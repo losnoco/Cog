@@ -66,37 +66,43 @@
 			if(tag) {
 				TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
 				int year, track, disc;
-				float rgAlbumGain, rgAlbumPeak, rgTrackGain, rgTrackPeak;
+				TagLib::Tag::ReplayGain rg;
 				TagLib::String cuesheet;
 				TagLib::String soundcheck;
 
 				artist = tag->artist();
-				//albumartist = tag->albumartist();
-				//composer = tag->composer();
+				albumartist = tag->albumartist();
+				composer = tag->composer();
 				title = tag->title();
 				album = tag->album();
 				genre = tag->genre();
 				comment = tag->comment();
-				//cuesheet = tag->cuesheet();
-				//unsyncedlyrics = tag->unsyncedlyrics();
+				cuesheet = tag->cuesheet();
+				unsyncedlyrics = tag->unsyncedlyrics();
 
 				year = tag->year();
-				[dict setObject:@(year) forKey:@"year"];
+				if(year)
+					[dict setObject:@(year) forKey:@"year"];
 
 				track = tag->track();
-				[dict setObject:@(track) forKey:@"track"];
+				if(track)
+					[dict setObject:@(track) forKey:@"track"];
 
-				/*disc = tag->disc();
-				[dict setObject:@(disc) forKey:@"disc"];*/
+				disc = tag->disc();
+				if(disc)
+					[dict setObject:@(disc) forKey:@"disc"];
 
-				/*rgAlbumGain = tag->rgAlbumGain();
-				rgAlbumPeak = tag->rgAlbumPeak();
-				rgTrackGain = tag->rgTrackGain();
-				rgTrackPeak = tag->rgTrackPeak();
-				[dict setObject:@(rgAlbumGain) forKey:@"replaygain_album_gain"];
-				[dict setObject:@(rgAlbumPeak) forKey:@"replaygain_album_peak"];
-				[dict setObject:@(rgTrackGain) forKey:@"replaygain_track_gain"];
-				[dict setObject:@(rgTrackPeak) forKey:@"replaygain_track_peak"];
+				rg = tag->replaygain();
+				if(!rg.isEmpty()) {
+					if(rg.albumGainSet())
+						[dict setObject:@(rg.albumGain()) forKey:@"replaygain_album_gain"];
+					if(rg.albumPeakSet())
+						[dict setObject:@(rg.albumPeak()) forKey:@"replaygain_album_peak"];
+					if(rg.trackGainSet())
+						[dict setObject:@(rg.trackGain()) forKey:@"replaygain_track_gain"];
+					if(rg.trackPeakSet())
+						[dict setObject:@(rg.trackPeak()) forKey:@"replaygain_track_peak"];
+				}
 
 				soundcheck = tag->soundcheck();
 				if(!soundcheck.isEmpty()) {
@@ -108,13 +114,16 @@
 					}
 
 					if(wantedTag.size() >= 10) {
-						float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(16)) / 1000) * 10;
-						float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(16)) / 1000) * 10;
-						float volumeToUse = MIN(volume1, volume2);
-						float volumeScale = pow(10, volumeToUse / 20);
-						[dict setObject:@(volumeScale) forKey:@"volume"];
+						bool ok1, ok2;
+						float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(&ok1, 16)) / 1000) * 10;
+						float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(&ok2, 16)) / 1000) * 10;
+						if(ok1 && ok2) {
+							float volumeToUse = MIN(volume1, volume2);
+							float volumeScale = pow(10, volumeToUse / 20);
+							[dict setObject:@(volumeScale) forKey:@"volume"];
+						}
 					}
-				}*/
+				}
 
 				if(!artist.isEmpty())
 					[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
