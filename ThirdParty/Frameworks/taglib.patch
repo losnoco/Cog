@@ -1,0 +1,3162 @@
+diff -ur taglib-2.0.2.orig/taglib/ape/apetag.cpp taglib-2.0.2/taglib/ape/apetag.cpp
+--- taglib-2.0.2.orig/taglib/ape/apetag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/ape/apetag.cpp	2025-02-17 02:18:36
+@@ -73,6 +73,9 @@
+ 
+   Footer footer;
+   ItemListMap itemListMap;
++
++  String albumartistField;
++  String unsyncedlyricsField;
+ };
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -106,18 +109,59 @@
+   return val.isEmpty() ? String() : joinTagValues(val.values());
+ }
+ 
++String APE::Tag::albumartist() const
++{
++  Item val = d->itemListMap.value("ALBUMARTIST");
++  if(!val.isEmpty()) {
++    d->albumartistField = "ALBUMARTIST";
++    return joinTagValues(val.values());
++  }
++  val = d->itemListMap.value("ALBUM ARTIST");
++  if(!val.isEmpty()) {
++    d->albumartistField = "ALBUM ARTIST";
++    return joinTagValues(val.values());
++  }
++  return String();
++}
++
+ String APE::Tag::artist() const
+ {
+   Item val = d->itemListMap.value("ARTIST");
+   return val.isEmpty() ? String() : joinTagValues(val.values());
+ }
+ 
++String APE::Tag::composer() const
++{
++  Item val = d->itemListMap.value("COMPOSER");
++  return val.isEmpty() ? String() : joinTagValues(val.values());
++}
++
+ String APE::Tag::album() const
+ {
+   Item val = d->itemListMap.value("ALBUM");
+   return val.isEmpty() ? String() : joinTagValues(val.values());
+ }
+ 
++String APE::Tag::unsyncedlyrics() const
++{
++  Item val = d->itemListMap.value("UNSYNCEDLYRICS");
++  if(!val.isEmpty()) {
++    d->unsyncedlyricsField = "UNSYNCEDLYRICS";
++    return joinTagValues(val.values());
++  }
++  val = d->itemListMap.value("UNSYNCED LYRICS");
++  if(!val.isEmpty()) {
++    d->unsyncedlyricsField = "UNSYNCED LYRICS";
++    return joinTagValues(val.values());
++  }
++  val = d->itemListMap.value("LYRICS");
++  if(!val.isEmpty()) {
++    d->unsyncedlyricsField = "LYRICS";
++    return joinTagValues(val.values());
++  }
++  return String();
++}
++
+ String APE::Tag::comment() const
+ {
+   Item val = d->itemListMap.value("COMMENT");
+@@ -142,21 +186,70 @@
+   return val.isEmpty() ? 0 : val.toString().toInt();
+ }
+ 
++unsigned int APE::Tag::disc() const
++{
++  Item val = d->itemListMap.value("DISC");
++  return val.isEmpty() ? 0 : val.toString().toInt();
++}
++
++String APE::Tag::cuesheet() const
++{
++  Item val = d->itemListMap.value("CUESHEET");
++  return val.isEmpty() ? String() : val.toString();
++}
++
++TagLib::Tag::ReplayGain APE::Tag::replaygain() const
++{
++  return rg;
++}
++
++String APE::Tag::soundcheck() const
++{
++  return String();
++}
++
+ void APE::Tag::setTitle(const String &s)
+ {
+   addValue("TITLE", s, true);
+ }
+ 
++void APE::Tag::setAlbumArtist(const String &s)
++{
++  if(d->albumartistField.isEmpty()) {
++    if(d->itemListMap.contains("ALBUMARTIST"))
++      d->albumartistField = "ALBUMARTIST";
++    else
++      d->albumartistField = "ALBUM ARTIST";
++  }
++  addValue(d->albumartistField, s, true);
++}
++
+ void APE::Tag::setArtist(const String &s)
+ {
+   addValue("ARTIST", s, true);
+ }
+ 
++void APE::Tag::setComposer(const String &s)
++{
++  addValue("COMPOSER", s, true);
++}
++
+ void APE::Tag::setAlbum(const String &s)
+ {
+   addValue("ALBUM", s, true);
+ }
+ 
++void APE::Tag::setUnsyncedLyrics(const String &s)
++{
++  if(d->unsyncedlyricsField.isEmpty()) {
++    if(d->itemListMap.contains("UNSYNCEDLYRICS"))
++      d->unsyncedlyricsField = "UNSYNCEDLYRICS";
++    else
++      d->unsyncedlyricsField = "UNSYNCED LYRICS";
++  }
++  addValue(d->unsyncedlyricsField, s);
++}
++
+ void APE::Tag::setComment(const String &s)
+ {
+   addValue("COMMENT", s, true);
+@@ -183,6 +276,44 @@
+     addValue("TRACK", String::number(i), true);
+ }
+ 
++void APE::Tag::setDisc(unsigned int i)
++{
++  if(i == 0)
++    removeItem("DISC");
++  else
++    addValue("DISC", String::number(i), true);
++}
++
++void APE::Tag::setCuesheet(const String &s)
++{
++  addValue("CUESHEET", s);
++}
++
++void APE::Tag::setReplaygain(TagLib::Tag::ReplayGain r)
++{
++  rg = r;
++  if(!rg.albumGainSet())
++    removeItem("REPLAYGAIN_ALBUM_GAIN");
++  else
++    addValue("REPLAYGAIN_ALBUM_GAIN", String::number(rg.albumGain()) + " dB", true);
++  if(!rg.albumPeakSet())
++    removeItem("REPLAYGAIN_ALBUM_PEAK");
++  else
++    addValue("REPLAYGAIN_ALBUM_PEAK", String::number(rg.albumPeak()), true);
++  if(!rg.trackGainSet())
++    removeItem("REPLAYGAIN_TRACK_GAIN");
++  else
++    addValue("REPLAYGAIN_TRACK_GAIN", String::number(rg.trackGain()) + " dB", true);
++  if(!rg.trackPeakSet())
++    removeItem("REPLAYGAIN_TRACK_PEAK");
++  else
++    addValue("REPLAYGAIN_TRACK_PEAK", String::number(rg.trackPeak()), true);
++}
++
++void APE::Tag::setSoundcheck(const String &)
++{
++}
++
+ namespace
+ {
+   // conversions of tag keys between what we use in PropertyMap and what's usual
+@@ -500,4 +631,25 @@
+ 
+     pos += keyLength + valLength + 9;
+   }
++
++  Item val = d->itemListMap.value("REPLAYGAIN_ALBUM_GAIN");
++  if(!val.isEmpty())
++    rg.setAlbumGain(val.toString().toFloat());
++  else
++    rg.clearAlbumGain();
++  val = d->itemListMap.value("REPLAYGAIN_ALBUM_PEAK");
++  if(!val.isEmpty())
++    rg.setAlbumPeak(val.toString().toFloat());
++  else
++    rg.clearAlbumPeak();
++  val = d->itemListMap.value("REPLAYGAIN_TRACK_GAIN");
++  if(!val.isEmpty())
++    rg.setTrackGain(val.toString().toFloat());
++  else
++    rg.clearTrackGain();
++  val = d->itemListMap.value("REPLAYGAIN_TRACK_PEAK");
++  if(!val.isEmpty())
++    rg.setTrackPeak(val.toString().toFloat());
++  else
++    rg.clearTrackPeak();
+ }
+diff -ur taglib-2.0.2.orig/taglib/ape/apetag.h taglib-2.0.2/taglib/ape/apetag.h
+--- taglib-2.0.2.orig/taglib/ape/apetag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/ape/apetag.h	2025-02-17 01:22:05
+@@ -56,6 +56,8 @@
+     class TAGLIB_EXPORT Tag : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
++
+       /*!
+        * Create an APE tag with default values.
+        */
+@@ -90,20 +92,34 @@
+       // Reimplementations.
+ 
+       String title() const override;
++      String albumartist() const override;
+       String artist() const override;
++      String composer() const override;
+       String album() const override;
++      String unsyncedlyrics() const override;
+       String comment() const override;
+       String genre() const override;
+       unsigned int year() const override;
+       unsigned int track() const override;
++      unsigned int disc() const override;
++      String cuesheet() const override;
++      ReplayGain replaygain() const override;
++      String soundcheck() const override;
+ 
+       void setTitle(const String &s) override;
++      void setAlbumArtist(const String &s) override;
+       void setArtist(const String &s) override;
++      void setComposer(const String &s) override;
+       void setAlbum(const String &s) override;
++      void setUnsyncedLyrics(const String &s) override;
+       void setComment(const String &s) override;
+       void setGenre(const String &s) override;
+       void setYear(unsigned int i) override;
+       void setTrack(unsigned int i) override;
++      void setDisc(unsigned int i) override;
++      void setCuesheet(const String &s) override;
++      void setReplaygain(ReplayGain r) override;
++      void setSoundcheck(const String &s) override;
+ 
+       /*!
+        * Implements the unified tag dictionary interface -- export function.
+diff -ur taglib-2.0.2.orig/taglib/asf/asftag.cpp taglib-2.0.2/taglib/asf/asftag.cpp
+--- taglib-2.0.2.orig/taglib/asf/asftag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/asf/asftag.cpp	2025-02-17 01:37:32
+@@ -50,10 +50,13 @@
+ {
+ public:
+   String title;
++  String albumartist;
+   String artist;
++  String composer;
+   String copyright;
+   String comment;
+   String rating;
++  String unsyncedlyrics;
+   AttributeListMap attributeListMap;
+ };
+ 
+@@ -69,11 +72,21 @@
+   return d->title;
+ }
+ 
++String ASF::Tag::albumartist() const
++{
++  return d->albumartist;
++}
++
+ String ASF::Tag::artist() const
+ {
+   return d->artist;
+ }
+ 
++String ASF::Tag::composer() const
++{
++  return d->composer;
++}
++
+ String ASF::Tag::album() const
+ {
+   if(d->attributeListMap.contains("WM/AlbumTitle"))
+@@ -97,6 +110,11 @@
+   return d->rating;
+ }
+ 
++String ASF::Tag::unsyncedlyrics() const
++{
++  return d->unsyncedlyrics;
++}
++
+ unsigned int ASF::Tag::year() const
+ {
+   if(d->attributeListMap.contains("WM/Year"))
+@@ -117,6 +135,25 @@
+   return 0;
+ }
+ 
++unsigned int ASF::Tag::disc() const
++{
++  if(d->attributeListMap.contains("WM/PartOfSet")) {
++    const ASF::Attribute attr = d->attributeListMap["WM/PartOfSet"][0];
++    if(attr.type() == ASF::Attribute::DWordType)
++      return attr.toUInt();
++    return attr.toString().toInt();
++  }
++  if(d->attributeListMap.contains("WM/DiscNumber")) {
++    const ASF::Attribute attr = d->attributeListMap["WM/DiscNumber"][0];
++    if(attr.type() == ASF::Attribute::DWordType)
++      return attr.toUInt();
++    return attr.toString().toInt();
++  }
++  if(d->attributeListMap.contains("WM/Disc"))
++    return d->attributeListMap["WM/Disc"][0].toUInt();
++  return 0;
++}
++
+ String ASF::Tag::genre() const
+ {
+   if(d->attributeListMap.contains("WM/Genre"))
+@@ -125,16 +162,41 @@
+   return String();
+ }
+ 
++String ASF::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain ASF::Tag::replaygain() const
++{
++  return TagLib::Tag::ReplayGain();
++}
++
++String ASF::Tag::soundcheck() const
++{
++  return String();
++}
++
+ void ASF::Tag::setTitle(const String &value)
+ {
+   d->title = value;
+ }
+ 
++void ASF::Tag::setAlbumArtist(const String &value)
++{
++  d->albumartist = value;
++}
++
+ void ASF::Tag::setArtist(const String &value)
+ {
+   d->artist = value;
+ }
+ 
++void ASF::Tag::setComposer(const String &value)
++{
++  d->composer = value;
++}
++
+ void ASF::Tag::setCopyright(const String &value)
+ {
+   d->copyright = value;
+@@ -150,6 +212,11 @@
+   d->rating = value;
+ }
+ 
++void ASF::Tag::setUnsyncedLyrics(const String &value)
++{
++  d->unsyncedlyrics = value;
++}
++
+ void ASF::Tag::setAlbum(const String &value)
+ {
+   setAttribute("WM/AlbumTitle", value);
+@@ -167,9 +234,32 @@
+ 
+ void ASF::Tag::setTrack(unsigned int value)
+ {
++  if(d->attributeListMap.contains("WM/Track"))
++    d->attributeListMap.erase("WM/Track");
+   setAttribute("WM/TrackNumber", String::number(value));
+ }
+ 
++void ASF::Tag::setDisc(unsigned int value)
++{
++  if(d->attributeListMap.contains("WM/DiscNumber"))
++    d->attributeListMap.erase("WM/DiscNumber");
++  if(d->attributeListMap.contains("WM/Disc"))
++    d->attributeListMap.erase("WM/Disc");
++  setAttribute("WM/PartOfSet", String::number(value));
++}
++
++void ASF::Tag::setCuesheet(const String &value)
++{
++}
++
++void ASF::Tag::setReplaygain(TagLib::Tag::ReplayGain)
++{
++}
++
++void ASF::Tag::setSoundcheck(const String &)
++{
++}
++
+ ASF::AttributeListMap& ASF::Tag::attributeListMap()
+ {
+   return d->attributeListMap;
+@@ -302,15 +392,24 @@
+   if(!d->title.isEmpty()) {
+     props["TITLE"] = d->title;
+   }
++  if(!d->albumartist.isEmpty()) {
++    props["ALBUMARTIST"] = d->albumartist;
++  }
+   if(!d->artist.isEmpty()) {
+     props["ARTIST"] = d->artist;
+   }
++  if(!d->composer.isEmpty()) {
++    props["COMPOSER"] = d->composer;
++  }
+   if(!d->copyright.isEmpty()) {
+     props["COPYRIGHT"] = d->copyright;
+   }
+   if(!d->comment.isEmpty()) {
+     props["COMMENT"] = d->comment;
+   }
++  if(!d->unsyncedlyrics.isEmpty()) {
++    props["LYRICS"] = d->unsyncedlyrics;
++  }
+ 
+   for(const auto &[k, attributes] : std::as_const(d->attributeListMap)) {
+     if(const String key = translateKey(k); !key.isEmpty()) {
+@@ -354,15 +453,24 @@
+       if(prop == "TITLE") {
+         d->title.clear();
+       }
++      else if(prop == "ALBUMARTIST") {
++        d->albumartist.clear();
++      }
+       else if(prop == "ARTIST") {
+         d->artist.clear();
+       }
++      else if(prop == "COMPOSER") {
++        d->composer.clear();
++      }
+       else if(prop == "COMMENT") {
+         d->comment.clear();
+       }
+       else if(prop == "COPYRIGHT") {
+         d->copyright.clear();
+       }
++      else if(prop == "LYRICS") {
++        d->unsyncedlyrics.clear();
++      }
+       else {
+         d->attributeListMap.erase(reverseKeyMap[prop]);
+       }
+@@ -381,14 +489,23 @@
+     else if(prop == "TITLE") {
+       d->title = attributes.toString();
+     }
++    else if(prop == "ALBUMARTIST") {
++      d->albumartist = attributes.toString();
++    }
+     else if(prop == "ARTIST") {
+       d->artist = attributes.toString();
+     }
++    else if(prop == "COMPOSER") {
++      d->composer = attributes.toString();
++    }
+     else if(prop == "COMMENT") {
+       d->comment = attributes.toString();
+     }
+     else if(prop == "COPYRIGHT") {
+       d->copyright = attributes.toString();
++    }
++    else if(prop == "LYRICS") {
++      d->unsyncedlyrics = attributes.toString();
+     }
+     else {
+       ignoredProps.insert(prop, attributes);
+diff -ur taglib-2.0.2.orig/taglib/asf/asftag.h taglib-2.0.2/taglib/asf/asftag.h
+--- taglib-2.0.2.orig/taglib/asf/asftag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/asf/asftag.h	2025-02-17 01:35:57
+@@ -46,6 +46,7 @@
+       friend class File;
+ 
+     public:
++      using TagLib::Tag::ReplayGain;
+ 
+       Tag();
+ 
+@@ -60,17 +61,33 @@
+       String title() const override;
+ 
+       /*!
++       * Returns the album artist name.
++       */
++      String albumartist() const override;
++
++      /*!
+        * Returns the artist name.
+        */
+       String artist() const override;
+ 
+       /*!
++       * Returns the composer name.
++       */
++      String composer() const override;
++
++      /*!
+        * Returns the album name; if no album name is present in the tag
+        * an empty string will be returned.
+        */
+       String album() const override;
+ 
+       /*!
++       * Returns the unsynchronized lyrics; if no unsynced lyrics are
++       * present in the tag an empty string will be returned.
++       */
++      String unsyncedlyrics() const override;
++
++      /*!
+        * Returns the track comment.
+        */
+       String comment() const override;
+@@ -104,22 +121,62 @@
+       unsigned int track() const override;
+ 
+       /*!
++       * Returns the disc number; if there is no disc number set, this will
++       * return 0.
++       */
++      unsigned int disc() const override;
++
++      /*!
++       * Returns the embedded cuesheet; currently unimplemented, this will
++       * always return an empty string.
++       */
++      String cuesheet() const override;
++
++      /*!
++       * Returns the ReplayGain tag; currently unimplemented, will alway
++       * always return an empty tag.
++       */
++      ReplayGain replaygain() const override;
++
++      /*!
++       * Returns the SoundCheck tag; currently unimplemented, this will
++       * always return an empty string.
++       */
++      String soundcheck() const override;
++
++      /*!
+        * Sets the title to \a value.
+        */
+       void setTitle(const String &value) override;
+ 
+       /*!
++       * Sets the album artist to \a value.
++       */
++      void setAlbumArtist(const String &value) override;
++
++      /*!
+        * Sets the artist to \a value.
+        */
+       void setArtist(const String &value) override;
+ 
+       /*!
++       * Sets the composer to \a value.
++       */
++      void setComposer(const String &value) override;
++
++      /*!
+        * Sets the album to \a value.  If \a value is an empty string then this value will be
+        * cleared.
+        */
+       void setAlbum(const String &value) override;
+ 
+       /*!
++       * Sets the unsynchronized lyrics to \a value.  If \a value is an empty string then
++       * this value will be cleared.
++       */
++      void setUnsyncedLyrics(const String &value) override;
++
++      /*!
+        * Sets the comment to \a value.
+        */
+       void setComment(const String &value) override;
+@@ -150,6 +207,29 @@
+       void setTrack(unsigned int value) override;
+ 
+       /*!
++       * Sets the disc to \a value.  If \a value is 0 then this value will be cleared.
++       */
++      void setDisc(unsigned int value) override;
++
++      /*!
++       * Sets the embedded cuesheet to \a value.  Currently unimplemented and does
++       * nothing.
++       */
++      void setCuesheet(const String &value) override;
++
++      /*!
++       * Sets the ReplayGain tag to \a value.  Currently unimplemented and does
++       * nothing.
++       */
++      void setReplaygain(ReplayGain value) override;
++
++      /*!
++       * Sets the SoundCheck tag to \a value.  Currently unimplemented and does
++       * nothing.
++       */
++       void setSoundcheck(const String &value) override;
++
++       /*!
+        * Returns \c true if the tag does not contain any data.  This should be
+        * reimplemented in subclasses that provide more than the basic tagging
+        * abilities in this class.
+diff -ur taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.cpp taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.cpp
+--- taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.cpp	2025-02-17 01:58:54
+@@ -53,16 +53,31 @@
+   return d->title;
+ }
+ 
++String DSDIFF::DIIN::Tag::albumartist() const
++{
++  return String();
++}
++
+ String DSDIFF::DIIN::Tag::artist() const
+ {
+   return d->artist;
+ }
+ 
++String DSDIFF::DIIN::Tag::composer() const
++{
++  return String();
++}
++
+ String DSDIFF::DIIN::Tag::album() const
+ {
+   return String();
+ }
+ 
++String DSDIFF::DIIN::Tag::unsyncedlyrics() const
++{
++  return String();
++}
++
+ String DSDIFF::DIIN::Tag::comment() const
+ {
+   return String();
+@@ -83,21 +98,56 @@
+   return 0;
+ }
+ 
++unsigned int DSDIFF::DIIN::Tag::disc() const
++{
++  return 0;
++}
++
++String DSDIFF::DIIN::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain DSDIFF::DIIN::Tag::replaygain() const
++{
++  return TagLib::Tag::ReplayGain();
++}
++
++String DSDIFF::DIIN::Tag::soundcheck() const
++{
++  return String();
++}
++
+ void DSDIFF::DIIN::Tag::setTitle(const String &title)
+ {
+   d->title = title;
+ }
+ 
++void DSDIFF::DIIN::Tag::setAlbumArtist(const String &)
++{
++  debug("DSDIFF::DIIN::Tag::setAlbumArtist() -- Ignoring unsupported tag.");
++}
++
+ void DSDIFF::DIIN::Tag::setArtist(const String &artist)
+ {
+   d->artist = artist;
+ }
+ 
++void DSDIFF::DIIN::Tag::setComposer(const String &)
++{
++  debug("DSDIFF::DIIN::Tag::setComposer() -- Ignoring unsupported tag.");
++}
++
+ void DSDIFF::DIIN::Tag::setAlbum(const String &)
+ {
+   debug("DSDIFF::DIIN::Tag::setAlbum() -- Ignoring unsupported tag.");
+ }
+ 
++void DSDIFF::DIIN::Tag::setUnsyncedLyrics(const String &)
++{
++  debug("DSDIFF::DIIN::Tag::setUnsyncedLyrics() -- Ignoring unsupported tag.");
++}
++
+ void DSDIFF::DIIN::Tag::setComment(const String &)
+ {
+   debug("DSDIFF::DIIN::Tag::setComment() -- Ignoring unsupported tag.");
+@@ -116,6 +166,26 @@
+ void DSDIFF::DIIN::Tag::setTrack(unsigned int)
+ {
+   debug("DSDIFF::DIIN::Tag::setTrack() -- Ignoring unsupported tag.");
++}
++
++void DSDIFF::DIIN::Tag::setDisc(unsigned int)
++{
++  debug("DSDIFF::DIIN::Tag::setDisc() -- Ignoring unsupported tag.");
++}
++
++void DSDIFF::DIIN::Tag::setCuesheet(const String &)
++{
++  debug("DSDIFF::DIIN::Tag::setCuesheet() -- Ignoring unsupported tag.");
++}
++
++void DSDIFF::DIIN::Tag::setReplaygain(TagLib::Tag::ReplayGain)
++{
++  debug("DSDIFF::DIIN::Tag::setReplaygain() -- Ignoring unsupported tag.");
++}
++
++void DSDIFF::DIIN::Tag::setSoundcheck(const String &)
++{
++  debug("DSDIFF::DIIN::Tag::setSoundcheck() -- Ignoring unsupported tag.");
+ }
+ 
+ PropertyMap DSDIFF::DIIN::Tag::properties() const
+diff -ur taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.h taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.h
+--- taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.h	2025-02-17 01:53:14
+@@ -42,6 +42,7 @@
+       class TAGLIB_EXPORT Tag : public TagLib::Tag
+       {
+       public:
++        using TagLib::Tag::ReplayGain;
+         Tag();
+         ~Tag() override;
+ 
+@@ -52,6 +53,11 @@
+         String title() const override;
+ 
+         /*!
++         * Not supported.  Therefore always returns String().
++         */
++         String albumartist() const override;
++
++         /*!
+          * Returns the artist name; if no artist name is present in the tag
+          * String() will be returned.
+          */
+@@ -60,11 +66,21 @@
+         /*!
+          * Not supported.  Therefore always returns String().
+          */
++         String composer() const override;
++
++        /*!
++         * Not supported.  Therefore always returns String().
++         */
+         String album() const override;
+ 
+         /*!
+          * Not supported.  Therefore always returns String().
+          */
++        String unsyncedlyrics() const override;
++
++        /*!
++         * Not supported.  Therefore always returns String().
++         */
+         String comment() const override;
+ 
+         /*!
+@@ -83,12 +99,37 @@
+         unsigned int track() const override;
+ 
+         /*!
++         * Not supported.  Therefore always returns 0.
++         */
++        unsigned int disc() const override;
++
++        /*!
++         * Not supported.  Therefore always returns String().
++         */
++        String cuesheet() const override;
++
++        /*!
++         * Not supported.  Therefore always returns ReplayGain().
++         */
++        ReplayGain replaygain() const override;
++
++        /*!
++         * Not supported.  Therefore always returns String().
++         */
++        String soundcheck() const override;
++
++        /*!
+          * Sets the title to \a title.  If \a title is String() then this
+          * value will be cleared.
+          */
+         void setTitle(const String &title) override;
+ 
+         /*!
++         * Not supported and therefore ignored.
++         */
++        void setAlbumArtist(const String &albumartist) override;
++
++        /*!
+          * Sets the artist to \a artist.  If \a artist is String() then this
+          * value will be cleared.
+          */
+@@ -97,11 +138,21 @@
+         /*!
+          * Not supported and therefore ignored.
+          */
++        void setComposer(const String &composer) override;       
++
++        /*!
++         * Not supported and therefore ignored.
++         */
+         void setAlbum(const String &album) override;
+ 
+         /*!
+          * Not supported and therefore ignored.
+          */
++        void setUnsyncedLyrics(const String &unsyncedlyrics) override;
++
++        /*!
++         * Not supported and therefore ignored.
++         */
+         void setComment(const String &comment) override;
+ 
+         /*!
+@@ -118,6 +169,26 @@
+          * Not supported and therefore ignored.
+          */
+         void setTrack(unsigned int track) override;
++
++        /*!
++         * Not supported and therefore ignored.
++         */
++        void setDisc(unsigned int disc) override;
++
++        /*!
++         * Not supported and therefore ignored.
++         */
++        void setCuesheet(const String &cuesheet) override;
++
++        /*!
++         * Not supported and therefore ignored.
++         */
++        void setReplaygain(ReplayGain replaygain) override;
++
++        /*!
++         * Not supported and therefore ignored.
++         */
++        void setSoundcheck(const String &soundcheck) override;
+ 
+         /*!
+          * Implements the unified property interface -- export function.
+diff -ur taglib-2.0.2.orig/taglib/mod/modtag.cpp taglib-2.0.2/taglib/mod/modtag.cpp
+--- taglib-2.0.2.orig/taglib/mod/modtag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mod/modtag.cpp	2025-02-17 01:39:36
+@@ -53,16 +53,31 @@
+   return d->title;
+ }
+ 
++String Mod::Tag::albumartist() const
++{
++  return String();
++}
++
+ String Mod::Tag::artist() const
+ {
+   return String();
+ }
+ 
++String Mod::Tag::composer() const
++{
++  return String();
++}
++
+ String Mod::Tag::album() const
+ {
+   return String();
+ }
+ 
++String Mod::Tag::unsyncedlyrics() const
++{
++  return String();
++}
++
+ String Mod::Tag::comment() const
+ {
+   return d->comment;
+@@ -83,6 +98,26 @@
+   return 0;
+ }
+ 
++unsigned int Mod::Tag::disc() const
++{
++  return 0;
++}
++
++String Mod::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain Mod::Tag::replaygain() const
++{
++  return TagLib::Tag::ReplayGain();
++}
++
++String Mod::Tag::soundcheck() const
++{
++  return String();
++}
++
+ String Mod::Tag::trackerName() const
+ {
+   return d->trackerName;
+@@ -93,14 +128,26 @@
+   d->title = title;
+ }
+ 
++void Mod::Tag::setAlbumArtist(const String &)
++{
++}
++
+ void Mod::Tag::setArtist(const String &)
+ {
+ }
+ 
++void Mod::Tag::setComposer(const String &)
++{
++}
++
+ void Mod::Tag::setAlbum(const String &)
+ {
+ }
+ 
++void Mod::Tag::setUnsyncedLyrics(const String &)
++{
++}
++
+ void Mod::Tag::setComment(const String &comment)
+ {
+   d->comment = comment;
+@@ -115,6 +162,22 @@
+ }
+ 
+ void Mod::Tag::setTrack(unsigned int)
++{
++}
++
++void Mod::Tag::setDisc(unsigned int)
++{
++}
++
++void Mod::Tag::setCuesheet(const String &)
++{
++}
++
++void Mod::Tag::setReplaygain(TagLib::Tag::ReplayGain)
++{
++}
++
++void Mod::Tag::setSoundcheck(const String &)
+ {
+ }
+ 
+diff -ur taglib-2.0.2.orig/taglib/mod/modtag.h taglib-2.0.2/taglib/mod/modtag.h
+--- taglib-2.0.2.orig/taglib/mod/modtag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mod/modtag.h	2025-02-17 01:24:04
+@@ -48,6 +48,8 @@
+     class TAGLIB_EXPORT Tag : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
++
+       Tag();
+       ~Tag() override;
+ 
+@@ -63,14 +65,29 @@
+       /*!
+        * Not supported by module files.  Therefore always returns an empty string.
+        */
++      String albumartist() const override;
++
++      /*!
++       * Not supported by module files.  Therefore always returns an empty string.
++       */
+       String artist() const override;
+ 
+       /*!
+        * Not supported by module files.  Therefore always returns an empty string.
+        */
++      String composer() const override;
++
++       /*!
++       * Not supported by module files.  Therefore always returns an empty string.
++       */
+       String album() const override;
+ 
+       /*!
++       * Not supported by module files.  Therefore always returns an empty string.
++       */
++      String unsyncedlyrics() const override;
++
++       /*!
+        * Returns the track comment derived from the instrument/sample/pattern
+        * names; if no comment is present in the tag an empty string will be
+        * returned.
+@@ -93,6 +110,26 @@
+       unsigned int track() const override;
+ 
+       /*!
++       * Not supported by module files.  Therefore always returns 0.
++       */
++      unsigned int disc() const override;
++
++      /*!
++       * Not supported by module files.  Therefore always returns an empty string.
++       */
++      String cuesheet() const override;
++
++      /*!
++       * Not supported by module files.  Therefore always returns an empty tag.
++       */
++      ReplayGain replaygain() const override;
++
++      /*!
++       * Not supported by module files.  Therefore always returns an empty string.
++       */
++      String soundcheck() const override;
++
++       /*!
+        * Returns the name of the tracker used to create/edit the module file.
+        * Only XM files store this tag to the file as such, for other formats
+        * (Mod, S3M, IT) this is derived from the file type or the flavour of
+@@ -114,14 +151,29 @@
+       /*!
+        * Not supported by module files and therefore ignored.
+        */
++      void setAlbumArtist(const String &albumartist) override;
++
++      /*!
++       * Not supported by module files and therefore ignored.
++       */
+       void setArtist(const String &artist) override;
+ 
+       /*!
+        * Not supported by module files and therefore ignored.
+        */
++      void setComposer(const String &composer) override;
++
++      /*!
++       * Not supported by module files and therefore ignored.
++       */
+       void setAlbum(const String &album) override;
+ 
+       /*!
++       * Not supported by module files and therefore ignored.
++       */
++      void setUnsyncedLyrics(const String &unsyncedlyrics) override;
++
++      /*!
+        * Sets the comment to \a comment.  If \a comment is an empty string then
+        * this value will be cleared.
+        *
+@@ -156,6 +208,26 @@
+       void setTrack(unsigned int track) override;
+ 
+       /*!
++       * Not supported by module files and therefore ignored.
++       */
++      void setDisc(unsigned int disc) override;
++
++      /*!
++       * Not supported by module files and therefore ignored.
++       */
++      void setCuesheet(const String &cuesheet) override;
++
++      /*!
++       * Not supported by module files and therefore ignored.
++       */
++      void setReplaygain(ReplayGain r) override;
++
++      /*!
++       * Not supported by module files and therefore ignored.
++       */
++      void setSoundcheck(const String &soundcheck) override;
++
++       /*!
+        * Sets the tracker name to \a trackerName.  If \a trackerName is
+        * an empty string then this value will be cleared.
+        *
+diff -ur taglib-2.0.2.orig/taglib/mp4/mp4tag.cpp taglib-2.0.2/taglib/mp4/mp4tag.cpp
+--- taglib-2.0.2.orig/taglib/mp4/mp4tag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mp4/mp4tag.cpp	2025-02-17 01:39:07
+@@ -78,6 +78,34 @@
+       addItem(name, itm);
+     }
+   }
++
++  if(d->items.contains("----:com.apple.iTunes:replaygain_album_gain"))
++    rg.setAlbumGain(d->items["----:com.apple.iTunes:replaygain_album_gain"].toStringList().toString().toFloat());
++  else if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_album_gain"))
++    rg.setAlbumGain(d->items["----:org.hydrogenaudio.replaygain:replaygain_album_gain"].toStringList().toString().toFloat());
++  else
++    rg.clearAlbumGain();
++
++  if(d->items.contains("----:com.apple.iTunes:replaygain_album_peak"))
++    rg.setAlbumPeak(d->items["----:com.apple.iTunes:replaygain_album_peak"].toStringList().toString().toFloat());
++  else if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_album_peak"))
++    rg.setAlbumPeak(d->items["----:org.hydrogenaudio.replaygain:replaygain_album_peak"].toStringList().toString().toFloat());
++  else
++    rg.clearAlbumPeak();
++
++  if(d->items.contains("----:com.apple.iTunes:replaygain_track_gain"))
++    rg.setTrackGain(d->items["----:com.apple.iTunes:replaygain_track_gain"].toStringList().toString().toFloat());
++  else if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_track_gain"))
++    rg.setTrackGain(d->items["----:org.hydrogenaudio.replaygain:replaygain_track_gain"].toStringList().toString().toFloat());
++  else
++    rg.clearTrackGain();
++
++  if(d->items.contains("----:com.apple.iTunes:replaygain_track_peak"))
++    rg.setTrackPeak(d->items["----:com.apple.iTunes:replaygain_track_peak"].toStringList().toString().toFloat());
++  else if(d->items.contains("----:org.hydrogenaudio.replaygain:replaygain_track_peak"))
++    rg.setTrackPeak(d->items["----:org.hydrogenaudio.replaygain:replaygain_track_peak"].toStringList().toString().toFloat());
++  else
++    rg.clearTrackPeak();
+ }
+ 
+ MP4::Tag::~Tag() = default;
+@@ -321,6 +349,14 @@
+ }
+ 
+ String
++MP4::Tag::albumartist() const
++{
++  if(d->items.contains("aART"))
++    return d->items["aART"].toStringList().toString(", ");
++  return String();
++}
++
++String
+ MP4::Tag::artist() const
+ {
+   if(d->items.contains("\251ART"))
+@@ -329,6 +365,14 @@
+ }
+ 
+ String
++MP4::Tag::composer() const
++{
++  if(d->items.contains("\251wrt"))
++    return d->items["\251wrt"].toStringList().toString(", ");
++  return String();
++}
++
++String
+ MP4::Tag::album() const
+ {
+   if(d->items.contains("\251alb"))
+@@ -337,6 +381,14 @@
+ }
+ 
+ String
++MP4::Tag::unsyncedlyrics() const
++{
++  if(d->items.contains("\251lyr"))
++    return d->items["\251lyr"].toStringList().toString(", ");
++  return String();
++}
++
++String
+ MP4::Tag::comment() const
+ {
+   if(d->items.contains("\251cmt"))
+@@ -368,6 +420,34 @@
+   return 0;
+ }
+ 
++unsigned int
++MP4::Tag::disc() const
++{
++  if(d->items.contains("disk"))
++    return d->items["disk"].toIntPair().first;
++  return 0;
++}
++
++String
++MP4::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain
++MP4::Tag::replaygain() const
++{
++  return rg;
++}
++
++String
++MP4::Tag::soundcheck() const
++{
++  if(d->items.contains("----:com.apple.iTunes:iTunNORM"))
++    return d->items["----:com.apple.iTunes:iTunNORM"].toStringList().toString();
++  return String();
++}
++
+ void
+ MP4::Tag::setTitle(const String &value)
+ {
+@@ -375,18 +455,36 @@
+ }
+ 
+ void
++MP4::Tag::setAlbumArtist(const String &value)
++{
++  setTextItem("aART", value);
++}
++
++void
+ MP4::Tag::setArtist(const String &value)
+ {
+   setTextItem("\251ART", value);
+ }
+ 
+ void
++MP4::Tag::setComposer(const String &value)
++{
++  setTextItem("\251wrt", value);
++}
++
++void
+ MP4::Tag::setAlbum(const String &value)
+ {
+   setTextItem("\251alb", value);
+ }
+ 
+ void
++MP4::Tag::setUnsyncedLyrics(const String &value)
++{
++  setTextItem("\251lyr", value);
++}
++
++void
+ MP4::Tag::setComment(const String &value)
+ {
+   setTextItem("\251cmt", value);
+@@ -428,6 +526,54 @@
+   else {
+     d->items["trkn"] = MP4::Item(value, 0);
+   }
++}
++
++void
++MP4::Tag::setDisc(unsigned int value)
++{
++  if (value == 0) {
++    d->items.erase("disk");
++  }
++  else {
++    d->items["disk"] = MP4::Item(value, 0);
++  }
++}
++
++void
++MP4::Tag::setCuesheet(const String &)
++{
++}
++
++void
++MP4::Tag::setReplaygain(TagLib::Tag::ReplayGain r)
++{
++  rg = r;
++  d->items.erase("----:org.hydrogenaudio.replaygain:replaygain_album_gain");
++  if(!rg.albumGainSet())
++    d->items.erase("----:com.apple.iTunes:replaygain_album_gain");
++  else
++    setTextItem("----:com.apple.iTunes:replaygain_album_gain", String::number(rg.albumGain()) + " dB");
++  d->items.erase("----:org.hydrogenaudio.replaygain:replaygain_album_peak");
++  if(!rg.albumPeakSet())
++    d->items.erase("----:com.apple.iTunes:replaygain_album_peak");
++  else
++    setTextItem("----:com.apple.iTunes:replaygain_album_peak", String::number(rg.albumPeak()));
++  d->items.erase("----:org.hydrogenaudio.replaygain:replaygain_track_gain");
++  if(!rg.trackGainSet())
++    d->items.erase("----:com.apple.iTunes:replaygain_track_gain");
++  else
++    setTextItem("----:com.apple.iTunes:replaygain_track_gain", String::number(rg.trackGain()) + " dB");
++  d->items.erase("----:org.hydrogenaudio.replaygain:replaygain_track_peak");
++  if(!rg.trackPeakSet())
++    d->items.erase("----:com.apple.iTunes:replaygain_track_peak");
++  else
++    setTextItem("----:com.apple.iTunes:replaygain_track_peak", String::number(rg.trackPeak()));
++}
++
++void
++MP4::Tag::setSoundcheck(const String &value)
++{
++  setTextItem("----:com.apple.iTunes:iTunNORM", value);
+ }
+ 
+ bool MP4::Tag::isEmpty() const
+diff -ur taglib-2.0.2.orig/taglib/mp4/mp4tag.h taglib-2.0.2/taglib/mp4/mp4tag.h
+--- taglib-2.0.2.orig/taglib/mp4/mp4tag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mp4/mp4tag.h	2025-02-17 01:37:52
+@@ -43,6 +43,7 @@
+     class TAGLIB_EXPORT Tag: public TagLib::Tag
+     {
+     public:
++        using TagLib::Tag::ReplayGain;
+         Tag();
+         Tag(TagLib::File *file, Atoms *atoms,
+             const ItemFactory *factory = nullptr);
+@@ -52,20 +53,34 @@
+         bool save();
+ 
+         String title() const override;
++        String albumartist() const override;
+         String artist() const override;
++        String composer() const override;
+         String album() const override;
++        String unsyncedlyrics() const override;
+         String comment() const override;
+         String genre() const override;
+         unsigned int year() const override;
+         unsigned int track() const override;
++        unsigned int disc() const override;
++        String cuesheet() const override;
++        ReplayGain replaygain() const override;
++        String soundcheck() const override;
+ 
+         void setTitle(const String &value) override;
++        void setAlbumArtist(const String &value) override;
+         void setArtist(const String &value) override;
++        void setComposer(const String &value) override;
+         void setAlbum(const String &value) override;
++        void setUnsyncedLyrics(const String &value) override;
+         void setComment(const String &value) override;
+         void setGenre(const String &value) override;
+         void setYear(unsigned int value) override;
+         void setTrack(unsigned int value) override;
++        void setDisc(unsigned int value) override;
++        void setCuesheet(const String &value) override;
++        void setReplaygain(ReplayGain value) override;
++        void setSoundcheck(const String &value) override;
+ 
+         bool isEmpty() const override;
+ 
+diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.cpp taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.cpp
+--- taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.cpp	2025-02-17 01:28:50
+@@ -124,16 +124,31 @@
+   return d->title;
+ }
+ 
++String ID3v1::Tag::albumartist() const
++{
++  return String();
++}
++
+ String ID3v1::Tag::artist() const
+ {
+   return d->artist;
+ }
+ 
++String ID3v1::Tag::composer() const
++{
++  return String();
++}
++
+ String ID3v1::Tag::album() const
+ {
+   return d->album;
+ }
+ 
++String ID3v1::Tag::unsyncedlyrics() const
++{
++  return String();
++}
++
+ String ID3v1::Tag::comment() const
+ {
+   return d->comment;
+@@ -154,21 +169,53 @@
+   return d->track;
+ }
+ 
++unsigned int ID3v1::Tag::disc() const
++{
++  return 0;
++}
++
++String ID3v1::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain ID3v1::Tag::replaygain() const
++{
++  return TagLib::Tag::ReplayGain();
++}
++
++String ID3v1::Tag::soundcheck() const
++{
++  return String();
++}
++
+ void ID3v1::Tag::setTitle(const String &s)
+ {
+   d->title = s;
+ }
+ 
++void ID3v1::Tag::setAlbumArtist(const String &)
++{
++}
++
+ void ID3v1::Tag::setArtist(const String &s)
+ {
+   d->artist = s;
+ }
+ 
++void ID3v1::Tag::setComposer(const String &)
++{
++}
++
+ void ID3v1::Tag::setAlbum(const String &s)
+ {
+   d->album = s;
+ }
+ 
++void ID3v1::Tag::setUnsyncedLyrics(const String &)
++{
++}
++
+ void ID3v1::Tag::setComment(const String &s)
+ {
+   d->comment = s;
+@@ -187,6 +234,22 @@
+ void ID3v1::Tag::setTrack(unsigned int i)
+ {
+   d->track = i < 256 ? i : 0;
++}
++
++void ID3v1::Tag::setDisc(unsigned int)
++{
++}
++
++void ID3v1::Tag::setCuesheet(const String &)
++{
++}
++
++void ID3v1::Tag::setReplaygain(TagLib::Tag::ReplayGain)
++{
++}
++
++void ID3v1::Tag::setSoundcheck(const String &)
++{
+ }
+ 
+ unsigned int ID3v1::Tag::genreNumber() const
+diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.h taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.h
+--- taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.h	2025-02-17 01:25:21
+@@ -114,6 +114,7 @@
+     class TAGLIB_EXPORT Tag : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
+       /*!
+        * Create an ID3v1 tag with default values.
+        */
+@@ -148,20 +149,34 @@
+       // Reimplementations.
+ 
+       String title() const override;
++      String albumartist() const override;
+       String artist() const override;
++      String composer() const override;
+       String album() const override;
++      String unsyncedlyrics() const override;
+       String comment() const override;
+       String genre() const override;
+       unsigned int year() const override;
+       unsigned int track() const override;
++      unsigned int disc() const override;
++      String cuesheet() const override;
++      ReplayGain replaygain() const override;
++      String soundcheck() const override;
+ 
+       void setTitle(const String &s) override;
++      void setAlbumArtist(const String &s) override;
+       void setArtist(const String &s) override;
++      void setComposer(const String &s) override;
+       void setAlbum(const String &s) override;
++      void setUnsyncedLyrics(const String &s) override;
+       void setComment(const String &s) override;
+       void setGenre(const String &s) override;
+       void setYear(unsigned int i) override;
+       void setTrack(unsigned int i) override;
++      void setDisc(unsigned int i) override;
++      void setCuesheet(const String &s) override;
++      void setReplaygain(ReplayGain r) override;
++      void setSoundcheck(const String &s) override;
+ 
+       /*!
+        * Returns the genre in number.
+diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.cpp
+--- taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.cpp	2025-02-17 01:31:54
+@@ -125,6 +125,13 @@
+   return String();
+ }
+ 
++String ID3v2::Tag::albumartist() const
++{
++  if(!d->frameListMap["TPE2"].isEmpty())
++    return joinTagValues(d->frameListMap["TPE2"].front()->toStringList());
++  return String();
++}
++
+ String ID3v2::Tag::artist() const
+ {
+   if(!d->frameListMap["TPE1"].isEmpty())
+@@ -132,6 +139,13 @@
+   return String();
+ }
+ 
++String ID3v2::Tag::composer() const
++{
++  if(!d->frameListMap["TCOM"].isEmpty())
++    return joinTagValues(d->frameListMap["TCOM"].front()->toStringList());
++  return String();
++}
++
+ String ID3v2::Tag::album() const
+ {
+   if(!d->frameListMap["TALB"].isEmpty())
+@@ -139,6 +153,13 @@
+   return String();
+ }
+ 
++String ID3v2::Tag::unsyncedlyrics() const
++{
++  if(!d->frameListMap["USLT"].isEmpty())
++    return d->frameListMap["USLT"].front()->toString();
++  return String();
++}
++
+ String ID3v2::Tag::comment() const
+ {
+   const FrameList &comments = d->frameListMap["COMM"];
+@@ -209,21 +230,90 @@
+   return 0;
+ }
+ 
++unsigned int ID3v2::Tag::disc() const
++{
++  if(!d->frameListMap["TPOS"].isEmpty())
++    return d->frameListMap["TPOS"].front()->toString().toInt();
++  return 0;
++}
++
++String ID3v2::Tag::cuesheet() const
++{
++  auto frame = UserTextIdentificationFrame::find(this, "cuesheet");
++  if(frame) {
++    StringList l = frame->fieldList();
++    l.erase(l.begin());
++    return l.toString();
++  }
++  return String();
++}
++
++TagLib::Tag::ReplayGain ID3v2::Tag::replaygain() const
++{
++  return rg;
++}
++
++String ID3v2::Tag::soundcheck() const
++{
++  if(const FrameList &comments = d->frameListMap["COMM"]; !comments.isEmpty()) {
++    for(const auto &commFrame : comments) {
++      auto frame = dynamic_cast<CommentsFrame *>(commFrame);
++      if(frame && frame->description() == "iTunNORM") {
++        return commFrame->toString();
++      }
++    }
++  }
++  return String();
++}
++
+ void ID3v2::Tag::setTitle(const String &s)
+ {
+   setTextFrame("TIT2", s);
+ }
+ 
++void ID3v2::Tag::setAlbumArtist(const String &s)
++{
++  setTextFrame("TPE2", s);
++}
++
+ void ID3v2::Tag::setArtist(const String &s)
+ {
+   setTextFrame("TPE1", s);
+ }
+ 
++void ID3v2::Tag::setComposer(const String &s)
++{
++  setTextFrame("TCOM", s);
++}
++
+ void ID3v2::Tag::setAlbum(const String &s)
+ {
+   setTextFrame("TALB", s);
+ }
+ 
++void ID3v2::Tag::setUnsyncedLyrics(const String &s)
++{
++  if(s.isEmpty()) {
++    removeFrames("USLT");
++    return;
++  }
++
++  if(const FrameList &unsyncedlyrics = d->frameListMap["USLT"]; !unsyncedlyrics.isEmpty()) {
++    for(const auto &lyricsFrame: unsyncedlyrics) {
++      auto frame = dynamic_cast<UnsynchronizedLyricsFrame *>(lyricsFrame);
++      if(frame && (frame->description().isEmpty() || frame->description() == "LYRICS")) {
++        frame->setText(s);
++        return;
++      }
++    }
++  }
++
++  auto frame = new UnsynchronizedLyricsFrame(d->factory->defaultTextEncoding());
++  addFrame(frame);
++  frame->setDescription("LYRICS");
++  frame->setText(s);
++}
++
+ void ID3v2::Tag::setComment(const String &s)
+ {
+   if(s.isEmpty()) {
+@@ -293,6 +383,120 @@
+   setTextFrame("TRCK", String::number(i));
+ }
+ 
++void ID3v2::Tag::setDisc(unsigned int i)
++{
++  if(i == 0) {
++    removeFrames("TPOS");
++    return;
++  }
++  setTextFrame("TPOS", String::number(i));
++}
++
++void ID3v2::Tag::setCuesheet(const String &s)
++{
++  auto frame = UserTextIdentificationFrame::find(this, "cuesheet");
++  if(s.isEmpty()) {
++    if(frame)
++      removeFrame(frame);
++    return;
++  }
++  if(frame == nullptr) {
++    frame = new UserTextIdentificationFrame(d->factory->defaultTextEncoding());
++    frame->setDescription("cuesheet");
++    addFrame(frame);
++  }
++  frame->setText(s);
++}
++
++void ID3v2::Tag::setReplaygain(TagLib::Tag::ReplayGain r)
++{
++  rg = r;
++
++  auto frame = UserTextIdentificationFrame::find(this, "replaygain_album_gain");
++  if(!rg.albumGainSet()) {
++    if(frame)
++      removeFrame(frame);
++  }
++  else {
++    if(frame == nullptr) {
++      frame = new UserTextIdentificationFrame(d->factory->defaultTextEncoding());
++      frame->setDescription("replaygain_album_gain");
++      addFrame(frame);
++    }
++    frame->setText(String::number(rg.albumGain()) + " dB");
++  }
++
++  frame = UserTextIdentificationFrame::find(this, "replaygain_album_peak");
++  if(!rg.albumPeakSet()) {
++    if(frame)
++      removeFrame(frame);
++  }
++  else {
++    if(frame == nullptr) {
++      frame = new UserTextIdentificationFrame(d->factory->defaultTextEncoding());
++      frame->setDescription("replaygain_album_peak");
++      addFrame(frame);
++    }
++    frame->setText(String::number(rg.albumPeak()));
++  }
++
++  frame = UserTextIdentificationFrame::find(this, "replaygain_track_gain");
++  if(!rg.trackGainSet()) {
++    if(frame)
++      removeFrame(frame);
++  }
++  else {
++    if(frame == nullptr) {
++      frame = new UserTextIdentificationFrame(d->factory->defaultTextEncoding());
++      frame->setDescription("replaygain_track_gain");
++      addFrame(frame);
++    }
++    frame->setText(String::number(rg.trackGain()) + " dB");
++  }
++
++  frame = UserTextIdentificationFrame::find(this, "replaygain_track_peak");
++  if(!rg.trackPeakSet()) {
++    if(frame)
++      removeFrame(frame);
++  }
++  else {
++    if(frame == nullptr) {
++      frame = new UserTextIdentificationFrame(d->factory->defaultTextEncoding());
++      frame->setDescription("replaygain_track_peak");
++      addFrame(frame);
++    }
++    frame->setText(String::number(rg.trackPeak()));
++  }
++}
++
++void ID3v2::Tag::setSoundcheck(const String &s)
++{
++  CommentsFrame *soundcheckFrame = nullptr;
++  if(const FrameList &comments = d->frameListMap["COMM"]; !comments.isEmpty()) {
++    for(const auto &commFrame : comments) {
++      auto frame = dynamic_cast<CommentsFrame *>(commFrame);
++      if(frame && frame->description() == "iTunNORM") {
++        soundcheckFrame = frame;
++        break;
++      }
++    }
++  }
++
++  if(s.isEmpty()) {
++    if(soundcheckFrame)
++      removeFrame(soundcheckFrame);
++    return;
++  }
++
++  if(soundcheckFrame == nullptr) {
++    soundcheckFrame = new CommentsFrame(d->factory->defaultTextEncoding());
++    soundcheckFrame->setDescription("iTunNORM");
++    addFrame(soundcheckFrame);
++  }
++
++  soundcheckFrame->setText(s);
++}
++
+ bool ID3v2::Tag::isEmpty() const
+ {
+   return d->frameList.isEmpty();
+@@ -871,6 +1075,34 @@
+   }
+ 
+   d->factory->rebuildAggregateFrames(this);
++
++  auto frame = UserTextIdentificationFrame::find(this, "replaygain_album_gain");
++  if(frame) {
++    StringList l = frame->fieldList();
++    rg.setAlbumGain(l.back().toFloat());
++  } else
++    rg.clearAlbumGain();
++
++  frame = UserTextIdentificationFrame::find(this, "replaygain_album_peak");
++  if(frame) {
++    StringList l = frame->fieldList();
++    rg.setAlbumPeak(l.back().toFloat());
++  } else
++    rg.clearAlbumPeak();
++
++  frame = UserTextIdentificationFrame::find(this, "replaygain_track_gain");
++  if(frame) {
++    StringList l = frame->fieldList();
++    rg.setTrackGain(l.back().toFloat());
++  } else
++    rg.clearTrackGain();
++
++  frame = UserTextIdentificationFrame::find(this, "replaygain_track_peak");
++  if(frame) {
++    StringList l = frame->fieldList();
++    rg.setTrackPeak(l.back().toFloat());
++  } else
++    rg.clearTrackPeak();
+ }
+ 
+ void ID3v2::Tag::setTextFrame(const ByteVector &id, const String &value)
+diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.h taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.h
+--- taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.h	2025-02-17 01:25:52
+@@ -133,6 +133,7 @@
+     class TAGLIB_EXPORT Tag : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
+       /*!
+        * Constructs an empty ID3v2 tag.
+        *
+@@ -166,20 +167,34 @@
+       // Reimplementations.
+ 
+       String title() const override;
++      String albumartist() const override;
+       String artist() const override;
++      String composer() const override;
+       String album() const override;
++      String unsyncedlyrics() const override;
+       String comment() const override;
+       String genre() const override;
+       unsigned int year() const override;
+       unsigned int track() const override;
++      unsigned int disc() const override;
++      String cuesheet() const override;
++      ReplayGain replaygain() const override;
++      String soundcheck() const override;
+ 
+       void setTitle(const String &s) override;
++      void setAlbumArtist(const String &s) override;
+       void setArtist(const String &s) override;
++      void setComposer(const String &s) override;
+       void setAlbum(const String &s) override;
++      void setUnsyncedLyrics(const String &s) override;
+       void setComment(const String &s) override;
+       void setGenre(const String &s) override;
+       void setYear(unsigned int i) override;
+       void setTrack(unsigned int i) override;
++      void setDisc(unsigned int i) override;
++      void setCuesheet(const String &s) override;
++      void setReplaygain(ReplayGain r) override;
++      void setSoundcheck(const String &s) override;
+ 
+       bool isEmpty() const override;
+ 
+diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xiphcomment.cpp
+--- taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/ogg/xiphcomment.cpp	2025-02-17 01:32:38
+@@ -43,6 +43,8 @@
+   FieldListMap fieldListMap;
+   String vendorID;
+   String commentField;
++  String albumartistField;
++  String unsyncedlyricsField;
+   List<FLAC::Picture *> pictureList;
+ };
+ 
+@@ -69,18 +71,59 @@
+   return val.isEmpty() ? String() : joinTagValues(val);
+ }
+ 
++String Ogg::XiphComment::albumartist() const
++{
++  StringList val = d->fieldListMap.value("ALBUMARTIST");
++  if(!val.isEmpty()) {
++    d->albumartistField = "ALBUMARTIST";
++    return joinTagValues(val);
++  }
++  val = d->fieldListMap.value("ALBUM ARTIST");
++  if(!val.isEmpty()) {
++    d->albumartistField = "ALBUM ARTIST";
++    return joinTagValues(val);
++  }
++  return String();
++}
++
+ String Ogg::XiphComment::artist() const
+ {
+   StringList val = d->fieldListMap.value("ARTIST");
+   return val.isEmpty() ? String() : joinTagValues(val);
+ }
+ 
++String Ogg::XiphComment::composer() const
++{
++  StringList val = d->fieldListMap.value("COMPOSER");
++  return val.isEmpty() ? String() : joinTagValues(val);
++}
++
+ String Ogg::XiphComment::album() const
+ {
+   StringList val = d->fieldListMap.value("ALBUM");
+   return val.isEmpty() ? String() : joinTagValues(val);
+ }
+ 
++String Ogg::XiphComment::unsyncedlyrics() const
++{
++  StringList val = d->fieldListMap.value("UNSYNCEDLYRICS");
++  if(!val.isEmpty()) {
++    d->unsyncedlyricsField = "UNSYNCEDLYRICS";
++    return joinTagValues(val);
++  }
++  val = d->fieldListMap.value("UNSYNCED LYRICS");
++  if(!val.isEmpty()) {
++    d->unsyncedlyricsField = "UNSYNCED LYRICS";
++    return joinTagValues(val);
++  }
++  val = d->fieldListMap.value("LYRICS");
++  if(!val.isEmpty()) {
++    d->unsyncedlyricsField = "LYRICS";
++    return joinTagValues(val);
++  }
++  return String();
++}
++
+ String Ogg::XiphComment::comment() const
+ {
+   StringList val = d->fieldListMap.value("DESCRIPTION");
+@@ -123,24 +166,88 @@
+   val = d->fieldListMap.value("TRACKNUM");
+   if(!val.isEmpty())
+     return val.front().toInt();
++  val = d->fieldListMap.value("TRACK");
++  if(!val.isEmpty())
++    return val.front().toInt();
+   return 0;
+ }
+ 
++unsigned int Ogg::XiphComment::disc() const
++{
++  StringList val = d->fieldListMap.value("DISCNUMBER");
++  if(!val.isEmpty())
++    return val.front().toInt();
++  val = d->fieldListMap.value("DISCNUM");
++  if(!val.isEmpty())
++    return val.front().toInt();
++  val = d->fieldListMap.value("DISC");
++  if(!val.isEmpty())
++    return val.front().toInt();
++  return 0;
++}
++
++String Ogg::XiphComment::cuesheet() const
++{
++  StringList val = d->fieldListMap.value("CUESHEET");
++  return val.isEmpty() ? String() : joinTagValues(val);
++}
++
++TagLib::Tag::ReplayGain Ogg::XiphComment::replaygain() const
++{
++  return rg;
++}
++
++String Ogg::XiphComment::soundcheck() const
++{
++  return String();
++}
++
+ void Ogg::XiphComment::setTitle(const String &s)
+ {
+   addField("TITLE", s);
+ }
+ 
++void Ogg::XiphComment::setAlbumArtist(const String &s)
++{
++  if(d->commentField.isEmpty()) {
++    if(!d->fieldListMap.value("ALBUMARTIST").isEmpty())
++      d->albumartistField = "ALBUMARTIST";
++    else
++      d->albumartistField = "ALBUM ARTIST";
++  }
++
++  addField(d->albumartistField, s);
++}
++
+ void Ogg::XiphComment::setArtist(const String &s)
+ {
+   addField("ARTIST", s);
+ }
+ 
++void Ogg::XiphComment::setComposer(const String &s)
++{
++  addField("COMPOSER", s);
++}
++
+ void Ogg::XiphComment::setAlbum(const String &s)
+ {
+   addField("ALBUM", s);
+ }
+ 
++void Ogg::XiphComment::setUnsyncedLyrics(const String &s)
++{
++  if(d->unsyncedlyricsField.isEmpty()) {
++    if(!d->fieldListMap.value("UNSYNCEDLYRICS").isEmpty())
++      d->unsyncedlyricsField = "UNSYNCEDLYRICS";
++    else if(!d->fieldListMap.value("LYRICS").isEmpty())
++      d->unsyncedlyricsField = "LYRICS";
++    else
++      d->unsyncedlyricsField = "UNSYNCED LYRICS";
++  }
++
++  addField(d->unsyncedlyricsField, s);
++}
++
+ void Ogg::XiphComment::setComment(const String &s)
+ {
+   if(d->commentField.isEmpty()) {
+@@ -169,6 +276,7 @@
+ 
+ void Ogg::XiphComment::setTrack(unsigned int i)
+ {
++  removeFields("TRACK");
+   removeFields("TRACKNUM");
+   if(i == 0)
+     removeFields("TRACKNUMBER");
+@@ -176,6 +284,50 @@
+     addField("TRACKNUMBER", String::number(i));
+ }
+ 
++void Ogg::XiphComment::setDisc(unsigned int i)
++{
++  removeFields("DISC");
++  removeFields("DISCNUM");
++  if(i == 0)
++    removeFields("DISCNUMBER");
++  else
++    addField("DISCNUMBER", String::number(i));
++}
++
++void Ogg::XiphComment::setCuesheet(const String &s)
++{
++  if(s.isEmpty())
++    removeFields("CUESHEET");
++  else
++    addField("CUESHEET", s);
++}
++
++void Ogg::XiphComment::setReplaygain(TagLib::Tag::ReplayGain r)
++{
++  rg = r;
++
++  if(!rg.albumGainSet())
++    removeFields("REPLAYGAIN_ALBUM_GAIN");
++  else
++    addField("REPLAYGAIN_ALBUM_GAIN", String::number(rg.albumGain()) + " dB");
++  if(!rg.albumPeakSet())
++    removeFields("REPLAYGAIN_ALBUM_PEAK");
++  else
++    addField("REPLAYGAIN_ALBUM_PEAK", String::number(rg.albumPeak()));
++  if(!rg.trackGainSet())
++    removeFields("REPLAYGAIN_TRACK_GAIN");
++  else
++    addField("REPLAYGAIN_TRACK_GAIN", String::number(rg.trackGain()) + " dB");
++  if(!rg.trackPeakSet())
++    removeFields("REPLAYGAIN_TRACK_PEAK");
++  else
++    addField("REPLAYGAIN_TRACK_PEAK", String::number(rg.trackPeak()));
++}
++
++void Ogg::XiphComment::setSoundcheck(const String &)
++{
++}
++
+ bool Ogg::XiphComment::isEmpty() const
+ {
+   return std::all_of(d->fieldListMap.cbegin(), d->fieldListMap.cend(),
+@@ -519,4 +671,25 @@
+       addField(key, String(entry.mid(sep + 1), String::UTF8), false);
+     }
+   }
++
++  StringList val = d->fieldListMap.value("REPLAYGAIN_ALBUM_GAIN");
++  if(val.isEmpty())
++    rg.clearAlbumGain();
++  else
++    rg.setAlbumGain(val.front().toFloat());
++  val = d->fieldListMap.value("REPLAYGAIN_ALBUM_PEAK");
++  if(val.isEmpty())
++    rg.clearAlbumPeak();
++  else
++    rg.setAlbumPeak(val.front().toFloat());
++  val = d->fieldListMap.value("REPLAYGAIN_TRACK_GAIN");
++  if(val.isEmpty())
++    rg.clearTrackGain();
++  else
++    rg.setTrackGain(val.front().toFloat());
++  val = d->fieldListMap.value("REPLAYGAIN_TRACK_PEAK");
++  if(val.isEmpty())
++    rg.clearTrackPeak();
++  else
++    rg.setTrackPeak(val.front().toFloat());
+ }
+diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.h taglib-2.0.2/taglib/ogg/xiphcomment.h
+--- taglib-2.0.2.orig/taglib/ogg/xiphcomment.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/ogg/xiphcomment.h	2025-02-17 01:26:37
+@@ -70,6 +70,7 @@
+     class TAGLIB_EXPORT XiphComment : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
+       /*!
+        * Constructs an empty Vorbis comment.
+        */
+@@ -89,20 +90,34 @@
+       XiphComment &operator=(const XiphComment &) = delete;
+ 
+       String title() const override;
++      String albumartist() const override;
+       String artist() const override;
++      String composer() const override;
+       String album() const override;
++      String unsyncedlyrics() const override;
+       String comment() const override;
+       String genre() const override;
+       unsigned int year() const override;
+       unsigned int track() const override;
++      unsigned int disc() const override;
++      String cuesheet() const override;
++      ReplayGain replaygain() const override;
++      String soundcheck() const override;
+ 
+       void setTitle(const String &s) override;
++      void setAlbumArtist(const String &s) override;
+       void setArtist(const String &s) override;
++      void setComposer(const String &s) override;
+       void setAlbum(const String &s) override;
++      void setUnsyncedLyrics(const String &s) override;
+       void setComment(const String &s) override;
+       void setGenre(const String &s) override;
+       void setYear(unsigned int i) override;
+       void setTrack(unsigned int i) override;
++      void setDisc(unsigned int i) override;
++      void setCuesheet(const String &s) override;
++      void setReplaygain(ReplayGain r) override;
++      void setSoundcheck(const String &s) override;
+ 
+       bool isEmpty() const override;
+ 
+diff -ur taglib-2.0.2.orig/taglib/riff/wav/infotag.cpp taglib-2.0.2/taglib/riff/wav/infotag.cpp
+--- taglib-2.0.2.orig/taglib/riff/wav/infotag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/riff/wav/infotag.cpp	2025-02-17 01:35:07
+@@ -90,16 +90,31 @@
+   return fieldText("INAM");
+ }
+ 
++String RIFF::Info::Tag::albumartist() const
++{
++  return String();
++}
++
+ String RIFF::Info::Tag::artist() const
+ {
+   return fieldText("IART");
+ }
+ 
++String RIFF::Info::Tag::composer() const
++{
++  return fieldText("IMUS");
++}
++
+ String RIFF::Info::Tag::album() const
+ {
+   return fieldText("IPRD");
+ }
+ 
++String RIFF::Info::Tag::unsyncedlyrics() const
++{
++  return String();
++}
++
+ String RIFF::Info::Tag::comment() const
+ {
+   return fieldText("ICMT");
+@@ -120,21 +135,54 @@
+   return fieldText("IPRT").toInt();
+ }
+ 
++unsigned int RIFF::Info::Tag::disc() const
++{
++  return 0;
++}
++
++String RIFF::Info::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain RIFF::Info::Tag::replaygain() const
++{
++  return TagLib::Tag::ReplayGain();
++}
++
++String RIFF::Info::Tag::soundcheck() const
++{
++  return String();
++}
++
+ void RIFF::Info::Tag::setTitle(const String &s)
+ {
+   setFieldText("INAM", s);
+ }
+ 
++void RIFF::Info::Tag::setAlbumArtist(const String &)
++{
++}
++
+ void RIFF::Info::Tag::setArtist(const String &s)
+ {
+   setFieldText("IART", s);
+ }
+ 
++void RIFF::Info::Tag::setComposer(const String &s)
++{
++  setFieldText("IMUS", s);
++}
++
+ void RIFF::Info::Tag::setAlbum(const String &s)
+ {
+   setFieldText("IPRD", s);
+ }
+ 
++void RIFF::Info::Tag::setUnsyncedLyrics(const String &)
++{
++}
++
+ void RIFF::Info::Tag::setComment(const String &s)
+ {
+   setFieldText("ICMT", s);
+@@ -159,6 +207,22 @@
+     setFieldText("IPRT", String::number(i));
+   else
+     d->fieldListMap.erase("IPRT");
++}
++
++void RIFF::Info::Tag::setDisc(unsigned int i)
++{
++}
++
++void RIFF::Info::Tag::setCuesheet(const String &)
++{
++}
++
++void RIFF::Info::Tag::setReplaygain(TagLib::Tag::ReplayGain)
++{
++}
++
++void RIFF::Info::Tag::setSoundcheck(const String &)
++{
+ }
+ 
+ bool RIFF::Info::Tag::isEmpty() const
+diff -ur taglib-2.0.2.orig/taglib/riff/wav/infotag.h taglib-2.0.2/taglib/riff/wav/infotag.h
+--- taglib-2.0.2.orig/taglib/riff/wav/infotag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/riff/wav/infotag.h	2025-02-17 01:34:48
+@@ -95,6 +95,7 @@
+     class TAGLIB_EXPORT Tag : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
+       /*!
+        * Constructs an empty INFO tag.
+        */
+@@ -113,20 +114,34 @@
+       // Reimplementations
+ 
+       String title() const override;
++      String albumartist() const override;
+       String artist() const override;
++      String composer() const override;
+       String album() const override;
++      String unsyncedlyrics() const override;
+       String comment() const override;
+       String genre() const override;
+       unsigned int year() const override;
+       unsigned int track() const override;
++      unsigned int disc() const override;
++      String cuesheet() const override;
++      ReplayGain replaygain() const override;
++      String soundcheck() const override;
+ 
+       void setTitle(const String &s) override;
++      void setAlbumArtist(const String &s) override;
+       void setArtist(const String &s) override;
++      void setComposer(const String &s) override;
+       void setAlbum(const String &s) override;
++      void setUnsyncedLyrics(const String &s) override;
+       void setComment(const String &s) override;
+       void setGenre(const String &s) override;
+       void setYear(unsigned int i) override;
+       void setTrack(unsigned int i) override;
++      void setDisc(unsigned int i) override;
++      void setCuesheet(const String &s) override;
++      void setReplaygain(ReplayGain r) override;
++      void setSoundcheck(const String &s) override;
+ 
+       bool isEmpty() const override;
+ 
+diff -ur taglib-2.0.2.orig/taglib/tag.cpp taglib-2.0.2/taglib/tag.cpp
+--- taglib-2.0.2.orig/taglib/tag.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/tag.cpp	2025-02-17 04:15:31
+@@ -25,6 +25,7 @@
+ 
+ #include "tag.h"
+ 
++#include <cmath>
+ #include <utility>
+ 
+ #include "tstringlist.h"
+@@ -43,12 +44,19 @@
+ bool Tag::isEmpty() const
+ {
+   return title().isEmpty() &&
++         albumartist().isEmpty() &&
+          artist().isEmpty() &&
++         composer().isEmpty() &&
+          album().isEmpty() &&
++         unsyncedlyrics().isEmpty() &&
+          comment().isEmpty() &&
+          genre().isEmpty() &&
+          year() == 0 &&
+-         track() == 0;
++         track() == 0 &&
++         disc() == 0 &&
++         cuesheet().isEmpty() &&
++         rg.isEmpty() &&
++         soundcheck().isEmpty();
+ }
+ 
+ PropertyMap Tag::properties() const
+@@ -56,10 +64,16 @@
+   PropertyMap map;
+   if(!title().isEmpty())
+     map["TITLE"].append(title());
++  if(!albumartist().isEmpty())
++    map["ALBUMARTIST"].append(albumartist());
+   if(!artist().isEmpty())
+     map["ARTIST"].append(artist());
++  if(!composer().isEmpty())
++    map["COMPOSER"].append(composer());
+   if(!album().isEmpty())
+     map["ALBUM"].append(album());
++  if(!unsyncedlyrics().isEmpty())
++    map["UNSYNCEDLYRICS"].append(unsyncedlyrics());
+   if(!comment().isEmpty())
+     map["COMMENT"].append(comment());
+   if(!genre().isEmpty())
+@@ -68,6 +82,22 @@
+     map["DATE"].append(String::number(year()));
+   if(track() != 0)
+     map["TRACKNUMBER"].append(String::number(track()));
++  if(disc() != 0)
++    map["DISCNUMBER"].append(String::number(disc()));
++  if(!cuesheet().isEmpty())
++    map["CUESHEET"].append(cuesheet());
++  if(!rg.isEmpty()) {
++    if(rg.albumGainSet())
++      map["REPLAYGAIN_ALBUM_GAIN"].append(String::number(rg.albumGain()) + " dB");
++    if(rg.albumPeakSet())
++      map["REPLAYGAIN_ALBUM_PEAK"].append(String::number(rg.albumPeak()));
++    if(rg.trackGainSet())
++      map["REPLAYGAIN_TRACK_GAIN"].append(String::number(rg.trackGain()) + " dB");
++    if(rg.trackPeakSet())
++      map["REPLAYGAIN_TRACK_PEAK"].append(String::number(rg.trackPeak()));
++  }
++  if(!soundcheck().isEmpty())
++    map["SOUNDCHECK"].append(soundcheck());
+   return map;
+ }
+ 
+@@ -87,18 +117,36 @@
+   } else
+     setTitle(String());
+ 
++  if(props.contains("ALBUMARTIST")) {
++    setAlbumArtist(props["ALBUMARTIST"].front());
++    oneValueSet.append("ALBUMARTIST");
++  } else
++    setAlbumArtist(String());
++
+   if(props.contains("ARTIST")) {
+     setArtist(props["ARTIST"].front());
+     oneValueSet.append("ARTIST");
+   } else
+     setArtist(String());
+ 
++  if(props.contains("COMPOSER")) {
++    setComposer(props["COMPOSER"].front());
++    oneValueSet.append("COMPOSER");
++  } else
++    setComposer(String());
++
+   if(props.contains("ALBUM")) {
+     setAlbum(props["ALBUM"].front());
+     oneValueSet.append("ALBUM");
+   } else
+     setAlbum(String());
+ 
++  if(props.contains("UNSYNCEDLYRICS")) {
++    setUnsyncedLyrics(props["UNSYNCEDLYRICS"].front());
++    oneValueSet.append("UNSYNCEDLYRICS");
++  } else
++    setUnsyncedLyrics(String());
++
+   if(props.contains("COMMENT")) {
+     setComment(props["COMMENT"].front());
+     oneValueSet.append("COMMENT");
+@@ -135,6 +183,80 @@
+   else
+     setTrack(0);
+ 
++  if(props.contains("DISCNUMBER")) {
++    bool ok;
++    int discNumber = props["DISCNUMBER"].front().toInt(&ok);
++    if(ok) {
++      setDisc(discNumber);
++      oneValueSet.append("DISCNUMBER");
++    } else
++      setDisc(0);
++  }
++  else
++    setDisc(0);
++
++  if(props.contains("CUESHEET")) {
++    setCuesheet(props["CUESHEET"].front());
++    oneValueSet.append("CUESHEET");
++  } else
++    setCuesheet(String());
++
++  if(props.contains("REPLAYGAIN_ALBUM_GAIN")) {
++    bool ok;
++    float albumGain = props["REPLAYGAIN_ALBUM_GAIN"].front().toFloat(&ok);
++    if(ok) {
++      rg.setAlbumGain(albumGain);
++      oneValueSet.append("REPLAYGAIN_ALBUM_GAIN");
++    } else
++      rg.clearAlbumGain();
++  }
++  else
++    rg.clearAlbumGain();
++
++  if(props.contains("REPLAYGAIN_ALBUM_PEAK")) {
++    bool ok;
++    float albumPeak = props["REPLAYGAIN_ALBUM_PEAK"].front().toFloat(&ok);
++    if(ok) {
++      rg.setAlbumPeak(albumPeak);
++      oneValueSet.append("REPLAYGAIN_ALBUM_PEAK");
++    } else
++      rg.clearAlbumPeak();
++  }
++  else
++    rg.clearAlbumPeak();
++
++  if(props.contains("REPLAYGAIN_TRACK_GAIN")) {
++    bool ok;
++    float trackGain = props["REPLAYGAIN_TRACK_GAIN"].front().toFloat(&ok);
++    if(ok) {
++      rg.setTrackGain(trackGain);
++      oneValueSet.append("REPLAYGAIN_TRACK_GAIN");
++    } else
++      rg.clearTrackGain();
++  }
++  else
++    rg.clearTrackGain();
++
++  if(props.contains("REPLAYGAIN_TRACK_PEAK")) {
++    bool ok;
++    float trackPeak = props["REPLAYGAIN_TRACK_PEAK"].front().toFloat(&ok);
++    if(ok) {
++      rg.setTrackPeak(trackPeak);
++      oneValueSet.append("REPLAYGAIN_TRACK_PEAK");
++    } else
++      rg.clearTrackPeak();
++  }
++  else
++    rg.clearTrackPeak();
++
++  setReplaygain(rg);
++
++  if(props.contains("SOUNDCHECK")) {
++    setSoundcheck(props["SOUNDCHECK"].front());
++    oneValueSet.append("SOUNDCHECK");
++  } else
++    setSoundcheck(String());
++
+   // for each tag that has been set above, remove the first entry in the corresponding
+   // value list. The others will be returned as unsupported by this format.
+   for(const auto &entry : std::as_const(oneValueSet)) {
+@@ -165,20 +287,33 @@
+ {
+   if(overwrite) {
+     target->setTitle(source->title());
++    target->setAlbumArtist(source->albumartist());
+     target->setArtist(source->artist());
++    target->setComposer(source->composer());
+     target->setAlbum(source->album());
++    target->setUnsyncedLyrics(source->unsyncedlyrics());
+     target->setComment(source->comment());
+     target->setGenre(source->genre());
+     target->setYear(source->year());
+     target->setTrack(source->track());
++    target->setDisc(source->disc());
++    target->setCuesheet(source->cuesheet());
++    target->setReplaygain(source->replaygain());
++    target->setSoundcheck(source->soundcheck());
+   }
+   else {
+     if(target->title().isEmpty())
+       target->setTitle(source->title());
++    if(target->albumartist().isEmpty())
++      target->setAlbumArtist(source->albumartist());
+     if(target->artist().isEmpty())
+       target->setArtist(source->artist());
++    if(target->composer().isEmpty())
++      target->setComposer(source->composer());
+     if(target->album().isEmpty())
+       target->setAlbum(source->album());
++    if(target->unsyncedlyrics().isEmpty())
++      target->setUnsyncedLyrics(source->unsyncedlyrics());
+     if(target->comment().isEmpty())
+       target->setComment(source->comment());
+     if(target->genre().isEmpty())
+@@ -187,10 +322,170 @@
+       target->setYear(source->year());
+     if(target->track() == 0)
+       target->setTrack(source->track());
++    if(target->disc() == 0)
++      target->setDisc(source->disc());
++    if(target->cuesheet().isEmpty())
++      target->setCuesheet(source->cuesheet());
++    if(!target->replaygain().isEmpty())
++      target->setReplaygain(source->replaygain());
++    if(target->soundcheck().isEmpty())
++      target->setSoundcheck(source->soundcheck());
+   }
+ }
+ 
+ String Tag::joinTagValues(const StringList &values)
+ {
+   return values.toString(" / ");
++}
++
++Tag::ReplayGain::ReplayGain()
++{
++  clear();
++}
++
++Tag::ReplayGain &Tag::ReplayGain::operator=(const Tag::ReplayGain &source)
++{
++  clear();
++  if(source.albumgainSet)
++    setAlbumGain(source.albumgain);
++  if(source.albumpeakSet)
++    setAlbumPeak(source.albumpeak);
++  if(source.trackgainSet)
++    setTrackGain(source.trackgain);
++  if(source.trackpeakSet)
++    setTrackPeak(source.trackpeak);
++
++  return *this;
++}
++
++bool Tag::ReplayGain::_equals(const Tag::ReplayGain &source) const
++{
++  if(this->albumgainSet != source.albumgainSet ||
++     this->albumpeakSet != source.albumpeakSet ||
++     this->trackgainSet != source.trackgainSet ||
++     this->trackpeakSet != source.trackpeakSet)
++    return false;
++  if(this->albumgainSet && std::fabs(this->albumgain - source.albumgain) > 1e-6)
++    return false;
++  if(this->albumpeakSet && std::fabs(this->albumpeak - source.albumpeak) > 1e-6)
++    return false;
++  if(this->trackgainSet && std::fabs(this->trackgain - source.trackgain) > 1e-6)
++    return false;
++  if(this->trackpeakSet && std::fabs(this->trackpeak - source.trackpeak) > 1e-6)
++    return false;
++  return true;
++}
++
++bool Tag::ReplayGain::operator==(const Tag::ReplayGain &source) const
++{
++  return this->_equals(source);
++}
++
++bool Tag::ReplayGain::operator!=(const Tag::ReplayGain &source) const
++{
++  return !(this->_equals(source));
++}
++
++bool Tag::ReplayGain::isEmpty() const
++{
++  return !albumgainSet &&
++         !albumpeakSet &&
++         !trackgainSet &&
++         !trackpeakSet;
++}
++
++bool Tag::ReplayGain::albumGainSet() const
++{
++  return albumgainSet;
++}
++
++bool Tag::ReplayGain::albumPeakSet() const
++{
++  return albumpeakSet;
++}
++
++bool Tag::ReplayGain::trackGainSet() const
++{
++  return trackgainSet;
++}
++
++bool Tag::ReplayGain::trackPeakSet() const
++{
++  return trackpeakSet;
++}
++
++float Tag::ReplayGain::albumGain() const
++{
++  return albumgainSet ? albumgain : 0;
++}
++
++float Tag::ReplayGain::albumPeak() const
++{
++  return albumpeakSet ? albumpeak : 0;
++}
++
++float Tag::ReplayGain::trackGain() const
++{
++  return trackgainSet ? trackgain : 0;
++}
++
++float Tag::ReplayGain::trackPeak() const
++{
++  return trackpeakSet ? trackpeak : 0;
++}
++
++void Tag::ReplayGain::setAlbumGain(float f)
++{
++  albumgain = f;
++  albumgainSet = true;
++}
++
++void Tag::ReplayGain::setAlbumPeak(float f)
++{
++  albumpeak = f;
++  albumpeakSet = true;
++}
++
++void Tag::ReplayGain::setTrackGain(float f)
++{
++  trackgain = f;
++  trackgainSet = true;
++}
++
++void Tag::ReplayGain::setTrackPeak(float f)
++{
++  trackpeak = f;
++  trackpeakSet = true;
++}
++
++void Tag::ReplayGain::clear()
++{
++  clearAlbumGain();
++  clearAlbumPeak();
++  clearTrackGain();
++  clearTrackPeak();
++}
++
++void Tag::ReplayGain::clearAlbumGain()
++{
++  albumgain = 0;
++  albumgainSet = false;
++}
++
++void Tag::ReplayGain::clearAlbumPeak()
++{
++  albumpeak = 0;
++  albumpeakSet = false;
++}
++
++void Tag::ReplayGain::clearTrackGain()
++{
++  trackgain = 0;
++  trackgainSet = false;
++}
++
++void Tag::ReplayGain::clearTrackPeak()
++{
++  trackpeak = 0;
++  trackpeakSet = false;
+ }
+diff -ur taglib-2.0.2.orig/taglib/tag.h taglib-2.0.2/taglib/tag.h
+--- taglib-2.0.2.orig/taglib/tag.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/tag.h	2025-02-17 04:14:03
+@@ -48,7 +48,51 @@
+   class TAGLIB_EXPORT Tag
+   {
+   public:
++    class ReplayGain {
++    protected:
++      bool _equals(const ReplayGain &) const;
+ 
++    public:
++      ReplayGain();
++
++      ReplayGain &operator=(const ReplayGain &);
++      bool operator==(const ReplayGain &) const;
++      bool operator!=(const ReplayGain &) const;
++
++      bool isEmpty() const;
++      bool albumGainSet() const;
++      bool albumPeakSet() const;
++      bool trackGainSet() const;
++      bool trackPeakSet() const;
++
++      float albumGain() const;
++      float albumPeak() const;
++      float trackGain() const;
++      float trackPeak() const;
++
++      void setAlbumGain(float f);
++      void setAlbumPeak(float f);
++      void setTrackGain(float f);
++      void setTrackPeak(float f);
++
++      void clear();
++      void clearAlbumGain();
++      void clearAlbumPeak();
++      void clearTrackGain();
++      void clearTrackPeak();
++
++    private:
++      bool albumgainSet;
++      bool albumpeakSet;
++      bool trackgainSet;
++      bool trackpeakSet;
++
++      float albumgain;
++      float albumpeak;
++      float trackgain;
++      float trackpeak;
++    };
++
+     /*!
+      * Destroys this Tag instance.
+      */
+@@ -130,18 +174,36 @@
+     virtual String title() const = 0;
+ 
+     /*!
++     * Returns the album artist name; if no album artist name is present
++     * in the tag an empty string will be returned.
++     */
++    virtual String albumartist() const = 0;
++
++    /*!
+      * Returns the artist name; if no artist name is present in the tag
+      * an empty string will be returned.
+      */
+     virtual String artist() const = 0;
+ 
+     /*!
++     * Returns the composer name; if no composer name is present in the
++     * tag an empty string will be returned.
++     */
++    virtual String composer() const = 0;
++
++    /*!
+      * Returns the album name; if no album name is present in the tag
+      * an empty string will be returned.
+      */
+     virtual String album() const = 0;
+ 
+     /*!
++     * Returns the unsynchronized lyrics; if no unsynced lyrics are
++     * present in the tag an empty string will be returned.
++     */
++    virtual String unsyncedlyrics() const = 0;
++
++    /*!
+      * Returns the track comment; if no comment is present in the tag
+      * an empty string will be returned.
+      */
+@@ -165,24 +227,65 @@
+     virtual unsigned int track() const = 0;
+ 
+     /*!
++     * Returns the disc number; if there is no disc number set, this will
++     * return 0.
++     */
++    virtual unsigned int disc() const = 0;
++
++    /*!
++     * Returns the embedded cue sheet; if there is no embedded cue sheet set,
++     * this will return an empty string.
++     */
++    virtual String cuesheet() const = 0;
++
++    /*!
++     * Returns the ReplayGain tags; if there are no tags set then it will be
++     * marked empty.
++     */
++    virtual ReplayGain replaygain() const = 0;
++
++    /*!
++     * Returns the SoundCheck tag; if there is no SoundCheck tag set then this
++     * will return an empty string.
++     */
++    virtual String soundcheck() const = 0;
++
++    /*!
+      * Sets the title to \a s.  If \a s is an empty string then this value will be
+      * cleared.
+      */
+     virtual void setTitle(const String &s) = 0;
+ 
+     /*!
++     * Sets the album artist to \a s.  If \a s is an empty string then this value
++     * will be cleared. */
++    virtual void setAlbumArtist(const String &s) = 0;
++
++    /*!
+      * Sets the artist to \a s.  If \a s is an empty string then this value will be
+      * cleared.
+      */
+     virtual void setArtist(const String &s) = 0;
+ 
+     /*!
++     * Sets the composer to \a s.  If \a s is an empty string then this value will
++     * be cleared.
++     */
++    virtual void setComposer(const String &s) = 0;
++
++    /*!
+      * Sets the album to \a s.  If \a s is an empty string then this value will be
+      * cleared.
+      */
+     virtual void setAlbum(const String &s) = 0;
+ 
+     /*!
++     * Sets the unsynchronized lyrics to \a s.  If \a s is an empty string then this
++     * value will be cleared.
++     */
++    virtual void setUnsyncedLyrics(const String &s) = 0;
++
++    /*!
+      * Sets the comment to \a s.  If \a s is an empty string then this value will be
+      * cleared.
+      */
+@@ -198,16 +301,39 @@
+     virtual void setGenre(const String &s) = 0;
+ 
+     /*!
+-     * Sets the year to \a i.  If \a s is 0 then this value will be cleared.
++     * Sets the year to \a i.  If \a i is 0 then this value will be cleared.
+      */
+     virtual void setYear(unsigned int i) = 0;
+ 
+     /*!
+-     * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
++     * Sets the track to \a i.  If \a i is 0 then this value will be cleared.
+      */
+     virtual void setTrack(unsigned int i) = 0;
+ 
+     /*!
++     * Sets the disc to \a i.  If \a i is 0 then this value will be cleared.
++     */
++    virtual void setDisc(unsigned int i) = 0;
++
++    /*!
++     * Sets the embedded cue sheet to \a s.  If \a s is an empty string then
++     * this value will be cleared.
++     */
++    virtual void setCuesheet(const String &s) = 0;
++
++    /*!
++     * Sets the ReplayGain tag to \a t.  If any fields are marked as empty
++     * then they will be cleared.
++     */
++    virtual void setReplaygain(ReplayGain replaygain) = 0;
++
++    /*!
++     * Sets the SoundCheck tag to \a s.  If \a s is an empty string then this
++     * value will be cleared.
++     */
++    virtual void setSoundcheck(const String &s) = 0;
++
++    /*!
+      * Returns \c true if the tag does not contain any data.  This should be
+      * reimplemented in subclasses that provide more than the basic tagging
+      * abilities in this class.
+@@ -241,6 +367,12 @@
+      * through subclasses.
+      */
+     Tag();
++
++    /*!
++     * Internal ReplayGain tag state. This is protected since subclasses should
++     * be able to manipulate it freely.
++     */
++    ReplayGain rg;
+ 
+   private:
+     class TagPrivate;
+diff -ur taglib-2.0.2.orig/taglib/tagunion.cpp taglib-2.0.2/taglib/tagunion.cpp
+--- taglib-2.0.2.orig/taglib/tagunion.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/tagunion.cpp	2025-02-17 01:12:48
+@@ -164,16 +164,31 @@
+   stringUnion(title);
+ }
+ 
++String TagUnion::albumartist() const
++{
++  stringUnion(albumartist);
++}
++
+ String TagUnion::artist() const
+ {
+   stringUnion(artist);
+ }
+ 
++String TagUnion::composer() const
++{
++  stringUnion(composer);
++}
++
+ String TagUnion::album() const
+ {
+   stringUnion(album);
+ }
+ 
++String TagUnion::unsyncedlyrics() const
++{
++  stringUnion(unsyncedlyrics);
++}
++
+ String TagUnion::comment() const
+ {
+   stringUnion(comment);
+@@ -194,21 +209,62 @@
+   numberUnion(track);
+ }
+ 
++unsigned int TagUnion::disc() const
++{
++  numberUnion(disc);
++}
++
++String TagUnion::cuesheet() const
++{
++  stringUnion(cuesheet);
++}
++
++Tag::ReplayGain TagUnion::replaygain() const
++{
++  if(tag(0))
++    return tag(0)->replaygain();
++  if(tag(1))
++    return tag(1)->replaygain();
++  if(tag(2))
++    return tag(2)->replaygain();
++  return Tag::ReplayGain();
++}
++
++String TagUnion::soundcheck() const
++{
++  stringUnion(soundcheck);
++}
++
+ void TagUnion::setTitle(const String &s)
+ {
+   setUnion(Title, s);
+ }
+ 
++void TagUnion::setAlbumArtist(const String &s)
++{
++  setUnion(AlbumArtist, s);
++}
++
+ void TagUnion::setArtist(const String &s)
+ {
+   setUnion(Artist, s);
+ }
+ 
++void TagUnion::setComposer(const String &s)
++{
++  setUnion(Composer, s);
++}
++
+ void TagUnion::setAlbum(const String &s)
+ {
+   setUnion(Album, s);
+ }
+ 
++void TagUnion::setUnsyncedLyrics(const String &s)
++{
++  setUnion(UnsyncedLyrics, s);
++}
++
+ void TagUnion::setComment(const String &s)
+ {
+   setUnion(Comment, s);
+@@ -227,6 +283,26 @@
+ void TagUnion::setTrack(unsigned int i)
+ {
+   setUnion(Track, i);
++}
++
++void TagUnion::setDisc(unsigned int i)
++{
++  setUnion(Disc, i);
++}
++
++void TagUnion::setCuesheet(const String &s)
++{
++  setUnion(Cuesheet, s);
++}
++
++void TagUnion::setReplaygain(Tag::ReplayGain r)
++{
++  setUnion(Replaygain, r);
++}
++
++void TagUnion::setSoundcheck(const String &s)
++{
++  setUnion(Soundcheck, s);
+ }
+ 
+ bool TagUnion::isEmpty() const
+diff -ur taglib-2.0.2.orig/taglib/tagunion.h taglib-2.0.2/taglib/tagunion.h
+--- taglib-2.0.2.orig/taglib/tagunion.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/tagunion.h	2025-02-17 01:12:11
+@@ -67,20 +67,34 @@
+     bool setComplexProperties(const String &key, const List<VariantMap> &value) override;
+ 
+     String title() const override;
++    String albumartist() const override;
+     String artist() const override;
++    String composer() const override;
+     String album() const override;
++    String unsyncedlyrics() const override;
+     String comment() const override;
+     String genre() const override;
+     unsigned int year() const override;
+     unsigned int track() const override;
++    unsigned int disc() const override;
++    String cuesheet() const override;
++    Tag::ReplayGain replaygain() const override;
++    String soundcheck() const override;
+ 
+     void setTitle(const String &s) override;
++    void setAlbumArtist(const String &s) override;
+     void setArtist(const String &s) override;
++    void setComposer(const String &s) override;
+     void setAlbum(const String &s) override;
++    void setUnsyncedLyrics(const String &s) override;
+     void setComment(const String &s) override;
+     void setGenre(const String &s) override;
+     void setYear(unsigned int i) override;
+     void setTrack(unsigned int i) override;
++    void setDisc(unsigned int i) override;
++    void setCuesheet(const String &s) override;
++    void setReplaygain(Tag::ReplayGain r) override;
++    void setSoundcheck(const String &s) override;
+     bool isEmpty() const override;
+ 
+     template <class T> T *access(int index, bool create)
+diff -ur taglib-2.0.2.orig/taglib/toolkit/tstring.cpp taglib-2.0.2/taglib/toolkit/tstring.cpp
+--- taglib-2.0.2.orig/taglib/toolkit/tstring.cpp	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/toolkit/tstring.cpp	2025-02-17 02:38:54
+@@ -475,12 +475,12 @@
+   }
+ }
+ 
+-int String::toInt(bool *ok) const
++int String::toInt(bool *ok, int base) const
+ {
+   const wchar_t *beginPtr = d->data.c_str();
+   wchar_t *endPtr;
+   errno = 0;
+-  const long value = ::wcstol(beginPtr, &endPtr, 10);
++  const long value = ::wcstol(beginPtr, &endPtr, base);
+ 
+   // Has wcstol() consumed the entire string and not overflowed?
+   if(ok) {
+@@ -489,6 +489,21 @@
+   }
+ 
+   return static_cast<int>(value);
++}
++
++float String::toFloat(bool *ok) const
++{
++  const wchar_t *beginPtr = d->data.c_str();
++  wchar_t *endPtr;
++  errno = 0;
++  const float value = ::wcstof(beginPtr, &endPtr);
++
++  // Has wcstof() consumed at least part of the string and not overflowed?
++  if(ok) {
++    *ok = (errno == 0 && endPtr > beginPtr);
++  }
++
++  return value;
+ }
+ 
+ String String::stripWhiteSpace() const
+diff -ur taglib-2.0.2.orig/taglib/toolkit/tstring.h taglib-2.0.2/taglib/toolkit/tstring.h
+--- taglib-2.0.2.orig/taglib/toolkit/tstring.h	2024-08-23 21:40:41
++++ taglib-2.0.2/taglib/toolkit/tstring.h	2025-02-17 02:38:42
+@@ -357,7 +357,16 @@
+      * \c true and returns the integer. Otherwise it sets \a *ok to \c false
+      * and the result is undefined.
+      */
+-    int toInt(bool *ok = nullptr) const;
++    int toInt(bool *ok = nullptr, int base = 10) const;
++
++    /*!
++     * Convert the string to a float.
++     *
++     * If the conversion was successful, it sets the value of \a *ok to
++     * \c true and returns the float. Otherwise it sets \a *ok to \c false
++     * and the result is undefined.
++     */
++    float toFloat(bool *ok = nullptr) const;
+ 
+     /*!
+      * Returns a string with the leading and trailing whitespace stripped.

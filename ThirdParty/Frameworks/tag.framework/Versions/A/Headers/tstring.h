@@ -357,7 +357,16 @@ namespace TagLib {
      * \c true and returns the integer. Otherwise it sets \a *ok to \c false
      * and the result is undefined.
      */
-    int toInt(bool *ok = nullptr) const;
+    int toInt(bool *ok = nullptr, int base = 10) const;
+
+    /*!
+     * Convert the string to a float.
+     *
+     * If the conversion was successful, it sets the value of \a *ok to
+     * \c true and returns the float. Otherwise it sets \a *ok to \c false
+     * and the result is undefined.
+     */
+    float toFloat(bool *ok = nullptr) const;
 
     /*!
      * Returns a string with the leading and trailing whitespace stripped.

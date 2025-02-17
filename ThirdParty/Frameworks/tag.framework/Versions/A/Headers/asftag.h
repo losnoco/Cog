@@ -46,6 +46,7 @@ namespace TagLib {
       friend class File;
 
     public:
+      using TagLib::Tag::ReplayGain;
 
       Tag();
 
@@ -60,15 +61,31 @@ namespace TagLib {
       String title() const override;
 
       /*!
+       * Returns the album artist name.
+       */
+      String albumartist() const override;
+
+      /*!
        * Returns the artist name.
        */
       String artist() const override;
+
+      /*!
+       * Returns the composer name.
+       */
+      String composer() const override;
 
       /*!
        * Returns the album name; if no album name is present in the tag
        * an empty string will be returned.
        */
       String album() const override;
+
+      /*!
+       * Returns the unsynchronized lyrics; if no unsynced lyrics are
+       * present in the tag an empty string will be returned.
+       */
+      String unsyncedlyrics() const override;
 
       /*!
        * Returns the track comment.
@@ -104,9 +121,38 @@ namespace TagLib {
       unsigned int track() const override;
 
       /*!
+       * Returns the disc number; if there is no disc number set, this will
+       * return 0.
+       */
+      unsigned int disc() const override;
+
+      /*!
+       * Returns the embedded cuesheet; currently unimplemented, this will
+       * always return an empty string.
+       */
+      String cuesheet() const override;
+
+      /*!
+       * Returns the ReplayGain tag; currently unimplemented, will alway
+       * always return an empty tag.
+       */
+      ReplayGain replaygain() const override;
+
+      /*!
+       * Returns the SoundCheck tag; currently unimplemented, this will
+       * always return an empty string.
+       */
+      String soundcheck() const override;
+
+      /*!
        * Sets the title to \a value.
        */
       void setTitle(const String &value) override;
+
+      /*!
+       * Sets the album artist to \a value.
+       */
+      void setAlbumArtist(const String &value) override;
 
       /*!
        * Sets the artist to \a value.
@@ -114,10 +160,21 @@ namespace TagLib {
       void setArtist(const String &value) override;
 
       /*!
+       * Sets the composer to \a value.
+       */
+      void setComposer(const String &value) override;
+
+      /*!
        * Sets the album to \a value.  If \a value is an empty string then this value will be
        * cleared.
        */
       void setAlbum(const String &value) override;
+
+      /*!
+       * Sets the unsynchronized lyrics to \a value.  If \a value is an empty string then
+       * this value will be cleared.
+       */
+      void setUnsyncedLyrics(const String &value) override;
 
       /*!
        * Sets the comment to \a value.
@@ -150,6 +207,29 @@ namespace TagLib {
       void setTrack(unsigned int value) override;
 
       /*!
+       * Sets the disc to \a value.  If \a value is 0 then this value will be cleared.
+       */
+      void setDisc(unsigned int value) override;
+
+      /*!
+       * Sets the embedded cuesheet to \a value.  Currently unimplemented and does
+       * nothing.
+       */
+      void setCuesheet(const String &value) override;
+
+      /*!
+       * Sets the ReplayGain tag to \a value.  Currently unimplemented and does
+       * nothing.
+       */
+      void setReplaygain(ReplayGain value) override;
+
+      /*!
+       * Sets the SoundCheck tag to \a value.  Currently unimplemented and does
+       * nothing.
+       */
+       void setSoundcheck(const String &value) override;
+
+       /*!
        * Returns \c true if the tag does not contain any data.  This should be
        * reimplemented in subclasses that provide more than the basic tagging
        * abilities in this class.

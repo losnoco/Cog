@@ -48,6 +48,8 @@ namespace TagLib {
     class TAGLIB_EXPORT Tag : public TagLib::Tag
     {
     public:
+      using TagLib::Tag::ReplayGain;
+
       Tag();
       ~Tag() override;
 
@@ -63,14 +65,29 @@ namespace TagLib {
       /*!
        * Not supported by module files.  Therefore always returns an empty string.
        */
+      String albumartist() const override;
+
+      /*!
+       * Not supported by module files.  Therefore always returns an empty string.
+       */
       String artist() const override;
 
       /*!
        * Not supported by module files.  Therefore always returns an empty string.
        */
+      String composer() const override;
+
+       /*!
+       * Not supported by module files.  Therefore always returns an empty string.
+       */
       String album() const override;
 
       /*!
+       * Not supported by module files.  Therefore always returns an empty string.
+       */
+      String unsyncedlyrics() const override;
+
+       /*!
        * Returns the track comment derived from the instrument/sample/pattern
        * names; if no comment is present in the tag an empty string will be
        * returned.
@@ -93,6 +110,26 @@ namespace TagLib {
       unsigned int track() const override;
 
       /*!
+       * Not supported by module files.  Therefore always returns 0.
+       */
+      unsigned int disc() const override;
+
+      /*!
+       * Not supported by module files.  Therefore always returns an empty string.
+       */
+      String cuesheet() const override;
+
+      /*!
+       * Not supported by module files.  Therefore always returns an empty tag.
+       */
+      ReplayGain replaygain() const override;
+
+      /*!
+       * Not supported by module files.  Therefore always returns an empty string.
+       */
+      String soundcheck() const override;
+
+       /*!
        * Returns the name of the tracker used to create/edit the module file.
        * Only XM files store this tag to the file as such, for other formats
        * (Mod, S3M, IT) this is derived from the file type or the flavour of
@@ -114,12 +151,27 @@ namespace TagLib {
       /*!
        * Not supported by module files and therefore ignored.
        */
+      void setAlbumArtist(const String &albumartist) override;
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
       void setArtist(const String &artist) override;
 
       /*!
        * Not supported by module files and therefore ignored.
        */
+      void setComposer(const String &composer) override;
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
       void setAlbum(const String &album) override;
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      void setUnsyncedLyrics(const String &unsyncedlyrics) override;
 
       /*!
        * Sets the comment to \a comment.  If \a comment is an empty string then
@@ -156,6 +208,26 @@ namespace TagLib {
       void setTrack(unsigned int track) override;
 
       /*!
+       * Not supported by module files and therefore ignored.
+       */
+      void setDisc(unsigned int disc) override;
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      void setCuesheet(const String &cuesheet) override;
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      void setReplaygain(ReplayGain r) override;
+
+      /*!
+       * Not supported by module files and therefore ignored.
+       */
+      void setSoundcheck(const String &soundcheck) override;
+
+       /*!
        * Sets the tracker name to \a trackerName.  If \a trackerName is
        * an empty string then this value will be cleared.
        *
