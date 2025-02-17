@@ -43,6 +43,7 @@ namespace TagLib {
     class TAGLIB_EXPORT Tag: public TagLib::Tag
     {
     public:
+        using TagLib::Tag::ReplayGain;
         Tag();
         Tag(TagLib::File *file, Atoms *atoms,
             const ItemFactory *factory = nullptr);
@@ -52,20 +53,34 @@ namespace TagLib {
         bool save();
 
         String title() const override;
+        String albumartist() const override;
         String artist() const override;
+        String composer() const override;
         String album() const override;
+        String unsyncedlyrics() const override;
         String comment() const override;
         String genre() const override;
         unsigned int year() const override;
         unsigned int track() const override;
+        unsigned int disc() const override;
+        String cuesheet() const override;
+        ReplayGain replaygain() const override;
+        String soundcheck() const override;
 
         void setTitle(const String &value) override;
+        void setAlbumArtist(const String &value) override;
         void setArtist(const String &value) override;
+        void setComposer(const String &value) override;
         void setAlbum(const String &value) override;
+        void setUnsyncedLyrics(const String &value) override;
         void setComment(const String &value) override;
         void setGenre(const String &value) override;
         void setYear(unsigned int value) override;
         void setTrack(unsigned int value) override;
+        void setDisc(unsigned int value) override;
+        void setCuesheet(const String &value) override;
+        void setReplaygain(ReplayGain value) override;
+        void setSoundcheck(const String &value) override;
 
         bool isEmpty() const override;
 

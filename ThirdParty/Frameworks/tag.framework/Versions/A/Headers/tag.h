@@ -48,6 +48,50 @@ namespace TagLib {
   class TAGLIB_EXPORT Tag
   {
   public:
+    class ReplayGain {
+    protected:
+      bool _equals(const ReplayGain &) const;
+
+    public:
+      ReplayGain();
+
+      ReplayGain &operator=(const ReplayGain &);
+      bool operator==(const ReplayGain &) const;
+      bool operator!=(const ReplayGain &) const;
+
+      bool isEmpty() const;
+      bool albumGainSet() const;
+      bool albumPeakSet() const;
+      bool trackGainSet() const;
+      bool trackPeakSet() const;
+
+      float albumGain() const;
+      float albumPeak() const;
+      float trackGain() const;
+      float trackPeak() const;
+
+      void setAlbumGain(float f);
+      void setAlbumPeak(float f);
+      void setTrackGain(float f);
+      void setTrackPeak(float f);
+
+      void clear();
+      void clearAlbumGain();
+      void clearAlbumPeak();
+      void clearTrackGain();
+      void clearTrackPeak();
+
+    private:
+      bool albumgainSet;
+      bool albumpeakSet;
+      bool trackgainSet;
+      bool trackpeakSet;
+
+      float albumgain;
+      float albumpeak;
+      float trackgain;
+      float trackpeak;
+    };
 
     /*!
      * Destroys this Tag instance.
@@ -130,16 +174,34 @@ namespace TagLib {
     virtual String title() const = 0;
 
     /*!
+     * Returns the album artist name; if no album artist name is present
+     * in the tag an empty string will be returned.
+     */
+    virtual String albumartist() const = 0;
+
+    /*!
      * Returns the artist name; if no artist name is present in the tag
      * an empty string will be returned.
      */
     virtual String artist() const = 0;
 
     /*!
+     * Returns the composer name; if no composer name is present in the
+     * tag an empty string will be returned.
+     */
+    virtual String composer() const = 0;
+
+    /*!
      * Returns the album name; if no album name is present in the tag
      * an empty string will be returned.
      */
     virtual String album() const = 0;
+
+    /*!
+     * Returns the unsynchronized lyrics; if no unsynced lyrics are
+     * present in the tag an empty string will be returned.
+     */
+    virtual String unsyncedlyrics() const = 0;
 
     /*!
      * Returns the track comment; if no comment is present in the tag
@@ -165,10 +227,39 @@ namespace TagLib {
     virtual unsigned int track() const = 0;
 
     /*!
+     * Returns the disc number; if there is no disc number set, this will
+     * return 0.
+     */
+    virtual unsigned int disc() const = 0;
+
+    /*!
+     * Returns the embedded cue sheet; if there is no embedded cue sheet set,
+     * this will return an empty string.
+     */
+    virtual String cuesheet() const = 0;
+
+    /*!
+     * Returns the ReplayGain tags; if there are no tags set then it will be
+     * marked empty.
+     */
+    virtual ReplayGain replaygain() const = 0;
+
+    /*!
+     * Returns the SoundCheck tag; if there is no SoundCheck tag set then this
+     * will return an empty string.
+     */
+    virtual String soundcheck() const = 0;
+
+    /*!
      * Sets the title to \a s.  If \a s is an empty string then this value will be
      * cleared.
      */
     virtual void setTitle(const String &s) = 0;
+
+    /*!
+     * Sets the album artist to \a s.  If \a s is an empty string then this value
+     * will be cleared. */
+    virtual void setAlbumArtist(const String &s) = 0;
 
     /*!
      * Sets the artist to \a s.  If \a s is an empty string then this value will be
@@ -177,10 +268,22 @@ namespace TagLib {
     virtual void setArtist(const String &s) = 0;
 
     /*!
+     * Sets the composer to \a s.  If \a s is an empty string then this value will
+     * be cleared.
+     */
+    virtual void setComposer(const String &s) = 0;
+
+    /*!
      * Sets the album to \a s.  If \a s is an empty string then this value will be
      * cleared.
      */
     virtual void setAlbum(const String &s) = 0;
+
+    /*!
+     * Sets the unsynchronized lyrics to \a s.  If \a s is an empty string then this
+     * value will be cleared.
+     */
+    virtual void setUnsyncedLyrics(const String &s) = 0;
 
     /*!
      * Sets the comment to \a s.  If \a s is an empty string then this value will be
@@ -198,14 +301,37 @@ namespace TagLib {
     virtual void setGenre(const String &s) = 0;
 
     /*!
-     * Sets the year to \a i.  If \a s is 0 then this value will be cleared.
+     * Sets the year to \a i.  If \a i is 0 then this value will be cleared.
      */
     virtual void setYear(unsigned int i) = 0;
 
     /*!
-     * Sets the track to \a i.  If \a s is 0 then this value will be cleared.
+     * Sets the track to \a i.  If \a i is 0 then this value will be cleared.
      */
     virtual void setTrack(unsigned int i) = 0;
+
+    /*!
+     * Sets the disc to \a i.  If \a i is 0 then this value will be cleared.
+     */
+    virtual void setDisc(unsigned int i) = 0;
+
+    /*!
+     * Sets the embedded cue sheet to \a s.  If \a s is an empty string then
+     * this value will be cleared.
+     */
+    virtual void setCuesheet(const String &s) = 0;
+
+    /*!
+     * Sets the ReplayGain tag to \a t.  If any fields are marked as empty
+     * then they will be cleared.
+     */
+    virtual void setReplaygain(ReplayGain replaygain) = 0;
+
+    /*!
+     * Sets the SoundCheck tag to \a s.  If \a s is an empty string then this
+     * value will be cleared.
+     */
+    virtual void setSoundcheck(const String &s) = 0;
 
     /*!
      * Returns \c true if the tag does not contain any data.  This should be
@@ -241,6 +367,12 @@ namespace TagLib {
      * through subclasses.
      */
     Tag();
+
+    /*!
+     * Internal ReplayGain tag state. This is protected since subclasses should
+     * be able to manipulate it freely.
+     */
+    ReplayGain rg;
 
   private:
     class TagPrivate;

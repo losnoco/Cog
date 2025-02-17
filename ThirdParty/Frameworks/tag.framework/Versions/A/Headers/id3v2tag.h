@@ -133,6 +133,7 @@ namespace TagLib {
     class TAGLIB_EXPORT Tag : public TagLib::Tag
     {
     public:
+      using TagLib::Tag::ReplayGain;
       /*!
        * Constructs an empty ID3v2 tag.
        *
@@ -166,20 +167,34 @@ namespace TagLib {
       // Reimplementations.
 
       String title() const override;
+      String albumartist() const override;
       String artist() const override;
+      String composer() const override;
       String album() const override;
+      String unsyncedlyrics() const override;
       String comment() const override;
       String genre() const override;
       unsigned int year() const override;
       unsigned int track() const override;
+      unsigned int disc() const override;
+      String cuesheet() const override;
+      ReplayGain replaygain() const override;
+      String soundcheck() const override;
 
       void setTitle(const String &s) override;
+      void setAlbumArtist(const String &s) override;
       void setArtist(const String &s) override;
+      void setComposer(const String &s) override;
       void setAlbum(const String &s) override;
+      void setUnsyncedLyrics(const String &s) override;
       void setComment(const String &s) override;
       void setGenre(const String &s) override;
       void setYear(unsigned int i) override;
       void setTrack(unsigned int i) override;
+      void setDisc(unsigned int i) override;
+      void setCuesheet(const String &s) override;
+      void setReplaygain(ReplayGain r) override;
+      void setSoundcheck(const String &s) override;
 
       bool isEmpty() const override;
 
