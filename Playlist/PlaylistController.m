@@ -861,12 +861,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSIndexSet *)disarrangeIndexes:(NSIndexSet *)indexes {
-	if([[self arrangedObjects] count] <= [indexes lastIndex]) return indexes;
-
 	NSMutableIndexSet *disarrangedIndexes = [[NSMutableIndexSet alloc] init];
 
 	[indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *_Nonnull stop) {
-		[disarrangedIndexes addIndex:[[self content] indexOfObject:[[self arrangedObjects] objectAtIndex:idx]]];
+		NSUInteger arrCount = [[self arrangedObjects] count];
+		NSUInteger disCount = [[self content] count];
+		if(idx >= arrCount) {
+			[disarrangedIndexes addIndex:idx - arrCount + disCount];
+		} else {
+			[disarrangedIndexes addIndex:[[self content] indexOfObject:[[self arrangedObjects] objectAtIndex:idx]]];
+		}
 	}];
 
 	return disarrangedIndexes;
@@ -895,11 +899,12 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes {
+	[self clearFilterPredicate:self];
 	[self insertObjects:objects atArrangedObjectIndexes:indexes];
-	[self rearrangeObjects];
 }
 
 - (void)untrashObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes {
+	[self clearFilterPredicate:self];
 	[self untrashObjects:objects atArrangedObjectIndexes:indexes];
 	[self rearrangeObjects];
 }
@@ -919,7 +924,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			index = range.location;
 		}
 	}];
-	NSUInteger count = [[self content] count];
+	NSUInteger count = [[self arrangedObjects] count];
 	if(index > count) {
 		// Ah, oops, bodge fix
 		__block NSMutableIndexSet *replacementIndexes = [[NSMutableIndexSet alloc] init];
@@ -944,8 +949,15 @@ static void *playlistControllerContext = &playlistControllerContext;
 		[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	}
 	@catch(id anException) {
-		indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(count, [objects count])];
-		[super insertObjects:objects atArrangedObjectIndexes:indexes];
+		// Even further bodge fix
+		@try {
+			count = [[self arrangedObjects] count];
+			indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(count, [objects count])];
+			[super insertObjects:objects atArrangedObjectIndexes:indexes];
+		}
+		@catch(id anException) {
+			DLog(@"Exception thrown adding tracks to the playlist: %@", anException);
+		}
 	}
 
 	[self commitPersistentStore];
@@ -1836,6 +1848,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (void)insertURLsInBackground:(NSDictionary *)input {
+	[self performSelectorOnMainThread:@selector(clearFilterPredicate:) withObject:self waitUntilDone:YES];
+	
 	NSArray *entries = [input objectForKey:@"entries"];
 	NSUInteger row = [[input objectForKey:@"index"] integerValue];
 	BOOL sort = [[input objectForKey:@"sort"] boolValue];
