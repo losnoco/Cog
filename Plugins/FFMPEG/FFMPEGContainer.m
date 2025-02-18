@@ -30,14 +30,16 @@
 
 	if([url fragment]) {
 		// input url already has fragment defined - no need to expand further
-		return [NSMutableArray arrayWithObject:url];
+		return @[url];
 	}
+
+	NSMutableArray *tracks = [[NSMutableArray alloc] init];
 
 	id audioSourceClass = NSClassFromString(@"AudioSource");
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
 
 	if(![source open:url])
-		return [NSArray array];
+		return @[];
 
 	int errcode, i;
 	AVStream *stream;
@@ -62,42 +64,32 @@
 		formatCtx = avformat_alloc_context();
 		if(!formatCtx) {
 			ALog(@"Unable to allocate AVFormat context");
-			return [NSArray array];
+			goto exit;
 		}
 
 		NSString *urlString = [url absoluteString];
 		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
 			av_strerror(errcode, errDescr, 4096);
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
-			return [NSArray array];
+			goto exit;
 		}
 	} else {
 		buffer = av_malloc(32 * 1024);
 		if(!buffer) {
 			ALog(@"Out of memory!");
-			[source close];
-			source = nil;
-			return [NSArray array];
+			goto exit;
 		}
 
 		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
 		if(!ioCtx) {
 			ALog(@"Unable to create AVIO context");
-			av_free(buffer);
-			[source close];
-			source = nil;
-			return [NSArray array];
+			goto exit;
 		}
 
 		formatCtx = avformat_alloc_context();
 		if(!formatCtx) {
 			ALog(@"Unable to allocate AVFormat context");
-			buffer = ioCtx->buffer;
-			av_free(ioCtx);
-			av_free(buffer);
-			[source close];
-			source = nil;
-			return [NSArray array];
+			goto exit;
 		}
 
 		formatCtx->pb = ioCtx;
@@ -105,32 +97,14 @@
 		if((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0) {
 			av_strerror(errcode, errDescr, 4096);
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
-			avformat_close_input(&(formatCtx));
-			buffer = ioCtx->buffer;
-			av_free(ioCtx);
-			av_free(buffer);
-			[source close];
-			source = nil;
-			return [NSArray array];
+			goto exit;
 		}
 	}
 
 	if((errcode = avformat_find_stream_info(formatCtx, NULL)) < 0) {
 		av_strerror(errcode, errDescr, 4096);
 		ALog(@"Can't find stream info, errcode = %d, error = %s", errcode, errDescr);
-		avformat_close_input(&(formatCtx));
-		if(ioCtx) {
-			buffer = ioCtx->buffer;
-			av_free(ioCtx);
-		}
-		if(buffer) {
-			av_free(buffer);
-		}
-		if(source) {
-			[source close];
-			source = nil;
-		}
-		return [NSArray array];
+		goto exit;
 	}
 
 	int streamIndex = -1;
@@ -155,22 +129,8 @@
 
 	if(streamIndex < 0) {
 		ALog(@"no audio codec found");
-		avformat_close_input(&(formatCtx));
-		if(ioCtx) {
-			buffer = ioCtx->buffer;
-			av_free(ioCtx);
-		}
-		if(buffer) {
-			av_free(buffer);
-		}
-		if(source) {
-			[source close];
-			source = nil;
-		}
-		return [NSArray array];
+		goto exit;
 	}
-
-	NSMutableArray *tracks = [NSMutableArray array];
 
 	int subsongs = formatCtx->nb_chapters;
 	if(subsongs < 1) subsongs = 1;
@@ -179,20 +139,23 @@
 		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
 	}
 
-	avformat_close_input(&(formatCtx));
+exit:
+	if(formatCtx) {
+		avformat_close_input(&(formatCtx));
+	}
 	if(ioCtx) {
 		buffer = ioCtx->buffer;
-		av_free(ioCtx);
+		avio_context_free(&ioCtx);
 	}
 	if(buffer) {
-		av_free(buffer);
+		av_freep(&buffer);
 	}
 	if(source) {
 		[source close];
 		source = nil;
 	}
 
-	return tracks;
+	return [NSArray arrayWithArray:tracks];
 }
 
 @end

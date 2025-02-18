@@ -6,7 +6,6 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-// test
 #import "FFMPEGDecoder.h"
 
 #import "NSDictionary+Merge.h"
@@ -496,35 +495,28 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	if(lastDecodedFrame) {
-		av_free(lastDecodedFrame);
-		lastDecodedFrame = NULL;
+		av_freep(&lastDecodedFrame);
 	}
 
 	if(codecCtx) {
-		avcodec_close(codecCtx);
 		avcodec_free_context(&codecCtx);
-		codecCtx = NULL;
 	}
 
 	if(formatCtx) {
-		avformat_close_input(&(formatCtx));
-		formatCtx = NULL;
+		avformat_close_input(&formatCtx);
 	}
 
 	if(ioCtx) {
 		buffer = ioCtx->buffer;
-		av_free(ioCtx);
-		ioCtx = NULL;
+		avio_context_free(&ioCtx);
 	}
 
 	if(sampleBuffer) {
-		av_free(sampleBuffer);
-		sampleBuffer = NULL;
+		av_freep(&sampleBuffer);
 	}
 
 	if(buffer) {
-		av_free(buffer);
-		buffer = NULL;
+		av_freep(&buffer);
 	}
 }
 
