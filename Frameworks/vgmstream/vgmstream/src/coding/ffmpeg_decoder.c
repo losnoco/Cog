@@ -918,35 +918,26 @@ static void free_ffmpeg_config(ffmpeg_codec_data* data) {
 
     if (data->packet) {
         av_packet_unref(data->packet);
-        av_free(data->packet);
-        data->packet = NULL;
+        av_freep(&(data->packet));
     }
     if (data->frame) {
         av_frame_unref(data->frame);
-        av_free(data->frame);
-        data->frame = NULL;
+        av_freep(&(data->frame));
     }
     if (data->codecCtx) {
-        avcodec_close(data->codecCtx);
         avcodec_free_context(&data->codecCtx);
-        data->codecCtx = NULL;
     }
     if (data->formatCtx) {
         avformat_close_input(&data->formatCtx);
-        //avformat_free_context(data->formatCtx); /* done in close_input */
-        data->formatCtx = NULL;
     }
     if (data->ioCtx) {
         /* buffer passed in is occasionally freed and replaced.
          * the replacement must be free'd as well (below) */
         data->buffer = data->ioCtx->buffer;
         avio_context_free(&data->ioCtx);
-        //av_free(data->ioCtx); /* done in context_free (same thing) */
-        data->ioCtx = NULL;
     }
     if (data->buffer) {
-        av_free(data->buffer);
-        data->buffer = NULL;
+        av_freep(&(data->buffer));
     }
 
     //todo avformat_find_stream_info may cause some Win Handle leaks? related to certain option
@@ -959,8 +950,7 @@ void free_ffmpeg(ffmpeg_codec_data* data) {
     free_ffmpeg_config(data);
 
     if (data->header_block) {
-        av_free(data->header_block);
-        data->header_block = NULL;
+        av_freep(&(data->header_block));
     }
 
     close_streamfile(data->sf);
