@@ -35,21 +35,23 @@
 
 	Semaphore *exitAtTheEndOfTheStream;
 }
-@property(readonly) Semaphore *exitAtTheEndOfTheStream;
+@property(readonly) Semaphore * _Nonnull exitAtTheEndOfTheStream;
 @property(readonly) BOOL threadExited;
 
-- (BOOL)openWithSource:(id<CogSource>)source;
-- (BOOL)openWithDecoder:(id<CogDecoder>)d;
+- (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
+
+- (BOOL)openWithSource:(id<CogSource>_Nonnull)source;
+- (BOOL)openWithDecoder:(id<CogDecoder>_Nonnull)d;
 
 - (void)process;
-- (NSDictionary *)properties;
+- (NSDictionary *_Nonnull)properties;
 - (void)seek:(long)frame;
 
 - (void)registerObservers;
 
-- (BOOL)setTrack:(NSURL *)track;
+- (BOOL)setTrack:(NSURL *_Nonnull)track;
 
-- (id<CogDecoder>)decoder;
+- (id<CogDecoder>_Nonnull)decoder;
 
 - (void)setLastVolume:(double)v;
 
