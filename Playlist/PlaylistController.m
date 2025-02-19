@@ -687,7 +687,17 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 11:
 		case 12:
 		case 14:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sampleRate" ascending:ascending selector:@selector(compare:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
 		case 15:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"bitsPerSample" ascending:ascending selector:@selector(compare:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
+		case 18:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"playCount" ascending:ascending selector:@selector(compare:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
 		case 17:
 			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(caseInsensitiveCompare:)];
 			sortDescriptors = @[sortDescriptor];
