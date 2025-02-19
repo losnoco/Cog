@@ -463,11 +463,9 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 	// Get files from a normal file drop (such as from Finder)
 	if([bestType isEqualToString:NSPasteboardTypeFileURL]) {
-		NSMutableArray *urls = [[NSMutableArray alloc] init];
-
-		for(NSString *file in [pboard propertyListForType:NSPasteboardTypeFileURL]) {
-			[urls addObject:[NSURL fileURLWithPath:file]];
-		}
+		NSArray<Class> *classes = @[[NSURL class]];
+		NSDictionary *options = @{};
+		NSArray<NSURL*> *urls = [pboard readObjectsForClasses:classes options:options];
 
 		//[playlistLoader insertURLs:urls atIndex:row sort:YES];
 		[acceptedURLs addObjectsFromArray:urls];
