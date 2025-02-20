@@ -588,6 +588,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 	NSCompoundPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[albumPredicate, artistPredicate, titlePredicate]];
 
+	__block BOOL fixtags = NO;
+
 	__block PlayCount *item = nil;
 
 	[kPersistentContainer.viewContext performBlockAndWait:^{
@@ -604,12 +606,37 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 			request.predicate = filenamePredicate;
 
 			results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
+			if(!results || [results count] < 1) {
+				filenamePredicate = [NSPredicate predicateWithFormat:@"filename == %@", self.filename];
+
+				request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+				request.predicate = filenamePredicate;
+
+				results = [kPersistentContainer.viewContext executeFetchRequest:request error:&error];
+			}
+
+			if(results && [results count] >= 1) {
+				fixtags = YES;
+			}
 		}
 
 		if(!results || [results count] < 1) return;
 
 		item = results[0];
 	}];
+
+	if(fixtags) {
+		// shoot, something inserted the play counts without the tags
+		[kPersistentContainer.viewContext performBlockAndWait:^{
+			item.album = self.album;
+			item.artist = self.artist;
+			item.title = self.title;
+			item.filename = self.filenameFragment;
+		}];
+
+		NSError *error = nil;
+		[kPersistentContainer.viewContext save:&error];
+	}
 
 	return item;
 }
