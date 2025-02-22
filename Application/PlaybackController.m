@@ -25,6 +25,7 @@ extern BOOL kAppControllerShuttingDown;
 
 @implementation NSObject (NxAdditions)
 
+#if 0
 -(void)performSelectorInBackground:(SEL)selector withObjects:(id)object, ...
 {
 	NSMethodSignature *signature = [self methodSignatureForSelector:selector];
@@ -48,6 +49,32 @@ extern BOOL kAppControllerShuttingDown;
 	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invocation];
 	NSOperationQueue *backgroundQueue = [[NSOperationQueue alloc] init];
 	[backgroundQueue addOperation:operation];
+}
+#endif
+
+-(void)performSelectorOnMainThread:(SEL)selector withObjects:(id)object, ...
+{
+	NSMethodSignature *signature = [self methodSignatureForSelector:selector];
+
+	// Setup the invocation
+	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+	invocation.target = self;
+	invocation.selector = selector;
+
+	// Associate the arguments
+	va_list objects;
+	va_start(objects, object);
+	unsigned int objectCounter = 2;
+	for (id obj = object; obj != nil; obj = va_arg(objects, id))
+	{
+		[invocation setArgument:&obj atIndex:objectCounter++];
+	}
+	va_end(objects);
+
+	// Invoke on the main operation queue
+	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invocation];
+	NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+	[mainQueue addOperation:operation];
 }
 
 @end
@@ -302,7 +329,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	double seekTime = pe.seekable ? [offset doubleValue] : 0.0;
 
-	[audioPlayer performSelectorInBackground:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(seekTime), nil];
+	[audioPlayer performSelectorOnMainThread:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(seekTime), nil];
 }
 
 - (IBAction)next:(id)sender {
@@ -855,7 +882,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
 	[[FIRCrashlytics crashlytics] logWithFormat:@"Restarting playback of track: %@", pe.url];
-	[player performSelectorInBackground:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(pe.seekable ? pe.currentPosition : 0.0), nil];
+	[player performSelectorOnMainThread:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(pe.seekable ? pe.currentPosition : 0.0), nil];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
