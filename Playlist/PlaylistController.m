@@ -437,6 +437,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSView *_Nullable)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *_Nullable)tableColumn row:(NSInteger)row {
+	// What the heck
+	if(row < 0 || row >= [[self arrangedObjects] count]) {
+		return nil;
+	}
+
 	NSImage *cellImage = nil;
 	NSString *cellText = @"";
 	NSString *cellIdentifier = @"";
