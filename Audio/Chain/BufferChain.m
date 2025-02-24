@@ -365,8 +365,15 @@
 
 - (void)setVolume:(double)v {
 	AudioPlayer * audioPlayer = controller;
-	OutputNode *outputNode = [audioPlayer output];
-	[outputNode setVolume:v];
+	if(audioPlayer) {
+		OutputNode *outputNode = [audioPlayer output];
+		if(outputNode) {
+			[outputNode setVolume:v];
+		}
+	}
+	if(inputNode) {
+		[inputNode setLastVolume:v];
+	}
 }
 
 @end
