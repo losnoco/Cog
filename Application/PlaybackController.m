@@ -360,7 +360,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (IBAction)seek:(id)sender {
 	double time = [sender doubleValue];
 
-	[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(time)];
+	[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(time), nil];
 
 	lastPosition = -10;
 
@@ -377,7 +377,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(time)];
+	[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(time), nil];
 
 	[self setPosition:time];
 
@@ -409,7 +409,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[self next:self];
 	} else {
 		lastPosition = -10;
-		[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(seekTo)];
+		[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
 		[self setPosition:seekTo];
 	}
 }
@@ -426,7 +426,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[audioPlayer performSelectorInBackground:@selector(seekToTimeBG:) withObject:@(seekTo)];
+	[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
 	[self setPosition:seekTo];
 }
 
