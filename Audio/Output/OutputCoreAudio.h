@@ -105,6 +105,7 @@ using std::atomic_long;
 	float tempBuffer[512 * 32];
 	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
 
+	BOOL muted;
 #ifdef OUTPUT_LOG
 	FILE *_logFile;
 #endif
@@ -124,6 +125,9 @@ using std::atomic_long;
 
 - (double)volume;
 - (void)setVolume:(double)v;
+
+- (void)mute;
+- (void)unmute;
 
 - (void)setShouldPlayOutBuffer:(BOOL)enabled;
 

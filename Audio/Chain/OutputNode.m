@@ -50,6 +50,14 @@
 	[output resume];
 }
 
+- (void)mute {
+	[output mute];
+}
+
+- (void)unmute {
+	[output unmute];
+}
+
 - (void)incrementAmountPlayed:(double)seconds {
 	amountPlayed += seconds;
 	amountPlayedInterval += seconds;
@@ -156,7 +164,8 @@
 	config = channelConfig;
 	// Calculate a ratio and add to double(seconds) instead, as format may change
 	// double oldSampleRatio = sampleRatio;
-	BufferChain *bufferChain = [controller bufferChain];
+	AudioPlayer *audioPlayer = controller;
+	BufferChain *bufferChain = [audioPlayer bufferChain];
 	if(bufferChain) {
 		ConverterNode *converter = [bufferChain converter];
 		DSPDownmixNode *downmix = [bufferChain downmix];
@@ -180,11 +189,8 @@
 			}
 		}
 		if(formatChanged) {
+			[audioPlayer mute];
 			InputNode *inputNode = [bufferChain inputNode];
-			if(inputNode) {
-				[inputNode setLastVolume:[output volume]];
-				[output setVolume:0.0];
-			}
 			if(converter) {
 				[converter setOutputFormat:format];
 			}

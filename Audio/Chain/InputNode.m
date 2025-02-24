@@ -29,7 +29,6 @@ static void *kInputNodeContext = &kInputNodeContext;
 	if(self) {
 		exitAtTheEndOfTheStream = [[Semaphore alloc] init];
 		threadExited = NO;
-		lastVolume = 1.0;
 	}
 
 	return self;
@@ -161,7 +160,10 @@ static void *kInputNodeContext = &kInputNodeContext;
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
 		if(shouldSeek == YES) {
 			BufferChain *bufferChain = controller;
-			[bufferChain setVolume:0.0];
+			AudioPlayer *audioPlayer = [controller controller];
+			[audioPlayer mute];
+			OutputNode *outputNode = [audioPlayer output];
+			[outputNode resetBuffer];
 
 			ConverterNode *converter = [bufferChain converter];
 			DSPRubberbandNode *rubberband = [bufferChain rubberband];
@@ -198,7 +200,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 				[controller setError:YES];
 			}
 
-			[bufferChain setVolume:lastVolume];
+			[audioPlayer unmute];
 		}
 
 		AudioChunk *chunk;
@@ -251,6 +253,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 	seekFrame = frame;
 	shouldSeek = YES;
 	DLog(@"Should seek!");
+	[self resetBuffer];
 	[writeSemaphore signal];
 
 	if(endOfStream) {
@@ -298,10 +301,6 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 - (double)secondsBuffered {
 	return [buffer listDuration];
-}
-
-- (void)setLastVolume:(double)v {
-	lastVolume = v;
 }
 
 @end
