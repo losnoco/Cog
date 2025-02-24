@@ -281,15 +281,17 @@ void equalizerLoadPreset(AudioUnit au) {
 }
 
 void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
-	if(au && preset) {
+	if(preset) {
 		@synchronized(cog_equalizer_band_settings) {
 			if(!cog_equalizer_band_settings)
 				cog_equalizer_band_settings = _cog_equalizer_band_settings();
 		}
 
-		AudioUnitParameterValue paramValue = 0;
-		if(AudioUnitGetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, &paramValue))
-			return;
+		if(au) {
+			AudioUnitParameterValue paramValue = 0;
+			if(AudioUnitGetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, &paramValue))
+				return;
+		}
 
 		float presetValues[31];
 		interpolateBands(presetValues, preset);
@@ -297,10 +299,14 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 		float preamp = getPreamp(preset);
 
 		[[NSUserDefaults standardUserDefaults] setFloat:preamp forKey:[cog_equalizer_band_settings objectAtIndex:0]];
-		AudioUnitSetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, 1, 0);
+		if(au) {
+			AudioUnitSetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, 1, 0);
+		}
 		for(unsigned int i = 0; i < 31; ++i) {
 			[[NSUserDefaults standardUserDefaults] setFloat:presetValues[i] forKey:[cog_equalizer_band_settings objectAtIndex:i + 1]];
-			AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
+			if(au) {
+				AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
+			}
 		}
 	}
 }
