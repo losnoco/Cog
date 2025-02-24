@@ -78,7 +78,9 @@
 		output = [[OutputNode alloc] initWithController:self previous:nil];
 	}
 	[output setup];
-	[output setVolume:volume];
+	if(muted) {
+		[output mute];
+	}
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -177,6 +179,10 @@
 	[output resume];
 
 	[self setPlaybackStatus:CogStatusPlaying waitUntilDone:YES];
+
+	if(muted) {
+		[self unmute];
+	}
 }
 
 - (void)seekToTimeBG:(NSNumber *)time {
@@ -184,6 +190,7 @@
 }
 
 - (void)seekToTime:(double)time {
+	[self mute];
 	if(endOfInputReached) {
 		// This is a dirty hack in case the playback has finished with the track
 		// that the user thinks they're seeking into
@@ -216,6 +223,20 @@
 
 - (double)volume {
 	return volume;
+}
+
+- (void)mute {
+	if(!muted) {
+		[output mute];
+		muted = YES;
+	}
+}
+
+- (void)unmute {
+	if(muted) {
+		[output unmute];
+		muted = NO;
+	}
 }
 
 // This is called by the delegate DURING a requestNextStream request.

@@ -230,7 +230,7 @@
 	AudioPlayer * audioPlayer = controller;
 	OutputNode *outputNode = [audioPlayer output];
 
-	[inputNode setLastVolume:[outputNode volume]];
+	[audioPlayer mute];
 	[inputNode seek:frame];
 }
 
@@ -370,9 +370,6 @@
 		if(outputNode) {
 			[outputNode setVolume:v];
 		}
-	}
-	if(inputNode) {
-		[inputNode setLastVolume:v];
 	}
 }
 

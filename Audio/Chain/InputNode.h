@@ -29,8 +29,6 @@
 	BOOL shouldSeek;
 	long seekFrame;
 
-	double lastVolume;
-
 	BOOL observersAdded;
 
 	Semaphore *exitAtTheEndOfTheStream;
@@ -52,7 +50,5 @@
 - (BOOL)setTrack:(NSURL *_Nonnull)track;
 
 - (id<CogDecoder>_Nonnull)decoder;
-
-- (void)setLastVolume:(double)v;
 
 @end
