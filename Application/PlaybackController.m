@@ -729,7 +729,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq {
-
 	if(_eq && _eq != eq) {
 		[equalizerWindowController setEQ:nil];
 	}

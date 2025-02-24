@@ -24,6 +24,16 @@ extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
 
+@interface EQObject : NSObject {
+	AudioUnit eq;
+}
+@property AudioUnit eq;
+@end
+
+@implementation EQObject
+@synthesize eq;
+@end
+
 @interface EQHookContainer : NSObject {
 	NSMutableArray *equalizers;
 }
@@ -60,22 +70,29 @@ static EQHookContainer *theContainer = nil;
 
 - (void)pushEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer {
 	@synchronized (equalizers) {
-		[equalizers addObject:@((uintptr_t)eq)];
+		EQObject *_eq = [[EQObject alloc] init];
+		_eq.eq = eq;
+		[equalizers addObject:_eq];
 		if([equalizers count] == 1) {
 			[audioPlayer beginEqualizer:eq];
+		} else {
+			[audioPlayer refreshEqualizer:eq];
 		}
 	}
 }
 
 - (void)popEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer {
 	@synchronized (equalizers) {
-		uintptr_t _eq = [[equalizers objectAtIndex:0] unsignedIntegerValue];
-		if(eq == (AudioUnit)_eq) {
-			[equalizers removeObject:@(_eq)];
-			if([equalizers count]) {
-				_eq = [[equalizers objectAtIndex:0] unsignedIntegerValue];
-				[audioPlayer beginEqualizer:(AudioUnit)_eq];
+		for(EQObject *_eq in equalizers) {
+			if(_eq.eq == eq) {
+				[equalizers removeObject:_eq];
+				break;
 			}
+		}
+		[audioPlayer endEqualizer:eq];
+		if([equalizers count]) {
+			EQObject *_eq = [equalizers objectAtIndex:0];
+			[audioPlayer beginEqualizer:_eq.eq];
 		}
 	}
 }
@@ -87,6 +104,8 @@ static EQHookContainer *theContainer = nil;
 	BOOL equalizerInitialized;
 
 	double equalizerPreamp;
+	
+	__weak AudioPlayer *audioPlayer;
 
 	AudioUnit _eq;
 
@@ -148,6 +167,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		float preamp = [defaults floatForKey:@"eqPreamp"];
 		equalizerPreamp = pow(10.0, preamp / 20.0);
 
+		BufferChain *bufferChain = c;
+		audioPlayer = [bufferChain controller];
+
 		[self addObservers];
 	}
 	return self;
@@ -192,8 +214,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 }
 
 - (AudioPlayer *)audioPlayer {
-	BufferChain *bufferChain = controller;
-	return [bufferChain controller];
+	return audioPlayer;
 }
 
 - (BOOL)fullInit {
