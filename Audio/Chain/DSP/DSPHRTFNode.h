@@ -10,7 +10,7 @@
 
 #import <simd/types.h>
 
-#import "DSPNode.h"
+#import <CogAudio/DSPNode.h>
 
 @interface DSPHRTFNode : DSPNode {
 }

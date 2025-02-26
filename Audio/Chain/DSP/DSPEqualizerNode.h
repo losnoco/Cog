@@ -8,7 +8,7 @@
 #ifndef DSPEqualizerNode_h
 #define DSPEqualizerNode_h
 
-#import "DSPNode.h"
+#import <CogAudio/DSPNode.h>
 
 @interface DSPEqualizerNode : DSPNode {
 	float *samplePtr;

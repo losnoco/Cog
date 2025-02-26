@@ -12,9 +12,9 @@
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/AudioHardware.h>
 
-#import <soxr.h>
+#import <CogAudio/soxr.h>
 
-#import "Node.h"
+#import <CogAudio/Node.h>
 
 @interface ConverterNode : Node {
 	NSDictionary *rgInfo;

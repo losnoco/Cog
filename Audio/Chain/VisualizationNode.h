@@ -8,7 +8,7 @@
 #ifndef VisualizationNode_h
 #define VisualizationNode_h
 
-#import "Node.h"
+#import <CogAudio/Node.h>
 
 @interface VisualizationNode : Node {
 }

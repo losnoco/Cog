@@ -2,7 +2,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "Plugin.h"
+#import <CogAudio/Plugin.h>
 
 // Singletonish
 @interface PluginController : NSObject <CogPluginController> {

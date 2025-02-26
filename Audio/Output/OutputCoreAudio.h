@@ -22,11 +22,9 @@ using std::atomic_long;
 #import <stdatomic.h>
 #endif
 
-#import <CogAudio/CogAudio-Swift.h>
-
 #import <simd/simd.h>
 
-#import "HeadphoneFilter.h"
+#import <CogAudio/HeadphoneFilter.h>
 
 //#define OUTPUT_LOG
 #ifdef OUTPUT_LOG
@@ -90,8 +88,6 @@ using std::atomic_long;
 	AUAudioUnit *_au;
 
 	size_t _bufferSize;
-
-	VisualizationController *visController;
 
 	int inputRemain;
 	

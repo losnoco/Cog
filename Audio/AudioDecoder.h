@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "Plugin.h"
+#import <CogAudio/Plugin.h>
 
 @interface AudioDecoder : NSObject {
 }

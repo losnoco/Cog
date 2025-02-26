@@ -10,7 +10,7 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 
-#import "DSPNode.h"
+#import <CogAudio/DSPNode.h>
 
 @interface DSPDownmixNode : DSPNode {
 }

@@ -8,15 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "AudioPlayer.h"
-#import "ConverterNode.h"
-#import "DSPRubberbandNode.h"
-#import "DSPFSurroundNode.h"
-#import "DSPHRTFNode.h"
-#import "DSPEqualizerNode.h"
-#import "VisualizationNode.h"
-#import "DSPDownmixNode.h"
-#import "InputNode.h"
+#import <CogAudio/AudioPlayer.h>
+#import <CogAudio/ConverterNode.h>
+#import <CogAudio/DSPRubberbandNode.h>
+#import <CogAudio/DSPFSurroundNode.h>
+#import <CogAudio/DSPHRTFNode.h>
+#import <CogAudio/DSPEqualizerNode.h>
+#import <CogAudio/VisualizationNode.h>
+#import <CogAudio/DSPDownmixNode.h>
+#import <CogAudio/InputNode.h>
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;

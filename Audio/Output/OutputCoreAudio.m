@@ -17,11 +17,15 @@
 
 #import <Accelerate/Accelerate.h>
 
+#import <CogAudio/VisualizationController.h>
+
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 
-@implementation OutputCoreAudio
+@implementation OutputCoreAudio {
+	VisualizationController *visController;
+}
 
 static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
@@ -554,7 +558,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (int)renderAndConvert {
-	OSStatus status;
 	int inputRendered = 0;
 	int bytesRendered = inputRendered * realStreamFormat.mBytesPerPacket;
 
