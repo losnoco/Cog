@@ -50,14 +50,6 @@
 	[output resume];
 }
 
-- (void)mute {
-	[output mute];
-}
-
-- (void)unmute {
-	[output unmute];
-}
-
 - (void)incrementAmountPlayed:(double)seconds {
 	amountPlayed += seconds;
 	amountPlayedInterval += seconds;
@@ -189,7 +181,6 @@
 			}
 		}
 		if(formatChanged) {
-			[audioPlayer mute];
 			InputNode *inputNode = [bufferChain inputNode];
 			if(converter) {
 				[converter setOutputFormat:format];

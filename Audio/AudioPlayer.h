@@ -25,7 +25,6 @@
 	BufferChain *bufferChain;
 	OutputNode *output;
 
-	BOOL muted;
 	double volume;
 	double pitch;
 	double tempo;
@@ -76,9 +75,6 @@
 - (double)volume;
 - (double)volumeUp:(double)amount;
 - (double)volumeDown:(double)amount;
-
-- (void)mute;
-- (void)unmute;
 
 - (double)amountPlayed;
 - (double)amountPlayedInterval;
