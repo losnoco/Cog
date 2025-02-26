@@ -19,7 +19,7 @@
 
 #import "Logging.h"
 
-@import Firebase;
+//@import Sentry;
 
 extern BOOL kAppControllerShuttingDown;
 
@@ -284,11 +284,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(!pe.url) {
 		pe.error = YES;
 		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
-		[[FIRCrashlytics crashlytics] log:@"Attempting to play bad file."];
+		//[[FIRCrashlytics crashlytics] log:@"Attempting to play bad file."];
 		return;
 	}
 
-	[[FIRCrashlytics crashlytics] logWithFormat:@"Playing track: %@", pe.url];
+	//[[FIRCrashlytics crashlytics] logWithFormat:@"Playing track: %@", pe.url];
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
@@ -767,15 +767,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
 	if(pe && pe.url) {
-		[[FIRCrashlytics crashlytics] logWithFormat:@"Beginning decoding track: %@", pe.url];
+		//[[FIRCrashlytics crashlytics] logWithFormat:@"Beginning decoding track: %@", pe.url];
 		[player setNextStream:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 	} else if(pe) {
-		[[FIRCrashlytics crashlytics] log:@"Invalid playlist entry reached."];
+		//[[FIRCrashlytics crashlytics] log:@"Invalid playlist entry reached."];
 		[player setNextStream:nil];
 		pe.error = YES;
 		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
-		[[FIRCrashlytics crashlytics] log:@"End of playlist reached."];
+		//[[FIRCrashlytics crashlytics] log:@"End of playlist reached."];
 		[player setNextStream:nil];
 	}
 }
@@ -786,7 +786,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	// Delay the action until this function has returned to the audio thread
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
 		if(pe) {
-			[[FIRCrashlytics crashlytics] logWithFormat:@"Updating UI with track: %@", pe.url];
+			//[[FIRCrashlytics crashlytics] logWithFormat:@"Updating UI with track: %@", pe.url];
 		}
 
 		[self->playlistController setCurrentEntry:pe];
@@ -817,7 +817,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		}
 
 		if(status == CogStatusStopped) {
-			[[FIRCrashlytics crashlytics] log:@"Stopped."];
+			//[[FIRCrashlytics crashlytics] log:@"Stopped."];
 
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
@@ -825,11 +825,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotificiation object:nil];
 		} else // paused
 		{
-			[[FIRCrashlytics crashlytics] log:@"Paused."];
+			//[[FIRCrashlytics crashlytics] log:@"Paused."];
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotificiation object:nil];
 		}
 	} else if(status == CogStatusPlaying) {
-		[[FIRCrashlytics crashlytics] log:@"Started playing."];
+		//[[FIRCrashlytics crashlytics] log:@"Started playing."];
 
 		if(!positionTimer) {
 			positionTimer = [NSTimer timerWithTimeInterval:0.2 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
@@ -865,7 +865,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (void)audioPlayer:(AudioPlayer *)player didStopNaturally:(id)userInfo {
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"quitOnNaturalStop"]) {
-		[[FIRCrashlytics crashlytics] log:@"Terminating due to natural stop."];
+		//[[FIRCrashlytics crashlytics] log:@"Terminating due to natural stop."];
 		[NSApp terminate:nil];
 	}
 }
@@ -880,7 +880,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
-	[[FIRCrashlytics crashlytics] logWithFormat:@"Restarting playback of track: %@", pe.url];
+	//[[FIRCrashlytics crashlytics] logWithFormat:@"Restarting playback of track: %@", pe.url];
 	[player performSelectorOnMainThread:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(pe.seekable ? pe.currentPosition : 0.0), nil];
 }
 

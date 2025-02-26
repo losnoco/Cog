@@ -47,3 +47,8 @@
 // CODE_SIGN_IDENTITY = …;
 // CODE_SIGN_STYLE = Manual/Automatic;
 // Please make sure not to commit them to source control.
+
+#include? "SENTRY_SETTINGS.xcconfig"
+// Also, create this file if you wish to upload symbols to your server on build.
+// It should define SENTRY_URL, SENTRY_PROJECT to the ID number, and finally
+// SENTRY_AUTH_TOKEN to the developer authorization token for your instance.

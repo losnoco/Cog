@@ -10,15 +10,18 @@
 #import <Cocoa/Cocoa.h>
 
 @interface FeedbackController : NSWindowController <FeedbackSocketDelegate> {
-	IBOutlet NSTextField* fromView;
-	IBOutlet NSTextField* subjectView;
+	IBOutlet NSTextField* nameView;
+	IBOutlet NSTextField* emailView;
 	IBOutlet NSTextView* messageView;
-	IBOutlet NSProgressIndicator* sendingIndicator;
-
-	FeedbackSocket* feedbackSocket;
 }
 
 - (IBAction)sendFeedback:(id)sender;
 - (IBAction)cancel:(id)sender;
+
+- (BOOL)waitForCompletion;
+
+- (NSString *)name;
+- (NSString *)email;
+- (NSString *)comments;
 
 @end

@@ -2,8 +2,8 @@
 "CogTitle" = "Cog";
 "ConsentNo" = "No";
 "ConsentYes" = "Yes";
-"CrashlyticsConsentText" = "Would you like to allow Crashlytics to submit crash reports? You may turn this off again in Preferences. We won't ask you again.";
-"CrashlyticsConsentTitle" = "Crashlytics crash collection";
+"SentryConsentText" = "Would you like to allow Sentry to submit crash reports? You may turn this off again in Preferences. We won't ask you again.";
+"SentryConsentTitle" = "Sentry crash collection";
 "ErrorInvalidTrackId" = "Invalid track ID sent to SQLite request.";
 "ErrorMessageBadFile" = "Unable to parse metadata for bad file.";
 "ErrorMetadata" = "Unable to retrieve metadata.";

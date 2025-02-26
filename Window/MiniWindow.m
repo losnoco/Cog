@@ -12,7 +12,7 @@
 
 extern NSString *iTunesDropType;
 
-extern void showCrashlyticsConsent(NSWindow *window);
+extern void showSentryConsent(NSWindow *window);
 
 @implementation MiniWindow
 
@@ -44,7 +44,7 @@ extern void showCrashlyticsConsent(NSWindow *window);
 	[self registerForDraggedTypes:@[NSPasteboardTypeFileURL, iTunesDropType]];
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
-		showCrashlyticsConsent(self);
+		showSentryConsent(self);
 	}
 }
 

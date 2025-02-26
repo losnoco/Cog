@@ -10,62 +10,67 @@
 
 #import "Logging.h"
 
-@implementation FeedbackController
+@implementation FeedbackController {
+	BOOL showing;
+	BOOL sent;
+	
+	NSString *name;
+	NSString *email;
+	NSString *comments;
+}
 
 - (id)init {
-	return [super initWithWindowNibName:@"Feedback"];
+	self = [super initWithWindowNibName:@"Feedback"];
+	if(self) {
+		showing = NO;
+		sent = NO;
+	}
+	return self;
 }
 
 - (IBAction)showWindow:(id)sender {
-	[fromView setStringValue:@""];
-	[subjectView setStringValue:@""];
+	[nameView setStringValue:@""];
+	[emailView setStringValue:@""];
 	[messageView setString:@""];
 
 	[super showWindow:sender];
-}
-
-- (void)alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo {
-	if([(NSNumber *)CFBridgingRelease(contextInfo) boolValue] == YES) {
-		[[self window] close];
-	}
-}
-
-- (void)feedbackDidNotSend:(FeedbackSocket *)feedback {
-	ALog(@"Error sending feedback");
-
-	[sendingIndicator stopAnimation:self];
-
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setMessageText:NSLocalizedString(@"FeedbackFailedMessageText", @"")];
-	[alert setInformativeText:NSLocalizedString(@"FeedbackFailedInformativeText", @"")];
-
-	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:(void *)CFBridgingRetain([NSNumber numberWithBool:NO])];
-}
-
-- (void)feedbackDidSend:(FeedbackSocket *)feedback {
-	[sendingIndicator stopAnimation:self];
-
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setMessageText:NSLocalizedString(@"FeedbackSuccessMessageText", @"")];
-	[alert setInformativeText:NSLocalizedString(@"FeedbackSuccessInformativeText", @"")];
-
-	[alert beginSheetModalForWindow:[self window] modalDelegate:self didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:(void *)CFBridgingRetain([NSNumber numberWithBool:YES])];
+	
+	showing = YES;
 }
 
 - (IBAction)sendFeedback:(id)sender {
-	[sendingIndicator startAnimation:self];
+	name = [nameView stringValue];
+	email = [emailView stringValue];
+	comments = [messageView string];
 
-	// Using this so that if its a bad connection, it doesnt sit there looking stupid..or should it
-	feedbackSocket = [[FeedbackSocket alloc] init];
-	[feedbackSocket setDelegate:self];
-
-	NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
-
-	[feedbackSocket sendFeedback:[fromView stringValue] subject:[subjectView stringValue] message:[messageView string] version:version];
+	[[self window] close];
+	sent = YES;
+	showing = NO;
 }
 
 - (IBAction)cancel:(id)sender {
 	[[self window] close];
+	sent = NO;
+	showing = NO;
+}
+
+- (BOOL)waitForCompletion {
+	while(showing) {
+		usleep(2000);
+	}
+	return sent;
+}
+
+- (NSString *)name {
+	return name;
+}
+
+- (NSString *)email {
+	return email;
+}
+
+- (NSString *)comments {
+	return comments;
 }
 
 @end

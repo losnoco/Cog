@@ -31,7 +31,9 @@
 
 #import "PreferencesController.h"
 
-@import Firebase;
+#import "FeedbackController.h"
+
+@import Sentry;
 
 void *kAppControllerContext = &kAppControllerContext;
 
@@ -166,19 +168,14 @@ static AppController *kAppController = nil;
 	return [key isEqualToString:@"currentEntry"];
 }
 
-- (void)awakeFromNib {
-#if DEBUG
-	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(NO) }];
-#else
-	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSApplicationCrashOnExceptions": @(YES) }];
-#endif
-	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"crashlyticsConsented": @(NO),
-															   @"crashlyticsAskedConsent": @(NO) }];
+static BOOL consentLastEnabled = NO;
 
-	[FIRApp configure];
+- (void)awakeFromNib {
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @(NO),
+															   @"sentryAskedConsent": @(NO) }];
 	
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.crashlyticsConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
-	
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
+
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
 	[self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
@@ -323,10 +320,45 @@ static AppController *kAppController = nil;
 		return;
 	}
 	
-	if([keyPath isEqualToString:@"values.crashlyticsConsented"]) {
-		BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"crashlyticsConsented"];
-		[[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:enabled];
-		[FIRAnalytics setAnalyticsCollectionEnabled:enabled];
+	if([keyPath isEqualToString:@"values.sentryConsented"]) {
+		BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"sentryConsented"];
+		if(enabled != consentLastEnabled) {
+			if(enabled) {
+				[SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
+					options.dsn = @"https://b5eda1c2390eb965a74dd735413b6392@cog-analytics.losno.co/3";
+					options.debug = YES; // Enabled debug when first installing is always helpful
+
+					// Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+					// We recommend adjusting this value in production.
+					options.tracesSampleRate = @1.0;
+
+					// Adds IP for users.
+					// For more information, visit: https://docs.sentry.io/platforms/apple/data-management/data-collected/
+					options.sendDefaultPii = YES;
+
+					// And now to set up user feedback prompting
+					options.onCrashedLastRun = ^void(SentryEvent * _Nonnull event) {
+						// capture user feedback
+						FeedbackController *fbcon = [[FeedbackController alloc] init];
+						[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
+						if([fbcon waitForCompletion]) {
+							SentryUserFeedback *userFeedback = [[SentryUserFeedback alloc] initWithEventId:[event eventId]];
+
+							userFeedback.comments = [fbcon comments];
+							userFeedback.email = [fbcon email];
+							userFeedback.name = [fbcon name];
+
+							[SentrySDK captureUserFeedback:userFeedback];
+						}
+					};
+				}];
+			} else {
+				if([SentrySDK isEnabled]) {
+					[SentrySDK close];
+				}
+			}
+			consentLastEnabled = enabled;
+		}
 	} else if([keyPath isEqualToString:@"playlistController.currentEntry"]) {
 		PlaylistEntry *entry = playlistController.currentEntry;
 		NSString *appTitle = NSLocalizedString(@"CogTitle", @"");

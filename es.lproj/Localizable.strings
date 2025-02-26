@@ -2,8 +2,8 @@
 "CogTitle" = "Cog";
 "ConsentNo" = "No";
 "ConsentYes" = "Sí";
-"CrashlyticsConsentText" = "¿Te gustaría permitir que Crashlytics envíe informes de fallos? Puedes volver a desactivarlo en Preferencias. No te volveremos a preguntar.";
-"CrashlyticsConsentTitle" = "Colección de fallos de Crashlytics";
+"SentryConsentText" = "¿Te gustaría permitir que Sentry envíe informes de fallos? Puedes volver a desactivarlo en Preferencias. No te volveremos a preguntar.";
+"CrashlyticsConsentTitle" = "Colección de fallos de Sentry";
 "ErrorInvalidTrackId" = "ID de pista inválida enviada a la solicitud de SQLite.";
 "ErrorMessageBadFile" = "No se han podido analizar los metadatos de un archivo defectuoso.";
 "ErrorMetadata" = "No se pueden recuperar los metadatos.";
