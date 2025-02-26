@@ -203,6 +203,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				started = NO;
 				restarted = NO;
 				lastClippedSampleRate = 0.0;
+				inputRemain = 0;
 				[outputLock unlock];
 			}
 
@@ -618,12 +619,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		@autoreleasepool {
 			while(renderedSamples < frameCount) {
-				if(_self->muted) {
-					inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
-					inputData->mBuffers[0].mNumberChannels = channels;
-					bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
-					return 0;
-				}
 				int inputRemain = _self->inputRemain;
 				while(!inputRemain) {
 					inputRemain = [_self renderAndConvert];
@@ -744,17 +739,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)setVolume:(double)v {
 	volume = v * 0.01f;
-}
-
-- (void)mute {
-	if(!muted) {
-		muted = YES;
-		inputRemain = 0;
-	}
-}
-
-- (void)unmute {
-	muted = NO;
 }
 
 - (double)latency {

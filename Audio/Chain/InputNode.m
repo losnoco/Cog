@@ -160,30 +160,11 @@ static void *kInputNodeContext = &kInputNodeContext;
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
 		if(shouldSeek == YES) {
 			BufferChain *bufferChain = controller;
-			AudioPlayer *audioPlayer = [controller controller];
-			[audioPlayer mute];
+			AudioPlayer *audioPlayer = [bufferChain controller];
 			OutputNode *outputNode = [audioPlayer output];
-			[outputNode resetBuffer];
 
-			ConverterNode *converter = [bufferChain converter];
-			DSPRubberbandNode *rubberband = [bufferChain rubberband];
-			DSPFSurroundNode *fsurround = [bufferChain fsurround];
-			DSPEqualizerNode *equalizer = [bufferChain equalizer];
-			DSPHRTFNode *hrtf = [bufferChain hrtf];
-			DSPDownmixNode *downmix = [bufferChain downmix];
-			VisualizationNode *visualization = [bufferChain visualization];
 			DLog(@"SEEKING! Resetting Buffer");
-
-			// This resets the converter's buffer
-			[self resetBuffer];
-			[converter resetBuffer];
-			[converter inputFormatDidChange:[bufferChain inputFormat] inputConfig:[bufferChain inputConfig]];
-			[rubberband resetBuffer];
-			[fsurround resetBuffer];
-			[equalizer resetBuffer];
-			[hrtf resetBuffer];
-			[downmix resetBuffer];
-			[visualization resetBuffer];
+			[outputNode resetBackwards];
 
 			DLog(@"Reset buffer!");
 
@@ -199,8 +180,6 @@ static void *kInputNodeContext = &kInputNodeContext;
 			if(seekError) {
 				[controller setError:YES];
 			}
-
-			[audioPlayer unmute];
 		}
 
 		AudioChunk *chunk;
@@ -214,6 +193,11 @@ static void *kInputNodeContext = &kInputNodeContext;
 				chunk = nil;
 			}
 		} else {
+			if(chunk) {
+				@autoreleasepool {
+					chunk = nil;
+				}
+			}
 			DLog(@"End of stream? %@", [self properties]);
 
 			endOfStream = YES;

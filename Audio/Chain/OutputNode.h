@@ -62,9 +62,6 @@
 - (double)volume;
 - (void)setVolume:(double)v;
 
-- (void)mute;
-- (void)unmute;
-
 - (void)setShouldContinue:(BOOL)s;
 
 - (void)setShouldPlayOutBuffer:(BOOL)s;

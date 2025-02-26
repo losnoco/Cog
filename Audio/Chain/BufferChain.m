@@ -230,7 +230,6 @@
 	AudioPlayer * audioPlayer = controller;
 	OutputNode *outputNode = [audioPlayer output];
 
-	[audioPlayer mute];
 	[inputNode seek:frame];
 }
 

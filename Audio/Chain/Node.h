@@ -66,6 +66,7 @@
 
 - (void)setShouldReset:(BOOL)s;
 - (BOOL)shouldReset;
+- (void)resetBackwards;
 
 - (void)setPreviousNode:(id _Nullable)p;
 - (id _Nullable)previousNode;

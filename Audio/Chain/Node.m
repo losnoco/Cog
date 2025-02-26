@@ -523,6 +523,20 @@
 	}
 }
 
+- (void)lockedResetBuffer {
+	@autoreleasepool {
+		[buffer reset];
+	}
+}
+
+- (void)unlockedResetBuffer {
+	@autoreleasepool {
+		[accessLock lock];
+		[buffer reset];
+		[accessLock unlock];
+	}
+}
+
 // Implementations should override
 - (BOOL)paused {
 	return NO;
@@ -554,6 +568,25 @@
 // Buffering nodes should implement this
 - (double)secondsBuffered {
 	return 0.0;
+}
+
+// Reset everything in the chain
+- (void)resetBackwards {
+	[accessLock lock];
+	if(buffer) {
+		[self lockedResetBuffer];
+		[writeSemaphore signal];
+		[readSemaphore signal];
+	}
+	Node *node = previousNode;
+	while(node) {
+		[node unlockedResetBuffer];
+		[node setShouldReset:YES];
+		[[node writeSemaphore] signal];
+		[[node readSemaphore] signal];
+		node = [node previousNode];
+	}
+	[accessLock unlock];
 }
 
 @end
