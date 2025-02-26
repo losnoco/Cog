@@ -461,7 +461,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="52" name="value" keyPath="values.crashlyticsConsented" id="GQu-a0-JJs"/>
+                        <binding destination="52" name="value" keyPath="values.sentryConsented" id="7I0-0u-zKC"/>
                     </connections>
                 </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="crf-C9-9YF">

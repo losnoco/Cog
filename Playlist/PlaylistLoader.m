@@ -41,8 +41,6 @@
 
 #import "SandboxBroker.h"
 
-@import Firebase;
-
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @implementation PlaylistLoader
@@ -748,7 +746,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 			[op addExecutionBlock:^{
 				@autoreleasepool {
 					DLog(@"Loading metadata for %@", url);
-					[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", url];
+					//[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", url];
 
 					NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:url];
 					if(entryProperties == nil)
@@ -883,7 +881,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		PlaylistEntry *pe = [entries objectAtIndex:idx];
 
 		DLog(@"Loading metadata for %@", pe.url);
-		[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", pe.url];
+		//[[FIRCrashlytics crashlytics] logWithFormat:@"Loading metadata for %@", pe.url];
 
 		NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.url];
 		if(entryProperties == nil)

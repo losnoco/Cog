@@ -1,18 +1,18 @@
 
-/* Class = "NSWindow"; title = "Send Feedback"; ObjectID = "1"; */
-"1.title" = "Enviar comentarios";
+/* Class = "NSWindow"; title = "Send Crash Feedback"; ObjectID = "1"; */
+"1.title" = "Enviar comentarios por fallo";
 
 /* Class = "NSButtonCell"; title = "Send"; ObjectID = "17"; */
 "17.title" = "Enviar";
 
-/* Class = "NSTextFieldCell"; title = "Subject:"; ObjectID = "18"; */
-"18.title" = "Asunto:";
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "18"; */
+"18.title" = "Nombre:";
 
-/* Class = "NSTextFieldCell"; title = "Message:"; ObjectID = "19"; */
-"19.title" = "Mensaje:";
+/* Class = "NSTextFieldCell"; title = "Describe what you were doing:"; ObjectID = "19"; */
+"19.title" = "Describe lo que estabas haciendo:";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "20"; */
 "20.title" = "Cancelar";
 
 /* Class = "NSTextFieldCell"; title = "Email:"; ObjectID = "22"; */
-"22.title" = "Correo electrónico:";
+"22.title" = "Email:";
