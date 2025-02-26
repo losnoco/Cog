@@ -6,7 +6,7 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import "ChunkList.h"
+#import <CogAudio/ChunkList.h>
 #import <CogAudio/CogSemaphore.h>
 #import <Cocoa/Cocoa.h>
 

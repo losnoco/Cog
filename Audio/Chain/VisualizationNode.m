@@ -13,7 +13,7 @@
 
 #import "Downmix.h"
 
-#import <CogAudio/CogAudio-Swift.h>
+#import <CogAudio/VisualizationController.h>
 
 #import "BufferChain.h"
 

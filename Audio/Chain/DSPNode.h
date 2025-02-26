@@ -8,7 +8,7 @@
 #ifndef DSPNode_h
 #define DSPNode_h
 
-#import "Node.h"
+#import <CogAudio/Node.h>
 
 @interface DSPNode : Node {
 }

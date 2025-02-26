@@ -8,7 +8,7 @@
 #ifndef DSPFSurroundNode_h
 #define DSPFSurroundNode_h
 
-#import "DSPNode.h"
+#import <CogAudio/DSPNode.h>
 
 @interface DSPFSurroundNode : DSPNode {
 }

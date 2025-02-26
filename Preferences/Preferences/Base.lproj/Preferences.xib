@@ -1279,12 +1279,12 @@
                         <binding destination="0rf-6O-MPh" name="content" keyPath="arrangedObjects" id="1Lg-gE-DdG"/>
                         <binding destination="0rf-6O-MPh" name="contentValues" keyPath="arrangedObjects.name" previousBinding="37N-3K-rq6" id="kLx-xv-a24"/>
                         <binding destination="0rf-6O-MPh" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="1Lg-gE-DdG" id="37N-3K-rq6"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.rubberbandDetector" previousBinding="kLx-xv-a24" id="MQw-g6-ogU"/>
                         <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="YLJ-Qx-vXy">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">RubberbandEngineR3Transformer</string>
                             </dictionary>
                         </binding>
-                        <binding destination="52" name="selectedObject" keyPath="values.rubberbandDetector" previousBinding="kLx-xv-a24" id="MQw-g6-ogU"/>
                     </connections>
                 </popUpButton>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ORM-SO-bUh">
@@ -1531,12 +1531,12 @@
                         <binding destination="Dfm-y4-7ki" name="content" keyPath="arrangedObjects" id="bas-JW-4u4"/>
                         <binding destination="Dfm-y4-7ki" name="contentValues" keyPath="arrangedObjects.name" previousBinding="K1C-oq-2vZ" id="8Ja-Tu-lo2"/>
                         <binding destination="Dfm-y4-7ki" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="bas-JW-4u4" id="K1C-oq-2vZ"/>
+                        <binding destination="52" name="selectedObject" keyPath="values.rubberbandChannels" previousBinding="8Ja-Tu-lo2" id="Xyj-me-7r1"/>
                         <binding destination="52" name="enabled" keyPath="values.rubberbandEngine" id="hZx-A7-Nvg">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">RubberbandEngineEnabledTransformer</string>
                             </dictionary>
                         </binding>
-                        <binding destination="52" name="selectedObject" keyPath="values.rubberbandChannels" previousBinding="8Ja-Tu-lo2" id="Xyj-me-7r1"/>
                     </connections>
                 </popUpButton>
             </subviews>

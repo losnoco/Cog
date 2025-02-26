@@ -10,7 +10,13 @@
 
 #import "fft.h"
 
-@implementation VisualizationController
+@implementation VisualizationController {
+	double sampleRate;
+	double latency;
+	float *visAudio;
+	int visAudioCursor, visAudioSize;
+	uint64_t visSamplesPosted;
+}
 
 static VisualizationController *_sharedController = nil;
 
@@ -27,17 +33,25 @@ static VisualizationController *_sharedController = nil;
 	self = [super init];
 	if(self) {
 		visAudio = NULL;
+		visAudioSize = 0;
 		latency = 0;
-		visAudioTemp = (float *) calloc(sizeof(float), 4096);
-		if(!visAudioTemp) {
-			return nil;
-		}
 	}
 	return self;
 }
 
 - (void)dealloc {
 	fft_free();
+}
+
+- (void)reset {
+	@synchronized (self) {
+		latency = 0;
+		visAudioCursor = 0;
+		visSamplesPosted = 0;
+		if(visAudio && visAudioSize) {
+			bzero(visAudio, sizeof(float) * visAudioSize);
+		}
+	}
 }
 
 - (void)postSampleRate:(double)sampleRate {
@@ -53,6 +67,12 @@ static VisualizationController *_sharedController = nil;
 				self->visAudio = visAudio;
 				self->visAudioSize = visAudioSize;
 				visAudioCursor %= visAudioSize;
+			} else {
+				if(self->visAudio) {
+					free(self->visAudio);
+					self->visAudio = NULL;
+				}
+				self->visAudioSize = 0;
 			}
 		}
 	}
@@ -60,6 +80,9 @@ static VisualizationController *_sharedController = nil;
 
 - (void)postVisPCM:(const float *)inPCM amount:(int)amount {
 	@synchronized(self) {
+		if(!visAudioSize) {
+			return;
+		}
 		int samplesRead = 0;
 		while(amount > 0) {
 			int amountToCopy = (int)(visAudioSize - visAudioCursor);
@@ -69,6 +92,7 @@ static VisualizationController *_sharedController = nil;
 			if(visAudioCursor >= visAudioSize) visAudioCursor -= visAudioSize;
 			amount -= amountToCopy;
 			samplesRead += amountToCopy;
+			visSamplesPosted += amountToCopy;
 		}
 	}
 }
@@ -84,6 +108,10 @@ static VisualizationController *_sharedController = nil;
 	}
 }
 
+- (UInt64)samplesPosted {
+	return visSamplesPosted;
+}
+
 - (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT latencyOffset:(double)latency {
 	if(!outPCM && !outFFT) return;
 
@@ -93,7 +121,12 @@ static VisualizationController *_sharedController = nil;
 		return;
 	}
 
-	if(!outPCM) outPCM = &visAudioTemp[0];
+	void *visAudioTemp = calloc(sizeof(float), 4096);
+	if(!visAudioTemp) {
+		if(outPCM) bzero(outPCM, sizeof(float) * 4096);
+		if(outFFT) bzero(outFFT, sizeof(float) * 2048);
+		return;
+	}
 
 	@synchronized(self) {
 		if(!sampleRate) {
@@ -103,11 +136,14 @@ static VisualizationController *_sharedController = nil;
 			}
 			return;
 		}
-		int latencySamples = (int)(sampleRate * (self->latency + latency));
+		int latencySamples = (int)(sampleRate * (self->latency + latency)) + 2048;
 		if(latencySamples < 4096) latencySamples = 4096;
 		int readCursor = visAudioCursor - latencySamples;
 		int samples = 4096;
 		int samplesRead = 0;
+		if(latencySamples + samples > visAudioSize) {
+			samples = (int)(visAudioSize - latencySamples);
+		}
 		while(readCursor < 0)
 			readCursor += visAudioSize;
 		while(readCursor >= visAudioSize)
@@ -115,16 +151,21 @@ static VisualizationController *_sharedController = nil;
 		while(samples > 0) {
 			int samplesToRead = (int)(visAudioSize - readCursor);
 			if(samplesToRead > samples) samplesToRead = samples;
-			cblas_scopy(samplesToRead, visAudio + readCursor, 1, outPCM + samplesRead, 1);
+			cblas_scopy(samplesToRead, visAudio + readCursor, 1, visAudioTemp + samplesRead, 1);
 			samplesRead += samplesToRead;
 			readCursor += samplesToRead;
 			samples -= samplesToRead;
 			if(readCursor >= visAudioSize) readCursor -= visAudioSize;
 		}
 	}
-	if(outFFT) {
-		fft_calculate(outPCM, outFFT, 2048);
+	if(outPCM) {
+		cblas_scopy(4096, visAudioTemp, 1, outPCM, 1);
 	}
+	if(outFFT) {
+		fft_calculate(visAudioTemp, outFFT, 2048);
+	}
+
+	free(visAudioTemp);
 }
 
 @end

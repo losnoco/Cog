@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -47,33 +47,32 @@
 		8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */ = {isa = PBXBuildFile; fileRef = 8328995527CB51B700D7F028 /* SHA256Digest.h */; };
 		8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8328995627CB51B700D7F028 /* SHA256Digest.m */; };
 		8328995A27CB51C900D7F028 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8328995927CB51C900D7F028 /* Security.framework */; };
-		833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 833738E92D5EA52500278628 /* DSPDownmixNode.h */; };
+		833442422D6EFA6700C51D38 /* VisualizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 833442402D6EFA6700C51D38 /* VisualizationController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		833442432D6EFA6700C51D38 /* VisualizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 833442412D6EFA6700C51D38 /* VisualizationController.m */; };
+		833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 833738E92D5EA52500278628 /* DSPDownmixNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		833738EC2D5EA53500278628 /* DSPDownmixNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 833738EB2D5EA53500278628 /* DSPDownmixNode.m */; };
 		833738EF2D5EA5B700278628 /* Downmix.m in Sources */ = {isa = PBXBuildFile; fileRef = 833738EE2D5EA5B700278628 /* Downmix.m */; };
-		833738F02D5EA5B700278628 /* Downmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 833738ED2D5EA5B700278628 /* Downmix.h */; };
+		833738F02D5EA5B700278628 /* Downmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 833738ED2D5EA5B700278628 /* Downmix.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */; };
 		8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */; };
 		834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A41A5287A90AB00EB9D9B /* freesurround_decoder.h */; };
 		834A41AA287A90AB00EB9D9B /* freesurround_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834A41A6287A90AB00EB9D9B /* freesurround_decoder.cpp */; };
 		834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834A41A7287A90AB00EB9D9B /* channelmaps.cpp */; };
 		834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A41A8287A90AB00EB9D9B /* channelmaps.h */; };
-		834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EA27AF8F380063BC83 /* AudioChunk.h */; };
+		834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EA27AF8F380063BC83 /* AudioChunk.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EC27AF91220063BC83 /* AudioChunk.m */; };
-		834FD4F027AF93680063BC83 /* ChunkList.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EE27AF93680063BC83 /* ChunkList.h */; };
+		834FD4F027AF93680063BC83 /* ChunkList.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EE27AF93680063BC83 /* ChunkList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		834FD4F127AF93680063BC83 /* ChunkList.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EF27AF93680063BC83 /* ChunkList.m */; };
 		8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8350416C28646149006B32CC /* CoreMedia.framework */; };
 		835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AF279811A500E28EAE /* hdcd_decode2.h */; };
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
 		835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */; };
-		835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD2662ACAF1D90057E319 /* OutputCoreAudio.h */; };
-		835DD2702ACAF5AD0057E319 /* LICENSE.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 835DD26B2ACAF5AD0057E319 /* LICENSE.LGPL */; };
-		835DD2712ACAF5AD0057E319 /* License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 835DD26C2ACAF5AD0057E319 /* License.txt */; };
+		835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD2662ACAF1D90057E319 /* OutputCoreAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		835DD2722ACAF5AD0057E319 /* lpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD26D2ACAF5AD0057E319 /* lpc.h */; };
 		835DD2732ACAF5AD0057E319 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 835DD26E2ACAF5AD0057E319 /* util.h */; };
 		835DD2742ACAF5AD0057E319 /* lpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 835DD26F2ACAF5AD0057E319 /* lpc.c */; };
 		835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */ = {isa = PBXBuildFile; fileRef = 835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */; };
 		835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */; };
-		836DF618298F6F5F00CD0580 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836DF615298F6E8900CD0580 /* libsoxr.0.dylib */; };
 		83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7B27AA0D8A0003F694 /* Accelerate.framework */; };
 		83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83725A7C27AA0D8E0003F694 /* AVFoundation.framework */; };
 		8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 8377C64B27B8C51500E8BC0F /* fft_accelerate.c */; };
@@ -85,34 +84,35 @@
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
-		839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B83F9286D91ED00F529EE /* VisualizationController.swift */; };
 		839E56E52879450300DFB5F4 /* HrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E12879450300DFB5F4 /* HrtfData.h */; };
 		839E56E62879450300DFB5F4 /* Endianness.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E22879450300DFB5F4 /* Endianness.h */; };
 		839E56E72879450300DFB5F4 /* HrtfData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839E56E32879450300DFB5F4 /* HrtfData.cpp */; };
 		839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E42879450300DFB5F4 /* IHrtfData.h */; };
 		839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E928794F6300DFB5F4 /* HrtfTypes.h */; };
 		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
-		839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E899D2D5DB9D500A13526 /* VisualizationNode.h */; };
+		839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E899D2D5DB9D500A13526 /* VisualizationNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E899F2D5DBA1700A13526 /* VisualizationNode.m */; };
 		83A3496A2D5C3F430096D530 /* DSPRubberbandNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A349682D5C3F430096D530 /* DSPRubberbandNode.m */; };
-		83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349672D5C3F430096D530 /* DSPRubberbandNode.h */; };
-		83A3496D2D5C40490096D530 /* DSPFSurroundNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3496C2D5C40490096D530 /* DSPFSurroundNode.h */; };
+		83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349672D5C3F430096D530 /* DSPRubberbandNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83A3496D2D5C40490096D530 /* DSPFSurroundNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A3496C2D5C40490096D530 /* DSPFSurroundNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A3496F2D5C405E0096D530 /* DSPFSurroundNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3496E2D5C405E0096D530 /* DSPFSurroundNode.m */; };
 		83A349722D5C41810096D530 /* FSurroundFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83A349712D5C41810096D530 /* FSurroundFilter.mm */; };
-		83A349732D5C41810096D530 /* FSurroundFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349702D5C41810096D530 /* FSurroundFilter.h */; };
-		83A349752D5C50A10096D530 /* DSPHRTFNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349742D5C50A10096D530 /* DSPHRTFNode.h */; };
+		83A349732D5C41810096D530 /* FSurroundFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349702D5C41810096D530 /* FSurroundFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83A349752D5C50A10096D530 /* DSPHRTFNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349742D5C50A10096D530 /* DSPHRTFNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A349772D5C50B20096D530 /* DSPHRTFNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A349762D5C50B20096D530 /* DSPHRTFNode.m */; };
 		83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */; };
-		83F843202D5C6272008C123B /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F8431E2D5C6272008C123B /* HeadphoneFilter.h */; };
+		83F843202D5C6272008C123B /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F8431E2D5C6272008C123B /* HeadphoneFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83F843212D5C6272008C123B /* HeadphoneFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */; };
-		83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F843222D5C66DA008C123B /* DSPEqualizerNode.h */; };
+		83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F843222D5C66DA008C123B /* DSPEqualizerNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83F843252D5C66E9008C123B /* DSPEqualizerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F843242D5C66E9008C123B /* DSPEqualizerNode.m */; };
-		83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FFED502D5B08BC0044CCAF /* DSPNode.h */; };
+		83F9FFF62D6EC43900026576 /* soxr.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F9FFF02D6EC43900026576 /* soxr.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83F9FFF82D6EC43900026576 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */; };
+		83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FFED502D5B08BC0044CCAF /* DSPNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83FFED532D5B09320044CCAF /* DSPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83FFED522D5B09320044CCAF /* DSPNode.m */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
-		8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC1225D0B993BD500C5B3AD /* ConverterNode.h */; };
+		8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC1225D0B993BD500C5B3AD /* ConverterNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC1225E0B993BD500C5B3AD /* ConverterNode.m */; };
 		B0575F2D0D687A0800411D77 /* Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = B0575F2C0D687A0800411D77 /* Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0575F300D687A4000411D77 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0575F2F0D687A4000411D77 /* Helper.m */; };
@@ -175,6 +175,8 @@
 		8328995527CB51B700D7F028 /* SHA256Digest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = ../../Utils/SHA256Digest.h; sourceTree = "<group>"; };
 		8328995627CB51B700D7F028 /* SHA256Digest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = ../../Utils/SHA256Digest.m; sourceTree = "<group>"; };
 		8328995927CB51C900D7F028 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		833442402D6EFA6700C51D38 /* VisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationController.h; sourceTree = "<group>"; };
+		833442412D6EFA6700C51D38 /* VisualizationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationController.m; sourceTree = "<group>"; };
 		833738E92D5EA52500278628 /* DSPDownmixNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPDownmixNode.h; sourceTree = "<group>"; };
 		833738EB2D5EA53500278628 /* DSPDownmixNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPDownmixNode.m; sourceTree = "<group>"; };
 		833738ED2D5EA5B700278628 /* Downmix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Downmix.h; sourceTree = "<group>"; };
@@ -201,7 +203,6 @@
 		835DD26F2ACAF5AD0057E319 /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lpc.c; sourceTree = "<group>"; };
 		835FAC5C27BCA14D00BA8562 /* BadSampleCleaner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BadSampleCleaner.h; path = Utils/BadSampleCleaner.h; sourceTree = SOURCE_ROOT; };
 		835FAC5D27BCA14D00BA8562 /* BadSampleCleaner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = BadSampleCleaner.m; path = Utils/BadSampleCleaner.m; sourceTree = SOURCE_ROOT; };
-		836DF615298F6E8900CD0580 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsoxr.0.dylib; path = ../ThirdParty/soxr/lib/libsoxr.0.dylib; sourceTree = "<group>"; };
 		83725A7B27AA0D8A0003F694 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83725A7C27AA0D8E0003F694 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8377C64B27B8C51500E8BC0F /* fft_accelerate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
@@ -213,7 +214,6 @@
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
-		839B83F9286D91ED00F529EE /* VisualizationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationController.swift; sourceTree = "<group>"; };
 		839E56E12879450300DFB5F4 /* HrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfData.h; sourceTree = "<group>"; };
 		839E56E22879450300DFB5F4 /* Endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Endianness.h; sourceTree = "<group>"; };
 		839E56E32879450300DFB5F4 /* HrtfData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HrtfData.cpp; sourceTree = "<group>"; };
@@ -235,6 +235,9 @@
 		83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadphoneFilter.mm; sourceTree = "<group>"; };
 		83F843222D5C66DA008C123B /* DSPEqualizerNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPEqualizerNode.h; sourceTree = "<group>"; };
 		83F843242D5C66E9008C123B /* DSPEqualizerNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPEqualizerNode.m; sourceTree = "<group>"; };
+		83F9FFF02D6EC43900026576 /* soxr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = soxr.h; sourceTree = "<group>"; };
+		83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsoxr.0.dylib; sourceTree = "<group>"; };
+		83F9FFF42D6EC43900026576 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		83FFED502D5B08BC0044CCAF /* DSPNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPNode.h; sourceTree = "<group>"; };
 		83FFED522D5B09320044CCAF /* DSPNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPNode.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -255,11 +258,11 @@
 			files = (
 				8328995A27CB51C900D7F028 /* Security.framework in Frameworks */,
 				83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */,
+				83F9FFF82D6EC43900026576 /* libsoxr.0.dylib in Frameworks */,
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */,
 				83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */,
 				17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */,
-				836DF618298F6F5F00CD0580 /* libsoxr.0.dylib in Frameworks */,
 				17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */,
 				17D21DAF0B8BE76800D1EBDE /* CoreAudio.framework in Frameworks */,
 				17D21DB00B8BE76800D1EBDE /* CoreAudioKit.framework in Frameworks */,
@@ -356,7 +359,6 @@
 			isa = PBXGroup;
 			children = (
 				838A33712D06A97D00D0D770 /* librubberband.3.dylib */,
-				836DF615298F6E8900CD0580 /* libsoxr.0.dylib */,
 				83725A7B27AA0D8A0003F694 /* Accelerate.framework */,
 				17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */,
 				17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */,
@@ -408,6 +410,7 @@
 		17D21CD80B8BE5B400D1EBDE /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				83F9FFF52D6EC43900026576 /* soxr */,
 				835DD2692ACAF5AD0057E319 /* lvqcl */,
 				834A41A4287A90AB00EB9D9B /* fsurround */,
 				839E56E02879450300DFB5F4 /* hrtf */,
@@ -520,7 +523,8 @@
 		8377C64F27B8CAAB00E8BC0F /* Visualization */ = {
 			isa = PBXGroup;
 			children = (
-				839B83F9286D91ED00F529EE /* VisualizationController.swift */,
+				833442402D6EFA6700C51D38 /* VisualizationController.h */,
+				833442412D6EFA6700C51D38 /* VisualizationController.m */,
 			);
 			path = Visualization;
 			sourceTree = "<group>";
@@ -560,6 +564,33 @@
 			path = DSP;
 			sourceTree = "<group>";
 		};
+		83F9FFF12D6EC43900026576 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				83F9FFF02D6EC43900026576 /* soxr.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		83F9FFF32D6EC43900026576 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		83F9FFF52D6EC43900026576 /* soxr */ = {
+			isa = PBXGroup;
+			children = (
+				83F9FFF12D6EC43900026576 /* include */,
+				83F9FFF32D6EC43900026576 /* lib */,
+				83F9FFF42D6EC43900026576 /* README.md */,
+			);
+			name = soxr;
+			path = ../ThirdParty/soxr;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -567,42 +598,47 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */,
+				833442422D6EFA6700C51D38 /* VisualizationController.h in Headers */,
+				833738F02D5EA5B700278628 /* Downmix.h in Headers */,
+				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
 				83F843202D5C6272008C123B /* HeadphoneFilter.h in Headers */,
+				83A349732D5C41810096D530 /* FSurroundFilter.h in Headers */,
+				839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */,
 				17D21CA10B8BE4BA00D1EBDE /* BufferChain.h in Headers */,
-				83A3496D2D5C40490096D530 /* DSPFSurroundNode.h in Headers */,
 				831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */,
+				835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */,
 				834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */,
+				83A3496D2D5C40490096D530 /* DSPFSurroundNode.h in Headers */,
+				83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
-				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
-				835DD2732ACAF5AD0057E319 /* util.h in Headers */,
+				833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */,
 				83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */,
+				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
+				834FD4F027AF93680063BC83 /* ChunkList.h in Headers */,
+				835DD2732ACAF5AD0057E319 /* util.h in Headers */,
 				17D21CA70B8BE4BA00D1EBDE /* Node.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				17D21CA90B8BE4BA00D1EBDE /* OutputNode.h in Headers */,
+				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
 				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
 				839E56E52879450300DFB5F4 /* HrtfData.h in Headers */,
-				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
-				833738F02D5EA5B700278628 /* Downmix.h in Headers */,
+				83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */,
+				839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */,
+				83A349752D5C50A10096D530 /* DSPHRTFNode.h in Headers */,
+				83F9FFF62D6EC43900026576 /* soxr.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
-				835DD2682ACAF1D90057E319 /* OutputCoreAudio.h in Headers */,
 				839E56E62879450300DFB5F4 /* Endianness.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				835DD2722ACAF5AD0057E319 /* lpc.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
 				831A50182865A8B30049CFE4 /* rsstate.h in Headers */,
-				834FD4F027AF93680063BC83 /* ChunkList.h in Headers */,
 				17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */,
-				83A349752D5C50A10096D530 /* DSPHRTFNode.h in Headers */,
 				17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */,
 				8328995727CB51B700D7F028 /* SHA256Digest.h in Headers */,
-				834FD4EB27AF8F380063BC83 /* AudioChunk.h in Headers */,
-				83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */,
 				17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */,
-				839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */,
 				8347C7412796C58800FA8A7D /* NSFileHandle+CreateFile.h in Headers */,
-				83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */,
+				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */,
 				839065F32853338700636FBB /* dsd2float.h in Headers */,
@@ -610,14 +646,11 @@
 				839366671815923C006DD712 /* CogPluginMulti.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
 				835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */,
-				8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */,
-				83A349732D5C41810096D530 /* FSurroundFilter.h in Headers */,
 				8384912718080FF100E7332D /* Logging.h in Headers */,
 				8377C64E27B8C54400E8BC0F /* fft.h in Headers */,
 				835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */,
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
-				833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */,
 				07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */,
 				839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */,
 			);
@@ -626,9 +659,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* CogAudio Framework */ = {
+		8DC2EF4F0486A6940098B216 /* CogAudio */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio Framework" */;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio" */;
 			buildPhases = (
 				8DC2EF500486A6940098B216 /* Headers */,
 				8DC2EF540486A6940098B216 /* Sources */,
@@ -640,7 +673,7 @@
 			);
 			dependencies = (
 			);
-			name = "CogAudio Framework";
+			name = CogAudio;
 			productInstallPath = "$(HOME)/Library/Frameworks";
 			productName = CogAudio;
 			productReference = 8DC2EF5B0486A6940098B216 /* CogAudio.framework */;
@@ -652,7 +685,8 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1400;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
 						LastSwiftMigration = 1330;
@@ -673,7 +707,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* CogAudio Framework */,
+				8DC2EF4F0486A6940098B216 /* CogAudio */,
 			);
 		};
 /* End PBXProject section */
@@ -683,8 +717,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				835DD2712ACAF5AD0057E319 /* License.txt in Resources */,
-				835DD2702ACAF5AD0057E319 /* LICENSE.LGPL in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +735,7 @@
 				83F843252D5C66E9008C123B /* DSPEqualizerNode.m in Sources */,
 				834A41AB287A90AB00EB9D9B /* channelmaps.cpp in Sources */,
 				833738EC2D5EA53500278628 /* DSPDownmixNode.m in Sources */,
+				833442432D6EFA6700C51D38 /* VisualizationController.m in Sources */,
 				831A50162865A8800049CFE4 /* rsstate.cpp in Sources */,
 				17D21CA80B8BE4BA00D1EBDE /* Node.m in Sources */,
 				17D21CAA0B8BE4BA00D1EBDE /* OutputNode.m in Sources */,
@@ -711,7 +744,6 @@
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
 				833738EF2D5EA5B700278628 /* Downmix.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */,
-				839B83FA286D91ED00F529EE /* VisualizationController.swift in Sources */,
 				839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				83A3496F2D5C405E0096D530 /* DSPFSurroundNode.m in Sources */,
@@ -751,9 +783,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				DEFINES_MODULE = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -769,15 +802,14 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
-					../ThirdParty/rubberband/lib,
 					../ThirdParty/soxr/lib,
-					"$(PROJECT_DIR)",
+					../ThirdParty/rubberband/lib,
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WARNING_LDFLAGS = "";
@@ -791,9 +823,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -807,15 +840,14 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
-					../ThirdParty/rubberband/lib,
 					../ThirdParty/soxr/lib,
-					"$(PROJECT_DIR)",
+					../ThirdParty/rubberband/lib,
 				);
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
@@ -848,8 +880,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -865,7 +900,9 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
+				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
 			};
 			name = Debug;
@@ -895,8 +932,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_CONFIG_H=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -908,7 +948,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
+				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
 			};
 			name = Release;
@@ -916,7 +959,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio Framework" */ = {
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,

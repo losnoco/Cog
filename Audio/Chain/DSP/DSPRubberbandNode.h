@@ -8,7 +8,7 @@
 #ifndef DSPRubberbandNode_h
 #define DSPRubberbandNode_h
 
-#import "DSPNode.h"
+#import <CogAudio/DSPNode.h>
 
 @interface DSPRubberbandNode : DSPNode {
 }

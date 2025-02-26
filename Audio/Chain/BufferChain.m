@@ -227,9 +227,6 @@
 - (void)seek:(double)time {
 	long frame = (long)round(time * [[[inputNode properties] objectForKey:@"sampleRate"] floatValue]);
 
-	AudioPlayer * audioPlayer = controller;
-	OutputNode *outputNode = [audioPlayer output];
-
 	[inputNode seek:frame];
 }
 

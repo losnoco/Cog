@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1620"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8DC2EF4F0486A6940098B216"
                BuildableName = "CogAudio.framework"
-               BlueprintName = "CogAudio Framework"
+               BlueprintName = "CogAudio"
                ReferencedContainer = "container:CogAudio.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,7 +45,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8DC2EF4F0486A6940098B216"
             BuildableName = "CogAudio.framework"
-            BlueprintName = "CogAudio Framework"
+            BlueprintName = "CogAudio"
             ReferencedContainer = "container:CogAudio.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -61,7 +61,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8DC2EF4F0486A6940098B216"
             BuildableName = "CogAudio.framework"
-            BlueprintName = "CogAudio Framework"
+            BlueprintName = "CogAudio"
             ReferencedContainer = "container:CogAudio.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

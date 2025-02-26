@@ -9,7 +9,7 @@
 
 #import <SceneKit/SceneKit.h>
 
-#import <CogAudio/CogAudio-Swift.h>
+#import <CogAudio/VisualizationController.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -109,7 +109,7 @@
 + (void)globalShowPathSuggester;
 
 - (IBAction)showRubberbandSettings:(id)sender;
-- (void)globalShowRubberbandSettings;
++ (void)globalShowRubberbandSettings;
 
 - (IBAction)checkForUpdates:(id)sender;
 

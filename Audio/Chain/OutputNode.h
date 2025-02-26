@@ -12,8 +12,8 @@
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/AudioHardware.h>
 
-#import "Node.h"
-#import "OutputCoreAudio.h"
+#import <CogAudio/Node.h>
+#import <CogAudio/OutputCoreAudio.h>
 
 @interface OutputNode : Node {
 	AudioStreamBasicDescription format;

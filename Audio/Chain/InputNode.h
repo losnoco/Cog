@@ -12,9 +12,9 @@
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/AudioHardware.h>
 
-#import "AudioDecoder.h"
-#import "Node.h"
-#import "Plugin.h"
+#import <CogAudio/AudioDecoder.h>
+#import <CogAudio/Node.h>
+#import <CogAudio/Plugin.h>
 
 #define INPUT_NODE_SEEK
 

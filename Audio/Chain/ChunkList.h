@@ -8,7 +8,7 @@
 #import <CoreAudio/CoreAudio.h>
 #import <Foundation/Foundation.h>
 
-#import "AudioChunk.h"
+#import <CogAudio/AudioChunk.h>
 
 #import <CogAudio/CogSemaphore.h>
 
