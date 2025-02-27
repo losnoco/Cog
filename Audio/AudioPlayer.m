@@ -78,6 +78,7 @@
 		output = [[OutputNode alloc] initWithController:self previous:nil];
 	}
 	[output setup];
+	[output setVolume:volume];
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
