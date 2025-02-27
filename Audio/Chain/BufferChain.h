@@ -107,6 +107,4 @@
 
 - (double)getPostVisLatency;
 
-- (void)setVolume:(double)v;
-
 @end
