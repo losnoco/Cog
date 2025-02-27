@@ -19,9 +19,42 @@
 
 #define ST_BUFF 2048
 
+@implementation FFMPEGReader
+
+- (id)initWithFile:(id<CogSource>)f {
+	self = [super init];
+	if(self) {
+		file = f;
+		cachedSize = NO;
+		size = 0;
+	}
+	return self;
+}
+
+- (id<CogSource>)file {
+	return file;
+}
+
+- (int64_t)size {
+	if(!cachedSize) {
+		if([file seekable]) {
+			int64_t curOffset = [file tell];
+			[file seek:0 whence:SEEK_END];
+			size = [file tell];
+			[file seek:curOffset whence:SEEK_SET];
+		} else {
+			size = -1;
+		}
+		cachedSize = YES;
+	}
+	return size;
+}
+
+@end
+
 int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size) {
-	id source = (__bridge id)opaque;
-	long sizeRead = [source read:buf amount:buf_size];
+	FFMPEGReader *source = (__bridge FFMPEGReader*)opaque;
+	long sizeRead = [[source file] read:buf amount:buf_size];
 	if(sizeRead == 0) return AVERROR_EOF;
 	return (int)sizeRead;
 }
@@ -31,19 +64,13 @@ int ffmpeg_write(void *opaque, const uint8_t *buf, int buf_size) {
 }
 
 int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
-	id source = (__bridge id)opaque;
+	FFMPEGReader *source = (__bridge FFMPEGReader*)opaque;
 	if(whence & AVSEEK_SIZE) {
-		if([source seekable]) {
-			int64_t curOffset = [source tell];
-			[source seek:0 whence:SEEK_END];
-			int64_t size = [source tell];
-			[source seek:curOffset whence:SEEK_SET];
-			return size;
-		}
-		return -1;
+		return [source size];
 	}
 	whence &= ~(AVSEEK_SIZE | AVSEEK_FORCE);
-	return [source seekable] ? ([source seek:offset whence:whence] ? [source tell] : -1) : -1;
+	id<CogSource> file = [source file];
+	return [file seekable] ? ([file seek:offset whence:whence] ? [file tell] : -1) : -1;
 }
 
 @implementation FFMPEGDecoder
@@ -131,7 +158,9 @@ static uint8_t reverse_bits[0x100];
 			return NO;
 		}
 
-		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
+		reader = [[FFMPEGReader alloc] initWithFile:source];
+
+		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
 		if(!ioCtx) {
 			ALog(@"Unable to create AVIO context");
 			return NO;

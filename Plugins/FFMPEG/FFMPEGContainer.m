@@ -51,6 +51,8 @@
 
 	uint8_t *buffer = NULL;
 
+	FFMPEGReader *reader = nil;
+
 	// register all available codecs
 
 	if(([[url scheme] isEqualToString:@"http"] ||
@@ -80,7 +82,9 @@
 			goto exit;
 		}
 
-		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)source, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
+		reader = [[FFMPEGReader alloc] initWithFile:source];
+
+		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
 		if(!ioCtx) {
 			ALog(@"Unable to create AVIO context");
 			goto exit;

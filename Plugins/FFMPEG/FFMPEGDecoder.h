@@ -13,12 +13,27 @@
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 
+@interface FFMPEGReader : NSObject {
+	id<CogSource> file;
+
+	BOOL cachedSize;
+	int64_t size;
+}
+
+- (id)initWithFile:(id<CogSource>)f;
+
+- (id<CogSource>)file;
+- (int64_t)size;
+
+@end
+
 extern int ffmpeg_read(void *opaque, uint8_t *buf, int buf_size);
 extern int ffmpeg_write(void *opaque, const uint8_t *buf, int buf_size);
 int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 
 @interface FFMPEGDecoder : NSObject <CogDecoder> {
 	id<CogSource> source;
+	FFMPEGReader *reader;
 	BOOL seekable;
 	int channels;
 	uint32_t channelConfig;
