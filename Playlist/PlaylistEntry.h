@@ -25,6 +25,7 @@
 + (NSSet *_Nonnull)keyPathsForValuesAffectingAlbumArt;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingTrackText;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingLengthText;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingLengthInfo;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingYearText;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingCuesheetPresent;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingGainCorrection;
@@ -42,6 +43,7 @@
 @property(nonatomic, readonly) NSString *_Nonnull positionText;
 
 @property(nonatomic, readonly) NSString *_Nonnull lengthText;
+@property(nonatomic, readonly) NSString *_Nonnull lengthInfo;
 
 @property(nonatomic, readonly) NSString *_Nonnull yearText;
 

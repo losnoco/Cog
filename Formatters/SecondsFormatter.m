@@ -99,3 +99,83 @@
 }
 
 @end
+
+@implementation SecondsFractionFormatter
+
+- (NSString *)stringForObjectValue:(id)object {
+	NSString *result = nil;
+	double value;
+	unsigned days = 0;
+	unsigned hours = 0;
+	unsigned minutes = 0;
+	float seconds = 0.0;
+
+	if(nil == object || NO == [object isKindOfClass:[NSNumber class]] || isnan([object doubleValue])) {
+		return @"";
+	}
+
+	value = [object doubleValue];
+
+	seconds = fmod(value, 60.0);
+	minutes = (unsigned)floor(value / 60.0);
+
+	while(60 <= minutes) {
+		minutes -= 60;
+		++hours;
+	}
+
+	while(24 <= hours) {
+		hours -= 24;
+		++days;
+	}
+
+	if(0 < days) {
+		result = [NSString stringWithFormat:@"%u:%.2u:%.2u:%06.3f", days, hours, minutes, seconds];
+	} else if(0 < hours) {
+		result = [NSString stringWithFormat:@"%u:%.2u:%06.3f", hours, minutes, seconds];
+	} else if(0 < minutes) {
+		result = [NSString stringWithFormat:@"%u:%06.3f", minutes, seconds];
+	} else {
+		result = [NSString stringWithFormat:@"0:%06.3f", seconds];
+	}
+
+	return result;
+}
+
+- (BOOL)getObjectValue:(id *)object forString:(NSString *)string errorDescription:(NSString **)error {
+	NSScanner *scanner = nil;
+	BOOL result = NO;
+	double value = 0.0;
+	double seconds = 0.0;
+
+	scanner = [NSScanner scannerWithString:string];
+
+	while(NO == [scanner isAtEnd]) {
+		// Grab a value
+		if([scanner scanDouble:&value]) {
+			seconds *= 60.0;
+			seconds += value;
+			result = YES;
+		}
+
+		// Grab the separator, if present
+		[scanner scanString:@":" intoString:NULL];
+	}
+
+	if(result && NULL != object) {
+		*object = @(seconds);
+	} else if(NULL != error) {
+		*error = @"Couldn't convert value to seconds";
+	}
+
+	return result;
+}
+
+- (NSAttributedString *)attributedStringForObjectValue:(id)object withDefaultAttributes:(NSDictionary *)attributes {
+	NSAttributedString *result = nil;
+
+	result = [[NSAttributedString alloc] initWithString:[self stringForObjectValue:object] attributes:attributes];
+	return result;
+}
+
+@end

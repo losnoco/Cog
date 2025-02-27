@@ -445,6 +445,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSImage *cellImage = nil;
 	NSString *cellText = @"";
 	NSString *cellIdentifier = @"";
+	NSString *cellToolTip = nil;
 	NSTextAlignment cellTextAlignment = NSTextAlignmentLeft;
 
 	PlaylistEntry *pe = [[self arrangedObjects] objectAtIndex:row];
@@ -486,6 +487,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			case 6:
 				cellText = pe.lengthText;
 				cellTextAlignment = NSTextAlignmentRight;
+				cellToolTip = pe.lengthInfo;
 				break;
 
 			case 7:
@@ -582,6 +584,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 				cellView.textField.toolTip = cellTextTruncated ?: @"";
 			else
 				cellView.textField.toolTip = [pe statusMessage];
+
+			if(cellToolTip) {
+				cellView.textField.toolTip = cellToolTip;
+			}
 
 			NSRect cellFrameRect = cellView.textField.frame;
 			cellFrameRect.origin.y = 1;
