@@ -91,6 +91,10 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	return [NSSet setWithObject:@"length"];
 }
 
++ (NSSet *)keyPathsForValuesAffectingLengthInfo {
+	return [NSSet setWithObject:@"length"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingAlbumArt {
 	return [NSSet setWithObjects:@"albumArtInternal", @"artId", nil];
 }
@@ -312,6 +316,13 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 @dynamic lengthText;
 - (NSString *)lengthText {
 	SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+	NSString *time = [secondsFormatter stringForObjectValue:self.length];
+	return time;
+}
+
+@dynamic lengthInfo;
+- (NSString *)lengthInfo {
+	SecondsFractionFormatter * secondsFormatter = [[SecondsFractionFormatter alloc] init];
 	NSString *time = [secondsFormatter stringForObjectValue:self.length];
 	return time;
 }

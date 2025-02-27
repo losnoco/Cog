@@ -24,3 +24,8 @@
 }
 
 @end
+
+@interface SecondsFractionFormatter : NSFormatter {
+}
+
+@end
