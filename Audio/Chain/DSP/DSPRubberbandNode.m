@@ -37,6 +37,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	BOOL stopping, paused;
 	BOOL processEntered;
 
+	BOOL flushed;
+
 	BOOL observersapplied;
 
 	AudioStreamBasicDescription lastInputFormat;
@@ -261,6 +263,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	tsapplynewoptions = NO;
 	tsrestartengine = NO;
+	flushed = NO;
 
 	stretchIn = 0.0;
 	stretchOut = 0.0;
@@ -357,7 +360,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
-				if([self endOfStream] == YES) {
+				if(flushed) {
+					endOfStream = YES;
 					break;
 				}
 				if(paused) {
@@ -385,7 +389,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	processEntered = YES;
 
-	if(stopping || [self endOfStream] == YES || [self shouldContinue] == NO) {
+	if(stopping || flushed || [self endOfStream] == YES || [self shouldContinue] == NO) {
 		processEntered = NO;
 		return nil;
 	}
@@ -448,11 +452,11 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i], 1);
 		}
 
-		endOfStream = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
+		flushed = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
 
 		int len = (int)frameCount;
 
-		rubberband_process(ts, (const float * const *)rsPtrs, len, endOfStream);
+		rubberband_process(ts, (const float * const *)rsPtrs, len, flushed);
 	}
 
 	ssize_t samplesAvailable;
@@ -481,7 +485,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		samplesBuffered += samplesOut;
 	}
 
-	if(endOfStream) {
+	if(flushed) {
 		if(samplesBuffered > 0) {
 			ssize_t delta = (stretchIn - stretchOut) * inputFormat.mSampleRate;
 			if(delta > 0 && samplesBuffered > delta) {
