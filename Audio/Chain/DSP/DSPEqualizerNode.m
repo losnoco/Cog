@@ -331,7 +331,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	while(processEntered) {
 		usleep(500);
 	}
-	[super resetBuffer];
+	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
 }

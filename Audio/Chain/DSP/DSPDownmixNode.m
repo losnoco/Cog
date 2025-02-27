@@ -76,7 +76,7 @@
 	while(processEntered) {
 		usleep(500);
 	}
-	[super resetBuffer];
+	[buffer reset];
 	paused = NO;
 }
 
@@ -87,7 +87,7 @@
 		while(processEntered) {
 			usleep(500);
 		}
-		[super resetBuffer];
+		[buffer reset];
 		[self fullShutdown];
 		paused = NO;
 	}
