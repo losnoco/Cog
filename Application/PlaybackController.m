@@ -19,7 +19,9 @@
 
 #import "Logging.h"
 
-//@import Sentry;
+@import Sentry;
+
+// Sentry captureMessage is too spammy to use for anything but actual errors
 
 extern BOOL kAppControllerShuttingDown;
 
@@ -284,11 +286,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(!pe.url) {
 		pe.error = YES;
 		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
-		//[[FIRCrashlytics crashlytics] log:@"Attempting to play bad file."];
+		[SentrySDK captureMessage:@"Attempted to play a bad file with no URL"];
 		return;
 	}
 
-	//[[FIRCrashlytics crashlytics] logWithFormat:@"Playing track: %@", pe.url];
+	//[SentrySDK captureMessage:[NSString stringWithFormat:@"Playing track: %@", pe.url]];
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
@@ -767,15 +769,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
 	if(pe && pe.url) {
-		//[[FIRCrashlytics crashlytics] logWithFormat:@"Beginning decoding track: %@", pe.url];
+		//[SentrySDK captureMessage:[NSString stringWithFormat:@"Beginning decoding track: %@", pe.url]];
 		[player setNextStream:pe.url withUserInfo:pe withRGInfo:makeRGInfo(pe)];
 	} else if(pe) {
-		//[[FIRCrashlytics crashlytics] log:@"Invalid playlist entry reached."];
+		[SentrySDK captureMessage:@"Invalid playlist entry reached"];
 		[player setNextStream:nil];
 		pe.error = YES;
 		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
-		//[[FIRCrashlytics crashlytics] log:@"End of playlist reached."];
+		//[SentrySDK captureMessage:@"End of playlist reached"];
 		[player setNextStream:nil];
 	}
 }
@@ -786,7 +788,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	// Delay the action until this function has returned to the audio thread
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
 		if(pe) {
-			//[[FIRCrashlytics crashlytics] logWithFormat:@"Updating UI with track: %@", pe.url];
+			//[SentrySDK captureMessage:[NSString stringWithFormat:@"Updating UI with track: %@", pe.url]];
 		}
 
 		[self->playlistController setCurrentEntry:pe];
@@ -817,7 +819,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		}
 
 		if(status == CogStatusStopped) {
-			//[[FIRCrashlytics crashlytics] log:@"Stopped."];
+			//[SentrySDK captureMessage:@"Playback stopped"];
 
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
@@ -825,11 +827,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotificiation object:nil];
 		} else // paused
 		{
-			//[[FIRCrashlytics crashlytics] log:@"Paused."];
+			//[SentrySDK captureMessage:@"Playback paused"];
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotificiation object:nil];
 		}
 	} else if(status == CogStatusPlaying) {
-		//[[FIRCrashlytics crashlytics] log:@"Started playing."];
+		//[SentrySDK captureMessage:@"Playback started"];
 
 		if(!positionTimer) {
 			positionTimer = [NSTimer timerWithTimeInterval:0.2 target:self selector:@selector(updatePosition:) userInfo:nil repeats:YES];
@@ -865,7 +867,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (void)audioPlayer:(AudioPlayer *)player didStopNaturally:(id)userInfo {
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"quitOnNaturalStop"]) {
-		//[[FIRCrashlytics crashlytics] log:@"Terminating due to natural stop."];
+		//[SentrySDK captureMessage:@"Playback stopped naturally, terminating app"];
 		[NSApp terminate:nil];
 	}
 }
@@ -880,7 +882,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
-	//[[FIRCrashlytics crashlytics] logWithFormat:@"Restarting playback of track: %@", pe.url];
+	//[SentrySDK captureMessage:[NSString stringWithFormat:@"Playback restarting for track: %@", pe.url]];
 	[player performSelectorOnMainThread:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(pe.seekable ? pe.currentPosition : 0.0), nil];
 }
 
