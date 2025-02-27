@@ -359,14 +359,4 @@
 	return latency;
 }
 
-- (void)setVolume:(double)v {
-	AudioPlayer * audioPlayer = controller;
-	if(audioPlayer) {
-		OutputNode *outputNode = [audioPlayer output];
-		if(outputNode) {
-			[outputNode setVolume:v];
-		}
-	}
-}
-
 @end
