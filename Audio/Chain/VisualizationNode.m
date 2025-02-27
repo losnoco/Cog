@@ -174,7 +174,7 @@ static VisualizationCollection *theCollection = nil;
 	while(processEntered) {
 		usleep(500);
 	}
-	[super resetBuffer];
+	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
 }

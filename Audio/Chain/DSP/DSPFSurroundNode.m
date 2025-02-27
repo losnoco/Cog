@@ -127,7 +127,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	while(processEntered) {
 		usleep(500);
 	}
-	[super resetBuffer];
+	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
 }

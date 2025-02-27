@@ -252,7 +252,7 @@ static void unregisterMotionListener(void) {
 	while(processEntered) {
 		usleep(500);
 	}
-	[super resetBuffer];
+	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
 }
