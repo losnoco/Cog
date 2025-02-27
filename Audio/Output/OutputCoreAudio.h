@@ -45,8 +45,6 @@ using std::atomic_long;
 
 	double streamTimestamp;
 
-	double lastClippedSampleRate;
-
 	BOOL stopInvoked;
 	BOOL stopCompleted;
 	BOOL running;

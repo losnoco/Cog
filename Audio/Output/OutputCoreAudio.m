@@ -206,7 +206,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				[outputLock lock];
 				started = NO;
 				restarted = NO;
-				lastClippedSampleRate = 0.0;
 				inputRemain = 0;
 				[outputLock unlock];
 			}
@@ -679,8 +678,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		paused = NO;
 		outputDeviceID = -1;
 		restarted = NO;
-
-		lastClippedSampleRate = 0.0;
 
 		inputRemain = 0;
 
