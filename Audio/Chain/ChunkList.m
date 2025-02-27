@@ -402,6 +402,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		halveDSDVolume = NO;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
+
+		observersAdded = YES;
 	}
 
 	return self;
@@ -429,8 +431,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	if(tempData) {
 		free(tempData);
 	}
-	
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.halveDSDVolume" context:kChunkListContext];
+	if(observersAdded) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.halveDSDVolume" context:kChunkListContext];
+		observersAdded = NO;
+	}
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
