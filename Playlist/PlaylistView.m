@@ -16,6 +16,8 @@
 
 #import "Logging.h"
 
+@import Sentry;
+
 static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 @implementation PlaylistView
@@ -119,7 +121,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		// Reset to defaults
 		NSString *message = @"Reset playlist columns to default";
 		DLog(@"%@", message);
-		//[[FIRCrashlytics crashlytics] logWithFormat:@"%@", message];
+		[SentrySDK captureMessage:message];
 		for(NSTableColumn *col in columns) {
 			[self removeTableColumn:col];
 		}
