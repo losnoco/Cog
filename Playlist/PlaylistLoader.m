@@ -418,21 +418,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	DLog(@"Expanded urls: %@", expandedURLs);
 
-	NSArray *sortedURLs;
-	if(sort == YES) {
-		sortedURLs = [expandedURLs sortedArrayUsingSelector:@selector(finderCompare:)];
-		//		sortedURLs = [expandedURLs sortedArrayUsingSelector:@selector(compareTrackNumbers:)];
-	} else {
-		sortedURLs = expandedURLs;
-	}
-
 	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainerFiles", @"") percentOfTotal:20.0];
 
-	progressstep = [sortedURLs count] ? 100.0 / (double)([sortedURLs count]) : 0;
+	progressstep = [expandedURLs count] ? 100.0 / (double)([expandedURLs count]) : 0;
 
 	id<SentrySpan> containerTask = [mainTask startChildWithOperation:@"Process paths for containers"];
 
-	for(url in sortedURLs) {
+	for(url in expandedURLs) {
 		// Container vs non-container url
 		id<SentrySpan> pathTask = nil;
 		@try {
@@ -637,15 +629,22 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		return @[];
 	}
 
+	NSArray *sortedURLs;
+	if(sort == YES) {
+		sortedURLs = [validURLs sortedArrayUsingSelector:@selector(finderCompare:)];
+	} else {
+		sortedURLs = validURLs;
+	}
+
 	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderAddingEntries", @"") percentOfTotal:20.0];
 
 	progressstep = 100.0 / (double)(count);
 
-	__block id<SentrySpan> addTask = [mainTask startChildWithOperation:@"Add entries to playlist" description:[NSString stringWithFormat:@"Adding %lu entries to the playlist", [validURLs count]]];
+	__block id<SentrySpan> addTask = [mainTask startChildWithOperation:@"Add entries to playlist" description:[NSString stringWithFormat:@"Adding %lu entries to the playlist", [sortedURLs count]]];
 
 	NSInteger i = 0;
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
-	for(NSURL *url in validURLs) {
+	for(NSURL *url in sortedURLs) {
 		__block PlaylistEntry *pe;
 
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
