@@ -448,6 +448,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	@synchronized(chunkList) {
 		[chunkList removeAllObjects];
 		listDuration = 0.0;
+		listDurationRatioed = 0.0;
 	}
 }
 
