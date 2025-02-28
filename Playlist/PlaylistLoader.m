@@ -52,6 +52,9 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	if(self) {
 		[self initDefaults];
 
+		containerQueue = [[NSOperationQueue alloc] init];
+		[containerQueue setMaxConcurrentOperationCount:8];
+
 		queue = [[NSOperationQueue alloc] init];
 		[queue setMaxConcurrentOperationCount:8];
 
@@ -335,15 +338,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
-	NSMutableSet *uniqueURLs = [NSMutableSet set];
+	__block NSMutableSet *uniqueURLs = [NSMutableSet set];
 
-	NSMutableArray *expandedURLs = [NSMutableArray array];
-	NSMutableArray *containedURLs = [NSMutableArray array];
-	NSMutableArray *fileURLs = [NSMutableArray array];
-	NSMutableArray *validURLs = [NSMutableArray array];
-	NSMutableArray *folderURLs = [NSMutableArray array];
-	NSMutableArray *dependencyURLs = [NSMutableArray array];
-	NSDictionary *xmlData = nil;
+	__block NSMutableArray *expandedURLs = [[NSMutableArray alloc] init];
+	__block NSMutableArray *containedURLs = [[NSMutableArray alloc] init];
+	__block NSMutableArray *fileURLs = [[NSMutableArray alloc] init];
+	NSMutableArray *validURLs = [[NSMutableArray alloc] init];
+	NSMutableArray *folderURLs = [[NSMutableArray alloc] init];
+	NSMutableArray *dependencyURLs = [[NSMutableArray alloc] init];
+	__block NSDictionary *xmlData = nil;
 
 	BOOL addOtherFilesInFolder = [[NSUserDefaults standardUserDefaults] boolForKey:@"addOtherFilesInFolders"];
 
@@ -422,72 +425,125 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	progressstep = [expandedURLs count] ? 100.0 / (double)([expandedURLs count]) : 0;
 
-	id<SentrySpan> containerTask = [mainTask startChildWithOperation:@"Process paths for containers"];
+	if([expandedURLs count]) {
+		__block id<SentrySpan> containerTask = [mainTask startChildWithOperation:@"Process paths for containers"];
 
-	for(url in expandedURLs) {
+		__block NSLock *lock = [[NSLock alloc] init];
+		
+		__block NSArray *acceptableContainerTypes = [self acceptableContainerTypes];
+		
+		__block double weakProgress = progress;
+		__block double weakProgressstep = progressstep;
+
 		// Container vs non-container url
-		id<SentrySpan> pathTask = nil;
-		@try {
-			pathTask = [containerTask startChildWithOperation:@"Process path as container" description:[NSString stringWithFormat:@"Checking if file is container: %@", url]];
-			if([[self acceptableContainerTypes] containsObject:[[url pathExtension] lowercaseString]]) {
-				id<SentrySpan> innerTask = [pathTask startChildWithOperation:@"Container, processing"];
-				
-				NSArray *urls = [AudioContainer urlsForContainerURL:url];
-				
-				if(urls != nil && [urls count] != 0) {
-					[containedURLs addObjectsFromArray:urls];
-					
-					// Make sure the container isn't added twice.
-					[uniqueURLs addObject:url];
-					
-					// Find the dependencies
-					NSArray *depURLs = [AudioContainer dependencyUrlsForContainerURL:url];
-					
-					BOOL localFound = NO;
-					for(NSURL *u in urls) {
-						if([u isFileURL]) {
-							localFound = YES;
-							break;
-						}
+		for(size_t i = 0, j = [expandedURLs count]; i < j; ++i) {
+			NSBlockOperation *op = [[NSBlockOperation alloc] init];
+			
+			[op addExecutionBlock:^{
+				id<SentrySpan> pathTask = nil;
+				id<SentrySpan> innerTask = nil;
+				@try {
+					if(containerTask) {
+						pathTask = [containerTask startChildWithOperation:@"Process path as container" description:[NSString stringWithFormat:@"Checking if file is container: %@", url]];
 					}
-					if(depURLs) {
-						[dependencyURLs addObjectsFromArray:depURLs];
-						
-						for(NSURL *u in depURLs) {
-							if([u isFileURL]) {
-								localFound = YES;
-								break;
+
+					[lock lock];
+					NSURL *url = [expandedURLs objectAtIndex:0];
+					[expandedURLs removeObjectAtIndex:0];
+					[lock unlock];
+
+					if([acceptableContainerTypes containsObject:[[url pathExtension] lowercaseString]]) {
+						if(pathTask) {
+							innerTask = [pathTask startChildWithOperation:@"Container, processing"];
+						}
+
+						NSArray *urls = [AudioContainer urlsForContainerURL:url];
+
+						if(urls != nil && [urls count] != 0) {
+							[lock lock];
+							[containedURLs addObjectsFromArray:urls];
+							[lock unlock];
+
+							// Make sure the container isn't added twice.
+							[lock lock];
+							[uniqueURLs addObject:url];
+							[lock unlock];
+
+							// Find the dependencies
+							NSArray *depURLs = [AudioContainer dependencyUrlsForContainerURL:url];
+
+							BOOL localFound = NO;
+							for(NSURL *u in urls) {
+								if([u isFileURL]) {
+									localFound = YES;
+									break;
+								}
 							}
+							if(depURLs) {
+								[lock lock];
+								[dependencyURLs addObjectsFromArray:depURLs];
+								[lock unlock];
+
+								for(NSURL *u in depURLs) {
+									if([u isFileURL]) {
+										localFound = YES;
+										break;
+									}
+								}
+							}
+							if(localFound) {
+								[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
+							}
+						} else {
+							/* Fall back on adding the raw file if all container parsers have failed. */
+							[lock lock];
+							[fileURLs addObject:url];
+							[lock unlock];
 						}
+						if(innerTask) {
+							[innerTask finish];
+							innerTask = nil;
+						}
+					} else if([[[url pathExtension] lowercaseString] isEqualToString:@"xml"]) {
+						[lock lock];
+						xmlData = [XmlContainer entriesForContainerURL:url];
+						[lock unlock];
+					} else {
+						[lock lock];
+						[fileURLs addObject:url];
+						[lock unlock];
 					}
-					if(localFound) {
-						[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
+					if(pathTask) {
+						[pathTask finish];
+						pathTask = nil;
 					}
-				} else {
-					/* Fall back on adding the raw file if all container parsers have failed. */
-					[fileURLs addObject:url];
 				}
-				[innerTask finish];
-			} else if([[[url pathExtension] lowercaseString] isEqualToString:@"xml"]) {
-				xmlData = [XmlContainer entriesForContainerURL:url];
-			} else {
-				[fileURLs addObject:url];
-			}
-			[pathTask finish];
-		}
-		@catch(id anException) {
-			DLog(@"Exception caught while processing for containers: %@", anException);
-			[SentrySDK captureException:anException];
-			if(pathTask) {
-				[pathTask finishWithStatus:kSentrySpanStatusInternalError];
-			}
+				@catch(id anException) {
+					DLog(@"Exception caught while processing for containers: %@", anException);
+					[SentrySDK captureException:anException];
+					if(innerTask) {
+						[innerTask finishWithStatus:kSentrySpanStatusInternalError];
+					}
+					if(pathTask) {
+						[pathTask finishWithStatus:kSentrySpanStatusInternalError];
+					}
+				}
+
+				[lock lock];
+				weakProgress += weakProgressstep;
+				[self setProgressJobStatus:weakProgress];
+				[lock unlock];
+			}];
+
+			[containerQueue addOperation:op];
 		}
 
-		progress += progressstep;
-		[self setProgressJobStatus:progress];
+		[containerQueue waitUntilAllOperationsAreFinished];
+
+		progress = weakProgress;
+
+		[containerTask finish];
 	}
-
-	[containerTask finish];
 
 	progress = 0.0;
 	[self completeProgressJob];
