@@ -410,9 +410,30 @@
 
 		if([unixPathNext isEqualToString:unixPathPrev])
 			pathsEqual = YES;
+	} else if(![nextStream isFileURL] && ![[lastChain streamURL] isFileURL]) {
+		@try {
+			NSURL *lastURL = [lastChain streamURL];
+			NSString *nextScheme = [nextStream scheme];
+			NSString *lastScheme = [lastURL scheme];
+			NSString *nextHost = [nextStream host];
+			NSString *lastHost = [lastURL host];
+			NSString *nextPath = [nextStream path];
+			NSString *lastPath = [lastURL path];
+			if(nextScheme && lastScheme && [nextScheme isEqualToString:lastScheme]) {
+				if((!nextHost && !lastHost) ||
+				   (nextHost && lastHost && [nextHost isEqualToString:lastHost])) {
+					if(nextPath && lastPath && [nextPath isEqualToString:lastPath]) {
+						pathsEqual = YES;
+					}
+				}
+			}
+		}
+		@catch(id anException) {
+			DLog(@"Exception thrown checking file match: %@", anException);
+		}
 	}
 
-	if(pathsEqual || ([[nextStream scheme] isEqualToString:[[lastChain streamURL] scheme]] && (([nextStream host] == nil && [[lastChain streamURL] host] == nil) || [[nextStream host] isEqualToString:[[lastChain streamURL] host]]) && [[nextStream path] isEqualToString:[[lastChain streamURL] path]])) {
+	if(pathsEqual) {
 		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
 			[newChain setStreamURL:nextStream];
 
