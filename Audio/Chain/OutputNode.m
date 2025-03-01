@@ -16,12 +16,18 @@
 @implementation OutputNode
 
 - (void)setup {
-	amountPlayed = 0.0;
-	amountPlayedInterval = 0.0;
+	[self setupWithInterval:NO];
+}
+
+- (void)setupWithInterval:(BOOL)resumeInterval {
+	if(!resumeInterval) {
+		amountPlayed = 0.0;
+		amountPlayedInterval = 0.0;
+		intervalReported = NO;
+	}
 
 	paused = YES;
 	started = NO;
-	intervalReported = NO;
 
 	output = [[OutputCoreAudio alloc] initWithController:self];
 

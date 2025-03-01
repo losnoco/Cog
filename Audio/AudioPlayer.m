@@ -67,6 +67,10 @@
 }
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time {
+	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:time andResumeInterval:NO];
+}
+
+- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time andResumeInterval:(BOOL)resumeInterval {
 	ALog(@"Opening file for playback: %@ at seek offset %f%@", url, time, (paused) ? @", starting paused" : @"");
 
 	[self waitUntilCallbacksExit];
@@ -77,7 +81,7 @@
 	if(!output) {
 		output = [[OutputNode alloc] initWithController:self previous:nil];
 	}
-	[output setup];
+	[output setupWithInterval:resumeInterval];
 	[output setVolume:volume];
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
@@ -184,28 +188,18 @@
 }
 
 - (void)seekToTime:(double)time {
-	if(endOfInputReached) {
-		// This is a dirty hack in case the playback has finished with the track
-		// that the user thinks they're seeking into
-		CogStatus status = (CogStatus)currentPlaybackStatus;
-		NSURL *url;
-		id userInfo;
-		NSDictionary *rgi;
+	CogStatus status = (CogStatus)currentPlaybackStatus;
+	NSURL *url;
+	id userInfo;
+	NSDictionary *rgi;
 
-		@synchronized(chainQueue) {
-			url = [bufferChain streamURL];
-			userInfo = [bufferChain userInfo];
-			rgi = [bufferChain rgInfo];
-		}
-
-		[self stop];
-
-		[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time];
-	} else {
-		// Still decoding the current file, safe to seek within it
-		[output seek:time];
-		[bufferChain seek:time];
+	@synchronized(chainQueue) {
+		url = [bufferChain streamURL];
+		userInfo = [bufferChain userInfo];
+		rgi = [bufferChain rgInfo];
 	}
+
+	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time andResumeInterval:YES];
 }
 
 - (void)setVolume:(double)v {

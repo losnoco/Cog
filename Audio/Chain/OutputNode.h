@@ -44,6 +44,7 @@
 - (double)secondsBuffered;
 
 - (void)setup;
+- (void)setupWithInterval:(BOOL)resumeInterval;
 - (void)process;
 - (void)close;
 - (void)seek:(double)time;
