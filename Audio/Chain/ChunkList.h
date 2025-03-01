@@ -40,7 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 	
 	BOOL halveDSDVolume;
-	BOOL observersAdded;
 	
 	void *hdcd_decoder;
 
