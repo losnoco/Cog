@@ -236,7 +236,7 @@ static VisualizationCollection *theCollection = nil;
 			if(replay) {
 				size_t length = [prerollBuffer length];
 				if(length) {
-					[visController postVisPCM:(const float *)[prerollBuffer bytes] amount:(length / sizeof(float))];
+					[visController postVisPCM:(const float *)[prerollBuffer bytes] amount:(int)(length / sizeof(float))];
 					[prerollBuffer replaceBytesInRange:NSMakeRange(0, length) withBytes:NULL length:0];
 				}
 				replay = NO;
