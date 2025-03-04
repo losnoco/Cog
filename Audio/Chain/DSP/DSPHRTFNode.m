@@ -271,7 +271,7 @@ static void unregisterMotionListener(void) {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
-				if([self endOfStream] == YES) {
+				if([previousNode endOfStream] == YES) {
 					break;
 				}
 				if(paused) {
@@ -287,6 +287,7 @@ static void unregisterMotionListener(void) {
 			}
 		}
 	}
+	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {
@@ -295,7 +296,7 @@ static void unregisterMotionListener(void) {
 
 	processEntered = YES;
 
-	if(stopping || [self endOfStream] == YES || [self shouldContinue] == NO) {
+	if(stopping || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
 		processEntered = NO;
 		return nil;
 	}
