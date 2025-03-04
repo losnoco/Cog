@@ -379,4 +379,8 @@ static impulseSetCache *_sharedController = nil;
 	}
 }
 
+- (size_t)needPrefill {
+	return paddedBufferSize;
+}
+
 @end
