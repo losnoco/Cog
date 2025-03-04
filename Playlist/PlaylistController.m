@@ -1288,11 +1288,20 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne {
+	BOOL selectionFollows = [[NSUserDefaults standardUserDefaults] boolForKey:@"selectionFollowsPlayback"];
+
 	if(!ignoreRepeatOne && [[NSUserDefaults standardUserDefaults] boolForKey:@"alwaysStopAfterCurrent"]) {
+		if(selectionFollows) {
+			PlaylistEntry *nextPe = [self getNextEntry:pe ignoreRepeatOne:YES];
+			[appController selectTrack:nextPe];
+		}
 		return nil;
 	}
 
 	if(!ignoreRepeatOne && [self repeat] == RepeatModeRepeatOne) {
+		if(selectionFollows) {
+			[appController selectTrack:pe];
+		}
 		return pe;
 	}
 
@@ -1310,11 +1319,19 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 		[self commitPersistentStore];
 
+		if(selectionFollows) {
+			[appController selectTrack:pe];
+		}
+
 		return pe;
 	}
 
 	if([self shuffle] != ShuffleOff) {
-		return [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
+		PlaylistEntry *nextPe = [self shuffledEntryAtIndex:(pe.shuffleIndex + 1)];
+		if(selectionFollows && nextPe) {
+			[appController selectTrack:nextPe];
+		}
+		return nextPe;
 	} else {
 		NSInteger i;
 
@@ -1342,7 +1359,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 			}
 		}
 
-		return [self entryAtIndex:i];
+		PlaylistEntry *nextPe = [self entryAtIndex:i];
+
+		if(selectionFollows) {
+			[appController selectTrack:nextPe];
+		}
+
+		return nextPe;
 	}
 }
 
@@ -1361,16 +1384,29 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne {
+	BOOL selectionFollows = [[NSUserDefaults standardUserDefaults] boolForKey:@"selectionFollowsPlayback"];
+
 	if(!ignoreRepeatOne && [[NSUserDefaults standardUserDefaults] boolForKey:@"alwaysStopAfterCurrent"]) {
+		if(selectionFollows) {
+			PlaylistEntry *prevPe = [self getPrevEntry:pe ignoreRepeatOne:YES];
+			[appController selectTrack:prevPe];
+		}
 		return nil;
 	}
 
 	if(!ignoreRepeatOne && [self repeat] == RepeatModeRepeatOne) {
+		if(selectionFollows) {
+			[appController selectTrack:pe];
+		}
 		return pe;
 	}
 
 	if([self shuffle] != ShuffleOff) {
-		return [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
+		PlaylistEntry *prevPe = [self shuffledEntryAtIndex:(pe.shuffleIndex - 1)];
+		if(selectionFollows && prevPe) {
+			[appController selectTrack:prevPe];
+		}
+		return prevPe;
 	} else {
 		NSInteger i;
 		if(pe.index < 0) // Was a current entry, now removed.
@@ -1380,7 +1416,12 @@ static void *playlistControllerContext = &playlistControllerContext;
 			i = pe.index - 1;
 		}
 
-		return [self entryAtIndex:i];
+		PlaylistEntry *prevPe = [self entryAtIndex:i];
+		if(selectionFollows) {
+			[appController selectTrack:prevPe];
+		}
+
+		return prevPe;
 	}
 }
 

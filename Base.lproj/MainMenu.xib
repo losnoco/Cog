@@ -1715,6 +1715,12 @@
                                     <action selector="scrollToCurrentEntry:" target="207" id="1888"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Selection Follows Playback" id="Q7K-Eu-1Vf">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="1689" name="value" keyPath="values.selectionFollowsPlayback" id="pml-0X-qIh"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
