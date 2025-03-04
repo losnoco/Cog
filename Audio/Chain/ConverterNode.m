@@ -67,6 +67,10 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 		extrapolateBufferSize = 0;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:0 context:kConverterNodeContext];
+
+#ifdef LOG_CHAINS
+		[self initLogFiles];
+#endif
 	}
 
 	return self;

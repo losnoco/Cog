@@ -17,7 +17,32 @@
 
 #import <mach/mach_time.h>
 
+#ifdef LOG_CHAINS
+#import "NSFileHandle+CreateFile.h"
+
+static NSLock * _Node_lock = nil;
+static uint64_t _Node_serial;
+#endif
+
 @implementation Node
+
+#ifdef LOG_CHAINS
++ (void)initialize {
+	@synchronized (_Node_lock) {
+		if(!_Node_lock) {
+			_Node_lock = [[NSLock alloc] init];
+			_Node_serial = 0;
+		}
+	}
+}
+
+- (void)initLogFiles {
+	[_Node_lock lock];
+	logFileOut = [NSFileHandle fileHandleForWritingAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_output_%08lld.raw", [self className], _Node_serial++]] createFile:YES];
+	logFileIn = [NSFileHandle fileHandleForWritingAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_input_%08lld.raw", [self className], _Node_serial++]] createFile:YES];
+	[_Node_lock unlock];
+}
+#endif
 
 - (id)initWithController:(id)c previous:(id)p {
 	self = [super init];
@@ -45,6 +70,10 @@
 		inMerge = NO;
 
 		[self setPreviousNode:p];
+		
+#ifdef LOG_CHAINS
+		[self initLogFiles];
+#endif
 	}
 
 	return self;
@@ -93,6 +122,12 @@
 	}
 	[chunk setLossless:nodeLossless];
 	[chunk assignSamples:ptr frameCount:amount / nodeFormat.mBytesPerPacket];
+
+#ifdef LOG_CHAINS
+	if(logFileOut) {
+		[logFileOut writeData:[NSData dataWithBytes:ptr length:amount]];
+	}
+#endif
 
 	double durationList = [buffer listDuration];
 	double durationLeft = [buffer maxDuration] - durationList;
@@ -167,6 +202,14 @@
 
 	BOOL doSignal = NO;
 	if([chunk frameCount]) {
+#ifdef LOG_CHAINS
+		if(logFileOut) {
+			AudioChunk *chunkCopy = [chunk copy];
+			size_t frameCount = [chunkCopy frameCount];
+			NSData *chunkData = [chunkCopy removeSamples:frameCount];
+			[logFileOut writeData:chunkData];
+		}
+#endif
 		[buffer addChunk:chunk];
 		doSignal = YES;
 	}
@@ -324,6 +367,15 @@
 		[[previousNode writeSemaphore] signal];
 	}
 
+#ifdef LOG_CHAINS
+	if(logFileIn) {
+		AudioChunk *chunkCopy = [ret copy];
+		size_t frameCount = [chunkCopy frameCount];
+		NSData *chunkData = [chunkCopy removeSamples:frameCount];
+		[logFileIn writeData:chunkData];
+	}
+#endif
+
 	inRead = NO;
 
 	return ret;
@@ -385,6 +437,15 @@
 		[[previousNode writeSemaphore] signal];
 	}
 
+#ifdef LOG_CHAINS
+	if(logFileIn) {
+		AudioChunk *chunkCopy = [ret copy];
+		size_t frameCount = [chunkCopy frameCount];
+		NSData *chunkData = [chunkCopy removeSamples:frameCount];
+		[logFileIn writeData:chunkData];
+	}
+#endif
+
 	inRead = NO;
 
 	return ret;
@@ -432,6 +493,15 @@
 
 	if([ret frameCount]) {
 		[[previousNode writeSemaphore] signal];
+
+#ifdef LOG_CHAINS
+		if(logFileIn) {
+			AudioChunk *chunkCopy = [ret copy];
+			size_t frameCount = [chunkCopy frameCount];
+			NSData *chunkData = [chunkCopy removeSamples:frameCount];
+			[logFileIn writeData:chunkData];
+		}
+#endif
 	}
 
 	inMerge = NO;
@@ -481,6 +551,15 @@
 
 	if([ret frameCount]) {
 		[[previousNode writeSemaphore] signal];
+
+#ifdef LOG_CHAINS
+		if(logFileIn) {
+			AudioChunk *chunkCopy = [ret copy];
+			size_t frameCount = [chunkCopy frameCount];
+			NSData *chunkData = [chunkCopy removeSamples:frameCount];
+			[logFileIn writeData:chunkData];
+		}
+#endif
 	}
 
 	inMerge = NO;
