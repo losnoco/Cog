@@ -103,6 +103,8 @@
 - (void)showPathSuggester;
 + (void)globalShowPathSuggester;
 
+- (void)selectTrack:(id)sender;
+
 - (IBAction)showRubberbandSettings:(id)sender;
 + (void)globalShowRubberbandSettings;
 

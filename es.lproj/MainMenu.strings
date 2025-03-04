@@ -419,6 +419,9 @@
 /* Class = "NSMenuItem"; title = "Select Currently Playing"; ObjectID = "1823"; */
 "1823.title" = "Seleccionar reproducción actual";
 
+/* Class = "NSMenuItem"; title = "Selection Follows Playback"; ObjectID = "Q7K-Eu-1Vf"; */
+"Q7K-Eu-1Vf.title" = "Selección sigue la reproducción";
+
 /* Class = "NSMenuItem"; title = "View"; ObjectID = "1848"; */
 "1848.title" = "Visualización";
 

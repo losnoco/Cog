@@ -658,6 +658,7 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@(44100) forKey:@"synthSampleRate"];
 
 	[userDefaultsValuesDict setObject:@NO forKey:@"alwaysStopAfterCurrent"];
+	[userDefaultsValuesDict setObject:@YES forKey:@"selectionFollowsPlayback"];
 
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
@@ -851,6 +852,15 @@ static BOOL consentLastEnabled = NO;
 
 + (void)globalShowRubberbandSettings {
 	[kAppController showRubberbandSettings:kAppController];
+}
+
+- (void)selectTrack:(id)sender {
+	PlaylistEntry *pe = (PlaylistEntry *)sender;
+	@try {
+		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] byExtendingSelection:NO];
+	}
+	@catch(id anException) {
+	}
 }
 
 @end
