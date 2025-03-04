@@ -13,6 +13,8 @@
 
 #import "DSPHRTFNode.h"
 
+#import "lpc.h"
+
 #import "HeadphoneFilter.h"
 
 static void * kDSPHRTFNodeContext = &kDSPHRTFNodeContext;
@@ -75,6 +77,8 @@ static void unregisterMotionListener(void) {
 	BOOL processEntered;
 	BOOL resetFilter;
 
+	size_t needPrefill;
+
 	BOOL observersapplied;
 
 	AudioStreamBasicDescription lastInputFormat;
@@ -89,7 +93,11 @@ static void unregisterMotionListener(void) {
 	simd_float4x4 rotationMatrix;
 	simd_float4x4 referenceMatrix;
 
+	float prefillBuffer[4096 * 32];
 	float outBuffer[4096 * 2];
+
+	void *extrapolate_buffer;
+	size_t extrapolate_buffer_size;
 }
 
 + (void)initialize {
@@ -131,6 +139,11 @@ static void unregisterMotionListener(void) {
 	[self cleanUp];
 	[self removeObservers];
 	[super cleanUp];
+	if(extrapolate_buffer) {
+		free(extrapolate_buffer);
+		extrapolate_buffer = NULL;
+		extrapolate_buffer_size = 0;
+	}
 }
 
 - (void)addObservers {
@@ -210,6 +223,8 @@ static void unregisterMotionListener(void) {
 		outputChannelConfig = AudioChannelSideLeft | AudioChannelSideRight;
 
 		resetFilter = NO;
+
+		needPrefill = [hrtf needPrefill];
 	} else {
 		if(lastEnableHeadTracking) {
 			lastEnableHeadTracking = NO;
@@ -358,6 +373,18 @@ static void unregisterMotionListener(void) {
 
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
+
+	if(needPrefill) {
+		size_t maxToUse = 4096 - needPrefill;
+		if(maxToUse > frameCount) {
+			maxToUse = frameCount;
+		}
+		size_t channels = inputFormat.mChannelsPerFrame;
+		memcpy(&prefillBuffer[needPrefill * channels], [sampleData bytes], maxToUse * sizeof(float) * channels);
+		lpc_extrapolate_bkwd(&prefillBuffer[needPrefill * channels], maxToUse, maxToUse, (int)channels, LPC_ORDER, needPrefill, &extrapolate_buffer, &extrapolate_buffer_size);
+		[hrtf process:&prefillBuffer[0] sampleCount:(int)needPrefill toBuffer:&outBuffer[0]];
+		needPrefill = 0;
+	}
 
 	[hrtf process:(const float *)[sampleData bytes] sampleCount:(int)frameCount toBuffer:&outBuffer[0]];
 

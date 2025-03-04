@@ -39,6 +39,8 @@
 
 - (void)reset;
 
+- (size_t)needPrefill;
+
 @end
 
 #endif /* HeadphoneFilter_h */
