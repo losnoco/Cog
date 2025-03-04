@@ -153,6 +153,17 @@ static double reverseSpeedScale(double input, double min, double max) {
 	return (input * (max - min) / 100.0) + min;
 }
 
+- (void)snapSpeeds {
+	double pitch = [[NSUserDefaults standardUserDefaults] doubleForKey:@"pitch"];
+	double tempo = [[NSUserDefaults standardUserDefaults] doubleForKey:@"tempo"];
+	if(fabs(pitch - 1.0) < 1e-6) {
+		[[NSUserDefaults standardUserDefaults] setDouble:1.0 forKey:@"pitch"];
+	}
+	if(fabs(tempo - 1.0) < 1e-6) {
+		[[NSUserDefaults standardUserDefaults] setDouble:1.0 forKey:@"tempo"];
+	}
+}
+
 - (void)awakeFromNib {
 	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
 	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
@@ -166,6 +177,8 @@ static double reverseSpeedScale(double input, double min, double max) {
 	[pitchSlider setDoubleValue:reverseSpeedScale(pitch, [pitchSlider minValue], [pitchSlider maxValue])];
 	double tempo = [[NSUserDefaults standardUserDefaults] doubleForKey:@"tempo"];
 	[tempoSlider setDoubleValue:reverseSpeedScale(tempo, [tempoSlider minValue], [tempoSlider maxValue])];
+
+	[self snapSpeeds];
 
 	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"];
 	[lockButton setTitle:speedLock ? @"🔒" : @"🔓"];
@@ -548,6 +561,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
 		[[NSUserDefaults standardUserDefaults] setDouble:pitch forKey:@"tempo"];
 	}
+
+	[self snapSpeeds];
 }
 
 - (IBAction)changeTempo:(id)sender {
@@ -559,6 +574,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
 		[[NSUserDefaults standardUserDefaults] setDouble:tempo forKey:@"pitch"];
 	}
+
+	[self snapSpeeds];
 }
 
 - (IBAction)skipToNextAlbum:(id)sender {
