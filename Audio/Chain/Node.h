@@ -15,6 +15,8 @@
 #define BUFFER_SIZE 1024 * 1024
 #define CHUNK_SIZE 16 * 1024
 
+//#define LOG_CHAINS 1
+
 @interface Node : NSObject {
 	ChunkList *buffer;
 	Semaphore *writeSemaphore;
@@ -41,8 +43,17 @@
 	BOOL nodeLossless;
 
 	double durationPrebuffer;
+
+#ifdef LOG_CHAINS
+	NSFileHandle *logFileOut;
+	NSFileHandle *logFileIn;
+#endif
 }
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p;
+
+#ifdef LOG_CHAINS
+- (void)initLogFiles;
+#endif
 
 - (void)cleanUp;
 
