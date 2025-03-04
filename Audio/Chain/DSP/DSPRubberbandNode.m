@@ -28,7 +28,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	BOOL tsrestartengine;
 	double tempo, pitch;
 	double lastTempo, lastPitch;
-	double stretchIn, stretchOut;
+	double countIn;
+	uint64_t countOut;
 
 	double streamTimestamp;
 	double streamTimeRatio;
@@ -265,8 +266,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	tsrestartengine = NO;
 	flushed = NO;
 
-	stretchIn = 0.0;
-	stretchOut = 0.0;
+	countIn = 0.0;
+	countOut = 0;
 
 	return YES;
 }
@@ -443,9 +444,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		streamTimeRatio = [chunk streamTimeRatio];
 		isHDCD = [chunk isHDCD];
 
-		stretchIn += [chunk duration] / tempo;
-
 		size_t frameCount = [chunk frameCount];
+		countIn += ((double)frameCount) / tempo;
+
 		NSData *sampleData = [chunk removeSamples:frameCount];
 
 		for (size_t i = 0; i < channels; ++i) {
@@ -487,11 +488,10 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	if(flushed) {
 		if(samplesBuffered > 0) {
-			ssize_t delta = (stretchIn - stretchOut) * inputFormat.mSampleRate;
-			if(delta > 0 && samplesBuffered > delta) {
-				// Seems that Rubber Band over-flushes when it hits end of stream
-				// Also somehow, this was being miscalculated before and ending up negative
-				samplesBuffered = delta;
+			ssize_t ideal = (ssize_t)floor(countIn + 0.5);
+			if(countOut + samplesBuffered > ideal) {
+				// Rubber Band does not account for flushing duration in real time mode
+				samplesBuffered = ideal - countOut;
 			}
 		}
 	}
@@ -507,9 +507,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		[outputChunk setStreamTimestamp:streamTimestamp];
 		[outputChunk setStreamTimeRatio:streamTimeRatio * tempo];
 		[outputChunk assignSamples:&rsOutBuffer[0] frameCount:samplesBuffered];
+		countOut += samplesBuffered;
 		samplesBuffered = 0;
 		double chunkDuration = [outputChunk duration];
-		stretchOut += chunkDuration;
 		streamTimestamp += chunkDuration * [outputChunk streamTimeRatio];
 	}
 
@@ -525,9 +525,11 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		// how much audio will be lopped off at the end of the process.
 		//
 		// Tested once, this tends to be close to zero when actually called.
-		rbBuffered = stretchIn - stretchOut;
-		if(rbBuffered < 0.0) {
+		rbBuffered = countIn - (double)(countOut);
+		if(rbBuffered < 0) {
 			rbBuffered = 0.0;
+		} else {
+			rbBuffered /= inputFormat.mSampleRate;
 		}
 	}
 	return [buffer listDuration] + rbBuffered;
