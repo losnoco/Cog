@@ -461,6 +461,9 @@
 /* Class = "NSMenuItem"; title = "Stop After Current"; ObjectID = "1895"; */
 "1895.title" = "Stop After Current";
 
+/* Class = "NSMenuItem"; title = "Always Stop After Current"; ObjectID = "y8c-n8-5Uh"; */
+"y8c-n8-5Uh.title" = "Always Stop After Current";
+
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Cog"; ObjectID = "1903"; */
 "1903.ibShadowedIsNilPlaceholder" = "Cog";
 

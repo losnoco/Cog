@@ -657,6 +657,8 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@(2) forKey:@"synthDefaultLoopCount"];
 	[userDefaultsValuesDict setObject:@(44100) forKey:@"synthSampleRate"];
 
+	[userDefaultsValuesDict setObject:@NO forKey:@"alwaysStopAfterCurrent"];
+
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
