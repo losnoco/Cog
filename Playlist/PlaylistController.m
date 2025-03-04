@@ -1288,6 +1288,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (PlaylistEntry *)getNextEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne {
+	if(!ignoreRepeatOne && [[NSUserDefaults standardUserDefaults] boolForKey:@"alwaysStopAfterCurrent"]) {
+		return nil;
+	}
+
 	if(!ignoreRepeatOne && [self repeat] == RepeatModeRepeatOne) {
 		return pe;
 	}
@@ -1357,6 +1361,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (PlaylistEntry *)getPrevEntry:(PlaylistEntry *)pe ignoreRepeatOne:(BOOL)ignoreRepeatOne {
+	if(!ignoreRepeatOne && [[NSUserDefaults standardUserDefaults] boolForKey:@"alwaysStopAfterCurrent"]) {
+		return nil;
+	}
+
 	if(!ignoreRepeatOne && [self repeat] == RepeatModeRepeatOne) {
 		return pe;
 	}

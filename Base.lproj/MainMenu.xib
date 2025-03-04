@@ -1926,6 +1926,12 @@
                                     <action selector="stopAfterCurrent:" target="218" id="1896"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Always Stop After Current" keyEquivalent="." id="y8c-n8-5Uh">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <binding destination="1689" name="value" keyPath="values.alwaysStopAfterCurrent" id="rwr-s6-PnE"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
