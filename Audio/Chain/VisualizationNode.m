@@ -245,7 +245,7 @@ static VisualizationCollection *theCollection = nil;
 			AudioChunk *chunk = nil;
 			chunk = [self readAndMergeChunksAsFloat32:512];
 			if(!chunk || ![chunk frameCount]) {
-				if([self endOfStream] == YES) {
+				if([previousNode endOfStream] == YES) {
 					break;
 				}
 			} else {
@@ -255,6 +255,7 @@ static VisualizationCollection *theCollection = nil;
 			}
 		}
 	}
+	endOfStream = YES;
 }
 
 - (void)postVisPCM:(const float *)visTemp amount:(size_t)samples {

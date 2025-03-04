@@ -112,10 +112,10 @@
 		if(finalNode) {
 			AudioChunk *ret = [super readChunk:amount];
 
-			/*	if (n == 0) {
-			 DLog(@"Output Buffer dry!");
-			 }
-			 */
+			if((!ret || ![ret frameCount]) && [previousNode endOfStream]) {
+				endOfStream = YES;
+			}
+
 			return ret;
 		} else {
 			return [[AudioChunk alloc] init];
@@ -127,7 +127,11 @@
 	@autoreleasepool {
 		[self setPreviousNode:[[controller bufferChain] finalNode]];
 
-		return [super peekFormat:format channelConfig:config];
+		BOOL ret = [super peekFormat:format channelConfig:config];
+		if(!ret && [previousNode endOfStream]) {
+			endOfStream = YES;
+		}
+		return ret;
 	}
 }
 

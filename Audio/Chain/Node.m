@@ -257,7 +257,6 @@ static uint64_t _Node_serial;
 	}
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
-		endOfStream = YES;
 		[accessLock unlock];
 		inPeek = NO;
 		return NO;
@@ -296,7 +295,6 @@ static uint64_t _Node_serial;
 	}
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
-		endOfStream = YES;
 		[accessLock unlock];
 		inPeek = NO;
 		return NO;
@@ -338,7 +336,6 @@ static uint64_t _Node_serial;
 	}
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
-		endOfStream = YES;
 		[accessLock unlock];
 		inRead = NO;
 		return [[AudioChunk alloc] init];
@@ -408,7 +405,6 @@ static uint64_t _Node_serial;
 	}
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
-		endOfStream = YES;
 		[accessLock unlock];
 		inRead = NO;
 		return [[AudioChunk alloc] init];
@@ -461,7 +457,6 @@ static uint64_t _Node_serial;
 	[accessLock lock];
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
-		endOfStream = YES;
 		[accessLock unlock];
 		inMerge = NO;
 		return [[AudioChunk alloc] init];
@@ -519,7 +514,6 @@ static uint64_t _Node_serial;
 	[accessLock lock];
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
-		endOfStream = YES;
 		[accessLock unlock];
 		inMerge = NO;
 		return [[AudioChunk alloc] init];

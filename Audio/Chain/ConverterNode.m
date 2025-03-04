@@ -110,7 +110,8 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
-				if([self endOfStream] == YES) {
+				if([previousNode endOfStream] == YES) {
+					endOfStream = YES;
 					break;
 				}
 				if(paused || !streamFormatChanged) {
@@ -127,6 +128,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			}
 		}
 	}
+	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {
@@ -163,7 +165,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 
 		ssize_t bytesReadFromInput = 0;
 
-		while(bytesReadFromInput < amountToWrite && !stopping && !paused && !streamFormatChanged && [self shouldContinue] == YES && [self endOfStream] == NO) {
+		while(bytesReadFromInput < amountToWrite && !stopping && !paused && !streamFormatChanged && [self shouldContinue] == YES && !([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES)) {
 			AudioStreamBasicDescription inf;
 			uint32_t config;
 			if([self peekFormat:&inf channelConfig:&config]) {
@@ -203,7 +205,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			return nil;
 		}
 
-		if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || [self endOfStream] == YES) {
+		if(stopping || paused || streamFormatChanged || [self shouldContinue] == NO || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES)) {
 			if(!skipResampler) {
 				if(!is_postextrapolated_) {
 					is_postextrapolated_ = 1;

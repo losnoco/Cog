@@ -361,7 +361,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
 				if(flushed) {
-					endOfStream = YES;
 					break;
 				}
 				if(paused) {
@@ -381,6 +380,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			}
 		}
 	}
+	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {
@@ -389,7 +389,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	processEntered = YES;
 
-	if(stopping || flushed || [self endOfStream] == YES || [self shouldContinue] == NO) {
+	if(stopping || flushed || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
 		processEntered = NO;
 		return nil;
 	}
