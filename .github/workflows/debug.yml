@@ -11,14 +11,14 @@ on:
 jobs:
   build:
     name: Build Universal Cog.app
-    runs-on: macos-13
+    runs-on: macos-15
     env:
       XCODE_DERIVEDDATA_PATH: build
     steps:
-      - name: Switch to Xcode 15
+      - name: Switch to Xcode 16
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 15
+          xcode-version: 16
       - name: Check out repository
         uses: actions/checkout@v4
         with:
