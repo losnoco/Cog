@@ -888,7 +888,7 @@ static BOOL consentLastEnabled = NO;
 	@try {
 		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] byExtendingSelection:NO];
 	}
-	@catch(id anException) {
+	@catch(NSException *e) {
 	}
 }
 

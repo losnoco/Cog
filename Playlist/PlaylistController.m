@@ -969,15 +969,15 @@ static void *playlistControllerContext = &playlistControllerContext;
 	@try {
 		[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	}
-	@catch(id anException) {
+	@catch(NSException *e) {
 		// Even further bodge fix
 		@try {
 			count = [[self arrangedObjects] count];
 			indexes = [NSMutableIndexSet indexSetWithIndexesInRange:NSMakeRange(count, [objects count])];
 			[super insertObjects:objects atArrangedObjectIndexes:indexes];
 		}
-		@catch(id anException) {
-			DLog(@"Exception thrown adding tracks to the playlist: %@", anException);
+		@catch(NSException *e) {
+			DLog(@"Exception thrown adding tracks to the playlist: %@", e);
 		}
 	}
 

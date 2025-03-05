@@ -111,7 +111,7 @@ static NSString *guess_encoding_of_string(const char *input) {
 	@try {
 		ret = [NSString stringWithUTF8String:input];
 	}
-	@catch(id anException) {
+	@catch(NSException *e) {
 		// This method is incredibly slow
 		NSData *stringData = [NSData dataWithBytes:input length:strlen(input)];
 		[NSString stringEncodingForData:stringData encodingOptions:nil convertedString:&ret usedLossyConversion:nil];
