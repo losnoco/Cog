@@ -616,22 +616,24 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		const int channels = format->mChannelsPerFrame;
 		if(!channels) return 0;
 
+		if(!inputData->mNumberBuffers || !inputData->mBuffers[0].mData) return 0;
+
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
 
 		@autoreleasepool {
 			while(renderedSamples < frameCount) {
 				int inputRemain = _self->inputRemain;
-				while(!inputRemain) {
+				while(!inputRemain || !_self->samplePtr) {
 					inputRemain = [_self renderAndConvert];
-					if(_self->stopping) {
+					if(_self->stopping || !_self->samplePtr) {
 						inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
 						inputData->mBuffers[0].mNumberChannels = channels;
 						bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
 						return 0;
 					}
 				}
-				if(inputRemain) {
+				if(inputRemain && _self->samplePtr) {
 					int inputTodo = MIN(inputRemain, frameCount - renderedSamples);
 					cblas_scopy(inputTodo * channels, _self->samplePtr, 1, ((float *)inputData->mBuffers[0].mData) + renderedSamples * channels, 1);
 					_self->samplePtr += inputTodo * channels;
