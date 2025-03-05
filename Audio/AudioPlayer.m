@@ -422,8 +422,8 @@
 				}
 			}
 		}
-		@catch(id anException) {
-			DLog(@"Exception thrown checking file match: %@", anException);
+		@catch(NSException *e) {
+			DLog(@"Exception thrown checking file match: %@", e);
 		}
 	}
 

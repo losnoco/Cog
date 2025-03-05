@@ -402,9 +402,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			
 			[pathTask finish];
 		}
-		@catch(id anException) {
-			DLog(@"Exception caught while processing path: %@", anException);
-			[SentrySDK captureException:anException];
+		@catch(NSException *e) {
+			DLog(@"Exception caught while processing path: %@", e);
+			[SentrySDK captureException:e];
 			[pathTask finishWithStatus:kSentrySpanStatusInternalError];
 		}
 
@@ -518,9 +518,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						pathTask = nil;
 					}
 				}
-				@catch(id anException) {
-					DLog(@"Exception caught while processing for containers: %@", anException);
-					[SentrySDK captureException:anException];
+				@catch(NSException *e) {
+					DLog(@"Exception caught while processing for containers: %@", e);
+					[SentrySDK captureException:e];
 					if(innerTask) {
 						[innerTask finishWithStatus:kSentrySpanStatusInternalError];
 					}
@@ -600,9 +600,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 			[fileTask finish];
 		}
-		@catch(id anException) {
-			DLog(@"Exception caught while filtering paths: %@", anException);
-			[SentrySDK captureException:anException];
+		@catch(NSException *e) {
+			DLog(@"Exception caught while filtering paths: %@", e);
+			[SentrySDK captureException:e];
 			if(fileTask) {
 				[fileTask finishWithStatus:kSentrySpanStatusInternalError];
 			}
@@ -657,9 +657,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 			[containedUrlTask finish];
 		}
-		@catch(id anException) {
-			DLog(@"Exception caught filtering contained URL: %@", anException);
-			[SentrySDK captureException:anException];
+		@catch(NSException *e) {
+			DLog(@"Exception caught filtering contained URL: %@", e);
+			[SentrySDK captureException:e];
 			if(containedUrlTask) {
 				[containedUrlTask finishWithStatus:kSentrySpanStatusInternalError];
 			}
@@ -926,9 +926,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 							[childTask finish];
 						}
 					}
-					@catch(id anException) {
-						DLog(@"Exception thrown while reading tags: %@", anException);
-						[SentrySDK captureException:anException];
+					@catch(NSException *e) {
+						DLog(@"Exception thrown while reading tags: %@", e);
+						[SentrySDK captureException:e];
 						if(childTask) {
 							[childTask finishWithStatus:kSentrySpanStatusInternalError];
 						}
@@ -1074,9 +1074,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 				[childTask finish];
 			}
 		}
-		@catch(id anException) {
-			DLog(@"Exception thrown while reading tag synchronously: %@", anException);
-			[SentrySDK captureException:anException];
+		@catch(NSException *e) {
+			DLog(@"Exception thrown while reading tag synchronously: %@", e);
+			[SentrySDK captureException:e];
 			if(childTask) {
 				[childTask finishWithStatus:kSentrySpanStatusInternalError];
 			}
