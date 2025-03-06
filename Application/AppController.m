@@ -330,6 +330,9 @@ static BOOL consentLastEnabled = NO;
 					options.dsn = @"https://b5eda1c2390eb965a74dd735413b6392@cog-analytics.losno.co/3";
 					options.debug = YES; // Enabled debug when first installing is always helpful
 
+					// Temporary until there's a better solution
+					options.enableAppHangTracking = NO;
+
 					// Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
 					// We recommend adjusting this value in production.
 					options.tracesSampleRate = @1.0;
