@@ -29,22 +29,18 @@ static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotific
 
 static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
-- (int)renderInput:(int)amountToRead toBuffer:(float *)buffer {
+- (AudioChunk *)renderInput:(int)amountToRead {
 	int amountRead = 0;
 
 	if(stopping == YES || [outputController shouldContinue] == NO) {
 		// Chain is dead, fill out the serial number pointer forever with silence
 		stopping = YES;
-		return 0;
+		return [[AudioChunk alloc] init];
 	}
 
 	AudioStreamBasicDescription format;
 	uint32_t config;
 	if([outputController peekFormat:&format channelConfig:&config]) {
-		AudioStreamBasicDescription origFormat;
-		uint32_t origConfig = config;
-		origFormat = format;
-
 		if(!streamFormatStarted || config != realStreamChannelConfig || memcmp(&realStreamFormat, &format, sizeof(format)) != 0) {
 			realStreamFormat = format;
 			realStreamChannelConfig = config;
@@ -54,58 +50,10 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	}
 
 	if(streamFormatChanged) {
-		return 0;
+		return [[AudioChunk alloc] init];
 	}
 
-	AudioChunk *chunk;
-	
-	if(!chunkRemain) {
-		chunk = [outputController readChunk:amountToRead];
-		streamTimestamp = [chunk streamTimestamp];
-	} else {
-		chunk = chunkRemain;
-		chunkRemain = nil;
-	}
-
-	int frameCount = (int)[chunk frameCount];
-	format = [chunk format];
-	config = [chunk channelConfig];
-	double chunkDuration = 0;
-
-	if(frameCount) {
-		chunkDuration = [chunk duration];
-
-		NSData *samples = [chunk removeSamples:frameCount];
-#ifdef _DEBUG
-		[BadSampleCleaner cleanSamples:(float *)[samples bytes]
-								amount:frameCount * format.mChannelsPerFrame
-							  location:@"pre downmix"];
-#endif
-		const float *outputPtr = (const float *)[samples bytes];
-
-		cblas_scopy((int)(frameCount * realStreamFormat.mChannelsPerFrame), outputPtr, 1, &buffer[0], 1);
-		amountRead = frameCount;
-	} else {
-		return 0;
-	}
-
-	if(stopping) return 0;
-
-	float volumeScale = 1.0;
-	double sustained;
-	sustained = secondsHdcdSustained;
-	if(sustained > 0) {
-		if(sustained < amountRead) {
-			secondsHdcdSustained = 0;
-		} else {
-			secondsHdcdSustained -= chunkDuration;
-			volumeScale = 0.5;
-		}
-	}
-
-	scale_by_volume(&buffer[0], amountRead * realStreamFormat.mChannelsPerFrame, volumeScale * volume);
-
-	return amountRead;
+	return [outputController readChunk:amountToRead];
 }
 
 - (id)initWithController:(OutputNode *)c {
@@ -193,6 +141,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	running = YES;
 	started = NO;
 	shouldPlayOutBuffer = NO;
+	BOOL rendered = NO;
 
 	while(!stopping) {
 		@autoreleasepool {
@@ -206,12 +155,19 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				[outputLock lock];
 				started = NO;
 				restarted = NO;
-				inputRemain = 0;
+				[outputBuffer reset];
 				[outputLock unlock];
 			}
 
 			if(stopping)
 				break;
+
+			if(![outputBuffer isFull]) {
+				[self renderAndConvert];
+				rendered = YES;
+			} else {
+				rendered = NO;
+			}
 
 			if(!started && !paused) {
 				[self resume];
@@ -222,7 +178,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			}
 		}
 
-		usleep(5000);
+		if(!rendered) {
+			usleep(5000);
+		}
 	}
 
 	stopped = YES;
@@ -495,6 +453,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			return NO;
 
 		[outputController setFormat:&deviceFormat channelConfig:deviceChannelConfig];
+		
+		[outputLock lock];
+		[outputBuffer reset];
+		[outputLock unlock];
 	}
 
 	return YES;
@@ -556,55 +518,39 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 }
 
-- (int)renderAndConvert {
-	int inputRendered = 0;
-	int bytesRendered = inputRendered * realStreamFormat.mBytesPerPacket;
-
+- (void)renderAndConvert {
 	if(resetStreamFormat) {
 		[self updateStreamFormat];
 		if([self processEndOfStream]) {
-			return 0;
+			return;
 		}
 	}
 
-	while(inputRendered < 4096) {
-		int maxToRender = MIN(4096 - inputRendered, 512);
-		int rendered = [self renderInput:maxToRender toBuffer:&tempBuffer[0]];
-		if(rendered > 0) {
-			memcpy(((uint8_t*)&inputBuffer[0]) + bytesRendered, &tempBuffer[0], rendered * realStreamFormat.mBytesPerPacket);
-		}
-		inputRendered += rendered;
-		bytesRendered += rendered * realStreamFormat.mBytesPerPacket;
-		if(streamFormatChanged) {
-			streamFormatChanged = NO;
-			if(inputRendered) {
-				resetStreamFormat = YES;
-				break;
-			} else {
-				[self updateStreamFormat];
-			}
-		}
-		if([self processEndOfStream]) break;
+	AudioChunk *chunk = [self renderInput:512];
+	size_t frameCount = 0;
+	if(chunk) {
+		frameCount = [chunk frameCount];
+
+		[outputLock lock];
+		[outputBuffer addChunk:chunk];
+		[outputLock unlock];
 	}
-
-	int samplesRendered = inputRendered;
-
-	samplePtr = &inputBuffer[0];
-
-#ifdef OUTPUT_LOG
-	if(samplesRendered) {
-		size_t dataByteSize = samplesRendered * sizeof(float) * deviceFormat.mChannelsPerFrame;
-
-		fwrite(samplePtr, 1, dataByteSize, _logFile);
+	
+	if(streamFormatChanged) {
+		streamFormatChanged = NO;
+		if(frameCount) {
+			resetStreamFormat = YES;
+		} else {
+			[self updateStreamFormat];
+		}
 	}
-#endif
-
-	return samplesRendered;
+	[self processEndOfStream];
 }
 
 - (void)audioOutputBlock {
 	__block AudioStreamBasicDescription *format = &deviceFormat;
 	__block void *refCon = (__bridge void *)self;
+	__block NSLock *refLock = self->outputLock;
 
 #ifdef OUTPUT_LOG
 	__block FILE *logFile = _logFile;
@@ -623,24 +569,24 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		@autoreleasepool {
 			while(renderedSamples < frameCount) {
-				int inputRemain = _self->inputRemain;
-				while(!inputRemain || !_self->samplePtr) {
-					inputRemain = [_self renderAndConvert];
-					if(_self->stopping || !_self->samplePtr) {
-						inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
-						inputData->mBuffers[0].mNumberChannels = channels;
-						bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
-						return 0;
-					}
-				}
-				if(inputRemain && _self->samplePtr) {
-					int inputTodo = MIN(inputRemain, frameCount - renderedSamples);
-					cblas_scopy(inputTodo * channels, _self->samplePtr, 1, ((float *)inputData->mBuffers[0].mData) + renderedSamples * channels, 1);
-					_self->samplePtr += inputTodo * channels;
-					inputRemain -= inputTodo;
+				[refLock lock];
+				AudioChunk *chunk = [_self->outputBuffer removeSamples:frameCount - renderedSamples];
+				[refLock unlock];
+
+				_self->streamTimestamp = [chunk streamTimestamp];
+
+				size_t _frameCount = [chunk frameCount];
+				if(_frameCount) {
+					NSData *sampleData = [chunk removeSamples:_frameCount];
+					float *samplePtr = (float *)[sampleData bytes];
+					size_t inputTodo = MIN(_frameCount, frameCount - renderedSamples);
+					cblas_scopy((int)(inputTodo * channels), samplePtr, 1, ((float *)inputData->mBuffers[0].mData) + renderedSamples * channels, 1);
 					renderedSamples += inputTodo;
 				}
-				_self->inputRemain = inputRemain;
+
+				if(_self->stopping) {
+					break;
+				}
 			}
 
 			inputData->mBuffers[0].mDataByteSize = renderedSamples * format->mBytesPerPacket;
@@ -681,10 +627,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		outputDeviceID = -1;
 		restarted = NO;
 
-		inputRemain = 0;
-
-		chunkRemain = nil;
-
 		AudioComponentDescription desc;
 		NSError *err;
 
@@ -723,16 +665,22 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
+		
+		outputBuffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
+		if(!outputBuffer) {
+			return NO;
+		}
 
 		return (err == nil);
 	}
 }
 
 - (void)updateLatency:(double)secondsPlayed {
+	double visLatency = [outputController getVisLatency];
 	if(secondsPlayed > 0) {
 		[outputController setAmountPlayed:streamTimestamp];
 	}
-	[visController postLatency:[outputController getPostVisLatency]];
+	[visController postLatency:visLatency];
 }
 
 - (double)volume {
@@ -744,7 +692,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (double)latency {
-	return 0.0;
+	return [outputBuffer listDuration];
 }
 
 - (void)start {
@@ -793,7 +741,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 		if(_au) {
 			if(shouldPlayOutBuffer && !commandStop) {
-				int compareVal = 0;
+				double compareVal = 0;
 				double secondsLatency = [outputController getTotalLatency];
 				int compareMax = (((1000000 / 5000) * secondsLatency) + (10000 / 5000)); // latency plus 10ms, divide by sleep intervals
 				do {

@@ -10,23 +10,11 @@
 
 #import <CogAudio/AudioPlayer.h>
 #import <CogAudio/ConverterNode.h>
-#import <CogAudio/DSPRubberbandNode.h>
-#import <CogAudio/DSPFSurroundNode.h>
-#import <CogAudio/DSPHRTFNode.h>
-#import <CogAudio/DSPEqualizerNode.h>
-#import <CogAudio/VisualizationNode.h>
-#import <CogAudio/DSPDownmixNode.h>
 #import <CogAudio/InputNode.h>
 
 @interface BufferChain : NSObject {
 	InputNode *inputNode;
 	ConverterNode *converterNode;
-	DSPRubberbandNode *rubberbandNode;
-	DSPFSurroundNode *fsurroundNode;
-	DSPHRTFNode *hrtfNode;
-	DSPEqualizerNode *equalizerNode;
-	DSPDownmixNode *downmixNode;
-	VisualizationNode *visualizationNode;
 
 	NSURL *streamURL;
 	id userInfo;
@@ -83,18 +71,6 @@
 - (AudioStreamBasicDescription)inputFormat;
 - (uint32_t)inputConfig;
 
-- (DSPRubberbandNode *)rubberband;
-
-- (DSPFSurroundNode *)fsurround;
-
-- (DSPHRTFNode *)hrtf;
-
-- (DSPEqualizerNode *)equalizer;
-
-- (DSPDownmixNode *)downmix;
-
-- (VisualizationNode *)visualization;
-
 - (double)secondsBuffered;
 
 - (void)sustainHDCD;
@@ -104,7 +80,5 @@
 - (void)pushInfo:(NSDictionary *)info;
 
 - (void)setError:(BOOL)status;
-
-- (double)getPostVisLatency;
 
 @end

@@ -9,6 +9,7 @@
 #import "BufferChain.h"
 #import "AudioSource.h"
 #import "CoreAudioUtils.h"
+#import "DSPDownmixNode.h"
 #import "OutputNode.h"
 
 #import "AudioPlayer.h"
@@ -27,14 +28,6 @@
 
 		inputNode = nil;
 		converterNode = nil;
-
-		rubberbandNode = nil;
-		fsurroundNode = nil;
-		equalizerNode = nil;
-		hrtfNode = nil;
-		downmixNode = nil;
-
-		visualizationNode = nil;
 	}
 
 	return self;
@@ -45,12 +38,6 @@
 	finalNode = nil;
 
 	// Tear them down in reverse
-	visualizationNode = nil;
-	downmixNode = nil;
-	hrtfNode = nil;
-	equalizerNode = nil;
-	fsurroundNode = nil;
-	rubberbandNode = nil;
 	converterNode = nil;
 	inputNode = nil;
 
@@ -58,22 +45,8 @@
 	if(!inputNode) return NO;
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 	if(!converterNode) return NO;
-	rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:converterNode latency:0.1];
-	if(!rubberbandNode) return NO;
-	fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
-	if(!fsurroundNode) return NO;
-	equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
-	if(!equalizerNode) return NO;
-	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
-	if(!hrtfNode) return NO;
-	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
-	if(!downmixNode) return NO;
 
-	// Approximately double the chunk size for Vis at 44100Hz
-	visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:8192.0 / 44100.0];
-	if(!visualizationNode) return NO;
-
-	finalNode = visualizationNode;
+	finalNode = converterNode;
 
 	return YES;
 }
@@ -178,6 +151,7 @@
 - (void)initDownmixer {
 	AudioPlayer * audioPlayer = controller;
 	OutputNode *outputNode = [audioPlayer output];
+	DSPDownmixNode *downmixNode = [outputNode downmix];
 	[downmixNode setOutputFormat:[outputNode deviceFormat] withChannelConfig:[outputNode deviceChannelConfig]];
 }
 
@@ -186,12 +160,6 @@
 
 	[inputNode launchThread];
 	[converterNode launchThread];
-	[rubberbandNode launchThread];
-	[fsurroundNode launchThread];
-	[equalizerNode launchThread];
-	[hrtfNode launchThread];
-	[downmixNode launchThread];
-	[visualizationNode launchThread];
 }
 
 - (void)setUserInfo:(id)i {
@@ -217,9 +185,6 @@
 	[[inputNode writeSemaphore] signal];
 	if(![inputNode threadExited])
 		[[inputNode exitAtTheEndOfTheStream] wait]; // wait for decoder to be closed (see InputNode's -(void)process )
-
-	// Must do this here, or else the VisualizationContainer will carry a reference forever
-	[visualizationNode pop];
 
 	DLog(@"Bufferchain dealloc");
 }
@@ -262,12 +227,6 @@
 - (void)setShouldContinue:(BOOL)s {
 	[inputNode setShouldContinue:s];
 	[converterNode setShouldContinue:s];
-	[rubberbandNode setShouldContinue:s];
-	[fsurroundNode setShouldContinue:s];
-	[equalizerNode setShouldContinue:s];
-	[hrtfNode setShouldContinue:s];
-	[downmixNode setShouldContinue:s];
-	[visualizationNode setShouldContinue:s];
 }
 
 - (BOOL)isRunning {
@@ -284,30 +243,6 @@
 
 - (ConverterNode *)converter {
 	return converterNode;
-}
-
-- (DSPRubberbandNode *)rubberband {
-	return rubberbandNode;
-}
-
-- (DSPFSurroundNode *)fsurround {
-	return fsurroundNode;
-}
-
-- (DSPHRTFNode *)hrtf {
-	return hrtfNode;
-}
-
-- (DSPEqualizerNode *)equalizer {
-	return equalizerNode;
-}
-
-- (DSPDownmixNode *)downmix {
-	return downmixNode;
-}
-
-- (VisualizationNode *)visualization {
-	return visualizationNode;
 }
 
 - (AudioStreamBasicDescription)inputFormat {
@@ -344,19 +279,6 @@
 
 - (void)setError:(BOOL)status {
 	[controller setError:status];
-}
-
-- (double)getPostVisLatency {
-	double latency = 0.0;
-	Node *node = finalNode;
-	while(node) {
-		latency += [node secondsBuffered];
-		if(node == visualizationNode) {
-			break;
-		}
-		node = [node previousNode];
-	}
-	return latency;
 }
 
 @end

@@ -14,7 +14,7 @@
 
 #import "DSPEqualizerNode.h"
 
-#import "BufferChain.h"
+#import "OutputNode.h"
 
 #import "Logging.h"
 
@@ -23,81 +23,6 @@
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
-
-@interface EQObject : NSObject {
-	AudioUnit eq;
-}
-@property AudioUnit eq;
-@end
-
-@implementation EQObject
-@synthesize eq;
-@end
-
-@interface EQHookContainer : NSObject {
-	NSMutableArray *equalizers;
-}
-
-+ (EQHookContainer *)sharedContainer;
-
-- (id)init;
-
-- (void)pushEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer;
-- (void)popEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer;
-
-@end
-
-@implementation EQHookContainer
-
-static EQHookContainer *theContainer = nil;
-
-+ (EQHookContainer *)sharedContainer {
-	@synchronized(theContainer) {
-		if(!theContainer) {
-			theContainer = [[EQHookContainer alloc] init];
-		}
-		return theContainer;
-	}
-}
-
-- (id)init {
-	self = [super init];
-	if(self) {
-		equalizers = [[NSMutableArray alloc] init];
-	}
-	return self;
-}
-
-- (void)pushEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer {
-	@synchronized (equalizers) {
-		EQObject *_eq = [[EQObject alloc] init];
-		_eq.eq = eq;
-		[equalizers addObject:_eq];
-		if([equalizers count] == 1) {
-			[audioPlayer beginEqualizer:eq];
-		} else {
-			[audioPlayer refreshEqualizer:eq];
-		}
-	}
-}
-
-- (void)popEqualizer:(AudioUnit)eq forPlayer:(AudioPlayer *)audioPlayer {
-	@synchronized (equalizers) {
-		for(EQObject *_eq in equalizers) {
-			if(_eq.eq == eq) {
-				[equalizers removeObject:_eq];
-				break;
-			}
-		}
-		[audioPlayer endEqualizer:eq];
-		if([equalizers count]) {
-			EQObject *_eq = [equalizers objectAtIndex:0];
-			[audioPlayer beginEqualizer:_eq.eq];
-		}
-	}
-}
-
-@end
 
 @implementation DSPEqualizerNode {
 	BOOL enableEqualizer;
@@ -167,8 +92,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		float preamp = [defaults floatForKey:@"eqPreamp"];
 		equalizerPreamp = pow(10.0, preamp / 20.0);
 
-		BufferChain *bufferChain = c;
-		audioPlayer = [bufferChain controller];
+		OutputNode *outputNode = c;
+		audioPlayer = [outputNode controller];
 
 		[self addObservers];
 	}
@@ -177,6 +102,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 - (void)dealloc {
 	DLog(@"Equalizer dealloc");
+	[self setShouldContinue:NO];
 	[self cleanUp];
 	[self removeObservers];
 	[super cleanUp];
@@ -293,7 +219,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		equalizerInitialized = YES;
 
-		[[EQHookContainer sharedContainer] pushEqualizer:_eq forPlayer:[self audioPlayer]];
+		[[self audioPlayer] beginEqualizer:_eq];
 	}
 
 	return YES;
@@ -302,7 +228,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 - (void)fullShutdown {
 	if(_eq) {
 		if(equalizerInitialized) {
-			[[EQHookContainer sharedContainer] popEqualizer:_eq forPlayer:[self audioPlayer]];
+			[[self audioPlayer] endEqualizer:_eq];
 			AudioUnitUninitialize(_eq);
 			equalizerInitialized = NO;
 		}
@@ -342,7 +268,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 - (void)process {
 	while([self shouldContinue] == YES) {
-		if(paused) {
+		if(paused || endOfStream) {
 			usleep(500);
 			continue;
 		}
@@ -351,7 +277,9 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
 				if([previousNode endOfStream] == YES) {
-					break;
+					usleep(500);
+					endOfStream = YES;
+					continue;
 				}
 				if(paused) {
 					continue;
@@ -366,7 +294,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			}
 		}
 	}
-	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {
