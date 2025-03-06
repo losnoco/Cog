@@ -209,6 +209,8 @@ static BOOL consentLastEnabled = NO;
 	[randomizeButton setToolTip:NSLocalizedString(@"RandomizeButtonTooltip", @"")];
 	[fileButton setToolTip:NSLocalizedString(@"FileButtonTooltip", @"")];
 
+	[self registerDefaultHotKeys];
+
 	[self registerHotKeys];
 
 	(void)[spotlightWindowController init];
@@ -715,7 +717,67 @@ static BOOL consentLastEnabled = NO;
 	}
 }
 
-/* Unassign previous handler first, so dealloc can unregister it from the global map before the new instances are assigned */
+MASShortcut *shortcutWithMigration(NSString *oldKeyCodePrefName,
+								   NSString *oldKeyModifierPrefName,
+								   NSString *newShortcutPrefName,
+								   NSInteger newDefaultKeyCode) {
+	NSEventModifierFlags defaultModifiers = NSEventModifierFlagControl | NSEventModifierFlagCommand;
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	if([defaults objectForKey:oldKeyCodePrefName]) {
+		NSInteger oldKeyCode = [defaults integerForKey:oldKeyCodePrefName];
+		NSEventModifierFlags oldKeyModifiers = [defaults integerForKey:oldKeyModifierPrefName];
+		// Should we consider temporarily save these values for further migration?
+		[defaults removeObjectForKey:oldKeyCodePrefName];
+		[defaults removeObjectForKey:oldKeyModifierPrefName];
+		return [MASShortcut shortcutWithKeyCode:oldKeyCode modifierFlags:oldKeyModifiers];
+	} else {
+		return [MASShortcut shortcutWithKeyCode:newDefaultKeyCode modifierFlags:defaultModifiers];
+	}
+}
+
+static NSUserDefaultsController *shortcutDefaultsController = nil;
+
+- (void)registerDefaultHotKeys {
+	MASShortcut *playShortcut = shortcutWithMigration(@"hotKeyPlayKeyCode",
+													  @"hotKeyPlayModifiers",
+													  CogPlayShortcutKey,
+													  kVK_ANSI_P);
+	MASShortcut *nextShortcut = shortcutWithMigration(@"hotKeyNextKeyCode",
+													  @"hotKeyNextModifiers",
+													  CogNextShortcutKey,
+													  kVK_ANSI_N);
+	MASShortcut *prevShortcut = shortcutWithMigration(@"hotKeyPreviousKeyCode",
+													  @"hotKeyPreviousModifiers",
+													  CogPrevShortcutKey,
+													  kVK_ANSI_R);
+	MASShortcut *spamShortcut = [MASShortcut shortcutWithKeyCode:kVK_ANSI_C
+												   modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
+	MASShortcut *fadeShortcut = [MASShortcut shortcutWithKeyCode:kVK_ANSI_O
+												   modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
+
+	NSData *playShortcutData = [NSKeyedArchiver archivedDataWithRootObject:playShortcut];
+	NSData *nextShortcutData = [NSKeyedArchiver archivedDataWithRootObject:nextShortcut];
+	NSData *prevShortcutData = [NSKeyedArchiver archivedDataWithRootObject:prevShortcut];
+	NSData *spamShortcutData = [NSKeyedArchiver archivedDataWithRootObject:spamShortcut];
+	NSData *fadeShortcutData = [NSKeyedArchiver archivedDataWithRootObject:fadeShortcut];
+
+	// Register default values to be used for the first app start
+	NSDictionary<NSString *, NSData *> *defaultShortcuts = @{
+		CogPlayShortcutKey: playShortcutData,
+		CogNextShortcutKey: nextShortcutData,
+		CogPrevShortcutKey: prevShortcutData,
+		CogSpamShortcutKey: spamShortcutData,
+		CogFadeShortcutKey: fadeShortcutData
+	};
+
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultShortcuts];
+	shortcutDefaultsController = [[NSUserDefaultsController sharedUserDefaultsController] initWithDefaults:nil initialValues:defaultShortcuts];
+}
+
+- (IBAction)resetHotkeys:(id)sender {
+	[shortcutDefaultsController revertToInitialValues:sender];
+}
+
 - (void)registerHotKeys {
 	MASShortcutBinder *binder = [MASShortcutBinder sharedBinder];
 	[binder bindShortcutWithDefaultsKey:CogPlayShortcutKey
