@@ -10,7 +10,7 @@
 	[self setSelectsInsertedObjects:NO];
 
 	NSDictionary *defaultDeviceInfo = @{
-		@"name": @"System Default Device",
+		@"name": NSLocalizedStringFromTableInBundle(@"System Default Device", nil, [NSBundle bundleForClass:[self class]], @""),
 		@"deviceID": @(-1),
 	};
 	[self addObject:defaultDeviceInfo];
