@@ -225,7 +225,7 @@
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <action selector="resetToDefaultShortcuts:" target="6" id="SSH-OG-OHD"/>
+                        <action selector="resetHotkeys:" target="-1" id="POi-Ci-HfU"/>
                     </connections>
                 </button>
             </subviews>
