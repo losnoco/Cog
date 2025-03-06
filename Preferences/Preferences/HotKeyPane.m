@@ -22,6 +22,8 @@
 	_prevShortcutView.associatedUserDefaultsKey = CogPrevShortcutKey;
 	_spamShortcutView.associatedUserDefaultsKey = CogSpamShortcutKey;
 	_fadeShortcutView.associatedUserDefaultsKey = CogFadeShortcutKey;
+	_seekBkwdShortcutView.associatedUserDefaultsKey = CogSeekBackwardShortcutKey;
+	_seekFwdShortcutView.associatedUserDefaultsKey = CogSeekForwardShortcutKey;
 }
 
 - (NSString *)title {
