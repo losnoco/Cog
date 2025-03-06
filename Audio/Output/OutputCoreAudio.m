@@ -706,7 +706,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (double)latency {
-	return [outputBuffer listDuration];
+	NSTimeInterval latency = 0.0;
+	if(_au) {
+		latency = [_au latency];
+	}
+	return [outputBuffer listDuration] + latency;
 }
 
 - (void)start {
