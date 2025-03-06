@@ -37,6 +37,7 @@
 
 - (void)dealloc {
 	DLog(@"Downmix dealloc");
+	[self setShouldContinue:NO];
 	[self cleanUp];
 	[super cleanUp];
 }
@@ -102,7 +103,7 @@
 
 - (void)process {
 	while([self shouldContinue] == YES) {
-		if(paused) {
+		if(paused || endOfStream) {
 			usleep(500);
 			continue;
 		}
@@ -111,7 +112,9 @@
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
 				if([previousNode endOfStream] == YES) {
-					break;
+					usleep(500);
+					endOfStream = YES;
+					continue;
 				}
 				if(paused) {
 					continue;
@@ -123,7 +126,6 @@
 			}
 		}
 	}
-	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {

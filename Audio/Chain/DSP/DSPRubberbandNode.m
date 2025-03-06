@@ -71,6 +71,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 - (void)dealloc {
 	DLog(@"Rubber Band dealloc");
+	[self setShouldContinue:NO];
 	[self cleanUp];
 	[self removeObservers];
 	[super cleanUp];
@@ -351,9 +352,26 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	return paused;
 }
 
+- (void)setPreviousNode:(id)p {
+	if(previousNode != p) {
+		paused = YES;
+		while(processEntered);
+		previousNode = p;
+		paused = NO;
+	}
+}
+
+- (void)setEndOfStream:(BOOL)e {
+	if(endOfStream && !e) {
+		[self fullShutdown];
+	}
+	[super setEndOfStream:e];
+	flushed = e;
+}
+
 - (void)process {
 	while([self shouldContinue] == YES) {
-		if(paused) {
+		if(paused || endOfStream) {
 			usleep(500);
 			continue;
 		}
@@ -362,7 +380,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
 				if(flushed) {
-					break;
+					usleep(500);
+					endOfStream = YES;
+					continue;
 				}
 				if(paused) {
 					continue;
@@ -381,7 +401,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			}
 		}
 	}
-	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {
@@ -390,7 +409,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	processEntered = YES;
 
-	if(stopping || flushed || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
+	if(stopping || flushed || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
 		processEntered = NO;
 		return nil;
 	}

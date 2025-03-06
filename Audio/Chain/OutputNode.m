@@ -11,9 +11,27 @@
 #import "BufferChain.h"
 #import "OutputCoreAudio.h"
 
+#import "DSPRubberbandNode.h"
+#import "DSPFSurroundNode.h"
+#import "DSPHRTFNode.h"
+#import "DSPEqualizerNode.h"
+#import "VisualizationNode.h"
+#import "DSPDownmixNode.h"
+
 #import "Logging.h"
 
-@implementation OutputNode
+@implementation OutputNode {
+	BOOL DSPsLaunched;
+
+	Node *previousInput;
+
+	DSPRubberbandNode *rubberbandNode;
+	DSPFSurroundNode *fsurroundNode;
+	DSPHRTFNode *hrtfNode;
+	DSPEqualizerNode *equalizerNode;
+	DSPDownmixNode *downmixNode;
+	VisualizationNode *visualizationNode;
+}
 
 - (void)setup {
 	[self setupWithInterval:NO];
@@ -32,6 +50,31 @@
 	output = [[OutputCoreAudio alloc] initWithController:self];
 
 	[output setup];
+
+	if(!DSPsLaunched) {
+		rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:nil latency:0.1];
+		if(!rubberbandNode) return;
+		fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
+		if(!fsurroundNode) return;
+		equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
+		if(!equalizerNode) return;
+		hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
+		if(!hrtfNode) return;
+		downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
+		if(!downmixNode) return;
+
+		// Approximately double the chunk size for Vis at 44100Hz
+		visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:8192.0 / 44100.0];
+		if(!visualizationNode) return;
+
+		[self setPreviousNode:visualizationNode];
+
+		DSPsLaunched = YES;
+
+		[self launchDSPs];
+
+		previousInput = nil;
+	}
 }
 
 - (void)seek:(double)time {
@@ -84,7 +127,13 @@
 }
 
 - (BOOL)selectNextBuffer {
-	return [controller selectNextBuffer];
+	BOOL ret = [controller selectNextBuffer];
+	if(!ret) {
+		Node *finalNode = [[controller bufferChain] finalNode];
+		[rubberbandNode setPreviousNode:finalNode];
+		[self reconnectInput];
+	}
+	return ret;
 }
 
 - (void)endOfInputPlayed {
@@ -104,10 +153,34 @@
 	return [buffer listDuration];
 }
 
+- (NSArray *)DSPs {
+	if(DSPsLaunched) {
+		return @[rubberbandNode, fsurroundNode, equalizerNode, hrtfNode, downmixNode, visualizationNode];
+	} else {
+		return @[];
+	}
+}
+
+- (void)reconnectInput {
+	NSArray *DSPs = [self DSPs];
+
+	for (Node *node in DSPs) {
+		[node setEndOfStream:NO];
+	}
+}
+
+- (void)launchDSPs {
+	NSArray *DSPs = [self DSPs];
+
+	for (Node *node in DSPs) {
+		[node launchThread];
+	}
+}
+
 - (AudioChunk *)readChunk:(size_t)amount {
 	@autoreleasepool {
 		Node *finalNode = [[controller bufferChain] finalNode];
-		[self setPreviousNode:finalNode];
+		[rubberbandNode setPreviousNode:finalNode];
 
 		if(finalNode) {
 			AudioChunk *ret = [super readChunk:amount];
@@ -125,7 +198,8 @@
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config {
 	@autoreleasepool {
-		[self setPreviousNode:[[controller bufferChain] finalNode]];
+		Node *finalNode = [[controller bufferChain] finalNode];
+		[rubberbandNode setPreviousNode:finalNode];
 
 		BOOL ret = [super peekFormat:format channelConfig:config];
 		if(!ret && [previousNode endOfStream]) {
@@ -170,7 +244,6 @@
 	BufferChain *bufferChain = [audioPlayer bufferChain];
 	if(bufferChain) {
 		ConverterNode *converter = [bufferChain converter];
-		DSPDownmixNode *downmix = [bufferChain downmix];
 		AudioStreamBasicDescription outputFormat;
 		uint32_t outputChannelConfig;
 		BOOL formatChanged = NO;
@@ -180,11 +253,11 @@
 				formatChanged = YES;
 			}
 		}
-		if(downmix && output && !formatChanged) {
+		if(downmixNode && output && !formatChanged) {
 			outputFormat = [output deviceFormat];
 			outputChannelConfig = [output deviceChannelConfig];
-			AudioStreamBasicDescription currentOutputFormat = [downmix nodeFormat];
-			uint32_t currentOutputChannelConfig = [downmix nodeChannelConfig];
+			AudioStreamBasicDescription currentOutputFormat = [downmixNode nodeFormat];
+			uint32_t currentOutputChannelConfig = [downmixNode nodeChannelConfig];
 			if(memcmp(&currentOutputFormat, &outputFormat, sizeof(currentOutputFormat)) != 0 ||
 			   currentOutputChannelConfig != outputChannelConfig) {
 				formatChanged = YES;
@@ -195,8 +268,8 @@
 			if(converter) {
 				[converter setOutputFormat:format];
 			}
-			if(downmix && output) {
-				[downmix setOutputFormat:[output deviceFormat] withChannelConfig:[output deviceChannelConfig]];
+			if(downmixNode && output) {
+				[downmixNode setOutputFormat:[output deviceFormat] withChannelConfig:[output deviceChannelConfig]];
 			}
 			if(inputNode) {
 				AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
@@ -209,6 +282,20 @@
 - (void)close {
 	[output stop];
 	output = nil;
+	if(DSPsLaunched) {
+		NSArray *DSPs = [self DSPs];
+		for(Node *node in DSPs) {
+			[node setShouldContinue:NO];
+		}
+		previousNode = nil;
+		visualizationNode = nil;
+		downmixNode = nil;
+		hrtfNode = nil;
+		fsurroundNode = nil;
+		rubberbandNode = nil;
+		previousInput = nil;
+		DSPsLaunched = NO;
+	}
 }
 
 - (double)volume {
@@ -222,6 +309,10 @@
 - (void)setShouldContinue:(BOOL)s {
 	[super setShouldContinue:s];
 
+	NSArray *DSPs = [self DSPs];
+	for(Node *node in DSPs) {
+		[node setShouldContinue:s];
+	}
 	//	if (s == NO)
 	//		[output stop];
 }
@@ -243,15 +334,28 @@
 }
 
 - (double)latency {
-	return [output latency];
+	double latency = 0.0;
+	NSArray *DSPs = [self DSPs];
+	for(Node *node in DSPs) {
+		latency += [node secondsBuffered];
+	}
+	return [output latency] + latency;
+}
+
+- (double)getVisLatency {
+	return [output latency] + [visualizationNode secondsBuffered];
 }
 
 - (double)getTotalLatency {
-	return [[controller bufferChain] secondsBuffered] + [output latency];
+	return [[controller bufferChain] secondsBuffered] + [self latency];
 }
 
-- (double)getPostVisLatency {
-	return [[controller bufferChain] getPostVisLatency] + [output latency];
+- (id)controller {
+	return controller;
+}
+
+- (id)downmix {
+	return downmixNode;
 }
 
 @end

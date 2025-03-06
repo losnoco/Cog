@@ -24,6 +24,7 @@ using std::atomic_long;
 
 #import <simd/simd.h>
 
+#import <CogAudio/ChunkList.h>
 #import <CogAudio/HeadphoneFilter.h>
 
 //#define OUTPUT_LOG
@@ -87,17 +88,11 @@ using std::atomic_long;
 
 	size_t _bufferSize;
 
-	int inputRemain;
-	
-	AudioChunk *chunkRemain;
-	
 	BOOL resetStreamFormat;
 	
 	BOOL shouldPlayOutBuffer;
 
-	float *samplePtr;
-	float tempBuffer[512 * 32];
-	float inputBuffer[4096 * 32]; // 4096 samples times maximum supported channel count
+	ChunkList *outputBuffer;
 
 #ifdef OUTPUT_LOG
 	FILE *_logFile;

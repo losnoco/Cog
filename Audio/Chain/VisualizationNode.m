@@ -23,59 +23,6 @@
 
 #import "VisualizationNode.h"
 
-@interface VisualizationCollection : NSObject {
-	NSMutableArray *collection;
-}
-
-+ (VisualizationCollection *)sharedCollection;
-
-- (id)init;
-
-- (BOOL)pushVisualizer:(VisualizationNode *)visualization;
-- (void)popVisualizer:(VisualizationNode *)visualization;
-
-@end
-
-@implementation VisualizationCollection
-
-static VisualizationCollection *theCollection = nil;
-
-+ (VisualizationCollection *)sharedCollection {
-	@synchronized (theCollection) {
-		if(!theCollection) {
-			theCollection = [[VisualizationCollection alloc] init];
-		}
-		return theCollection;
-	}
-}
-
-- (id)init {
-	self = [super init];
-	if(self) {
-		collection = [[NSMutableArray alloc] init];
-	}
-	return self;
-}
-
-- (BOOL)pushVisualizer:(VisualizationNode *)visualization {
-	@synchronized (collection) {
-		[collection addObject:visualization];
-		return [collection count] > 1;
-	}
-}
-
-- (void)popVisualizer:(VisualizationNode *)visualization {
-	@synchronized (collection) {
-		[collection removeObject:visualization];
-		if([collection count]) {
-			VisualizationNode *next = [collection objectAtIndex:0];
-			[next replayPreroll];
-		}
-	}
-}
-
-@end
-
 @implementation VisualizationNode {
 	void *rs;
 	double lastVisRate;
@@ -83,7 +30,6 @@ static VisualizationCollection *theCollection = nil;
 	BOOL processEntered;
 	BOOL stopping;
 	BOOL paused;
-	BOOL replay;
 
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription visFormat; // Mono format for vis
@@ -100,10 +46,6 @@ static VisualizationCollection *theCollection = nil;
 	float visAudio[512];
 	float resamplerInput[8192];
 	float visTemp[8192];
-
-	BOOL registered;
-	BOOL prerolling;
-	NSMutableData *prerollBuffer;
 }
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
@@ -129,11 +71,6 @@ static VisualizationCollection *theCollection = nil;
 
 		visController = [VisualizationController sharedController];
 
-		registered = NO;
-		prerolling = NO;
-		replay = NO;
-		prerollBuffer = [[NSMutableData alloc] init];
-
 		inWrite = NO;
 		inPeek = NO;
 		inRead = NO;
@@ -147,16 +84,9 @@ static VisualizationCollection *theCollection = nil;
 
 - (void)dealloc {
 	DLog(@"Visualization node dealloc");
+	[self setShouldContinue:NO];
 	[self cleanUp];
-	[self pop];
 	[super cleanUp];
-}
-
-- (void)pop {
-	if(registered) {
-		[[VisualizationCollection sharedCollection] popVisualizer:self];
-		registered = NO;
-	}
 }
 
 // Visualization thread should be fairly high priority, too
@@ -228,25 +158,18 @@ static VisualizationCollection *theCollection = nil;
 
 - (void)process {
 	while([self shouldContinue] == YES) {
-		if(paused) {
+		if(paused || endOfStream) {
 			usleep(500);
 			continue;
 		}
 		@autoreleasepool {
-			if(replay) {
-				size_t length = [prerollBuffer length];
-				if(length) {
-					[visController postVisPCM:(const float *)[prerollBuffer bytes] amount:(int)(length / sizeof(float))];
-					[prerollBuffer replaceBytesInRange:NSMakeRange(0, length) withBytes:NULL length:0];
-				}
-				replay = NO;
-				prerolling = NO;
-			}
 			AudioChunk *chunk = nil;
 			chunk = [self readAndMergeChunksAsFloat32:512];
 			if(!chunk || ![chunk frameCount]) {
 				if([previousNode endOfStream] == YES) {
-					break;
+					usleep(500);
+					endOfStream = YES;
+					continue;
 				}
 			} else {
 				[self processVis:[chunk copy]];
@@ -259,24 +182,7 @@ static VisualizationCollection *theCollection = nil;
 }
 
 - (void)postVisPCM:(const float *)visTemp amount:(size_t)samples {
-	if(!registered) {
-		prerolling = [[VisualizationCollection sharedCollection] pushVisualizer:self];
-		registered = YES;
-	}
-	if(prerolling) {
-		[prerollBuffer appendBytes:visTemp length:(samples * sizeof(float))];
-	} else {
-		[visController postVisPCM:visTemp amount:samples];
-	}
-}
-
-- (void)replayPreroll {
-	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
-	replay = YES;
-	paused = NO;
+	[visController postVisPCM:visTemp amount:(int)samples];
 }
 
 - (void)processVis:(AudioChunk *)chunk {

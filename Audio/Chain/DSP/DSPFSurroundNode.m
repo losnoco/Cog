@@ -53,6 +53,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 
 - (void)dealloc {
 	DLog(@"FreeSurround dealloc");
+	[self setShouldContinue:NO];
 	[self cleanUp];
 	[self removeObservers];
 	[super cleanUp];
@@ -138,7 +139,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 
 - (void)process {
 	while([self shouldContinue] == YES) {
-		if(paused) {
+		if(paused || endOfStream) {
 			usleep(500);
 			continue;
 		}
@@ -147,7 +148,9 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
 				if([previousNode endOfStream] == YES) {
-					break;
+					usleep(500);
+					endOfStream = YES;
+					continue;
 				}
 				if(paused) {
 					continue;
@@ -162,7 +165,6 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 			}
 		}
 	}
-	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {

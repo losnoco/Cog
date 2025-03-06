@@ -49,8 +49,6 @@
 - (void)close;
 - (void)seek:(double)time;
 
-- (double)latency;
-
 - (AudioChunk *)readChunk:(size_t)amount;
 
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig;
@@ -76,7 +74,12 @@
 
 - (void)restartPlaybackAtCurrentPosition;
 
+- (double)latency;
+- (double)getVisLatency;
 - (double)getTotalLatency;
-- (double)getPostVisLatency;
+
+- (id)controller;
+
+- (id)downmix;
 
 @end

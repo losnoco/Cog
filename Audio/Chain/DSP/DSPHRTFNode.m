@@ -136,6 +136,7 @@ static void unregisterMotionListener(void) {
 
 - (void)dealloc {
 	DLog(@"HRTF dealloc");
+	[self setShouldContinue:NO];
 	[self cleanUp];
 	[self removeObservers];
 	[super cleanUp];
@@ -278,7 +279,7 @@ static void unregisterMotionListener(void) {
 
 - (void)process {
 	while([self shouldContinue] == YES) {
-		if(paused) {
+		if(paused || endOfStream) {
 			usleep(500);
 			continue;
 		}
@@ -287,7 +288,9 @@ static void unregisterMotionListener(void) {
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
 				if([previousNode endOfStream] == YES) {
-					break;
+					usleep(500);
+					endOfStream = YES;
+					continue;
 				}
 				if(paused) {
 					continue;
@@ -302,7 +305,6 @@ static void unregisterMotionListener(void) {
 			}
 		}
 	}
-	endOfStream = YES;
 }
 
 - (AudioChunk *)convert {
