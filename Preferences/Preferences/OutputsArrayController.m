@@ -15,30 +15,34 @@
 	};
 	[self addObject:defaultDeviceInfo];
 
-	NSDictionary *defaultDevice = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
-	NSString *defaultDeviceName = defaultDevice[@"name"];
-	NSNumber *defaultDeviceIDNum = defaultDevice[@"deviceID"];
-	AudioDeviceID defaultDeviceID = [defaultDeviceIDNum unsignedIntValue];
+	NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
+	NSDictionary *defaultDevice = [defaults objectForKey:@"outputDevice"];
+	NSString *defaultDeviceName = defaultDevice ? defaultDevice[@"name"] : @"";
+	NSNumber *defaultDeviceIDNum = defaultDevice ? defaultDevice[@"deviceID"] : @(-1);
+	int defaultDeviceID = defaultDeviceIDNum ? [defaultDeviceIDNum intValue] : -1;
 
 	[self enumerateAudioOutputsUsingBlock:
-	      ^(NSString *deviceName, AudioDeviceID deviceID, AudioDeviceID systemDefaultID, BOOL *stop) {
-		      NSDictionary *deviceInfo = @{
-			      @"name": deviceName,
-			      @"deviceID": @(deviceID),
-		      };
-		      [self addObject:deviceInfo];
+		 ^(NSString *deviceName, AudioDeviceID deviceID, AudioDeviceID systemDefaultID, BOOL *stop) {
+		NSDictionary *deviceInfo = @{
+			@"name": deviceName,
+			@"deviceID": @(deviceID),
+		};
 
-		      if(defaultDevice && defaultDeviceID != -1) {
-			      if((deviceID == defaultDeviceID) ||
-			         ([deviceName isEqualToString:defaultDeviceName])) {
-				      [self setSelectedObjects:@[deviceInfo]];
-				      // Update `outputDevice`, in case the ID has changed.
-				      [[NSUserDefaults standardUserDefaults] setObject:deviceInfo forKey:@"outputDevice"];
-			      }
-		      }
-	      }];
+		[self addObject:deviceInfo];
 
-	if(!defaultDevice || defaultDeviceID == -1) {
+		if(defaultDeviceID != -1) {
+			if((deviceID == (AudioDeviceID)defaultDeviceID) ||
+			   ([deviceName isEqualToString:defaultDeviceName])) {
+				[self setSelectedObjects:@[deviceInfo]];
+				// Update `outputDevice`, in case the ID has changed.
+				if(deviceID != (AudioDeviceID)defaultDeviceID) {
+					[defaults setObject:deviceInfo forKey:@"outputDevice"];
+				}
+			}
+		}
+	}];
+
+	if(defaultDeviceID == -1) {
 		[self setSelectionIndex:0];
 	}
 }

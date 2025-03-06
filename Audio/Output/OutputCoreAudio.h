@@ -102,7 +102,7 @@ using std::atomic_long;
 - (id)initWithController:(OutputNode *)c;
 
 - (BOOL)setup;
-- (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID;
+- (OSStatus)setOutputDeviceByID:(int)deviceID;
 - (BOOL)setOutputDeviceWithDeviceDict:(NSDictionary *)deviceDict;
 - (void)start;
 - (void)pause;
