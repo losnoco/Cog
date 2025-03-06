@@ -589,10 +589,24 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				}
 			}
 
+			double secondsRendered = (double)renderedSamples / format->mSampleRate;
+			float volumeScale = 1.0;
+			double sustained;
+			sustained = _self->secondsHdcdSustained;
+			if(sustained > 0) {
+				if(sustained < secondsRendered) {
+					_self->secondsHdcdSustained = 0.0;
+				} else {
+					_self->secondsHdcdSustained = sustained - secondsRendered;
+					volumeScale = 0.5;
+				}
+			}
+
+			scale_by_volume((float*)inputData->mBuffers[0].mData, renderedSamples * channels, volumeScale * _self->volume);
+
 			inputData->mBuffers[0].mDataByteSize = renderedSamples * format->mBytesPerPacket;
 			inputData->mBuffers[0].mNumberChannels = channels;
 
-			double secondsRendered = (double)renderedSamples / format->mSampleRate;
 			[_self updateLatency:secondsRendered];
 		}
 
