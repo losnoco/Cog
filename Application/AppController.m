@@ -729,12 +729,18 @@ static NSUserDefaultsController *shortcutDefaultsController = nil;
 												   modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
 	MASShortcut *fadeShortcut = [MASShortcut shortcutWithKeyCode:kVK_ANSI_O
 												   modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
+	MASShortcut *seekBkwdShortcut = [MASShortcut shortcutWithKeyCode:kVK_LeftArrow
+													   modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
+	MASShortcut *seekFwdShortcut = [MASShortcut shortcutWithKeyCode:kVK_RightArrow
+													  modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
 
 	NSData *playShortcutData = [NSKeyedArchiver archivedDataWithRootObject:playShortcut];
 	NSData *nextShortcutData = [NSKeyedArchiver archivedDataWithRootObject:nextShortcut];
 	NSData *prevShortcutData = [NSKeyedArchiver archivedDataWithRootObject:prevShortcut];
 	NSData *spamShortcutData = [NSKeyedArchiver archivedDataWithRootObject:spamShortcut];
 	NSData *fadeShortcutData = [NSKeyedArchiver archivedDataWithRootObject:fadeShortcut];
+	NSData *seekBkwdShortcutData = [NSKeyedArchiver archivedDataWithRootObject:seekBkwdShortcut];
+	NSData *seekFwdShortcutData = [NSKeyedArchiver archivedDataWithRootObject:seekFwdShortcut];
 
 	// Register default values to be used for the first app start
 	NSDictionary<NSString *, NSData *> *defaultShortcuts = @{
@@ -742,10 +748,11 @@ static NSUserDefaultsController *shortcutDefaultsController = nil;
 		CogNextShortcutKey: nextShortcutData,
 		CogPrevShortcutKey: prevShortcutData,
 		CogSpamShortcutKey: spamShortcutData,
-		CogFadeShortcutKey: fadeShortcutData
+		CogFadeShortcutKey: fadeShortcutData,
+		CogSeekBackwardShortcutKey: seekBkwdShortcutData,
+		CogSeekForwardShortcutKey: seekFwdShortcutData
 	};
 
-	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultShortcuts];
 	shortcutDefaultsController = [[NSUserDefaultsController sharedUserDefaultsController] initWithDefaults:nil initialValues:defaultShortcuts];
 }
 
@@ -779,6 +786,16 @@ static NSUserDefaultsController *shortcutDefaultsController = nil;
 	                           toAction:^{
 	                               [self clickFade];
 	                           }];
+
+	[binder bindShortcutWithDefaultsKey:CogSeekBackwardShortcutKey
+	                           toAction:^{
+	                               [self clickSeekBack];
+	                           }];
+
+	[binder bindShortcutWithDefaultsKey:CogSeekForwardShortcutKey
+	                           toAction:^{
+	                               [self clickSeekForward];
+	                           }];
 }
 
 - (void)clickPlay {
@@ -811,6 +828,14 @@ static NSUserDefaultsController *shortcutDefaultsController = nil;
 
 - (void)clickSeek:(NSTimeInterval)position {
 	[playbackController seek:self toTime:position];
+}
+
+- (void)clickSeekBack {
+	[playbackController seekBackward:10.0];
+}
+
+- (void)clickSeekForward {
+	[playbackController seekForward:10.0];
 }
 
 - (void)changeFontSize:(float)size {

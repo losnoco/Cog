@@ -122,6 +122,12 @@
 /* Class = "NSTextFieldCell"; title = "Copy now playing:"; ObjectID = "SMd-GA-jrH"; */
 "SMd-GA-jrH.title" = "Copy now playing:";
 
+/* Class = "NSTextFieldCell"; title = "Seek backward:"; ObjectID = "2Jq-rQ-73W"; */
+"2Jq-rQ-73W.title" = "Seek backward:";
+
+/* Class = "NSTextFieldCell"; title = "Seek forward:"; ObjectID = "fDI-hi-ZTg"; */
+"fDI-hi-ZTg.title" = "Seek forward:";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
 "V8o-Xy-HUW.title" = "OtherViews";
 

@@ -17,6 +17,8 @@
 @property(strong) IBOutlet MASShortcutView *prevShortcutView;
 @property(strong) IBOutlet MASShortcutView *spamShortcutView;
 @property(strong) IBOutlet MASShortcutView *fadeShortcutView;
+@property(strong) IBOutlet MASShortcutView *seekBkwdShortcutView;
+@property(strong) IBOutlet MASShortcutView *seekFwdShortcutView;
 
 - (IBAction)resetToDefaultShortcuts:(id)sender;
 

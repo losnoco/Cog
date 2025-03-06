@@ -118,6 +118,12 @@
 /* Class = "NSTextFieldCell"; title = "Copy now playing:"; ObjectID = "SMd-GA-jrH"; */
 "SMd-GA-jrH.title" = "Copiar info de pista actual:";
 
+/* Class = "NSTextFieldCell"; title = "Seek backward:"; ObjectID = "2Jq-rQ-73W"; */
+"2Jq-rQ-73W.title" = "Retroceder:";
+
+/* Class = "NSTextFieldCell"; title = "Seek forward:"; ObjectID = "fDI-hi-ZTg"; */
+"fDI-hi-ZTg.title" = "Avanzar:";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "V8o-Xy-HUW"; */
 "V8o-Xy-HUW.title" = "Otras vistas";
 
