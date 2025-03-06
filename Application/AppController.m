@@ -372,13 +372,9 @@ static BOOL consentLastEnabled = NO;
 						FeedbackController *fbcon = [[FeedbackController alloc] init];
 						[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
 						if([fbcon waitForCompletion]) {
-							SentryUserFeedback *userFeedback = [[SentryUserFeedback alloc] initWithEventId:[event eventId]];
+							SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];
 
-							userFeedback.comments = [fbcon comments];
-							userFeedback.email = [fbcon email];
-							userFeedback.name = [fbcon name];
-
-							[SentrySDK captureUserFeedback:userFeedback];
+							[SentrySDK captureFeedback:feedback];
 						}
 					};
 				}];
