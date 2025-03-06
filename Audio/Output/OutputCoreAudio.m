@@ -189,7 +189,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 }
 
-- (OSStatus)setOutputDeviceByID:(AudioDeviceID)deviceID {
+- (OSStatus)setOutputDeviceByID:(int)deviceIDIn {
 	OSStatus err;
 	BOOL defaultDevice = NO;
 	AudioObjectPropertyAddress theAddress = {
@@ -198,7 +198,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		.mElement = kAudioObjectPropertyElementMaster
 	};
 
-	if(deviceID == -1) {
+	AudioDeviceID deviceID = (AudioDeviceID)deviceIDIn;
+
+	if(deviceIDIn == -1) {
 		defaultDevice = YES;
 		UInt32 size = sizeof(AudioDeviceID);
 		err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &size, &deviceID);
@@ -278,8 +280,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (BOOL)setOutputDeviceWithDeviceDict:(NSDictionary *)deviceDict {
-	NSNumber *deviceIDNum = [deviceDict objectForKey:@"deviceID"];
-	AudioDeviceID outputDeviceID = [deviceIDNum unsignedIntValue] ?: -1;
+	NSNumber *deviceIDNum = deviceDict ? [deviceDict objectForKey:@"deviceID"] : @(-1);
+	int outputDeviceID = deviceIDNum ? [deviceIDNum intValue] : -1;
 
 	__block OSStatus err = [self setOutputDeviceByID:outputDeviceID];
 
