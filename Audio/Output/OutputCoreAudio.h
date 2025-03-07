@@ -55,6 +55,7 @@ using std::atomic_long;
 	BOOL paused;
 	BOOL restarted;
 	BOOL commandStop;
+	BOOL resetting;
 
 	BOOL eqEnabled;
 	BOOL eqInitialized;
