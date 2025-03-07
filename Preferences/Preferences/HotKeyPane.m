@@ -9,14 +9,10 @@
 #import "HotKeyPane.h"
 #import "Shortcuts.h"
 
-@implementation HotKeyPane {
-	NSUserDefaultsController *defaultsController;
-}
+@implementation HotKeyPane
 
 // Defaults have been moved to AppController.m
 - (void)awakeFromNib {
-	defaultsController = [NSUserDefaultsController sharedUserDefaultsController];
-
 	_playShortcutView.associatedUserDefaultsKey = CogPlayShortcutKey;
 	_nextShortcutView.associatedUserDefaultsKey = CogNextShortcutKey;
 	_prevShortcutView.associatedUserDefaultsKey = CogPrevShortcutKey;
@@ -34,10 +30,6 @@
 	if(@available(macOS 11.0, *))
 		return [NSImage imageWithSystemSymbolName:@"keyboard" accessibilityDescription:nil];
 	return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"hot_keys"]];
-}
-
-- (IBAction)resetToDefaultShortcuts:(id)sender {
-	[defaultsController revertToInitialValues:sender];
 }
 
 @end
