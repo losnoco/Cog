@@ -450,6 +450,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 
 		renderFormat = [[AVAudioFormat alloc] initWithStreamDescription:&deviceFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
+		resetting = YES;
+		[_au stopHardware];
 		[_au.inputBusses[0] setFormat:renderFormat error:&err];
 		if(err != nil)
 			return NO;
@@ -459,6 +461,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[outputLock lock];
 		[outputBuffer reset];
 		[outputLock unlock];
+
+		if(started) {
+			[_au startHardwareAndReturnError:&err];
+			if(err != nil)
+				return NO;
+		}
+
+		resetting = NO;
 	}
 
 	return YES;
@@ -569,16 +579,26 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
 
+		if(_self->resetting) {
+			inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
+			bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
+			inputData->mBuffers[0].mNumberChannels = channels;
+			return 0;
+		}
+
 		@autoreleasepool {
 			while(renderedSamples < frameCount) {
 				[refLock lock];
-				AudioChunk *chunk = [_self->outputBuffer removeSamples:frameCount - renderedSamples];
+				AudioChunk *chunk = nil;
+				if(![_self->outputBuffer isEmpty]) {
+					chunk = [_self->outputBuffer removeSamples:frameCount - renderedSamples];
+				}
 				[refLock unlock];
-
-				_self->streamTimestamp = [chunk streamTimestamp];
-
-				size_t _frameCount = [chunk frameCount];
-				if(_frameCount) {
+				
+				if(chunk && [chunk frameCount]) {
+					_self->streamTimestamp = [chunk streamTimestamp];
+					
+					size_t _frameCount = [chunk frameCount];
 					NSData *sampleData = [chunk removeSamples:_frameCount];
 					float *samplePtr = (float *)[sampleData bytes];
 					size_t inputTodo = MIN(_frameCount, frameCount - renderedSamples);
@@ -586,7 +606,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					renderedSamples += inputTodo;
 				}
 
-				if(_self->stopping) {
+				if(_self->stopping || _self->resetting) {
 					break;
 				}
 			}
@@ -708,11 +728,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (double)latency {
-	NSTimeInterval latency = 0.0;
-	if(_au) {
-		latency = [_au latency];
-	}
-	return [outputBuffer listDuration] + latency;
+	return [outputBuffer listDuration];
 }
 
 - (void)start {
