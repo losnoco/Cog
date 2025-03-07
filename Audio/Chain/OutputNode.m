@@ -273,6 +273,9 @@
 			}
 			if(inputNode) {
 				AudioStreamBasicDescription inputFormat = [inputNode nodeFormat];
+				if(converter) {
+					[converter inputFormatDidChange:inputFormat inputConfig:[inputNode nodeChannelConfig]];
+				}
 				[inputNode seek:(long)(amountPlayed * inputFormat.mSampleRate)];
 			}
 		}
