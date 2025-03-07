@@ -20,6 +20,4 @@
 @property(strong) IBOutlet MASShortcutView *seekBkwdShortcutView;
 @property(strong) IBOutlet MASShortcutView *seekFwdShortcutView;
 
-- (IBAction)resetToDefaultShortcuts:(id)sender;
-
 @end
