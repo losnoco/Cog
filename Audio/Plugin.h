@@ -1,6 +1,10 @@
 // Plugins! HOORAY!
 
-#import <CogAudio/AudioChunk.h>
+#if __has_include(<CogAudio/AudioChunk.h>)
+#    import <CogAudio/AudioChunk.h>
+#else
+#    import "AudioChunk.h"
+#endif
 
 @protocol CogSource <NSObject>
 + (NSArray *)schemes; // http, file, etc
