@@ -734,7 +734,7 @@ MASShortcut *shortcutWithMigration(NSString *oldKeyCodePrefName,
 	}
 }
 
-static NSUserDefaultsController *shortcutDefaultsController = nil;
+static NSDictionary *shortcutDefaults = nil;
 
 - (void)registerDefaultHotKeys {
 	MASShortcut *playShortcut = shortcutWithMigration(@"hotKeyPlayKeyCode",
@@ -777,11 +777,15 @@ static NSUserDefaultsController *shortcutDefaultsController = nil;
 		CogSeekForwardShortcutKey: seekFwdShortcutData
 	};
 
-	shortcutDefaultsController = [[NSUserDefaultsController sharedUserDefaultsController] initWithDefaults:nil initialValues:defaultShortcuts];
+	shortcutDefaults = defaultShortcuts;
+
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultShortcuts];
 }
 
 - (IBAction)resetHotkeys:(id)sender {
-	[shortcutDefaultsController revertToInitialValues:sender];
+	[shortcutDefaults enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+		[[NSUserDefaults standardUserDefaults] setObject:obj forKey:key];
+	}];
 }
 
 - (void)registerHotKeys {
