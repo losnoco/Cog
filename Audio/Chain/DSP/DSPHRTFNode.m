@@ -17,6 +17,12 @@
 
 #import "HeadphoneFilter.h"
 
+#include <AvailabilityMacros.h>
+
+#if defined(MAC_OS_X_VERSION_14_0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_14_0
+#define MOTION_MANAGER 1
+#endif
+
 static void * kDSPHRTFNodeContext = &kDSPHRTFNodeContext;
 
 static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDigResetHeadTracking";
@@ -31,11 +37,14 @@ static simd_float4x4 convertMatrix(CMRotationMatrix r) {
 	return matrix;
 }
 
+#ifdef MOTION_MANAGER
 static NSLock *motionManagerLock = nil;
 API_AVAILABLE(macos(14.0)) static CMHeadphoneMotionManager *motionManager = nil;
 static DSPHRTFNode  *registeredMotionListener = nil;
+#endif
 
 static void registerMotionListener(DSPHRTFNode *listener) {
+#ifdef MOTION_MANAGER
 	if(@available(macOS 14, *)) {
 		[motionManagerLock lock];
 		if([motionManager isDeviceMotionActive]) {
@@ -53,9 +62,11 @@ static void registerMotionListener(DSPHRTFNode *listener) {
 		}
 		[motionManagerLock unlock];
 	}
+#endif
 }
 
 static void unregisterMotionListener(void) {
+#ifdef MOTION_MANAGER
 	if(@available(macOS 14, *)) {
 		[motionManagerLock lock];
 		if([motionManager isDeviceMotionActive]) {
@@ -64,6 +75,7 @@ static void unregisterMotionListener(void) {
 		registeredMotionListener = nil;
 		[motionManagerLock unlock];
 	}
+#endif
 }
 
 @implementation DSPHRTFNode {
@@ -101,6 +113,7 @@ static void unregisterMotionListener(void) {
 }
 
 + (void)initialize {
+#ifdef MOTION_MANAGER
 	motionManagerLock = [[NSLock alloc] init];
 
 	if(@available(macOS 14, *)) {
@@ -118,6 +131,7 @@ static void unregisterMotionListener(void) {
 
 		motionManager = [[CMHeadphoneMotionManager alloc] init];
 	}
+#endif
 }
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
