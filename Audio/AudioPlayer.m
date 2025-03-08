@@ -75,6 +75,7 @@
 
 	[self waitUntilCallbacksExit];
 	if(output) {
+		[output fadeOut];
 		[output setShouldContinue:NO];
 		[output close];
 	}
@@ -83,6 +84,9 @@
 	}
 	[output setupWithInterval:resumeInterval];
 	[output setVolume:volume];
+	if(resumeInterval) {
+		[output fadeIn];
+	}
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -166,7 +170,7 @@
 }
 
 - (void)pause {
-	[output pause];
+	[output fadeOut];
 
 	[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
 }
@@ -178,6 +182,7 @@
 			[self launchOutputThread];
 	}
 
+	[output fadeIn];
 	[output resume];
 
 	[self setPlaybackStatus:CogStatusPlaying waitUntilDone:YES];
