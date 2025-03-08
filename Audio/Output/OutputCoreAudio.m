@@ -902,16 +902,16 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 	return deviceChannelConfig;
 }
 
-// 10 milliseconds
+// 125 milliseconds
 - (void)fadeOut {
 	fadeTarget = 0.0f;
-	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 10.0f);
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 125.0f);
 	fading = YES;
 }
 
 - (void)fadeIn {
 	fadeTarget = 1.0;
-	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 10.0f);
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 125.0f);
 	fading = YES;
 	faded = NO;
 }
