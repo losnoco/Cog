@@ -110,7 +110,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
-				if([previousNode endOfStream] == YES) {
+				if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
 					endOfStream = YES;
 					break;
 				}
