@@ -648,7 +648,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	inConverter = YES;
 
 	AudioStreamBasicDescription chunkFormat = [inChunk format];
-	if(![inChunk duration] ||
+	if(![inChunk frameCount] ||
 	   (chunkFormat.mFormatFlags == kAudioFormatFlagsNativeFloatPacked &&
 		chunkFormat.mBitsPerChannel == 32)) {
 		inConverter = NO;
