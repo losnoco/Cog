@@ -185,9 +185,11 @@ static BOOL consentLastEnabled = NO;
 	[randomizeButton setToolTip:NSLocalizedString(@"RandomizeButtonTooltip", @"")];
 	[fileButton setToolTip:NSLocalizedString(@"FileButtonTooltip", @"")];
 
-	[self registerDefaultHotKeys];
-
-	[self registerHotKeys];
+	if(@available(macOS 15, *)) {
+		[self registerDefaultHotKeys];
+		
+		[self registerHotKeys];
+	}
 
 	(void)[spotlightWindowController init];
 
