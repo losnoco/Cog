@@ -84,9 +84,6 @@
 	}
 	[output setupWithInterval:resumeInterval];
 	[output setVolume:volume];
-	if(resumeInterval) {
-		[output fadeIn];
-	}
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
 			[anObject setShouldContinue:NO];
@@ -126,6 +123,7 @@
 	}
 
 	if(time > 0.0) {
+		[output fadeIn];
 		[output seek:time];
 		[bufferChain seek:time];
 	}
