@@ -549,6 +549,7 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 		for(size_t j = 0; j < channels; ++j) {
 			samples[j] *= _fadeLevel;
 		}
+		samples += channels;
 		_fadeLevel += fadeStep;
 		if(towardZero && _fadeLevel <= fadeTarget) {
 			_fadeLevel = fadeTarget;
