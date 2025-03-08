@@ -258,7 +258,8 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 			ALog(@"Unsupported sample size: %d", bitsPerSample);
 	}
 
-	double streamTimestamp = (double)(frame) / frequency;
+	double DSDrate = (bitsPerSample == 1) ? 8.0 : 1.0;
+	double streamTimestamp = (double)(frame) / frequency * DSDrate;
 	frame += samplesRead;
 
 	[chunk setStreamTimestamp:streamTimestamp];

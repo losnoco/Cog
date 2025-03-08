@@ -174,11 +174,12 @@ static const uint32_t AudioChannelConfigTable[] = {
 	if(formatAssigned) {
 		@autoreleasepool {
 			const double secondsDuration = (double)(frameCount) / format.mSampleRate;
+			const double DSDrate = (format.mBitsPerChannel == 1) ? 8.0 : 1.0;
 			const size_t bytesPerPacket = format.mBytesPerPacket;
 			const size_t byteCount = bytesPerPacket * frameCount;
 			NSData *ret = [chunkData subdataWithRange:NSMakeRange(0, byteCount)];
 			[chunkData replaceBytesInRange:NSMakeRange(0, byteCount) withBytes:NULL length:0];
-			streamTimestamp += secondsDuration * streamTimeRatio;
+			streamTimestamp += secondsDuration * streamTimeRatio * DSDrate;
 			return ret;
 		}
 	}
@@ -211,7 +212,8 @@ static const uint32_t AudioChannelConfigTable[] = {
 	if(formatAssigned && [chunkData length]) {
 		const size_t bytesPerPacket = format.mBytesPerPacket;
 		const double sampleRate = format.mSampleRate;
-		return (double)([chunkData length] / bytesPerPacket) / sampleRate;
+		const double DSDrate = (format.mBitsPerChannel == 1) ? 8.0 : 1.0;
+		return ((double)([chunkData length] / bytesPerPacket) / sampleRate) * DSDrate;
 	}
 	return 0.0;
 }
