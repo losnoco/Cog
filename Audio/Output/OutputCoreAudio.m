@@ -170,7 +170,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			}
 
 			if(!started && !paused) {
+				// Prevent this call from hanging when used in this thread, when buffer may be empty
+				// and waiting for this very thread to fill it
+				resetting = YES;
 				[self resume];
+				resetting = NO;
 			}
 
 			if([outputController shouldContinue] == NO) {
