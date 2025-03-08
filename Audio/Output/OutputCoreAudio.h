@@ -57,6 +57,11 @@ using std::atomic_long;
 	BOOL commandStop;
 	BOOL resetting;
 
+	BOOL fading, faded;
+	float fadeLevel;
+	float fadeStep;
+	float fadeTarget;
+
 	BOOL eqEnabled;
 	BOOL eqInitialized;
 
@@ -109,6 +114,9 @@ using std::atomic_long;
 - (void)pause;
 - (void)resume;
 - (void)stop;
+
+- (void)fadeOut;
+- (void)fadeIn;
 
 - (double)latency;
 

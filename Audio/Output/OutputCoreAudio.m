@@ -534,6 +534,29 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 }
 
+static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fadeLevel, float fadeStep, float fadeTarget) {
+	float _fadeLevel = *fadeLevel;
+	BOOL towardZero = fadeStep < 0.0;
+	BOOL stopping = NO;
+	for(size_t i = 0; i < count; ++i) {
+		for(size_t j = 0; j < channels; ++j) {
+			samples[j] *= _fadeLevel;
+		}
+		_fadeLevel += fadeStep;
+		if(towardZero && _fadeLevel <= fadeTarget) {
+			_fadeLevel = fadeTarget;
+			fadeStep = 0.0;
+			stopping = YES;
+		} else if(!towardZero && _fadeLevel >= fadeTarget) {
+			_fadeLevel = fadeTarget;
+			fadeStep = 0.0;
+			stopping = YES;
+		}
+	}
+	*fadeLevel = _fadeLevel;
+	return stopping;
+}
+
 - (void)renderAndConvert {
 	if(resetStreamFormat) {
 		[self updateStreamFormat];
@@ -583,7 +606,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
 
-		if(_self->resetting) {
+		if(_self->resetting || _self->faded) {
 			inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
 			bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
 			inputData->mBuffers[0].mNumberChannels = channels;
@@ -610,7 +633,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					renderedSamples += inputTodo;
 				}
 
-				if(_self->stopping || _self->resetting) {
+				if(_self->stopping || _self->resetting || _self->faded) {
 					break;
 				}
 			}
@@ -629,6 +652,17 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			}
 
 			scale_by_volume((float*)inputData->mBuffers[0].mData, renderedSamples * channels, volumeScale * _self->volume);
+
+			if(_self->fading) {
+				BOOL faded = fadeAudio((float*)inputData->mBuffers[0].mData, channels, renderedSamples, &_self->fadeLevel, _self->fadeStep, _self->fadeTarget);
+				if(faded) {
+					if(_self->fadeStep < 0.0f) {
+						_self->faded = YES;
+					}
+					_self->fading = NO;
+					_self->fadeStep = 0.0f;
+				}
+			}
 
 			inputData->mBuffers[0].mDataByteSize = renderedSamples * format->mBytesPerPacket;
 			inputData->mBuffers[0].mNumberChannels = channels;
@@ -666,6 +700,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		paused = NO;
 		outputDeviceID = -1;
 		restarted = NO;
+
+		fadeTarget = 1.0f;
+		fadeLevel = 1.0f;
+		fadeStep = 0.0f;
+		fading = NO;
+		faded = NO;
 
 		AudioComponentDescription desc;
 		NSError *err;
@@ -788,6 +828,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					compareVal = [outputController getTotalLatency];
 					usleep(5000);
 				} while(!commandStop && compareVal > 0 && compareMax-- > 0);
+			} else {
+				[self fadeOut];
+				while(fading && !faded) {
+					usleep(5000);
+				}
 			}
 			[_au stopHardware];
 			_au = nil;
@@ -848,6 +893,20 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (uint32_t)deviceChannelConfig {
 	return deviceChannelConfig;
+}
+
+// 10 milliseconds
+- (void)fadeOut {
+	fadeTarget = 0.0f;
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 10.0f);
+	fading = YES;
+}
+
+- (void)fadeIn {
+	fadeTarget = 1.0;
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 10.0f);
+	fading = YES;
+	faded = NO;
 }
 
 @end

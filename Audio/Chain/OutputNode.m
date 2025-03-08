@@ -99,6 +99,14 @@
 	[output resume];
 }
 
+- (void)fadeOut {
+	[output fadeOut];
+}
+
+- (void)fadeIn {
+	[output fadeIn];
+}
+
 - (void)incrementAmountPlayed:(double)seconds {
 	amountPlayed += seconds;
 	amountPlayedInterval += seconds;
