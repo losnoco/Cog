@@ -908,12 +908,19 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 	__block id<SentrySpan> mainTask = [SentrySDK startTransactionWithName:@"Loading tags" operation:@"Main tag operation"];
 
 	{
-		for(NSString *key in queueThisJob) {
+		__block NSLock *blockLock = [[NSLock alloc] init];
+		__block NSMutableArray *blockInputs = [queueThisJob mutableCopy];
+		for(size_t i = 0, j = [blockInputs count]; i < j; ++i) {
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
-			NSURL *url = urlForPath(key);
-
 			[op addExecutionBlock:^{
 				@autoreleasepool {
+					[blockLock lock];
+					NSString *key = [blockInputs objectAtIndex:0];
+					[blockInputs removeObjectAtIndex:0];
+					[blockLock unlock];
+
+					NSURL *url = urlForPath(key);
+
 					NSString *message = [NSString stringWithFormat:@"Loading metadata for %@", url];
 					DLog(@"%@", message);
 					id<SentrySpan> childTask = nil;
@@ -947,7 +954,11 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 					}
 					@catch(NSException *e) {
 						DLog(@"Exception thrown while reading tags: %@", e);
-						[SentrySDK captureException:e];
+						if(e) {
+							[SentrySDK captureException:e];
+						} else {
+							[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception caught while reading tags for URL: %@", url]];
+						}
 						if(childTask) {
 							[childTask finishWithStatus:kSentrySpanStatusInternalError];
 						}
