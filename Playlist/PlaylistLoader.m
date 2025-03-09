@@ -404,7 +404,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 		@catch(NSException *e) {
 			DLog(@"Exception caught while processing path: %@", e);
-			[SentrySDK captureException:e];
+			if(e) {
+				[SentrySDK captureException:e];
+			} else {
+				[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception when processing path: %@", url]];
+			}
 			[pathTask finishWithStatus:kSentrySpanStatusInternalError];
 		}
 
@@ -442,13 +446,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			[op addExecutionBlock:^{
 				id<SentrySpan> pathTask = nil;
 				id<SentrySpan> innerTask = nil;
+				NSURL *url = nil;
 				@try {
 					if(containerTask) {
 						pathTask = [containerTask startChildWithOperation:@"Process path as container" description:[NSString stringWithFormat:@"Checking if file is container: %@", url]];
 					}
 
 					[lock lock];
-					NSURL *url = [expandedURLs objectAtIndex:0];
+					url = [expandedURLs objectAtIndex:0];
 					[expandedURLs removeObjectAtIndex:0];
 					[lock unlock];
 
@@ -520,7 +525,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 				@catch(NSException *e) {
 					DLog(@"Exception caught while processing for containers: %@", e);
-					[SentrySDK captureException:e];
+					if(e) {
+						[SentrySDK captureException:e];
+					} else {
+						[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception caught while processing containers for URL: %@", url]];
+					}
 					if(innerTask) {
 						[innerTask finishWithStatus:kSentrySpanStatusInternalError];
 					}
@@ -553,6 +562,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	} else {
 		[self setProgressStatus:60.0];
 	}
+
+	NSArray *fileTypes = [AudioPlayer fileTypes];
 
 	id<SentrySpan> filterTask = [mainTask startChildWithOperation:@"Filtering URLs for dupes and supported tracks"];
 
@@ -589,7 +600,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			NSString *ext = [[url pathExtension] lowercaseString];
 			
 			// Need a better way to determine acceptable file types than basing it on extensions.
-			if([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:ext])
+			if([url isFileURL] && ![fileTypes containsObject:ext])
 				continue;
 			
 			if(![uniqueURLs containsObject:url]) {
@@ -602,7 +613,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 		@catch(NSException *e) {
 			DLog(@"Exception caught while filtering paths: %@", e);
-			[SentrySDK captureException:e];
+			if(e) {
+				[SentrySDK captureException:e];
+			} else {
+				[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception caught when filtering paths for URL: %@", url]];
+			}
 			if(fileTask) {
 				[fileTask finishWithStatus:kSentrySpanStatusInternalError];
 			}
@@ -646,7 +661,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			}
 
 			// Need a better way to determine acceptable file types than basing it on extensions.
-			if([url isFileURL] && ![[AudioPlayer fileTypes] containsObject:[[url pathExtension] lowercaseString]]) {
+			if([url isFileURL] && ![fileTypes containsObject:[[url pathExtension] lowercaseString]]) {
 				[containedUrlTask finish];
 				continue;
 			}
@@ -659,7 +674,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 		@catch(NSException *e) {
 			DLog(@"Exception caught filtering contained URL: %@", e);
-			[SentrySDK captureException:e];
+			if(e) {
+				[SentrySDK captureException:e];
+			} else {
+				[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception caught when filtering contained URL: %@", url]];
+			}
 			if(containedUrlTask) {
 				[containedUrlTask finishWithStatus:kSentrySpanStatusInternalError];
 			}
@@ -1076,7 +1095,11 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		}
 		@catch(NSException *e) {
 			DLog(@"Exception thrown while reading tag synchronously: %@", e);
-			[SentrySDK captureException:e];
+			if(e) {
+				[SentrySDK captureException:e];
+			} else {
+				[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception caught while reading tags for URL: %@", pe.url]];
+			}
 			if(childTask) {
 				[childTask finishWithStatus:kSentrySpanStatusInternalError];
 			}
