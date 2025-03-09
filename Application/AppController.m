@@ -28,6 +28,7 @@
 
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>
+#import <MASShortcut/MASDictionaryTransformer.h>
 
 #import <Sparkle/Sparkle.h>
 
@@ -209,11 +210,11 @@ static BOOL consentLastEnabled = NO;
 	[randomizeButton setToolTip:NSLocalizedString(@"RandomizeButtonTooltip", @"")];
 	[fileButton setToolTip:NSLocalizedString(@"FileButtonTooltip", @"")];
 
-	if(@available(macOS 15, *)) {
-		[self registerDefaultHotKeys];
-		
-		[self registerHotKeys];
-	}
+	[self registerDefaultHotKeys];
+	
+	[self migrateHotKeys];
+
+	[self registerHotKeys];
 
 	(void)[spotlightWindowController init];
 
@@ -760,23 +761,24 @@ static NSDictionary *shortcutDefaults = nil;
 	MASShortcut *seekFwdShortcut = [MASShortcut shortcutWithKeyCode:kVK_RightArrow
 													  modifierFlags:NSEventModifierFlagControl | NSEventModifierFlagCommand];
 
-	NSData *playShortcutData = [NSKeyedArchiver archivedDataWithRootObject:playShortcut];
-	NSData *nextShortcutData = [NSKeyedArchiver archivedDataWithRootObject:nextShortcut];
-	NSData *prevShortcutData = [NSKeyedArchiver archivedDataWithRootObject:prevShortcut];
-	NSData *spamShortcutData = [NSKeyedArchiver archivedDataWithRootObject:spamShortcut];
-	NSData *fadeShortcutData = [NSKeyedArchiver archivedDataWithRootObject:fadeShortcut];
-	NSData *seekBkwdShortcutData = [NSKeyedArchiver archivedDataWithRootObject:seekBkwdShortcut];
-	NSData *seekFwdShortcutData = [NSKeyedArchiver archivedDataWithRootObject:seekFwdShortcut];
+	MASDictionaryTransformer *transformer = [MASDictionaryTransformer new];
+	NSDictionary *playShortcutDict = [transformer reverseTransformedValue:playShortcut];
+	NSDictionary *nextShortcutDict = [transformer reverseTransformedValue:nextShortcut];
+	NSDictionary *prevShortcutDict = [transformer reverseTransformedValue:prevShortcut];
+	NSDictionary *spamShortcutDict = [transformer reverseTransformedValue:spamShortcut];
+	NSDictionary *fadeShortcutDict = [transformer reverseTransformedValue:fadeShortcut];
+	NSDictionary *seekBkwdShortcutDict = [transformer reverseTransformedValue:seekBkwdShortcut];
+	NSDictionary *seekFwdShortcutDict = [transformer reverseTransformedValue:seekFwdShortcut];
 
 	// Register default values to be used for the first app start
-	NSDictionary<NSString *, NSData *> *defaultShortcuts = @{
-		CogPlayShortcutKey: playShortcutData,
-		CogNextShortcutKey: nextShortcutData,
-		CogPrevShortcutKey: prevShortcutData,
-		CogSpamShortcutKey: spamShortcutData,
-		CogFadeShortcutKey: fadeShortcutData,
-		CogSeekBackwardShortcutKey: seekBkwdShortcutData,
-		CogSeekForwardShortcutKey: seekFwdShortcutData
+	NSDictionary<NSString *, NSDictionary *> *defaultShortcuts = @{
+		CogPlayShortcutKey: playShortcutDict,
+		CogNextShortcutKey: nextShortcutDict,
+		CogPrevShortcutKey: prevShortcutDict,
+		CogSpamShortcutKey: spamShortcutDict,
+		CogFadeShortcutKey: fadeShortcutDict,
+		CogSeekBackwardShortcutKey: seekBkwdShortcutDict,
+		CogSeekForwardShortcutKey: seekFwdShortcutDict
 	};
 
 	shortcutDefaults = defaultShortcuts;
@@ -788,6 +790,20 @@ static NSDictionary *shortcutDefaults = nil;
 	[shortcutDefaults enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 		[[NSUserDefaults standardUserDefaults] setObject:obj forKey:key];
 	}];
+}
+
+- (void)migrateHotKeys {
+	NSArray *inKeys = @[CogPlayShortcutKeyV1, CogNextShortcutKeyV1, CogPrevShortcutKeyV1, CogSpamShortcutKeyV1, CogFadeShortcutKeyV1, CogSeekBackwardShortcutKeyV1, CogSeekForwardShortcutKeyV1];
+	NSArray *outKeys = @[CogPlayShortcutKey, CogNextShortcutKey, CogPrevShortcutKey, CogSpamShortcutKey, CogFadeShortcutKey, CogSeekBackwardShortcutKey, CogSeekForwardShortcutKey];
+	for(size_t i = 0, j = [inKeys count]; i < j; ++i) {
+		NSString *inKey = inKeys[i];
+		NSString *outKey = outKeys[i];
+		id value = [[NSUserDefaults standardUserDefaults] objectForKey:inKey];
+		if(value && value != [NSNull null]) {
+			[[NSUserDefaults standardUserDefaults] setObject:value forKey:outKey];
+			[[NSUserDefaults standardUserDefaults] removeObjectForKey:inKey];
+		}
+	}
 }
 
 - (void)registerHotKeys {
