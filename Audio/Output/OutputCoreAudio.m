@@ -169,12 +169,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				rendered = NO;
 			}
 
+#if 0
 			if(faded && !paused) {
 				resetting = YES;
 				[self pause];
 				started = NO;
 				resetting = NO;
 			}
+#endif
 
 			if(!started && !paused) {
 				// Prevent this call from hanging when used in this thread, when buffer may be empty
