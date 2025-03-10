@@ -16,6 +16,7 @@
 		83489C632782F39D00BDCEA2 /* libvgm-player.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83489C602782F39D00BDCEA2 /* libvgm-player.a */; };
 		83489C662782F74800BDCEA2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83489C652782F74800BDCEA2 /* libz.tbd */; };
 		83489C682782F74E00BDCEA2 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83489C672782F74E00BDCEA2 /* libiconv.tbd */; };
+		834D190A2D7F94FF00F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19092D7F94FF00F13B89 /* CogAudio.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 		83489C652782F74800BDCEA2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		83489C672782F74E00BDCEA2 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		834A42AC287AF18E00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D19092D7F94FF00F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		835C888F22CC1883001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747C312862DBE80021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384912E1808175400E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D190A2D7F94FF00F13B89 /* CogAudio.framework in Frameworks */,
 				83489C682782F74E00BDCEA2 /* libiconv.tbd in Frameworks */,
 				83489C662782F74800BDCEA2 /* libz.tbd in Frameworks */,
 				83489C612782F39D00BDCEA2 /* libvgm-utils.a in Frameworks */,
@@ -168,6 +171,7 @@
 		83489C642782F74800BDCEA2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D19092D7F94FF00F13B89 /* CogAudio.framework */,
 				83489C672782F74E00BDCEA2 /* libiconv.tbd */,
 				83489C652782F74800BDCEA2 /* libz.tbd */,
 			);

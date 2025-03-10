@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		834D18F92D7F945D00F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D18F82D7F945D00F13B89 /* CogAudio.framework */; };
 		8359009417FEF5A60060F3ED /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8359FF7017FEF3A00060F3ED /* File_Extractor.framework */; };
 		8359009917FEF6490060F3ED /* ArchiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 8359009817FEF6490060F3ED /* ArchiveSource.m */; };
 		8359009C17FEFDA80060F3ED /* ArchiveContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8359009B17FEFDA80060F3ED /* ArchiveContainer.m */; };
@@ -34,6 +35,7 @@
 /* Begin PBXFileReference section */
 		8307D31A286070EA000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		834A42B0287AF4BF00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D18F82D7F945D00F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8359009717FEF6490060F3ED /* ArchiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveSource.h; sourceTree = "<group>"; };
 		8359009817FEF6490060F3ED /* ArchiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveSource.m; sourceTree = "<group>"; };
 		8359009A17FEFDA80060F3ED /* ArchiveContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveContainer.h; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D18F92D7F945D00F13B89 /* CogAudio.framework in Frameworks */,
 				8359009417FEF5A60060F3ED /* File_Extractor.framework in Frameworks */,
 				8359FF1B17FEF35C0060F3ED /* Cocoa.framework in Frameworks */,
 			);
@@ -67,11 +70,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		834D18F72D7F945D00F13B89 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				834D18F82D7F945D00F13B89 /* CogAudio.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8359FF0E17FEF35C0060F3ED = {
 			isa = PBXGroup;
 			children = (
 				83747C622862DDA00021245F /* Xcode-config */,
 				8359FF2017FEF35C0060F3ED /* ArchiveSource */,
+				834D18F72D7F945D00F13B89 /* Frameworks */,
 				8359FF1817FEF35C0060F3ED /* Products */,
 			);
 			sourceTree = "<group>";

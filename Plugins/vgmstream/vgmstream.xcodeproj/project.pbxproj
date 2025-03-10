@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8340888E1F6F604C00DCD404 /* VGMMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 8340888B1F6F604A00DCD404 /* VGMMetadataReader.m */; };
+		834D19152D7F959600F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19142D7F959600F13B89 /* CogAudio.framework */; };
 		835D2420235AB319009A1251 /* VGMPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 835D241E235AB318009A1251 /* VGMPropertiesReader.m */; };
 		836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836F6B1318BDB80D0095E648 /* Cocoa.framework */; };
 		836F6B1E18BDB80D0095E648 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836F6B1C18BDB80D0095E648 /* InfoPlist.strings */; };
@@ -53,6 +54,7 @@
 		8340888B1F6F604A00DCD404 /* VGMMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMMetadataReader.m; sourceTree = "<group>"; };
 		8340888D1F6F604B00DCD404 /* VGMMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMMetadataReader.h; sourceTree = "<group>"; };
 		834A42A8287AEDFB00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D19142D7F959600F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		835D241E235AB318009A1251 /* VGMPropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMPropertiesReader.m; sourceTree = "<group>"; };
 		835D241F235AB319009A1251 /* VGMPropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMPropertiesReader.h; sourceTree = "<group>"; };
 		836F6B1018BDB80D0095E648 /* vgmstream.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vgmstream.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D19152D7F959600F13B89 /* CogAudio.framework in Frameworks */,
 				83C2806720E4ED3500823BF9 /* libvgmstream.framework in Frameworks */,
 				836F6B1418BDB80D0095E648 /* Cocoa.framework in Frameworks */,
 			);
@@ -112,6 +115,7 @@
 		836F6B1218BDB80D0095E648 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D19142D7F959600F13B89 /* CogAudio.framework */,
 				836F6B1318BDB80D0095E648 /* Cocoa.framework */,
 				836F6B1518BDB80D0095E648 /* Other Frameworks */,
 				836F6B6718BDB8880095E648 /* libvgmstream.xcodeproj */,

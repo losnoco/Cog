@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		834D18FB2D7F948000F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D18FA2D7F948000F13B89 /* CogAudio.framework */; };
 		8352D48F1CDDB023009D16AA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D48E1CDDB023009D16AA /* CoreFoundation.framework */; };
 		8352D4911CDDB02A009D16AA /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D4901CDDB02A009D16AA /* VideoDecodeAcceleration.framework */; };
 		8352D4931CDDB034009D16AA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D4921CDDB034009D16AA /* QuartzCore.framework */; };
@@ -46,6 +47,7 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		834A42B3287AF65000EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D18FA2D7F948000F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8352D48E1CDDB023009D16AA /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		8352D4901CDDB02A009D16AA /* VideoDecodeAcceleration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoDecodeAcceleration.framework; path = System/Library/Frameworks/VideoDecodeAcceleration.framework; sourceTree = SDKROOT; };
 		8352D4921CDDB034009D16AA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -83,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D18FB2D7F948000F13B89 /* CogAudio.framework in Frameworks */,
 				83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */,
 				83AA7D0C279EBCC600087AA4 /* libavcodec.61.dylib in Frameworks */,
 				83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */,
@@ -206,6 +209,7 @@
 		83E22FC42772FD32000015EE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D18FA2D7F948000F13B89 /* CogAudio.framework */,
 				83E22FC72772FD3A000015EE /* AudioToolbox.framework */,
 				83E22FC52772FD32000015EE /* libbz2.tbd */,
 			);

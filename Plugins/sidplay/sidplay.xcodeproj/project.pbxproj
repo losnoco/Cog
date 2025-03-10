@@ -11,6 +11,7 @@
 		8314D80A1A35654900EEE8E6 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */; };
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
 		833A8998286FF2E30022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A8996286FF2E30022E036 /* Cocoa.framework */; };
+		834D19122D7F957300F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19112D7F957300F13B89 /* CogAudio.framework */; };
 		836F5BEC1A357915002730CC /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836F5BEA1A357915002730CC /* roms.cpp */; };
 		EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; };
 		EDBE911925E7EA01001EB4A4 /* sidplayfp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EDBE8F0F25E7E74D001EB4A4 /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -53,6 +54,7 @@
 		8314D80E1A3565AC00EEE8E6 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		833A8996286FF2E30022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		834A42A6287AEAAB00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D19112D7F957300F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836F5BEA1A357915002730CC /* roms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = roms.cpp; sourceTree = SOURCE_ROOT; };
 		836F5BEB1A357915002730CC /* roms.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = roms.hpp; sourceTree = SOURCE_ROOT; };
 		83747BFF2862DA420021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D19122D7F957300F13B89 /* CogAudio.framework in Frameworks */,
 				833A8998286FF2E30022E036 /* Cocoa.framework in Frameworks */,
 				EDBE911825E7EA01001EB4A4 /* sidplayfp.framework in Frameworks */,
 			);
@@ -121,6 +124,7 @@
 		8314D64A1A354E4400EEE8E6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D19112D7F957300F13B89 /* CogAudio.framework */,
 				833A8996286FF2E30022E036 /* Cocoa.framework */,
 				EDBE8F0A25E7E74D001EB4A4 /* sidplayfp.xcodeproj */,
 			);
