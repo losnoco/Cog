@@ -41,26 +41,15 @@
 	[[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] loadNibNamed:@"Preferences"
 	                                                                    owner:plugin
 	                                                          topLevelObjects:nil];
-	if(@available(macos 15, *)) {
-		return @[[plugin playlistPane],
-				 [plugin hotKeyPane],
-				 [plugin updatesPane],
-				 [plugin outputPane],
-				 [plugin generalPane],
-				 [plugin notificationsPane],
-				 [plugin appearancePane],
-				 [plugin midiPane],
-				 [plugin rubberbandPane]];
-	} else {
-		return @[[plugin playlistPane],
-				 [plugin updatesPane],
-				 [plugin outputPane],
-				 [plugin generalPane],
-				 [plugin notificationsPane],
-				 [plugin appearancePane],
-				 [plugin midiPane],
-				 [plugin rubberbandPane]];
-	}
+	return @[[plugin playlistPane],
+			 [plugin hotKeyPane],
+			 [plugin updatesPane],
+			 [plugin outputPane],
+			 [plugin generalPane],
+			 [plugin notificationsPane],
+			 [plugin appearancePane],
+			 [plugin midiPane],
+			 [plugin rubberbandPane]];
 }
 
 - (HotKeyPane *)hotKeyPane {
