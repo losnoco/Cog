@@ -110,6 +110,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="16" id="rvk-lE-INB"/>
+                    </constraints>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.addOtherFilesInFolders" id="9V7-qF-e8q"/>
                     </connections>
@@ -120,6 +123,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="16" id="LbZ-s4-IoH"/>
+                    </constraints>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.resumePlaybackOnStartup" id="8OB-tj-Hd0"/>
                     </connections>
@@ -130,6 +136,9 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="16" id="NN0-HG-qXk"/>
+                    </constraints>
                     <connections>
                         <binding destination="52" name="value" keyPath="values.quitOnNaturalStop" id="T4y-d6-qSk"/>
                     </connections>
@@ -138,6 +147,7 @@
             <constraints>
                 <constraint firstItem="259" firstAttribute="firstBaseline" secondItem="247" secondAttribute="firstBaseline" id="1rv-W8-b3j"/>
                 <constraint firstItem="253" firstAttribute="bottom" secondItem="261" secondAttribute="bottom" id="3HA-bC-1P9"/>
+                <constraint firstItem="6QS-GF-Vnc" firstAttribute="top" secondItem="RiU-1B-ZKm" secondAttribute="bottom" constant="12" id="3OU-gR-Ocn"/>
                 <constraint firstItem="253" firstAttribute="top" secondItem="231" secondAttribute="top" constant="53" id="3mb-zQ-nlW"/>
                 <constraint firstAttribute="trailing" secondItem="253" secondAttribute="trailing" constant="20" symbolic="YES" id="5vB-qt-TGf"/>
                 <constraint firstItem="253" firstAttribute="trailing" secondItem="247" secondAttribute="trailing" id="6Cl-uh-i7K"/>
