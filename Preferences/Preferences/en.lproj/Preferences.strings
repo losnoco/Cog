@@ -77,6 +77,9 @@
 /* Class = "NSButtonCell"; title = "Read CUE sheets when adding folders to playlist"; ObjectID = "311"; */
 "311.title" = "Read CUE sheets when adding folders to playlist";
 
+/* Class = "NSButtonCell"; title = "Read playlist files when adding folders to playlist"; ObjectID = "k2u-la-Kp8"; */
+"k2u-la-Kp8.title" = "Read playlist files when adding folders to playlist";
+
 /* Class = "NSTextFieldCell"; title = "Spectrum bars"; ObjectID = "Bll-IJ-lje"; */
 "Bll-IJ-lje.title" = "Spectrum bars";
 

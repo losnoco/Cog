@@ -65,8 +65,9 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 }
 
 - (void)initDefaults {
-	NSDictionary *defaultsDictionary = @{ @"readCueSheetsInFolders": @(YES),
-		                                  @"addOtherFilesInFolders": @(NO) };
+	NSDictionary *defaultsDictionary = @{ @"readCueSheetsInFolders": @NO,
+		                                  @"readPlaylistsInFolders": @NO,
+		                                  @"addOtherFilesInFolders": @NO };
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
@@ -252,13 +253,24 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 	NSArray *subpaths = [manager subpathsAtPath:path];
 	[[SandboxBroker sharedSandboxBroker] endFolderAccess:sbHandle];
 
+	BOOL readCueSheets = [[NSUserDefaults standardUserDefaults] boolForKey:@"readCueSheetsInFolders"];
+	BOOL readPlaylists = [[NSUserDefaults standardUserDefaults] boolForKey:@"readPlaylistsInFolders"];
+
 	for(NSString *subpath in subpaths) {
 		NSString *absoluteSubpath = [NSString pathWithComponents:@[path, subpath]];
 
 		BOOL isDir;
 		if([manager fileExistsAtPath:absoluteSubpath isDirectory:&isDir] && isDir == NO) {
-			if([[absoluteSubpath pathExtension] caseInsensitiveCompare:@"cue"] != NSOrderedSame ||
-			   [[NSUserDefaults standardUserDefaults] boolForKey:@"readCueSheetsInFolders"]) {
+			BOOL readFile = YES;
+			NSString *ext = [absoluteSubpath pathExtension];
+			if([ext caseInsensitiveCompare:@"cue"] == NSOrderedSame) {
+				readFile = readCueSheets;
+			} else if([ext caseInsensitiveCompare:@"m3u"] == NSOrderedSame ||
+					  [ext caseInsensitiveCompare:@"m3u8"] == NSOrderedSame ||
+					  [ext caseInsensitiveCompare:@"pls"] == NSOrderedSame) {
+				readFile = readPlaylists;
+			}
+			if(readFile) {
 				[urls addObject:[NSURL fileURLWithPath:absoluteSubpath]];
 			}
 		}
