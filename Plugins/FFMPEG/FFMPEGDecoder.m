@@ -192,6 +192,8 @@ static uint8_t reverse_bits[0x100];
 	attachedPicIndex = -1;
 	AVCodecParameters *codecPar;
 
+	NSMutableArray *pictures = [[NSMutableArray alloc] init];
+
 	for(i = 0; i < formatCtx->nb_streams; i++) {
 		stream = formatCtx->streams[i];
 		codecPar = stream->codecpar;
@@ -201,7 +203,7 @@ static uint8_t reverse_bits[0x100];
 		} else if(codecPar->codec_id == AV_CODEC_ID_TIMED_ID3) {
 			metadataIndex = i;
 		} else if(stream->disposition & AV_DISPOSITION_ATTACHED_PIC) {
-			attachedPicIndex = i;
+			[pictures addObject:@(i)];
 		} else {
 			stream->discard = AVDISCARD_ALL;
 		}
@@ -210,6 +212,31 @@ static uint8_t reverse_bits[0x100];
 	if(streamIndex < 0) {
 		ALog(@"no audio codec found");
 		return NO;
+	}
+
+	if([pictures count]) {
+		if([pictures count] == 1) {
+			attachedPicIndex = [pictures[0] intValue];
+		} else {
+			// Find the first attached picture with "front" or "cover" in its filename
+			for(NSNumber *picture in pictures) {
+				i = [picture intValue];
+				stream = formatCtx->streams[i];
+				AVDictionary *metadata = stream->metadata;
+				AVDictionaryEntry *filename = av_dict_get(metadata, "filename", NULL, 0);
+				if(filename) {
+					if(strcasestr(filename->value, "front") ||
+					   strcasestr(filename->value, "cover")) {
+						attachedPicIndex = i;
+						break;
+					}
+				}
+			}
+			// Or else find the first attached picture
+			if(attachedPicIndex < 0) {
+				attachedPicIndex = [pictures[0] intValue];
+			}
+		}
 	}
 
 	stream = formatCtx->streams[streamIndex];
