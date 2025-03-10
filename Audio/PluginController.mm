@@ -481,6 +481,8 @@ static NSString *xmlEscapeString(NSString * string) {
 \t<string>https://cogcdn.cog.losno.co/mercury.xml</string>\n\
 \t<key>SUPublicEDKey</key>\n\
 \t<string>omxG7Rp0XK9/YEvKbVy7cd44eVAh1LJB6CmjQwjOJz4=</string>\n\
+\t<key>ITSAppUsesNonExemptEncryption</key>\n\
+\t<false/>\n\
 </dict>\n\
 </plist>\n";
     NSMutableArray * decodersRegistered = [[NSMutableArray alloc] init];
