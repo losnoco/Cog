@@ -418,14 +418,16 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (void)seekForward:(double)amount {
-	double seekTo = [audioPlayer amountPlayed] + amount;
-
-	if(seekTo > [[[playlistController currentEntry] length] doubleValue]) {
-		[self next:self];
-	} else {
-		lastPosition = -10;
-		[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
-		[self setPosition:seekTo];
+	if([self seekable]) {
+		double seekTo = [audioPlayer amountPlayed] + amount;
+		
+		if(seekTo > [[[playlistController currentEntry] length] doubleValue]) {
+			[self next:self];
+		} else {
+			lastPosition = -10;
+			[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
+			[self setPosition:seekTo];
+		}
 	}
 }
 
@@ -434,15 +436,17 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (void)seekBackward:(double)amount {
-	double seekTo = [audioPlayer amountPlayed] - amount;
-
-	if(seekTo < 0)
-		seekTo = 0;
-
-	lastPosition = -10;
-
-	[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
-	[self setPosition:seekTo];
+	if([self seekable]) {
+		double seekTo = [audioPlayer amountPlayed] - amount;
+		
+		if(seekTo < 0)
+			seekTo = 0;
+		
+		lastPosition = -10;
+		
+		[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
+		[self setPosition:seekTo];
+	}
 }
 
 /*
