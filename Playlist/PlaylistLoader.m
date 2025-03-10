@@ -909,7 +909,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 	{
 		__block NSLock *blockLock = [[NSLock alloc] init];
-		__block NSMutableArray *blockInputs = [queueThisJob mutableCopy];
+		__block NSMutableArray *blockInputs = [[queueThisJob allKeys] mutableCopy];
 		for(size_t i = 0, j = [blockInputs count]; i < j; ++i) {
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
 			[op addExecutionBlock:^{
