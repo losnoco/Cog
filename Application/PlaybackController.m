@@ -204,8 +204,9 @@ static double reverseSpeedScale(double input, double min, double max) {
 }
 
 - (IBAction)pause:(id)sender {
-	if(!([playlistController currentEntry].seekable)) {
-		return [self stop:sender];
+	if(![self seekable]) {
+		[self stop:sender];
+		return;
 	}
 
 	[[NSUserDefaults standardUserDefaults] setInteger:CogStatusPaused forKey:@"lastPlaybackStatus"];
