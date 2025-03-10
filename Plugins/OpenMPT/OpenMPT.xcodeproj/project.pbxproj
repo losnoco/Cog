@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		833A899C286FF3150022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A899B286FF3150022E036 /* Cocoa.framework */; };
+		834D190E2D7F955800F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D190D2D7F955800F13B89 /* CogAudio.framework */; };
 		83E5FE731FFF010C00659F0F /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6D1FFF010B00659F0F /* OMPTDecoder.mm */; };
 		83E5FE741FFF010C00659F0F /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */; };
 		83E5FE751FFF010C00659F0F /* OMPTMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */; };
@@ -49,6 +50,7 @@
 /* Begin PBXFileReference section */
 		833A899B286FF3150022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		834A42BE287AFDC300EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D190D2D7F955800F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFA61FFEF78100659F0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D190E2D7F955800F13B89 /* CogAudio.framework in Frameworks */,
 				833A899C286FF3150022E036 /* Cocoa.framework in Frameworks */,
 				83F30AE8286EBD2A0005EF06 /* libOpenMPT.framework in Frameworks */,
 			);
@@ -116,6 +119,7 @@
 		83E5EFB21FFEF79000659F0F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D190D2D7F955800F13B89 /* CogAudio.framework */,
 				833A899B286FF3150022E036 /* Cocoa.framework */,
 				83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */,
 			);

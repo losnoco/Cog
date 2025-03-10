@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		17C93F080B8FF67A008627D6 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93F040B8FF67A008627D6 /* FlacDecoder.m */; };
 		8301C147287805F500651A6E /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8301C146287805F500651A6E /* NSDictionary+Merge.m */; };
+		834D18FE2D7F949900F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D18FD2D7F949900F13B89 /* CogAudio.framework */; };
 		836EF0DA27BB970B00BF35B2 /* libFLAC.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D927BB970B00BF35B2 /* libFLAC.12.dylib */; };
 		83AA660B27B7DAE40098D4B8 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AA660A27B7DAE40098D4B8 /* cuesheet.m */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -37,6 +38,7 @@
 		8301C145287805F500651A6E /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		8301C146287805F500651A6E /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		834A42B4287AF7AA00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D18FD2D7F949900F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8356BD1927B3CCBB0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0D927BB970B00BF35B2 /* libFLAC.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.12.dylib; path = ../../ThirdParty/flac/lib/libFLAC.12.dylib; sourceTree = "<group>"; };
 		83747C4A2862DCF40021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
@@ -53,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D18FE2D7F949900F13B89 /* CogAudio.framework in Frameworks */,
 				836EF0DA27BB970B00BF35B2 /* libFLAC.12.dylib in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
@@ -70,6 +73,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				834D18FC2D7F949900F13B89 /* Frameworks */,
 			);
 			name = Flac;
 			sourceTree = "<group>";
@@ -141,6 +145,14 @@
 				32DBCF630370AF2F00C91783 /* Flac_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		834D18FC2D7F949900F13B89 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				834D18FD2D7F949900F13B89 /* CogAudio.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		83747C492862DCF40021245F /* Xcode-config */ = {

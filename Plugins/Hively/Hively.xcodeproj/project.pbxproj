@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		834D19062D7F94D700F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19052D7F94D700F13B89 /* CogAudio.framework */; };
 		836FB5311820538700B3AD2D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836FB5301820538700B3AD2D /* Cocoa.framework */; };
 		836FB53B1820538700B3AD2D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836FB5391820538700B3AD2D /* InfoPlist.strings */; };
 		836FB5971820554E00B3AD2D /* HivelyPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836FB58A182053D800B3AD2D /* HivelyPlayer.framework */; };
@@ -50,6 +51,7 @@
 		831C7F6918ADD73F00CE4A69 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 		833F68471CDBCABF00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		834A42B8287AFA3600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D19052D7F94D700F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		836FB52D1820538700B3AD2D /* Hively.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Hively.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		836FB5301820538700B3AD2D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		836FB5331820538700B3AD2D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -76,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D19062D7F94D700F13B89 /* CogAudio.framework in Frameworks */,
 				836FB5971820554E00B3AD2D /* HivelyPlayer.framework in Frameworks */,
 				836FB5311820538700B3AD2D /* Cocoa.framework in Frameworks */,
 			);
@@ -105,6 +108,7 @@
 		836FB52F1820538700B3AD2D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D19052D7F94D700F13B89 /* CogAudio.framework */,
 				836FB5301820538700B3AD2D /* Cocoa.framework */,
 				836FB5321820538700B3AD2D /* Other Frameworks */,
 				836FB584182053D700B3AD2D /* HivelyPlayer.xcodeproj */,

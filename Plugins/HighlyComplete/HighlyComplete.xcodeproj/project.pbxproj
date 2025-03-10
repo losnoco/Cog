@@ -15,6 +15,7 @@
 		8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; };
 		8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		834379A817F9818400584396 /* HCDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834379A717F9818400584396 /* HCDecoder.mm */; };
+		834D19032D7F94C800F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19022D7F94C800F13B89 /* CogAudio.framework */; };
 		8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EEE717F92AC8005208A4 /* Cocoa.framework */; };
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
@@ -191,6 +192,7 @@
 		8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyAdvanced.xcodeproj; path = ../../Frameworks/HighlyAdvanced/HighlyAdvanced.xcodeproj; sourceTree = "<group>"; };
 		834379A717F9818400584396 /* HCDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HCDecoder.mm; sourceTree = "<group>"; };
 		834A42B6287AF99600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D19022D7F94C800F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8360EEE417F92AC8005208A4 /* HighlyComplete.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HighlyComplete.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8360EEE717F92AC8005208A4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8360EEEA17F92AC8005208A4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -216,6 +218,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D19032D7F94C800F13B89 /* CogAudio.framework in Frameworks */,
 				83E2F4D123566BC5006F7A41 /* lazyusf2.framework in Frameworks */,
 				83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */,
 				83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */,
@@ -285,6 +288,7 @@
 		8360EEE617F92AC8005208A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D19022D7F94C800F13B89 /* CogAudio.framework */,
 				8360EEE717F92AC8005208A4 /* Cocoa.framework */,
 				8333B6731DCC4999004C140D /* libz.tbd */,
 				83E2F4C923566B0C006F7A41 /* lazyusf2.xcodeproj */,

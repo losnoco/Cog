@@ -110,23 +110,10 @@
 - (int)putMetadataInURL:(NSURL *)url;
 @end
 
-static NSString *guess_encoding_of_string(const char *input) {
-	NSString *ret = @"";
-	if(input && *input) {
-		@try {
-			ret = [NSString stringWithUTF8String:input];
-		}
-		@catch(NSException *e) {
-			ret = nil;
-		}
-		if(!ret) {
-			// This method is incredibly slow
-			NSData *stringData = [NSData dataWithBytes:input length:strlen(input)];
-			[NSString stringEncodingForData:stringData encodingOptions:nil convertedString:&ret usedLossyConversion:nil];
-			if(!ret) {
-				ret = @"";
-			}
-		}
-	}
-	return ret;
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern NSString *guess_encoding_of_string(const char *input);
+#ifdef __cplusplus
 }
+#endif

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		833A899A286FF2FD0022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A8999286FF2FD0022E036 /* Cocoa.framework */; };
 		833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; };
+		834D18F62D7F943900F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D18F52D7F943900F13B89 /* CogAudio.framework */; };
 		83C2806320E4ECAD00823BF9 /* libAdPlug.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA434020E4EC8C00E861B2 /* libAdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D3C659201C6E24005564CB /* AdPlugContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C654201C6E24005564CB /* AdPlugContainer.mm */; };
 		83D3C65A201C6E24005564CB /* AdPlugMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83D3C656201C6E24005564CB /* AdPlugMetadataReader.mm */; };
@@ -53,6 +54,7 @@
 /* Begin PBXFileReference section */
 		833A8999286FF2FD0022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		834A42AE287AF27A00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834D18F52D7F943900F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83747C6D2862DDDB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83D3C5F3201C674D005564CB /* AdPlug.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdPlug.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				834D18F62D7F943900F13B89 /* CogAudio.framework in Frameworks */,
 				83D3C6A6201D3951005564CB /* libbinio.framework in Frameworks */,
 				833AFD3620E4ED9D00F0C21E /* libAdPlug.framework in Frameworks */,
 				833A899A286FF2FD0022E036 /* Cocoa.framework in Frameworks */,
@@ -145,6 +148,7 @@
 		83D3C602201C675D005564CB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				834D18F52D7F943900F13B89 /* CogAudio.framework */,
 				833A8999286FF2FD0022E036 /* Cocoa.framework */,
 				83D3C6A7201D3951005564CB /* libbinio.framework */,
 				83D3C603201C6775005564CB /* libAdPlug.xcodeproj */,
