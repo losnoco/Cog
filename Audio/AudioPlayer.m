@@ -98,7 +98,9 @@
 	}
 
 	bufferChain = [[BufferChain alloc] initWithController:self];
-	[self notifyStreamChanged:userInfo];
+	if(!resumeInterval) {
+		[self notifyStreamChanged:userInfo];
+	}
 
 	while(![bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi]) {
 		bufferChain = nil;
