@@ -379,6 +379,9 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
+				if(!ts) {
+					flushed = previousNode && [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
+				}
 				if(flushed) {
 					usleep(500);
 					endOfStream = YES;
