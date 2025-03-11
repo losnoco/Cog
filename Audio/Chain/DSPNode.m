@@ -9,7 +9,9 @@
 
 #import "DSPNode.h"
 
-@implementation DSPNode
+@implementation DSPNode {
+	BOOL threadTerminated;
+}
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super init];
@@ -53,7 +55,17 @@
 		NSThread *currentThread = [NSThread currentThread];
 		[currentThread setThreadPriority:0.75];
 		[currentThread setQualityOfService:NSQualityOfServiceUserInitiated];
+		threadTerminated = NO;
 		[self process];
+		threadTerminated = YES;
+	}
+}
+
+- (void)setShouldContinue:(BOOL)s {
+	BOOL currentShouldContinue = shouldContinue;
+	shouldContinue = s;
+	if(!currentShouldContinue && s && threadTerminated) {
+		[self launchThread];
 	}
 }
 

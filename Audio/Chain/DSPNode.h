@@ -17,6 +17,8 @@
 
 - (void)threadEntry:(id _Nullable)arg;
 
+- (void)setShouldContinue:(BOOL)s;
+
 - (double)secondsBuffered;
 
 @end

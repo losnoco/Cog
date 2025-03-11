@@ -39,6 +39,8 @@
 - (BOOL)selectNextBuffer;
 - (void)endOfInputPlayed;
 
+- (BOOL)endOfStream;
+
 - (BOOL)chainQueueHasTracks;
 
 - (double)secondsBuffered;
@@ -50,6 +52,7 @@
 - (void)seek:(double)time;
 
 - (void)fadeOut;
+- (void)fadeOutBackground;
 - (void)fadeIn;
 
 - (AudioChunk *)readChunk:(size_t)amount;

@@ -24,8 +24,7 @@
 
 - (void)resetBuffer;
 
-- (void)pop;
-- (void)replayPreroll;
+- (void)setShouldContinue:(BOOL)s;
 
 - (void)process;
 
