@@ -75,14 +75,12 @@
 
 	[self waitUntilCallbacksExit];
 	if(output) {
-		[output fadeOut];
-		[output setShouldContinue:NO];
-		[output close];
+		[output fadeOutBackground];
 	}
 	if(!output) {
 		output = [[OutputNode alloc] initWithController:self previous:nil];
+		[output setupWithInterval:resumeInterval];
 	}
-	[output setupWithInterval:resumeInterval];
 	[output setVolume:volume];
 	@synchronized(chainQueue) {
 		for(id anObject in chainQueue) {
@@ -125,14 +123,15 @@
 	}
 
 	if(time > 0.0) {
-		[output fadeIn];
 		[output seek:time];
 		[bufferChain seek:time];
 	}
 
 	[self setShouldContinue:YES];
 
-	outputLaunched = NO;
+	if(!resumeInterval) {
+		outputLaunched = NO;
+	}
 	startedPaused = paused;
 	initialBufferFilled = NO;
 	previousUserInfo = userInfo;
@@ -144,6 +143,8 @@
 		if(time > 0.0) {
 			[self updatePosition:userInfo];
 		}
+	} else if(resumeInterval) {
+		[output fadeIn];
 	}
 }
 

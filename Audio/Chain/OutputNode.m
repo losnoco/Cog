@@ -103,7 +103,12 @@
 	[output fadeOut];
 }
 
+- (void)fadeOutBackground {
+	[output fadeOutBackground];
+}
+
 - (void)fadeIn {
+	[self reconnectInputAndReplumb];
 	[output fadeIn];
 }
 
@@ -137,9 +142,7 @@
 - (BOOL)selectNextBuffer {
 	BOOL ret = [controller selectNextBuffer];
 	if(!ret) {
-		Node *finalNode = [[controller bufferChain] finalNode];
-		[rubberbandNode setPreviousNode:finalNode];
-		[self reconnectInput];
+		[self reconnectInputAndReplumb];
 	}
 	return ret;
 }
@@ -169,11 +172,28 @@
 	}
 }
 
-- (void)reconnectInput {
+- (BOOL)reconnectInput {
+	Node *finalNode = nil;
+	if(rubberbandNode) {
+		finalNode = [[controller bufferChain] finalNode];
+		[rubberbandNode setPreviousNode:finalNode];
+	}
+
+	return !!finalNode;
+}
+
+- (void)reconnectInputAndReplumb {
+	Node *finalNode = nil;
+	if(rubberbandNode) {
+		finalNode = [[controller bufferChain] finalNode];
+		[rubberbandNode setPreviousNode:finalNode];
+	}
+
 	NSArray *DSPs = [self DSPs];
 
 	for (Node *node in DSPs) {
 		[node setEndOfStream:NO];
+		[node setShouldContinue:YES];
 	}
 }
 
@@ -187,10 +207,7 @@
 
 - (AudioChunk *)readChunk:(size_t)amount {
 	@autoreleasepool {
-		Node *finalNode = [[controller bufferChain] finalNode];
-		[rubberbandNode setPreviousNode:finalNode];
-
-		if(finalNode) {
+		if([self reconnectInput]) {
 			AudioChunk *ret = [super readChunk:amount];
 
 			if((!ret || ![ret frameCount]) && [previousNode endOfStream]) {
@@ -206,14 +223,15 @@
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config {
 	@autoreleasepool {
-		Node *finalNode = [[controller bufferChain] finalNode];
-		[rubberbandNode setPreviousNode:finalNode];
-
-		BOOL ret = [super peekFormat:format channelConfig:config];
-		if(!ret && [previousNode endOfStream]) {
-			endOfStream = YES;
+		if([self reconnectInput]) {
+			BOOL ret = [super peekFormat:format channelConfig:config];
+			if(!ret && [previousNode endOfStream]) {
+				endOfStream = YES;
+			}
+			return ret;
+		} else {
+			return NO;
 		}
-		return ret;
 	}
 }
 

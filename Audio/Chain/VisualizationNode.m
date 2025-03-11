@@ -30,6 +30,7 @@
 	BOOL processEntered;
 	BOOL stopping;
 	BOOL paused;
+	BOOL threadTerminated;
 
 	AudioStreamBasicDescription inputFormat;
 	AudioStreamBasicDescription visFormat; // Mono format for vis
@@ -95,7 +96,9 @@
 		NSThread *currentThread = [NSThread currentThread];
 		[currentThread setThreadPriority:0.75];
 		[currentThread setQualityOfService:NSQualityOfServiceUserInitiated];
+		threadTerminated = NO;
 		[self process];
+		threadTerminated = YES;
 	}
 }
 
@@ -111,6 +114,14 @@
 
 - (double)secondsBuffered {
 	return [buffer listDuration];
+}
+
+- (void)setShouldContinue:(BOOL)s {
+	BOOL currentShouldContinue = shouldContinue;
+	shouldContinue = s;
+	if(!currentShouldContinue && s && threadTerminated) {
+		[self launchThread];
+	}
 }
 
 - (BOOL)setup {

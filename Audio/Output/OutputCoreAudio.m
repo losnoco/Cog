@@ -23,15 +23,89 @@ extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 
+static BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels, size_t count, float *fadeLevel, float fadeStep, float fadeTarget) {
+	float _fadeLevel = *fadeLevel;
+	BOOL towardZero = fadeStep < 0.0;
+	BOOL stopping = NO;
+	for(size_t i = 0; i < count; ++i) {
+		for(size_t j = 0; j < channels; ++j) {
+			outSamples[j] += inSamples[j] * _fadeLevel;
+		}
+		inSamples += channels;
+		outSamples += channels;
+		_fadeLevel += fadeStep;
+		if(towardZero && _fadeLevel <= fadeTarget) {
+			_fadeLevel = fadeTarget;
+			fadeStep = 0.0;
+			stopping = YES;
+			break;
+		} else if(!towardZero && _fadeLevel >= fadeTarget) {
+			_fadeLevel = fadeTarget;
+			fadeStep = 0.0;
+			stopping = YES;
+		}
+	}
+	*fadeLevel = _fadeLevel;
+	return stopping;
+}
+
+@interface FadedBuffer : NSObject {
+	float fadeLevel;
+	float fadeStep;
+	float fadeTarget;
+
+	ChunkList *lastBuffer;
+}
+
+- (id)initWithBuffer:(ChunkList *)buffer fadeTarget:(float)fadeTarget sampleRate:(double)sampleRate;
+- (BOOL)mix:(float *)outputBuffer sampleCount:(size_t)samples channelCount:(size_t)channels;
+
+@end
+
+@implementation FadedBuffer
+
+- (id)initWithBuffer:(ChunkList *)buffer fadeTarget:(float)fadeTarget sampleRate:(double)sampleRate {
+	self = [super init];
+	if(self) {
+		fadeLevel = 1.0;
+		self->fadeTarget = fadeTarget;
+		lastBuffer = buffer;
+		const double maxFadeDurationMS = 1000.0 * [buffer listDuration];
+		const double fadeDuration = MIN(125.0f, maxFadeDurationMS);
+		fadeStep = ((fadeTarget - fadeLevel) / sampleRate) * (1000.0f / fadeDuration);
+	}
+	return self;
+}
+
+- (BOOL)mix:(float *)outputBuffer sampleCount:(size_t)samples channelCount:(size_t)channels {
+	if(lastBuffer) {
+		AudioChunk * chunk = [lastBuffer removeAndMergeSamples:samples callBlock:^BOOL{
+			// Always interrupt if buffer runs empty, because it is not being refilled any more
+			return true;
+		}];
+		if(chunk && [chunk frameCount]) {
+			// Will always be input request size or less
+			size_t samplesToMix = [chunk frameCount];
+			NSData *sampleData = [chunk removeSamples:samplesToMix];
+			return fadeAudio((const float *)[sampleData bytes], outputBuffer, channels, samplesToMix, &fadeLevel, fadeStep, fadeTarget);
+		}
+	}
+	// No buffer or no chunk, stream ended
+	return true;
+}
+
+@end
+
 @implementation OutputCoreAudio {
 	VisualizationController *visController;
+
+	NSLock *fadedBuffersLock;
+	NSMutableArray<FadedBuffer *> *fadedBuffers;
 }
 
 static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
 - (AudioChunk *)renderInput:(int)amountToRead {
-	int amountRead = 0;
-
 	if(stopping == YES || [outputController shouldContinue] == NO) {
 		// Chain is dead, fill out the serial number pointer forever with silence
 		stopping = YES;
@@ -66,6 +140,9 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 		secondsHdcdSustained = 0;
 
 		outputLock = [[NSLock alloc] init];
+
+		fadedBuffersLock = [[NSLock alloc] init];
+		fadedBuffers = [[NSMutableArray alloc] init];
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
@@ -162,21 +239,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			if(stopping)
 				break;
 
-			if(![outputBuffer isFull]) {
+			if(!cutOffInput && ![outputBuffer isFull]) {
 				[self renderAndConvert];
 				rendered = YES;
 			} else {
 				rendered = NO;
 			}
-
-#if 0
-			if(faded && !paused) {
-				resetting = YES;
-				[self pause];
-				started = NO;
-				resetting = NO;
-			}
-#endif
 
 			if(!started && !paused) {
 				// Prevent this call from hanging when used in this thread, when buffer may be empty
@@ -543,30 +611,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 }
 
-static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fadeLevel, float fadeStep, float fadeTarget) {
-	float _fadeLevel = *fadeLevel;
-	BOOL towardZero = fadeStep < 0.0;
-	BOOL stopping = NO;
-	for(size_t i = 0; i < count; ++i) {
-		for(size_t j = 0; j < channels; ++j) {
-			samples[j] *= _fadeLevel;
-		}
-		samples += channels;
-		_fadeLevel += fadeStep;
-		if(towardZero && _fadeLevel <= fadeTarget) {
-			_fadeLevel = fadeTarget;
-			fadeStep = 0.0;
-			stopping = YES;
-		} else if(!towardZero && _fadeLevel >= fadeTarget) {
-			_fadeLevel = fadeTarget;
-			fadeStep = 0.0;
-			stopping = YES;
-		}
-	}
-	*fadeLevel = _fadeLevel;
-	return stopping;
-}
-
 - (void)renderAndConvert {
 	if(resetStreamFormat) {
 		[self updateStreamFormat];
@@ -600,6 +644,8 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 	__block AudioStreamBasicDescription *format = &deviceFormat;
 	__block void *refCon = (__bridge void *)self;
 	__block NSLock *refLock = self->outputLock;
+	__block NSLock *fadersLock = self->fadedBuffersLock;
+	__block NSMutableArray *faders = self->fadedBuffers;
 
 #ifdef OUTPUT_LOG
 	__block FILE *logFile = _logFile;
@@ -616,35 +662,55 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
 
-		if(_self->resetting || _self->faded) {
-			inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
-			bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
-			inputData->mBuffers[0].mNumberChannels = channels;
+		inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
+		bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
+		inputData->mBuffers[0].mNumberChannels = channels;
+		
+		if(_self->resetting) {
 			return 0;
 		}
+		
+		float *outSamples = (float*)inputData->mBuffers[0].mData;
 
 		@autoreleasepool {
-			while(renderedSamples < frameCount) {
-				[refLock lock];
-				AudioChunk *chunk = nil;
-				if(![_self->outputBuffer isEmpty]) {
-					chunk = [_self->outputBuffer removeSamples:frameCount - renderedSamples];
-				}
-				[refLock unlock];
-				
-				if(chunk && [chunk frameCount]) {
-					_self->streamTimestamp = [chunk streamTimestamp];
-					
-					size_t _frameCount = [chunk frameCount];
-					NSData *sampleData = [chunk removeSamples:_frameCount];
-					float *samplePtr = (float *)[sampleData bytes];
-					size_t inputTodo = MIN(_frameCount, frameCount - renderedSamples);
-					cblas_scopy((int)(inputTodo * channels), samplePtr, 1, ((float *)inputData->mBuffers[0].mData) + renderedSamples * channels, 1);
-					renderedSamples += inputTodo;
-				}
+			if(!_self->faded) {
+				while(renderedSamples < frameCount) {
+					[refLock lock];
+					AudioChunk *chunk = nil;
+					if(_self->outputBuffer && ![_self->outputBuffer isEmpty]) {
+						chunk = [_self->outputBuffer removeSamples:frameCount - renderedSamples];
+					}
+					[refLock unlock];
 
-				if(_self->stopping || _self->resetting || _self->faded) {
-					break;
+					size_t _frameCount = 0;
+
+					if(chunk && [chunk frameCount]) {
+						_self->streamTimestamp = [chunk streamTimestamp];
+
+						_frameCount = [chunk frameCount];
+						NSData *sampleData = [chunk removeSamples:_frameCount];
+						float *samplePtr = (float *)[sampleData bytes];
+						size_t inputTodo = MIN(_frameCount, frameCount - renderedSamples);
+
+						if(!_self->fading) {
+							cblas_scopy((int)(inputTodo * channels), samplePtr, 1, outSamples + renderedSamples * channels, 1);
+						} else {
+							BOOL faded = fadeAudio(samplePtr, outSamples + renderedSamples * channels, channels, inputTodo, &_self->fadeLevel, _self->fadeStep, _self->fadeTarget);
+							if(faded) {
+								if(_self->fadeStep < 0.0) {
+									_self->faded = YES;
+								}
+								_self->fading = NO;
+								_self->fadeStep = 0.0f;
+							}
+						}
+
+						renderedSamples += inputTodo;
+					}
+
+					if(_self->stopping || _self->resetting || _self->faded || !chunk || !_frameCount) {
+						break;
+					}
 				}
 			}
 
@@ -661,21 +727,19 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 				}
 			}
 
-			scale_by_volume((float*)inputData->mBuffers[0].mData, renderedSamples * channels, volumeScale * _self->volume);
-
-			if(_self->fading) {
-				BOOL faded = fadeAudio((float*)inputData->mBuffers[0].mData, channels, renderedSamples, &_self->fadeLevel, _self->fadeStep, _self->fadeTarget);
-				if(faded) {
-					if(_self->fadeStep < 0.0f) {
-						_self->faded = YES;
-					}
-					_self->fading = NO;
-					_self->fadeStep = 0.0f;
+			[fadersLock lock];
+			for(size_t i = 0; i < [faders count];) {
+				FadedBuffer *buffer = faders[i];
+				BOOL stopping = [buffer mix:outSamples sampleCount:frameCount channelCount:channels];
+				if(stopping) {
+					[faders removeObjectAtIndex:i];
+				} else {
+					++i;
 				}
 			}
+			[fadersLock unlock];
 
-			inputData->mBuffers[0].mDataByteSize = renderedSamples * format->mBytesPerPacket;
-			inputData->mBuffers[0].mNumberChannels = channels;
+			scale_by_volume(outSamples, frameCount * channels, volumeScale * _self->volume);
 
 			[_self updateLatency:secondsRendered];
 		}
@@ -711,6 +775,7 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 		outputDeviceID = -1;
 		restarted = NO;
 
+		cutOffInput = NO;
 		fadeTarget = 1.0f;
 		fadeLevel = 1.0f;
 		fadeStep = 0.0f;
@@ -840,9 +905,13 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 				} while(!commandStop && compareVal > 0 && compareMax-- > 0);
 			} else {
 				[self fadeOut];
-				while(fading && !faded) {
-					usleep(5000);
+				[fadedBuffersLock lock];
+				while([fadedBuffers count]) {
+					[fadedBuffersLock unlock];
+					usleep(10000);
+					[fadedBuffersLock lock];
 				}
+				[fadedBuffersLock unlock];
 			}
 			[_au stopHardware];
 			_au = nil;
@@ -912,11 +981,24 @@ static BOOL fadeAudio(float * samples, size_t channels, size_t count, float * fa
 	fading = YES;
 }
 
+- (void)fadeOutBackground {
+	cutOffInput = YES;
+	[outputLock lock];
+	[fadedBuffersLock lock];
+	FadedBuffer *buffer = [[FadedBuffer alloc] initWithBuffer:outputBuffer fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
+	outputBuffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
+	[fadedBuffers addObject:buffer];
+	[fadedBuffersLock unlock];
+	[outputLock unlock];
+}
+
 - (void)fadeIn {
-	fadeTarget = 1.0;
+	fadeLevel = 0.0f;
+	fadeTarget = 1.0f;
 	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 125.0f);
 	fading = YES;
 	faded = NO;
+	cutOffInput = NO;
 }
 
 @end
