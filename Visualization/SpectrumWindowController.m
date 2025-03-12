@@ -9,12 +9,14 @@
 
 #import "SpectrumViewSK.h"
 #import "SpectrumViewCG.h"
+#import "ProjectMView.h"
 
 static void *kSpectrumWindowContext = &kSpectrumWindowContext;
 
 @interface SpectrumWindowController ()
 @property SpectrumViewSK *spectrumViewSK;
 @property SpectrumViewCG *spectrumViewCG;
+@property ProjectMView *projectMView;
 @end
 
 @implementation SpectrumWindowController
@@ -29,8 +31,6 @@ static void *kSpectrumWindowContext = &kSpectrumWindowContext;
 
 - (void)windowDidLoad {
 	[super windowDidLoad];
-
-	[self startRunning];
 }
 
 - (void)dealloc {
@@ -53,6 +53,14 @@ static void *kSpectrumWindowContext = &kSpectrumWindowContext;
 }
 
 - (void)startRunning {
+	if(!self.projectMView) {
+		NSRect frame = [[self window] frame];
+		self.projectMView = [[ProjectMView alloc] initWithFrame:frame];
+		if(self.projectMView) {
+			[[self window] setContentView:self.projectMView];
+		}
+	}
+#if 0
 	if(!self.spectrumViewSK && !self.spectrumViewCG) {
 		NSRect frame = [[self window] frame];
 		self.spectrumViewSK = [SpectrumViewSK createGuardWithFrame:frame];
@@ -76,12 +84,14 @@ static void *kSpectrumWindowContext = &kSpectrumWindowContext;
 		else if(self.spectrumViewCG)
 			[self.spectrumViewCG startPlayback];
 	}
+#endif
 }
 
 - (void)stopRunning {
 	[[self window] setContentView:nil];
 	self.spectrumViewSK = nil;
 	self.spectrumViewCG = nil;
+	self.projectMView = nil;
 }
 
 - (void)windowWillClose:(NSNotification *)notification {

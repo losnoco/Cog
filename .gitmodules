@@ -19,3 +19,9 @@
 [submodule "Frameworks/libsidplayfp/sidplayfp"]
 	path = Frameworks/libsidplayfp/sidplayfp
 	url = https://github.com/kode54/libsidplayfp.git
+[submodule "ThirdParty/libprojectM/subprojects/presets-milkdrop-texture-pack"]
+	path = ThirdParty/libprojectM/subprojects/presets-milkdrop-texture-pack
+	url = https://github.com/projectM-visualizer/presets-milkdrop-texture-pack.git
+[submodule "ThirdParty/libprojectM/subprojects/presets/presets-cream-of-the-crop"]
+	path = ThirdParty/libprojectM/subprojects/presets/presets-cream-of-the-crop
+	url = https://github.com/projectM-visualizer/presets-cream-of-the-crop.git

@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame;
 
+- (id)initWithFrame:(NSRect)frame;
+
 - (void)enableCameraControl;
 - (void)startPlayback;
 @end

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SpectrumViewCG : NSView
 @property(nonatomic) BOOL isListening;
 
+- (id)initWithFrame:(NSRect)frame;
+
 - (void)startPlayback;
 - (void)enableFullView;
 @end

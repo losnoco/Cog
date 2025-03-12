@@ -53,3 +53,8 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/vorbis/lib/libvorbisfile.3.dylib
 /ThirdParty/vorbis/lib/libvorbis.0.dylib
 /ThirdParty/soxr/lib/libsoxr.0.dylib
+/ThirdParty/libprojectM/lib/libprojectM-4.4.dylib
+/ThirdParty/libprojectM/lib/libprojectM-4-playlist.4.dylib
+/ThirdParty/libprojectM/lib/libboost_system.dylib
+/ThirdParty/libprojectM/lib/libboost_atomic.dylib
+/ThirdParty/libprojectM/lib/libboost_filesystem.dylib
