@@ -112,7 +112,7 @@ static VisualizationController *_sharedController = nil;
 	return visSamplesPosted;
 }
 
-- (void)copyVisPCM:(float *)outPCM visFFT:(float *)outFFT latencyOffset:(double)latency {
+- (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT latencyOffset:(double)latency {
 	if(!outPCM && !outFFT) return;
 
 	if(!visAudio || !visAudioSize) {
