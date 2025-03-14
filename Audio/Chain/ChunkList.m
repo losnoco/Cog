@@ -399,12 +399,28 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		dsd2pcmLatency = 0;
 #endif
 
-		halveDSDVolume = NO;
-
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
+		observersRegistered = NO;
 	}
 
 	return self;
+}
+
+- (void)addObservers {
+	if(!observersRegistered) {
+		halveDSDVolume = NO;
+
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
+
+		observersRegistered = YES;
+	}
+}
+
+- (void)removeObservers {
+	if(observersRegistered) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.halveDSDVolume" context:kChunkListContext];
+
+		observersRegistered = NO;
+	}
 }
 
 - (void)dealloc {
@@ -412,6 +428,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	while(inAdder || inRemover || inPeeker || inMerger || inConverter) {
 		usleep(500);
 	}
+	[self removeObservers];
 	if(hdcd_decoder) {
 		free(hdcd_decoder);
 		hdcd_decoder = NULL;
@@ -786,6 +803,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			isFloat = YES;
 			inputBuffer = &tempData[buffer_adder];
 			inputChanged = YES;
+			[self addObservers];
 #if DSD_DECIMATE
 			if(halveDSDVolume) {
 				float scaleFactor = 2.0f;

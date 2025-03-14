@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 	int dsd2pcmLatency;
 #endif
 	
+	BOOL observersRegistered;
 	BOOL halveDSDVolume;
 	
 	void *hdcd_decoder;
