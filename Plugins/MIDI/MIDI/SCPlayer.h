@@ -5,6 +5,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include "synth.h"
+
 class SCPlayer : public MIDIPlayer {
 	public:
 	// zero variables
@@ -21,9 +23,6 @@ class SCPlayer : public MIDIPlayer {
 
 	virtual void shutdown();
 	virtual bool startup();
-
-	virtual void send_event_time(uint32_t b, unsigned int time);
-	virtual void send_sysex_time(const uint8_t* event, size_t size, size_t port, unsigned int time);
 
 	private:
 	bool LoadCore();
@@ -45,10 +44,9 @@ class SCPlayer : public MIDIPlayer {
 	void process_write_code(uint32_t port, uint32_t code);
 	void process_write_bytes(uint32_t port, const void* buffer, uint32_t size);
 
-	bool bTerminating[3];
-	NSTask* hProcess[3];
-	NSPipe* hChildStd_IN[3];
-	NSPipe* hChildStd_OUT[3];
+	EmuSC::ControlRom *_controlROM;
+	EmuSC::PcmRom *_pcmROM;
+	EmuSC::Synth *_synth[3];
 };
 
 #endif

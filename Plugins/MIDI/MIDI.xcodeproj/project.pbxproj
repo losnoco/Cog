@@ -23,6 +23,13 @@
 		8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCD27B353E30074E50C /* libbasswv.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
+		836E66962D854D5700B62C38 /* SCPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 836E66952D854D5600B62C38 /* SCPlayer.mm */; };
+		836E66992D855A7500B62C38 /* libemusc.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836E66982D855A7500B62C38 /* libemusc.0.dylib */; };
+		836E669E2D855AC600B62C38 /* r00233567_control.bin in Resources */ = {isa = PBXBuildFile; fileRef = 836E669A2D855AAF00B62C38 /* r00233567_control.bin */; };
+		836E669F2D855AC800B62C38 /* r15199858_main_mcu.bin in Resources */ = {isa = PBXBuildFile; fileRef = 836E669B2D855AAF00B62C38 /* r15199858_main_mcu.bin */; };
+		836E66A02D855ACA00B62C38 /* r15209359_pcm_1.bin in Resources */ = {isa = PBXBuildFile; fileRef = 836E669C2D855AAF00B62C38 /* r15209359_pcm_1.bin */; };
+		836E66A12D855ACC00B62C38 /* r15279813_pcm_2.bin in Resources */ = {isa = PBXBuildFile; fileRef = 836E669D2D855AAF00B62C38 /* r15279813_pcm_2.bin */; };
+		836E66A22D855B2700B62C38 /* libemusc.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836E66982D855A7500B62C38 /* libemusc.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
 		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */; };
@@ -66,6 +73,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */,
+				836E66A22D855B2700B62C38 /* libemusc.0.dylib in CopyFiles */,
 				83EA54232A6A6CF400CD0580 /* libbass_mpc.dylib in CopyFiles */,
 				8356BCD127B353F60074E50C /* libbass.dylib in CopyFiles */,
 				8356BCD227B353F90074E50C /* libbassmidi.dylib in CopyFiles */,
@@ -115,6 +123,13 @@
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		83686AB01C5C783000671C7A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
+		836E66942D854D5600B62C38 /* SCPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCPlayer.h; sourceTree = "<group>"; };
+		836E66952D854D5600B62C38 /* SCPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SCPlayer.mm; sourceTree = "<group>"; };
+		836E66982D855A7500B62C38 /* libemusc.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libemusc.0.dylib; path = /Users/chris/Source/Repos/cog/ThirdParty/libemusc/lib/libemusc.0.dylib; sourceTree = "<absolute>"; };
+		836E669A2D855AAF00B62C38 /* r00233567_control.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = r00233567_control.bin; sourceTree = "<group>"; };
+		836E669B2D855AAF00B62C38 /* r15199858_main_mcu.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = r15199858_main_mcu.bin; sourceTree = "<group>"; };
+		836E669C2D855AAF00B62C38 /* r15209359_pcm_1.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = r15209359_pcm_1.bin; sourceTree = "<group>"; };
+		836E669D2D855AAF00B62C38 /* r15279813_pcm_2.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = r15279813_pcm_2.bin; sourceTree = "<group>"; };
 		83747C222862DB7F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		838EE8CA29A8600C00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -171,6 +186,7 @@
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
 				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
+				836E66992D855A7500B62C38 /* libemusc.0.dylib in Frameworks */,
 				8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */,
 				8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
@@ -204,6 +220,17 @@
 			);
 			name = json;
 			path = ../../../ThirdParty/json;
+			sourceTree = "<group>";
+		};
+		836E66972D855A2600B62C38 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				836E669A2D855AAF00B62C38 /* r00233567_control.bin */,
+				836E669B2D855AAF00B62C38 /* r15199858_main_mcu.bin */,
+				836E669C2D855AAF00B62C38 /* r15209359_pcm_1.bin */,
+				836E669D2D855AAF00B62C38 /* r15279813_pcm_2.bin */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		83747C212862DB7F0021245F /* Xcode-config */ = {
@@ -263,6 +290,7 @@
 		83B0667E180D5668008E3612 = {
 			isa = PBXGroup;
 			children = (
+				836E66972D855A2600B62C38 /* Resources */,
 				83747C212862DB7F0021245F /* Xcode-config */,
 				83B06690180D5668008E3612 /* MIDI */,
 				83B06689180D5668008E3612 /* Frameworks */,
@@ -295,6 +323,7 @@
 		83B0668C180D5668008E3612 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				836E66982D855A7500B62C38 /* libemusc.0.dylib */,
 				83EA54212A6A6CE200CD0580 /* libbass_mpc.dylib */,
 				8356BCC727B353CB0074E50C /* libbass.dylib */,
 				8356BCC827B353CB0074E50C /* libbassmidi.dylib */,
@@ -311,6 +340,8 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				836E66942D854D5600B62C38 /* SCPlayer.h */,
+				836E66952D854D5600B62C38 /* SCPlayer.mm */,
 				834A42BC287AFC7F00EB9D9B /* AudioChunk.h */,
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
@@ -445,6 +476,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				83B06695180D5668008E3612 /* InfoPlist.strings in Resources */,
+				836E669E2D855AC600B62C38 /* r00233567_control.bin in Resources */,
+				836E669F2D855AC800B62C38 /* r15199858_main_mcu.bin in Resources */,
+				836E66A02D855ACA00B62C38 /* r15209359_pcm_1.bin in Resources */,
+				836E66A12D855ACC00B62C38 /* r15279813_pcm_2.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -471,6 +506,7 @@
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 				834BE91B1DE407CB00A07DCD /* resampler.c in Sources */,
+				836E66962D854D5700B62C38 /* SCPlayer.mm in Sources */,
 				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -623,6 +659,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../ThirdParty/BASS",
 					"$(SRCROOT)/../../ThirdParty/json",
+					"$(SRCROOT)/../../ThirdParty/libemusc/include",
 				);
 				INFOPLIST_FILE = "MIDI/MIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
@@ -630,6 +667,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
+					"$(PROJECT_DIR)/../../ThirdParty/libemusc/lib",
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -649,6 +688,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../ThirdParty/BASS",
 					"$(SRCROOT)/../../ThirdParty/json",
+					"$(SRCROOT)/../../ThirdParty/libemusc/include",
 				);
 				INFOPLIST_FILE = "MIDI/MIDI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
@@ -656,6 +696,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../../ThirdParty/BASS",
+					"$(PROJECT_DIR)/../../ThirdParty/libemusc/lib",
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";

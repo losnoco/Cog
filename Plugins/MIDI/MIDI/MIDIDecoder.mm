@@ -11,6 +11,7 @@
 #import "AUPlayer.h"
 #import "BMPlayer.h"
 #import "MSPlayer.h"
+#import "SCPlayer.h"
 
 #import "Logging.h"
 
@@ -244,14 +245,19 @@ static OSType getOSType(const char *in_) {
 		} else if([[plugin substringToIndex:5] isEqualToString:@"OPL3W"]) {
 			MSPlayer *msplayer = new MSPlayer;
 			player = msplayer;
-
+			
 			msplayer->set_synth(1);
-
+			
 			msplayer->set_bank([[plugin substringFromIndex:5] intValue]);
-
+			
 			msplayer->set_extp(1);
-
+			
 			msplayer->setSampleRate(sampleRate);
+		} else if([plugin isEqualToString:@"emusc"]) {
+			SCPlayer *scplayer = new SCPlayer;
+			player = scplayer;
+
+			scplayer->setSampleRate(sampleRate);
 		} else {
 			const char *cplugin = [plugin UTF8String];
 			OSType componentSubType;
