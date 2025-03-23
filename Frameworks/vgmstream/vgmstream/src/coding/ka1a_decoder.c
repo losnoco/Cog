@@ -1,19 +1,31 @@
 #include "coding.h"
 #include "../base/decode_state.h"
+#include "../base/codec_info.h"
 #include "libs/ka1a_dec.h"
 
 
 /* opaque struct */
-struct ka1a_codec_data {
+typedef struct {
     uint8_t* buf;
     float* fbuf;
 
     int frame_size;
     void* handle;
-};
+} ka1a_codec_data;
 
 
-ka1a_codec_data* init_ka1a(int bitrate_mode, int channels_tracks) {
+static void free_ka1a(void* priv_data) {
+    ka1a_codec_data* data = priv_data;
+    if (!data) return;
+
+    if (data->handle)
+        ka1a_free(data->handle);
+    free(data->buf);
+    free(data->fbuf);
+    free(data);
+}
+
+void* init_ka1a(int bitrate_mode, int channels_tracks) {
     ka1a_codec_data* data = NULL;
     int buf_size;
 
@@ -39,7 +51,7 @@ fail:
     return NULL;
 }
 
-static bool read_ka1a_frame(VGMSTREAM* v) {
+static bool read_frame(VGMSTREAM* v) {
     ka1a_codec_data* data = v->codec_data;
     int bytes;
 
@@ -72,8 +84,8 @@ static bool read_ka1a_frame(VGMSTREAM* v) {
     return true;
 }
 
-bool decode_ka1a_frame(VGMSTREAM* v) {
-    bool ok = read_ka1a_frame(v);
+bool decode_frame_ka1a(VGMSTREAM* v) {
+    bool ok = read_frame(v);
     if (!ok)
         return false;
 
@@ -90,13 +102,14 @@ bool decode_ka1a_frame(VGMSTREAM* v) {
     return true;
 }
 
-void reset_ka1a(ka1a_codec_data* data) {
+static void reset_ka1a(void* priv_data) {
+    ka1a_codec_data* data = priv_data;
     if (!data || !data->handle) return;
     
     ka1a_reset(data->handle);
 }
 
-void seek_ka1a(VGMSTREAM* v, int32_t num_sample) {
+static void seek_ka1a(VGMSTREAM* v, int32_t num_sample) {
     ka1a_codec_data* data = v->codec_data;
     decode_state_t* ds = v->decode_state;
     if (!data) return;
@@ -135,12 +148,10 @@ void seek_ka1a(VGMSTREAM* v, int32_t num_sample) {
     #endif
 }
 
-void free_ka1a(ka1a_codec_data* data) {
-    if (!data) return;
-
-    if (data->handle)
-        ka1a_free(data->handle);
-    free(data->buf);
-    free(data->fbuf);
-    free(data);
-}
+const codec_info_t ka1a_decoder = {
+    .sample_type = SFMT_FLT,
+    .decode_frame = decode_frame_ka1a,
+    .free = free_ka1a,
+    .reset = reset_ka1a,
+    .seek = seek_ka1a,
+};

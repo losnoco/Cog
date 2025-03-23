@@ -384,6 +384,8 @@ static void add_settings(txtp_entry_t* current, txtp_entry_t* entry, const char*
 
     current->loop_anchor_start = entry->loop_anchor_start;
     current->loop_anchor_end = entry->loop_anchor_end;
+
+    current->body_mode = entry->body_mode;
 }
 
 //TODO use
@@ -708,6 +710,16 @@ static void parse_params(txtp_entry_t* entry, char* params) {
 
             txtp_add_mixing(entry, &mix, MACRO_DOWNMIX);
         }
+        else if (strcmp(command,"@body-intro") == 0) {
+            entry->body_mode = TXTP_BODY_INTRO;
+            VGM_LOG("body: %x\n", entry->body_mode);
+        }
+        else if (strcmp(command,"@body-main") == 0) {
+            entry->body_mode = TXTP_BODY_MAIN;
+        }
+        else if (strcmp(command,"@body-outro") == 0) {
+            entry->body_mode = TXTP_BODY_OUTRO;
+        }
         else if (params[nc] == ' ') {
             //;VGM_LOG("TXTP:   comment\n");
             break; /* comment, ignore rest */
@@ -1019,7 +1031,9 @@ static int parse_keyval(txtp_header_t* txtp, const char* key, const char* val) {
 
     }
     else {
-        goto fail;
+        // in rare cases a filename may contain a (blah=blah.blah), but it's hard to distinguish
+        // from key=val + setting with dots. Signal unknown command to treat it like a file (should fail later).
+        return -1;
     }
 
     return 1;
@@ -1066,9 +1080,11 @@ txtp_header_t* txtp_parse(STREAMFILE* sf) {
             /* try key/val (ignores lead/trail spaces, # may be commands or comments) */
             ok = sscanf(line, " %[^ \t#=] = %[^\t\r\n] ", key,val);
             if (ok == 2) { /* key=val */
-                if (!parse_keyval(txtp, key, val)) /* read key/val */
-                    goto fail;
-                continue;
+                int ret = parse_keyval(txtp, key, val); /* read key/val */
+                if (ret == 0) goto fail;
+                if (ret > 0)
+                    continue;
+                // ret < 0: try to handle as filename below
             }
 
             /* must be a filename (only remove spaces from start/end, as filenames con contain mid spaces/#/etc) */
