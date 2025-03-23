@@ -5,6 +5,7 @@
 #include "mixing.h"
 #include "plugins.h"
 #include "sbuf.h"
+#include "codec_info.h"
 
 #include "../util/log.h"
 #include "decode_state.h"
@@ -38,14 +39,16 @@ void decode_free(VGMSTREAM* vgmstream) {
 
     if (!vgmstream->codec_data)
         return;
+    
+    const codec_info_t* codec_info = codec_get_info(vgmstream);
+    if (codec_info) {
+        codec_info->free(vgmstream->codec_data);
+        return;
+    }
 
 #ifdef VGM_USE_VORBIS
     if (vgmstream->coding_type == coding_OGG_VORBIS) {
         free_ogg_vorbis(vgmstream->codec_data);
-    }
-
-    if (vgmstream->coding_type == coding_VORBIS_custom) {
-        free_vorbis_custom(vgmstream->codec_data);
     }
 #endif
 
@@ -57,14 +60,6 @@ void decode_free(VGMSTREAM* vgmstream) {
         free_relic(vgmstream->codec_data);
     }
 
-    if (vgmstream->coding_type == coding_CRI_HCA) {
-        free_hca(vgmstream->codec_data);
-    }
-
-    if (vgmstream->coding_type == coding_TAC) {
-        free_tac(vgmstream->codec_data);
-    }
-
     if (vgmstream->coding_type == coding_ICE_RANGE ||
         vgmstream->coding_type == coding_ICE_DCT) {
         free_ice(vgmstream->codec_data);
@@ -74,24 +69,12 @@ void decode_free(VGMSTREAM* vgmstream) {
         free_ubi_adpcm(vgmstream->codec_data);
     }
 
-    if (vgmstream->coding_type == coding_IMUSE) {
-        free_imuse(vgmstream->codec_data);
-    }
-
     if (vgmstream->coding_type == coding_ONGAKUKAN_ADPCM) {
         free_ongakukan_adp(vgmstream->codec_data);
     }
 
-    if (vgmstream->coding_type == coding_COMPRESSWAVE) {
-        free_compresswave(vgmstream->codec_data);
-    }
-
     if (vgmstream->coding_type == coding_EA_MT) {
         free_ea_mt(vgmstream->codec_data, vgmstream->channels);
-    }
-
-    if (vgmstream->coding_type == coding_KA1A) {
-        free_ka1a(vgmstream->codec_data);
     }
 
 #ifdef VGM_USE_FFMPEG
@@ -140,12 +123,6 @@ void decode_free(VGMSTREAM* vgmstream) {
     }
 #endif
 
-#ifdef VGM_USE_SPEEX
-    if (vgmstream->coding_type == coding_SPEEX) {
-        free_speex(vgmstream->codec_data);
-    }
-#endif
-
     if (vgmstream->coding_type == coding_ACM) {
         free_acm(vgmstream->codec_data);
     }
@@ -162,20 +139,18 @@ void decode_seek(VGMSTREAM* vgmstream) {
     if (!vgmstream->codec_data)
         return;
 
+    const codec_info_t* codec_info = codec_get_info(vgmstream);
+    if (codec_info) {
+        codec_info->seek(vgmstream, vgmstream->loop_current_sample);
+        return;
+    }
+
     if (vgmstream->coding_type == coding_CIRCUS_VQ) {
         seek_circus_vq(vgmstream->codec_data, vgmstream->loop_current_sample);
     }
 
     if (vgmstream->coding_type == coding_RELIC) {
         seek_relic(vgmstream->codec_data, vgmstream->loop_current_sample);
-    }
-
-    if (vgmstream->coding_type == coding_CRI_HCA) {
-        loop_hca(vgmstream->codec_data, vgmstream->loop_current_sample);
-    }
-
-    if (vgmstream->coding_type == coding_TAC) {
-        seek_tac(vgmstream->codec_data, vgmstream->loop_current_sample);
     }
 
     if (vgmstream->coding_type == coding_ICE_RANGE ||
@@ -187,33 +162,17 @@ void decode_seek(VGMSTREAM* vgmstream) {
         seek_ubi_adpcm(vgmstream->codec_data, vgmstream->loop_current_sample);
     }
 
-    if (vgmstream->coding_type == coding_IMUSE) {
-        seek_imuse(vgmstream->codec_data, vgmstream->loop_current_sample);
-    }
-
     if (vgmstream->coding_type == coding_ONGAKUKAN_ADPCM) {
         seek_ongakukan_adp(vgmstream->codec_data, vgmstream->loop_current_sample);
-    }
-
-    if (vgmstream->coding_type == coding_COMPRESSWAVE) {
-        seek_compresswave(vgmstream->codec_data, vgmstream->loop_current_sample);
     }
 
     if (vgmstream->coding_type == coding_EA_MT) {
         seek_ea_mt(vgmstream, vgmstream->loop_current_sample);
     }
 
-    if (vgmstream->coding_type == coding_KA1A) {
-        seek_ka1a(vgmstream, vgmstream->loop_current_sample);
-    }
-
 #ifdef VGM_USE_VORBIS
     if (vgmstream->coding_type == coding_OGG_VORBIS) {
         seek_ogg_vorbis(vgmstream->codec_data, vgmstream->loop_current_sample);
-    }
-
-    if (vgmstream->coding_type == coding_VORBIS_custom) {
-        seek_vorbis_custom(vgmstream, vgmstream->loop_current_sample);
     }
 #endif
 
@@ -241,12 +200,6 @@ void decode_seek(VGMSTREAM* vgmstream) {
     }
 #endif
 
-#ifdef VGM_USE_SPEEX
-    if (vgmstream->coding_type == coding_SPEEX) {
-        seek_speex(vgmstream, vgmstream->loop_current_sample);
-    }
-#endif
-
 #ifdef VGM_USE_MPEG
     if (vgmstream->coding_type == coding_MPEG_custom ||
         vgmstream->coding_type == coding_MPEG_ealayer3 ||
@@ -269,13 +222,15 @@ void decode_reset(VGMSTREAM* vgmstream) {
     if (!vgmstream->codec_data)
         return;
 
+    const codec_info_t* codec_info = codec_get_info(vgmstream);
+    if (codec_info) {
+        codec_info->reset(vgmstream->codec_data);
+        return;
+    }
+
 #ifdef VGM_USE_VORBIS
     if (vgmstream->coding_type == coding_OGG_VORBIS) {
         reset_ogg_vorbis(vgmstream->codec_data);
-    }
-
-    if (vgmstream->coding_type == coding_VORBIS_custom) {
-        reset_vorbis_custom(vgmstream);
     }
 #endif
 
@@ -287,14 +242,6 @@ void decode_reset(VGMSTREAM* vgmstream) {
         reset_relic(vgmstream->codec_data);
     }
 
-    if (vgmstream->coding_type == coding_CRI_HCA) {
-        reset_hca(vgmstream->codec_data);
-    }
-
-    if (vgmstream->coding_type == coding_TAC) {
-        reset_tac(vgmstream->codec_data);
-    }
-
     if (vgmstream->coding_type == coding_ICE_RANGE ||
         vgmstream->coding_type == coding_ICE_DCT) {
         reset_ice(vgmstream->codec_data);
@@ -304,24 +251,12 @@ void decode_reset(VGMSTREAM* vgmstream) {
         reset_ubi_adpcm(vgmstream->codec_data);
     }
 
-    if (vgmstream->coding_type == coding_IMUSE) {
-        reset_imuse(vgmstream->codec_data);
-    }
-
     if (vgmstream->coding_type == coding_ONGAKUKAN_ADPCM) {
         reset_ongakukan_adp(vgmstream->codec_data);
     }
 
-    if (vgmstream->coding_type == coding_COMPRESSWAVE) {
-        reset_compresswave(vgmstream->codec_data);
-    }
-
     if (vgmstream->coding_type == coding_EA_MT) {
         reset_ea_mt(vgmstream);
-    }
-
-    if (vgmstream->coding_type == coding_KA1A) {
-        reset_ka1a(vgmstream->codec_data);
     }
 
 #if defined(VGM_USE_MP4V2) && defined(VGM_USE_FDKAAC)
@@ -361,12 +296,6 @@ void decode_reset(VGMSTREAM* vgmstream) {
 #ifdef VGM_USE_CELT
     if (vgmstream->coding_type == coding_CELT_FSB) {
         reset_celt_fsb(vgmstream->codec_data);
-    }
-#endif
-
-#ifdef VGM_USE_SPEEX
-    if (vgmstream->coding_type == coding_SPEEX) {
-        reset_speex(vgmstream->codec_data);
     }
 #endif
 
@@ -433,7 +362,6 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
             return 1;
 #ifdef VGM_USE_VORBIS
         case coding_OGG_VORBIS:
-        case coding_VORBIS_custom:
 #endif
 #ifdef VGM_USE_MPEG
         case coding_MPEG_custom:
@@ -586,18 +514,12 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
             return 0; /* varies per frame */
         case coding_ONGAKUKAN_ADPCM:
             return 0; /* actually 1. */
-        case coding_COMPRESSWAVE:
-            return 0; /* multiple of 2 */
         case coding_EA_MT:
             return 0; /* 432, but variable in looped files */
         case coding_CIRCUS_VQ:
             return 0;
         case coding_RELIC:
             return 0; /* 512 */
-        case coding_CRI_HCA:
-            return 0; /* 1024 - delay/padding (which can be bigger than 1024) */
-        case coding_TAC:
-            return 0; /* 1024 - delay/padding */
         case coding_ICE_RANGE:
         case coding_ICE_DCT:
             return 0; /* ~100 (range), ~16 (DCT) */
@@ -612,10 +534,6 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
 #ifdef VGM_USE_CELT
         case coding_CELT_FSB:
             return 0; /* 512? */
-#endif
-#ifdef VGM_USE_SPEEX
-        case coding_SPEEX:
-            return 0;
 #endif
         default:
             return 0;
@@ -807,12 +725,9 @@ int decode_get_frame_size(VGMSTREAM* vgmstream) {
         /* UBI_ADPCM: varies per mode? */
         /* IMUSE: VBR */
         /* EA_MT: VBR, frames of bit counts or PCM frames */
-        /* COMPRESSWAVE: VBR/huffman bits */
         /* ATRAC9: CBR around  0x100-200 */
         /* CELT FSB: varies, usually 0x80-100 */
-        /* SPEEX: varies, usually 0x40-60 */
         /* TAC: VBR around ~0x200-300 */
-        /* Vorbis, MPEG, ACM, etc: varies */
         default: /* (VBR or managed by decoder) */
             return 0;
     }
@@ -875,6 +790,7 @@ static void decode_frames(sbuf_t* sdst, VGMSTREAM* vgmstream) {
     decode_state_t* ds = vgmstream->decode_state;
     sbuf_t* ssrc = &ds->sbuf;
 
+    const codec_info_t* codec_info = codec_get_info(vgmstream);
 
     // fill the external buf by decoding N times; may read partially that buf
     while (sdst->filled < sdst->samples) {
@@ -882,12 +798,12 @@ static void decode_frames(sbuf_t* sdst, VGMSTREAM* vgmstream) {
         // decode new frame if prev one was consumed
         if (ssrc->filled == 0) {
             bool ok = false;
-            switch (vgmstream->coding_type) {
-                case coding_KA1A:
-                    ok = decode_ka1a_frame(vgmstream);
-                    break;
-                default:
-                    goto decode_fail;
+
+            if (codec_info) {
+                ok = codec_info->decode_frame(vgmstream);
+            }
+            else {
+                goto decode_fail;
             }
 
             if (!ok)
@@ -901,6 +817,9 @@ static void decode_frames(sbuf_t* sdst, VGMSTREAM* vgmstream) {
                 VGM_LOG("VGMSTREAM: deadlock?\n");
                 goto decode_fail;
             }
+        }
+        else {
+            num_empty = 0; //reset for discard loops
         }
     
         if (ds->discard) {
@@ -1233,22 +1152,12 @@ void decode_vgmstream(sbuf_t* sdst, VGMSTREAM* vgmstream, int samples_to_do) {
         case coding_OGG_VORBIS:
             decode_ogg_vorbis(vgmstream->codec_data, buffer, samples_to_do, vgmstream->channels);
             break;
-
-        case coding_VORBIS_custom:
-            decode_vorbis_custom(vgmstream, buffer, samples_to_do, vgmstream->channels);
-            break;
 #endif
         case coding_CIRCUS_VQ:
             decode_circus_vq(vgmstream->codec_data, buffer, samples_to_do, vgmstream->channels);
             break;
         case coding_RELIC:
             decode_relic(&vgmstream->ch[0], vgmstream->codec_data, buffer, samples_to_do);
-            break;
-        case coding_CRI_HCA:
-            decode_hca(vgmstream->codec_data, buffer, samples_to_do);
-            break;
-        case coding_TAC:
-            decode_tac(vgmstream, buffer, samples_to_do);
             break;
         case coding_ICE_RANGE:
         case coding_ICE_DCT:
@@ -1483,11 +1392,6 @@ void decode_vgmstream(sbuf_t* sdst, VGMSTREAM* vgmstream, int samples_to_do) {
             decode_celt_fsb(vgmstream, buffer, samples_to_do, vgmstream->channels);
             break;
 #endif
-#ifdef VGM_USE_SPEEX
-        case coding_SPEEX:
-            decode_speex(vgmstream, buffer, samples_to_do);
-            break;
-#endif
         case coding_ACM:
             decode_acm(vgmstream->codec_data, buffer, samples_to_do, vgmstream->channels);
             break;
@@ -1656,16 +1560,8 @@ void decode_vgmstream(sbuf_t* sdst, VGMSTREAM* vgmstream, int samples_to_do) {
             decode_ubi_adpcm(vgmstream, buffer, samples_to_do);
             break;
 
-        case coding_IMUSE:
-            decode_imuse(vgmstream, buffer, samples_to_do);
-            break;
-
         case coding_ONGAKUKAN_ADPCM:
             decode_ongakukan_adp(vgmstream, buffer, samples_to_do);
-            break;
-
-        case coding_COMPRESSWAVE:
-            decode_compresswave(vgmstream->codec_data, buffer, samples_to_do);
             break;
 
         case coding_EA_MT:

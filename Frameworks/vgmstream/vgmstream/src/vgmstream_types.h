@@ -139,25 +139,28 @@ typedef enum {
     coding_ONGAKUKAN_ADPCM, /* Ongakukan 4-bit ADPCM */
 
     coding_EA_MT,           /* Electronic Arts MicroTalk (linear-predictive speech codec) */
+
     coding_CIRCUS_VQ,       /* Circus VQ */
-    coding_RELIC,           /* Relic Codec (DCT-based) */
-    coding_CRI_HCA,         /* CRI High Compression Audio (MDCT-based) */
-    coding_TAC,             /* tri-Ace Codec (MDCT-based) */
+    coding_RELIC,           /* Relic Codec (transform-based) */
+    coding_CRI_HCA,         /* CRI High Compression Audio (transform-based) */
+    coding_TAC,             /* tri-Ace Codec (transform-based) */
     coding_ICE_RANGE,       /* Inti Creates "range" codec */
     coding_ICE_DCT,         /* Inti Creates "DCT" codec */
     coding_KA1A,            /* Koei Tecmo codec (transform-based) */
+    coding_UBI_MPEG,        /* Ubisoft MPEG codec (transform-based) */
+    coding_MIO,             /* Entis MIO codec (transform-based) */
 
 #ifdef VGM_USE_VORBIS
-    coding_OGG_VORBIS,      /* Xiph Vorbis with Ogg layer (MDCT-based) */
-    coding_VORBIS_custom,   /* Xiph Vorbis with custom layer (MDCT-based) */
+    coding_OGG_VORBIS,      /* Xiph Vorbis with Ogg layer (transform-based) */
+    coding_VORBIS_custom,   /* Xiph Vorbis with custom layer (transform-based) */
 #endif
 
 #ifdef VGM_USE_MPEG
-    coding_MPEG_custom,     /* MPEG audio with custom features (MDCT-based) */
+    coding_MPEG_custom,     /* MPEG audio with custom features (transform-based) */
     coding_MPEG_ealayer3,   /* EALayer3, custom MPEG frames */
-    coding_MPEG_layer1,     /* MP1 MPEG audio (MDCT-based) */
-    coding_MPEG_layer2,     /* MP2 MPEG audio (MDCT-based) */
-    coding_MPEG_layer3,     /* MP3 MPEG audio (MDCT-based) */
+    coding_MPEG_layer1,     /* MP1 MPEG audio (transform-based) */
+    coding_MPEG_layer2,     /* MP2 MPEG audio (transform-based) */
+    coding_MPEG_layer3,     /* MP3 MPEG audio (transform-based) */
 #endif
 
 #ifdef VGM_USE_G7221
@@ -434,15 +437,14 @@ typedef enum {
     meta_P2BT_MOVE_VISA,
     meta_GBTS,
     meta_NGC_DSP_IADP,      /* Gamecube Interleave DSP */
-    meta_PS2_MCG,           /* Gunvari MCG Files (was name .GCM on disk) */
     meta_ZSD,               /* Dragon Booster ZSD */
     meta_REDSPARK,          /* "RedSpark" RSD (MadWorld) */
     meta_RAGE_AUD,          /* Rockstar AUD - MC:LA, GTA IV */
     meta_NDS_HWAS,          /* Spider-Man 3, Tony Hawk's Downhill Jam, possibly more... */
     meta_NGC_LPS,           /* Rave Master (Groove Adventure Rave)(GC) */
-    meta_NAOMI_ADPCM,       /* NAOMI/NAOMI2 ARcade games */
-    meta_SD9,               /* beatmaniaIIDX16 - EMPRESS (Arcade) */
-    meta_2DX9,              /* beatmaniaIIDX16 - EMPRESS (Arcade) */
+    meta_NAOMI_ADPCM,       /* NAOMI/NAOMI2 Arcade games */
+    meta_SD9,               /* Konami/Bemani Arcade Games */
+    meta_2DX9,              /* beatmania IIDX Arcade Games */
     meta_PS2_VGV,           /* Rune: Viking Warlord */
     meta_GCUB,
     meta_MAXIS_XA,          /* Sim City 3000 (PC) */
@@ -460,7 +462,7 @@ typedef enum {
     meta_WB,
     meta_S14,               /* raw Siren 14, 24kbit mono */
     meta_SSS,               /* raw Siren 14, 48kbit stereo */
-    meta_PS2_GCM,           /* NamCollection */
+    meta_MCG,
     meta_SMPL,
     meta_MSA,
     meta_VOI,
@@ -495,7 +497,6 @@ typedef enum {
     meta_LSF_N1NJ4N,        /* .lsf n1nj4n Fastlane Street Racing (iPhone) */
     meta_XWAV,
     meta_RAW_SNDS,
-    meta_PS2_WMUS,          /* The Warriors (PS2) */
     meta_HYPERSCAN_KVAG,    /* Hyperscan KVAG/BVG */
     meta_PSND,
     meta_ADP_WILDFIRE,
@@ -717,7 +718,9 @@ typedef enum {
     meta_XABP,
     meta_I3DS,
     meta_AXHD,
-    meta_SHAA           /* Nintendo Alarmo SHAA */
+    meta_SHAA,
+    meta_OOR,
+    meta_MIO,
 } meta_t;
 
 #endif

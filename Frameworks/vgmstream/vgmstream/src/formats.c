@@ -350,6 +350,7 @@ static const char* extension_list[] = {
     "mi4", //fake extension for .mib (renamed, to be removed)
     "mib",
     "mic",
+    "mio",
     "mnstr",
     "mogg",
     //"m4a", //common
@@ -418,6 +419,7 @@ static const char* extension_list[] = {
     "ogv",
     "oma", //FFmpeg/not parsed (ATRAC3/ATRAC3PLUS/MP3/LPCM/WMA)
     "omu",
+    "oor",
     "opu",
     //"opus", //common
     "opusx",
@@ -667,7 +669,6 @@ static const char* extension_list[] = {
     "wic", //txth/reserved [Road Rash (SAT)-videos]
     "wip", //txth/reserved [Colin McRae DiRT (PC)]
     "wlv", //txth/reserved [ToeJam & Earl III: Mission to Earth (DC)]
-    "wmus", //fake extension (to be removed)
     "wp2",
     "wpd",
     "wsd",
@@ -924,7 +925,9 @@ static const coding_info coding_info_list[] = {
         {coding_TAC,                "tri-Ace Codec"},
         {coding_ICE_RANGE,          "Inti Creates Range Codec"},
         {coding_ICE_DCT,            "Inti Creates DCT Codec"},
-        {coding_KA1A,               "Koei Tecmo KA1A Codec"},
+        {coding_KA1A,               "Koei Tecmo KA1A"},
+        {coding_UBI_MPEG,           "Ubisoft MPEG"},
+        {coding_MIO,                "Entis MIO"},
 
 #ifdef VGM_USE_VORBIS
         {coding_OGG_VORBIS,         "Ogg Vorbis"},
@@ -1178,7 +1181,6 @@ static const meta_info meta_info_list[] = {
         {meta_PS2_SND,              "Might and Magic SSND Header"},
         {meta_SMSS,                 "Treasure SMSS header"},
         {meta_ADS_MIDWAY,           "Midway ADS header"},
-        {meta_PS2_MCG,              "Gunvari MCG Header"},
         {meta_ZSD,                  "Konami ZSD header"},
         {meta_REDSPARK,             "RedSpark header"},
         {meta_RAGE_AUD,             "Rockstar AUD header"},
@@ -1214,7 +1216,7 @@ static const meta_info meta_info_list[] = {
         {meta_WB,                   "Triangle Service .WB header"},
         {meta_S14,                  "Namco .S14 raw header"},
         {meta_SSS,                  "Namco .SSS raw header"},
-        {meta_PS2_GCM,              "Namco GCM header"},
+        {meta_MCG,                  "Namco MCG header"},
         {meta_SMPL,                 "Skonec SMPL header"},
         {meta_MSA,                  "Success .MSA header"},
         {meta_VOI,                  "Irem .VOI header"},
@@ -1250,7 +1252,6 @@ static const meta_info meta_info_list[] = {
         {meta_LSF_N1NJ4N,           "Gizmondo Studios Helsingborg LSF header"},
         {meta_XWAV,                 "feelplus XWAV header"},
         {meta_RAW_SNDS,             "PC .snds raw header"},
-        {meta_PS2_WMUS,             "assumed The Warriors Sony ADPCM by .wmus extension"},
         {meta_HYPERSCAN_KVAG,       "Mattel Hyperscan KVAG"},
         {meta_PSND,                 "Polarbit PSND header"},
         {meta_ADP_WILDFIRE,         "Wildfire ADP! header"},
@@ -1473,7 +1474,9 @@ static const meta_info meta_info_list[] = {
         {meta_XABP,                 "cavia XABp header"},
         {meta_I3DS,                 "Codemasters i3DS header"},
         {meta_AXHD,                 "Angel Studios AXHD header"},
-        {meta_SHAA,                 "Nintendo Alarmo SHAA header"}
+        {meta_SHAA,                 "Nintendo SHAA header"},
+        {meta_OOR,                  "age .OOR header"},
+        {meta_MIO,                  "Entis .MIO header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
