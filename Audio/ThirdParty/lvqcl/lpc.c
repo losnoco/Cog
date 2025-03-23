@@ -155,12 +155,13 @@ void lpc_extrapolate2(float *const data, const size_t data_len, const int nch, c
 		*extrapolate_buffer_size = new_size;
 	}
 
-	float *tdata = (float *)(*extrapolate_buffer); // for 1 channel only
+	double *aut = (double *)(*extrapolate_buffer);
+	double *lpc = (double *)(*extrapolate_buffer + aut_size);
 
-	double *aut = (double *)(*extrapolate_buffer + tdata_size);
-	double *lpc = (double *)(*extrapolate_buffer + tdata_size + aut_size);
-	float *lpci = (float *)(*extrapolate_buffer + tdata_size + aut_size + lpc_size);
-	float *work = (float *)(*extrapolate_buffer + tdata_size + aut_size + lpc_size + lpci_size);
+	float *tdata = (float *)(*extrapolate_buffer + aut_size + lpc_size); // for 1 channel only
+
+	float *lpci = (float *)(*extrapolate_buffer + aut_size + lpc_size + tdata_size);
+	float *work = (float *)(*extrapolate_buffer + aut_size + lpc_size + tdata_size + lpci_size);
 
 	for(int c = 0; c < nch; c++) {
 		if(extra_bkwd) {
