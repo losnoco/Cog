@@ -213,12 +213,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "Christopher Snowhill";
-				TargetAttributes = {
-					836F6B0F18BDB80D0095E648 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 836F6B0B18BDB80D0095E648 /* Build configuration list for PBXProject "vgmstream" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -450,8 +444,12 @@
 		836F6B2318BDB80D0095E648 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -463,8 +461,9 @@
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.vgmstream";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.vgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -474,8 +473,12 @@
 		836F6B2418BDB80D0095E648 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "vgmstream/vgmstream-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -487,8 +490,9 @@
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
-				PRODUCT_BUNDLE_IDENTIFIER = "NoWork-Inc.vgmstream";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.vgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
