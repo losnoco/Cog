@@ -9,7 +9,7 @@
 #import "VGMDecoder.h"
 #import "VGMInterface.h"
 
-#import <libvgmstream/render.h>
+#import <libvgmstream/libvgmstream.h>
 
 #import "PlaylistController.h"
 
@@ -52,33 +52,16 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	return self;
 }
 
-- (void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream {
-	vgmstream_cfg_t vcfg = { 0 };
-
-	vcfg.allow_play_forever = 1;
-	vcfg.play_forever = 0;
-	vcfg.loop_count = 2;
-	vcfg.fade_time = 10;
-	vcfg.fade_delay = 0;
-	vcfg.ignore_loop = 0;
-
-	vgmstream_apply_config(stream, &vcfg);
-
-	int output_channels = stream->channels;
-
-	vgmstream_mixing_autodownmix(stream, 6);
-	vgmstream_mixing_enable(stream, MAX_BUFFER_SAMPLES, NULL, &output_channels);
+- (void)stuffURL:(NSURL *)url stream:(libvgmstream_t *)stream {
+	int output_channels = stream->format->channels;
 
 	int track_num = [[url fragment] intValue];
 
-	int sampleRate = stream->sample_rate;
+	int sampleRate = stream->format->sample_rate;
 	int channels = output_channels;
-	long totalFrames = vgmstream_get_samples(stream);
+	long totalFrames = stream->format->play_samples;
 
-	int bitrate = get_vgmstream_average_bitrate(stream);
-
-	char description[1024];
-	describe_vgmstream(stream, description, 1024);
+	int bitrate = stream->format->stream_bitrate;
 
 	NSString *path = [url absoluteString];
 	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
@@ -107,16 +90,17 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	NSNumber *rgAlbumGain = @(0);
 	NSNumber *rgAlbumPeak = @(0);
 
-	codec = get_description_tag(description, "encoding: ", 0);
+	codec = [NSString stringWithUTF8String:stream->format->codec_name];
 
-	STREAMFILE *tagFile = open_cog_streamfile_from_url(tagurl);
-	if(tagFile) {
-		VGMSTREAM_TAGS *tags;
-		const char *tag_key, *tag_val;
+	libstreamfile_t* sf_tags = open_vfs([[tagurl absoluteString] UTF8String]);
+	if(sf_tags) {
+		libvgmstream_tags_t* tags = NULL;
 
-		tags = vgmstream_tags_init(&tag_key, &tag_val);
-		vgmstream_tags_reset(tags, [filename UTF8String]);
-		while(vgmstream_tags_next_tag(tags, tagFile)) {
+		tags = libvgmstream_tags_init(sf_tags);
+		libvgmstream_tags_find(tags, [filename UTF8String]);
+		while(libvgmstream_tags_next_tag(tags)) {
+			const char* tag_key = tags->key;
+			const char* tag_val = tags->val;
 			NSString *value = guess_encoding_of_string(tag_val);
 			if(!strncasecmp(tag_key, "REPLAYGAIN_", strlen("REPLAYGAIN_"))) {
 				if(!strncasecmp(tag_key + strlen("REPLAYGAIN_"), "TRACK_", strlen("TRACK_"))) {
@@ -148,15 +132,23 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 				title = value;
 			}
 		}
-		vgmstream_tags_close(tags);
-		close_streamfile(tagFile);
+		libvgmstream_tags_free(tags);
+		libstreamfile_close(sf_tags);
+	}
+
+	BOOL formatFloat;
+	switch(stream->format->sample_format) {
+		case LIBVGMSTREAM_SFMT_PCM16: formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_FLOAT: formatFloat = YES; break;
+		default:
+			return;
 	}
 
 	NSDictionary *properties = @{ @"bitrate": @(bitrate / 1000),
 		                          @"sampleRate": @(sampleRate),
 		                          @"totalFrames": @(totalFrames),
-		                          @"bitsPerSample": @(16),
-		                          @"floatingPoint": @(NO),
+								  @"bitsPerSample": @(formatFloat ? 32 : 16),
+		                          @"floatingPoint": @(formatFloat),
 		                          @"channels": @(channels),
 		                          @"seekable": @(YES),
 		                          @"replaygain_album_gain": rgAlbumGain,
@@ -168,8 +160,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		                          @"encoding": @"lossy/lossless" };
 
 	if([title isEqualToString:@""]) {
-		if(stream->num_streams > 1) {
-			title = [NSString stringWithFormat:@"%@ - %@", [[urlTrimmed URLByDeletingPathExtension] lastPathComponent], guess_encoding_of_string(stream->stream_name)];
+		if(stream->format->subsong_count > 1) {
+			title = [NSString stringWithFormat:@"%@ - %@", [[urlTrimmed URLByDeletingPathExtension] lastPathComponent], guess_encoding_of_string(stream->format->stream_name)];
 		} else {
 			title = [[urlTrimmed URLByDeletingPathExtension] lastPathComponent];
 		}
@@ -254,25 +246,9 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		path = [path substringToIndex:fragmentRange.location];
 	}
 
-	NSLog(@"Opening %@ subsong %d", path, track_num);
+	playForever = IsRepeatOneSet();
 
-	stream = init_vgmstream_from_cogfile([[path stringByRemovingPercentEncoding] UTF8String], track_num);
-	if(!stream)
-		return NO;
-
-	int output_channels = stream->channels;
-
-	vgmstream_mixing_autodownmix(stream, 6);
-	vgmstream_mixing_enable(stream, MAX_BUFFER_SAMPLES, NULL, &output_channels);
-
-	canPlayForever = stream->loop_flag;
-	if(canPlayForever) {
-		playForever = IsRepeatOneSet();
-	} else {
-		playForever = NO;
-	}
-
-	vgmstream_cfg_t vcfg = { 0 };
+	libvgmstream_config_t vcfg = { 0 };
 
 	vcfg.allow_play_forever = 1;
 	vcfg.play_forever = playForever;
@@ -280,16 +256,35 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	vcfg.fade_time = fadeTime;
 	vcfg.fade_delay = 0;
 	vcfg.ignore_loop = 0;
+	vcfg.auto_downmix_channels = 6;
 
-	vgmstream_apply_config(stream, &vcfg);
+	NSLog(@"Opening %@ subsong %d", path, track_num);
 
-	sampleRate = stream->sample_rate;
+	libstreamfile_t* sf = open_vfs([[path stringByRemovingPercentEncoding] UTF8String]);
+	if(!sf)
+		return NO;
+	stream = libvgmstream_create(sf, track_num, &vcfg);
+	if(!stream)
+		return NO;
+
+	int output_channels = stream->format->channels;
+
+	sampleRate = stream->format->sample_rate;
 	channels = output_channels;
-	totalFrames = vgmstream_get_samples(stream);
+	totalFrames = stream->format->play_samples;
 
 	framesRead = 0;
 
-	bitrate = get_vgmstream_average_bitrate(stream);
+	bitrate = stream->format->stream_bitrate;
+
+	switch(stream->format->sample_format) {
+		case LIBVGMSTREAM_SFMT_PCM16: formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_FLOAT: formatFloat = YES; break;
+		default:
+			libvgmstream_free(stream);
+			stream = NULL;
+			return NO;
+	}
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -301,8 +296,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	return @{ @"bitrate": @(bitrate / 1000),
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
-		      @"bitsPerSample": @(16),
-		      @"floatingPoint": @(NO),
+			  @"bitsPerSample": @(formatFloat ? 32 : 16),
+		      @"floatingPoint": @(formatFloat),
 		      @"channels": @(channels),
 		      @"seekable": @(YES),
 		      @"endian": @"host",
@@ -314,88 +309,44 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 - (AudioChunk *)readAudio {
-	UInt32 frames = 1024;
-	UInt32 framesMax = frames;
-	UInt32 framesDone = 0;
-
-	double streamTimestamp = (double)(stream->pstate.play_position) / sampleRate;
+	double streamTimestamp = (double)(libvgmstream_get_play_position(stream)) / sampleRate;
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
+	size_t framesDone = 0;
 
-	if (!sample_buf) {
-		sample_buf = malloc(1024 * channels * sizeof(int16_t));
-		if (!sample_buf) return nil;
-	}
-	void *buf = (void *)sample_buf;
+	for(;;) {
+		if(stream->decoder->done) break;
 
-	if(canPlayForever) {
-		BOOL repeatone = IsRepeatOneSet();
+		int err = libvgmstream_render(stream);
+		if(err < 0)
+			break;
 
-		if(repeatone != playForever) {
-			playForever = repeatone;
-			vgmstream_set_play_forever(stream, repeatone);
-		}
-	}
-
-	if(framesRead + frames > totalFrames && !playForever)
-		frames = totalFrames - framesRead;
-	if(frames > framesMax)
-		frames = 0; // integer overflow?
-
-	while(frames) {
-		if (!sample_buf_temp) {
-			sample_buf_temp = malloc(MAX_BUFFER_SAMPLES * VGMSTREAM_MAX_CHANNELS * sizeof(int16_t));
-			if (!sample_buf_temp) return nil;
+		const size_t bytes_done = stream->decoder->buf_bytes;
+		if(!bytes_done) {
+			continue;
 		}
 
-		UInt32 frames_to_do = frames;
-		if(frames_to_do > MAX_BUFFER_SAMPLES)
-			frames_to_do = MAX_BUFFER_SAMPLES;
+		const size_t bytes_per_sample = stream->format->channels * (formatFloat ? 4 : 2);
+		framesDone = bytes_done / bytes_per_sample;
 
-		memset(sample_buf_temp, 0, frames_to_do * channels * sizeof(float));
-
-		sbuf_t sbuf = {0};
-		sbuf_init(&sbuf, SFMT_S16, sample_buf_temp, frames_to_do, stream->channels);
-
-		int frames_done = render_main(&sbuf, stream);
-
-		if (!frames_done) return nil;
-
-		framesRead += frames_done;
-		framesDone += frames_done;
-
-		int16_t *obuf = (int16_t *)buf;
-
-		memcpy(obuf, sample_buf_temp, frames_done * channels * sizeof(obuf[0]));
-
-		obuf += frames_done * channels;
-
-		buf = (void *)obuf;
-
-		frames -= frames_done;
+		framesRead += framesDone;
+		break;
 	}
 
-	[chunk setStreamTimestamp:streamTimestamp];
-	[chunk assignSamples:sample_buf frameCount:framesDone];
+	if(framesDone) {
+		[chunk setStreamTimestamp:streamTimestamp];
+		[chunk assignSamples:stream->decoder->buf frameCount:framesDone];
+	}
 
 	return chunk;
 }
 
 - (long)seek:(long)frame {
-	if(canPlayForever) {
-		BOOL repeatone = IsRepeatOneSet();
-
-		if(repeatone != playForever) {
-			playForever = repeatone;
-			vgmstream_set_play_forever(stream, repeatone);
-		}
-	}
-
 	if(frame > totalFrames)
 		frame = totalFrames;
 
-	seek_vgmstream(stream, frame);
+	libvgmstream_seek(stream, frame);
 
 	framesRead = frame;
 
@@ -403,16 +354,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 - (void)close {
-	close_vgmstream(stream);
+	libvgmstream_close_stream(stream);
 	stream = NULL;
-	if (sample_buf_temp) {
-		free(sample_buf_temp);
-		sample_buf_temp = NULL;
-	}
-	if (sample_buf) {
-		free(sample_buf);
-		sample_buf = NULL;
-	}
 }
 
 - (void)dealloc {
@@ -422,8 +365,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 + (NSArray *)fileTypes {
 	NSMutableArray *array = [[NSMutableArray alloc] init];
 
-	size_t count;
-	const char **formats = vgmstream_get_formats(&count);
+	int count;
+	const char **formats = libvgmstream_get_extensions(&count);
 
 	for(size_t i = 0; i < count; ++i) {
 		[array addObject:[NSString stringWithUTF8String:formats[i]]];

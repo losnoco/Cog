@@ -40,13 +40,26 @@
 			path = [path substringToIndex:fragmentRange.location];
 		}
 
-		VGMSTREAM *stream = init_vgmstream_from_cogfile([[path stringByRemovingPercentEncoding] UTF8String], track_num);
+		libvgmstream_config_t vcfg = { 0 };
+
+		vcfg.allow_play_forever = 1;
+		vcfg.play_forever = 0;
+		vcfg.loop_count = 2;
+		vcfg.fade_time = 10;
+		vcfg.fade_delay = 0;
+		vcfg.ignore_loop = 0;
+
+		libstreamfile_t* sf = open_vfs([[path stringByRemovingPercentEncoding] UTF8String]);
+		if(!sf)
+			return nil;
+		libvgmstream_t* stream = libvgmstream_create(sf, track_num, &vcfg);
+		libstreamfile_close(sf);
 		if(!stream)
 			return nil;
 
 		[sharedMyCache stuffURL:url stream:stream];
 
-		close_vgmstream(stream);
+		libvgmstream_close_stream(stream);
 
 		properties = [sharedMyCache getPropertiesForURL:url];
 	}

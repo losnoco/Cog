@@ -47,14 +47,13 @@
 		url = [NSURL fileURLWithPath:[path stringByRemovingPercentEncoding]];
 	}
 
-	VGMSTREAM *stream = init_vgmstream_from_cogfile([path UTF8String], 0);
-	if(!stream) {
-		ALog(@"Open failed for file: %@", [url absoluteString]);
-		return @[];
-	}
+	libstreamfile_t* sf = open_vfs([path UTF8String]);
+	if(!sf) return @[];
 
-	if(stream->stream_index > 0) {
-		close_vgmstream(stream);
+	libvgmstream_config_t vcfg = {0};
+
+	libvgmstream_t* infostream = libvgmstream_create(sf, 0, &vcfg);
+	if(!infostream) {
 		return @[];
 	}
 
@@ -64,30 +63,33 @@
 	NSURL *trackurl;
 
 	int i;
-	int subsongs = stream->num_streams;
+	int subsongs = infostream->format->subsong_count;
 	if(subsongs == 0)
+		subsongs = 1;
+	if(infostream->format->subsong_index > 0)
 		subsongs = 1;
 
 	{
 		trackurl = [NSURL URLWithString:[[url absoluteString] stringByAppendingString:@"#1"]];
-		[sharedMyCache stuffURL:trackurl stream:stream];
+		[sharedMyCache stuffURL:trackurl stream:infostream];
 		[tracks addObject:trackurl];
 	}
 
 	for(i = 2; i <= subsongs; ++i) {
-		close_vgmstream(stream);
+		libvgmstream_close_stream(infostream);
 
-		stream = init_vgmstream_from_cogfile([path UTF8String], i);
+		infostream = libvgmstream_create(sf, i, &vcfg);
 
-		if(!stream)
+		if(!infostream)
 			return @[];
 
 		trackurl = [NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]];
-		[sharedMyCache stuffURL:trackurl stream:stream];
+		[sharedMyCache stuffURL:trackurl stream:infostream];
 		[tracks addObject:trackurl];
 	}
 
-	close_vgmstream(stream);
+	libvgmstream_close_stream(infostream);
+	libstreamfile_close(sf);
 
 	return tracks;
 }

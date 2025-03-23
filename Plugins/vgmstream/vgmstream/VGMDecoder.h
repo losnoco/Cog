@@ -8,8 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <libvgmstream/streamfile.h>
-#import <libvgmstream/vgmstream.h>
+#import <libvgmstream/libvgmstream.h>
 
 #import "Plugin.h"
 
@@ -19,14 +18,16 @@
 
 + (id)sharedCache;
 
-- (void)stuffURL:(NSURL *)url stream:(VGMSTREAM *)stream;
+- (void)stuffURL:(NSURL *)url stream:(libvgmstream_t *)stream;
 - (NSDictionary *)getPropertiesForURL:(NSURL *)url;
 - (NSDictionary *)getMetadataForURL:(NSURL *)url;
 
 @end
 
 @interface VGMDecoder : NSObject <CogDecoder> {
-	VGMSTREAM *stream;
+	libvgmstream_t *stream;
+
+	BOOL formatFloat;
 
 	BOOL playForever;
 	BOOL canPlayForever;
@@ -37,8 +38,5 @@
 	int bitrate;
 	long totalFrames;
 	long framesRead;
-
-	void *sample_buf;
-	void *sample_buf_temp;
 }
 @end
