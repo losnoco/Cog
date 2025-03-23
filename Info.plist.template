@@ -659,6 +659,7 @@
 				<string>mi4</string>
 				<string>mib</string>
 				<string>mic</string>
+				<string>mio</string>
 				<string>mnstr</string>
 				<string>mogg</string>
 				<string>move</string>
@@ -716,6 +717,7 @@
 				<string>ogv</string>
 				<string>oma</string>
 				<string>omu</string>
+				<string>oor</string>
 				<string>opu</string>
 				<string>opusx</string>
 				<string>oto</string>
@@ -954,7 +956,6 @@
 				<string>wic</string>
 				<string>wip</string>
 				<string>wlv</string>
-				<string>wmus</string>
 				<string>wp2</string>
 				<string>wpd</string>
 				<string>wsd</string>
