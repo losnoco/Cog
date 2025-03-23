@@ -290,6 +290,9 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		if(error < 0) {
 			return -1;
 		}
+		samples_filled = 0;
+	} else {
+		return -1;
 	}
 
 	seconds = (double)frame / (double)_decoder_info.hz;
