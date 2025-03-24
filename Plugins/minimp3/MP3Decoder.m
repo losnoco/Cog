@@ -150,6 +150,9 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		if(samples && sample_ptr) {
 			samples_filled = samples / _decoder_info.channels;
 			memcpy(&_decoder_buffer_output[0], sample_ptr, sizeof(mp3d_sample_t) * samples);
+		} else {
+			inputEOF = YES;
+			return NO;
 		}
 		inputEOF = NO;
 		if(!_foundiTunSMPB) {
