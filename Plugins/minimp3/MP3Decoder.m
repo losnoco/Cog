@@ -293,7 +293,7 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		frame = totalFrames;
 
 	if(seekable) {
-		int error = mp3dec_ex_seek(&_decoder_ex, frame);
+		int error = mp3dec_ex_seek(&_decoder_ex, frame * _decoder_ex.info.channels);
 		if(error < 0) {
 			return -1;
 		}
