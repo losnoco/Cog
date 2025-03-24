@@ -146,7 +146,11 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 			_decoder_ex.samples = (totalFrames + _startPadding + _endPadding) * _decoder_ex.info.channels;
 		}
 		mp3d_sample_t *sample_ptr = NULL;
-		size_t samples = mp3dec_ex_read_frame(&_decoder_ex, &sample_ptr, &_decoder_info, MINIMP3_MAX_SAMPLES_PER_FRAME);
+		size_t samples = 0;
+		int retry = 10;
+		do {
+			samples = mp3dec_ex_read_frame(&_decoder_ex, &sample_ptr, &_decoder_info, MINIMP3_MAX_SAMPLES_PER_FRAME);
+		} while(!samples && --retry > 0);
 		if(samples && sample_ptr) {
 			samples_filled = samples / _decoder_info.channels;
 			memcpy(&_decoder_buffer_output[0], sample_ptr, sizeof(mp3d_sample_t) * samples);
