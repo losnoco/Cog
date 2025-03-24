@@ -161,20 +161,28 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		}
 		bitrate = (double)((_fileSize - id3_length) * 8) / ((double)totalFrames / (double)_decoder_info.hz) / 1000.0;
 	} else {
-		_decoder_buffer_filled = [source read:_decoder_buffer amount:INPUT_BUFFER_SIZE];
-		inputEOF = _decoder_buffer_filled < INPUT_BUFFER_SIZE;
+		_decoder_buffer_filled = [source read:_decoder_buffer amount:MINIMP3_BUF_SIZE];
+		inputEOF = _decoder_buffer_filled < MINIMP3_BUF_SIZE;
 		mp3dec_init(&_decoder_ex.mp3d);
-		int samples = mp3dec_decode_frame(&_decoder_ex.mp3d, _decoder_buffer, (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
-		if(!samples)
+		int error = mp3dec_detect_buf(_decoder_buffer, _decoder_buffer_filled);
+		if(error)
 			return NO;
-		size_t bytes_read = _decoder_info.frame_bytes;
-		if(bytes_read >= _decoder_buffer_filled) {
-			_decoder_buffer_filled = 0;
-		} else {
-			_decoder_buffer_filled -= bytes_read;
-			memmove(&_decoder_buffer[0], &_decoder_buffer[bytes_read], _decoder_buffer_filled);
+
+		for(;;) {
+			error = mp3dec_decode_frame(&_decoder_ex.mp3d, _decoder_buffer, (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
+			if(_decoder_info.frame_bytes > _decoder_buffer_filled) {
+				break;
+			}
+			_decoder_buffer_filled -= _decoder_info.frame_bytes;
+			memmove(&_decoder_buffer[0], &_decoder_buffer[_decoder_info.frame_bytes], _decoder_buffer_filled);
+			if(error) {
+				break;
+			}
 		}
-		samples_filled = samples;
+		if(!error) {
+			return NO;
+		}
+		samples_filled = error;
 		bitrate = _decoder_info.bitrate_kbps;
 	}
 
@@ -243,7 +251,7 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 				inputEOF = YES;
 			}
 		} else {
-			size_t bytesRemain = INPUT_BUFFER_SIZE - _decoder_buffer_filled;
+			size_t bytesRemain = MINIMP3_BUF_SIZE - _decoder_buffer_filled;
 			ssize_t bytesRead = [_source read:&_decoder_buffer[_decoder_buffer_filled] amount:bytesRemain];
 			if(bytesRead < 0 || bytesRead < bytesRemain) {
 				inputEOF = YES;
@@ -254,8 +262,12 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 			int samples = mp3dec_decode_frame(&_decoder_ex.mp3d, &_decoder_buffer[0], (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
 			if(samples > 0) {
 				samples_filled = samples;
-			} else {
+			}
+			if(_decoder_info.frame_bytes > _decoder_buffer_filled) {
 				inputEOF = YES;
+			} else {
+				_decoder_buffer_filled -= _decoder_info.frame_bytes;
+				memmove(&_decoder_buffer[0], &_decoder_buffer[_decoder_info.frame_bytes], _decoder_buffer_filled);
 			}
 		}
 
