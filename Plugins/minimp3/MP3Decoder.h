@@ -15,12 +15,11 @@
 
 #import "Plugin.h"
 
-#define INPUT_BUFFER_SIZE 5 * 8192
+#define INPUT_BUFFER_SIZE 16 * 1024
 
 @interface MP3Decoder : NSObject <CogDecoder> {
 	BOOL seekable;
-	mp3dec_t _decoder;
-	unsigned char _decoder_buffer[32768];
+	unsigned char _decoder_buffer[INPUT_BUFFER_SIZE];
 	size_t _decoder_buffer_filled;
 
 	mp3dec_ex_t _decoder_ex;

@@ -38,6 +38,8 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 	size_t id3_length = 0;
 
 	if(seekable) {
+		// minimp3 already skips ID3v2, but we need to supplement it with support for
+		// iTunes gapless info, which is stored in the ID3v2 tag
 		uint8_t buffer[10];
 		size_t buflen = [source read:&buffer[0] amount:10];
 
@@ -137,12 +139,14 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		if(error)
 			return NO;
 		if(_foundiTunSMPB) {
+			// start_delay is used for seeking, to_skip must be filled for the first packet decoded
+			// and detected_samples will truncate the end padding
 			_decoder_ex.start_delay = _decoder_ex.to_skip = _startPadding * _decoder_ex.info.channels;
 			_decoder_ex.detected_samples = totalFrames * _decoder_ex.info.channels;
 			_decoder_ex.samples = (totalFrames + _startPadding + _endPadding) * _decoder_ex.info.channels;
 		}
 		mp3d_sample_t *sample_ptr = NULL;
-		size_t samples = mp3dec_ex_read_frame(&_decoder_ex, &sample_ptr, &_decoder_info, 1152 * 2);
+		size_t samples = mp3dec_ex_read_frame(&_decoder_ex, &sample_ptr, &_decoder_info, MINIMP3_MAX_SAMPLES_PER_FRAME);
 		if(samples && sample_ptr) {
 			samples_filled = samples / _decoder_info.channels;
 			memcpy(&_decoder_buffer_output[0], sample_ptr, sizeof(mp3d_sample_t) * samples);
@@ -157,10 +161,10 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		}
 		bitrate = (double)((_fileSize - id3_length) * 8) / ((double)totalFrames / (double)_decoder_info.hz) / 1000.0;
 	} else {
-		_decoder_buffer_filled = [source read:_decoder_buffer amount:32768];
-		inputEOF = _decoder_buffer_filled < 32768;
-		mp3dec_init(&_decoder);
-		int samples = mp3dec_decode_frame(&_decoder, _decoder_buffer, (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
+		_decoder_buffer_filled = [source read:_decoder_buffer amount:INPUT_BUFFER_SIZE];
+		inputEOF = _decoder_buffer_filled < INPUT_BUFFER_SIZE;
+		mp3dec_init(&_decoder_ex.mp3d);
+		int samples = mp3dec_decode_frame(&_decoder_ex.mp3d, _decoder_buffer, (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
 		if(!samples)
 			return NO;
 		size_t bytes_read = _decoder_info.frame_bytes;
@@ -231,7 +235,7 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 
 		if(seekable) {
 			mp3d_sample_t *sample_ptr = NULL;
-			size_t samples = mp3dec_ex_read_frame(&_decoder_ex, &sample_ptr, &_decoder_info, 1152 * 2);
+			size_t samples = mp3dec_ex_read_frame(&_decoder_ex, &sample_ptr, &_decoder_info, MINIMP3_MAX_SAMPLES_PER_FRAME);
 			if(samples && sample_ptr) {
 				samples_filled = samples / _decoder_info.channels;
 				memcpy(&_decoder_buffer_output[0], sample_ptr, sizeof(mp3d_sample_t) * samples);
@@ -239,7 +243,7 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 				inputEOF = YES;
 			}
 		} else {
-			size_t bytesRemain = 32768 - _decoder_buffer_filled;
+			size_t bytesRemain = INPUT_BUFFER_SIZE - _decoder_buffer_filled;
 			ssize_t bytesRead = [_source read:&_decoder_buffer[_decoder_buffer_filled] amount:bytesRemain];
 			if(bytesRead < 0 || bytesRead < bytesRemain) {
 				inputEOF = YES;
@@ -247,7 +251,7 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 			if(bytesRead > 0) {
 				_decoder_buffer_filled += bytesRead;
 			}
-			int samples = mp3dec_decode_frame(&_decoder, &_decoder_buffer[0], (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
+			int samples = mp3dec_decode_frame(&_decoder_ex.mp3d, &_decoder_buffer[0], (int)_decoder_buffer_filled, &_decoder_buffer_output[0], &_decoder_info);
 			if(samples > 0) {
 				samples_filled = samples;
 			} else {
