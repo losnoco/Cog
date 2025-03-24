@@ -121,7 +121,7 @@ static uint8_t reverse_bits[0x100];
 
 	rawDSD = NO;
 
-	BOOL isStream = NO;
+	isHLS = NO;
 
 	// register all available codecs
 
@@ -131,13 +131,16 @@ static uint8_t reverse_bits[0x100];
 		subsong = [[source.url fragment] intValue];
 
 	NSURL *url = [s url];
-	if(([[url scheme] isEqualToString:@"http"] ||
-	    [[url scheme] isEqualToString:@"https"]) &&
-	   [[url pathExtension] isEqualToString:@"m3u8"]) {
+
+	BOOL isHTTP = [[url scheme] isEqualToString:@"http"] ||
+				  [[url scheme] isEqualToString:@"https"];
+	BOOL isM3U = [[url pathExtension] isEqualToString:@"m3u8"];
+
+	if(isHTTP && isM3U) {
 		source = nil;
 		[s close];
 
-		isStream = YES;
+		isHLS = YES;
 
 		formatCtx = avformat_alloc_context();
 		if(!formatCtx) {
@@ -151,7 +154,7 @@ static uint8_t reverse_bits[0x100];
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			return NO;
 		}
-	} else {
+	} else if(!isM3U) {
 		buffer = av_malloc(32 * 1024);
 		if(!buffer) {
 			ALog(@"Out of memory!");
@@ -179,6 +182,8 @@ static uint8_t reverse_bits[0x100];
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			return NO;
 		}
+	} else {
+		return NO;
 	}
 
 	if((errcode = avformat_find_stream_info(formatCtx, NULL)) < 0) {
@@ -481,7 +486,7 @@ static uint8_t reverse_bits[0x100];
 
 	// totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
 	AVRational tb = { .num = 1, .den = codecCtx->sample_rate };
-	totalFrames = isStream ? 0 : av_rescale_q(formatCtx->duration, AV_TIME_BASE_Q, tb);
+	totalFrames = isHLS ? 0 : av_rescale_q(formatCtx->duration, AV_TIME_BASE_Q, tb);
 	bitrate = (int)((codecCtx->bit_rate) / 1000);
 	framesRead = 0;
 	endOfStream = NO;
@@ -502,7 +507,7 @@ static uint8_t reverse_bits[0x100];
 		totalFrames *= 8;
 	}
 
-	if(!isStream) {
+	if(!isHLS) {
 		if(stream->start_time && stream->start_time != AV_NOPTS_VALUE)
 			skipSamples = av_rescale_q(stream->start_time, stream->time_base, tb);
 		if(skipSamples < 0)
@@ -524,7 +529,7 @@ static uint8_t reverse_bits[0x100];
 	if(totalFrames < 0)
 		totalFrames = 0;
 
-	seekable = [s seekable];
+	seekable = !isHLS && [s seekable];
 
 	seekedToStart = !seekable;
 
@@ -592,10 +597,23 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 - (void)updateMetadata {
 	NSMutableDictionary *_metaDict = [[NSMutableDictionary alloc] init];
 	const AVDictionaryEntry *tag = NULL;
-	for(size_t i = 0; i < 2; ++i) {
+	for(size_t i = 0; i < 4; ++i) {
 		AVDictionary *metadata;
 		if(i == 0) {
 			metadata = formatCtx->metadata;
+			if(!metadata) continue;
+		} else if(i == 1) {
+			if(formatCtx->nb_programs > 0) {
+				AVProgram *program = formatCtx->programs[0];
+				if(!program) continue;
+				metadata = program->metadata;
+				if(!metadata) continue;
+			} else {
+				continue;
+			}
+		} else if(i == 2) {
+			AVStream *stream = formatCtx->streams[streamIndex];
+			metadata = stream->metadata;
 			if(!metadata) continue;
 		} else {
 			if(subsong < formatCtx->nb_chapters) {
@@ -606,7 +624,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 			}
 		}
 		tag = NULL;
-		while((tag = av_dict_get(metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+		while((tag = av_dict_iterate(metadata, tag))) {
 			@autoreleasepool {
 				if(!strcasecmp(tag->key, "streamtitle")) {
 					NSString *artistTitle = guess_encoding_of_string(tag->value);
@@ -635,6 +653,10 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 					} else {
 						setDictionary(_metaDict, @"title", _tag);
 					}
+				} else if(!strcasecmp(tag->key, "variant_bitrate")) {
+					NSString *bitrate = guess_encoding_of_string(tag->value);
+					long nbitrate = [bitrate integerValue];
+					setDictionary(_metaDict, @"bitrate", [@(nbitrate / 1000) stringValue]);
 				} else if(!strcasecmp(tag->key, "date_recorded")) {
 					setDictionary(_metaDict, @"date", guess_encoding_of_string(tag->value));
 				} else if(!strcasecmp(tag->key, "replaygain_gain")) {
@@ -713,7 +735,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		@autoreleasepool {
 			metaDict = _metaDict;
 		}
-		if(![source seekable]) {
+		if(!seekable) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
 		} else {
@@ -739,7 +761,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSData *_albumArt = [NSData dataWithBytes:lastReadPacket->data length:lastReadPacket->size];
 	if(![_albumArt isEqualToData:albumArt]) {
 		albumArt = _albumArt;
-		if(![source seekable]) {
+		if(!seekable) {
 			[self willChangeValueForKey:@"metadata"];
 			[self didChangeValueForKey:@"metadata"];
 		} else {
@@ -1056,7 +1078,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aac", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", @"application/vnd.apple.mpegurl"];
+	return @[@"application/wma", @"application/x-wma", @"audio/x-wma", @"audio/x-ms-wma", @"audio/x-tak", @"application/ogg", @"audio/aac", @"audio/aacp", @"audio/mpeg", @"audio/mp4", @"audio/x-mp3", @"audio/x-mp2", @"audio/x-matroska", @"audio/x-ape", @"audio/x-ac3", @"audio/x-dts", @"audio/x-dtshd", @"audio/x-at3", @"audio/wav", @"audio/tta", @"audio/x-tta", @"audio/x-twinvq", @"application/vnd.apple.mpegurl", @"audio/mpegurl"];
 }
 
 + (NSArray *)fileTypeAssociations {

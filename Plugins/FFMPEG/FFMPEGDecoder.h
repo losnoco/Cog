@@ -34,6 +34,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 @interface FFMPEGDecoder : NSObject <CogDecoder> {
 	id<CogSource> source;
 	FFMPEGReader *reader;
+	BOOL isHLS;
 	BOOL seekable;
 	int channels;
 	uint32_t channelConfig;

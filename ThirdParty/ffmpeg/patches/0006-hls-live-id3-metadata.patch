@@ -1,0 +1,27 @@
+diff -ur ffmpeg-7.1.1.orig/libavformat/hls.c ffmpeg-7.1.1/libavformat/hls.c
+--- ffmpeg-7.1.1.orig/libavformat/hls.c	2025-03-02 13:08:21.000000000 -0800
++++ ffmpeg-7.1.1/libavformat/hls.c	2025-03-24 04:38:04.672676124 -0700
+@@ -153,7 +153,6 @@
+     unsigned int id3_buf_size;
+     AVDictionary *id3_initial; /* data from first id3 tag */
+     int id3_found; /* ID3 tag found at some point */
+-    int id3_changed; /* ID3 tag data has changed at some point */
+     ID3v2ExtraMeta *id3_deferred_extra; /* stored here until subdemuxer is opened */
+ 
+     HLSAudioSetupInfo audio_setup_info;
+@@ -1218,9 +1217,12 @@
+         pls->id3_initial = metadata;
+ 
+     } else {
+-        if (!pls->id3_changed && id3_has_changed_values(pls, metadata, apic)) {
+-            avpriv_report_missing_feature(pls->parent, "Changing ID3 metadata in HLS audio elementary stream");
+-            pls->id3_changed = 1;
++        if (id3_has_changed_values(pls, metadata, apic)) {
++            AVDictionary *old = pls->id3_initial;
++            av_dict_copy(&pls->ctx->metadata, metadata, 0);
++            pls->id3_initial = metadata;
++            metadata = old;
++            pls->ctx->event_flags |= AVFMT_EVENT_FLAG_METADATA_UPDATED;
+         }
+         av_dict_free(&metadata);
+     }
