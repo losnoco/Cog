@@ -276,6 +276,9 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 }
 
 - (void)close {
+	if(seekable) {
+		mp3dec_ex_close(&_decoder_ex);
+	}
 	if(_source) {
 		_source = nil;
 	}
