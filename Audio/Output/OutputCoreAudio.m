@@ -19,6 +19,10 @@
 
 #import <CogAudio/VisualizationController.h>
 
+#ifdef OUTPUT_LOG
+#import <NSFileHandle+CreateFile.h>
+#endif
+
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
@@ -146,7 +150,7 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
-		_logFile = fopen([logName UTF8String], "wb");
+		_logFile = [NSFileHandle fileHandleForWritingAtPath:logName createFile:YES];
 #endif
 	}
 
@@ -648,7 +652,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	__block NSMutableArray *faders = self->fadedBuffers;
 
 #ifdef OUTPUT_LOG
-	__block FILE *logFile = _logFile;
+	__block NSFileHandle *logFile = _logFile;
 #endif
 
 	_au.outputProvider = ^AUAudioUnitStatus(AudioUnitRenderActionFlags *_Nonnull actionFlags, const AudioTimeStamp *_Nonnull timestamp, AUAudioFrameCount frameCount, NSInteger inputBusNumber, AudioBufferList *_Nonnull inputData) {
@@ -742,6 +746,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			scale_by_volume(outSamples, frameCount * channels, volumeScale * _self->volume);
 
 			[_self updateLatency:secondsRendered];
+
+#ifdef OUTPUT_LOG
+			NSData *outData = [NSData dataWithBytes:outSamples length:frameCount * format->mBytesPerPacket];
+			[logFile writeData:outData];
+#endif
 		}
 
 #ifdef _DEBUG
@@ -924,7 +933,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 #ifdef OUTPUT_LOG
 		if(_logFile) {
-			fclose(_logFile);
+			[_logFile closeFile];
 			_logFile = NULL;
 		}
 #endif
