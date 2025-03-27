@@ -625,9 +625,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	AudioChunk *chunk = [self renderInput:512];
 	size_t frameCount = 0;
-	if(chunk) {
-		frameCount = [chunk frameCount];
-
+	if(chunk && (frameCount = [chunk frameCount])) {
 		[outputLock lock];
 		[outputBuffer addChunk:chunk];
 		[outputLock unlock];
