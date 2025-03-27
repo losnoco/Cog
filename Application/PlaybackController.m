@@ -356,8 +356,12 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (IBAction)prev:(id)sender {
-	if([playlistController prev] == NO)
-		return;
+	double pos = [audioPlayer amountPlayed];
+
+	if(pos < 5.0) {
+		if([playlistController prev] == NO)
+			return;
+	}
 
 	[self playEntry:[playlistController currentEntry]];
 }
