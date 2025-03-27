@@ -28,9 +28,6 @@ using std::atomic_long;
 #import <CogAudio/HeadphoneFilter.h>
 
 //#define OUTPUT_LOG
-#ifdef OUTPUT_LOG
-#import <stdio.h>
-#endif
 
 @class OutputNode;
 
@@ -102,7 +99,7 @@ using std::atomic_long;
 	ChunkList *outputBuffer;
 
 #ifdef OUTPUT_LOG
-	FILE *_logFile;
+	NSFileHandle *_logFile;
 #endif
 }
 
