@@ -269,6 +269,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		size_t inputSamples = ioNumberPackets / floatFormat.mBytesPerPacket;
 		ioNumberPackets = (UInt32)inputSamples;
 		ioNumberPackets = (UInt32)ceil((float)ioNumberPackets * sampleRatio);
+		ioNumberPackets += soxr_delay(soxr);
 		ioNumberPackets = (ioNumberPackets + 255) & ~255;
 
 		size_t newSize = ioNumberPackets * floatFormat.mBytesPerPacket;
@@ -285,7 +286,6 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		size_t outputDone = 0;
 
 		if(!skipResampler) {
-			ioNumberPackets += soxr_delay(soxr);
 			soxr_process(soxr, (float *)(((uint8_t *)inputBuffer) + inpOffset), inputSamples, &inputDone, floatBuffer, ioNumberPackets, &outputDone);
 
 			if(latencyEatenPost) {
