@@ -8,27 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1745C4DA0B90C42500A6768C /* WavPackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1745C4D60B90C42500A6768C /* WavPackDecoder.m */; };
-		17F562D80C3BDA6C0019975C /* WavPack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; };
-		17F562DB0C3BDA6E0019975C /* WavPack.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F562CA0C3BDA5A0019975C /* WavPack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83E83F792D964AFE0054365C /* libwavpack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E83F782D964AFE0054365C /* libwavpack.a */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		17F562C90C3BDA5A0019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = WavPack;
-		};
-		17F562DC0C3BDA830019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WavPack;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1745C4FE0B90C4CD00A6768C /* CopyFiles */ = {
@@ -37,7 +19,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17F562DB0C3BDA6E0019975C /* WavPack.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,11 +31,11 @@
 		1745C4D50B90C42500A6768C /* WavPackDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WavPackDecoder.h; sourceTree = "<group>"; };
 		1745C4D60B90C42500A6768C /* WavPackDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WavPackDecoder.m; sourceTree = "<group>"; };
 		177FCF940B90C9450011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WavPack.xcodeproj; path = ../../Frameworks/WavPack/WavPack.xcodeproj; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* WavPack_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WavPack_Prefix.pch; sourceTree = "<group>"; };
 		834A42AA287AEFC300EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		83747BE62862D8D60021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83849133180819EB00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		83E83F782D964AFE0054365C /* libwavpack.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libwavpack.a; path = /Users/chris/Source/Repos/cog/ThirdParty/WavPack/lib/libwavpack.a; sourceTree = "<absolute>"; };
 		8D5B49B6048680CD000E48DA /* WavPack.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WavPack.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -65,8 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17F562D80C3BDA6C0019975C /* WavPack.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+				83E83F792D964AFE0054365C /* libwavpack.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,7 +99,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */,
+				83E83F782D964AFE0054365C /* libwavpack.a */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
@@ -132,14 +113,6 @@
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		17F562C30C3BDA5A0019975C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17F562CA0C3BDA5A0019975C /* WavPack.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
@@ -182,7 +155,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				17F562DD0C3BDA830019975C /* PBXTargetDependency */,
 			);
 			name = "WavPack Plugin";
 			productInstallPath = "$(HOME)/Library/Bundles";
@@ -215,28 +187,12 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* WavPack */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 17F562C30C3BDA5A0019975C /* Products */;
-					ProjectRef = 17F562C20C3BDA5A0019975C /* WavPack.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8D5B49AC048680CD000E48DA /* WavPack Plugin */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		17F562CA0C3BDA5A0019975C /* WavPack.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = WavPack.framework;
-			remoteRef = 17F562C90C3BDA5A0019975C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8D5B49AF048680CD000E48DA /* Resources */ = {
@@ -259,14 +215,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		17F562DD0C3BDA830019975C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = WavPack;
-			targetProxy = 17F562DC0C3BDA830019975C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		1DEB913B08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -286,8 +234,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WavPack_Prefix.pch;
+				HEADER_SEARCH_PATHS = ../../ThirdParty/WavPack/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LIBRARY_SEARCH_PATHS = ../../ThirdParty/WavPack/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.wavpack;
 				PRODUCT_NAME = WavPack;
 				SDKROOT = macosx;
@@ -312,8 +262,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WavPack_Prefix.pch;
+				HEADER_SEARCH_PATHS = ../../ThirdParty/WavPack/include;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LIBRARY_SEARCH_PATHS = ../../ThirdParty/WavPack/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.wavpack;
 				PRODUCT_NAME = WavPack;
 				SDKROOT = macosx;

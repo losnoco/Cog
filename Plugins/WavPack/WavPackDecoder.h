@@ -11,7 +11,7 @@
 
 #define ChunkHeader WavPackChunkHeader
 
-#import <WavPack/wavpack.h>
+#import <wavpack.h>
 
 @interface WavPackReader : NSObject {
 	id<CogSource> source;
@@ -33,6 +33,9 @@
 
 	int32_t *inputBuffer;
 	size_t inputBufferSize;
+
+	uint8_t *outputBuffer;
+	size_t outputBufferSize;
 
 	BOOL isDSD;
 	BOOL isLossy;

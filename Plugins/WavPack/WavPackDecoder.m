@@ -10,7 +10,31 @@
 
 #import "Logging.h"
 
+#import <sys/sysctl.h>
+
+static int worker_threads;
+
+int get_default_worker_threads (void)
+{
+	int num_processors = 1;
+
+	size_t len = sizeof (num_processors);
+	int mib[2] = { CTL_HW, HW_NCPU };
+	sysctl (mib, 2, &num_processors, &len, NULL, 0);
+
+	if (num_processors <= 1)
+		return 0;
+	else if (num_processors > 4)
+		return 4;
+	else
+		return num_processors;
+}
+
 @implementation WavPackReader
++ (void)initialize {
+	worker_threads = get_default_worker_threads ();
+}
+
 - (id)initWithSource:(id<CogSource>)s {
 	self = [super init];
 	if(self) {
@@ -137,6 +161,9 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 	if(![s seekable])
 		open_flags |= OPEN_STREAMING;
 
+	if (worker_threads)
+		open_flags |= worker_threads << OPEN_THREADS_SHFT;
+
 	wpc = WavpackOpenFileInputEx(&reader, (__bridge void *)(wv), (__bridge void *)(wvc), error, open_flags, 0);
 	if(!wpc) {
 		DLog(@"Unable to open file..");
@@ -199,6 +226,15 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 */
 - (AudioChunk *)readAudio {
 	int32_t frames = 1024;
+	if(worker_threads) {
+		if(channels <= 2)
+			frames = (worker_threads + 1) * 48000;
+		else
+			frames = 48000;
+
+		while(frames * channels > 8388608 / sizeof(int32_t))
+			frames >>= 1;
+	}
 
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
@@ -211,12 +247,22 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 	int32_t *alias32;
 
 	const size_t bufferSize = frames * [chunk format].mBytesPerFrame;
-	uint8_t buffer[bufferSize];
-	void *buf = (void *)buffer;
+	void *buf = (void *)outputBuffer;
+	if(!buf || outputBufferSize < bufferSize) {
+		buf = realloc(outputBuffer, bufferSize);
+		if(!buf) {
+			return nil;
+		}
+		outputBuffer = (uint8_t *)buf;
+	}
 
 	size_t newSize = frames * sizeof(int32_t) * channels;
 	if(!inputBuffer || newSize > inputBufferSize) {
-		inputBuffer = realloc(inputBuffer, inputBufferSize = newSize);
+		void *inp = realloc(inputBuffer, inputBufferSize = newSize);
+		if(!inp) {
+			return nil;
+		}
+		inputBuffer = (int32_t *)inp;
 	}
 
 	samplesRead = WavpackUnpackSamples(wpc, inputBuffer, frames);
@@ -263,7 +309,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 	frame += samplesRead;
 
 	[chunk setStreamTimestamp:streamTimestamp];
-	[chunk assignSamples:buffer frameCount:samplesRead];
+	[chunk assignSamples:outputBuffer frameCount:samplesRead];
 
 	return chunk;
 }
@@ -290,6 +336,11 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 		free(inputBuffer);
 		inputBuffer = NULL;
 		inputBufferSize = 0;
+	}
+	if(outputBuffer) {
+		free(outputBuffer);
+		outputBuffer = NULL;
+		outputBufferSize = 0;
 	}
 	wvc = nil;
 	wv = nil;
