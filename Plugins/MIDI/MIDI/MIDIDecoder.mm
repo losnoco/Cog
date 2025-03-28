@@ -210,7 +210,6 @@ static OSType getOSType(const char *in_) {
 	if(sauce || !plugin || [plugin isEqualToString:@"BASSMIDI"]) {
 		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
 			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
-			[[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
 		}
 	}
 

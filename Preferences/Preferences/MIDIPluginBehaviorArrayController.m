@@ -31,10 +31,13 @@ static void enumComponents(callback cbEnum, void *context) {
 		bytes = CFStringGetCStringPtr(cfName, kCFStringEncodingUTF8);
 		if(!bytes) {
 			CFStringGetCString(cfName, bytesBuffer, sizeof(bytesBuffer) - 1, kCFStringEncodingUTF8);
+			bytesBuffer[sizeof(bytesBuffer) - 1] = '\0';
 			bytes = bytesBuffer;
 		}
 		AudioComponentGetDescription(comp, &tcd);
-		cbEnum(context, tcd.componentSubType, tcd.componentManufacturer, bytes);
+		if(tcd.componentManufacturer != kAudioUnitManufacturer_Apple) {
+			cbEnum(context, tcd.componentSubType, tcd.componentManufacturer, bytes);
+		}
 		CFRelease(cfName);
 		comp = AudioComponentFindNext(comp, &cd);
 	}
