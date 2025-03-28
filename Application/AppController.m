@@ -636,7 +636,7 @@ static BOOL consentLastEnabled = NO;
 
 	[userDefaultsValuesDict setObject:@(CogStatusStopped) forKey:@"lastPlaybackStatus"];
 
-	[userDefaultsValuesDict setObject:@"dls appl" forKey:@"midiPlugin"];
+	[userDefaultsValuesDict setObject:@"BASSMIDI" forKey:@"midiPlugin"];
 
 	[userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
 
@@ -691,6 +691,11 @@ static BOOL consentLastEnabled = NO;
 	// }
 	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"FluidSynth"]) {
 		[[NSUserDefaults standardUserDefaults] setValue:@"BASSMIDI" forKey:@"midiPlugin"];
+	}
+
+	NSString *midiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
+	if([midiPlugin length] == 8 && [[midiPlugin substringFromIndex:4] isEqualToString:@"appl"]) {
+		[[NSUserDefaults standardUserDefaults] setObject:@"BASSMIDI" forKey:@"midiPlugin"];
 	}
 }
 
