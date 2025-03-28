@@ -321,9 +321,8 @@ static OSType getOSType(const char *in_) {
 		streamTimestamp = (double)(player->Tell()) / sampleRate;
 
 		int frames = 1024;
-		float buffer[frames * 2];
 
-		UInt32 frames_done = player->Play(buffer, frames);
+		UInt32 frames_done = player->Play(outputBuffer, frames);
 
 		if(!frames_done)
 			return 0;
@@ -336,7 +335,7 @@ static OSType getOSType(const char *in_) {
 				long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
 				long fadePos;
 
-				float *buff = buffer;
+				float *buff = outputBuffer;
 
 				float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
 				float fadeStep = 1.0 / (float)framesFade;
@@ -362,7 +361,7 @@ static OSType getOSType(const char *in_) {
 		id audioChunkClass = NSClassFromString(@"AudioChunk");
 		AudioChunk *chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
 		[chunk setStreamTimestamp:streamTimestamp];
-		[chunk assignSamples:buffer frameCount:frames];
+		[chunk assignSamples:outputBuffer frameCount:frames];
 
 		return chunk;
 	} catch (std::exception &e) {
