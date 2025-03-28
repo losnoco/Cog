@@ -31,23 +31,19 @@ static BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels
 	float _fadeLevel = *fadeLevel;
 	BOOL towardZero = fadeStep < 0.0;
 	BOOL stopping = NO;
-	for(size_t i = 0; i < count; ++i) {
-		for(size_t j = 0; j < channels; ++j) {
-			outSamples[j] += inSamples[j] * _fadeLevel;
+	size_t maxCount = (size_t)floor(fabs(fadeTarget - _fadeLevel) / fabs(fadeStep));
+	if(maxCount) {
+		size_t countToDo = MIN(count, maxCount);
+		for(size_t i = 0; i < channels; ++i) {
+			_fadeLevel = *fadeLevel;
+			vDSP_vrampmuladd(&inSamples[i], channels, &_fadeLevel, &fadeStep, &outSamples[i], channels, countToDo);
 		}
-		inSamples += channels;
-		outSamples += channels;
-		_fadeLevel += fadeStep;
-		if(towardZero && _fadeLevel <= fadeTarget) {
-			_fadeLevel = fadeTarget;
-			fadeStep = 0.0;
-			stopping = YES;
-			break;
-		} else if(!towardZero && _fadeLevel >= fadeTarget) {
-			_fadeLevel = fadeTarget;
-			fadeStep = 0.0;
-			stopping = YES;
+	}
+	if(maxCount <= count) {
+		if(!towardZero && maxCount < count) {
+			vDSP_vadd(&inSamples[maxCount * channels], 1, &outSamples[maxCount * channels], 1, &outSamples[maxCount * channels], 1, (count - maxCount) * channels);
 		}
+		stopping = YES;
 	}
 	*fadeLevel = _fadeLevel;
 	return stopping;
