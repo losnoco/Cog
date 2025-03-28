@@ -28,6 +28,7 @@ class AUPlayer : public MIDIPlayer {
 	static void enumComponents(callback cbEnum);
 
 	void setComponent(OSType uSubType, OSType uManufacturer);
+	void setPreset(NSDictionary *preset);
 
 	protected:
 	virtual unsigned int send_event_needs_time();
@@ -61,6 +62,8 @@ class AUPlayer : public MIDIPlayer {
 	OSType componentSubType, componentManufacturer;
 
 	BOOL needsInput;
+
+	NSDictionary *preset;
 };
 
 #endif

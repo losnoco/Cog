@@ -291,3 +291,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Channels:"; ObjectID = "LpA-ak-Aj5"; */
 "LpA-ak-Aj5.title" = "Canales:";
+
+/* Class = "NSButtonCell"; title = "Setup"; ObjectID = "Tdt-2E-FVm"; */
+"Tdt-2E-FVm.title" = "Config.";

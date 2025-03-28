@@ -32,10 +32,11 @@
 		8391EA06286F9D3200A37593 /* PathSuggester.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83DAD9F0286EDBCD000FAA9A /* PathSuggester.xib */; };
 		83A3B72C283AE04800CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */; };
 		83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AC57382861A54D009D6F50 /* PathSuggester.m */; };
-		83B06729180D85B8008E3612 /* MIDIPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.m */; };
+		83B06729180D85B8008E3612 /* MIDIPane.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.mm */; };
 		83B0672B180D8B39008E3612 /* midi.png in Resources */ = {isa = PBXBuildFile; fileRef = 83B0672A180D8B39008E3612 /* midi.png */; };
 		83B8FE242D59CDA7005854C1 /* rubberband.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 83B8FE232D59CDA7005854C1 /* rubberband.pdf */; };
 		83B8FE292D59D059005854C1 /* RubberbandPane.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B8FE282D59D059005854C1 /* RubberbandPane.m */; };
+		83E83F7E2D96780E0054365C /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E83F7D2D96780E0054365C /* AUPlayerView.mm */; };
 		83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */; };
 		83F27E6B1810DD3A00CEF538 /* appearance@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E651810DD3A00CEF538 /* appearance@2x.png */; };
 		83F27E6E1810DD3A00CEF538 /* midi@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F27E681810DD3A00CEF538 /* midi@2x.png */; };
@@ -136,7 +137,7 @@
 		83AC57382861A54D009D6F50 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PathSuggester.m; sourceTree = "<group>"; };
 		83AC573E2861B77E009D6F50 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		83B06727180D85B8008E3612 /* MIDIPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIPane.h; sourceTree = "<group>"; };
-		83B06728180D85B8008E3612 /* MIDIPane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIDIPane.m; sourceTree = "<group>"; };
+		83B06728180D85B8008E3612 /* MIDIPane.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIPane.mm; sourceTree = "<group>"; };
 		83B0672A180D8B39008E3612 /* midi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midi.png; path = Icons/midi.png; sourceTree = "<group>"; };
 		83B8FE232D59CDA7005854C1 /* rubberband.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = rubberband.pdf; path = Icons/rubberband.pdf; sourceTree = "<group>"; };
 		83B8FE272D59D03F005854C1 /* RubberbandPane.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RubberbandPane.h; sourceTree = "<group>"; };
@@ -145,6 +146,8 @@
 		83DAD9F1286EDBCD000FAA9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PathSuggester.xib; sourceTree = "<group>"; };
 		83DAD9F3286EDBD2000FAA9A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PathSuggester.strings; sourceTree = "<group>"; };
 		83DAD9F5286EDBD6000FAA9A /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PathSuggester.strings; sourceTree = "<group>"; };
+		83E83F7C2D96780E0054365C /* AUPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
+		83E83F7D2D96780E0054365C /* AUPlayerView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83EF495D17FBC96A00642E3C /* VolumeBehaviorArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeBehaviorArrayController.h; sourceTree = "<group>"; };
 		83EF495E17FBC96A00642E3C /* VolumeBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VolumeBehaviorArrayController.m; sourceTree = "<group>"; };
 		83F0E6AF287CAB4100D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/PathSuggester.strings; sourceTree = "<group>"; };
@@ -269,7 +272,7 @@
 				17C6433D0B8A783F00C53518 /* OutputPane.h */,
 				17C6433E0B8A783F00C53518 /* OutputPane.m */,
 				83B06727180D85B8008E3612 /* MIDIPane.h */,
-				83B06728180D85B8008E3612 /* MIDIPane.m */,
+				83B06728180D85B8008E3612 /* MIDIPane.mm */,
 				8307D309286057B5000FF8EB /* GeneralPane.h */,
 				8307D30A286057B5000FF8EB /* GeneralPane.m */,
 				83B8FE272D59D03F005854C1 /* RubberbandPane.h */,
@@ -281,6 +284,8 @@
 		17D503410ABDB1660022D1E8 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				83E83F7C2D96780E0054365C /* AUPlayerView.h */,
+				83E83F7D2D96780E0054365C /* AUPlayerView.mm */,
 				83651DA427322C8700A2C097 /* MIDIFlavorBehaviorArrayController.h */,
 				83651DA327322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m */,
 				837C0D3E1C50954000CAE18F /* MIDIPluginBehaviorArrayController.h */,
@@ -502,8 +507,9 @@
 				83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */,
 				83B8FE292D59D059005854C1 /* RubberbandPane.m in Sources */,
 				83726F022CF41B3200F15FBF /* AppearancePane.m in Sources */,
+				83E83F7E2D96780E0054365C /* AUPlayerView.mm in Sources */,
 				83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */,
-				83B06729180D85B8008E3612 /* MIDIPane.m in Sources */,
+				83B06729180D85B8008E3612 /* MIDIPane.mm in Sources */,
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,
 				83F27E741810E45D00CEF538 /* PathToFileTransformer.m in Sources */,
 				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,

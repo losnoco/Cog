@@ -270,6 +270,14 @@ static OSType getOSType(const char *in_) {
 					soundFontsAssigned = YES;
 				}
 
+				NSDictionary *midiPluginSettings = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"midiPluginSettings"];
+				if(midiPluginSettings) {
+					NSDictionary *theSettings = [midiPluginSettings objectForKey:plugin];
+					if(theSettings) {
+						auplayer->setPreset(theSettings);
+					}
+				}
+
 				player = auplayer;
 			}
 		}
