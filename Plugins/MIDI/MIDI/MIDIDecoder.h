@@ -36,6 +36,8 @@ class BMPlayer;
 	long framesLength;
 	long framesFade;
 	long framesRead;
+
+	float outputBuffer[1024 * 2];
 }
 
 @end
