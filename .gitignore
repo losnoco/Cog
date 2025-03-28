@@ -53,3 +53,4 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/vorbis/lib/libvorbisfile.3.dylib
 /ThirdParty/vorbis/lib/libvorbis.0.dylib
 /ThirdParty/soxr/lib/libsoxr.0.dylib
+/ThirdParty/WavPack/lib/libwavpack.a

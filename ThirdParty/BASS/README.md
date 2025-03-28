@@ -12,8 +12,8 @@ already use @rpath now.
 As of editing, they are:
 
 BASS		2.4.17
-BASSMIDI	2.4.14.1
-BASSFLAC	2.4.5.3
-BASSOPUS	2.4.2.3
+BASSMIDI	2.4.15.3
+BASSFLAC	2.4.5.5
+BASSOPUS	2.4.3
 BASS_MPC	2.4.1.2
-BASSWV		2.4.7.3
+BASSWV		2.4.7.4
