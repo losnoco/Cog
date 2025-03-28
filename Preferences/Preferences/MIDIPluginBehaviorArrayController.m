@@ -60,25 +60,25 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
 	pref[8] = '\0';
 
 	[pself addObject:
-	       [NSDictionary dictionaryWithObjectsAndKeys:
-	                     [NSString stringWithUTF8String:name], @"name",
-	                     [NSString stringWithUTF8String:pref], @"preference", nil]];
+	 @{@"name": [NSString stringWithUTF8String:name],
+	   @"preference": [NSString stringWithUTF8String:pref],
+	   @"configurable": @YES}];
 }
 
 @implementation MIDIPluginBehaviorArrayController
 - (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
 
-	[self addObject:@{@"name": @"BASSMIDI", @"preference": @"BASSMIDI"}];
+	[self addObject:@{@"name": @"BASSMIDI", @"preference": @"BASSMIDI", @"configurable": @NO}];
 
-	[self addObject:@{@"name": @"DMX Generic", @"preference": @"DOOM0000"}];
-	[self addObject:@{@"name": @"DMX Doom 1", @"preference": @"DOOM0001"}];
-	[self addObject:@{@"name": @"DMX Doom 2", @"preference": @"DOOM0002"}];
-	[self addObject:@{@"name": @"DMX Raptor", @"preference": @"DOOM0003"}];
-	[self addObject:@{@"name": @"DMX Strife", @"preference": @"DOOM0004"}];
-	[self addObject:@{@"name": @"DMXOPL", @"preference": @"DOOM0005"}];
+	[self addObject:@{@"name": @"DMX Generic", @"preference": @"DOOM0000", @"configurable": @NO}];
+	[self addObject:@{@"name": @"DMX Doom 1", @"preference": @"DOOM0001", @"configurable": @NO}];
+	[self addObject:@{@"name": @"DMX Doom 2", @"preference": @"DOOM0002", @"configurable": @NO}];
+	[self addObject:@{@"name": @"DMX Raptor", @"preference": @"DOOM0003", @"configurable": @NO}];
+	[self addObject:@{@"name": @"DMX Strife", @"preference": @"DOOM0004", @"configurable": @NO}];
+	[self addObject:@{@"name": @"DMXOPL", @"preference": @"DOOM0005", @"configurable": @NO}];
 
-	[self addObject:@{@"name": @"OPL3Windows", @"preference": @"OPL3W000"}];
+	[self addObject:@{@"name": @"OPL3Windows", @"preference": @"OPL3W000", @"configurable": @NO}];
 
 	enumComponents(enumCallback, (__bridge void *)(self));
 }

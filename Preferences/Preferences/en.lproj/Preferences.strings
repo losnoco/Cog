@@ -292,3 +292,6 @@
 
 /* Class = "NSTextFieldCell"; title = "Channels:"; ObjectID = "LpA-ak-Aj5"; */
 "LpA-ak-Aj5.title" = "Channels:";
+
+/* Class = "NSButtonCell"; title = "Setup"; ObjectID = "Tdt-2E-FVm"; */
+"Tdt-2E-FVm.title" = "Setup";

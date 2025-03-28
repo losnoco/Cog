@@ -208,6 +208,10 @@ void AUPlayer::setSoundFont(const char *in) {
 	}
 }
 
+void AUPlayer::setPreset(NSDictionary *preset) {
+	this->preset = preset;
+}
+
 /*void AUPlayer::setFileSoundFont( const char * in )
 {
     sFileSoundFontName = in;
@@ -333,6 +337,11 @@ bool AUPlayer::startup() {
 
 		value = 1;
 		AudioUnitSetProperty(samplerUnit[i], kMusicDeviceProperty_StreamFromDisk, kAudioUnitScope_Global, 0, &value, size);
+
+		if(preset) {
+			CFDictionaryRef cdict = (__bridge CFDictionaryRef)preset;
+			AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_ClassInfo, kAudioUnitScope_Global, 0, &cdict, sizeof(cdict));
+		}
 
 		error = AudioUnitInitialize(samplerUnit[i]);
 

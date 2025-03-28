@@ -468,6 +468,9 @@
         <customObject id="i5B-ga-Atm" userLabel="MIDIPane" customClass="MIDIPane">
             <connections>
                 <outlet property="midiFlavorControl" destination="1Yw-25-Gbs" id="6In-S0-YE2"/>
+                <outlet property="midiPluginBehaviorArrayController" destination="czk-eG-6QG" id="6FE-WD-VwB"/>
+                <outlet property="midiPluginControl" destination="8Nj-G4-5ag" id="1k1-lQ-sQi"/>
+                <outlet property="midiPluginSetupButton" destination="49M-Dx-QSC" id="AVl-il-IYO"/>
                 <outlet property="view" destination="JXu-ar-J3Y" id="uI3-0O-h4x"/>
             </connections>
         </customObject>
@@ -898,7 +901,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Nj-G4-5ag" userLabel="MIDI Plugin">
-                    <rect key="frame" x="295" y="176" width="329" height="26"/>
+                    <rect key="frame" x="295" y="176" width="263" height="26"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="vaQ-pZ-jXy" id="xcv-1b-kTI">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -912,12 +915,24 @@
                         </menu>
                     </popUpButtonCell>
                     <connections>
+                        <action selector="setMidiPlugin:" target="i5B-ga-Atm" id="hN2-mi-z23"/>
                         <binding destination="czk-eG-6QG" name="content" keyPath="arrangedObjects" id="Mzg-yr-6mv"/>
                         <binding destination="czk-eG-6QG" name="contentValues" keyPath="arrangedObjects.name" previousBinding="NFp-di-hMf" id="6JE-ba-47Z"/>
                         <binding destination="czk-eG-6QG" name="contentObjects" keyPath="arrangedObjects.preference" previousBinding="Mzg-yr-6mv" id="NFp-di-hMf"/>
                         <binding destination="52" name="selectedObject" keyPath="values.midiPlugin" previousBinding="6JE-ba-47Z" id="ePY-TV-ngD"/>
                     </connections>
                 </popUpButton>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="49M-Dx-QSC" userLabel="Setup">
+                    <rect key="frame" x="555" y="174" width="70" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Setup" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Tdt-2E-FVm" userLabel="Setup">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="setupPlugin:" target="i5B-ga-Atm" id="NNs-KH-p3S"/>
+                    </connections>
+                </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="G86-18-hiK">
                     <rect key="frame" x="18" y="151" width="274" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>

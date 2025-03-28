@@ -10,8 +10,13 @@
 #import <Cocoa/Cocoa.h>
 
 @interface MIDIPane : GeneralPreferencePane {
+	IBOutlet NSArrayController *midiPluginBehaviorArrayController;
+	IBOutlet NSButton *midiPluginSetupButton;
+	IBOutlet NSPopUpButton *midiPluginControl;
 	IBOutlet NSPopUpButton *midiFlavorControl;
 }
+
+- (IBAction)setupPlugin:(id)sender;
 
 - (IBAction)setSoundFont:(id)sender;
 
