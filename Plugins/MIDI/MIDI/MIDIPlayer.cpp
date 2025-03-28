@@ -148,8 +148,8 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 			for(; uStreamPosition < stream_end; uStreamPosition++) {
 				const midi_stream_event &me = mStream.at(uStreamPosition);
 
-				unsigned long samples_todo = me.m_timestamp - uTimeCurrent - into_block;
-				if(samples_todo) {
+				ssize_t samples_todo = me.m_timestamp - uTimeCurrent - into_block;
+				if(samples_todo > 0) {
 					if(samples_todo > count - done) {
 						uSamplesRemaining = samples_todo - (count - done);
 						samples_todo = count - done;
@@ -167,12 +167,14 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 				}
 
 				if(needs_block_size) {
-					into_block += samples_todo;
-					while(into_block >= needs_block_size) {
-						render(out + done * 2, needs_block_size);
-						done += needs_block_size;
-						into_block -= needs_block_size;
-						uTimeCurrent += needs_block_size;
+					if(samples_todo > 0) {
+						into_block += samples_todo;
+						while(into_block >= needs_block_size) {
+							render(out + done * 2, needs_block_size);
+							done += needs_block_size;
+							into_block -= needs_block_size;
+							uTimeCurrent += needs_block_size;
+						}
 					}
 					send_event_time_filtered(me.m_event, into_block);
 				} else

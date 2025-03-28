@@ -1,6 +1,8 @@
-#include "AUPlayer.h"
+#import "AUPlayer.h"
 
-#include <stdlib.h>
+#import <stdlib.h>
+
+#import <Accelerate/Accelerate.h>
 
 #define SF2PACK
 
@@ -82,29 +84,33 @@ void AUPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, un
 }
 
 void AUPlayer::render(float *out, unsigned long count) {
-	float *ptrL, *ptrR;
-	memset(out, 0, count * sizeof(float) * 2);
+	const float *ptrL, *ptrR;
+	bzero(out, count * sizeof(float) * 2);
 	while(count) {
 		UInt32 numberFrames = count > BLOCK_SIZE ? BLOCK_SIZE : (UInt32)count;
 
 		for(unsigned long i = 0; i < 3; ++i) {
 			AudioUnitRenderActionFlags ioActionFlags = 0;
 
+			bufferList->mNumberBuffers = 2;
 			for(unsigned long j = 0; j < 2; j++) {
 				bufferList->mBuffers[j].mNumberChannels = 1;
 				bufferList->mBuffers[j].mDataByteSize = (UInt32)(numberFrames * sizeof(float));
 				bufferList->mBuffers[j].mData = audioBuffer + j * BLOCK_SIZE;
-				memset(bufferList->mBuffers[j].mData, 0, numberFrames * sizeof(float));
+				bzero(bufferList->mBuffers[j].mData, numberFrames * sizeof(float));
 			}
 
 			AudioUnitRender(samplerUnit[i], &ioActionFlags, &mTimeStamp, 0, numberFrames, bufferList);
 
-			ptrL = (float *)bufferList->mBuffers[0].mData;
-			ptrR = (float *)bufferList->mBuffers[1].mData;
-			for(unsigned long j = 0; j < numberFrames; ++j) {
-				out[j * 2 + 0] += ptrL[j];
-				out[j * 2 + 1] += ptrR[j];
-			}
+			ptrL = (const float *)bufferList->mBuffers[0].mData;
+			ptrR = (const float *)bufferList->mBuffers[1].mData;
+			size_t numBytesL = bufferList->mBuffers[0].mDataByteSize;
+			size_t numBytesR = bufferList->mBuffers[1].mDataByteSize;
+			size_t numBytes = MIN(numBytesL, numBytesR);
+			size_t numFrames = numBytes / sizeof(float);
+			numFrames = MIN(numFrames, numberFrames);
+			vDSP_vadd(ptrL, 1, out, 2, out, 2, numFrames);
+			vDSP_vadd(ptrR, 1, out + 1, 2, out + 1, 2, numFrames);
 		}
 
 		out += numberFrames * 2;
@@ -214,7 +220,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 			int k = inNumberFrames * sizeof(float);
 			if(k > ioData->mBuffers[i].mDataByteSize)
 				k = ioData->mBuffers[i].mDataByteSize;
-			memset(ioData->mBuffers[i].mData, 0, k);
+			bzero(ioData->mBuffers[i].mData, k);
 		}
 	}
 
@@ -222,7 +228,7 @@ static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioAct
 }
 
 bool AUPlayer::startup() {
-	if(bufferList) return true;
+	if(initialized) return true;
 
 	AudioComponentDescription cd = { 0 };
 	cd.componentType = kAudioUnitType_MusicDevice;
