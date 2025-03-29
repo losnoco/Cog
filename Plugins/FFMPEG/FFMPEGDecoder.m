@@ -991,7 +991,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	if(totalFrames && (framesRead + framesReadNow > totalFrames))
 		framesReadNow = (int)(totalFrames - framesRead);
 
-	double streamTimestamp = (double)(framesRead) / frequency;
+	double streamTimestamp = (double)(framesRead * (rawDSD ? 8UL : 1UL)) / frequency;
 
 	framesRead += framesReadNow;
 
