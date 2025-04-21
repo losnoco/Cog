@@ -35,6 +35,7 @@
 	double fadeTime;
 	int sampleRate;
 	int channels;
+	int bps;
 	int bitrate;
 	long totalFrames;
 	long framesRead;
