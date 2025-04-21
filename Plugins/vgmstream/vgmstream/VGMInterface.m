@@ -70,6 +70,7 @@ static void vfs_close(libstreamfile_t* libsf) {
 	if(libsf->user_data) {
 		vfs_priv_t* priv = (vfs_priv_t*)libsf->user_data;
 		CFBridgingRelease(priv->infile);
+		free(priv);
 	}
 	free(libsf);
 }
