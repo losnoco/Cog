@@ -137,9 +137,12 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	}
 
 	BOOL formatFloat;
+	int bps;
 	switch(stream->format->sample_format) {
-		case LIBVGMSTREAM_SFMT_PCM16: formatFloat = NO; break;
-		case LIBVGMSTREAM_SFMT_FLOAT: formatFloat = YES; break;
+		case LIBVGMSTREAM_SFMT_PCM16: bps = 16; formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_PCM24: bps = 24; formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_PCM32: bps = 32; formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_FLOAT: bps = 32; formatFloat = YES; break;
 		default:
 			return;
 	}
@@ -147,7 +150,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	NSDictionary *properties = @{ @"bitrate": @(bitrate / 1000),
 		                          @"sampleRate": @(sampleRate),
 		                          @"totalFrames": @(totalFrames),
-								  @"bitsPerSample": @(formatFloat ? 32 : 16),
+								  @"bitsPerSample": @(bps),
 		                          @"floatingPoint": @(formatFloat),
 		                          @"channels": @(channels),
 		                          @"seekable": @(YES),
@@ -278,8 +281,10 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	bitrate = stream->format->stream_bitrate;
 
 	switch(stream->format->sample_format) {
-		case LIBVGMSTREAM_SFMT_PCM16: formatFloat = NO; break;
-		case LIBVGMSTREAM_SFMT_FLOAT: formatFloat = YES; break;
+		case LIBVGMSTREAM_SFMT_PCM16: bps = 16; formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_PCM24: bps = 24; formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_PCM32: bps = 32; formatFloat = NO; break;
+		case LIBVGMSTREAM_SFMT_FLOAT: bps = 32; formatFloat = YES; break;
 		default:
 			libvgmstream_free(stream);
 			stream = NULL;
@@ -296,7 +301,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	return @{ @"bitrate": @(bitrate / 1000),
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
-			  @"bitsPerSample": @(formatFloat ? 32 : 16),
+			  @"bitsPerSample": @(bps),
 		      @"floatingPoint": @(formatFloat),
 		      @"channels": @(channels),
 		      @"seekable": @(YES),
@@ -327,7 +332,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 			continue;
 		}
 
-		const size_t bytes_per_sample = stream->format->channels * (formatFloat ? 4 : 2);
+		const size_t bytes_per_sample = stream->format->channels * (bps / 8);
 		framesDone = bytes_done / bytes_per_sample;
 
 		framesRead += framesDone;
