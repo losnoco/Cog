@@ -39,7 +39,7 @@ void loop_layout_segmented(VGMSTREAM* vgmstream, int32_t loop_sample);
 typedef struct {
     int layer_count;
     VGMSTREAM** layers;
-    sample_t* buffer;
+    void* buffer;
     int input_channels;     /* internal buffer channels */
     int output_channels;    /* resulting channels (after mixing, if applied) */
     int external_looping;   /* don't loop using per-layer loops, but layout's own looping */
@@ -72,8 +72,8 @@ void block_update_ws_aud(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_dec(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_vs_mh(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_mul(off_t block_offset, VGMSTREAM* vgmstream);
-void block_update_gsb(off_t block_offset, VGMSTREAM* vgmstream);
-void block_update_xvas(off_t block_offset, VGMSTREAM* vgmstream);
+void block_update_gsnd(off_t block_offset, VGMSTREAM* vgmstream);
+void block_update_vas_kceo(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_thp(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_filp(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_rage_aud(off_t block_offset, VGMSTREAM* vgmstream);

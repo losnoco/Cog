@@ -211,10 +211,10 @@ typedef enum {
     layout_blocked_str_snds,
     layout_blocked_ws_aud,
     layout_blocked_dec,
-    layout_blocked_xvas,
+    layout_blocked_vas_kceo,
     layout_blocked_vs_mh,
     layout_blocked_mul,
-    layout_blocked_gsb,
+    layout_blocked_gsnd,
     layout_blocked_thp,
     layout_blocked_filp,
     layout_blocked_ea_swvr,
@@ -302,7 +302,7 @@ typedef enum {
     meta_HIS,               /* Her Ineractive .his */
     meta_BNSF,              /* Bandai Namco Sound Format */
 
-    meta_XA,                /* CD-ROM XA */
+    meta_XA,
     meta_ADS,
     meta_NPS,
     meta_RXWS,
@@ -367,7 +367,7 @@ typedef enum {
     meta_ISH_ISD,           /* Various (ISH+ISD DSP) */
     meta_GSND,
     meta_YDSP,              /* WWE Day of Reckoning */
-    meta_FFCC_STR,          /* Final Fantasy: Crystal Chronicles */
+    meta_STR_SQEX,
     meta_UBI_JADE,          /* Beyond Good & Evil, Rayman Raving Rabbids */
     meta_GCA,               /* Metal Slug Anthology */
     meta_SSM,
@@ -441,11 +441,11 @@ typedef enum {
     meta_REDSPARK,          /* "RedSpark" RSD (MadWorld) */
     meta_RAGE_AUD,          /* Rockstar AUD - MC:LA, GTA IV */
     meta_NDS_HWAS,          /* Spider-Man 3, Tony Hawk's Downhill Jam, possibly more... */
-    meta_NGC_LPS,           /* Rave Master (Groove Adventure Rave)(GC) */
+    meta_LPS,
     meta_NAOMI_ADPCM,       /* NAOMI/NAOMI2 Arcade games */
-    meta_SD9,               /* Konami/Bemani Arcade Games */
-    meta_2DX9,              /* beatmania IIDX Arcade Games */
-    meta_PS2_VGV,           /* Rune: Viking Warlord */
+    meta_SD9,
+    meta_2DX9,
+    meta_VGV,
     meta_GCUB,
     meta_MAXIS_XA,          /* Sim City 3000 (PC) */
     meta_NGC_SCK_DSP,       /* Scorpion King (NGC) */
@@ -481,18 +481,18 @@ typedef enum {
     meta_GH3_BAR,           /* Guitar Hero III Mobile .bar */
     meta_DSP_DSPW,          /* Sengoku Basara 3 [WII] */
     meta_PS2_JSTM,          /* Tantei Jinguji Saburo - Kind of Blue (PS2) */
-    meta_SQEX_SCD,          /* Square-Enix SCD */
-    meta_NGC_NST_DSP,       /* Animaniacs [NGC] */
-    meta_BAF,               /* Bizarre Creations (Blur, James Bond) */
-    meta_XVAG,              /* Ratchet & Clank Future: Quest for Booty (PS3) */
+    meta_SQEX_SCD,
+    meta_NST_MONSTER,
+    meta_BAF,
+    meta_XVAG,
     meta_CPS,
     meta_MSF,
     meta_SNDP,
-    meta_SGXD,              /* Sony: Folklore, Genji, Tokyo Jungle (PS3), Brave Story, Kurohyo (PSP) */
+    meta_SGXD,
     meta_RAS,
     meta_SPM,
     meta_VGS_PS,
-    meta_PS2_IAB,           /* Ueki no Housoku - Taosu ze Robert Juudan!! (PS2) */
+    meta_IAB,
     meta_VS_STR,            /* The Bouncer */
     meta_LSF_N1NJ4N,        /* .lsf n1nj4n Fastlane Street Racing (iPhone) */
     meta_XWAV,
@@ -501,13 +501,13 @@ typedef enum {
     meta_PSND,
     meta_ADP_WILDFIRE,
     meta_QD_ADP,
-    meta_EB_SFX,            /* Excitebots .sfx */
-    meta_EB_SF0,            /* Excitebots .sf0 */
+    meta_SFX0_MONSTER,
+    meta_SONG_MONSTER,
     meta_MTAF,
     meta_ALP,
     meta_WPD,
     meta_MN_STR,            /* Mini Ninjas (PC/PS3/WII) */
-    meta_MSS,               /* Guerilla: ShellShock Nam '67 (PS2/Xbox), Killzone (PS2) */
+    meta_MCSS,
     meta_PS2_HSF,           /* Lowrider (PS2) */
     meta_IVAG,
     meta_2PFS,
@@ -518,7 +518,7 @@ typedef enum {
     meta_IDSP_NAMCO,
     meta_KT_WIIBGM,         /* Koei Tecmo WiiBGM */
     meta_KTSS,              /* Koei Tecmo Nintendo Stream (KNS) */
-    meta_MCA,               /* Capcom MCA "MADP" */
+    meta_MADP,
     meta_ADX_MONSTER,
     meta_HCA,
     meta_SVAG_SNK,
@@ -533,7 +533,7 @@ typedef enum {
     meta_WWISE_RIFF,        /* Audiokinetic Wwise RIFF/RIFX */
     meta_UBI_RAKI,          /* Ubisoft RAKI header (Rayman Legends, Just Dance 2017) */
     meta_SNDX,
-    meta_OGL,               /* Shin'en Wii/WiiU (Jett Rocket (Wii), FAST Racing NEO (WiiU)) */
+    meta_OGL,
     meta_MPC3,
     meta_GHS,
     meta_AAC_TRIACE,
@@ -548,11 +548,11 @@ typedef enum {
     meta_EA_SNU,            /* Electronic Arts SNU (Dead Space) */
     meta_AWC,               /* Rockstar AWC (GTA5, RDR) */
     meta_OPUS,              /* Nintendo Opus [Lego City Undercover (Switch)] */
-    meta_PC_AST,            /* Dead Rising (PC) */
-    meta_NAAC,              /* Namco AAC (3DS) */
-    meta_UBI_SB,            /* Ubisoft banks */
-    meta_UBI_APM,           /* Ubisoft APM */
-    meta_EZW,               /* EZ2DJ (Arcade) EZWAV */
+    meta_ASTL,
+    meta_NAAC,
+    meta_UBI_SB,
+    meta_UBI_APM,
+    meta_EZW,
     meta_VXN,               /* Gameloft mobile games */
     meta_EA_SNR_SNS,        /* Electronic Arts SNR+SNS (Burnout Paradise) */
     meta_EA_SPS,            /* Electronic Arts SPS (Burnout Crash) */
@@ -610,7 +610,7 @@ typedef enum {
     meta_AO,                /* Cloudphobia (PC) */
     meta_APC,               /* MegaRace 3 (PC) */
     meta_WAV2,
-    meta_XAU_KONAMI,        /* Yu-Gi-Oh - The Dawn of Destiny (Xbox) */
+    meta_SFXB,
     meta_DERF,              /* Stupid Invaders (PC) */
     meta_SADF,
     meta_UTK,
@@ -618,7 +618,7 @@ typedef enum {
     meta_ADPCM_CAPCOM,
     meta_UE4OPUS,
     meta_XWMA,
-    meta_VA3,               /* DDR Supernova 2 AC */
+    meta_VA3,
     meta_XOPUS,
     meta_VS_SQUARE,
     meta_NWAV,
