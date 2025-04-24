@@ -129,6 +129,7 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 		                                  @"volumeLimit": @(YES),
 		                                  @"enableHrtf": @(NO),
 		                                  @"enableHeadTracking": @(NO),
+		                                  @"enableHDCD": @(NO),
 		                                  /*@"rubberbandEngine": @"faster",*/
 		                                  @"rubberbandTransients": @"crisp",
 		                                  @"rubberbandDetector": @"compound",

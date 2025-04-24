@@ -244,6 +244,9 @@
 /* Class = "NSButtonCell"; title = "Recenter"; ObjectID = "aQP-kn-fMB"; */
 "aQP-kn-fMB.title" = "Recalibrar";
 
+/* Class = "NSButtonCell"; title = "Enable HDCD Peak and Low Level Range Extend"; ObjectID = "IU9-uF-gU9"; */
+"IU9-uF-gU9.title" = "Activar extensiones de HDCD";
+
 /* Class = "NSButtonCell"; title = "Automatically check for updates on startup"; ObjectID = "207"; */
 "207.title" = "Buscar actualizaciones al abrir";
 
