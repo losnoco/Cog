@@ -408,8 +408,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 - (void)addObservers {
 	if(!observersRegistered) {
 		halveDSDVolume = NO;
+		enableHDCD = NO;
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHDCD" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
 
 		observersRegistered = YES;
 	}
@@ -418,6 +420,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 - (void)removeObservers {
 	if(observersRegistered) {
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.halveDSDVolume" context:kChunkListContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHDCD" context:kChunkListContext];
 
 		observersRegistered = NO;
 	}
@@ -456,6 +459,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	
 	if([keyPath isEqualToString:@"values.halveDSDVolume"]) {
 		halveDSDVolume = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"halveDSDVolume"];
+	} else if([keyPath isEqualToString:@"values.enableHDCD"]) {
+		enableHDCD = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHDCD"];
 	}
 }
 
@@ -693,6 +698,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		   inputFormat.mChannelsPerFrame == 2 &&
 		   inputFormat.mSampleRate == 44100) {
 			// possibly HDCD, run through decoder
+			[self addObservers];
 			if(hdcd_decoder) {
 				free(hdcd_decoder);
 				hdcd_decoder = NULL;
@@ -839,13 +845,19 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			   ((hdcd_state_stereo_t *)hdcd_decoder)->channel[1].sustain) {
 				hdcdSustained = YES;
 			}
-			gain = 2.0;
-			bitsPerSample = 32;
-			bytesReadFromInput = samplesRead * 4;
-			isUnsigned = NO;
-			inputBuffer = &tempData[buffer_adder];
-			inputChanged = YES;
+			if(enableHDCD) {
+				gain = 2.0;
+				bitsPerSample = 32;
+				bytesReadFromInput = samplesRead * 4;
+				isUnsigned = NO;
+				inputBuffer = &tempData[buffer_adder];
+				inputChanged = YES;
+			} else {
+				// Discard the output of the decoder and process again
+				goto process16bit;
+			}
 		} else if(bitsPerSample <= 16) {
+		process16bit:
 			samplesRead = bytesReadFromInput / 2;
 			const size_t buffer_adder = (inputBuffer == &tempData[0]) ? buffer_adder_base : 0;
 			if(isUnsigned) {
