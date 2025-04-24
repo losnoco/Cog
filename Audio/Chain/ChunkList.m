@@ -837,10 +837,18 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		if(hdcd_decoder) { // implied bits per sample is 16, produces 32 bit int scale
 			samplesRead = bytesReadFromInput / 2;
 			const size_t buffer_adder = (inputBuffer == &tempData[0]) ? buffer_adder_base : 0;
-			if(isUnsigned)
+			if(isUnsigned) {
+				if(!inputChanged) {
+					memcpy(&tempData[buffer_adder], inputBuffer, samplesRead * 2);
+					inputBuffer = &tempData[buffer_adder];
+					inputChanged = YES;
+				}
 				convert_u16_to_s16((int16_t *)inputBuffer, samplesRead);
-			convert_s16_to_hdcd_input((int32_t *)(&tempData[buffer_adder]), (int16_t *)inputBuffer, samplesRead);
-			hdcd_process_stereo((hdcd_state_stereo_t *)hdcd_decoder, (int32_t *)(&tempData[buffer_adder]), (int)(samplesRead / 2));
+				isUnsigned = NO;
+			}
+			const size_t buffer_adder2 = (inputBuffer == &tempData[0]) ? buffer_adder_base : 0;
+			convert_s16_to_hdcd_input((int32_t *)(&tempData[buffer_adder2]), (int16_t *)inputBuffer, samplesRead);
+			hdcd_process_stereo((hdcd_state_stereo_t *)hdcd_decoder, (int32_t *)(&tempData[buffer_adder2]), (int)(samplesRead / 2));
 			if(((hdcd_state_stereo_t *)hdcd_decoder)->channel[0].sustain &&
 			   ((hdcd_state_stereo_t *)hdcd_decoder)->channel[1].sustain) {
 				hdcdSustained = YES;
@@ -850,7 +858,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				bitsPerSample = 32;
 				bytesReadFromInput = samplesRead * 4;
 				isUnsigned = NO;
-				inputBuffer = &tempData[buffer_adder];
+				inputBuffer = &tempData[buffer_adder2];
 				inputChanged = YES;
 			} else {
 				// Discard the output of the decoder and process again
