@@ -713,17 +713,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			}
 
 			double secondsRendered = (double)renderedSamples / format->mSampleRate;
-			float volumeScale = 1.0;
-			double sustained;
-			sustained = _self->secondsHdcdSustained;
-			if(sustained > 0) {
-				if(sustained < secondsRendered) {
-					_self->secondsHdcdSustained = 0.0;
-				} else {
-					_self->secondsHdcdSustained = sustained - secondsRendered;
-					volumeScale = 0.5;
-				}
-			}
 
 			[fadersLock lock];
 			for(size_t i = 0; i < [faders count];) {
@@ -737,7 +726,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			}
 			[fadersLock unlock];
 
-			scale_by_volume(outSamples, frameCount * channels, volumeScale * _self->volume);
+			scale_by_volume(outSamples, frameCount * channels, _self->volume);
 
 			[_self updateLatency:secondsRendered];
 
