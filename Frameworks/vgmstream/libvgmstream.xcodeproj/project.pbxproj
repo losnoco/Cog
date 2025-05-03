@@ -669,6 +669,7 @@
 		837CEB0523487F2C00E62A4A /* sqex_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAF023487F2C00E62A4A /* sqex_streamfile.h */; };
 		837CEB072348809400E62A4A /* seb.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEB062348809400E62A4A /* seb.c */; };
 		8383A62C281203C60062E49E /* s3v.c in Sources */ = {isa = PBXBuildFile; fileRef = 8383A62B281203C50062E49E /* s3v.c */; };
+		8384EC322DC60DD70037EFFD /* mpeg_custom_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 8384EC312DC60DD70037EFFD /* mpeg_custom_info.c */; };
 		83852B0B2680247900378854 /* rxws.c in Sources */ = {isa = PBXBuildFile; fileRef = 83852B092680247900378854 /* rxws.c */; };
 		83852B0C2680247900378854 /* ads_midway.c in Sources */ = {isa = PBXBuildFile; fileRef = 83852B0A2680247900378854 /* ads_midway.c */; };
 		8385D4E6245174C700FF8E67 /* diva.c in Sources */ = {isa = PBXBuildFile; fileRef = 8385D4E2245174C600FF8E67 /* diva.c */; };
@@ -1624,6 +1625,7 @@
 		837CEAF023487F2C00E62A4A /* sqex_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqex_streamfile.h; sourceTree = "<group>"; };
 		837CEB062348809400E62A4A /* seb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seb.c; sourceTree = "<group>"; };
 		8383A62B281203C50062E49E /* s3v.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s3v.c; sourceTree = "<group>"; };
+		8384EC312DC60DD70037EFFD /* mpeg_custom_info.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mpeg_custom_info.c; sourceTree = "<group>"; };
 		83852B092680247900378854 /* rxws.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rxws.c; sourceTree = "<group>"; };
 		83852B0A2680247900378854 /* ads_midway.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ads_midway.c; sourceTree = "<group>"; };
 		8385D4E2245174C600FF8E67 /* diva.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diva.c; sourceTree = "<group>"; };
@@ -2022,6 +2024,7 @@
 				83B73C482D8FF17900A57F08 /* mio_decoder.c */,
 				834F7D6A2C7093EA003AC386 /* mp4_aac_decoder.c */,
 				834F7D692C7093EA003AC386 /* mpc3_decoder.c */,
+				8384EC312DC60DD70037EFFD /* mpeg_custom_info.c */,
 				834F7D6E2C7093EA003AC386 /* mpeg_custom_utils.c */,
 				834F7D6B2C7093EA003AC386 /* mpeg_custom_utils_ahx.c */,
 				834F7D6C2C7093EA003AC386 /* mpeg_custom_utils_ealayer3.c */,
@@ -3382,6 +3385,7 @@
 				8306B0A820984552000302D4 /* blocked_ps2_iab.c in Sources */,
 				834F7DC62C7093EA003AC386 /* g721_decoder.c in Sources */,
 				834F7DA32C7093EA003AC386 /* nwa_lib.c in Sources */,
+				8384EC322DC60DD70037EFFD /* mpeg_custom_info.c in Sources */,
 				8306B0EA20984590000302D4 /* caf.c in Sources */,
 				83AA7F842519C042004C5298 /* svag_snk.c in Sources */,
 				834FE107215C79ED000A5D3D /* mib_mih.c in Sources */,
