@@ -45,6 +45,8 @@
 
 	double sampleRatio;
 
+	BOOL observersAdded;
+
 	float volumeScale;
 
 	void *floatBuffer;

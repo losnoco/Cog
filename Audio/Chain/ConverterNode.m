@@ -66,14 +66,26 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 		extrapolateBuffer = NULL;
 		extrapolateBufferSize = 0;
 
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:0 context:kConverterNodeContext];
-
 #ifdef LOG_CHAINS
 		[self initLogFiles];
 #endif
 	}
 
 	return self;
+}
+
+- (void)addObservers {
+	if(!observersAdded) {
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeScaling" options:(NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew) context:kConverterNodeContext];
+		observersAdded = YES;
+	}
+}
+
+- (void)removeObservers {
+	if(observersAdded) {
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling" context:kConverterNodeContext];
+		observersAdded = NO;
+	}
 }
 
 void scale_by_volume(float *buffer, size_t count, float volume) {
@@ -334,6 +346,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		if(nodeChannelConfig) {
 			[chunk setChannelConfig:nodeChannelConfig];
 		}
+		[self addObservers];
 		scale_by_volume(floatBuffer, ioNumberPackets / sizeof(float), volumeScale);
 		[chunk setStreamTimestamp:streamTimestamp];
 		[chunk setStreamTimeRatio:streamTimeRatio];
@@ -488,7 +501,7 @@ static float db_to_scale(float db) {
 - (void)dealloc {
 	DLog(@"Converter dealloc");
 
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.volumeScaling" context:kConverterNodeContext];
+	[self removeObservers];
 
 	paused = NO;
 	[self cleanUp];
