@@ -673,6 +673,8 @@
 		83852B0B2680247900378854 /* rxws.c in Sources */ = {isa = PBXBuildFile; fileRef = 83852B092680247900378854 /* rxws.c */; };
 		83852B0C2680247900378854 /* ads_midway.c in Sources */ = {isa = PBXBuildFile; fileRef = 83852B0A2680247900378854 /* ads_midway.c */; };
 		8385D4E6245174C700FF8E67 /* diva.c in Sources */ = {isa = PBXBuildFile; fileRef = 8385D4E2245174C600FF8E67 /* diva.c */; };
+		838A6FF12DCF0850009CBEE7 /* audiopkg_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 838A6FF02DCF0850009CBEE7 /* audiopkg_streamfile.h */; };
+		838A6FF22DCF0850009CBEE7 /* audiopkg.c in Sources */ = {isa = PBXBuildFile; fileRef = 838A6FEF2DCF0850009CBEE7 /* audiopkg.c */; };
 		838BDB681D3AF70D0022CA6F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB671D3AF70D0022CA6F /* libz.tbd */; };
 		838BDB6A1D3AF7140022CA6F /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB691D3AF7140022CA6F /* libiconv.tbd */; };
 		838BDB6E1D3B043C0022CA6F /* ffmpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 838BDB6D1D3B043C0022CA6F /* ffmpeg.c */; };
@@ -1629,6 +1631,8 @@
 		83852B092680247900378854 /* rxws.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rxws.c; sourceTree = "<group>"; };
 		83852B0A2680247900378854 /* ads_midway.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ads_midway.c; sourceTree = "<group>"; };
 		8385D4E2245174C600FF8E67 /* diva.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = diva.c; sourceTree = "<group>"; };
+		838A6FEF2DCF0850009CBEE7 /* audiopkg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = audiopkg.c; sourceTree = "<group>"; };
+		838A6FF02DCF0850009CBEE7 /* audiopkg_streamfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audiopkg_streamfile.h; sourceTree = "<group>"; };
 		838BDB671D3AF70D0022CA6F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		838BDB691D3AF7140022CA6F /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		838BDB6D1D3B043C0022CA6F /* ffmpeg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffmpeg.c; sourceTree = "<group>"; };
@@ -2340,6 +2344,8 @@
 				83AB8C741E8072A100086084 /* astb.c */,
 				8349A8F01FE6257C00E26435 /* astl.c */,
 				8306B0D520984590000302D4 /* atsl.c */,
+				838A6FEF2DCF0850009CBEE7 /* audiopkg.c */,
+				838A6FF02DCF0850009CBEE7 /* audiopkg_streamfile.h */,
 				83EED5D2203A8BC7008BEB45 /* aus.c */,
 				83A16D2722D2ADE700B90C4C /* awb.c */,
 				83AA5D201F6E2F9B0020821C /* awc.c */,
@@ -3069,6 +3075,7 @@
 				836F6F4D18BDC2190095E648 /* layout.h in Headers */,
 				83269DD22399F5DE00F49FE3 /* nus3bank_streamfile.h in Headers */,
 				83AA5D251F6E2F9C0020821C /* hca_keys.h in Headers */,
+				838A6FF12DCF0850009CBEE7 /* audiopkg_streamfile.h in Headers */,
 				834F7E832C709F5B003AC386 /* apa3_streamfile.h in Headers */,
 				83256CDA28666C620036D9C0 /* l2tables.h in Headers */,
 				83256CC828666C620036D9C0 /* getbits.h in Headers */,
@@ -3608,6 +3615,7 @@
 				834F7DDD2C7093EA003AC386 /* mpeg_decoder.c in Sources */,
 				83A21F8B201D8982000F04B9 /* sps_n1.c in Sources */,
 				836F6F9E18BDC2190095E648 /* mus_acm.c in Sources */,
+				838A6FF22DCF0850009CBEE7 /* audiopkg.c in Sources */,
 				83A16D2B22D2ADE800B90C4C /* awb.c in Sources */,
 				834F7EC72C70A786003AC386 /* api_tags.c in Sources */,
 				831BA6191EAC61A500CF89B0 /* ogl.c in Sources */,

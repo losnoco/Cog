@@ -413,6 +413,7 @@
 				<string>aud</string>
 				<string>audio</string>
 				<string>audio_data</string>
+				<string>audiopkg</string>
 				<string>aus</string>
 				<string>awa</string>
 				<string>awb</string>
@@ -719,6 +720,7 @@
 				<string>omu</string>
 				<string>oor</string>
 				<string>opu</string>
+				<string>opusnx</string>
 				<string>opusx</string>
 				<string>oto</string>
 				<string>ovb</string>
@@ -754,7 +756,6 @@
 				<string>rda</string>
 				<string>res</string>
 				<string>rkv</string>
-				<string>rnd</string>
 				<string>rof</string>
 				<string>rpgmvo</string>
 				<string>rrds</string>
@@ -833,6 +834,7 @@
 				<string>smk</string>
 				<string>smp</string>
 				<string>smv</string>
+				<string>sn0</string>
 				<string>snb</string>
 				<string>snd</string>
 				<string>snds</string>
@@ -852,6 +854,7 @@
 				<string>srsa</string>
 				<string>ss2</string>
 				<string>ssd</string>
+				<string>ssf</string>
 				<string>ssm</string>
 				<string>sspr</string>
 				<string>ssp</string>
@@ -906,7 +909,6 @@
 				<string>vai</string>
 				<string>vam</string>
 				<string>vas</string>
-				<string>vawx</string>
 				<string>vb</string>
 				<string>vbk</string>
 				<string>vbx</string>
@@ -989,6 +991,7 @@
 				<string>xnb</string>
 				<string>xsh</string>
 				<string>xsf</string>
+				<string>xst</string>
 				<string>xse</string>
 				<string>xsew</string>
 				<string>xss</string>
@@ -1401,6 +1404,41 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>psf</string>
+				<string>minipsf</string>
+				<string>psf2</string>
+				<string>minipsf2</string>
+				<string>ssf</string>
+				<string>minissf</string>
+				<string>dsf</string>
+				<string>minidsf</string>
+				<string>qsf</string>
+				<string>miniqsf</string>
+				<string>gsf</string>
+				<string>minigsf</string>
+				<string>ncsf</string>
+				<string>minincsf</string>
+				<string>2sf</string>
+				<string>mini2sf</string>
+				<string>usf</string>
+				<string>miniusf</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>vg.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>PSF Format Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>vgm</string>
 				<string>vgz</string>
 				<string>s98</string>
@@ -1490,41 +1528,6 @@
 			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>AdPlug Files</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Default</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>psf</string>
-				<string>minipsf</string>
-				<string>psf2</string>
-				<string>minipsf2</string>
-				<string>ssf</string>
-				<string>minissf</string>
-				<string>dsf</string>
-				<string>minidsf</string>
-				<string>qsf</string>
-				<string>miniqsf</string>
-				<string>gsf</string>
-				<string>minigsf</string>
-				<string>ncsf</string>
-				<string>minincsf</string>
-				<string>2sf</string>
-				<string>mini2sf</string>
-				<string>usf</string>
-				<string>miniusf</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>vg.icns</string>
-			<key>CFBundleTypeIconSystemGenerated</key>
-			<integer>1</integer>
-			<key>CFBundleTypeName</key>
-			<string>PSF Format Files</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>
