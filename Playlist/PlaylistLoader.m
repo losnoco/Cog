@@ -352,8 +352,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
 	__block NSMutableSet *uniqueURLs = [NSMutableSet set];
 
-	__block NSMutableArray *expandedURLs = [[NSMutableArray alloc] init];
-	__block NSMutableArray *containedURLs = [[NSMutableArray alloc] init];
+	__block NSMutableDictionary *expandedURLs = [[NSMutableDictionary alloc] init];
+	__block NSMutableDictionary *loadedURLs = [[NSMutableDictionary alloc] init];
 	__block NSMutableArray *fileURLs = [[NSMutableArray alloc] init];
 	NSMutableArray *validURLs = [[NSMutableArray alloc] init];
 	NSMutableArray *folderURLs = [[NSMutableArray alloc] init];
@@ -394,22 +394,28 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 					if(isDir == YES) {
 						// Get subpaths
 						[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:url];
-						[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[url path]]];
+						NSArray *pathURLs = [self fileURLsAtPath:[url path]];
+						for(NSURL *url in pathURLs) {
+							[expandedURLs setValue:url forKey:[url absoluteString]];
+						}
 					} else if(addOtherFilesInFolder) {
 						NSURL *folderUrl = [url URLByDeletingLastPathComponent];
 						if(![folderURLs containsObject:folderUrl]) {
 							[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
-							[expandedURLs addObjectsFromArray:[self fileURLsAtPath:[folderUrl path]]];
+							NSArray *pathURLs = [self fileURLsAtPath:[folderUrl path]];
+							for(NSURL *url in pathURLs) {
+								[expandedURLs setValue:url forKey:[url absoluteString]];
+							}
 							[folderURLs addObject:folderUrl];
 						}
 					} else {
 						[[SandboxBroker sharedSandboxBroker] addFileIfMissing:url];
-						[expandedURLs addObject:[NSURL fileURLWithPath:[url path]]];
+						[expandedURLs setValue:url forKey:[url absoluteString]];
 					}
 				}
 			} else {
 				// Non-file URL..
-				[expandedURLs addObject:url];
+				[expandedURLs setValue:url forKey:[url absoluteString]];
 			}
 			
 			[pathTask finish];
@@ -452,7 +458,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		__block double weakProgressstep = progressstep;
 
 		// Container vs non-container url
-		for(size_t i = 0, j = [expandedURLs count]; i < j; ++i) {
+		[expandedURLs enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 			NSBlockOperation *op = [[NSBlockOperation alloc] init];
 			
 			[op addExecutionBlock:^{
@@ -464,9 +470,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						pathTask = [containerTask startChildWithOperation:@"Process path as container" description:[NSString stringWithFormat:@"Checking if file is container: %@", url]];
 					}
 
+					url = obj;
 					[lock lock];
-					url = [expandedURLs objectAtIndex:0];
-					[expandedURLs removeObjectAtIndex:0];
+					if([uniqueURLs containsObject:url]) {
+						[lock unlock];
+						return;
+					}
 					[lock unlock];
 
 					if([acceptableContainerTypes containsObject:[[url pathExtension] lowercaseString]]) {
@@ -478,7 +487,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 						if(urls != nil && [urls count] != 0) {
 							[lock lock];
-							[containedURLs addObjectsFromArray:urls];
+							[loadedURLs setValue:urls forKey:key];
 							[lock unlock];
 
 							// Make sure the container isn't added twice.
@@ -514,7 +523,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						} else {
 							/* Fall back on adding the raw file if all container parsers have failed. */
 							[lock lock];
-							[fileURLs addObject:url];
+							[loadedURLs setValue:url forKey:key];
 							[lock unlock];
 						}
 						if(innerTask) {
@@ -527,7 +536,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						[lock unlock];
 					} else {
 						[lock lock];
-						[fileURLs addObject:url];
+						[loadedURLs setValue:url forKey:key];
 						[lock unlock];
 					}
 					if(pathTask) {
@@ -556,8 +565,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				[lock unlock];
 			}];
 
-			[containerQueue addOperation:op];
-		}
+			[self->containerQueue addOperation:op];
+		}];
 
 		[containerQueue waitUntilAllOperationsAreFinished];
 
@@ -569,7 +578,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	progress = 0.0;
 	[self completeProgressJob];
 
-	if([fileURLs count] > 0) {
+	if([loadedURLs count] > 0) {
 		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringFiles", @"") percentOfTotal:20.0];
 	} else {
 		[self setProgressStatus:60.0];
@@ -579,22 +588,38 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	id<SentrySpan> filterTask = [mainTask startChildWithOperation:@"Filtering URLs for dupes and supported tracks"];
 
-	// Deduplication of contained URLs
-	[fileURLs removeObjectsInArray:containedURLs];
-	[fileURLs removeObjectsInArray:dependencyURLs];
-	for(NSURL *u in dependencyURLs) {
-		for(NSUInteger c = 0; c < [containedURLs count];) {
-			if([[u path] isEqualToString:[containedURLs[c] path]]) {
-				[containedURLs removeObjectAtIndex:c];
-			} else {
-				++c;
+	NSArray *keys = [loadedURLs allKeys];
+	if(sort) {
+		keys = [keys sortedArrayUsingSelector:@selector(finderCompare:)];
+	}
+	NSArray *objs = [loadedURLs objectsForKeys:keys notFoundMarker:[NSNull null]];
+	// Pass 1: Collect unique URLs
+	for(id obj in objs) {
+		if([obj isKindOfClass:[NSURL class]]) {
+			if(![uniqueURLs containsObject:obj]) {
+				[uniqueURLs addObject:obj];
+			}
+		} else if([obj isKindOfClass:[NSArray class]]) {
+			for(NSURL *url in obj) {
+				if(![uniqueURLs containsObject:url]) {
+					[uniqueURLs addObject:url];
+				}
 			}
 		}
 	}
 
-	DLog(@"File urls: %@", fileURLs);
+	// Pass 2: Only add outer URLs that are unique, but add all contained URLs
+	for(id obj in objs) {
+		if([obj isKindOfClass:[NSURL class]]) {
+			if(![uniqueURLs containsObject:obj]) {
+				[fileURLs addObject:obj];
+			}
+		} else if([obj isKindOfClass:[NSArray class]]) {
+			[fileURLs addObjectsFromArray:obj];
+		}
+	}
 
-	DLog(@"Contained urls: %@", containedURLs);
+	DLog(@"File urls: %@", fileURLs);
 
 	progressstep = [fileURLs count] ? 100.0 / (double)([fileURLs count]) : 0;
 
@@ -615,11 +640,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			if([url isFileURL] && ![fileTypes containsObject:ext])
 				continue;
 			
-			if(![uniqueURLs containsObject:url]) {
-				[validURLs addObject:url];
-				
-				[uniqueURLs addObject:url];
-			}
+			[validURLs addObject:url];
 
 			[fileTask finish];
 		}
@@ -646,65 +667,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		[self completeProgressJob];
 	}
 	
-	id<SentrySpan> containedTask = nil;
-
-	if([containedURLs count] > 0) {
-		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderFilteringContainedFiles", @"") percentOfTotal:20.0];
-		containedTask = [mainTask startChildWithOperation:@"Filtering contained URLs for supported tracks"];
-	} else {
-		[self setProgressStatus:80.0];
-	}
-
 	DLog(@"Valid urls: %@", validURLs);
 
-	progressstep = [containedURLs count] ? 100.0 / (double)([containedURLs count]) : 0;
-
-	for(url in containedURLs) {
-		id<SentrySpan> containedUrlTask = nil;
-
-		@try {
-			containedUrlTask = [containedTask startChildWithOperation:@"Filtering contained URL" description:[NSString stringWithFormat:@"Track URL: %@", url]];
-
-			progress += progressstep;
-
-			if(![[AudioPlayer schemes] containsObject:[url scheme]]) {
-				[containedUrlTask finish];
-				continue;
-			}
-
-			// Need a better way to determine acceptable file types than basing it on extensions.
-			if([url isFileURL] && ![fileTypes containsObject:[[url pathExtension] lowercaseString]]) {
-				[containedUrlTask finish];
-				continue;
-			}
-
-			[validURLs addObject:url];
-
-			[self setProgressJobStatus:progress];
-
-			[containedUrlTask finish];
-		}
-		@catch(NSException *e) {
-			DLog(@"Exception caught filtering contained URL: %@", e);
-			if(e) {
-				[SentrySDK captureException:e];
-			} else {
-				[SentrySDK captureMessage:[NSString stringWithFormat:@"Null exception caught when filtering contained URL: %@", url]];
-			}
-			if(containedUrlTask) {
-				[containedUrlTask finishWithStatus:kSentrySpanStatusInternalError];
-			}
-		}
-	}
-
-	if(containedTask) {
-		[containedTask finish];
-	}
-
 	progress = 0.0;
-	if([containedURLs count] > 0) {
-		[self completeProgressJob];
-	}
 
 	// Create actual entries
 	int count = (int)[validURLs count];
@@ -716,22 +681,15 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		return @[];
 	}
 
-	NSArray *sortedURLs;
-	if(sort == YES) {
-		sortedURLs = [validURLs sortedArrayUsingSelector:@selector(finderCompare:)];
-	} else {
-		sortedURLs = validURLs;
-	}
-
 	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderAddingEntries", @"") percentOfTotal:20.0];
 
 	progressstep = 100.0 / (double)(count);
 
-	__block id<SentrySpan> addTask = [mainTask startChildWithOperation:@"Add entries to playlist" description:[NSString stringWithFormat:@"Adding %lu entries to the playlist", [sortedURLs count]]];
+	__block id<SentrySpan> addTask = [mainTask startChildWithOperation:@"Add entries to playlist" description:[NSString stringWithFormat:@"Adding %lu entries to the playlist", [validURLs count]]];
 
 	NSInteger i = 0;
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
-	for(NSURL *url in sortedURLs) {
+	for(NSURL *url in validURLs) {
 		__block PlaylistEntry *pe;
 
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
