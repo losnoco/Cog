@@ -593,13 +593,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		keys = [keys sortedArrayUsingSelector:@selector(finderCompare:)];
 	}
 	NSArray *objs = [loadedURLs objectsForKeys:keys notFoundMarker:[NSNull null]];
-	// Pass 1: Collect unique URLs
+	/* Pass 1: Collect unique URLs
+	 * v2: from containers only
+	 */
 	for(id obj in objs) {
-		if([obj isKindOfClass:[NSURL class]]) {
-			if(![uniqueURLs containsObject:obj]) {
-				[uniqueURLs addObject:obj];
-			}
-		} else if([obj isKindOfClass:[NSArray class]]) {
+		/*if([obj isKindOfClass:[NSURL class]]) {
+		} else*/
+		if([obj isKindOfClass:[NSArray class]]) {
 			for(NSURL *url in obj) {
 				if(![uniqueURLs containsObject:url]) {
 					[uniqueURLs addObject:url];
@@ -608,11 +608,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}
 
-	// Pass 2: Only add outer URLs that are unique, but add all contained URLs
+	/* Pass 2: Only add outer URLs that are unique, but add all contained URLs
+	 * v2: only add outer URLs to unique list here, otherwise they don't get added at all :D
+	 * Technically doing it for outer paths here isn't necessary, as the expanded URLs
+	 * dictionary will end up deduplicating input paths anyway. We just don't want it
+	 * happening to playlist or container contents
+	 */
 	for(id obj in objs) {
 		if([obj isKindOfClass:[NSURL class]]) {
 			if(![uniqueURLs containsObject:obj]) {
 				[fileURLs addObject:obj];
+				[uniqueURLs addObject:obj];
 			}
 		} else if([obj isKindOfClass:[NSArray class]]) {
 			[fileURLs addObjectsFromArray:obj];
