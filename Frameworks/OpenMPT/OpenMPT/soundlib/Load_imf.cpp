@@ -45,6 +45,19 @@ struct IMFFileHeader
 	uint8le  unused2[8];
 	char     im10[4];         // 'IM10'
 	IMFChannel channels[32];  // Channel settings
+
+	CHANNELINDEX GetNumChannels() const
+	{
+		uint8 detectedChannels = 0;
+		for(uint8 chn = 0; chn < 32; chn++)
+		{
+			if(channels[chn].status < 2)
+				detectedChannels = chn + 1;
+			else if(channels[chn].status > 2)
+				return 0;
+		}
+		return detectedChannels;
+	}
 };
 
 MPT_BINARY_STRUCT(IMFFileHeader, 576)
@@ -286,7 +299,7 @@ static std::pair<EffectCommand, uint8> TranslateIMFEffect(uint8 command, uint8 p
 			param |= 0xE0;
 		break;
 	case 0x16: // cutoff
-		param = (0xFF - param) / 2u;
+		param = static_cast<uint8>((0xFF - param) / 2u);
 		break;
 	case 0x17: // cutoff slide + resonance (TODO: cutoff slide is currently not handled)
 		param = 0x80 | (param & 0x0F);
@@ -365,29 +378,8 @@ static bool ValidateHeader(const IMFFileHeader &fileHeader)
 	   || fileHeader.bpm < 32
 	   || fileHeader.master > 64
 	   || fileHeader.amp < 4
-	   || fileHeader.amp > 127)
-	{
-		return false;
-	}
-	bool channelFound = false;
-	for(const auto &chn : fileHeader.channels)
-	{
-		switch(chn.status)
-		{
-		case 0: // enabled; don't worry about it
-			channelFound = true;
-			break;
-		case 1: // mute
-			channelFound = true;
-			break;
-		case 2: // disabled
-			// nothing
-			break;
-		default: // uhhhh.... freak out
-			return false;
-		}
-	}
-	if(!channelFound)
+	   || fileHeader.amp > 127
+	   || !fileHeader.GetNumChannels())
 	{
 		return false;
 	}
@@ -428,7 +420,7 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	}
@@ -437,60 +429,48 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
+	InitializeGlobals(MOD_TYPE_IMF, fileHeader.GetNumChannels());
+
+	m_modFormat.formatName = UL_("Imago Orpheus");
+	m_modFormat.type = UL_("imf");
+	m_modFormat.charset = mpt::Charset::CP437;
+
 	// Read channel configuration
-	std::bitset<32> ignoreChannels; // bit set for each channel that's completely disabled
-	uint8 detectedChannels = 0;
-	for(uint8 chn = 0; chn < 32; chn++)
+	std::bitset<32> ignoreChannels;  // bit set for each channel that's completely disabled
+	uint64 channelMuteStatus = 0;
+	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{
-		ChnSettings[chn].Reset();
-		ChnSettings[chn].nPan = fileHeader.channels[chn].panning * 256 / 255;
-
+		ChnSettings[chn].nPan = static_cast<uint16>(fileHeader.channels[chn].panning * 256 / 255);
 		ChnSettings[chn].szName = mpt::String::ReadBuf(mpt::String::nullTerminated, fileHeader.channels[chn].name);
-
+		channelMuteStatus |= static_cast<uint64>(fileHeader.channels[chn].status) << (chn * 2);
 		// TODO: reverb/chorus?
 		switch(fileHeader.channels[chn].status)
 		{
-		case 0: // enabled; don't worry about it
-			detectedChannels = chn + 1;
+		case 0:  // enabled; don't worry about it
 			break;
-		case 1: // mute
+		case 1:  // mute
 			ChnSettings[chn].dwFlags = CHN_MUTE;
-			detectedChannels = chn + 1;
 			break;
-		case 2: // disabled
+		case 2:  // disabled
 			ChnSettings[chn].dwFlags = CHN_MUTE;
 			ignoreChannels[chn] = true;
 			break;
-		default: // uhhhh.... freak out
-			return false;
 		}
 	}
-
-	InitializeGlobals(MOD_TYPE_IMF);
-	m_nChannels = detectedChannels;
-
-	m_modFormat.formatName = U_("Imago Orpheus");
-	m_modFormat.type = U_("imf");
-	m_modFormat.charset = mpt::Charset::CP437;
-
-	//From mikmod: work around an Orpheus bug
-	if(fileHeader.channels[0].status == 0)
+	// BEHIND.IMF: All channels but the first are muted
+	// mikmod refers to this as an Orpheus bug, but I haven't seen any other files like this, so maybe it's just an incorrectly saved file?
+	if(GetNumChannels() == 16 && channelMuteStatus == 0x5555'5554)
 	{
-		CHANNELINDEX chn;
-		for(chn = 1; chn < 16; chn++)
-			if(fileHeader.channels[chn].status != 1)
-				break;
-		if(chn == 16)
-			for(chn = 1; chn < 16; chn++)
-				ChnSettings[chn].dwFlags.reset(CHN_MUTE);
+		for(CHANNELINDEX chn = 1; chn < GetNumChannels(); chn++)
+			ChnSettings[chn].dwFlags.reset(CHN_MUTE);
 	}
 
 	// Song Name
 	m_songName = mpt::String::ReadBuf(mpt::String::nullTerminated, fileHeader.title);
 
 	m_SongFlags.set(SONG_LINEARSLIDES, fileHeader.flags & IMFFileHeader::linearSlides);
-	m_nDefaultSpeed = fileHeader.tempo;
-	m_nDefaultTempo.Set(fileHeader.bpm);
+	Order().SetDefaultSpeed(fileHeader.tempo);
+	Order().SetDefaultTempoInt(fileHeader.bpm);
 	m_nDefaultGlobalVolume = fileHeader.master * 4u;
 	m_nSamplePreAmp = fileHeader.amp;
 
@@ -543,7 +523,7 @@ bool CSoundFile::ReadIMF(FileReader &file, ModLoadingFlags loadFlags)
 					m.note = NOTE_NONE;
 				} else
 				{
-					m.note = (m.note >> 4) * 12 + (m.note & 0x0F) + 12 + 1;
+					m.note = static_cast<ModCommand::NOTE>((m.note >> 4) * 12 + (m.note & 0x0F) + 12 + 1);
 					if(!m.IsNoteOrEmpty())
 					{
 						m.note = NOTE_NONE;

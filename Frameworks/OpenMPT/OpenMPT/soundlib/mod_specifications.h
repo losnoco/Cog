@@ -33,7 +33,8 @@ struct CModSpecifications
 	bool HasCommand(ModCommand::COMMAND cmd) const;
 	// Return corresponding effect letter for this format
 	char GetEffectLetter(ModCommand::COMMAND cmd) const;
-	char GetVolEffectLetter(ModCommand::VOLCMD cmd) const;
+	char GetVolEffectLetter(ModCommand::VOLCMD volcmd) const;
+	static char GetGenericVolEffectLetter(ModCommand::VOLCMD volcmd);
 
 	// NOTE: If changing order, update all initializations in .cpp file.
 	MODTYPE internalType;       // Internal MODTYPE value

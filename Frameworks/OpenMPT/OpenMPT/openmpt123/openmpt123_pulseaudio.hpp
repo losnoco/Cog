@@ -44,7 +44,7 @@ struct pulseaudio_exception : public exception {
 			return mpt::ustring();
 		}
 	}
-	pulseaudio_exception( int error ) : exception( error_to_string( error ) ) { }
+	pulseaudio_exception( int error ) : exception( MPT_USTRING("PulseAudio: ") + error_to_string( error ) ) { }
 };
 
 class pulseaudio_stream_raii : public write_buffers_interface {
@@ -154,11 +154,16 @@ public:
 	}
 };
 
-static mpt::ustring show_pulseaudio_devices( concat_stream<mpt::ustring> & /* log */ ) {
-	string_concat_stream<mpt::ustring> devices;
-	devices << MPT_USTRING(" pulseaudio:") << lf;
-	devices << MPT_USTRING("    ") << MPT_USTRING("0") << MPT_USTRING(": Default Device") << lf;
-	return devices.str();
+inline std::vector<mpt::ustring> show_pulseaudio_devices( concat_stream<mpt::ustring> & /* log */ ) {
+	string_concat_stream<mpt::ustring> device;
+	device << MPT_USTRING("0") << MPT_USTRING(": Default Device");
+	return { device.str() };
+}
+
+inline mpt::ustring show_pulseaudio_version() {
+	string_concat_stream<mpt::ustring> log;
+	log << MPT_USTRING("libpulse, libpulse-simple") << MPT_USTRING(" (headers ") << mpt::transcode<mpt::ustring>( pulseaudio_encoding, pa_get_headers_version() ) << MPT_USTRING(", API ") << PA_API_VERSION << MPT_USTRING(", PROTOCOL ") << PA_PROTOCOL_VERSION << MPT_USTRING(", library ") << mpt::transcode<mpt::ustring>( pulseaudio_encoding, ( pa_get_library_version() ? pa_get_library_version() : "unknown" ) ) << MPT_USTRING(") <https://www.freedesktop.org/wiki/Software/PulseAudio/>");
+	return log.str();
 }
 
 } // namespace openmpt123

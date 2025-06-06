@@ -14,9 +14,12 @@ endif
 
 ifneq ($(STDCXX),)
 CXXFLAGS_STDCXX = -std=$(STDCXX) -fexceptions -frtti -pthread
-# We do not enable C++20 for fuzzer builds, because it prevents detecting
-# shifting of signed values which changed from undefined to defined behaviour
-# in C++20. As we still support C+ü+17, we need to catch these problem cases.
+# We do not enable C++20 or C++23 for fuzzer builds, because it prevents
+# detecting shifting of signed values which changed from undefined to defined
+# behaviour in C++20 and C++23. As we still support C++17, we need to catch
+# these problem cases.
+#else ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++23 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++23' ; fi ), c++23)
+#CXXFLAGS_STDCXX = -std=c++23 -fexceptions -frtti -pthread
 #else ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=c++20 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++20' ; fi ), c++20)
 #CXXFLAGS_STDCXX = -std=c++20 -fexceptions -frtti -pthread
 else
@@ -24,6 +27,10 @@ CXXFLAGS_STDCXX = -std=c++17 -fexceptions -frtti -pthread
 endif
 ifneq ($(STDC),)
 CFLAGS_STDC = -std=$(STDC) -pthread
+else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=c23 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c23' ; fi ), c23)
+CFLAGS_STDC = -std=c23 -pthread
+else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=c18 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c18' ; fi ), c18)
+CFLAGS_STDC = -std=c18 -pthread
 else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=c17 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c17' ; fi ), c17)
 CFLAGS_STDC = -std=c17 -pthread
 else

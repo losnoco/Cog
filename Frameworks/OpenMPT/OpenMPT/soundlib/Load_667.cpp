@@ -77,11 +77,10 @@ bool CSoundFile::Read667(FileReader &file, ModLoadingFlags loadFlags)
 	if(loadFlags == onlyVerifyHeader)
 		return true;
 
-	InitializeGlobals(MOD_TYPE_S3M);
+	InitializeGlobals(MOD_TYPE_S3M, 18);
 	m_SongFlags.set(SONG_IMPORTED);
-	m_nDefaultTempo.Set(150);
-	m_nDefaultSpeed = fileHeader.speed;
-	m_nChannels = 18;
+	Order().SetDefaultTempoInt(150);
+	Order().SetDefaultSpeed(fileHeader.speed);
 	m_nSamples = 64;
 
 	ReadOrderFromFile<uint8>(Order(), file, fileHeader.numOrders);
@@ -90,8 +89,6 @@ bool CSoundFile::Read667(FileReader &file, ModLoadingFlags loadFlags)
 		if(pat >= 128)
 			return false;
 	}
-
-	InitializeChannels();
 
 	for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
 	{
@@ -140,14 +137,14 @@ bool CSoundFile::Read667(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					// Instrument
 					auto instr = patData.ReadArray<uint8, 2>();
-					if(instr[0] >= m_nChannels || instr[1] > 63)
+					if(instr[0] >= GetNumChannels() || instr[1] > 63)
 						return false;
 					rowData[instr[0]].instr = instr[1] + 1;
 				} else if(b == 0xFD)
 				{
 					// Volume
 					auto vol = patData.ReadArray<uint8, 2>();
-					if(vol[0] >= m_nChannels || vol[1] > 63)
+					if(vol[0] >= GetNumChannels() || vol[1] > 63)
 						return false;
 					rowData[vol[0]].SetVolumeCommand(VOLCMD_VOLUME, 63u - vol[1]);
 				} else if(b == 0xFC)
@@ -159,13 +156,13 @@ bool CSoundFile::Read667(FileReader &file, ModLoadingFlags loadFlags)
 				{
 					// Pattern break
 					rowData[0].SetEffectCommand(CMD_PATTERNBREAK, 0);
-				} else if(b < m_nChannels)
+				} else if(b < GetNumChannels())
 				{
 					// Note data
 					uint8 note = patData.ReadUint8();
 					if(note >= 0x7C)
 						return false;
-					rowData[b].note = NOTE_MIN + 12 + (note & 0x0F) + (note >> 4) * 12;
+					rowData[b].note = static_cast<ModCommand::NOTE>(NOTE_MIN + 12 + (note & 0x0F) + (note >> 4) * 12);
 					if(b % 2u)
 						rightChn = true;
 					else
@@ -178,7 +175,7 @@ bool CSoundFile::Read667(FileReader &file, ModLoadingFlags loadFlags)
 		}
 		if(leftChn && rightChn)
 		{
-			for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+			for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 			{
 				ChnSettings[chn].nPan = (chn % 2u) ? 256 : 0;
 			}

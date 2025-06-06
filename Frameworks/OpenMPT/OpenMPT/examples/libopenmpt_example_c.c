@@ -72,10 +72,10 @@
 #define BUFFERSIZE 480
 #define SAMPLERATE 48000
 
-static int16_t left[BUFFERSIZE];
-static int16_t right[BUFFERSIZE];
-static int16_t * const buffers[2] = { left, right };
-static int16_t interleaved_buffer[BUFFERSIZE * 2];
+static float left[BUFFERSIZE];
+static float right[BUFFERSIZE];
+static float * const buffers[2] = { left, right };
+static float interleaved_buffer[BUFFERSIZE * 2];
 static int is_interleaved = 0;
 
 static void libopenmpt_example_logfunc( const char * message, void * userdata ) {
@@ -208,10 +208,10 @@ int main( int argc, char * argv[] ) {
 	}
 	pa_initialized = 1;
 
-	pa_error = Pa_OpenDefaultStream( &stream, 0, 2, paInt16 | paNonInterleaved, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );
+	pa_error = Pa_OpenDefaultStream( &stream, 0, 2, paFloat32 | paNonInterleaved, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );
 	if ( pa_error == paSampleFormatNotSupported ) {
 		is_interleaved = 1;
-		pa_error = Pa_OpenDefaultStream( &stream, 0, 2, paInt16, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );
+		pa_error = Pa_OpenDefaultStream( &stream, 0, 2, paFloat32, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );
 	}
 	if ( pa_error != paNoError ) {
 		fprintf( stderr, "Error: %s\n", "Pa_OpenStream() failed." );
@@ -231,7 +231,7 @@ int main( int argc, char * argv[] ) {
 	while ( 1 ) {
 
 		openmpt_module_error_clear( mod );
-		count = is_interleaved ? openmpt_module_read_interleaved_stereo( mod, SAMPLERATE, BUFFERSIZE, interleaved_buffer ) : openmpt_module_read_stereo( mod, SAMPLERATE, BUFFERSIZE, left, right );
+		count = is_interleaved ? openmpt_module_read_interleaved_float_stereo( mod, SAMPLERATE, BUFFERSIZE, interleaved_buffer ) : openmpt_module_read_float_stereo( mod, SAMPLERATE, BUFFERSIZE, left, right );
 		mod_err = openmpt_module_error_get_last( mod );
 		mod_err_str = openmpt_module_error_get_last_message( mod );
 		if ( mod_err != OPENMPT_ERROR_OK ) {

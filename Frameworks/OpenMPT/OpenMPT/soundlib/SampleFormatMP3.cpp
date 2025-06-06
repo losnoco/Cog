@@ -54,6 +54,7 @@
 #endif
 #endif
 #include <mpg123.h>
+#define MPT_USE_MPG123_PORTABLE_API 1
 
 #endif
 
@@ -65,6 +66,8 @@ OPENMPT_NAMESPACE_BEGIN
 // MP3 Samples
 
 #if defined(MPT_WITH_MPG123)
+
+#if (MPG123_API_VERSION < 48) || !MPT_USE_MPG123_PORTABLE_API
 
 using mpg123_off_t = off_t;
 
@@ -79,6 +82,8 @@ using mpg123_ssize_t = ptrdiff_t;
 using mpg123_ssize_t = ssize_t;
 #endif
 
+#endif
+
 class ComponentMPG123
 	: public ComponentBuiltin
 {
@@ -86,6 +91,47 @@ class ComponentMPG123
 
 public:
 
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+	static int FileReaderRead(void *fp, void *buf, size_t count, size_t *returned)
+	{
+		FileReader &file = *static_cast<FileReader *>(fp);
+		std::size_t readBytes = std::min(count, mpt::saturate_cast<size_t>(file.BytesLeft()));
+		file.ReadRaw(mpt::span(mpt::void_cast<std::byte*>(buf), readBytes));
+		if(!returned)
+		{
+			return -1;
+		}
+		*returned = readBytes;
+		return 0;
+	}
+	static int64_t FileReaderSeek(void *fp, int64_t offset, int whence)
+	{
+		FileReader &file = *static_cast<FileReader *>(fp);
+		if(whence == SEEK_CUR)
+		{
+			if(!mpt::in_range<FileReader::pos_type>(file.GetPosition() + offset))
+			{
+				return -1;
+			}
+			file.Seek(static_cast<FileReader::pos_type>(file.GetPosition() + offset));
+		} else if(whence == SEEK_END)
+		{
+			if(!mpt::in_range<FileReader::pos_type>(file.GetLength() + offset))
+			{
+				return -1;
+			}
+			file.Seek(static_cast<FileReader::pos_type>(file.GetLength() + offset));
+		} else
+		{
+			if(!mpt::in_range<FileReader::pos_type>(offset))
+			{
+				return -1;
+			}
+			file.Seek(static_cast<FileReader::pos_type>(offset));
+		}
+		return static_cast<int64_t>(file.GetPosition());
+	}
+#else
 	static mpg123_ssize_t FileReaderRead(void *fp, void *buf, mpg123_size_t count)
 	{
 		FileReader &file = *static_cast<FileReader *>(fp);
@@ -96,7 +142,7 @@ public:
 	static mpg123_off_t FileReaderLSeek(void *fp, mpg123_off_t offset, int whence)
 	{
 		FileReader &file = *static_cast<FileReader *>(fp);
-		FileReader::off_t oldpos = file.GetPosition();
+		FileReader::pos_type oldpos = file.GetPosition();
 		if(whence == SEEK_CUR) file.Seek(file.GetPosition() + offset);
 		else if(whence == SEEK_END) file.Seek(file.GetLength() + offset);
 		else file.Seek(offset);
@@ -107,6 +153,7 @@ public:
 		}
 		return static_cast<mpg123_off_t>(file.GetPosition());
 	}
+#endif
 
 public:
 	ComponentMPG123()
@@ -260,8 +307,13 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	if(!raw)
 	{
 
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+		int64_t length_raw = 0;
+		int64_t length_hdr = 0;
+#else
 		mpg123_off_t length_raw = 0;
 		mpg123_off_t length_hdr = 0;
+#endif
 
 		// libmpg123 provides no way to determine whether it parsed ID3V2 or VBR tags.
 		// Thus, we use a pre-scan with those disabled and compare the resulting length.
@@ -303,10 +355,17 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				return false;
 			}
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+			if(mpg123_reader64(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderSeek, 0))
+			{
+				return false;
+			}
+#else
 			if(mpg123_replace_reader_handle(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderLSeek, 0))
 			{
 				return false;
 			}
+#endif
 			if(mpg123_open_handle(mh, &file))
 			{
 				return false;
@@ -344,7 +403,11 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				return false;
 			}
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+			length_raw = mpg123_length64(mh);
+#else
 			length_raw = mpg123_length(mh);
+#endif
 		}
 
 		{
@@ -382,10 +445,17 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				return false;
 			}
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+			if(mpg123_reader64(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderSeek, 0))
+			{
+				return false;
+			}
+#else
 			if(mpg123_replace_reader_handle(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderLSeek, 0))
 			{
 				return false;
 			}
+#endif
 			if(mpg123_open_handle(mh, &file))
 			{
 				return false;
@@ -423,7 +493,11 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				return false;
 			}
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+			length_hdr = mpg123_length64(mh);
+#else
 			length_hdr = mpg123_length(mh);
+#endif
 		}
 
 		hasLameXingVbriHeader = (length_raw != length_hdr);
@@ -465,10 +539,17 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	{
 		return false;
 	}
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+	if(mpg123_reader64(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderSeek, 0))
+	{
+		return false;
+	}
+#else
 	if(mpg123_replace_reader_handle(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderLSeek, 0))
 	{
 		return false;
 	}
+#endif
 	if(mpg123_open_handle(mh, &file))
 	{
 		return false;
@@ -540,7 +621,11 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	{
 		buf_bytes.resize(mpg123_outblock(mh));
 		buf_samples.resize(buf_bytes.size() / sizeof(int16));
+#if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
+		size_t buf_bytes_decoded = 0;
+#else
 		mpg123_size_t buf_bytes_decoded = 0;
+#endif
 		int mpg123_read_result = mpg123_read(mh, mpt::byte_cast<unsigned char*>(buf_bytes.data()), buf_bytes.size(), &buf_bytes_decoded);
 		std::memcpy(buf_samples.data(), buf_bytes.data(), buf_bytes_decoded);
 		mpt::append(data, buf_samples.data(), buf_samples.data() + buf_bytes_decoded / sizeof(int16));

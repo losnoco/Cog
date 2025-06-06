@@ -30,6 +30,8 @@ void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::basic_string<
 
 void gui_show_file_info( HWND parent, std::basic_string<TCHAR> title, std::basic_string<TCHAR> info );
 
+void gui_show_about( HWND parent, std::basic_string<TCHAR> title, std::basic_string<TCHAR> about, std::basic_string<TCHAR> credits );
+
 } // namespace plugin
 } // namespace libopenmpt
 

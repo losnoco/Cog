@@ -240,6 +240,13 @@ std::int32_t module::get_selected_subsong() const {
 	return impl->get_selected_subsong();
 }
 
+std::int32_t module::get_restart_order( std::int32_t subsong ) const {
+	return impl->get_restart_order( subsong );
+}
+std::int32_t module::get_restart_row( std::int32_t subsong ) const {
+	return impl->get_restart_row( subsong );
+}
+
 void module::set_repeat_count( std::int32_t repeat_count ) {
 	impl->set_repeat_count( repeat_count );
 }
@@ -249,6 +256,10 @@ std::int32_t module::get_repeat_count() const {
 
 double module::get_duration_seconds() const {
 	return impl->get_duration_seconds();
+}
+
+double module::get_time_at_position( std::int32_t order, std::int32_t row ) const {
+	return impl->get_time_at_position( order, row );
 }
 
 double module::set_position_seconds( double seconds ) {
@@ -389,8 +400,30 @@ std::vector<std::string> module::get_sample_names() const {
 std::int32_t module::get_order_pattern( std::int32_t order ) const {
 	return impl->get_order_pattern( order );
 }
+
+bool module::is_order_skip_entry(std::int32_t order) const {
+	return impl->is_order_skip_entry( order );
+}
+bool module::is_pattern_skip_item( std::int32_t pattern ) const {
+	return module_impl::is_pattern_skip_item( pattern );
+}
+bool module::is_order_stop_entry( std::int32_t order ) const {
+	return impl->is_order_stop_entry( order );
+}
+bool module::is_pattern_stop_item( std::int32_t pattern ) const {
+	return module_impl::is_pattern_stop_item( pattern );
+}
+
 std::int32_t module::get_pattern_num_rows( std::int32_t pattern ) const {
 	return impl->get_pattern_num_rows( pattern );
+}
+
+std::int32_t module::get_pattern_rows_per_beat( std::int32_t pattern ) const {
+	return impl->get_pattern_rows_per_beat( pattern );
+}
+
+std::int32_t module::get_pattern_rows_per_measure( std::int32_t pattern ) const {
+	return impl->get_pattern_rows_per_measure( pattern );
 }
 
 std::uint8_t module::get_pattern_row_channel_command( std::int32_t pattern, std::int32_t row, std::int32_t channel, int command ) const {

@@ -38,13 +38,21 @@ MPT_WARNING("C++ compiler assumes finite math only. This is not standard-conform
 #endif
 
 #ifndef MPT_CHECK_CXX_IGNORE_WARNING_NO_EXCEPTIONS
-#if MPT_COMPILER_GCC
+#if MPT_COMPILER_MSVC
+#if !defined(_CPPUNWIND)
+MPT_WARNING("C++ compiler has no exception support.")
+#endif
+#elif MPT_COMPILER_GCC
 #if (!defined(__EXCEPTIONS) || (__EXCEPTIONS != 1))
 MPT_WARNING("C++ compiler has no exception support.")
 #endif
-#elif MPT_COMPILER_CLANG && !defined(_MSC_VER)
-#if (!defined(__EXCEPTIONS) || (__EXCEPTIONS != 1))
+#elif MPT_COMPILER_CLANG
+#if (!__has_feature(cxx_exceptions) && (!defined(__EXCEPTIONS) || (__EXCEPTIONS != 1)) && !defined(_CPPUNWIND))
 MPT_WARNING("C++ compiler has no exception support.")
+#else
+#if (MPT_CXX_AT_LEAST(20) && !defined(__cpp_exceptions))
+MPT_WARNING("C++ compiler has no exception support.")
+#endif
 #endif
 #endif
 #endif

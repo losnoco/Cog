@@ -18,6 +18,7 @@
 #include "mpt/io/io_stdstream.hpp"
 #include "../common/mptFileIO.h"
 #ifdef MODPLUG_TRACKER
+#include "../mptrack/Moddoc.h"
 #include "../mptrack/TrackerSettings.h"
 #endif // MODPLUG_TRACKER
 #endif // MODPLUG_NO_FILESAVE
@@ -84,7 +85,7 @@ void CSoundFile::S3MSaveConvert(const ModCommand &source, uint8 &command, uint8 
 	case CMD_DUMMY:           command = (param ? '@' : 0); break;
 	case CMD_SPEED:           command = 'A'; break;
 	case CMD_POSITIONJUMP:    command = 'B'; break;
-	case CMD_PATTERNBREAK:    command = 'C'; if(!toIT) param = ((param / 10) << 4) + (param % 10); break;
+	case CMD_PATTERNBREAK:    command = 'C'; if(!toIT) param = static_cast<uint8>(((param / 10) << 4) + (param % 10)); break;
 	case CMD_VOLUMESLIDE:     command = 'D'; break;
 	case CMD_PORTAMENTODOWN:  command = 'E'; if(param >= 0xE0 && (GetType() & (MOD_TYPE_MOD | MOD_TYPE_XM))) param = 0xDF; break;
 	case CMD_PORTAMENTOUP:    command = 'F'; if(param >= 0xE0 && (GetType() & (MOD_TYPE_MOD | MOD_TYPE_XM))) param = 0xDF; break;
@@ -219,7 +220,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	}
@@ -228,7 +229,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_S3M);
+	InitializeGlobals(MOD_TYPE_S3M, fileHeader.GetNumChannels());
 	m_nMinPeriod = 64;
 	m_nMaxPeriod = 32767;
 
@@ -252,6 +253,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	const bool usePanningTable = fileHeader.usePanningTable == S3MFileHeader::idPanning;
 	const bool offsetsAreCanonical = !patternOffsets.empty() && !sampleOffsets.empty() && patternOffsets[0] > sampleOffsets[0];
 	const int32 schismDateVersion = SchismTrackerEpoch + ((fileHeader.cwtv == 0x4FFF) ? fileHeader.reserved2 : (fileHeader.cwtv - 0x4050));
+	uint32 editTimer = 0;
 	switch(fileHeader.cwtv & S3MFileHeader::trackerMask)
 	{
 	case S3MFileHeader::trkAkord & S3MFileHeader::trackerMask:
@@ -329,17 +331,15 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		if(fileHeader.cwtv >= S3MFileHeader::trkIT2_07 && fileHeader.reserved3 != 0)
 		{
 			// Starting from version 2.07, IT stores the total edit time of a module in the "reserved" field
-			uint32 editTime = DecodeITEditTimer(fileHeader.cwtv, fileHeader.reserved3);
-
-			FileHistory hist;
-			hist.openTime = static_cast<uint32>(editTime * (HISTORY_TIMER_PRECISION / 18.2));
-			m_FileHistory.push_back(hist);
+			editTimer = DecodeITEditTimer(fileHeader.cwtv, fileHeader.reserved3);
 		}
 		nonCompatTracker = true;
 		m_playBehaviour.set(kPeriodsAreHertz);
 		m_playBehaviour.set(kITRetrigger);
 		m_playBehaviour.set(kITShortSampleRetrig);
 		m_playBehaviour.set(kST3SampleSwap);  // Not exactly like ST3, but close enough
+		m_playBehaviour.set(kITPortaNoNote);
+		m_playBehaviour.set(kITPortamentoSwapResetsPos);
 		m_nMinPeriod = 1;
 		break;
 	case S3MFileHeader::trkSchismTracker:
@@ -357,6 +357,12 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			if(schismDateVersion >= SchismVersionFromDate<2016, 05, 13>::date)
 				m_playBehaviour.set(kITShortSampleRetrig);
 			m_playBehaviour.reset(kST3TonePortaWithAdlibNote);
+
+			if(fileHeader.cwtv == (S3MFileHeader::trkSchismTracker | 0xFFF) && fileHeader.reserved3 != 0)
+			{
+				// Added in commit 6c4b71f10d4e0bf202dddfa8bd781de510b8bc0b
+				editTimer = fileHeader.reserved3;
+			}
 		}
 		nonCompatTracker = true;
 		break;
@@ -377,7 +383,12 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			uint32 mptVersion = (fileHeader.cwtv & S3MFileHeader::versionMask) << 16;
 			if(mptVersion >= 0x01'29'00'00)
+			{
 				mptVersion |= fileHeader.reserved2;
+				// Added in OpenMPT 1.32.00.31
+				if(fileHeader.reserved3 != 0)
+					editTimer = fileHeader.reserved3;
+			}
 			m_dwLastSavedWithVersion = Version(mptVersion);
 			madeWithTracker = UL_("OpenMPT ") + mpt::ufmt::val(m_dwLastSavedWithVersion);
 		} else
@@ -400,6 +411,14 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	if(formatTrackerStr)
 	{
 		madeWithTracker = MPT_UFORMAT("{} {}.{}")(madeWithTracker, (fileHeader.cwtv & 0xF00) >> 8, mpt::ufmt::hex0<2>(fileHeader.cwtv & 0xFF));
+	}
+
+	// IT edit timer
+	if(editTimer != 0)
+	{
+		FileHistory hist;
+		hist.openTime = static_cast<uint32>(editTimer * (HISTORY_TIMER_PRECISION / 18.2));
+		m_FileHistory.push_back(hist);
 	}
 
 	m_modFormat.formatName = UL_("Scream Tracker 3");
@@ -449,26 +468,24 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		m_SongFlags.set(SONG_FASTVOLSLIDES);
 	}
 
-	// Speed
-	m_nDefaultSpeed = fileHeader.speed;
-	if(m_nDefaultSpeed == 0 || (m_nDefaultSpeed == 255 && isST3))
-	{
-		// Even though ST3 accepts the command AFF as expected, it mysteriously fails to load a default speed of 255...
-		m_nDefaultSpeed = 6;
-	}
+	// Even though ST3 accepts the command AFF as expected, it mysteriously fails to load a default speed of 255...
+	if(fileHeader.speed == 0 || (fileHeader.speed == 255 && isST3))
+		Order().SetDefaultSpeed(6);
+	else
+		Order().SetDefaultSpeed(fileHeader.speed);
 
-	// Tempo
-	m_nDefaultTempo.Set(fileHeader.tempo);
+	// ST3 also fails to load an otherwise valid default tempo of 32...
 	if(fileHeader.tempo < 33)
-	{
-		// ST3 also fails to load an otherwise valid default tempo of 32...
-		m_nDefaultTempo.Set(isST3 ? 125 : 32);
-	}
+		Order().SetDefaultTempoInt(isST3 ? 125 : 32);
+	else
+		Order().SetDefaultTempoInt(fileHeader.tempo);
 
 	// Global Volume
 	m_nDefaultGlobalVolume = std::min(fileHeader.globalVol.get(), uint8(64)) * 4u;
 	// The following check is probably not very reliable, but it fixes a few tunes, e.g.
-	// DARKNESS.S3M by Purple Motion (ST 3.00) and "Image of Variance" by C.C.Catch (ST 3.01):
+	// DARKNESS.S3M by Purple Motion (ST 3.00) and "Image of Variance" by C.C.Catch (ST 3.01).
+	// Note that even ST 3.01b imports these files with a global volume of 0,
+	// so it's not clear if these files ever played "as intended" in any ST3 versions (I don't have any older ST3 versions).
 	if(m_nDefaultGlobalVolume == 0 && fileHeader.cwtv < S3MFileHeader::trkST3_20)
 	{
 		m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
@@ -498,23 +515,14 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// Channel setup
-	m_nChannels = 4;
 	std::bitset<32> isAdlibChannel;
-	for(CHANNELINDEX i = 0; i < 32; i++)
+	for(CHANNELINDEX i = 0; i < GetNumChannels(); i++)
 	{
-		ChnSettings[i].Reset();
-
 		uint8 ctype = fileHeader.channels[i] & ~0x80;
-		if(fileHeader.channels[i] != 0xFF)
-		{
-			m_nChannels = i + 1;
-			if(isStereo)
-				ChnSettings[i].nPan = (ctype & 8) ? 0xCC : 0x33;	// 200 : 56
-		}
+		if(fileHeader.channels[i] != 0xFF && isStereo)
+			ChnSettings[i].nPan = (ctype & 8) ? 0xCC : 0x33;  // 200 : 56
 		if(fileHeader.channels[i] & 0x80)
-		{
 			ChnSettings[i].dwFlags = CHN_MUTE;
-		}
 		if(ctype >= 16 && ctype <= 29)
 		{
 			// Adlib channel - except for OpenMPT 1.19 and older, which would write wrong channel types for PCM channels 16-32.
@@ -523,29 +531,22 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			isAdlibChannel[i] = true;
 		}
 	}
-	if(m_nChannels < 1)
-	{
-		m_nChannels = 1;
-	}
 
 	// Read extended channel panning
 	if(usePanningTable)
 	{
 		bool hasChannelsWithoutPanning = false;
 		const auto pan = file.ReadArray<uint8, 32>();
-		for(CHANNELINDEX i = 0; i < 32; i++)
+		for(CHANNELINDEX i = 0; i < GetNumChannels(); i++)
 		{
 			if((pan[i] & 0x20) != 0 && (!isST3 || !isAdlibChannel[i]))
-			{
-				ChnSettings[i].nPan = (static_cast<uint16>(pan[i] & 0x0F) * 256 + 8) / 15;
-			} else if(pan[i] < 0x10)
-			{
+				ChnSettings[i].nPan = static_cast<uint16>((static_cast<uint16>(pan[i] & 0x0F) * 256 + 8) / 15u);
+			else if(pan[i] < 0x10)
 				hasChannelsWithoutPanning = true;
-			}
 		}
-		if(m_nChannels < 32 && m_dwLastSavedWithVersion == MPT_V("1.16"))
+		if(GetNumChannels() < 32 && m_dwLastSavedWithVersion == MPT_V("1.16"))
 		{
-			// MPT 1.0 alpha 6 up to 1.16.203 set ths panning bit for all channels, regardless of whether they are used or not.
+			// MPT 1.0 alpha 6 up to 1.16.203 set the panning bit for all channels, regardless of whether they are used or not.
 			// Note: Schism Tracker fixed the same bug in git commit f21fe8bcae8b6dde2df27ede4ac9fe563f91baff
 			if(hasChannelsWithoutPanning)
 				m_modFormat.madeWithTracker = UL_("ModPlug Tracker 1.16 / OpenMPT 1.17");
@@ -591,7 +592,6 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		// All Scream Tracker versions except for some probably early revisions of Scream Tracker 3.00 write GUS addresses. GUS support might not have existed at that point (1992).
 		// Hence if a file claims to be written with ST3 (but not ST3.00), but has no GUS addresses, we deduce that it must be written by some other software (e.g. some PSM -> S3M conversions)
 		isST3 = false;
-		MPT_UNUSED(isST3);
 		m_modFormat.madeWithTracker = UL_("Unknown");
 		// Check these only after we are certain that it can't be ST3.01 because that version doesn't sanitize the ultraClicks value yet
 		if(fileHeader.cwtv == S3MFileHeader::trkST3_01 && fileHeader.ultraClicks == 0)
@@ -617,6 +617,8 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		if(useGUS)
 			m_nSamplePreAmp = 48;
 	}
+	if(isST3)
+		m_playBehaviour.set(kS3MIgnoreCombinedFineSlides);
 
 	if(anyADPCM)
 		m_modFormat.madeWithTracker += UL_(" (ADPCM packed)");
@@ -657,6 +659,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		ROWINDEX row = 0;
 		auto rowBase = Patterns[pat].GetRow(0);
 
+		ModCommand dummy;
 		while(row < 64)
 		{
 			uint8 info = file.ReadUint8();
@@ -672,7 +675,6 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 			}
 
 			CHANNELINDEX channel = (info & s3mChannelMask);
-			ModCommand dummy;
 			ModCommand &m = (channel < GetNumChannels()) ? rowBase[channel] : dummy;
 
 			if(info & s3mNotePresent)
@@ -743,7 +745,7 @@ bool CSoundFile::ReadS3M(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	if(pixPlayPanning && zxxCountLeft + zxxCountRight >= m_nChannels && (-zxxCountLeft + zxxCountRight) < static_cast<int>(m_nChannels))
+	if(pixPlayPanning && zxxCountLeft + zxxCountRight >= GetNumChannels() && (-zxxCountLeft + zxxCountRight) < static_cast<int>(GetNumChannels()))
 	{
 		// There are enough Zxx commands, so let's assume this was made to be played with PixPlay
 		Patterns.ForEachModCommand([](ModCommand &m)
@@ -770,7 +772,7 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 		0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
 	};
 
-	if(m_nChannels == 0)
+	if(GetNumChannels() == 0)
 	{
 		return false;
 	}
@@ -840,11 +842,26 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 
 	// Song Variables
 	fileHeader.globalVol = static_cast<uint8>(std::min(m_nDefaultGlobalVolume / 4u, uint32(64)));
-	fileHeader.speed = static_cast<uint8>(Clamp(m_nDefaultSpeed, 1u, 254u));
-	fileHeader.tempo = static_cast<uint8>(Clamp(m_nDefaultTempo.GetInt(), 33u, 255u));
+	fileHeader.speed = static_cast<uint8>(Clamp(Order().GetDefaultSpeed(), 1u, 254u));
+	fileHeader.tempo = static_cast<uint8>(Clamp(Order().GetDefaultTempo().GetInt(), 33u, 255u));
 	fileHeader.masterVolume = static_cast<uint8>(Clamp(m_nSamplePreAmp, 16u, 127u) | 0x80);
 	fileHeader.ultraClicks = 16;
 	fileHeader.usePanningTable = S3MFileHeader::idPanning;
+
+	// IT edit timer
+	uint64 editTimer = 0;
+	for(const auto &mptHistory : GetFileHistory())
+	{
+		editTimer += static_cast<uint32>(mptHistory.openTime * HISTORY_TIMER_PRECISION / 18.2);
+	}
+#ifdef MODPLUG_TRACKER
+	if(const auto modDoc = GetpModDoc(); modDoc != nullptr)
+	{
+		auto creationTime = modDoc->GetCreationTime();
+		editTimer += mpt::saturate_round<uint64>((mpt::Date::UnixAsSeconds(mpt::Date::UnixNow()) - mpt::Date::UnixAsSeconds(creationTime)) * HISTORY_TIMER_PRECISION);
+	}
+#endif  // MODPLUG_TRACKER
+	fileHeader.reserved3 = mpt::saturate_cast<uint32>(editTimer);
 
 	mpt::IO::Write(f, fileHeader);
 	Order().WriteAsByte(f, writeOrders);
@@ -952,21 +969,17 @@ bool CSoundFile::SaveS3M(std::ostream &f) const
 					{
 						info |= s3mNotePresent;
 
-						if(note == NOTE_NONE)
-						{
-							note = s3mNoteNone;
-						} else if(ModCommand::IsSpecialNote(note))
+						if(ModCommand::IsSpecialNote(note))
 						{
 							// Note Cut
 							note = s3mNoteOff;
-						} else if(note < 12 + NOTE_MIN)
+						} else if(note >= NOTE_MIN + 12 && note <= NOTE_MIN + 107)
 						{
-							// Too low
-							note = 0;
-						} else if(note <= NOTE_MAX)
+							note -= NOTE_MIN + 12;
+							note = static_cast<uint8>((note % 12) + ((note / 12) << 4));
+						} else
 						{
-							note -= (12 + NOTE_MIN);
-							note = (note % 12) + ((note / 12) << 4);
+							note = s3mNoteNone;
 						}
 
 						if(m.instr > 0 && m.instr <= GetNumSamples())

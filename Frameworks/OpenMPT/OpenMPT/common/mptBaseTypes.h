@@ -12,10 +12,11 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
-#include "mpt/base/integer.hpp"
-#include "mpt/base/floatingpoint.hpp"
-#include "mpt/base/pointer.hpp"
 #include "mpt/base/check_platform.hpp"
+#include "mpt/base/float.hpp"
+#include "mpt/base/integer.hpp"
+#include "mpt/base/pointer.hpp"
+#include "mpt/base/size.hpp"
 #include "mpt/base/source_location.hpp"
 #include "openmpt/base/Types.hpp"
 

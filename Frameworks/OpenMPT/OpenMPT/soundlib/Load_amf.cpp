@@ -116,7 +116,7 @@ bool CSoundFile::ReadAMF_Asylum(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	}
@@ -125,20 +125,18 @@ bool CSoundFile::ReadAMF_Asylum(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_AMF0);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_AMF0, 8);
 	SetupMODPanning(true);
-	m_nChannels = 8;
-	m_nDefaultSpeed = fileHeader.defaultSpeed;
-	m_nDefaultTempo.Set(fileHeader.defaultTempo);
+	Order().SetDefaultSpeed(fileHeader.defaultSpeed);
+	Order().SetDefaultTempoInt(fileHeader.defaultTempo);
 	m_nSamples = fileHeader.numSamples;
 	if(fileHeader.restartPos < fileHeader.numOrders)
 	{
 		Order().SetRestartPos(fileHeader.restartPos);
 	}
 
-	m_modFormat.formatName = U_("ASYLUM Music Format");
-	m_modFormat.type = U_("amf");
+	m_modFormat.formatName = UL_("ASYLUM Music Format");
+	m_modFormat.type = UL_("amf");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	uint8 orders[256];
@@ -240,6 +238,8 @@ struct AMFFileHeader
 			return false;
 		if(version < 9)
 			return true;
+		if(version < 12)
+			return (numChannels >= 1 && numChannels <= 16);
 		return (numChannels >= 1 && numChannels <= 32);
 	}
 
@@ -446,7 +446,7 @@ static void AMFReadPattern(CPattern &pattern, CHANNELINDEX chn, FileReader &file
 				if(param)
 				{
 					if(param & 0x80)
-						param = 0xF0 | ((-static_cast<int8>(param)) & 0x0F);
+						param = static_cast<uint8>(0xF0 | ((-static_cast<int8>(param)) & 0x0F));
 					else
 						param = 0x0F | ((param & 0x0F) << 4);
 				} else
@@ -573,28 +573,25 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 	if(loadFlags == onlyVerifyHeader)
 		return true;
 
-	InitializeGlobals(MOD_TYPE_AMF);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_AMF, (fileSignature.version < 9) ? 4 : fileHeader.numChannels);
 
 	if(isDMF)
 	{
-		m_modFormat.formatName = MPT_UFORMAT("DSMI Compact v{}")(fileSignature.version);
-		m_modFormat.type = U_("dmf");
+		m_modFormat.formatName = MPT_UFORMAT("DSMI Advanced Music Format (Compact) v{}")(fileSignature.version);
+		m_modFormat.type = UL_("dmf");
 	} else
 	{
 		m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, title);
-		m_modFormat.formatName = MPT_UFORMAT("DSMI v{}")(fileSignature.version);
-		m_modFormat.type = U_("amf");
+		m_modFormat.formatName = MPT_UFORMAT("DSMI Advanced Music Format v{}")(fileSignature.version);
+		m_modFormat.type = UL_("amf");
 	}
 	m_modFormat.charset = mpt::Charset::CP437;
 
-	m_nChannels = fileHeader.numChannels;
 	m_nSamples = fileHeader.numSamples;
 
 	if(fileSignature.version < 9)
 	{
 		// Old format revisions are fixed to 4 channels
-		m_nChannels = 4;
 		for(CHANNELINDEX chn = 0; chn < 4; chn++)
 		{
 			ChnSettings[chn].nPan = (chn & 1) ? 0xC0 : 0x40;
@@ -605,14 +602,15 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 	if(fileSignature.version >= 11)
 	{
 		const CHANNELINDEX readChannels = fileSignature.version >= 12 ? 32 : 16;
-		for(CHANNELINDEX chn = 0; chn < readChannels; chn++)
+		for(auto &chn : ChnSettings)
 		{
 			int8 pan = file.ReadInt8();
 			if(pan == 100)
-				ChnSettings[chn].dwFlags = CHN_SURROUND;
+				chn.dwFlags = CHN_SURROUND;
 			else
-				ChnSettings[chn].nPan = static_cast<uint16>(std::clamp((pan + 64) * 2, 0, 256));
+				chn.nPan = static_cast<uint16>(std::clamp((pan + 64) * 2, 0, 256));
 		}
+		file.Skip(readChannels - GetNumChannels());
 	} else if(fileSignature.version >= 9)
 	{
 		// Internally, DSMI assigns an Amiga-like LRRL panning scheme to the channels in pre-v11 files,
@@ -621,7 +619,7 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 		// This can be observed by looking at a 4-channel MOD and the converted AMF file: The last two channels are swapped.
 		// We ignore all this mess and simply assume that all AMF files use the standard remap table.
 		file.Skip(16);
-		for(CHANNELINDEX chn = 0; chn < 16; chn++)
+		for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 		{
 			ChnSettings[chn].nPan = (chn & 1) ? 0xC0 : 0x40;
 		}
@@ -633,18 +631,18 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 		auto [tempo, speed] = file.ReadArray<uint8, 2>();
 		if(tempo < 32)
 			tempo = 125;
-		m_nDefaultTempo.Set(tempo);
-		m_nDefaultSpeed = speed;
+		Order().SetDefaultTempoInt(tempo);
+		Order().SetDefaultSpeed(speed);
 	} else
 	{
-		m_nDefaultTempo.Set(125);
-		m_nDefaultSpeed = 6;
+		Order().SetDefaultTempoInt(125);
+		Order().SetDefaultSpeed(6);
 	}
 
 	// Setup Order List
 	Order().resize(fileHeader.numOrders);
 	std::vector<uint16> patternLength;
-	const FileReader::off_t trackStartPos = file.GetPosition() + (fileSignature.version >= 14 ? 2 : 0);
+	const FileReader::pos_type trackStartPos = file.GetPosition() + (fileSignature.version >= 14 ? 2 : 0);
 	if(fileSignature.version >= 14)
 	{
 		patternLength.resize(fileHeader.numOrders);
@@ -658,7 +656,7 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 			patternLength[ord] = file.ReadUint16LE();
 		}
 		// Track positions will be read as needed.
-		file.Skip(m_nChannels * 2);
+		file.Skip(GetNumChannels() * 2);
 	}
 
 	// Read Sample Headers
@@ -754,7 +752,7 @@ bool CSoundFile::ReadAMF_DSMI(FileReader &file, ModLoadingFlags loadFlags)
 					// Unsigned delta samples, how novel!
 					for(auto &v : mpt::as_span(sample.sample8(), sample.nLength))
 					{
-						v ^= 0x80;
+						v = static_cast<int8>(static_cast<uint8>(v) ^ 0x80u);
 					}
 				}
 			}

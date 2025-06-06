@@ -96,6 +96,17 @@ struct S3MFileHeader
 	uint16le reserved4;
 	uint16le special;          // Pointer to special custom data (unused)
 	uint8le  channels[32];     // Channel setup
+
+	uint8 GetNumChannels() const
+	{
+		uint8 numChannels  = 4;
+		for(uint8 i = 0; i < 32; i++)
+		{
+			if(channels[i] != 0xFF)
+				numChannels = i + 1;
+		}
+		return numChannels;
+	}
 };
 
 MPT_BINARY_STRUCT(S3MFileHeader, 96)

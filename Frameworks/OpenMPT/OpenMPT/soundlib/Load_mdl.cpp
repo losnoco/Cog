@@ -65,10 +65,21 @@ struct MDLInfoBlock
 	char     composer[20];
 	uint16le numOrders;
 	uint16le restartPos;
-	uint8le  globalVol;	// 1...255
-	uint8le  speed;		// 1...255
-	uint8le  tempo;		// 4...255
+	uint8le  globalVol;  // 1...255
+	uint8le  speed;      // 1...255
+	uint8le  tempo;      // 4...255
 	uint8le  chnSetup[32];
+
+	uint8 GetNumChannels() const
+	{
+		uint8 numChannels = 0;
+		for(uint8 c = 0; c < 32; c++)
+		{
+			if(!(chnSetup[c] & 0x80))
+				numChannels = c + 1;
+		}
+		return numChannels;
+	}
 };
 
 MPT_BINARY_STRUCT(MDLInfoBlock, 91)
@@ -214,11 +225,11 @@ static std::pair<EffectCommand, uint8> ConvertMDLCommand(const uint8 command, ui
 			cmd = CMD_NONE;
 		break;
 	case 0x0C:	// Global volume
-		param = (param + 1) / 2u;
+		param = static_cast<uint8>((param + 1) / 2u);
 		break;
 	case 0x0D: // Pattern Break
 		// Convert from BCD
-		param = 10 * (param >> 4) + (param & 0x0F);
+		param = static_cast<uint8>(10 * (param >> 4) + (param & 0x0F));
 		break;
 	case 0x0E: // Special
 		switch(param >> 4)
@@ -255,11 +266,11 @@ static std::pair<EffectCommand, uint8> ConvertMDLCommand(const uint8 command, ui
 			break;
 		case 0xA: // Global vol slide up
 			cmd = CMD_GLOBALVOLSLIDE;
-			param = 0xF0 & (((param & 0x0F) + 1) << 3);
+			param = static_cast<uint8>(0xF0 & (((param & 0x0F) + 1) << 3));
 			break;
 		case 0xB: // Global vol slide down
 			cmd = CMD_GLOBALVOLSLIDE;
-			param = ((param & 0x0F) + 1) >> 1;
+			param = static_cast<uint8>(((param & 0x0F) + 1) >> 1);
 			break;
 		case 0xC: // Note cut
 		case 0xD: // Note delay
@@ -361,8 +372,7 @@ static bool ImportMDLCommands(ModCommand &m, uint8 vol, uint8 cmd1, uint8 cmd2, 
 
 	if(vol)
 	{
-		m.volcmd = VOLCMD_VOLUME;
-		m.vol = (vol + 2) / 4u;
+		m.SetVolumeCommand(VOLCMD_VOLUME, static_cast<ModCommand::VOL>((vol + 2) / 4u));
 	}
 
 	// If we have Dxx + G00, or Dxx + H00, combine them into Lxx/Kxx.
@@ -416,6 +426,28 @@ static void CopyEnvelope(InstrumentEnvelope &mptEnv, uint8 flags, std::vector<MD
 	if(envNum < envelopes.size())
 		envelopes[envNum].ConvertToMPT(mptEnv);
 	mptEnv.dwFlags.set(ENV_ENABLED, (flags & 0x80) && !mptEnv.empty());
+}
+
+
+static uint8 GetMDLPatternChannelCount(FileReader chunk, uint8 numChannels, const uint8 fileVersion)
+{
+	const uint8 numPats = chunk.ReadUint8();
+	for(uint8 pat = 0; pat < numPats && numChannels < 32; pat++)
+	{
+		uint8 readChans = 32;
+		if(fileVersion >= 0x10)
+		{
+			MDLPatternHeader patHead;
+			chunk.ReadStruct(patHead);
+			readChans = patHead.channels;
+		}
+		for(uint8 chn = 0; chn < readChans; chn++)
+		{
+			if(chunk.ReadUint16LE() > 0 && chn >= numChannels && chn < 32)
+				numChannels = chn + 1;
+		}
+	}
+	return numChannels;
 }
 
 
@@ -474,7 +506,9 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	}
 
-	InitializeGlobals(MOD_TYPE_MDL);
+	// In case any muted channels contain data, be sure that we import them as well.
+	const uint8 numChannels = std::max(GetMDLPatternChannelCount(chunks.GetChunk(MDLChunk::idPats), info.GetNumChannels(), fileHeader.version), uint8(1));
+	InitializeGlobals(MOD_TYPE_MDL, numChannels);
 	m_SongFlags = SONG_ITCOMPATGXX;
 	m_playBehaviour.set(kPerChannelGlobalVolSlide);
 	m_playBehaviour.set(kApplyOffsetWithoutNote);
@@ -482,36 +516,32 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	m_playBehaviour.reset(kITSCxStopsSample);	// Gate effect in underbeat.mdl
 
-	m_modFormat.formatName = U_("Digitrakker");
-	m_modFormat.type = U_("mdl");
+	m_modFormat.formatName = UL_("Digitrakker");
+	m_modFormat.type = UL_("mdl");
 	m_modFormat.madeWithTracker = U_("Digitrakker ") + (
-		(fileHeader.version == 0x11) ? U_("3") // really could be 2.99b - close enough
-		: (fileHeader.version == 0x10) ? U_("2.3")
-		: (fileHeader.version == 0x00) ? U_("2.0 - 2.2b") // there was no 1.x release
-		: U_(""));
+		(fileHeader.version == 0x11) ? UL_("3") // really could be 2.99b - close enough
+		: (fileHeader.version == 0x10) ? UL_("2.3")
+		: (fileHeader.version == 0x00) ? UL_("2.0 - 2.2b") // there was no 1.x release
+		: UL_(""));
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, info.title);
 	m_songArtist = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::spacePadded, info.composer));
 
 	m_nDefaultGlobalVolume = info.globalVol + 1;
-	m_nDefaultSpeed = Clamp<uint8, uint8>(info.speed, 1, 255);
-	m_nDefaultTempo.Set(Clamp<uint8, uint8>(info.tempo, 4, 255));
+	Order().SetDefaultSpeed(Clamp<uint8, uint8>(info.speed, 1, 255));
+	Order().SetDefaultTempoInt(Clamp<uint8, uint8>(info.tempo, 4, 255));
 
 	ReadOrderFromFile<uint8>(Order(), chunk, info.numOrders);
 	Order().SetRestartPos(info.restartPos);
 
-	m_nChannels = 0;
-	for(CHANNELINDEX c = 0; c < 32; c++)
+	for(CHANNELINDEX c = 0; c < GetNumChannels(); c++)
 	{
-		ChnSettings[c].Reset();
 		ChnSettings[c].nPan = (info.chnSetup[c] & 0x7F) * 2u;
 		if(ChnSettings[c].nPan == 254)
 			ChnSettings[c].nPan = 256;
 		if(info.chnSetup[c] & 0x80)
 			ChnSettings[c].dwFlags.set(CHN_MUTE);
-		else
-			m_nChannels = c + 1;
 		chunk.ReadString<mpt::String::spacePadded>(ChnSettings[c].szName, 8);
 	}
 
@@ -652,7 +682,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 				mptSmp.nPan = std::min(static_cast<uint16>(sampleHeader.panning * 2), uint16(254));
 				mptSmp.nVibType = MDLVibratoType[sampleHeader.vibType & 3];
 				mptSmp.nVibSweep = sampleHeader.vibSweep;
-				mptSmp.nVibDepth = (sampleHeader.vibDepth + 3u) / 4u;
+				mptSmp.nVibDepth = static_cast<uint8>((sampleHeader.vibDepth + 3u) / 4u);
 				mptSmp.nVibRate = sampleHeader.vibSpeed;
 				// Convert to IT-like vibrato sweep
 				if(mptSmp.nVibSweep != 0)
@@ -681,27 +711,6 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 	if((loadFlags & loadPatternData) && (chunk = chunks.GetChunk(MDLChunk::idPats)).IsValid())
 	{
 		PATTERNINDEX numPats = chunk.ReadUint8();
-
-		// In case any muted channels contain data, be sure that we import them as well.
-		for(PATTERNINDEX pat = 0; pat < numPats; pat++)
-		{
-			CHANNELINDEX numChans = 32;
-			if(fileHeader.version >= 0x10)
-			{
-				MDLPatternHeader patHead;
-				chunk.ReadStruct(patHead);
-				if(patHead.channels > m_nChannels && patHead.channels <= 32)
-					m_nChannels = patHead.channels;
-				numChans = patHead.channels;
-			}
-			for(CHANNELINDEX chn = 0; chn < numChans; chn++)
-			{
-				if(chunk.ReadUint16LE() > 0 && chn >= m_nChannels && chn < 32)
-					m_nChannels = chn + 1;
-			}
-		}
-		chunk.Seek(1);
-
 		Patterns.ResizeArray(numPats);
 		for(PATTERNINDEX pat = 0; pat < numPats; pat++)
 		{
@@ -727,7 +736,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 			for(CHANNELINDEX chn = 0; chn < numChans; chn++)
 			{
 				uint16 trkNum = chunk.ReadUint16LE();
-				if(!trkNum || trkNum >= tracks.size() || chn >= m_nChannels)
+				if(!trkNum || trkNum >= tracks.size() || chn >= GetNumChannels())
 					continue;
 
 				FileReader &track = tracks[trkNum];
@@ -752,7 +761,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 							do
 							{
 								*m = orig;
-								m += m_nChannels;
+								m += GetNumChannels();
 								row++;
 							} while (row < numRows && x--);
 						}

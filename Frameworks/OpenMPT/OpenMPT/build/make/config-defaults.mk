@@ -49,6 +49,7 @@ else ifeq ($(HOST_FLAVOUR),OPENBSD)
 
 NO_PORTAUDIOCPP?=1
 NO_PULSEAUDIO?=1
+LDLIBS_PLATFORM=-lc++ -lc
 include build/make/config-clang.mk
 MPT_COMPILER_NOALLOCAH=1
 

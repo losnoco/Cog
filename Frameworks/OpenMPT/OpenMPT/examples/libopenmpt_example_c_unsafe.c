@@ -46,9 +46,9 @@
 #define BUFFERSIZE 480
 #define SAMPLERATE 48000
 
-static int16_t left[BUFFERSIZE];
-static int16_t right[BUFFERSIZE];
-static int16_t * const buffers[2] = { left, right };
+static float left[BUFFERSIZE];
+static float right[BUFFERSIZE];
+static float * const buffers[2] = { left, right };
 
 #if defined( __DJGPP__ )
 /* clang-format off */
@@ -88,10 +88,10 @@ int main( int argc, char * argv[] ) {
 #endif
 	fclose( file );
 	Pa_Initialize();
-	Pa_OpenDefaultStream( &stream, 0, 2, paInt16 | paNonInterleaved, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );
+	Pa_OpenDefaultStream( &stream, 0, 2, paFloat32 | paNonInterleaved, SAMPLERATE, paFramesPerBufferUnspecified, NULL, NULL );
 	Pa_StartStream( stream );
 	while ( 1 ) {
-		count = openmpt_module_read_stereo( mod, SAMPLERATE, BUFFERSIZE, left, right );
+		count = openmpt_module_read_float_stereo( mod, SAMPLERATE, BUFFERSIZE, left, right );
 		if ( count == 0 ) {
 			break;
 		}

@@ -109,7 +109,7 @@ bool SongMessage::Read(const std::byte *data, size_t length, LineEnding lineEndi
 
 bool SongMessage::Read(FileReader &file, const size_t length, LineEnding lineEnding)
 {
-	FileReader::off_t readLength = std::min(static_cast<FileReader::off_t>(length), file.BytesLeft());
+	FileReader::pos_type readLength = std::min(static_cast<FileReader::pos_type>(length), file.BytesLeft());
 	FileReader::PinnedView fileView = file.ReadPinnedView(readLength);
 	bool success = Read(fileView.data(), fileView.size(), lineEnding);
 	return success;
@@ -159,7 +159,7 @@ bool SongMessage::ReadFixedLineLength(const std::byte *data, const size_t length
 
 bool SongMessage::ReadFixedLineLength(FileReader &file, const size_t length, const size_t lineLength, const size_t lineEndingLength)
 {
-	FileReader::off_t readLength = std::min(static_cast<FileReader::off_t>(length), file.BytesLeft());
+	FileReader::pos_type readLength = std::min(static_cast<FileReader::pos_type>(length), file.BytesLeft());
 	FileReader::PinnedView fileView = file.ReadPinnedView(readLength);
 	bool success = ReadFixedLineLength(fileView.data(), fileView.size(), lineLength, lineEndingLength);
 	return success;

@@ -9,15 +9,24 @@
  */
 
 #include "stdafx.h"
-#include "../common/misc_util.h"
 #include "OPL.h"
+#include "../common/misc_util.h"
+
+#include <cstdint>
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
 #include "opal.h"
+#if MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#endif
 
 OPENMPT_NAMESPACE_BEGIN
 
-OPL::OPL(uint32 samplerate)
+OPL::OPL(uint32 sampleRate)
 {
-	Initialize(samplerate);
+	Initialize(sampleRate);
 }
 
 
@@ -34,12 +43,12 @@ OPL::~OPL()
 }
 
 
-void OPL::Initialize(uint32 samplerate)
+void OPL::Initialize(uint32 sampleRate)
 {
 	if(m_opl == nullptr)
-		m_opl = std::make_unique<Opal>(samplerate);
+		m_opl = std::make_unique<Opal>(sampleRate);
 	else
-		m_opl->SetSampleRate(samplerate);
+		m_opl->SetSampleRate(sampleRate);
 	Reset();
 }
 
@@ -62,7 +71,7 @@ void OPL::Mix(int32 *target, size_t count, uint32 volumeFactorQ16)
 }
 
 
-uint16 OPL::ChannelToRegister(uint8 oplCh)
+OPL::Register OPL::ChannelToRegister(uint8 oplCh)
 {
 	if(oplCh < 9)
 		return oplCh;
@@ -72,7 +81,7 @@ uint16 OPL::ChannelToRegister(uint8 oplCh)
 
 
 // Translate a channel's first operator address into a register
-uint16 OPL::OperatorToRegister(uint8 oplCh)
+OPL::Register OPL::OperatorToRegister(uint8 oplCh)
 {
 	static constexpr uint8 OPLChannelToOperator[] = { 0, 1, 2, 8, 9, 10, 16, 17, 18 };
 	if(oplCh < 9)
@@ -143,6 +152,8 @@ void OPL::MoveChannel(CHANNELINDEX from, CHANNELINDEX to)
 	m_OPLtoChan[oplCh] = to;
 	m_ChanToOPL[from] = OPL_CHANNEL_INVALID;
 	m_ChanToOPL[to] = oplCh;
+	if(m_logger)
+		m_logger->MoveChannel(from, to);
 }
 
 
@@ -150,6 +161,8 @@ void OPL::NoteOff(CHANNELINDEX c)
 {
 	uint8 oplCh = GetVoice(c);
 	if(oplCh == OPL_CHANNEL_INVALID || m_opl == nullptr)
+		return;
+	if(!(m_KeyOnBlock[oplCh] & KEYON_BIT))
 		return;
 	m_KeyOnBlock[oplCh] &= ~KEYON_BIT;
 	Port(c, KEYON_BLOCK | ChannelToRegister(oplCh), m_KeyOnBlock[oplCh]);
@@ -202,9 +215,9 @@ void OPL::Frequency(CHANNELINDEX c, uint32 milliHertz, bool keyOff, bool beating
 
 	fnum |= (block << 10);
 
-	uint16 channel = ChannelToRegister(oplCh);
-	m_KeyOnBlock[oplCh] = (keyOff ? 0 : KEYON_BIT) | (fnum >> 8);  // Key on bit + Octave (block) + F-number high 2 bits
-	Port(c, FNUM_LOW    | channel, fnum & 0xFF);                   // F-Number low 8 bits
+	OPL::Register channel = ChannelToRegister(oplCh);
+	m_KeyOnBlock[oplCh] = static_cast<uint8>((keyOff ? 0 : KEYON_BIT) | (fnum >> 8));  // Key on bit + Octave (block) + F-number high 2 bits
+	Port(c, FNUM_LOW    | channel, fnum & 0xFFu);                                      // F-Number low 8 bits
 	Port(c, KEYON_BLOCK | channel, m_KeyOnBlock[oplCh]);
 
 	m_isActive = true;
@@ -217,7 +230,7 @@ uint8 OPL::CalcVolume(uint8 trackerVol, uint8 kslVolume)
 		return kslVolume;
 	if(trackerVol > 0)
 		trackerVol++;
-	return (kslVolume & KSL_MASK) | (63u - ((63u - (kslVolume & TOTAL_LEVEL_MASK)) * trackerVol) / 64u);
+	return static_cast<uint8>((kslVolume & KSL_MASK) | (63u - ((63u - (kslVolume & TOTAL_LEVEL_MASK)) * trackerVol) / 64u));
 }
 
 
@@ -228,7 +241,7 @@ void OPL::Volume(CHANNELINDEX c, uint8 vol, bool applyToModulator)
 		return;
 
 	const auto &patch = m_Patches[oplCh];
-	const uint16 modulator = OperatorToRegister(oplCh), carrier = modulator + 3;
+	const OPL::Register modulator = OperatorToRegister(oplCh), carrier = modulator + 3;
 	if((patch[10] & CONNECTION_BIT) || applyToModulator)
 	{
 		// Set volume of both operators in additive mode
@@ -258,7 +271,7 @@ int8 OPL::Pan(CHANNELINDEX c, int32 pan)
 		fbConn |= VOICE_TO_RIGHT;
 
 	Port(c, FEEDBACK_CONNECTION | ChannelToRegister(oplCh), fbConn);
-	return ((fbConn & VOICE_TO_LEFT) ? -1 : 0) + ((fbConn & VOICE_TO_RIGHT) ? 1 : 0);
+	return static_cast<int8>(((fbConn & VOICE_TO_LEFT) ? -1 : 0) + ((fbConn & VOICE_TO_RIGHT) ? 1 : 0));
 }
 
 
@@ -270,7 +283,7 @@ void OPL::Patch(CHANNELINDEX c, const OPLPatch &patch)
 
 	m_Patches[oplCh] = patch;
 
-	const uint16 modulator = OperatorToRegister(oplCh), carrier = modulator + 3;
+	const OPL::Register modulator = OperatorToRegister(oplCh), carrier = modulator + 3;
 	for(uint8 op = 0; op < 2; op++)
 	{
 		const auto opReg = op ? carrier : modulator;
@@ -305,7 +318,7 @@ void OPL::Reset()
 }
 
 
-void OPL::Port(CHANNELINDEX c, uint16 reg, uint8 value)
+void OPL::Port(CHANNELINDEX c, OPL::Register reg, OPL::Value value)
 {
 	if(!m_logger)
 		m_opl->Port(reg, value);
@@ -314,31 +327,64 @@ void OPL::Port(CHANNELINDEX c, uint16 reg, uint8 value)
 }
 
 
-std::vector<uint16> OPL::AllVoiceRegisters()
+std::vector<OPL::Register> OPL::AllVoiceRegisters(uint8 oplCh)
 {
-	static constexpr uint8 opRegisters[] = {OPL::AM_VIB, OPL::KSL_LEVEL, OPL::ATTACK_DECAY, OPL::SUSTAIN_RELEASE, OPL::WAVE_SELECT};
-	static constexpr uint8 chnRegisters[] = {OPL::FNUM_LOW, OPL::KEYON_BLOCK, OPL::FEEDBACK_CONNECTION};
-	std::vector<uint16> result;
-	result.reserve(234);
-	for(uint16 chip = 0; chip < 2; chip++)
+	static constexpr uint8 opRegisters[] = {AM_VIB, KSL_LEVEL, ATTACK_DECAY, SUSTAIN_RELEASE, WAVE_SELECT};
+	static constexpr uint8 chnRegisters[] = {FNUM_LOW, KEYON_BLOCK, FEEDBACK_CONNECTION};
+	std::vector<OPL::Register> result;
+	uint8 minVoice = 0, maxVoice = OPL_CHANNELS;
+	if(oplCh < OPL_CHANNELS)
 	{
+		minVoice = oplCh;
+		maxVoice = oplCh + 1;
+	}
+	result.reserve(13 * (maxVoice - minVoice));
+	for(uint8 voice = minVoice; voice < maxVoice; voice++)
+	{
+		const Register opBaseReg = OperatorToRegister(voice);
 		for(uint8 opReg : opRegisters)
 		{
-			for(uint8 op = 0; op < 22; op++)
+			for(uint8 op = 0; op <= 3; op += 3)
 			{
-				if((op & 7) < 6)
-					result.push_back((chip << 8) | opReg | op);
+				result.push_back(opReg | (opBaseReg + op));
+				MPT_ASSERT(RegisterToVoice(result.back()) == voice);
 			}
 		}
+		const Register chnBaseReg = ChannelToRegister(voice);
 		for(uint8 chnReg : chnRegisters)
 		{
-			for(uint8 chn = 0; chn < 9; chn++)
-			{
-				result.push_back((chip << 8) | chnReg | chn);
-			}
+			result.push_back(chnReg | chnBaseReg);
+			MPT_ASSERT(RegisterToVoice(result.back()) == voice);
 		}
 	}
 	return result;
+}
+
+
+uint8 OPL::RegisterToVoice(OPL::Register reg)
+{
+	const OPL::Register regLo = reg & 0xE0;
+	const uint8 baseCh = (reg > 0xFF) ? 9 : 0;
+	if(reg == TREMOLO_VIBRATO_DEPTH)
+		return 0xFF;
+	if(regLo >= FNUM_LOW && regLo <= FEEDBACK_CONNECTION)
+		return baseCh + static_cast<uint8>(reg & 0x0F);
+	if(regLo >= AM_VIB && regLo <= WAVE_SELECT)
+		return static_cast<uint8>(baseCh + (reg & 0x07) % 3u + ((reg & 0x1F) >> 3) * 3);
+	return 0xFF;
+}
+
+
+OPL::Register OPL::StripVoiceFromRegister(OPL::Register reg)
+{
+	const OPL::Register regLo = reg & 0xE0;
+	if(reg == TREMOLO_VIBRATO_DEPTH)
+		return reg;
+	if(regLo >= FNUM_LOW && regLo <= FEEDBACK_CONNECTION)
+		return (reg & 0xF0);
+	if(regLo >= AM_VIB && regLo <= WAVE_SELECT)
+		return static_cast<OPL::Register>(regLo + ((reg & 0x07) >= 3 ? 3 : 0));
+	return reg;
 }
 
 

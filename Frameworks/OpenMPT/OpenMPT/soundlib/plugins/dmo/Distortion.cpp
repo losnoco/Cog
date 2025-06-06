@@ -13,8 +13,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "Distortion.h"
+#include "../../Sndfile.h"
 #include "DMOUtils.h"
 #include "mpt/base/numbers.hpp"
 #endif // !NO_PLUGINS
@@ -92,7 +92,7 @@ PlugParamValue Distortion::GetParameter(PlugParamIndex index)
 }
 
 
-void Distortion::SetParameter(PlugParamIndex index, PlugParamValue value)
+void Distortion::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kDistNumParameters)
 	{

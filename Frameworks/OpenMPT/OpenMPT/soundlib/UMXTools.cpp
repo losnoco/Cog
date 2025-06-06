@@ -9,8 +9,8 @@
 
 
 #include "stdafx.h"
-#include "Loaders.h"
 #include "UMXTools.h"
+#include "Loaders.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -118,7 +118,7 @@ static bool FindNameTableEntryImpl(TFile &file, const FileHeader &fileHeader, co
 		return false;
 	}
 	bool result = false;
-	const FileReader::off_t oldpos = file.GetPosition();
+	const FileReader::pos_type oldpos = file.GetPosition();
 	if(file.Seek(fileHeader.nameOffset))
 	{
 		for(uint32 i = 0; i < fileHeader.nameCount && file.CanRead(5); i++)

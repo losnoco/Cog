@@ -2,7 +2,7 @@
 CXXFLAGS_WARNINGS += -Wcast-align -Wcast-qual -Wdouble-promotion -Wfloat-conversion -Wmissing-prototypes -Wshift-count-negative -Wshift-count-overflow -Wshift-op-parentheses -Wshift-overflow -Wshift-sign-overflow -Wundef
 CFLAGS_WARNINGS   += -Wcast-align -Wcast-qual -Wdouble-promotion -Wfloat-conversion -Wmissing-prototypes -Wshift-count-negative -Wshift-count-overflow -Wshift-op-parentheses -Wshift-overflow -Wshift-sign-overflow -Wundef
 
-CXXFLAGS_WARNINGS += -Wdeprecated -Wextra-semi -Wglobal-constructors -Wimplicit-fallthrough -Wmissing-declarations -Wnon-virtual-dtor -Wreserved-id-macro
+CXXFLAGS_WARNINGS += -Wdeprecated -Wexit-time-destructors -Wextra-semi -Wglobal-constructors -Wimplicit-fallthrough -Wmissing-declarations -Wnon-virtual-dtor -Wreserved-id-macro
 CFLAGS_WARNINGS   += 
 
 ifneq ($(ANCIENT),1)
@@ -15,10 +15,14 @@ endif
 #CXXFLAGS_WARNINGS += -Wconversion
 #CXXFLAGS_WARNINGS += -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++98-c++11-c++14-compat -Wno-padded -Wno-weak-vtables -Wno-sign-conversion -Wno-shadow-field-in-constructor -Wno-conversion -Wno-switch-enum -Wno-old-style-cast
 
+ifneq ($(NO_NO_UNDEFINED_LINKER_FLAG),1)
+LDFLAGS_WARNINGS  += -Wl,--no-undefined
+endif
+
 ifeq ($(MODERN),1)
 CXXFLAGS_WARNINGS += 
 CFLAGS_WARNINGS   += 
-LDFLAGS_WARNINGS  += -Wl,-no-undefined
+LDFLAGS_WARNINGS  += 
 endif
 
 CFLAGS_SILENT += -Wno-\#warnings

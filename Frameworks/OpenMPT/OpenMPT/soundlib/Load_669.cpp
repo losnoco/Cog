@@ -130,26 +130,27 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 	
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	}
 
-	InitializeGlobals(MOD_TYPE_669);
+	InitializeGlobals(MOD_TYPE_669, 8);
 	m_nMinPeriod = 28 << 2;
 	m_nMaxPeriod = 1712 << 3;
-	m_nDefaultTempo.Set(78);
-	m_nDefaultSpeed = 4;
-	m_nChannels = 8;
+	Order().SetDefaultTempoInt(78);
+	Order().SetDefaultSpeed(4);
 	m_playBehaviour.set(kPeriodsAreHertz);
+	m_SongFlags.set(SONG_FASTPORTAS | SONG_AUTO_TONEPORTA);
 #ifdef MODPLUG_TRACKER
 	// 669 uses frequencies rather than periods, so linear slides mode will sound better in the higher octaves.
 	//m_SongFlags.set(SONG_LINEARSLIDES);
 #endif // MODPLUG_TRACKER
 
-	m_modFormat.formatName = U_("Composer 669");
-	m_modFormat.type = U_("669");
-	m_modFormat.madeWithTracker = !memcmp(fileHeader.magic, "if", 2) ? UL_("Composer 669") : UL_("UNIS 669");
+	const bool isExtended = !memcmp(fileHeader.magic, "JN", 2);
+	m_modFormat.formatName = UL_("Composer 669");
+	m_modFormat.type = UL_("669");
+	m_modFormat.madeWithTracker = isExtended ? UL_("UNIS 669") : UL_("Composer 669");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_nSamples = fileHeader.samples;
@@ -178,7 +179,6 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 	// Set up panning
 	for(CHANNELINDEX chn = 0; chn < 8; chn++)
 	{
-		ChnSettings[chn].Reset();
 		ChnSettings[chn].nPan = (chn & 1) ? 0xD0 : 0x30;
 	}
 
@@ -194,8 +194,8 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 
 		static constexpr ModCommand::COMMAND effTrans[] =
 		{
-			CMD_PORTAMENTOUP,    // Slide up (param * 80) Hz on every tick
-			CMD_PORTAMENTODOWN,  // Slide down (param * 80) Hz on every tick
+			CMD_AUTO_PORTAUP,    // Slide up (param * 80) Hz on every tick
+			CMD_AUTO_PORTADOWN,  // Slide down (param * 80) Hz on every tick
 			CMD_TONEPORTAMENTO,  // Slide to note by (param * 40) Hz on every tick
 			CMD_S3MCMDEX,        // Add (param * 80) Hz to sample frequency
 			CMD_VIBRATO,         // Add (param * 669) Hz on every other tick
@@ -225,43 +225,29 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 				if(noteInstr <= 0xFE)
 				{
 					m->volcmd = VOLCMD_VOLUME;
-					m->vol = ((vol * 64 + 8) / 15);
+					m->vol = static_cast<ModCommand::VOL>((vol * 64 + 8) / 15);
 				}
 
 				if(effParam != 0xFF)
-				{
 					effect[chn] = effParam;
-				}
-				if((effParam & 0x0F) == 0 && effParam != 0x30)
-				{
-					// A param value of 0 resets the effect.
-					effect[chn] = 0xFF;
-				}
 				if(effect[chn] == 0xFF)
-				{
 					continue;
-				}
 
-				m->param = effect[chn] & 0x0F;
+				uint8 command = effect[chn] >> 4;
 
 				// Weird stuff happening in corehop.669 with effects > 8... they seem to do the same thing as if the high bit wasn't set, but the sample also behaves strangely.
-				uint8 command = effect[chn] >> 4;
-				if(command < static_cast<uint8>(std::size(effTrans)))
+				if(command < mpt::array_size<decltype(effTrans)>::size)
 				{
-#if MPT_COMPILER_MSVC
-#pragma warning(push)
-// false-positive
-#pragma warning(disable:6385)  // Reading invalid data from 'effTrans'.
-#endif
-					m->command = effTrans[command];
-#if MPT_COMPILER_MSVC
-#pragma warning(pop)
-#endif
+					m->SetEffectCommand(effTrans[command], effect[chn] & 0x0F);
 				} else
 				{
 					m->command = CMD_NONE;
 					continue;
 				}
+
+				// Currently not implemented as auto-slides
+				if(m->command != CMD_PANNINGSLIDE)
+					effect[chn] = 0xFF;
 
 				// Fix some commands
 				switch(command)
@@ -275,7 +261,6 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 #else
 					m->param |= 0x20;
 #endif
-					effect[chn] = 0xFF;
 					break;
 
 				case 4:
@@ -289,7 +274,6 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 				case 5:
 					// F - set tempo
 					// TODO: param 0 is a "super fast tempo" in Unis 669 mode (?)
-					effect[chn] = 0xFF;
 					break;
 
 				case 6:
@@ -308,6 +292,11 @@ bool CSoundFile::Read669(FileReader &file, ModLoadingFlags loadFlags)
 						m->command = CMD_NONE;
 					}
 					break;
+
+				case 7:
+					// H- slot retrig ("This command rapidly fires 4 slots. The command parameter specifies the speed at which to do it. The speed difference across the values is exponential.")
+					if(!m->IsNote() || !isExtended)
+						m->command = CMD_NONE;
 				}
 			}
 		}

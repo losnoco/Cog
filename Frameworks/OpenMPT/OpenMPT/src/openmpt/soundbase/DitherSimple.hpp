@@ -10,6 +10,7 @@
 #include "mpt/random/engine.hpp"
 #include "mpt/random/default_engines.hpp"
 #include "mpt/random/random.hpp"
+#include "mpt/random/seed.hpp"
 #include "openmpt/base/Types.hpp"
 #include "openmpt/soundbase/MixSample.hpp"
 #include "openmpt/soundbase/MixSampleConvert.hpp"

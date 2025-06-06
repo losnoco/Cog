@@ -50,7 +50,7 @@ public:
 
 	PlugParamIndex GetNumParameters() const override { return kGargleNumParameters; }
 	PlugParamValue GetParameter(PlugParamIndex index) override;
-	void SetParameter(PlugParamIndex index, PlugParamValue value) override;
+	void SetParameter(PlugParamIndex index, PlugParamValue value, PlayState * = nullptr, CHANNELINDEX = CHANNELINDEX_INVALID) override;
 
 	void Resume() override;
 	void Suspend() override { m_isResumed = false; }

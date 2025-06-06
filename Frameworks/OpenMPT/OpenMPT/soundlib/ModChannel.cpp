@@ -1,7 +1,8 @@
 /*
  * ModChannel.cpp
  * --------------
- * Purpose: Module Channel header class and helpers
+ * Purpose: The ModChannel struct represents the state of one mixer channel.
+ *          ModChannelSettings represents the default settings of one pattern channel.
  * Notes  : (currently none)
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
@@ -9,14 +10,16 @@
 
 
 #include "stdafx.h"
-#include "Sndfile.h"
 #include "ModChannel.h"
+#include "Sndfile.h"
 #include "tuning.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
 void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELINDEX sourceChannel, ChannelFlags muteFlag)
 {
+	// For "the ultimate beeper.mod"
+	const ModSample *defaultSample = (sndFile.GetType() == MOD_TYPE_MOD && sndFile.GetSample(0).HasSampleData()) ? &sndFile.GetSample(0) : nullptr;
 	if(resetMask & resetSetPosBasic)
 	{
 		// IT compatibility: Initial "last note memory" of channel is C-0 (so a lonely instrument number without note will play that note).
@@ -24,7 +27,8 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 		nNote = nNewNote = (sndFile.m_playBehaviour[kITInitialNoteMemory] ? NOTE_MIN : NOTE_NONE);
 		nArpeggioLastNote = lastMidiNoteWithoutArp = NOTE_NONE;
 		nNewIns = nOldIns = 0;
-		pModSample = nullptr;
+		swapSampleIndex = 0;
+		pModSample = defaultSample;
 		pModInstrument = nullptr;
 		nPortamentoDest = 0;
 		nCommand = CMD_NONE;
@@ -33,6 +37,9 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 		nFadeOutVol = 0;
 		dwFlags.set(CHN_KEYOFF | CHN_NOTEFADE);
 		dwOldFlags.reset();
+		autoSlide.Reset();
+		nInsVol = 64;
+		nnaGeneration = 0;
 		//IT compatibility 15. Retrigger
 		if(sndFile.m_playBehaviour[kITRetrigger])
 		{
@@ -50,6 +57,7 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 		isPaused = false;
 		portaTargetReached = false;
 		rowCommand.Clear();
+		mpt::reconstruct(synthState);
 	}
 
 	if(resetMask & resetSetPosAdvanced)
@@ -61,7 +69,7 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 		nLoopStart = 0;
 		nLoopEnd = 0;
 		nROfs = nLOfs = 0;
-		pModSample = nullptr;
+		pModSample = defaultSample;
 		pModInstrument = nullptr;
 		nCutOff = 0x7F;
 		nResonance = 0;
@@ -73,6 +81,9 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 		nVibratoPos = nTremoloPos = nPanbrelloPos = 0;
 		nOldHiOffset = 0;
 		nLeftVU = nRightVU = 0;
+		nOldExtraFinePortaUpDown = nOldFinePortaUpDown = nOldPortaDown = nOldPortaUp = 0;
+		portamentoSlide = 0;
+		nMasterChn = 0;
 
 		// Custom tuning related
 		m_ReCalculateFreqOnFirstTick = false;
@@ -83,7 +94,7 @@ void ModChannel::Reset(ResetFlags resetMask, const CSoundFile &sndFile, CHANNELI
 
 	if(resetMask & resetChannelSettings)
 	{
-		if(sourceChannel < MAX_BASECHANNELS)
+		if(sourceChannel < sndFile.ChnSettings.size())
 		{
 			dwFlags = sndFile.ChnSettings[sourceChannel].dwFlags;
 			nPan = sndFile.ChnSettings[sourceChannel].nPan;
@@ -121,13 +132,19 @@ void ModChannel::UpdateInstrumentVolume(const ModSample *smp, const ModInstrumen
 {
 	nInsVol = 64;
 	if(smp != nullptr)
-		nInsVol = smp->nGlobalVol;
+		nInsVol = static_cast<uint8>(smp->nGlobalVol);
 	if(ins != nullptr)
-		nInsVol = (nInsVol * ins->nGlobalVol) / 64;
+		nInsVol = static_cast<uint8>((nInsVol * ins->nGlobalVol) / 64);
 }
 
 
-ModCommand::NOTE ModChannel::GetPluginNote(bool ignoreArpeggio) const
+uint32 ModChannel::GetVSTVolume() const noexcept
+{
+	return pModInstrument ? pModInstrument->nGlobalVol * 4 : nVolume;
+}
+
+
+ModCommand::NOTE ModChannel::GetPluginNote(bool ignoreArpeggio) const noexcept
 {
 	if(nArpeggioLastNote != NOTE_NONE && !ignoreArpeggio)
 	{
@@ -140,6 +157,24 @@ ModCommand::NOTE ModChannel::GetPluginNote(bool ignoreArpeggio) const
 		plugNote = pModInstrument->NoteMap[plugNote - NOTE_MIN];
 	}
 	return plugNote;
+}
+
+
+bool ModChannel::HasMIDIOutput() const noexcept
+{
+	return pModInstrument != nullptr && pModInstrument->HasValidMIDIChannel();
+}
+
+
+bool ModChannel::HasCustomTuning() const noexcept
+{
+	return pModInstrument != nullptr && pModInstrument->pTuning != nullptr;
+}
+
+
+bool ModChannel::InSustainLoop() const noexcept
+{
+	return (dwFlags & (CHN_LOOP | CHN_KEYOFF)) == CHN_LOOP && pModSample->uFlags[CHN_SUSTAINLOOP];
 }
 
 
@@ -217,6 +252,22 @@ void ModChannel::InstrumentControl(uint8 param, const CSoundFile &sndFile)
 				PitchEnv.flags.set(ENV_FILTER, param != 0xD);
 			}
 			break;
+	}
+}
+
+
+// Volume command :xx
+void ModChannel::PlayControl(uint8 param)
+{
+	switch(param)
+	{
+	case 0: isPaused = true; break;
+	case 1: isPaused = false; break;
+	case 2: dwFlags.set(CHN_PINGPONGFLAG, false); break;
+	case 3: dwFlags.set(CHN_PINGPONGFLAG, true); break;
+	case 4: dwFlags.flip(CHN_PINGPONGFLAG); break;
+	case 5: oldOffset = position.GetUInt(); break;
+	case 6: position.Set(oldOffset); break;
 	}
 }
 

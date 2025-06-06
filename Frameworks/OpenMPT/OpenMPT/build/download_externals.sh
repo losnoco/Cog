@@ -12,7 +12,9 @@ function download () {
  MPT_GET_FILE_NAME="$1"
  MPT_GET_FILE_SIZE="$2"
  MPT_GET_FILE_CHECKSUM="$3"
- MPT_GET_URLS="$4"
+ shift
+ shift
+ shift
  echo "Checking '$MPT_GET_FILE_NAME' ..."
  if [ -f "$MPT_GET_FILE_NAME" ]; then
   FILE_SIZE=$(find "$MPT_GET_FILE_NAME" -printf '%s')
@@ -28,10 +30,15 @@ function download () {
    rm -f "$MPT_GET_FILE_NAME"
   fi
  fi
- for URL in $MPT_GET_URLS; do
+ while (( "$#" )); do
+  URL="$(echo ""$1"" | sed 's/ /%20/g')"
   if [ ! -f "$MPT_GET_FILE_NAME" ]; then
    echo "Downloading '$MPT_GET_FILE_NAME' from '$URL' ..."
-   curl -o "$MPT_GET_FILE_NAME" "$URL"
+   if command -v curl &> /dev/null ; then
+    curl --location -o "$MPT_GET_FILE_NAME" "$URL" || true
+   elif command -v wget &> /dev/null ; then
+    wget -O "$MPT_GET_FILE_NAME" "$URL" || true
+   fi
    echo "Verifying '$URL' ..."
    if [ -f "$MPT_GET_FILE_NAME" ]; then
     FILE_SIZE=$(find "$MPT_GET_FILE_NAME" -printf '%s')
@@ -48,6 +55,7 @@ function download () {
     fi
    fi
   fi
+  shift
  done
  if [ ! -f "$MPT_GET_FILE_NAME" ]; then
   echo "Failed to download '$MPT_GET_FILE_NAME'."
@@ -95,11 +103,12 @@ if [ ! -d "build/tools" ]; then
  mkdir build/tools
 fi
 
-download "build/externals/allegro-4.2.3.1-hg.8+r8500.zip" 3872466 46cd8d4d7138b795dbc66994e953d0abc578c6d3c00615e3580237458529d33d7ad9d269a9778918d4b3719d75750d5cca74ff6bf38ad357a766472799ee9e7b "https://lib.openmpt.org/files/libopenmpt/contrib/allegro/allegro-4.2.3.1-hg.8+r8500.zip"
-download "build/externals/csdpmi7b.zip"                     71339 58c24691d27cead1cec92d334af551f37a3ba31de25a687d99399c28d822ec9f6ffccc9332bfce35e65dae4dd1210b54e54b223a4de17f5adcb11e2da004b834 "https://lib.openmpt.org/files/libopenmpt/contrib/djgpp/cwsdpmi/csdpmi7b.zip https://djgpp.mirror.garr.it/current/v2misc/csdpmi7b.zip"
-download "build/externals/csdpmi7s.zip"                     89872 ea5652d31850d8eb0d15a919de0b51849f58efea0d16ad2aa4687fac4abd223d0ca34a2d1b616b02fafe84651dbef3e506df9262cfb399eb6d9909bffc89bfd3 "https://lib.openmpt.org/files/libopenmpt/contrib/djgpp/cwsdpmi/csdpmi7s.zip https://djgpp.mirror.garr.it/current/v2misc/csdpmi7s.zip"
-download "build/externals/WA5.55_SDK.exe"                  336166 394375db8a16bf155b5de9376f6290488ab339e503dbdfdc4e2f5bede967799e625c559cca363bc988324f1a8e86e5fd28a9f697422abd7bb3dcde4a766607b5 "http://download.nullsoft.com/winamp/plugin-dev/WA5.55_SDK.exe https://web.archive.org/web/20131217072017id_/http://download.nullsoft.com/winamp/plugin-dev/WA5.55_SDK.exe"
-download "build/externals/xmp-sdk.zip"                     322903 67b96c6e6aa794e9de4f446d23f969e3591457196fd100c5475f5df52308de861a0c411db54fcb2bf46a12e9136ddda9d2974a5167432a979a701ef2c4679ef9 "https://www.un4seen.com/files/xmp-sdk.zip"
+# download
+cat build/download_externals.txt | (
+ while IFS=$'\n' read -r URL; do
+  eval download $URL
+ done
+)
 
 unpack "include/allegro42" "build/externals/allegro-4.2.3.1-hg.8+r8500.zip" "."
 unpack "include/cwsdpmi"   "build/externals/csdpmi7b.zip"                   "."
@@ -108,3 +117,6 @@ unpack "include/xmplay"    "build/externals/xmp-sdk.zip"                    "."
 
 ln -s OUT.H include/winamp/Winamp/out.h
 
+mkdir -p build/tools/svn_apply_autoprops
+cp "build/externals/svn_apply_autoprops.py" "build/tools/svn_apply_autoprops/"
+chmod u+x "build/tools/svn_apply_autoprops/svn_apply_autoprops.py"

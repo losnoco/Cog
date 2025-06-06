@@ -65,6 +65,13 @@ uint8 System(SystemEvent eventType)
 }
 
 
+// Build a MIDI Song Position Event
+uint32 SongPosition(uint16 quarterNotes)
+{
+	return Event(evSystem, sysPositionPointer, static_cast<uint8>(quarterNotes & 0x7F), static_cast<uint8>((quarterNotes >> 7) & 0x7F));
+}
+
+
 // Get MIDI channel from a MIDI event
 uint8 GetChannelFromEvent(uint32 midiMsg)
 {

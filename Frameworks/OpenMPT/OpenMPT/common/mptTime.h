@@ -15,10 +15,13 @@
 #if MPT_CXX_AT_LEAST(20) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO_DATE)
 #include <chrono>
 #include <exception>
+#elif MPT_CXX_AT_LEAST(17) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO) && defined(MODPLUG_TRACKER)
+#include <chrono>
 #endif
-#include <string>
 
+#if MPT_CXX_BEFORE(20) || defined(MPT_LIBCXX_QUIRK_NO_CHRONO) || defined(MPT_LIBCXX_QUIRK_NO_CHRONO_DATE)
 #include <ctime>
+#endif
 
 #if MPT_WINNT_AT_LEAST(MPT_WIN_8)
 #define MPT_FALLBACK_TIMEZONE_WINDOWS_HISTORIC
@@ -37,10 +40,34 @@ OPENMPT_NAMESPACE_BEGIN
 
 
 
+#if defined(MODPLUG_TRACKER) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO)
+
+namespace mpt {
+namespace chrono {
+#if MPT_CXX_AT_LEAST(20)
+using days = std::chrono::days;
+using weeks = std::chrono::weeks;
+using years = std::chrono::years;
+using months = std::chrono::months;
+#else
+using days = std::chrono::duration<int, std::ratio_multiply<std::ratio<24>, std::chrono::hours::period>>;
+using weeks = std::chrono::duration<int, std::ratio_multiply<std::ratio<7>, mpt::chrono::days::period>>;
+using years = std::chrono::duration<int, std::ratio_multiply<std::ratio<146097, 400>, mpt::chrono::days::period>>;
+using months = std::chrono::duration<int, std::ratio_divide<mpt::chrono::years::period, std::ratio<12>>>;
+#endif
+}
+}
+
+#endif // !MPT_LIBCXX_QUIRK_NO_CHRONO
+
+
+
 namespace mpt
 {
 namespace Date
 {
+
+
 
 #if defined(MODPLUG_TRACKER)
 
@@ -59,6 +86,8 @@ mpt::ustring ToUString(uint64 time100ns); // i.e. 2015-01-15 18:32:01.718
 #endif // MPT_OS_WINDOWS
 
 #endif // MODPLUG_TRACKER
+
+
 
 enum class LogicalTimezone
 {
@@ -146,10 +175,14 @@ struct Unix
 	}
 };
 
+#if MPT_CXX_BEFORE(20) || defined(MPT_LIBCXX_QUIRK_NO_CHRONO) || defined(MPT_LIBCXX_QUIRK_NO_CHRONO_DATE)
+
 inline Unix UnixNow()
 {
 	return Unix{static_cast<int64>(std::time(nullptr))};
 }
+
+#endif
 
 inline int64 UnixAsSeconds(Unix tp)
 {
@@ -238,6 +271,7 @@ inline mpt::Date::UTC UnixAsUTC(Unix tp)
 
 inline mpt::Date::Unix UnixFromLocal(Local local)
 {
+#if !defined(MPT_LIBCXX_QUIRK_CHRONO_DATE_NO_ZONED_TIME)
 	try
 	{
 		std::chrono::time_point<std::chrono::local_t, std::chrono::seconds> local_tp =
@@ -255,6 +289,7 @@ inline mpt::Date::Unix UnixFromLocal(Local local)
 		return std::chrono::zoned_time{std::chrono::current_zone(), local_tp}.get_sys_time();
 #endif
 	} catch(const std::exception &)
+#endif
 	{
 		return mpt::Date::UnixFromSeconds(mpt::Date::nochrono::UnixAsSeconds(mpt::Date::nochrono::UnixFromLocal(local)));
 	}
@@ -262,6 +297,7 @@ inline mpt::Date::Unix UnixFromLocal(Local local)
 
 inline mpt::Date::Local UnixAsLocal(Unix tp)
 {
+#if !defined(MPT_LIBCXX_QUIRK_CHRONO_DATE_NO_ZONED_TIME)
 	try
 	{
 		std::chrono::zoned_time local_tp{ std::chrono::current_zone(), tp };
@@ -277,6 +313,7 @@ inline mpt::Date::Local UnixAsLocal(Unix tp)
 		result.seconds = static_cast<int64>(hms.seconds().count());
 		return result;
 	} catch(const std::exception &)
+#endif
 	{
 		return mpt::Date::nochrono::UnixAsLocal(mpt::Date::nochrono::UnixFromSeconds(mpt::Date::UnixAsSeconds(tp)));
 	}
@@ -314,54 +351,6 @@ mpt::ustring ToShortenedISO8601(Local date); // i.e. 2015-01-15T18:32:01
 
 } // namespace Date
 } // namespace mpt
-
-
-
-#ifdef MODPLUG_TRACKER
-
-namespace Util
-{
-
-#if MPT_OS_WINDOWS
-
-// RAII wrapper around timeBeginPeriod/timeEndPeriod/timeGetTime (on Windows).
-// This clock is monotonic, even across changing its resolution.
-// This is needed to synchronize time in Steinberg APIs (ASIO and VST).
-class MultimediaClock
-{
-private:
-	uint32 m_CurrentPeriod;
-private:
-	void Init();
-	void SetPeriod(uint32 ms);
-	void Cleanup();
-public:
-	MultimediaClock();
-	MultimediaClock(uint32 ms);
-	~MultimediaClock();
-public:
-	// Sets the desired resolution in milliseconds, returns the obtained resolution in milliseconds.
-	// A parameter of 0 causes the resolution to be reset to system defaults.
-	// A return value of 0 means the resolution is unknown, but timestamps will still be valid.
-	uint32 SetResolution(uint32 ms);
-	// Returns obtained resolution in milliseconds.
-	// A return value of 0 means the resolution is unknown, but timestamps will still be valid.
-	uint32 GetResolution() const; 
-	// Returns current instantaneous timestamp in milliseconds.
-	// The epoch (offset) of the timestamps is undefined but constant until the next system reboot.
-	// The resolution is the value returned from GetResolution().
-	uint32 Now() const;
-	// Returns current instantaneous timestamp in nanoseconds.
-	// The epoch (offset) of the timestamps is undefined but constant until the next system reboot.
-	// The resolution is the value returned from GetResolution() in milliseconds.
-	uint64 NowNanoseconds() const;
-};
-
-#endif // MPT_OS_WINDOWS
-
-} // namespace Util
-
-#endif // MODPLUG_TRACKER
 
 
 

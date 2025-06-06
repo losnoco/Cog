@@ -45,7 +45,7 @@ public:
 	int32 GetUID() const override { return 0xEFCA3D92; }
 
 	PlugParamIndex GetNumParameters() const override { return kFlangerNumParameters; }
-	void SetParameter(PlugParamIndex index, PlugParamValue value) override;
+	void SetParameter(PlugParamIndex index, PlugParamValue value, PlayState * = nullptr, CHANNELINDEX = CHANNELINDEX_INVALID) override;
 
 #ifdef MODPLUG_TRACKER
 	CString GetDefaultEffectName() override { return _T("Flanger"); }

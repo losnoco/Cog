@@ -19,7 +19,7 @@
 #if MPT_CXX_AT_LEAST(20)
 #include <bit>
 #endif // C++20
-#if MPT_CXX_BEFORE(23) || MPT_COMPILER_MSVC || MPT_LIBCXX_GNU_BEFORE(10) || MPT_LIBCXX_LLVM_BEFORE(12000)
+#if MPT_CXX_BEFORE(23) || MPT_COMPILER_MSVC || MPT_LIBCXX_GNU_BEFORE(12) || MPT_LIBCXX_LLVM_BEFORE(14000)
 #include <limits>
 #endif // !C++23
 #include <type_traits>
@@ -356,7 +356,7 @@ constexpr T rotr(T x, int s) noexcept {
 
 
 
-#if MPT_CXX_AT_LEAST(23) && !MPT_COMPILER_MSVC
+#if MPT_CXX_AT_LEAST(23) && !MPT_LIBCXX_GNU_BEFORE(12) && !MPT_LIBCXX_LLVM_BEFORE(14000) && !MPT_MSVC_BEFORE(2022, 1)
 
 using std::byteswap;
 

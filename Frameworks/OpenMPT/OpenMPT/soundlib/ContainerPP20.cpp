@@ -181,7 +181,7 @@ bool UnpackPP20(std::vector<ContainerItem> &containerItems, FileReader &file, Co
 	containerItems.back().data_cache = std::make_unique<std::vector<char> >();
 	std::vector<char> & unpackedData = *(containerItems.back().data_cache);
 
-	FileReader::off_t length = file.GetLength();
+	FileReader::pos_type length = file.GetLength();
 	if(!mpt::in_range<uint32>(length)) return false;
 	// Length word must be aligned
 	if((length % 2u) != 0)

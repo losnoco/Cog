@@ -12,7 +12,11 @@ ifeq ($(origin AR),default)
 AR  = ar
 endif
 
+#CXXFLAGS_STDCXX = -std=c++23
+#CXXFLAGS_STDCXX = -std=c++20
 CXXFLAGS_STDCXX = -std=c++17
+#CFLAGS_STDC = -std=c23
+#CFLAGS_STDC = -std=c18
 CFLAGS_STDC = -std=c17
 CXXFLAGS += $(CXXFLAGS_STDCXX)
 CFLAGS += $(CFLAGS_STDC)

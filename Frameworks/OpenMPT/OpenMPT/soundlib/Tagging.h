@@ -12,30 +12,12 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
-#include <string>
+#include "openmpt/soundfile_data/tags.hpp"
+
 
 OPENMPT_NAMESPACE_BEGIN
 
 
-struct FileTags
-{
-
-	mpt::ustring encoder;
-
-	mpt::ustring title;
-	mpt::ustring comments;
-
-	mpt::ustring bpm;
-
-	mpt::ustring artist;
-	mpt::ustring album;
-	mpt::ustring trackno;
-	mpt::ustring year;
-	mpt::ustring url;
-
-	mpt::ustring genre;
-
-};
 
 
 mpt::ustring GetSampleNameFromTags(const FileTags &tags);

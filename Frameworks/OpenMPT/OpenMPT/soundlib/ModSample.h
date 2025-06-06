@@ -11,6 +11,7 @@
 #pragma once
 
 #include "openmpt/all/BuildSettings.hpp"
+#include "Snd_defs.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -129,6 +130,9 @@ struct ModSample
 	// Copies sample data from another sample slot and ensures that the 16-bit/stereo flags are set accordingly.
 	bool CopyWaveform(const ModSample &smpFrom);
 
+	// Replace waveform with given data, keeping the currently chosen format of the sample slot.
+	void ReplaceWaveform(void *newWaveform, const SmpLength newLength, CSoundFile &sndFile);
+
 	// Allocate sample based on a ModSample's properties.
 	// Returns number of bytes allocated, 0 on failure.
 	size_t AllocateSample();
@@ -150,6 +154,9 @@ struct ModSample
 	std::pair<SmpLength, SmpLength> GetSustainLoop() const noexcept { return std::make_pair(nSustainStart, nSustainEnd); }
 	// Update loop wrap-around buffer
 	void PrecomputeLoops(CSoundFile &sndFile, bool updateChannels = true);
+
+	// Propagate loop point changes to player
+	bool UpdateLoopPointsInActiveChannels(CSoundFile &sndFile);
 
 	constexpr bool HasLoop() const noexcept { return uFlags[CHN_LOOP] && nLoopEnd > nLoopStart; }
 	constexpr bool HasSustainLoop() const noexcept { return uFlags[CHN_SUSTAINLOOP] && nSustainEnd > nSustainStart; }

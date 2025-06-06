@@ -35,8 +35,6 @@ protected:
 	std::vector<int8> bwt;           // Bit width table for each sampling point
 	std::vector<uint8> packedData;   // Compressed data for current sample block
 	std::ostream *file = nullptr;    // File to which compressed data will be written (can be nullptr if you only want to find out the sample size)
-	std::vector<int8> sampleData8;   // Pre-processed sample data for currently compressed sample block
-	std::vector<int16> sampleData16; // Pre-processed sample data for currently compressed sample block
 	const ModSample &mptSample;      // Sample that is being processed
 	size_t packedLength = 0;         // Size of currently compressed sample block
 	size_t packedTotalLength = 0;    // Size of all compressed data so far

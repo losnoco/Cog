@@ -47,6 +47,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_USTRING("a")), "a");
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<mpt::ustring>(mpt::logical_encoding::locale, "a"), MPT_USTRING("a"));
+	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, MPT_USTRING("a")), "a");
+	MPT_TEST_EXPECT_EQUAL(mpt::transcode<mpt::ustring>(mpt::logical_encoding::active_locale, "a"), MPT_USTRING("a"));
 
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::common_encoding::utf8, MPT_UTF8_STRING("a")), "a");
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::common_encoding::iso8859_1, MPT_UTF8_STRING("a")), "a");
@@ -57,6 +59,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_UTF8_STRING("a")), "a");
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<mpt::ustring>(mpt::logical_encoding::locale, "a"), MPT_UTF8_STRING("a"));
+	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, MPT_UTF8_STRING("a")), "a");
+	MPT_TEST_EXPECT_EQUAL(mpt::transcode<mpt::ustring>(mpt::logical_encoding::active_locale, "a"), MPT_UTF8_STRING("a"));
 
 #if MPT_OS_EMSCRIPTEN
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_UTF8_STRING("\xe2\x8c\x82")), "\xe2\x8c\x82");
@@ -76,6 +80,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_UTF8_STRING("abc\xC3\xA4xyz")), "xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_UTF8_STRING("abc\xC3\xA4xyz")), "abc"));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, MPT_UTF8_STRING("abc\xC3\xA4xyz")), "xyz"));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, MPT_UTF8_STRING("abc\xC3\xA4xyz")), "abc"));
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::common_encoding::ascii, MPT_UTF8_STRING("abc\xE5\xAE\xB6xyz")), "xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::common_encoding::iso8859_1, MPT_UTF8_STRING("abc\xE5\xAE\xB6xyz")), "xyz"));
@@ -88,6 +94,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_UTF8_STRING("abc\xE5\xAE\xB6xyz")), "xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, MPT_UTF8_STRING("abc\xE5\xAE\xB6xyz")), "abc"));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, MPT_UTF8_STRING("abc\xE5\xAE\xB6xyz")), "xyz"));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, MPT_UTF8_STRING("abc\xE5\xAE\xB6xyz")), "abc"));
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::common_encoding::ascii, "abc\xC3\xA4xyz"), MPT_USTRING("xyz")));
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::common_encoding::iso8859_1, "abc\xC3\xA4xyz"), MPT_USTRING("xyz")));
@@ -100,6 +108,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::locale, "abc\xC3\xA4xyz"), MPT_USTRING("xyz")));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::locale, "abc\xC3\xA4xyz"), MPT_USTRING("abc")));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::active_locale, "abc\xC3\xA4xyz"), MPT_USTRING("xyz")));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::active_locale, "abc\xC3\xA4xyz"), MPT_USTRING("abc")));
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::common_encoding::ascii, "abc\xE5\xAE\xB6xyz"), MPT_USTRING("xyz")));
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::common_encoding::iso8859_1, "abc\xE5\xAE\xB6xyz"), MPT_USTRING("xyz")));
@@ -112,6 +122,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::locale, "abc\xE5\xAE\xB6xyz"), MPT_USTRING("xyz")));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::locale, "abc\xE5\xAE\xB6xyz"), MPT_USTRING("abc")));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::active_locale, "abc\xE5\xAE\xB6xyz"), MPT_USTRING("xyz")));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<mpt::ustring>(mpt::logical_encoding::active_locale, "abc\xE5\xAE\xB6xyz"), MPT_USTRING("abc")));
 
 	// Check that characters are correctly converted
 	// We test german umlaut-a (U+00E4) and CJK U+5BB6
@@ -156,6 +168,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::locale, L"a"), "a");
 	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::wstring>(mpt::logical_encoding::locale, "a"), L"a");
+	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, L"a"), "a");
+	MPT_TEST_EXPECT_EQUAL(mpt::transcode<std::wstring>(mpt::logical_encoding::active_locale, "a"), L"a");
 
 	// Check that some character replacement is done (and not just empty strings or truncated strings are returned)
 	// We test german umlaut-a (U+00E4) and CJK U+5BB6
@@ -176,6 +190,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, L"abc\u00E4xyz"), "xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, L"abc\u00E4xyz"), "abc"));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, L"abc\u00E4xyz"), "xyz"));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, L"abc\u00E4xyz"), "abc"));
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::common_encoding::ascii, L"abc\u5BB6xyz"), "xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::common_encoding::iso8859_1, L"abc\u5BB6xyz"), "xyz"));
@@ -188,6 +204,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, L"abc\u5BB6xyz"), "xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::locale, L"abc\u5BB6xyz"), "abc"));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, L"abc\u5BB6xyz"), "xyz"));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::string>(mpt::logical_encoding::active_locale, L"abc\u5BB6xyz"), "abc"));
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::common_encoding::ascii, "abc\xC3\xA4xyz"), L"xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::common_encoding::iso8859_1, "abc\xC3\xA4xyz"), L"xyz"));
@@ -200,6 +218,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::logical_encoding::locale, "abc\xC3\xA4xyz"), L"xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::wstring>(mpt::logical_encoding::locale, "abc\xC3\xA4xyz"), L"abc"));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::logical_encoding::active_locale, "abc\xC3\xA4xyz"), L"xyz"));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::wstring>(mpt::logical_encoding::active_locale, "abc\xC3\xA4xyz"), L"abc"));
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::common_encoding::ascii, "abc\xE5\xAE\xB6xyz"), L"xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::common_encoding::iso8859_1, "abc\xE5\xAE\xB6xyz"), L"xyz"));
@@ -212,6 +232,8 @@ MPT_TEST_GROUP_INLINE("mpt/string_transcode")
 
 	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::logical_encoding::locale, "abc\xE5\xAE\xB6xyz"), L"xyz"));
 	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::wstring>(mpt::logical_encoding::locale, "abc\xE5\xAE\xB6xyz"), L"abc"));
+	MPT_TEST_EXPECT_EXPR(mpt::ends_with(mpt::transcode<std::wstring>(mpt::logical_encoding::active_locale, "abc\xE5\xAE\xB6xyz"), L"xyz"));
+	MPT_TEST_EXPECT_EXPR(mpt::starts_with(mpt::transcode<std::wstring>(mpt::logical_encoding::active_locale, "abc\xE5\xAE\xB6xyz"), L"abc"));
 
 	// Check that characters are correctly converted
 	// We test german umlaut-a (U+00E4) and CJK U+5BB6

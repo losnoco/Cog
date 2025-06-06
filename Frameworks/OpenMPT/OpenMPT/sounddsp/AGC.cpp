@@ -85,7 +85,7 @@ static UINT ProcessAGC(int *pBuffer, int *pRearBuffer, std::size_t nSamples, std
 
 CAGC::CAGC()
 {
-	Initialize(true, 44100);
+	Initialize(true, 48000);
 }
 
 

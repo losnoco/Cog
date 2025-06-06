@@ -19,6 +19,10 @@
 #include <vector>
 #endif
 
+#if defined(MPT_WITH_MFC)
+#include <tchar.h>
+#endif
+
 #if !defined(MPT_WITH_MFC)
 #include <windows.h>
 #endif
@@ -123,20 +127,20 @@ protected:
 
 		selected = false;
 		if ( !s->no_default_format ) {
-			m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"Default" ), 0 );
+			m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( s->player_setting_name ? s->player_setting_name.value().c_str() : TEXT("Default") ), 0 );
 		}
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"6000" ), 6000 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"8000" ), 8000 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"11025" ), 11025 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"16000" ), 16000 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"22050" ), 22050 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"32000" ), 32000 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"44100" ), 44100 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"48000" ), 48000 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"88200" ), 88200 );
-		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( L"96000" ), 96000 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("6000") ), 6000 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("8000") ), 8000 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("11025") ), 11025 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("16000") ), 16000 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("22050") ), 22050 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("32000") ), 32000 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("44100") ), 44100 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("48000") ), 48000 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("88200") ), 88200 );
+		m_ComboBoxSamplerate.SetItemData( m_ComboBoxSamplerate.AddString( TEXT("96000") ), 96000 );
 		if ( !s->no_default_format && s->samplerate == 0 ) {
-			m_ComboBoxSamplerate.SelectString( 0, L"Default" );
+			m_ComboBoxSamplerate.SelectString( 0, TEXT("Default") );
 		}
 		for ( int index = 0; index < m_ComboBoxSamplerate.GetCount(); ++index ) {
 			if ( static_cast<int>( m_ComboBoxSamplerate.GetItemData( index ) ) == s->samplerate ) {
@@ -145,18 +149,18 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxSamplerate.SelectString( 0, L"48000" );
+			m_ComboBoxSamplerate.SelectString( 0, TEXT("48000") );
 		}
 
 		selected = false;
 		if ( !s->no_default_format ) {
-			m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Default" ), 0 );
+			m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( s->player_setting_name ? s->player_setting_name.value().c_str() : TEXT("Default") ), 0 );
 		}
-		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Mono" ), 1 );
-		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Stereo" ), 2 );
-		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( L"Quad" ), 4 );
+		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( TEXT("Mono") ), 1 );
+		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( TEXT("Stereo") ), 2 );
+		m_ComboBoxChannels.SetItemData( m_ComboBoxChannels.AddString( TEXT("Quad") ), 4 );
 		if ( !s->no_default_format && s->channels == 0 ) {
-			m_ComboBoxChannels.SelectString( 0, L"Default" );
+			m_ComboBoxChannels.SelectString( 0, TEXT("Default") );
 		}
 		for ( int index = 0; index < m_ComboBoxChannels.GetCount(); ++index ) {
 			if ( static_cast<int>( m_ComboBoxChannels.GetItemData( index ) ) == s->channels ) {
@@ -165,7 +169,7 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxChannels.SelectString( 0, L"Stereo" );
+			m_ComboBoxChannels.SelectString( 0, TEXT("Stereo") );
 		}
 
 		m_SliderCtrlGain.SetRange( -1200, 1200 );
@@ -175,10 +179,10 @@ protected:
 		m_SliderCtrlGain.SetPos( s->mastergain_millibel );
 
 		selected = false;
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"Off / 1 Tap (Nearest)" ), 1 );
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"2 Tap (Linear)" ), 2 );
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"4 Tap (Cubic)" ), 4 );
-		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( L"8 Tap (Polyphase FIR)" ), 8 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( TEXT("Off / 1 Tap (Nearest)") ), 1 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( TEXT("2 Tap (Linear)") ), 2 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( TEXT("4 Tap (Cubic)") ), 4 );
+		m_ComboBoxInterpolation.SetItemData( m_ComboBoxInterpolation.AddString( TEXT("8 Tap (Polyphase FIR)") ), 8 );
 		for ( int index = 0; index < m_ComboBoxInterpolation.GetCount(); ++index ) {
 			if ( static_cast<int>( m_ComboBoxInterpolation.GetItemData( index ) ) == s->interpolationfilterlength ) {
 				m_ComboBoxInterpolation.SetCurSel( index );
@@ -186,16 +190,16 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxInterpolation.SelectString( 0, L"8 Tap (Polyphase FIR)" );
+			m_ComboBoxInterpolation.SelectString( 0, TEXT("8 Tap (Polyphase FIR)") );
 		}
 		
 		m_CheckBoxAmigaResampler.SetCheck( s->use_amiga_resampler ? BST_CHECKED : BST_UNCHECKED );
 		selected = false;
 		m_ComboBoxAmigaFilter.EnableWindow( s->use_amiga_resampler ? TRUE : FALSE );
-		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( L"Default" ), 0 );
-		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( L"A500 Filter" ), 0xA500 );
-		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( L"A1200 Filter" ), 0xA1200 );
-		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( L"Unfiltered" ), 1 );
+		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( TEXT("Default") ), 0 );
+		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( TEXT("A500 Filter") ), 0xA500 );
+		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( TEXT("A1200 Filter") ), 0xA1200 );
+		m_ComboBoxAmigaFilter.SetItemData( m_ComboBoxAmigaFilter.AddString( TEXT("Unfiltered") ), 1 );
 		for ( int index = 0; index < m_ComboBoxAmigaFilter.GetCount(); ++index ) {
 			if ( static_cast<int>( m_ComboBoxAmigaFilter.GetItemData( index ) ) == s->amiga_filter_type ) {
 				m_ComboBoxAmigaFilter.SetCurSel( index );
@@ -203,13 +207,13 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxAmigaFilter.SelectString( 0, L"Default" );
+			m_ComboBoxAmigaFilter.SelectString( 0, TEXT("Default") );
 		}
 
 		selected = false;
-		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"Forever" ), static_cast<unsigned int>( -1 ) );
-		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"Never" ), 0 );
-		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( L"Once" ), 1 );
+		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( TEXT("Forever") ), static_cast<unsigned int>( -1 ) );
+		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( TEXT("Never") ), 0 );
+		m_ComboBoxRepeat.SetItemData( m_ComboBoxRepeat.AddString( TEXT("Once") ), 1 );
 		for ( int index = 0; index < m_ComboBoxRepeat.GetCount(); ++index ) {
 			if ( static_cast<int>( m_ComboBoxRepeat.GetItemData( index ) ) == s->repeatcount ) {
 				m_ComboBoxRepeat.SetCurSel( index );
@@ -217,7 +221,7 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxRepeat.SelectString( 0, L"Never" );
+			m_ComboBoxRepeat.SelectString( 0, TEXT("Never") );
 		}
 
 		m_SliderCtrlStereoSeparation.SetRange( 0, 200 );
@@ -227,13 +231,13 @@ protected:
 		m_SliderCtrlStereoSeparation.SetPos( s->stereoseparation );
 
 		selected = false;
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"Default" ), static_cast<unsigned int>( -1 ) );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"Off" ), 0 );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"1 ms" ), 1 );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"2 ms" ), 2 );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"3 ms" ), 3 );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"5 ms" ), 5 );
-		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( L"10 ms" ), 10 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("Default") ), static_cast<unsigned int>( -1 ) );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("Off") ), 0 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("1 ms") ), 1 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("2 ms") ), 2 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("3 ms") ), 3 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("5 ms") ), 5 );
+		m_ComboBoxRamping.SetItemData( m_ComboBoxRamping.AddString( TEXT("10 ms") ), 10 );
 		for ( int index = 0; index < m_ComboBoxRamping.GetCount(); ++index ) {
 			if ( static_cast<int>( m_ComboBoxRamping.GetItemData( index ) ) == s->ramping ) {
 				m_ComboBoxRamping.SetCurSel( index );
@@ -241,7 +245,7 @@ protected:
 			}
 		}
 		if ( !selected ) {
-			m_ComboBoxRamping.SelectString( 0, L"Default" );
+			m_ComboBoxRamping.SelectString( 0, TEXT("Default") );
 		}
 
 		return TRUE;
@@ -285,11 +289,11 @@ protected:
 
 		switch ( nID ) {
 		case IDC_SLIDER_GAIN:
-			swprintf( pTTT->szText, _countof(pTTT->szText), L"%.02f dB", m_SliderCtrlGain.GetPos() * 0.01f );
+			_sntprintf( pTTT->szText, _countof(pTTT->szText), TEXT("%.02f dB"), m_SliderCtrlGain.GetPos() * 0.01f );
 			break;
 
 		case IDC_SLIDER_STEREOSEPARATION:
-			swprintf( pTTT->szText, _countof(pTTT->szText), L"%d %%", m_SliderCtrlStereoSeparation.GetPos());
+			_sntprintf( pTTT->szText, _countof(pTTT->szText), TEXT("%d %%"), m_SliderCtrlStereoSeparation.GetPos() );
 			break;
 
 		default:
@@ -361,6 +365,7 @@ protected:
 
 #if defined(MPT_WITH_MFC)
 
+
 void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::wstring title ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 	CSettingsDialog dlg( s, title.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
@@ -370,7 +375,25 @@ void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::wstring title
 
 void gui_show_file_info( HWND parent, std::wstring title, std::wstring info ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
-	CInfoDialog dlg( title.c_str(), info.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr);
+	CInfoDialog dlg( title.c_str(), info.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
+	dlg.DoModal();
+}
+
+
+void gui_show_about( HWND parent, std::basic_string<TCHAR> title, std::basic_string<TCHAR> about, std::basic_string<TCHAR> credits ) {
+	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
+	about += TEXT("\r\n");
+	about += TEXT("Show full credits?\r\n");
+	if ( parent ) {
+		if ( CWnd::FromHandle( parent )->MessageBox( about.c_str(), title.c_str(), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
+			return;
+		}
+	} else {
+		if ( MessageBox( parent, about.c_str(), title.c_str(), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
+			return;
+		}
+	}
+	CInfoDialog dlg( title.c_str(), credits.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
 	dlg.DoModal();
 }
 
@@ -462,6 +485,14 @@ void gui_show_file_info( HWND /* parent */ , std::basic_string<TCHAR> title, std
 	WaitForSingleObject( processInformation.hProcess, INFINITE );
 	CloseHandle( processInformation.hProcess );
 	DeleteFile( filename.c_str() );
+}
+
+
+void gui_show_about( HWND parent, std::basic_string<TCHAR> title, std::basic_string<TCHAR> about, std::basic_string<TCHAR> credits ) {
+	if ( MessageBox( parent, about.c_str(), title.c_str(), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
+		return;
+	}
+	gui_show_file_info( parent, title, credits );
 }
 
 

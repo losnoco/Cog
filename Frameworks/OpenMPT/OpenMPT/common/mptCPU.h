@@ -28,9 +28,6 @@ namespace CPU
 #ifdef MPT_ENABLE_ARCH_INTRINSICS
 
 
-
-
-
 #if defined(MODPLUG_TRACKER) && !defined(MPT_BUILD_WINESUPPORT)
 
 
@@ -93,11 +90,6 @@ public:
 #endif // MODPLUG_TRACKER
 
 
-
-
-
-// legacy interface
-
 namespace feature = mpt::arch::current::feature;
 namespace mode = mpt::arch::current::mode;
 
@@ -110,8 +102,6 @@ namespace mode = mpt::arch::current::mode;
 {
 	return CPU::Info{}.HasModesEnabled(modes);
 }
-
-
 
 
 #endif // MPT_ENABLE_ARCH_INTRINSICS

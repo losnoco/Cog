@@ -16,8 +16,14 @@
 #include "mpt/io/base.hpp"
 #include "mpt/io/io.hpp"
 #include "mpt/io/io_stdstream.hpp"
+#if defined(MODPLUG_TRACKER)
+#include "mpt/io_file/fstream.hpp"
+#endif
 
+#if defined(MODPLUG_TRACKER)
 #include "mptFileIO.h"
+#endif
+
 #if defined(MODPLUG_TRACKER)
 #include <atomic>
 #endif
@@ -128,7 +134,7 @@ void GlobalLogger::SendLogMessage(const mpt::source_location &loc, LogLevel leve
 #endif
 		if(mpt::log::FileEnabled)
 		{
-			static std::optional<mpt::ofstream> s_logfile;
+			static std::optional<mpt::IO::ofstream> s_logfile;
 			if(!s_logfile)
 			{
 				s_logfile.emplace(P_("mptrack.log"), std::ios::app);
@@ -318,7 +324,7 @@ bool Dump(const mpt::PathString &filename)
 	// sort according to index in case of overflows
 	std::stable_sort(Entries.begin(), Entries.end());
 
-	mpt::ofstream f(filename);
+	mpt::IO::ofstream f(filename);
 
 	f << "Build: OpenMPT " << mpt::transcode<std::string>(mpt::logfile_encoding, Build::GetVersionStringExtended()) << std::endl;
 

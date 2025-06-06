@@ -40,7 +40,7 @@ private:
 	};
 	struct chunk_info {
 		pos_type ChunkOffset = 0;
-		pos_type ChunkLength = 0;
+		std::size_t ChunkLength = 0;
 		bool ChunkValid = false;
 	};
 	mutable std::vector<std::byte> m_Buffer = std::vector<std::byte>(BUFFER_SIZE);
@@ -90,19 +90,19 @@ private:
 		while (count > 0) {
 			std::size_t chunkIndex = InternalFillPageAndReturnIndex(pos);
 			pos_type pageSkip = pos - m_ChunkInfo[chunkIndex].ChunkOffset;
-			pos_type chunkWanted = std::min(static_cast<pos_type>(CHUNK_SIZE) - pageSkip, count);
-			pos_type chunkGot = (m_ChunkInfo[chunkIndex].ChunkLength > pageSkip) ? (m_ChunkInfo[chunkIndex].ChunkLength - pageSkip) : 0;
+			pos_type chunkWanted = std::min(static_cast<pos_type>(CHUNK_SIZE) - pageSkip, static_cast<pos_type>(count));
+			pos_type chunkGot = (static_cast<pos_type>(m_ChunkInfo[chunkIndex].ChunkLength) > pageSkip) ? (static_cast<pos_type>(m_ChunkInfo[chunkIndex].ChunkLength) - pageSkip) : 0;
 			pos_type chunk = std::min(chunkWanted, chunkGot);
-			std::copy(chunk_data(chunkIndex).data() + pageSkip, chunk_data(chunkIndex).data() + pageSkip + chunk, pdst);
+			std::copy(chunk_data(chunkIndex).data() + static_cast<std::size_t>(pageSkip), chunk_data(chunkIndex).data() + static_cast<std::size_t>(pageSkip + chunk), pdst);
 			pos += chunk;
 			pdst += chunk;
 			totalRead += chunk;
-			count -= chunk;
+			count -= static_cast<std::size_t>(chunk);
 			if (chunkWanted > chunk) {
-				return dst.first(totalRead);
+				return dst.first(static_cast<std::size_t>(totalRead));
 			}
 		}
-		return dst.first(totalRead);
+		return dst.first(static_cast<std::size_t>(totalRead));
 	}
 
 	virtual mpt::byte_span InternalReadBuffered(pos_type pos, mpt::byte_span dst) const = 0;

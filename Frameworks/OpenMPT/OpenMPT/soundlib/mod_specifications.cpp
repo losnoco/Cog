@@ -29,7 +29,7 @@ constexpr CModSpecifications mptm_ =
 	MOD_TYPE_MPT,								// Internal MODTYPE value
 	"mptm",										// File extension
 	NOTE_MIN,									// Minimum note index
-	NOTE_MAX,									// Maximum note index
+	NOTE_MIN + 119,								// Maximum note index
 	4000,										// Pattern max.
 	4000,										// Order max.
 	MAX_SEQUENCES,								// Sequences max
@@ -67,12 +67,9 @@ constexpr CModSpecifications mptm_ =
 	true,										// Has artist name
 	true,										// Has default resampling
 	true,										// Fixed point tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\:#+*??????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\:#+*?????????????????????",	// Supported Effects
 	" vpcdabuh??gfe?o",							// Supported Volume Column commands
 };
-
-
-
 
 constexpr CModSpecifications mod_ =
 {
@@ -100,7 +97,7 @@ constexpr CModSpecifications mod_ =
 	31,											// SamplesMax
 	0,											// instrumentMax
 	MixLevels::Compatible,						// defaultMixLevels
-	SONG_PT_MODE | SONG_AMIGALIMITS | SONG_ISAMIGA,	// Supported song flags
+	SONG_PT_MODE | SONG_AMIGALIMITS | SONG_ISAMIGA | SONG_FORMAT_NO_VOLCOL,  // Supported song flags
 	0,											// Max MIDI mapping directives
 	0,											// No instrument envelopes
 	false,										// No notecut.
@@ -117,10 +114,9 @@ constexpr CModSpecifications mod_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCD?FF?E???????????????????????????",	// Supported Effects
+	" 0123456789ABCD?FF?E??????????????????????????????????????",	// Supported Effects
 	" ???????????????",							// Supported Volume Column commands
 };
-
 
 constexpr CModSpecifications xm_ =
 {
@@ -165,7 +161,7 @@ constexpr CModSpecifications xm_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCDRFFTE???GHK??XPL??????W?????????",	// Supported Effects
+	" 0123456789ABCDRFFTE???GHK??XPL??????W????????????????????",	// Supported Effects
 	" vpcdabuhlrg????",							// Supported Volume Column commands
 };
 
@@ -180,7 +176,7 @@ constexpr CModSpecifications xmEx_ =
 	255,										// Order max.
 	1,											// Only one order list
 	1,											// Channel min
-	127,										// Channel max
+	128,										// Channel max
 	32,											// Min tempo
 	1000,										// Max tempo
 	1,											// Min Speed
@@ -213,7 +209,7 @@ constexpr CModSpecifications xmEx_ =
 	true,										// Has artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" 0123456789ABCDRFFTE???GHK?YXPLZ\\?#??W?????????",	// Supported Effects
+	" 0123456789ABCDRFFTE???GHK?YXPLZ\\?#??W????????????????????",	// Supported Effects
 	" vpcdabuhlrg????",							// Supported Volume Column commands
 };
 
@@ -260,7 +256,7 @@ constexpr CModSpecifications s3m_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?U?????????? ?????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?U?????????? ????????????????????",	// Supported Effects
 	" vp?????????????",							// Supported Volume Column commands
 };
 
@@ -308,7 +304,7 @@ constexpr CModSpecifications s3mEx_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z????? ?????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z????? ????????????????????",	// Supported Effects
 	" vp?????????????",							// Supported Volume Column commands
 };
 
@@ -355,7 +351,7 @@ constexpr CModSpecifications it_ =
 	false,										// Doesn't have artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z????? ?????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z????? ????????????????????",	// Supported Effects
 	" vpcdab?h??gfe??",							// Supported Volume Column commands
 };
 
@@ -402,7 +398,7 @@ constexpr CModSpecifications itEx_ =
 	true,										// Has artist name
 	false,										// Doesn't have default resampling
 	false,										// Integer tempo
-	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\?#?? ?????????",	// Supported Effects
+	" JFEGHLKRXODB?CQATI?SMNVW?UY?P?Z\\?#?? ????????????????????",	// Supported Effects
 	" vpcdab?h??gfe??",							// Supported Volume Column commands
 };
 
@@ -470,29 +466,40 @@ bool CModSpecifications::HasNote(ModCommand::NOTE note) const
 bool CModSpecifications::HasVolCommand(ModCommand::VOLCMD volcmd) const
 {
 	if(volcmd >= MAX_VOLCMDS) return false;
-	if(volcommands[volcmd] == '?') return false;
-	return true;
+	return volcommands[volcmd] != '?';
 }
 
 
 bool CModSpecifications::HasCommand(ModCommand::COMMAND cmd) const
 {
 	if(cmd >= MAX_EFFECTS) return false;
-	if(commands[cmd] == '?') return false;
-	return true;
+	return commands[cmd] != '?';
 }
 
 
 char CModSpecifications::GetVolEffectLetter(ModCommand::VOLCMD volcmd) const
 {
-	if(volcmd >= MAX_VOLCMDS) return '?';
+	if(volcmd >= MAX_VOLCMDS)
+		return '?';
 	return volcommands[volcmd];
+}
+
+
+char CModSpecifications::GetGenericVolEffectLetter(ModCommand::VOLCMD volcmd)
+{
+	// Note: Remove this function if volume effect letter display is ever going to differ between formats, and update users to GetVolEffectLetter instead.
+	static constexpr char VolCommands[] = " vpcdabuhlrgfe:o";
+	static_assert(std::size(VolCommands) == MAX_VOLCMDS + 1);
+	if(volcmd >= MAX_VOLCMDS)
+		return '?';
+	return VolCommands[volcmd];
 }
 
 
 char CModSpecifications::GetEffectLetter(ModCommand::COMMAND cmd) const
 {
-	if(cmd >= MAX_EFFECTS) return '?';
+	if(cmd >= MAX_EFFECTS)
+		return '?';
 	return commands[cmd];
 }
 

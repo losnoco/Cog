@@ -85,8 +85,7 @@ public:
 	float RenderSilence(uint32) override { return 0.0f; }
 
 	// MIDI event handling (mostly passing it through to the follow-up plugin)
-	bool MidiSend(uint32 midiCode) override;
-	bool MidiSysexSend(mpt::const_byte_span sysex) override;
+	bool MidiSend(mpt::const_byte_span midiData) override;
 	void MidiCC(MIDIEvents::MidiCC nController, uint8 nParam, CHANNELINDEX trackChannel) override;
 	void MidiPitchBend(int32 increment, int8 pwd, CHANNELINDEX trackChannel) override;
 	void MidiTonePortamento(int32 increment, uint8 newNote, int8 pwd, CHANNELINDEX trackChannel) override;
@@ -101,7 +100,7 @@ public:
 
 	PlugParamIndex GetNumParameters() const override { return kLFONumParameters; }
 	PlugParamValue GetParameter(PlugParamIndex index) override;
-	void SetParameter(PlugParamIndex index, PlugParamValue value) override;
+	void SetParameter(PlugParamIndex index, PlugParamValue value, PlayState * = nullptr, CHANNELINDEX = CHANNELINDEX_INVALID) override;
 
 	void Resume() override;
 	void Suspend() override { m_isResumed = false; }

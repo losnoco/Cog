@@ -305,8 +305,6 @@ struct MixLoopState
 // Render count * number of channels samples
 void CSoundFile::CreateStereoMix(int count)
 {
-	mixsample_t *pOfsL, *pOfsR;
-
 	if(!count)
 		return;
 
@@ -315,17 +313,24 @@ void CSoundFile::CreateStereoMix(int count)
 	if(m_MixerSettings.gnChannels > 2)
 		StereoFill(MixRearBuffer, count, m_surroundROfsVol, m_surroundLOfsVol);
 
-	CHANNELINDEX nchmixed = 0;
+	// Channels that are actually mixed and not skipped (because they are paused or muted)
+	CHANNELINDEX numChannelsMixed = 0;
 
 	for(uint32 nChn = 0; nChn < m_nMixChannels; nChn++)
 	{
-		ModChannel &chn = m_PlayState.Chn[m_PlayState.ChnMix[nChn]];
+		if(MixChannel(count, m_PlayState.Chn[m_PlayState.ChnMix[nChn]], m_PlayState.ChnMix[nChn], numChannelsMixed < m_MixerSettings.m_nMaxMixChannels))
+			numChannelsMixed++;
+	}
+	m_nMixStat = std::max(m_nMixStat, numChannelsMixed);
+}
 
-		if(!chn.pCurrentSample && !chn.nLOfs && !chn.nROfs)
-			continue;
 
-		pOfsR = &m_dryROfsVol;
-		pOfsL = &m_dryLOfsVol;
+bool CSoundFile::MixChannel(int count, ModChannel &chn, CHANNELINDEX channel, bool doMix)
+{
+	if(chn.pCurrentSample || chn.nLOfs || chn.nROfs)
+	{
+		mixsample_t *pOfsR = &m_dryROfsVol;
+		mixsample_t *pOfsL = &m_dryLOfsVol;
 
 		uint32 functionNdx = MixFuncTable::ResamplingModeToMixFlags(static_cast<ResamplingMode>(chn.resamplingMode));
 		if(chn.dwFlags[CHN_16BIT]) functionNdx |= MixFuncTable::ndx16Bit;
@@ -351,14 +356,13 @@ void CSoundFile::CreateStereoMix(int count)
 			pOfsL = &m_surroundLOfsVol;
 		}
 
-		//Look for plugins associated with this implicit tracker channel.
+		// Look for plugins associated with this implicit tracker channel.
 #ifndef NO_PLUGINS
-		PLUGINDEX nMixPlugin = GetBestPlugin(m_PlayState, m_PlayState.ChnMix[nChn], PrioritiseInstrument, RespectMutes);
-
-		if ((nMixPlugin > 0) && (nMixPlugin <= MAX_MIXPLUGINS) && m_MixPlugins[nMixPlugin - 1].pMixPlugin != nullptr)
+		const PLUGINDEX mixPlugin = GetBestPlugin(chn, channel, PrioritiseInstrument, RespectMutes);
+		if((mixPlugin > 0) && (mixPlugin <= MAX_MIXPLUGINS) && m_MixPlugins[mixPlugin - 1].pMixPlugin != nullptr)
 		{
 			// Render into plugin buffer instead of global buffer
-			SNDMIXPLUGINSTATE &mixState = m_MixPlugins[nMixPlugin - 1].pMixPlugin->m_MixState;
+			SNDMIXPLUGINSTATE &mixState = m_MixPlugins[mixPlugin - 1].pMixPlugin->m_MixState;
 			if (mixState.pMixBuffer)
 			{
 				pbuffer = mixState.pMixBuffer;
@@ -379,13 +383,13 @@ void CSoundFile::CreateStereoMix(int count)
 			*pOfsR += chn.nROfs;
 			*pOfsL += chn.nLOfs;
 			chn.nROfs = chn.nLOfs = 0;
-			continue;
+			return false;
 		}
 
 		MixLoopState mixLoopState(*this, chn);
 
 		////////////////////////////////////////////////////
-		CHANNELINDEX naddmix = 0;
+		bool addToMix = false;
 		int nsamples = count;
 		// Keep mixing this sample until the buffer is filled.
 		do
@@ -412,14 +416,14 @@ void CSoundFile::CreateStereoMix(int count)
 				break;
 			}
 
-			// Should we mix this channel ?
-			if((nchmixed >= m_MixerSettings.m_nMaxMixChannels)				// Too many channels
-				|| (!chn.nRampLength && !(chn.leftVol | chn.rightVol)))		// Channel is completely silent
+			// Should we mix this channel?
+			if(!doMix                                                   // Too many channels
+			   || (!chn.nRampLength && !(chn.leftVol | chn.rightVol)))  // Channel is completely silent
 			{
 				chn.position += chn.increment * nSmpCount;
 				chn.nROfs = chn.nLOfs = 0;
 				pbuffer += nSmpCount * 2;
-				naddmix = 0;
+				addToMix = false;
 			}
 #ifdef MODPLUG_TRACKER
 			else if(m_SamplePlayLengths != nullptr)
@@ -456,7 +460,7 @@ void CSoundFile::CreateStereoMix(int count)
 				chn.nROfs += *(pbufmax - 2);
 				chn.nLOfs += *(pbufmax - 1);
 				pbuffer = pbufmax;
-				naddmix = 1;
+				addToMix = true;
 			}
 
 			nsamples -= nSmpCount;
@@ -482,7 +486,7 @@ void CSoundFile::CreateStereoMix(int count)
 
 			const bool pastLoopEnd = chn.position.GetUInt() >= chn.nLoopEnd && chn.dwFlags[CHN_LOOP];
 			const bool pastSampleEnd = chn.position.GetUInt() >= chn.nLength && !chn.dwFlags[CHN_LOOP] && chn.nLength && !chn.nMasterChn;
-			const bool doSampleSwap = m_playBehaviour[kMODSampleSwap] && chn.nNewIns && chn.nNewIns <= GetNumSamples() && chn.pModSample != &Samples[chn.nNewIns];
+			const bool doSampleSwap = m_playBehaviour[kMODSampleSwap] && chn.swapSampleIndex && chn.swapSampleIndex <= GetNumSamples() && chn.pModSample != &Samples[chn.swapSampleIndex];
 			if((pastLoopEnd || pastSampleEnd) && doSampleSwap)
 			{
 				// ProTracker compatibility: Instrument changes without a note do not happen instantly, but rather when the sample loop has finished playing.
@@ -498,19 +502,23 @@ void CSoundFile::CreateStereoMix(int count)
 					}
 				}
 #endif
-				const ModSample &smp = Samples[chn.nNewIns];
+				const ModSample &smp = Samples[chn.swapSampleIndex];
 				chn.pModSample = &smp;
 				chn.pCurrentSample = smp.samplev();
 				chn.dwFlags = (chn.dwFlags & CHN_CHANNELFLAGS) | smp.uFlags;
-				chn.nLength = smp.uFlags[CHN_LOOP] ? smp.nLoopEnd : 0; // non-looping sample continue in oneshot mode (i.e. they will most probably just play silence)
+				if(smp.uFlags[CHN_LOOP])
+					chn.nLength = smp.nLoopEnd;
+				else if(!m_playBehaviour[kMODOneShotLoops])
+					chn.nLength = smp.nLength;
+				else
+					chn.nLength = 0; // non-looping sample continue in oneshot mode (i.e. they will most probably just play silence)
 				chn.nLoopStart = smp.nLoopStart;
 				chn.nLoopEnd = smp.nLoopEnd;
 				chn.position.SetInt(chn.nLoopStart);
+				chn.swapSampleIndex = 0;
 				mixLoopState.UpdateLookaheadPointers(chn);
 				if(!chn.pCurrentSample)
-				{
 					break;
-				}
 			} else if(pastLoopEnd && !doSampleSwap && m_playBehaviour[kMODOneShotLoops] && chn.nLoopStart == 0)
 			{
 				// ProTracker "oneshot" loops (if loop start is 0, play the whole sample once and then repeat until loop end)
@@ -521,16 +529,16 @@ void CSoundFile::CreateStereoMix(int count)
 
 		// Restore sample pointer in case it got changed through loop wrap-around
 		chn.pCurrentSample = mixLoopState.samplePointer;
-		nchmixed += naddmix;
 	
 #ifndef NO_PLUGINS
-		if(naddmix && nMixPlugin > 0 && nMixPlugin <= MAX_MIXPLUGINS && m_MixPlugins[nMixPlugin - 1].pMixPlugin)
+		if(addToMix && mixPlugin > 0 && mixPlugin <= MAX_MIXPLUGINS && m_MixPlugins[mixPlugin - 1].pMixPlugin)
 		{
-			m_MixPlugins[nMixPlugin - 1].pMixPlugin->ResetSilence();
+			m_MixPlugins[mixPlugin - 1].pMixPlugin->ResetSilence();
 		}
 #endif // NO_PLUGINS
+		return addToMix;
 	}
-	m_nMixStat = std::max(m_nMixStat, nchmixed);
+	return false;
 }
 
 

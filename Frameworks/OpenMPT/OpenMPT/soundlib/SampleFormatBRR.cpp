@@ -87,7 +87,14 @@ bool CSoundFile::ReadBRRSample(SAMPLEINDEX sample, FileReader &file)
 		if(isLast != file.EndOfFile())
 			return false;
 		if(!first && enableLoop != isLoop)
-			return false;
+		{
+			if(!hasLoopInfo)
+				return false;
+			// In some files, the loop flag is only set for the blocks within the loop (except for the first block?)
+			const bool inLoop = file.GetPosition() > loopStart + 11u;
+			if(enableLoop != inLoop)
+				return false;
+		}
 		// While a range of 13 is technically invalid as well, it can be found in the wild.
 		if(range > 13)
 			return false;

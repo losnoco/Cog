@@ -6,7 +6,7 @@
  *          It seems like no other game used the AM(FF) format.
  *          RIFF AM is the newer version of the format, generally following the RIFF "standard" closely.
  * Authors: Johannes Schultz (OpenMPT port, reverse engineering + loader implementation of the instrument format)
- *          kode54 (foo_dumb - this is almost a complete port of his code, thanks)
+ *          Largely based on the J2B loader of kode54's DUMB fork
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
 
@@ -43,17 +43,18 @@ struct J2BFileHeader
 {
 	// Magic Bytes
 	// 32-Bit J2B header identifiers
-	enum : uint32 {
+	enum : uint32
+	{
 		magicDEADBEAF = 0xAFBEADDEu,
 		magicDEADBABE = 0xBEBAADDEu
 	};
 
-	char     signature[4];		// MUSE
-	uint32le deadbeaf;			// 0xDEADBEAF (AM) or 0xDEADBABE (AMFF)
-	uint32le fileLength;		// complete filesize
-	uint32le crc32;				// checksum of the compressed data block
-	uint32le packedLength;		// length of the compressed data block
-	uint32le unpackedLength;	// length of the decompressed module
+	char     signature[4];    // MUSE
+	uint32le deadbeaf;        // 0xDEADBEAF (AM) or 0xDEADBABE (AMFF)
+	uint32le fileLength;      // complete filesize
+	uint32le crc32;           // checksum of the compressed data block
+	uint32le packedLength;    // length of the compressed data block
+	uint32le unpackedLength;  // length of the decompressed module
 };
 
 MPT_BINARY_STRUCT(J2BFileHeader, 24)
@@ -66,21 +67,21 @@ struct AMFFRiffChunk
 	// 32-Bit chunk identifiers
 	enum ChunkIdentifiers
 	{
-		idRIFF	= MagicLE("RIFF"),
-		idAMFF	= MagicLE("AMFF"),
-		idAM__	= MagicLE("AM  "),
-		idMAIN	= MagicLE("MAIN"),
-		idINIT	= MagicLE("INIT"),
-		idORDR	= MagicLE("ORDR"),
-		idPATT	= MagicLE("PATT"),
-		idINST	= MagicLE("INST"),
-		idSAMP	= MagicLE("SAMP"),
-		idAI__	= MagicLE("AI  "),
-		idAS__	= MagicLE("AS  "),
+		idRIFF = MagicLE("RIFF"),
+		idAMFF = MagicLE("AMFF"),
+		idAM__ = MagicLE("AM  "),
+		idMAIN = MagicLE("MAIN"),
+		idINIT = MagicLE("INIT"),
+		idORDR = MagicLE("ORDR"),
+		idPATT = MagicLE("PATT"),
+		idINST = MagicLE("INST"),
+		idSAMP = MagicLE("SAMP"),
+		idAI__ = MagicLE("AI  "),
+		idAS__ = MagicLE("AS  "),
 	};
 
-	uint32le id;		// See ChunkIdentifiers
-	uint32le length;	// Chunk size without header
+	uint32le id;      // See ChunkIdentifiers
+	uint32le length;  // Chunk size without header
 
 	size_t GetLength() const
 	{
@@ -110,8 +111,8 @@ struct AMFFMainChunk
 	uint8le  channels;
 	uint8le  speed;
 	uint8le  tempo;
-	uint16le minPeriod;	// 16x Amiga periods, but we should ignore them - otherwise some high notes in Medivo.j2b won't sound correct.
-	uint16le maxPeriod;	// Ditto
+	uint16le minPeriod;  // 16x Amiga periods, but we should ignore them - otherwise some high notes in Medivo.j2b won't sound correct.
+	uint16le maxPeriod;  // Ditto
 	uint8le  globalvolume;
 };
 
@@ -132,14 +133,14 @@ struct AMFFEnvelope
 	struct EnvPoint
 	{
 		uint16le tick;
-		uint8le  value;	// 0...64
+		uint8le  value;  // 0...64
 	};
 
-	uint8le envFlags;			// high nibble = pan env flags, low nibble = vol env flags (both nibbles work the same way)
-	uint8le envNumPoints;		// high nibble = pan env length, low nibble = vol env length
-	uint8le envSustainPoints;	// you guessed it... high nibble = pan env sustain point, low nibble = vol env sustain point
-	uint8le envLoopStarts;		// I guess you know the pattern now.
-	uint8le envLoopEnds;		// same here.
+	uint8le envFlags;          // high nibble = pan env flags, low nibble = vol env flags (both nibbles work the same way)
+	uint8le envNumPoints;      // high nibble = pan env length, low nibble = vol env length
+	uint8le envSustainPoints;  // you guessed it... high nibble = pan env sustain point, low nibble = vol env sustain point
+	uint8le envLoopStarts;     // I guess you know the pattern now.
+	uint8le envLoopEnds;       // same here.
 	EnvPoint volEnv[10];
 	EnvPoint panEnv[10];
 
@@ -191,8 +192,8 @@ MPT_BINARY_STRUCT(AMFFEnvelope, 65)
 // AMFF instrument header (old format)
 struct AMFFInstrumentHeader
 {
-	uint8le  unknown;		// 0x00
-	uint8le  index;			// actual instrument number
+	uint8le  unknown;  // 0x00
+	uint8le  index;    // actual instrument number
 	char     name[28];
 	uint8le  numSamples;
 	uint8le  sampleMap[120];
@@ -211,7 +212,7 @@ struct AMFFInstrumentHeader
 		static_assert(mpt::array_size<decltype(sampleMap)>::size <= mpt::array_size<decltype(mptIns.Keyboard)>::size);
 		for(size_t i = 0; i < std::size(sampleMap); i++)
 		{
-			mptIns.Keyboard[i] = sampleMap[i] + baseSample + 1;
+			mptIns.Keyboard[i] = static_cast<SAMPLEINDEX>(sampleMap[i] + baseSample + 1);
 		}
 
 		mptIns.nFadeOut = fadeout << 5;
@@ -229,16 +230,16 @@ struct AMFFSampleHeader
 	// Sample flags (also used for RIFF AM)
 	enum SampleFlags
 	{
-		smp16Bit	= 0x04,
-		smpLoop		= 0x08,
-		smpPingPong	= 0x10,
-		smpPanning	= 0x20,
-		smpExists	= 0x80,
+		smp16Bit    = 0x04,
+		smpLoop     = 0x08,
+		smpPingPong = 0x10,
+		smpPanning  = 0x20,
+		smpExists   = 0x80,
 		// some flags are still missing... what is e.g. 0x8000?
 	};
 
-	uint32le id;		// "SAMP"
-	uint32le chunkSize;	// header + sample size
+	uint32le id;         // "SAMP"
+	uint32le chunkSize;  // header + sample size
 	char     name[28];
 	uint8le  pan;
 	uint8le  volume;
@@ -363,16 +364,15 @@ struct AMEnvelope
 	}
 };
 
-MPT_BINARY_STRUCT(AMEnvelope::EnvPoint, 4)
 MPT_BINARY_STRUCT(AMEnvelope, 48)
 
 
 // AM instrument header (new format)
 struct AMInstrumentHeader
 {
-	uint32le headSize;	// Header size (i.e. the size of this struct)
-	uint8le  unknown1;	// 0x00
-	uint8le  index;		// Actual instrument number
+	uint32le headSize;  // Header size (i.e. the size of this struct)
+	uint8le  unknown1;  // 0x00
+	uint8le  index;     // Actual instrument number
 	char     name[32];
 	uint8le  sampleMap[128];
 	uint8le  vibratoType;
@@ -393,7 +393,7 @@ struct AMInstrumentHeader
 		static_assert(mpt::array_size<decltype(sampleMap)>::size <= mpt::array_size<decltype(mptIns.Keyboard)>::size);
 		for(uint8 i = 0; i < std::size(sampleMap); i++)
 		{
-			mptIns.Keyboard[i] = sampleMap[i] + baseSample + 1;
+			mptIns.Keyboard[i] = static_cast<SAMPLEINDEX>(sampleMap[i] + baseSample + 1);
 		}
 
 		mptIns.nFadeOut = volEnv.fadeout << 5;
@@ -415,12 +415,12 @@ MPT_BINARY_STRUCT(AMInstrumentHeader, 326)
 // AM sample header (new format)
 struct AMSampleHeader
 {
-	uint32le headSize;		// Header size (i.e. the size of this struct), apparently not including headSize.
+	uint32le headSize;  // Header size (i.e. the size of this struct), apparently not including headSize.
 	char     name[32];
 	uint16le pan;
 	uint16le volume;
 	uint16le flags;
-	uint16le unknown;		// 0x0000 / 0x0080?
+	uint16le unknown;  // 0x0000 / 0x0080?
 	uint32le length;
 	uint32le loopStart;
 	uint32le loopEnd;
@@ -430,8 +430,8 @@ struct AMSampleHeader
 	void ConvertToMPT(AMInstrumentHeader &instrHeader, ModSample &mptSmp) const
 	{
 		mptSmp.Initialize();
-		mptSmp.nPan = std::min(pan.get(), uint16(32767)) * 256 / 32767;
-		mptSmp.nVolume = std::min(volume.get(), uint16(32767)) * 256 / 32767;
+		mptSmp.nPan = static_cast<uint16>(std::min(pan.get(), uint16(32767)) * 256 / 32767);
+		mptSmp.nVolume = static_cast<uint16>(std::min(volume.get(), uint16(32767)) * 256 / 32767);
 		mptSmp.nGlobalVol = 64;
 		mptSmp.nLength = length;
 		mptSmp.nLoopStart = loopStart;
@@ -490,30 +490,24 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 
 	enum
 	{
-		rowDone		= 0,		// Advance to next row
-		channelMask	= 0x1F,		// Mask for retrieving channel information
-		volFlag		= 0x20,		// Volume effect present
-		noteFlag	= 0x40,		// Note + instr present
-		effectFlag	= 0x80,		// Effect information present
-		dataFlag	= 0xE0,		// Channel data present
+		rowDone     = 0x00,  // Advance to next row
+		channelMask = 0x1F,  // Mask for retrieving channel information
+		volFlag     = 0x20,  // Volume effect present
+		noteFlag    = 0x40,  // Note + instr present
+		effectFlag  = 0x80,  // Effect information present
+		dataFlag    = 0xE0,  // Channel data present
 	};
 
 	if(chunk.NoBytesLeft())
-	{
 		return false;
-	}
 
-	ROWINDEX numRows = Clamp(static_cast<ROWINDEX>(chunk.ReadUint8()) + 1, ROWINDEX(1), MAX_PATTERN_ROWS);
+	const ROWINDEX numRows = std::min(static_cast<ROWINDEX>(chunk.ReadUint8() + 1), MAX_PATTERN_ROWS);
 
 	if(!sndFile.Patterns.Insert(pat, numRows))
 		return false;
 
-	const CHANNELINDEX channels = sndFile.GetNumChannels();
-	if(channels == 0)
-		return false;
-
+	const CHANNELINDEX lastChannel = sndFile.GetNumChannels() - 1;
 	ROWINDEX row = 0;
-
 	while(row < numRows && chunk.CanRead(1))
 	{
 		const uint8 flags = chunk.ReadUint8();
@@ -523,98 +517,95 @@ static bool ConvertAMPattern(FileReader chunk, PATTERNINDEX pat, bool isAM, CSou
 			row++;
 			continue;
 		}
+		if(!(flags & dataFlag))
+			continue;
 
-		ModCommand &m = *sndFile.Patterns[pat].GetpModCommand(row, std::min(static_cast<CHANNELINDEX>(flags & channelMask), static_cast<CHANNELINDEX>(channels - 1)));
+		ModCommand &m = *sndFile.Patterns[pat].GetpModCommand(row, std::min(static_cast<CHANNELINDEX>(flags & channelMask), lastChannel));
 
-		if(flags & dataFlag)
+		if(flags & effectFlag) // effect
 		{
-			if(flags & effectFlag) // effect
+			const auto [param, command] = chunk.ReadArray<uint8, 2>();
+			if(command < std::size(amEffTrans))
 			{
-				m.param = chunk.ReadUint8();
-				uint8 command = chunk.ReadUint8();
-
-				if(command < std::size(amEffTrans))
-				{
-					// command translation
-					m.command = amEffTrans[command];
-				} else
-				{
+				m.SetEffectCommand(amEffTrans[command], param);
+			} else
+			{
 #ifdef J2B_LOG
-					MPT_LOG_GLOBAL(LogDebug, "J2B", MPT_UFORMAT("J2B: Unknown command: 0x{}, param 0x{}")(mpt::ufmt::HEX0<2>(command), mpt::ufmt::HEX0<2>(m.param)));
+				MPT_LOG_GLOBAL(LogDebug, "J2B", MPT_UFORMAT("J2B: Unknown command: 0x{}, param 0x{}")(mpt::ufmt::HEX0<2>(command), mpt::ufmt::HEX0<2>(m.param)));
 #endif
+				m.command = CMD_NONE;
+			}
+
+			// Handling special commands
+			switch(m.command)
+			{
+			case CMD_ARPEGGIO:
+				if(m.param == 0) m.command = CMD_NONE;
+				break;
+			case CMD_VOLUME:
+				if(m.volcmd == VOLCMD_NONE && !(flags & volFlag))
+				{
+					m.SetVolumeCommand(VOLCMD_VOLUME, Clamp(m.param, uint8(0), uint8(64)));
 					m.command = CMD_NONE;
 				}
-
-				// Handling special commands
-				switch(m.command)
+				break;
+			case CMD_TONEPORTAVOL:
+			case CMD_VIBRATOVOL:
+			case CMD_VOLUMESLIDE:
+			case CMD_GLOBALVOLSLIDE:
+			case CMD_PANNINGSLIDE:
+				if(m.param & 0xF0)
+					m.param &= 0xF0;
+				break;
+			case CMD_PANNING8:
+				if(m.param <= 0x80)
+					m.param = mpt::saturate_cast<ModCommand::PARAM>(m.param * 2);
+				else if(m.param == 0xA4)
+					m.SetEffectCommand(CMD_S3MCMDEX, 0x91u);
+				break;
+			case CMD_PATTERNBREAK:
+				m.param = static_cast<ModCommand::PARAM>(((m.param >> 4) * 10u) + (m.param & 0x0Fu));
+				break;
+			case CMD_MODCMDEX:
+				m.ExtendedMODtoS3MEffect();
+				break;
+			case CMD_TEMPO:
+				if(m.param <= 0x1F)
+					m.command = CMD_SPEED;
+				break;
+			case CMD_XFINEPORTAUPDOWN:
+				switch(m.param & 0xF0)
 				{
-				case CMD_ARPEGGIO:
-					if(m.param == 0) m.command = CMD_NONE;
+				case 0x10:
+					m.command = CMD_PORTAMENTOUP;
 					break;
-				case CMD_VOLUME:
-					if(m.volcmd == VOLCMD_NONE)
-					{
-						m.volcmd = VOLCMD_VOLUME;
-						m.vol = Clamp(m.param, uint8(0), uint8(64));
-						m.command = CMD_NONE;
-						m.param = 0;
-					}
-					break;
-				case CMD_TONEPORTAVOL:
-				case CMD_VIBRATOVOL:
-				case CMD_VOLUMESLIDE:
-				case CMD_GLOBALVOLSLIDE:
-				case CMD_PANNINGSLIDE:
-					if (m.param & 0xF0) m.param &= 0xF0;
-					break;
-				case CMD_PANNING8:
-					if(m.param <= 0x80) m.param = mpt::saturate_cast<uint8>(m.param * 2);
-					else if(m.param == 0xA4) {m.command = CMD_S3MCMDEX; m.param = 0x91;}
-					break;
-				case CMD_PATTERNBREAK:
-					m.param = ((m.param >> 4) * 10) + (m.param & 0x0F);
-					break;
-				case CMD_MODCMDEX:
-					m.ExtendedMODtoS3MEffect();
-					break;
-				case CMD_TEMPO:
-					if(m.param <= 0x1F) m.command = CMD_SPEED;
-					break;
-				case CMD_XFINEPORTAUPDOWN:
-					switch(m.param & 0xF0)
-					{
-					case 0x10:
-						m.command = CMD_PORTAMENTOUP;
-						break;
-					case 0x20:
-						m.command = CMD_PORTAMENTODOWN;
-						break;
-					}
-					m.param = (m.param & 0x0F) | 0xE0;
-					break;
-				default:
+				case 0x20:
+					m.command = CMD_PORTAMENTODOWN;
 					break;
 				}
+				m.param = (m.param & 0x0F) | 0xE0;
+				break;
+			default:
+				break;
 			}
+		}
 
-			if (flags & noteFlag) // note + ins
-			{
-				const auto [instr, note] = chunk.ReadArray<uint8, 2>();
-				m.instr = instr;
-				m.note = note;
-				if(m.note == 0x80) m.note = NOTE_KEYOFF;
-				else if(m.note > 0x80) m.note = NOTE_FADE;	// I guess the support for IT "note fade" notes was not intended in mod2j2b, but hey, it works! :-D
-			}
+		if(flags & noteFlag)  // note + ins
+		{
+			const auto [instr, note] = chunk.ReadArray<uint8, 2>();
+			m.instr = instr;
+			m.note = note;
+			if(m.note == 0x80)
+				m.note = NOTE_KEYOFF;
+			else if(m.note > 0x80)
+				m.note = NOTE_FADE;  // I guess the support for IT "note fade" notes was not intended in mod2j2b, but hey, it works! :-D
+		}
 
-			if (flags & volFlag) // volume
-			{
-				m.volcmd = VOLCMD_VOLUME;
-				m.vol = chunk.ReadUint8();
-				if(isAM)
-				{
-					m.vol = m.vol * 64 / 127;
-				}
-			}
+		if(flags & volFlag) // volume
+		{
+			m.SetVolumeCommand(VOLCMD_VOLUME, chunk.ReadUint8());
+			if(isAM)
+				m.vol = static_cast<ModCommand::VOL>(m.vol * 64u / 127u);
 		}
 	}
 
@@ -727,7 +718,7 @@ bool CSoundFile::ReadAM(FileReader &file, ModLoadingFlags loadFlags)
 
 	FileReader chunkMain(chunks.GetChunk(mainChunkID));
 	AMFFMainChunk mainChunk;
-	if(!chunkMain.IsValid() 
+	if(!chunkMain.IsValid()
 		|| !chunkMain.ReadStruct(mainChunk)
 		|| mainChunk.channels < 1
 		|| !chunkMain.CanRead(mainChunk.channels))
@@ -738,17 +729,16 @@ bool CSoundFile::ReadAM(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_J2B);
+	InitializeGlobals(MOD_TYPE_J2B, std::min(static_cast<CHANNELINDEX>(mainChunk.channels), static_cast<CHANNELINDEX>(MAX_BASECHANNELS)));
 	m_SongFlags = SONG_ITOLDEFFECTS | SONG_ITCOMPATGXX;
 	m_SongFlags.set(SONG_LINEARSLIDES, !(mainChunk.flags & AMFFMainChunk::amigaSlides));
 
-	m_nChannels = std::min(static_cast<CHANNELINDEX>(mainChunk.channels), static_cast<CHANNELINDEX>(MAX_BASECHANNELS));
-	m_nDefaultSpeed = mainChunk.speed;
-	m_nDefaultTempo.Set(mainChunk.tempo);
+	Order().SetDefaultSpeed(mainChunk.speed);
+	Order().SetDefaultTempoInt(mainChunk.tempo);
 	m_nDefaultGlobalVolume = mainChunk.globalvolume * 2;
 
 	m_modFormat.formatName = isAM ? UL_("Galaxy Sound System (new version)") : UL_("Galaxy Sound System (old version)");
-	m_modFormat.type = U_("j2b");
+	m_modFormat.type = UL_("j2b");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, mainChunk.songname);
@@ -756,23 +746,21 @@ bool CSoundFile::ReadAM(FileReader &file, ModLoadingFlags loadFlags)
 	// It seems like there's no way to differentiate between
 	// Muted and Surround channels (they're all 0xA0) - might
 	// be a limitation in mod2j2b.
-	for(CHANNELINDEX nChn = 0; nChn < m_nChannels; nChn++)
+	for(auto &chn : ChnSettings)
 	{
-		ChnSettings[nChn].Reset();
-
 		uint8 pan = chunkMain.ReadUint8();
 		if(isAM)
 		{
 			if(pan > 128)
-				ChnSettings[nChn].dwFlags = CHN_MUTE;
+				chn.dwFlags = CHN_MUTE;
 			else
-				ChnSettings[nChn].nPan = pan * 2;
+				chn.nPan = pan * 2;
 		} else
 		{
 			if(pan >= 128)
-				ChnSettings[nChn].dwFlags = CHN_MUTE;
+				chn.dwFlags = CHN_MUTE;
 			else
-				ChnSettings[nChn].nPan = static_cast<uint16>(std::min(pan * 4, 256));
+				chn.nPan = static_cast<uint16>(std::min(pan * 4, 256));
 		}
 	}
 
@@ -1041,7 +1029,7 @@ bool CSoundFile::ReadJ2B(FileReader &file, ModLoadingFlags loadFlags)
 		Bytef buffer[mpt::IO::BUFFERSIZE_TINY];
 		uint32 readSize = std::min(static_cast<uint32>(sizeof(buffer)), remainRead);
 		file.ReadRaw(mpt::span(buffer, readSize));
-		crc = crc32(crc, buffer, readSize);
+		crc = static_cast<uint32>(crc32(crc, buffer, readSize));
 
 		strm.avail_in = readSize;
 		strm.next_in = buffer;

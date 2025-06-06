@@ -11,8 +11,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "WavesReverb.h"
+#include "../../Sndfile.h"
 #endif // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -129,7 +129,7 @@ PlugParamValue WavesReverb::GetParameter(PlugParamIndex index)
 }
 
 
-void WavesReverb::SetParameter(PlugParamIndex index, PlugParamValue value)
+void WavesReverb::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kRvbNumParameters)
 	{

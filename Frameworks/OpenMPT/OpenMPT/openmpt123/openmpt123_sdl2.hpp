@@ -46,7 +46,7 @@ private:
 		return s.str();
 	}
 public:
-	sdl2_exception( int code, const char * error ) : exception( text_from_code( code ) + MPT_USTRING(" (") + mpt::transcode<mpt::ustring>( sdl2_encoding, error ? std::string(error) : std::string("NULL") ) + MPT_USTRING(")") ) { }
+	sdl2_exception( int code, const char * error ) : exception( MPT_USTRING("SDL2: ") + text_from_code( code ) + MPT_USTRING(" (") + mpt::transcode<mpt::ustring>( sdl2_encoding, error ? std::string(error) : std::string("NULL") ) + MPT_USTRING(")") ) { }
 };
 
 static void check_sdl2_error( int e ) {
@@ -189,10 +189,9 @@ public:
 	}
 };
 
-static mpt::ustring show_sdl2_devices( concat_stream<mpt::ustring> & /* log */ ) {
-	string_concat_stream<mpt::ustring> devices;
+inline std::vector<mpt::ustring> show_sdl2_devices( concat_stream<mpt::ustring> & /* log */ ) {
+	std::vector<mpt::ustring> devices;
 	std::size_t device_index = 0;
-	devices << MPT_USTRING(" SDL2:") << lf;
 	sdl2_raii sdl2( SDL_INIT_NOPARACHUTE | SDL_INIT_AUDIO );
 	for ( int driver = 0; driver < SDL_GetNumAudioDrivers(); ++driver ) {
 		const char * driver_name = SDL_GetAudioDriver( driver );
@@ -206,6 +205,7 @@ static mpt::ustring show_sdl2_devices( concat_stream<mpt::ustring> & /* log */ )
 			continue;
 		}
 		for ( int device = 0; device < SDL_GetNumAudioDevices( 0 ); ++device ) {
+			string_concat_stream<mpt::ustring> dev;
 			const char * device_name = SDL_GetAudioDeviceName( device, 0 );
 			if ( !device_name ) {
 				continue;
@@ -213,12 +213,32 @@ static mpt::ustring show_sdl2_devices( concat_stream<mpt::ustring> & /* log */ )
 			if ( std::string( device_name ).empty() ) {
 				continue;
 			}
-			devices << MPT_USTRING("    ") << device_index << MPT_USTRING(": ") << mpt::transcode<mpt::ustring>( sdl2_encoding, driver_name ) << MPT_USTRING(" - ") << mpt::transcode<mpt::ustring>( sdl2_encoding, device_name ) << lf;
+			dev << device_index << MPT_USTRING(": ") << mpt::transcode<mpt::ustring>( sdl2_encoding, driver_name ) << MPT_USTRING(" - ") << mpt::transcode<mpt::ustring>( sdl2_encoding, device_name );
 			device_index++;
+			devices.push_back( dev.str() );
 		}
 		SDL_AudioQuit();
 	}
-	return devices.str();
+	return devices;
+}
+
+inline mpt::ustring show_sdl2_version() {
+	string_concat_stream<mpt::ustring> log;
+	log << MPT_USTRING("libSDL2 ");
+	SDL_version sdlver;
+	std::memset(&sdlver, 0, sizeof(SDL_version));
+	SDL_GetVersion(&sdlver);
+	log << static_cast<int>(sdlver.major) << MPT_USTRING(".") << static_cast<int>(sdlver.minor) << MPT_USTRING(".") << static_cast<int>(sdlver.patch);
+	const char* revision = SDL_GetRevision();
+	if (revision) {
+		log << MPT_USTRING(" (") << mpt::transcode<mpt::ustring>(sdl2_encoding, revision) << MPT_USTRING(")");
+	}
+	log << MPT_USTRING(", ");
+	std::memset(&sdlver, 0, sizeof(SDL_version));
+	SDL_VERSION(&sdlver);
+	log << MPT_USTRING("API: ") << static_cast<int>(sdlver.major) << MPT_USTRING(".") << static_cast<int>(sdlver.minor) << MPT_USTRING(".") << static_cast<int>(sdlver.patch);
+	log << MPT_USTRING(" <https://libsdl.org/>");
+	return log.str();
 }
 
 } // namespace openmpt123

@@ -131,7 +131,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	}
@@ -145,21 +145,19 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	}
 
-	InitializeGlobals(MOD_TYPE_PLM);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_PLM, fileHeader.numChannels + 1);  // Additional channel for writing pattern breaks
 	m_SongFlags = SONG_ITOLDEFFECTS;
 	m_playBehaviour.set(kApplyOffsetWithoutNote);
 
-	m_modFormat.formatName = U_("Disorder Tracker 2");
-	m_modFormat.type = U_("plm");
+	m_modFormat.formatName = UL_("Disorder Tracker 2");
+	m_modFormat.type = UL_("plm");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	// Some PLMs use ASCIIZ, some space-padding strings...weird. Oh, and the file browser stops at 0 bytes in the name, the main GUI doesn't.
 	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
-	m_nChannels = fileHeader.numChannels + 1;	// Additional channel for writing pattern breaks
 	m_nSamplePreAmp = fileHeader.amplify;
-	m_nDefaultTempo.Set(fileHeader.tempo);
-	m_nDefaultSpeed = fileHeader.speed;
+	Order().SetDefaultTempoInt(fileHeader.tempo);
+	Order().SetDefaultSpeed(fileHeader.speed);
 	for(CHANNELINDEX chn = 0; chn < fileHeader.numChannels; chn++)
 	{
 		ChnSettings[chn].nPan = fileHeader.panPos[chn] * 0x11;
@@ -275,7 +273,8 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 		const uint32 patternEnd = ord.x + patHeader.numRows;
 		maxPos = std::max(maxPos, patternEnd);
 
-		ModCommand::NOTE lastNote[32] = { 0 };
+		std::array<ModCommand::NOTE, 32> lastNote;
+		lastNote.fill(NOTE_NONE);
 		for(ROWINDEX r = 0; r < patHeader.numRows; r++, curRow++)
 		{
 			if(curRow >= rowsPerPat)
@@ -296,7 +295,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				const auto [note, instr, volume, command, param] = file.ReadArray<uint8, 5>();
 				if(note > 0 && note < 0x90)
-					lastNote[c] = m->note = (note >> 4) * 12 + (note & 0x0F) + 12 + NOTE_MIN;
+					lastNote[c] = m->note = static_cast<ModCommand::NOTE>((note >> 4) * 12 + (note & 0x0F) + 12 + NOTE_MIN);
 				else
 					m->note = NOTE_NONE;
 				m->instr = instr;
@@ -324,7 +323,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 						{
 							uint16 target = order[m->param].x;
 							m->param = static_cast<ModCommand::PARAM>(target / rowsPerPat);
-							ModCommand *mBreak = Patterns[pat].GetpModCommand(curRow, m_nChannels - 1);
+							ModCommand *mBreak = Patterns[pat].GetpModCommand(curRow, GetNumChannels() - 1);
 							mBreak->command = CMD_PATTERNBREAK;
 							mBreak->param = static_cast<ModCommand::PARAM>(target % rowsPerPat);
 						}
@@ -332,7 +331,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 					case 0x0C:	// Jump to end of order
 						{
 							m->param = static_cast<ModCommand::PARAM>(patternEnd / rowsPerPat);
-							ModCommand *mBreak = Patterns[pat].GetpModCommand(curRow, m_nChannels - 1);
+							ModCommand *mBreak = Patterns[pat].GetpModCommand(curRow, GetNumChannels() - 1);
 							mBreak->command = CMD_PATTERNBREAK;
 							mBreak->param = static_cast<ModCommand::PARAM>(patternEnd % rowsPerPat);
 						}
@@ -386,7 +385,7 @@ bool CSoundFile::ReadPLM(FileReader &file, ModLoadingFlags loadFlags)
 	PATTERNINDEX blankPat = PATTERNINDEX_INVALID;
 	for(auto &pat : Order())
 	{
-		if(pat == Order.GetInvalidPatIndex())
+		if(pat == PATTERNINDEX_INVALID)
 		{
 			if(blankPat == PATTERNINDEX_INVALID)
 			{

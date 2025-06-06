@@ -36,10 +36,10 @@ class FileCursorFilenameTraits;
 template <typename Ttraits, typename Tfilenametraits>
 class FileCursor;
 
-}
+} // namespace IO
 
-}
-}
+} // inline namespace MPT_INLINE_NS
+} // namespace mpt
 
 OPENMPT_NAMESPACE_BEGIN
 

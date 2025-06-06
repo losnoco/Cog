@@ -12,6 +12,7 @@
 
 #include <windows.h>
 
+#include <optional>
 #include <string>
 
 
@@ -33,6 +34,7 @@ struct libopenmpt_settings {
 	int interpolationfilterlength = 8;
 	int ramping = -1;
 	int vis_allow_scroll = 1;
+	std::optional<std::basic_string<TCHAR>> player_setting_name = std::nullopt;
 	changed_func changed = nullptr;
 };
 
@@ -70,18 +72,15 @@ protected:
 		}
 	}
 public:
-	settings( const std::basic_string<TCHAR> & subkey, bool no_default_format_ )
-		: subkey(subkey)
+	settings( const std::basic_string<TCHAR> & subkey_, bool no_default_format_, const std::optional<std::basic_string<TCHAR>> & player_setting_name_ = std::nullopt)
+		: subkey(subkey_)
 	{
 		no_default_format = no_default_format_;
+		player_setting_name = player_setting_name_;
 	}
 	void load()
 	{
-		#ifdef UNICODE
-		#define read_setting(a,b,c) read_setting( b , L ## b , c)
-		#else
-		#define read_setting(a,b,c) read_setting( b , b , c)
-		#endif
+		#define read_setting(a,b,c) read_setting( b , TEXT(b) , c)
 			read_setting( subkey, "Samplerate_Hz", samplerate );
 			read_setting( subkey, "Channels", channels );
 			read_setting( subkey, "MasterGain_milliBel", mastergain_millibel );
@@ -96,11 +95,7 @@ public:
 	}
 	void save()
 	{
-		#ifdef UNICODE
-		#define write_setting(a,b,c) write_setting( b , L ## b , c)
-		#else
-		#define write_setting(a,b,c) write_setting( b , b , c)
-		#endif
+		#define write_setting(a,b,c) write_setting( b , TEXT(b) , c)
 			write_setting( subkey, "Samplerate_Hz", samplerate );
 			write_setting( subkey, "Channels", channels );
 			write_setting( subkey, "MasterGain_milliBel", mastergain_millibel );

@@ -12,6 +12,8 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#include <functional>
+
 OPENMPT_NAMESPACE_BEGIN
 
 constexpr int32 PLUGMAGIC(char a, char b, char c, char d) noexcept
@@ -27,31 +29,30 @@ class IMixPlugin;
 struct SNDMIXPLUGIN;
 enum PluginArch : int;
 
+enum class PluginCategory : uint8
+{
+	// Same plugin categories as defined in VST SDK
+	Unknown = 0,
+	Effect,          // Simple Effect
+	Synth,           // VST Instrument (Synths, samplers,...)
+	Analysis,        // Scope, Tuner, ...
+	Mastering,       // Dynamics, ...
+	Spacializer,     // Panners, ...
+	RoomFx,          // Delays and Reverbs
+	SurroundFx,      // Dedicated surround processor
+	Restoration,     // Denoiser, ...
+	OfflineProcess,  // Offline Process
+	Shell,           // Plug-in is container of other plug-ins
+	Generator,       // Tone Generator, ...
+	// Custom categories
+	DMO,     // DirectX media object plugin
+	Hidden,  // For internal plugins that should not be visible to the user (e.g. because they only exist for legacy reasons)
+
+	NumCategories
+};
+
 struct VSTPluginLib
 {
-public:
-	enum PluginCategory : uint8
-	{
-		// Same plugin categories as defined in VST SDK
-		catUnknown = 0,
-		catEffect,          // Simple Effect
-		catSynth,           // VST Instrument (Synths, samplers,...)
-		catAnalysis,        // Scope, Tuner, ...
-		catMastering,       // Dynamics, ...
-		catSpacializer,     // Panners, ...
-		catRoomFx,          // Delays and Reverbs
-		catSurroundFx,      // Dedicated surround processor
-		catRestoration,     // Denoiser, ...
-		catOfflineProcess,  // Offline Process
-		catShell,           // Plug-in is container of other plug-ins
-		catGenerator,       // Tone Generator, ...
-		// Custom categories
-		catDMO,     // DirectX media object plugin
-		catHidden,  // For internal plugins that should not be visible to the user (e.g. because they only exist for legacy reasons)
-
-		numCategories
-	};
-
 public:
 	using CreateProc = IMixPlugin *(*)(VSTPluginLib &factory, CSoundFile &sndFile, SNDMIXPLUGIN &mixStruct);
 
@@ -68,7 +69,8 @@ public:
 #endif // MODPLUG_TRACKER
 	int32 pluginId1 = 0;                // Plugin type (kEffectMagic, kDmoMagic, ...)
 	int32 pluginId2 = 0;                // Plugin unique ID
-	PluginCategory category = catUnknown;
+	uint32 shellPluginID = 0;           // ID of shell child plugin
+	PluginCategory category = PluginCategory::Unknown;
 	const bool isBuiltIn : 1;
 	bool isInstrument : 1;
 	bool useBridge : 1, shareBridgeInstance : 1, modernBridge : 1;
@@ -76,20 +78,26 @@ protected:
 	mutable uint8 dllArch = 0;
 
 public:
-	VSTPluginLib(CreateProc factoryProc, bool isBuiltIn, const mpt::PathString &dllPath, const mpt::PathString &libraryName
-#ifdef MODPLUG_TRACKER
-		, const mpt::ustring &tags = mpt::ustring(), const CString &vendor = CString()
-#endif // MODPLUG_TRACKER
-		)
+	VSTPluginLib(CreateProc factoryProc, bool isBuiltIn, mpt::PathString dllPath, mpt::PathString libraryName)
 		: Create(factoryProc)
-		, libraryName(libraryName), dllPath(dllPath)
-#ifdef MODPLUG_TRACKER
-		, tags(tags)
-		, vendor(vendor)
-#endif // MODPLUG_TRACKER
-		, category(catUnknown)
+		, libraryName(std::move(libraryName)), dllPath(std::move(dllPath))
+		, category(PluginCategory::Unknown)
 		, isBuiltIn(isBuiltIn), isInstrument(false)
 		, useBridge(false), shareBridgeInstance(true), modernBridge(true)
+	{
+	}
+	VSTPluginLib(VSTPluginLib &&) = default;
+	VSTPluginLib(const VSTPluginLib &other)
+		: Create(other.Create)
+		, libraryName(other.libraryName), dllPath(other.dllPath)
+#ifdef MODPLUG_TRACKER
+		, tags(other.tags), vendor(other.vendor)
+#endif  // MODPLUG_TRACKER
+		, pluginId1(other.pluginId1), pluginId2(other.pluginId2), shellPluginID(other.shellPluginID)
+		, category(other.category)
+		, isBuiltIn(other.isBuiltIn), isInstrument(other.isInstrument)
+		, useBridge(other.useBridge), shareBridgeInstance(other.shareBridgeInstance), modernBridge(other.modernBridge)
+		, dllArch(other.dllArch)
 	{
 	}
 
@@ -98,7 +106,6 @@ public:
 	// Get native phost process arch encoded as plugin arch
 	static uint8 GetNativePluginArch();
 	static mpt::ustring GetPluginArchName(uint8 arch);
-	static mpt::ustring GetPluginArchNameUser(uint8 arch);
 
 	// Check whether a plugin can be hosted inside OpenMPT or requires bridging
 	uint8 GetDllArch(bool fromCache = true) const;
@@ -117,7 +124,7 @@ public:
 	{
 		// Format: 00000000.0000000M.AAAAAASB.CCCCCCCI
 		return (isInstrument ? 1 : 0)
-			| (category << 1)
+			| (static_cast<uint32>(category) << 1)
 			| (useBridge ? 0x100 : 0)
 			| (shareBridgeInstance ? 0x200 : 0)
 			| ((dllArch / 8) << 10)
@@ -128,14 +135,14 @@ public:
 	void DecodeCacheFlags(uint32 flags)
 	{
 		category = static_cast<PluginCategory>((flags & 0xFF) >> 1);
-		if(category >= numCategories)
+		if(category >= PluginCategory::NumCategories)
 		{
-			category = catUnknown;
+			category = PluginCategory::Unknown;
 		}
 		if(flags & 1)
 		{
 			isInstrument = true;
-			category = catSynth;
+			category = PluginCategory::Synth;
 		}
 		useBridge = (flags & 0x100) != 0;
 		shareBridgeInstance = (flags & 0x200) != 0;
@@ -152,14 +159,14 @@ protected:
 #if defined(MPT_WITH_DMO)
 	bool MustUnInitilizeCOM = false;
 #endif
-	std::vector<VSTPluginLib *> pluginList;
+	std::vector<std::unique_ptr<VSTPluginLib>> pluginList;
 
 public:
 	CVstPluginManager();
 	~CVstPluginManager();
 
-	using iterator = std::vector<VSTPluginLib *>::iterator;
-	using const_iterator = std::vector<VSTPluginLib *>::const_iterator;
+	using iterator = decltype(pluginList)::iterator;
+	using const_iterator = decltype(pluginList)::const_iterator;
 
 	iterator begin() { return pluginList.begin(); }
 	const_iterator begin() const { return pluginList.begin(); }
@@ -169,7 +176,7 @@ public:
 	size_t size() const { return pluginList.size(); }
 
 	bool IsValidPlugin(const VSTPluginLib *pLib) const;
-	VSTPluginLib *AddPlugin(const mpt::PathString &dllPath, bool maskCrashes, const mpt::ustring &tags = mpt::ustring(), bool fromCache = true, bool *fileFound = nullptr);
+	std::vector<VSTPluginLib *> AddPlugin(const mpt::PathString &dllPath, bool maskCrashes, bool fromCache = true, bool *fileFound = nullptr, uint32 shellPluginID = 0);
 	bool RemovePlugin(VSTPluginLib *);
 	bool CreateMixPlugin(SNDMIXPLUGIN &, CSoundFile &);
 	void OnIdle();
@@ -177,6 +184,8 @@ public:
 
 protected:
 	void EnumerateDirectXDMOs();
+
+	std::vector<VSTPluginLib *> AddPluginsToList(std::vector<VSTPluginLib> containedPlugins, std::function<void(VSTPluginLib &, bool)> updateFunc);
 
 #else // NO_PLUGINS
 public:

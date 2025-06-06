@@ -14,9 +14,9 @@
 #include "mpt/io/io_stdstream.hpp"
 #include "../common/serialization_utils.h"
 #include <algorithm>
-#include "../common/mptFileIO.h"
 #include "Loaders.h"
 #ifdef MODPLUG_TRACKER
+#include "../common/mptFileIO.h"
 #include "mpt/fs/fs.hpp"
 #include "mpt/io_file/outputfile.hpp"
 #include "../mptrack/TrackerSettings.h"

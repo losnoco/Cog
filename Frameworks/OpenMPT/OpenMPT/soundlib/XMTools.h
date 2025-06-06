@@ -17,6 +17,10 @@
 
 OPENMPT_NAMESPACE_BEGIN
 
+struct InstrumentEnvelope;
+struct ModInstrument;
+struct ModSample;
+class SampleIO;
 
 // XM File Header
 struct XMFileHeader

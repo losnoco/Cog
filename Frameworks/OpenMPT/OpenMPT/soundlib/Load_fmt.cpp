@@ -80,18 +80,16 @@ bool CSoundFile::ReadFMT(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	if(!ValidateHeader(fileHeader))
 		return false;
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 		return false;
 	if(loadFlags == onlyVerifyHeader)
 		return true;
 
-	InitializeGlobals(MOD_TYPE_S3M);
-	InitializeChannels();
-	m_nChannels = 8;
+	InitializeGlobals(MOD_TYPE_S3M, 8);
 	m_nSamples = 8;
-	m_nDefaultTempo = TEMPO(45.5);  // 18.2 Hz timer
+	Order().SetDefaultTempo(TEMPO(45.5));  // 18.2 Hz timer
 	m_playBehaviour.set(kOPLNoteStopWith0Hz);
-	m_SongFlags.set(SONG_IMPORTED);
+	m_SongFlags.set(SONG_IMPORTED | SONG_FORMAT_NO_VOLCOL);
 	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.songName);
 
 	for(CHANNELINDEX chn = 0; chn < 8; chn++)
@@ -118,7 +116,7 @@ bool CSoundFile::ReadFMT(FileReader &file, ModLoadingFlags loadFlags)
 		if(delay < 1 || delay > 8)
 			return false;
 	}
-	m_nDefaultSpeed = delays[0];
+	Order().SetDefaultSpeed(delays[0]);
 
 	const PATTERNINDEX numPatterns = fileHeader.lastPattern + 1u;
 	const ROWINDEX numRows = fileHeader.lastRow + 1u;
@@ -184,8 +182,8 @@ bool CSoundFile::ReadFMT(FileReader &file, ModLoadingFlags loadFlags)
 		m->param = delay;
 	}
 
-	m_modFormat.formatName = U_("FM Tracker");
-	m_modFormat.type = U_("fmt");
+	m_modFormat.formatName = UL_("FM Tracker");
+	m_modFormat.type = UL_("fmt");
 	m_modFormat.madeWithTracker = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::maybeNullTerminated, fileHeader.trackerName));
 	m_modFormat.charset = mpt::Charset::CP437;
 

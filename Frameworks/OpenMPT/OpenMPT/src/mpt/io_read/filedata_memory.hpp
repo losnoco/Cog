@@ -64,9 +64,9 @@ public:
 		if (pos >= streamLength) {
 			return dst.first(0);
 		}
-		pos_type avail = std::min(streamLength - pos, dst.size());
-		std::copy(streamData + pos, streamData + pos + avail, dst.data());
-		return dst.first(avail);
+		pos_type avail = std::min(streamLength - pos, static_cast<pos_type>(dst.size()));
+		std::copy(streamData + pos, streamData + static_cast<std::size_t>(pos + avail), dst.data());
+		return dst.first(static_cast<std::size_t>(avail));
 	}
 
 	bool CanRead(pos_type pos, pos_type length) const override {

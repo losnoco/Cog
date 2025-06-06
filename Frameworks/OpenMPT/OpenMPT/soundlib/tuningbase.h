@@ -32,7 +32,7 @@ enum class SerializationResult : int {
 using NOTEINDEXTYPE = int16;    // Some signed integer-type.
 using UNOTEINDEXTYPE = uint16;  // Unsigned NOTEINDEXTYPE.
 
-using RATIOTYPE = float32;      // Some 'real figure' type able to present ratios. If changing RATIOTYPE, serialization methods may need modifications.
+using RATIOTYPE = somefloat32;      // Some 'real figure' type able to present ratios. If changing RATIOTYPE, serialization methods may need modifications.
 
 // Counter of steps between notes. If there is no 'finetune'(finestepcount == 0),
 // then 'step difference' between notes is the

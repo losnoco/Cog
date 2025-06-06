@@ -308,7 +308,6 @@ public:
 	virtual bool LoadOnStartup() const = 0;
 	virtual bool KeepLoaded() const = 0;
 	virtual bool IsBlocked(const std::string &key) const = 0;
-	virtual mpt::PathString Path() const = 0;
 protected:
 	virtual ~IComponentManagerSettings() = default;
 };
@@ -321,7 +320,6 @@ public:
 	bool LoadOnStartup() const override { return false; }
 	bool KeepLoaded() const override { return true; }
 	bool IsBlocked(const std::string & /*key*/ ) const override { return false; }
-	mpt::PathString Path() const override { return mpt::PathString(); }
 };
 
 
@@ -374,7 +372,6 @@ public:
 	std::shared_ptr<const IComponent> ReloadComponent(const IComponentFactory &componentFactory);
 	std::vector<std::string> GetRegisteredComponents() const;
 	ComponentInfo GetComponentInfo(std::string name) const;
-	mpt::PathString GetComponentPath() const;
 };
 
 
@@ -423,12 +420,6 @@ std::shared_ptr<const type> ReloadComponent()
 }
 
 
-inline mpt::PathString GetComponentPath()
-{
-	return ComponentManager::Instance()->GetComponentPath();
-}
-
-
 #else // !MPT_COMPONENT_MANAGER
 
 
@@ -438,8 +429,15 @@ inline mpt::PathString GetComponentPath()
 template <typename type>
 std::shared_ptr<const type> GetComponent()
 {
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif // MPT_COMPILER_CLANG
 	static std::weak_ptr<type> cache;
 	static mpt::mutex m;
+#if MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif // MPT_COMPILER_CLANG	mpt::lock_guard<mpt::mutex> l(m);
 	mpt::lock_guard<mpt::mutex> l(m);
 	std::shared_ptr<type> component = cache.lock();
 	if(!component)

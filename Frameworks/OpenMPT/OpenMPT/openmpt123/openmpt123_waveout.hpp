@@ -20,7 +20,7 @@
 namespace openmpt123 {
 
 struct waveout_exception : public exception {
-	waveout_exception() : exception( MPT_USTRING("waveout") ) { }
+	waveout_exception() : exception( MPT_USTRING("WaveOut: ") + MPT_USTRING("waveout") ) { }
 };
 
 class waveout_stream_raii : public write_buffers_interface {
@@ -34,7 +34,7 @@ private:
 	std::vector<std::vector<char> > wavebuffers;
 	std::deque<char> byte_queue;
 public:
-	waveout_stream_raii( commandlineflags & flags )
+	waveout_stream_raii( commandlineflags & flags, concat_stream<mpt::ustring> & /* log */ )
 		: waveout(NULL)
 		, num_channels(0)
 		, num_chunks(0)
@@ -177,22 +177,22 @@ public:
 	}
 };
 
-static mpt::ustring show_waveout_devices( concat_stream<mpt::ustring> & /*log*/ ) {
-	string_concat_stream<mpt::ustring> devices;
-	devices << MPT_USTRING(" waveout:") << lf;
+inline std::vector<mpt::ustring> show_waveout_devices( concat_stream<mpt::ustring> & /*log*/ ) {
+	std::vector<mpt::ustring> devices;
 	for ( UINT i = 0; i < waveOutGetNumDevs(); ++i ) {
-		devices << MPT_USTRING("    ") << i << MPT_USTRING(": ");
+		string_concat_stream<mpt::ustring> device;
+		device << i << MPT_USTRING(": ");
 		WAVEOUTCAPS caps;
 		ZeroMemory( &caps, sizeof( caps ) );
 		waveOutGetDevCaps( i, &caps, sizeof( caps ) );
 		#if defined(UNICODE)
-			devices << mpt::transcode<mpt::ustring>( caps.szPname );
+			device << mpt::transcode<mpt::ustring>( caps.szPname );
 		#else
-			devices << mpt::transcode<mpt::ustring>( mpt::logical_encoding::locale, caps.szPname );
+			device << mpt::transcode<mpt::ustring>( mpt::logical_encoding::locale, caps.szPname );
 		#endif
-		devices << lf;
+		devices.push_back( device.str() );
 	}
-	return devices.str();
+	return devices;
 }
 
 } // namespace openmpt123

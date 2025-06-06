@@ -408,6 +408,7 @@ inline CString ToCString(Tencoding &&from, Tsrc &&str)
 
 #define UC_(x)           MPT_UCHAR(x)
 #define UL_(x)           MPT_ULITERAL(x)
+#define UV_(x)           MPT_USTRINGVIEW(x)
 #define U_(x)            MPT_USTRING(x)
 
 

@@ -74,6 +74,16 @@ constexpr std::array<T, N> init_array(const Tx & x) {
 }
 
 
+template <typename T, std::size_t N, typename Fgen>
+constexpr std::array<T, N> generate_array(Fgen generator) {
+	std::array<T, N> result{};
+	for (std::size_t i = 0; i < N; ++i) {
+		result[i] = generator(i);
+	}
+	return result;
+}
+
+
 } // namespace MPT_INLINE_NS
 } // namespace mpt
 

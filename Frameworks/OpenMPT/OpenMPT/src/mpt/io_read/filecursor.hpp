@@ -6,9 +6,12 @@
 
 
 #include "mpt/base/alloc.hpp"
+#include "mpt/base/macros.hpp"
 #include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/base/span.hpp"
+#include "mpt/base/utility.hpp"
+#include "mpt/out_of_memory/out_of_memory.hpp"
 
 #include <algorithm>
 #include <optional>
@@ -249,7 +252,7 @@ public:
 			size_ = 0;
 			pinnedData = nullptr;
 			if (!file.CanRead(size)) {
-				size = file.BytesLeft();
+				size = static_cast<std::size_t>(file.BytesLeft());
 			}
 			size_ = size;
 			if (file.DataContainer().HasPinnedView()) {
@@ -268,15 +271,20 @@ public:
 			, pinnedData(nullptr) {
 		}
 		PinnedView(const FileCursor & file) {
-			Init(file, file.BytesLeft());
+			MPT_MAYBE_CONSTANT_IF (!mpt::in_range<std::size_t>(file.BytesLeft())) {
+				mpt::throw_out_of_memory();
+			}
+			Init(file, static_cast<std::size_t>(file.BytesLeft()));
 		}
 		PinnedView(const FileCursor & file, std::size_t size) {
 			Init(file, size);
 		}
 		PinnedView(FileCursor & file, bool advance) {
-			Init(file, file.BytesLeft());
-			if (advance)
-			{
+			MPT_MAYBE_CONSTANT_IF (!mpt::in_range<std::size_t>(file.BytesLeft())) {
+				mpt::throw_out_of_memory();
+			}
+			Init(file, static_cast<std::size_t>(file.BytesLeft()));
+			if (advance) {
 				file.Skip(size_);
 			}
 		}

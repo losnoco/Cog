@@ -154,7 +154,7 @@ bool CSoundFile::ReadMUS_KM(FileReader &file, ModLoadingFlags loadFlags)
 			return false;
 		if(!ValidateHeader(fileHeader))
 			return false;
-		if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+		if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 			return false;
 		if(loadFlags == onlyVerifyHeader)
 			return true;
@@ -169,10 +169,8 @@ bool CSoundFile::ReadMUS_KM(FileReader &file, ModLoadingFlags loadFlags)
 	if(songChunks.empty() || sampleChunks.empty())
 		return false;
 
-	InitializeGlobals(MOD_TYPE_MOD);
-	InitializeChannels();
-	m_SongFlags = SONG_AMIGALIMITS | SONG_IMPORTED | SONG_ISAMIGA;  // Yes, those were not Amiga games but the format fully conforms to Amiga limits, so allow the Amiga Resampler to be used.
-	m_nChannels = 4;
+	InitializeGlobals(MOD_TYPE_MOD, 4);
+	m_SongFlags = SONG_AMIGALIMITS | SONG_IMPORTED | SONG_FORMAT_NO_VOLCOL | SONG_ISAMIGA;  // Yes, those were not Amiga games but the format fully conforms to Amiga limits, so allow the Amiga Resampler to be used.
 	m_nSamples = 0;
 
 	static constexpr uint16 MUS_SAMPLE_UNUSED = 255;  // Sentinel value to check if a sample needs to be duplicated
@@ -375,8 +373,8 @@ bool CSoundFile::ReadMUS_KM(FileReader &file, ModLoadingFlags loadFlags)
 
 	Order.SetSequence(0);
 
-	m_modFormat.formatName = U_("Karl Morton Music Format");
-	m_modFormat.type = U_("mus");
+	m_modFormat.formatName = UL_("Karl Morton Music Format");
+	m_modFormat.type = UL_("mus");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	return true;

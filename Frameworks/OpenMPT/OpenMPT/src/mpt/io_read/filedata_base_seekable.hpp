@@ -32,25 +32,10 @@ class FileDataSeekable : public IFileData {
 private:
 	pos_type streamLength;
 
-	mutable bool cached;
-	mutable std::vector<std::byte> cache;
-
 protected:
 	FileDataSeekable(pos_type streamLength_)
-		: streamLength(streamLength_)
-		, cached(false) {
+		: streamLength(streamLength_) {
 		return;
-	}
-
-
-private:
-	void CacheStream() const {
-		if (cached) {
-			return;
-		}
-		cache.resize(streamLength);
-		InternalReadSeekable(0, mpt::as_span(cache));
-		cached = true;
 	}
 
 public:
@@ -63,12 +48,11 @@ public:
 	}
 
 	bool HasPinnedView() const override {
-		return cached;
+		return false;
 	}
 
 	const std::byte * GetRawData() const override {
-		CacheStream();
-		return cache.data();
+		return nullptr;
 	}
 
 	pos_type GetLength() const override {
@@ -76,13 +60,7 @@ public:
 	}
 
 	mpt::byte_span Read(pos_type pos, mpt::byte_span dst) const override {
-		if (cached) {
-			IFileData::pos_type cache_avail = std::min(IFileData::pos_type(cache.size()) - pos, dst.size());
-			std::copy(cache.begin() + pos, cache.begin() + pos + cache_avail, dst.data());
-			return dst.first(cache_avail);
-		} else {
-			return InternalReadSeekable(pos, dst);
-		}
+		return InternalReadSeekable(pos, dst);
 	}
 
 private:

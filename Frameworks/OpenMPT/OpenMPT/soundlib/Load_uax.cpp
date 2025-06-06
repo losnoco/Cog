@@ -42,9 +42,9 @@ bool CSoundFile::ReadUAX(FileReader &file, ModLoadingFlags loadFlags)
 	const std::vector<std::string> names = UMX::ReadNameTable(file, fileHeader);
 	const std::vector<int32> classes = UMX::ReadImportTable(file, fileHeader, names);
 
-	InitializeGlobals();
+	InitializeGlobals(MOD_TYPE_MPT, 4);
 	m_modFormat.formatName = MPT_UFORMAT("Unreal Package v{}")(fileHeader.packageVersion);
-	m_modFormat.type = U_("uax");
+	m_modFormat.type = UL_("uax");
 	m_modFormat.charset = mpt::Charset::Windows1252;
 	
 	// Read export table
@@ -70,10 +70,7 @@ bool CSoundFile::ReadUAX(FileReader &file, ModLoadingFlags loadFlags)
 
 	if(m_nSamples != 0)
 	{
-		InitializeChannels();
-		SetType(MOD_TYPE_MPT);
 		m_ContainerType = ModContainerType::UAX;
-		m_nChannels = 4;
 		Patterns.Insert(0, 64);
 		Order().assign(1, 0);
 		return true;

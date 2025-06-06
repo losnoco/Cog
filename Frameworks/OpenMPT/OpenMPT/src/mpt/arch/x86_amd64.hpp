@@ -37,8 +37,10 @@
 
 #if MPT_ARCH_X86 || MPT_ARCH_AMD64
 #if MPT_COMPILER_MSVC
-#include <immintrin.h>
 #include <intrin.h>
+#endif
+#if MPT_COMPILER_MSVC
+#include <immintrin.h>
 #elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
 #include <cpuid.h>
 #include <x86intrin.h>
@@ -47,207 +49,6 @@
 
 // skip assumed features for amd64
 #define MPT_ARCH_X86_AMD64_FAST_DETECT 0
-
-
-
-// clang-format off
-
-#if MPT_ARCH_X86 || MPT_ARCH_AMD64
-
-#if MPT_COMPILER_MSVC
-
-#if defined(_M_X64)
-	#define MPT_ARCH_X86_I386
-	#define MPT_ARCH_X86_FPU
-	#define MPT_ARCH_X86_FSIN
-	#define MPT_ARCH_X86_I486
-	#define MPT_ARCH_X86_CPUID
-	#define MPT_ARCH_X86_TSC
-	#define MPT_ARCH_X86_CX8
-	#define MPT_ARCH_X86_CMOV
-	#define MPT_ARCH_X86_MMX
-	#define MPT_ARCH_X86_MMXEXT
-	#define MPT_ARCH_X86_FXSR
-	#define MPT_ARCH_X86_SSE
-	#define MPT_ARCH_X86_SSE2
-#elif defined(_M_IX86) && defined(_M_IX86_FP)
-	#if (_M_IX86_FP >= 2)
-		#define MPT_ARCH_X86_I386
-		#define MPT_ARCH_X86_FPU
-		#define MPT_ARCH_X86_FSIN
-		#define MPT_ARCH_X86_I486
-		#define MPT_ARCH_X86_CPUID
-		#define MPT_ARCH_X86_TSC
-		#define MPT_ARCH_X86_CX8
-		#define MPT_ARCH_X86_CMOV
-		#define MPT_ARCH_X86_MMX
-		#define MPT_ARCH_X86_MMXEXT
-		#define MPT_ARCH_X86_FXSR
-		#define MPT_ARCH_X86_SSE
-		#define MPT_ARCH_X86_SSE2
-	#elif (_M_IX86_FP == 1)
-		#define MPT_ARCH_X86_I386
-		#define MPT_ARCH_X86_FPU
-		#define MPT_ARCH_X86_FSIN
-		#define MPT_ARCH_X86_I486
-		#define MPT_ARCH_X86_CPUID
-		#define MPT_ARCH_X86_TSC
-		#define MPT_ARCH_X86_CX8
-		#define MPT_ARCH_X86_CMOV
-		#define MPT_ARCH_X86_MMX
-		#define MPT_ARCH_X86_MMXEXT
-		#define MPT_ARCH_X86_FXSR
-		#define MPT_ARCH_X86_SSE
-	#elif MPT_MSVC_AT_LEAST(2008, 0)
-		#define MPT_ARCH_X86_I386
-		#define MPT_ARCH_X86_FPU
-		#define MPT_ARCH_X86_FSIN
-		#define MPT_ARCH_X86_I486
-		#define MPT_ARCH_X86_CPUID
-		#define MPT_ARCH_X86_TSC
-		#define MPT_ARCH_X86_CX8
-	#elif MPT_MSVC_AT_LEAST(2005, 0)
-		#define MPT_ARCH_X86_I386
-		#define MPT_ARCH_X86_FPU
-		#define MPT_ARCH_X86_FSIN
-		#define MPT_ARCH_X86_I486
-	#elif MPT_MSVC_AT_LEAST(1998, 0)
-		#define MPT_ARCH_X86_I386
-		#define MPT_ARCH_X86_FPU
-		#define MPT_ARCH_X86_FSIN
-	#else
-		#define MPT_ARCH_X86_I386
-	#endif
-#endif
-#if defined(__AVX__)
-	#define MPT_ARCH_X86_3DNOWPREFETCH
-	#ifndef MPT_ARCH_X86_XSAVE
-	#define MPT_ARCH_X86_XSAVE
-	#endif
-	#define MPT_ARCH_X86_AVX
-#endif
-#if defined(__AVX2__)
-	#ifndef MPT_ARCH_X86_XSAVE
-	#define MPT_ARCH_X86_XSAVE
-	#endif
-	#define MPT_ARCH_X86_AVX2
-	#define MPT_ARCH_X86_FMA
-	#define MPT_ARCH_X86_BMI1
-#endif
-
-#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
-
-#define MPT_ARCH_X86_I386
-#if !defined(_SOFT_FLOAT)
-	#define MPT_ARCH_X86_FPU
-	// GCC does not provide a macro for FSIN. Deduce it from 486 later.
-#endif
-#if defined(__i486__)
-	// GCC does not consistently provide i486, deduce it later from cpuid.
-	#define MPT_ARCH_X86_I486
-#endif
-#ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
-	// GCC does not provide TSC or CPUID.
-	// Imply it by CX8.
-	#define MPT_ARCH_X86_CX8
-	#define MPT_ARCH_X86_TSC
-	#define MPT_ARCH_X86_CPUID
-#endif
-#if defined(__i686__) || defined(__athlon__)
-	// GCC is broken here and does not set __i686__ for various non-Intel and even modern Intel CPUs
-	// Imply __i686__ by __SSE__ as a work-around.
-	#define MPT_ARCH_X86_CMOV
-#endif
-#if defined(MPT_ARCH_X86_CPUID)
-	#ifndef MPT_ARCH_X86_I486
-	#define MPT_ARCH_X86_I486
-	#endif
-#endif
-#if defined(MPT_ARCH_X86_I486) && defined(MPT_ARCH_X86_FPU)
-	#define MPT_ARCH_X86_FSIN
-#endif
-#ifdef __MMX__
-	#define MPT_ARCH_X86_MMX
-#endif
-#ifdef __3dNOW__
-	#define MPT_ARCH_X86_3DNOW
-#endif
-#ifdef __3dNOW_A__
-	#define MPT_ARCH_X86_MMXEXT
-	#define MPT_ARCH_X86_3DNOWEXT
-#endif
-#ifdef __PRFCHW__
-	#define MPT_ARCH_X86_3DNOWPREFETCH
-#endif
-#ifdef __FXSR__
-	#define MPT_ARCH_X86_FXSR
-#endif
-#ifdef __SSE__
-	#ifndef MPT_ARCH_X86_MMXEXT
-	#define MPT_ARCH_X86_MMXEXT
-	#endif
-	#define MPT_ARCH_X86_SSE
-	#ifndef MPT_ARCH_X86_CMOV
-	#define MPT_ARCH_X86_CMOV
-	#endif
-#endif
-#ifdef __SSE2__
-	#define MPT_ARCH_X86_SSE2
-#endif
-#ifdef __SSE3__
-	#define MPT_ARCH_X86_SSE3
-#endif
-#ifdef __SSSE3__
-	#define MPT_ARCH_X86_SSSE3
-#endif
-#ifdef __SSE4_1__
-	#define MPT_ARCH_X86_SSE4_1
-#endif
-#ifdef __SSE4_2__
-	#define MPT_ARCH_X86_SSE4_2
-#endif
-#ifdef __XSAVE__
-	#define MPT_ARCH_X86_XSAVE
-#endif
-#ifdef __AVX__
-	#define MPT_ARCH_X86_AVX
-#endif
-#ifdef __AVX2__
-	#define MPT_ARCH_X86_AVX2
-#endif
-#ifdef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16
-	#define MPT_ARCH_X86_CX16
-#endif
-#ifdef __LAHF_SAHF__
-	#define MPT_ARCH_X86_LAHF
-#endif
-#ifdef __POPCNT__
-	#define MPT_ARCH_X86_POPCNT
-#endif
-#ifdef __BMI__
-	#define MPT_ARCH_X86_BMI1
-#endif
-#ifdef __BMI2__
-	#define MPT_ARCH_X86_BMI2
-#endif
-#ifdef __F16C__
-	#define MPT_ARCH_X86_F16C
-#endif
-#ifdef __FMA__
-	#define MPT_ARCH_X86_FMA
-#endif
-#ifdef __LZCNT__
-	#define MPT_ARCH_X86_LZCNT
-#endif
-#ifdef __MOVBE__
-	#define MPT_ARCH_X86_MOVBE
-#endif
-
-#endif // MPT_COMPILER
-
-#endif // MPT_ARCH
-
-// clang-format on
 
 
 
@@ -413,6 +214,9 @@ enum class vendor : uint8 {
 	#endif
 	#ifdef MPT_ARCH_X86_FSIN
 		flags |= feature::fsin;
+	#endif
+	#ifdef MPT_ARCH_X86_I486
+		flags |= feature::intel486;
 	#endif
 	#ifdef MPT_ARCH_X86_CPUID
 		flags |= feature::cpuid;

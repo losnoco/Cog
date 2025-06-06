@@ -875,6 +875,26 @@ LIBOPENMPT_API int openmpt_module_select_subsong( openmpt_module * mod, int32_t 
  * \since 0.3.0
  */
 LIBOPENMPT_API int32_t openmpt_module_get_selected_subsong( openmpt_module * mod );
+
+/*! \brief Get the restart order of the specified sub-song
+ *
+ * \param mod The module handle to work on.
+ * \param subsong Index of the sub-song to retrieve the restart position from.
+ * \return The restart order of the specified sub-song. This is the order to which playback returns after the last pattern row of the song has been played. -1 is returned if if sub-song is not in range [0,openmpt_module_get_num_subsongs()[
+ * \sa openmpt_module_get_restart_row
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int32_t openmpt_module_get_restart_order( openmpt_module * mod, int32_t subsong );
+/*! \brief Get the restart row of the specified sub-song
+ *
+ * \param mod The module handle to work on.
+ * \param subsong Index of the sub-song to retrieve the restart position from.
+ * \return The restart row of the specified sub-song. This is the first played row of the order to which playback returns after the last pattern row of the song has been played. -1 is returned if if sub-song is not in range [0,openmpt_module_get_num_subsongs()[
+ * \sa openmpt_module_get_restart_order
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int32_t openmpt_module_get_restart_row( openmpt_module * mod, int32_t subsong );
+
 /*! \brief Set Repeat Count
  *
  * \param mod The module handle to work on.
@@ -904,6 +924,17 @@ LIBOPENMPT_API int32_t openmpt_module_get_repeat_count( openmpt_module * mod );
  * \remarks The function may return infinity if the pattern data is too complex to evaluate.
  */
 LIBOPENMPT_API double openmpt_module_get_duration_seconds( openmpt_module * mod );
+
+/*! \brief Get approximate playback time in seconds at given position
+ *
+ * \param mod The module handle to work on.
+ * \param order The order position at which the time should be retrieved.
+ * \param row The pattern row number at which the time should be retrieved.
+ * \return Approximate playback time in seconds of current sub-song at the start of the given order and row combination. Negative if the position does not exist, or the pattern data is too complex to evaluate.
+ * \remarks If an order / row combination is played multiple times (e.g. due the pattern loops), the first occurence of this position is returned.
+ * \since 0.8.0
+ */
+LIBOPENMPT_API double openmpt_module_get_time_at_position( openmpt_module * mod, int32_t order, int32_t row );
 
 /*! \brief Set approximate current song position
  *
@@ -1330,6 +1361,44 @@ LIBOPENMPT_API const char * openmpt_module_get_sample_name( openmpt_module * mod
  * \return The pattern index found at the given order position of the current sequence.
  */
 LIBOPENMPT_API int32_t openmpt_module_get_order_pattern( openmpt_module * mod, int32_t order );
+
+/*! \brief Check if specified order is a skip ("+++") item
+ *
+ * \param mod The module handle to work on.
+ * \param order The order index to check.
+ * \return Returns non-zero value if the pattern index at the given order position represents a skip item. During playback, this item is ignored and playback resumes at the next order list item.
+ * \sa openmpt_module_is_order_stop_entry, openmpt_module_is_pattern_skip_item
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int openmpt_module_is_order_skip_entry( openmpt_module * mod, int32_t order );
+/*! \brief Check if specified pattern index is a skip ("+++") item
+ *
+ * \param mod The module handle to work on.
+ * \param pattern The pattern index to check.
+ * \return Returns non-zero value if the pattern index represents a skip item. During playback, this item is ignored and playback resumes at the next order list item.
+ * \sa openmpt_module_is_pattern_stop_item, openmpt_module_is_order_skip_entry, openmpt_module_get_order_pattern
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int openmpt_module_is_pattern_skip_item( openmpt_module * mod, int32_t pattern );
+/*! \brief Check if specified order is a stop ("---") item
+ *
+ * \param mod The module handle to work on.
+ * \param order The order index to check.
+ * \return Returns non-zero value if the pattern index at the given order position represents a stop item. When this item is reached, playback continues at the restart position of the current sub-song.
+ * \sa openmpt_module_is_order_skip_entry, openmpt_module_is_pattern_stop_item
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int openmpt_module_is_order_stop_entry( openmpt_module * mod, int32_t order );
+/*! \brief Check if specified pattern index is a stop ("---") item
+ *
+ * \param mod The module handle to work on.
+ * \param pattern The pattern index to check.
+ * \return Returns non-zero value if the pattern index represents a stop item. When this item is reached, playback continues at the restart position of the current sub-song.
+ * \sa openmpt_module_is_pattern_skip_item, openmpt_module_is_order_stop_entry, openmpt_module_get_order_pattern
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int openmpt_module_is_pattern_stop_item( openmpt_module * mod, int32_t pattern );
+
 /*! \brief Get the number of rows in a pattern
  *
  * \param mod The module handle to work on.
@@ -1337,6 +1406,25 @@ LIBOPENMPT_API int32_t openmpt_module_get_order_pattern( openmpt_module * mod, i
  * \return The number of rows in the given pattern. If the pattern does not exist, 0 is returned.
  */
 LIBOPENMPT_API int32_t openmpt_module_get_pattern_num_rows( openmpt_module * mod, int32_t pattern );
+
+/*! \brief Get the rows per beat of a pattern
+ *
+ * \param mod The module handle to work on.
+ * \param pattern The pattern whose time signature should be retrieved.
+ * \return The rows per beat of the given pattern. If the pattern does not exist or the time signature is not defined, 0 is returned.
+ * \remarks Many module formats lack time signature metadata. In this case, the returned value may be an incorrect estimation.
+ * \since 0.8.0
+ */
+LIBOPENMPT_API int32_t openmpt_module_get_pattern_rows_per_beat( openmpt_module * mod, int32_t pattern );
+
+/*! \brief Get the rows per measure of a pattern
+ *
+ * \param mod The module handle to work on.
+ * \param pattern The pattern whose time signature should be retrieved.
+ * \return The rows per measure of the given pattern. If the pattern does not exist or the time signature is not defined, 0 is returned.
+ * \remarks Many module formats lack time signature metadata. In this case, the returned value may be an incorrect estimation.
+ */
+LIBOPENMPT_API int32_t openmpt_module_get_pattern_rows_per_measure( openmpt_module * mod, int32_t pattern );
 
 /*! \brief Get raw pattern content
  *

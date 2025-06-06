@@ -629,14 +629,11 @@ mpt::ustring GetFullCreditsString()
 		"http://modplug-xmms.sourceforge.net/\n"
 		"\n"
 #ifdef MODPLUG_TRACKER
-		"Stephan M. Bernsee for pitch shifting source code\n"
-		"http://www.dspdimension.com/\n"
+		"Geraint Luff for Signalsmith Stretch\n"
+		"https://signalsmith-audio.co.uk/code/stretch/\n"
 		"\n"
 		"Aleksey Vaneev of Voxengo for r8brain sample rate converter\n"
 		"https://github.com/avaneev/r8brain-free-src\n"
-		"\n"
-		"Olli Parviainen for SoundTouch Library (time stretching)\n"
-		"https://www.surina.net/soundtouch/\n"
 		"\n"
 #endif
 #ifdef MPT_WITH_VST

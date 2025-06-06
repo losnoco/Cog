@@ -18,78 +18,6 @@ OPENMPT_NAMESPACE_BEGIN
 namespace ctrlSmp
 {
 
-void ReplaceSample(ModSample &smp, void *pNewSample, const SmpLength newLength, CSoundFile &sndFile)
-{
-	void * const pOldSmp = smp.samplev();
-	FlagSet<ChannelFlags> setFlags, resetFlags;
-
-	setFlags.set(CHN_16BIT, smp.uFlags[CHN_16BIT]);
-	resetFlags.set(CHN_16BIT, !smp.uFlags[CHN_16BIT]);
-
-	setFlags.set(CHN_STEREO, smp.uFlags[CHN_STEREO]);
-	resetFlags.set(CHN_STEREO, !smp.uFlags[CHN_STEREO]);
-
-	CriticalSection cs;
-
-	ctrlChn::ReplaceSample(sndFile, smp, pNewSample, newLength, setFlags, resetFlags);
-	smp.pData.pSample = pNewSample;
-	smp.nLength = newLength;
-	ModSample::FreeSample(pOldSmp);
-}
-
-
-// Propagate loop point changes to player
-bool UpdateLoopPoints(const ModSample &smp, CSoundFile &sndFile)
-{
-	if(!smp.HasSampleData())
-		return false;
-
-	CriticalSection cs;
-
-	// Update channels with new loop values
-	for(auto &chn : sndFile.m_PlayState.Chn) if((chn.pModSample == &smp) && chn.nLength != 0)
-	{
-		bool looped = false, bidi = false;
-
-		if(smp.nSustainStart < smp.nSustainEnd && smp.nSustainEnd <= smp.nLength && smp.uFlags[CHN_SUSTAINLOOP] && !chn.dwFlags[CHN_KEYOFF])
-		{
-			// Sustain loop is active
-			chn.nLoopStart = smp.nSustainStart;
-			chn.nLoopEnd = smp.nSustainEnd;
-			chn.nLength = smp.nSustainEnd;
-			looped = true;
-			bidi = smp.uFlags[CHN_PINGPONGSUSTAIN];
-		} else if(smp.nLoopStart < smp.nLoopEnd && smp.nLoopEnd <= smp.nLength && smp.uFlags[CHN_LOOP])
-		{
-			// Normal loop is active
-			chn.nLoopStart = smp.nLoopStart;
-			chn.nLoopEnd = smp.nLoopEnd;
-			chn.nLength = smp.nLoopEnd;
-			looped = true;
-			bidi = smp.uFlags[CHN_PINGPONGLOOP];
-		}
-		chn.dwFlags.set(CHN_LOOP, looped);
-		chn.dwFlags.set(CHN_PINGPONGLOOP, looped && bidi);
-
-		if(chn.position.GetUInt() > chn.nLength)
-		{
-			chn.position.Set(chn.nLoopStart);
-			chn.dwFlags.reset(CHN_PINGPONGFLAG);
-		}
-		if(!bidi)
-		{
-			chn.dwFlags.reset(CHN_PINGPONGFLAG);
-		}
-		if(!looped)
-		{
-			chn.nLength = smp.nLength;
-		}
-	}
-
-	return true;
-}
-
-
 template <class T>
 static void ReverseSampleImpl(T *pStart, const SmpLength length)
 {
@@ -368,7 +296,7 @@ bool ConvertToStereo(ModSample &smp, CSoundFile &sndFile)
 
 	CriticalSection cs;
 	smp.uFlags.set(CHN_STEREO);
-	ReplaceSample(smp, newSample, smp.nLength, sndFile);
+	smp.ReplaceWaveform(newSample, smp.nLength, sndFile);
 
 	smp.PrecomputeLoops(sndFile, false);
 	return true;

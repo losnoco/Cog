@@ -151,7 +151,7 @@ static std::pair<EffectCommand, uint8> TranslateULTCommands(const uint8 e, uint8
 		param = (param & 0x0F) * 0x11;
 		break;
 	case 0x0D: // pattern break
-		param = 10 * (param >> 4) + (param & 0x0F);
+		param = static_cast<uint8>(10 * (param >> 4) + (param & 0x0F));
 		break;
 	case 0x0E: // special
 		switch(param >> 4)
@@ -264,75 +264,6 @@ static ULTEventResult ReadULTEvent(ModCommand &m, FileReader &file, uint8 versio
 }
 
 
-// Functor for postfixing ULT patterns (this is easier than just remembering everything WHILE we're reading the pattern events)
-struct PostFixUltCommands
-{
-	PostFixUltCommands(CHANNELINDEX channels) : numChannels{channels}
-	{
-		isPortaActive.resize(channels, false);
-	}
-
-	void operator()(ModCommand &m)
-	{
-		// Attempt to fix portamentos.
-		// UltraTracker will slide until the destination note is reached or 300 is encountered.
-
-		// Stop porta?
-		if(m.command == CMD_TONEPORTAMENTO && m.param == 0)
-		{
-			isPortaActive[curChannel] = false;
-			m.command = CMD_NONE;
-		}
-		if(m.volcmd == VOLCMD_TONEPORTAMENTO && m.vol == 0)
-		{
-			isPortaActive[curChannel] = false;
-			m.volcmd = VOLCMD_NONE;
-		}
-
-		// Apply porta?
-		if(m.note == NOTE_NONE && isPortaActive[curChannel])
-		{
-			if(m.command == CMD_NONE && m.volcmd != VOLCMD_TONEPORTAMENTO)
-			{
-				m.command = CMD_TONEPORTAMENTO;
-				m.param = 0;
-			} else if(m.volcmd == VOLCMD_NONE && m.command != CMD_TONEPORTAMENTO)
-			{
-				m.volcmd = VOLCMD_TONEPORTAMENTO;
-				m.vol = 0;
-			}
-		} else	// new note -> stop porta (or initialize again)
-		{
-			isPortaActive[curChannel] = (m.command == CMD_TONEPORTAMENTO || m.volcmd == VOLCMD_TONEPORTAMENTO);
-		}
-
-		// attempt to fix F00 (reset to tempo 125, speed 6)
-		if(writeT125 && m.command == CMD_NONE)
-		{
-			m.command = CMD_TEMPO;
-			m.param = 125;
-		}
-		if(m.command == CMD_SPEED && m.param == 0)
-		{
-			m.param = 6;
-			writeT125 = true;
-		}
-		if(m.command == CMD_TEMPO)	// don't try to fix this anymore if the tempo has already changed.
-		{
-			writeT125 = false;
-		}
-		curChannel++;
-		if(curChannel >= numChannels)
-			curChannel = 0;
-	}
-
-	std::vector<bool> isPortaActive;
-	const CHANNELINDEX numChannels;
-	CHANNELINDEX curChannel = 0;
-	bool writeT125 = false;
-};
-
-
 static bool ValidateHeader(const UltFileHeader &fileHeader)
 {
 	if(fileHeader.version < '1' || fileHeader.version > '4'
@@ -352,13 +283,9 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderULT(MemoryFileReader file, co
 {
 	UltFileHeader fileHeader;
 	if(!file.ReadStruct(fileHeader))
-	{
 		return ProbeWantMoreData;
-	}
 	if(!ValidateHeader(fileHeader))
-	{
 		return ProbeFailure;
-	}
 	return ProbeAdditionalSize(file, pfilesize, GetHeaderMinimumAdditionalSize(fileHeader));
 }
 
@@ -369,23 +296,15 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 
 	UltFileHeader fileHeader;
 	if(!file.ReadStruct(fileHeader))
-	{
 		return false;
-	}
 	if(!ValidateHeader(fileHeader))
-	{
 		return false;
-	}
 	if(loadFlags == onlyVerifyHeader)
-	{
 		return true;
-	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
-	{
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 		return false;
-	}
 
-	InitializeGlobals(MOD_TYPE_ULT);
+	InitializeGlobals(MOD_TYPE_ULT, 0);
 	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
 
 	const mpt::uchar *versions[] = {UL_("<1.4"), UL_("1.4"), UL_("1.5"), UL_("1.6")};
@@ -394,7 +313,10 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 	m_modFormat.madeWithTracker = U_("UltraTracker ") + versions[fileHeader.version - '1'];
 	m_modFormat.charset = mpt::Charset::CP437;
 
-	m_SongFlags = SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;  // this will be converted to IT format by MPT.
+	m_SongFlags = SONG_AUTO_TONEPORTA | SONG_AUTO_TONEPORTA_CONT | SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;  // this will be converted to IT format by MPT.
+	m_playBehaviour.reset(kITClearPortaTarget);
+	m_playBehaviour.reset(kITPortaTargetReached);
+	m_playBehaviour.set(kFT2PortaTargetNoReset);
 
 	// Read "messageLength" lines, each containing 32 characters.
 	m_songMessage.ReadFixedLineLength(file, fileHeader.messageLength * 32, 32, 0);
@@ -426,7 +348,7 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 	ReadOrderFromFile<uint8>(Order(), file, 256, 0xFF, 0xFE);
 
 	if(CHANNELINDEX numChannels = file.ReadUint8() + 1u; numChannels <= MAX_BASECHANNELS)
-		m_nChannels = numChannels;
+		ChnSettings.resize(numChannels);
 	else
 		return false;
 
@@ -434,7 +356,6 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 
 	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{
-		ChnSettings[chn].Reset();
 		if(fileHeader.version >= '3')
 			ChnSettings[chn].nPan = ((file.ReadUint8() & 0x0F) << 4) + 8;
 		else
@@ -448,7 +369,8 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 			return false;
 	}
 
-	for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+	bool postFixSpeedCommands = false;
+	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{
 		ModCommand evnote;
 		for(PATTERNINDEX pat = 0; pat < numPats && file.CanRead(5); pat++)
@@ -465,6 +387,8 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 					repeat = 64 - row;
 				if(repeat == 0)
 					break;
+				if(evnote.command == CMD_SPEED && evnote.param == 0)
+					postFixSpeedCommands = true;
 				while(repeat--)
 				{
 					*note = evnote;
@@ -474,10 +398,24 @@ bool CSoundFile::ReadULT(FileReader &file, ModLoadingFlags loadFlags)
 			}
 		}
 	}
-
-	// Post-fix some effects.
-	Patterns.ForEachModCommand(PostFixUltCommands(GetNumChannels()));
-
+	if(postFixSpeedCommands)
+	{
+		for(CPattern &pat : Patterns)
+		{
+			for(ROWINDEX row = 0; row < pat.GetNumRows(); row++)
+			{
+				for(auto &m : pat.GetRow(row))
+				{
+					if(m.command == CMD_SPEED && m.param == 0)
+					{
+						m.param = 6;
+						pat.WriteEffect(EffectWriter(CMD_TEMPO, 125).Row(row).RetryNextRow());
+					}
+				}
+			}
+		}
+	}
+	
 	if(loadFlags & loadSampleData)
 	{
 		for(SAMPLEINDEX smp = 1; smp <= GetNumSamples(); smp++)

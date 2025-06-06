@@ -17,6 +17,17 @@
 #include <array>
 #endif // C++20
 
+#if MPT_LIBCXX_MS
+// for _ITERATOR_DEBUG_LEVEL
+#include <array>
+#endif // MPT_LIBCXX_MS
+
+
+
+#if MPT_OS_DJGPP
+#define MPT_ARCH_QUIRK_NO_SIMD256
+#endif
+
 
 
 #if MPT_COMPILER_MSVC
@@ -235,6 +246,16 @@
 
 
 
+#if MPT_LIBC_MINGW
+// MinGW32 runtime headers require __off64_t when including some C and/or C++ stdlib headers.
+// This is declared in <sys/types.h>, which howeger is not included in some header chains.
+#if (defined(__MINGW32__) && !defined(__MINGW64__))
+#define MPT_LIBC_QUIRK_REQUIRES_SYS_TYPES_H
+#endif
+#endif
+
+
+
 #if MPT_LIBC_DJGPP
 #define MPT_LIBC_QUIRK_NO_FENV
 #endif
@@ -248,6 +269,42 @@
 
 
 // #define MPT_LIBCXX_QUIRK_BROKEN_ACTIVE_LOCALE
+
+
+
+#if MPT_OS_WINDOWS && MPT_LIBCXX_GNU
+#define MPT_LIBCXX_QUIRK_INCOMPLETE_IS_FUNCTION
+#endif
+
+
+
+#if MPT_CXX_AT_LEAST(20)
+#if MPT_LIBCXX_GNU_BEFORE(10) || MPT_LIBCXX_LLVM_BEFORE(13000) || (MPT_LIBCXX_MS && MPT_MSVC_BEFORE(2022, 0)) || (MPT_LIBCXX_MS && !MPT_COMPILER_MSVC)
+#define MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_ALGORITHM
+#endif
+#endif
+
+
+
+#if MPT_CXX_AT_LEAST(20)
+#if MPT_LIBCXX_GNU_BEFORE(12) || MPT_LIBCXX_LLVM_BEFORE(15000) || (MPT_LIBCXX_MS && MPT_MSVC_BEFORE(2022, 0)) || (MPT_LIBCXX_MS && !MPT_COMPILER_MSVC)
+#ifndef MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_CONTAINER
+#define MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_CONTAINER
+#endif
+#endif
+#if MPT_LIBCXX_MS
+// So, in 2025, Microsoft still ships a STL that by default is not standard-compliant with its own default Debug options.
+// constexpr auto foo = std::vector<int>{}; does not compile with iterator debugging enabled (i.e. in Debug builds).
+// See <https://developercommunity.visualstudio.com/t/Iterator-Debugging-breaks-C20-constexp/10861623>.
+#if defined(_ITERATOR_DEBUG_LEVEL)
+#if (_ITERATOR_DEBUG_LEVEL >= 1)
+#ifndef MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_CONTAINER
+#define MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_CONTAINER
+#endif
+#endif
+#endif
+#endif
+#endif
 
 
 
@@ -276,7 +333,7 @@
 #elif MPT_LIBCXX_GNU
 #define MPT_LIBCXX_QUIRK_NO_CHRONO_DATE_PARSE
 #endif
-#if MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2022, 9) || !MPT_COMPILER_MSVC)
+#if MPT_LIBCXX_MS && (MPT_MSVC_BEFORE(2022, 15) || !MPT_COMPILER_MSVC)
 // Causes massive memory leaks.
 // See
 // <https://developercommunity.visualstudio.com/t/stdchronoget-tzdb-list-memory-leak/1644641>
@@ -284,7 +341,9 @@
 #define MPT_LIBCXX_QUIRK_CHRONO_TZ_MEMLEAK
 #endif
 #endif
-
+#if MPT_LIBCXX_GNU_BEFORE(13)
+#define MPT_LIBCXX_QUIRK_CHRONO_DATE_NO_ZONED_TIME
+#endif
 #if MPT_MSVC_AT_LEAST(2022, 6) && MPT_MSVC_BEFORE(2022, 7)
 // std::chrono triggers ICE in VS2022 17.6.0, see <https://developercommunity.visualstudio.com/t/INTERNAL-COMPILER-ERROR-when-compiling-s/10366948>.
 #define MPT_LIBCXX_QUIRK_CHRONO_DATE_BROKEN_ZONED_TIME
@@ -328,6 +387,12 @@
 
 #if MPT_OS_ANDROID && MPT_LIBCXX_LLVM_BEFORE(17000)
 #define MPT_LIBCXX_QUIRK_NO_NUMBERS
+#endif
+
+
+
+#if MPT_LIBCXX_GNU_BEFORE(13) || (MPT_LIBCXX_MS && !MPT_MSVC_AT_LEAST(2022, 7)) || MPT_LIBCXX_LLVM
+#define MPT_LIBCXX_QUIRK_NO_STDFLOAT
 #endif
 
 

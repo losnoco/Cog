@@ -10,23 +10,23 @@
 
 
 #include "stdafx.h"
+#include "Dlsbank.h"
 #include "Sndfile.h"
 #ifdef MODPLUG_TRACKER
+#include "../common/mptFileIO.h"
 #include "../mptrack/Mptrack.h"
 #include "mpt/io_file/inputfile.hpp"
 #include "mpt/io_file_read/inputfile_filecursor.hpp"
-#include "../common/mptFileIO.h"
 #endif
-#include "Dlsbank.h"
 #include "Loaders.h"
 #include "SampleCopy.h"
-#include "../common/mptStringBuffer.h"
-#include "../common/FileReader.h"
-#include "openmpt/base/Endian.hpp"
 #include "SampleIO.h"
+#include "../common/FileReader.h"
+#include "../common/mptStringBuffer.h"
 #include "mpt/io/base.hpp"
 #include "mpt/io/io.hpp"
 #include "mpt/io/io_stdstream.hpp"
+#include "openmpt/base/Endian.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -762,7 +762,15 @@ bool CDLSBank::FindAndExtract(CSoundFile &sndFile, const INSTRUMENTINDEX ins, co
 			pIns = sndFile.Instruments[ins]; // Reset pointer because ExtractInstrument may delete the previous value.
 			if((key >= 24) && (key < 24 + std::size(szMidiPercussionNames)))
 			{
+#if MPT_COMPILER_MSVC
+#pragma warning(push)
+// false-positive
+#pragma warning(disable:6385)  // Reading invalid data from 'szMidiPercussionNames'.
+#endif
 				pIns->name = szMidiPercussionNames[key - 24];
+#if MPT_COMPILER_MSVC
+#pragma warning(pop)
+#endif
 			}
 			return true;
 		}
@@ -2263,7 +2271,7 @@ bool CDLSBank::ExtractInstrument(CSoundFile &sndFile, INSTRUMENTINDEX nInstr, ui
 	float tempoScale = 1.0f;
 	if(sndFile.m_nTempoMode == TempoMode::Modern)
 	{
-		uint32 ticksPerBeat = sndFile.m_nDefaultRowsPerBeat * sndFile.m_nDefaultSpeed;
+		uint32 ticksPerBeat = sndFile.m_nDefaultRowsPerBeat * sndFile.Order().GetDefaultSpeed();
 		if(ticksPerBeat != 0)
 			tempoScale = ticksPerBeat / 24.0f;
 	}

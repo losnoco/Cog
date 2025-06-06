@@ -10,6 +10,7 @@
 #include "mpt/path/os_path.hpp"
 #include "mpt/random/default_engines.hpp"
 #include "mpt/random/device.hpp"
+#include "mpt/random/seed.hpp"
 #include "mpt/string_transcode/transcode.hpp"
 #include "mpt/uuid/uuid.hpp"
 

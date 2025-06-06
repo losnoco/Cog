@@ -9,6 +9,7 @@
 #include "mpt/base/namespace.hpp"
 #include "mpt/random/default_engines.hpp"
 #include "mpt/random/device.hpp"
+#include "mpt/random/seed.hpp"
 #include "mpt/string/types.hpp"
 #include "mpt/test/test.hpp"
 #include "mpt/test/test_macros.hpp"

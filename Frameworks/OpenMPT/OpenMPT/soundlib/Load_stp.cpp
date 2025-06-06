@@ -254,17 +254,17 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_STP);
+	InitializeGlobals(MOD_TYPE_STP, 4);
 
 	m_modFormat.formatName = MPT_UFORMAT("Soundtracker Pro II v{}")(fileHeader.version);
-	m_modFormat.type = U_("stp");
+	m_modFormat.type = UL_("stp");
 	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 
-	m_nChannels = 4;
 	m_nSamples = 0;
+	m_SongFlags.set(SONG_AUTO_TONEPORTA | SONG_AUTO_GLOBALVOL | SONG_AUTO_VIBRATO | SONG_AUTO_TREMOLO);
 
-	m_nDefaultSpeed = fileHeader.speed;
-	m_nDefaultTempo = ConvertTempo(fileHeader.timerCount);
+	Order().SetDefaultSpeed(fileHeader.speed);
+	Order().SetDefaultTempo(ConvertTempo(fileHeader.timerCount));
 
 	m_nMinPeriod = 14 * 4;
 	m_nMaxPeriod = 3424 * 4;
@@ -365,7 +365,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 	if(fileHeader.version > 0)
 	{
 		// Scan for total number of channels
-		FileReader::off_t patOffset = file.GetPosition();
+		FileReader::pos_type patOffset = file.GetPosition();
 		for(uint16 pat = 0; pat < numPatterns; pat++)
 		{
 			PATTERNINDEX actualPat = file.ReadUint16BE();
@@ -376,22 +376,14 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 			channels = file.ReadUint16BE();
 			if(channels > MAX_BASECHANNELS)
 				return false;
-			m_nChannels = std::max(m_nChannels, channels);
+			ChnSettings.resize(std::max(GetNumChannels(), channels));
 
 			file.Skip(channels * patternLength * 4u);
 		}
 		file.Seek(patOffset);
 	}
 
-	struct ChannelMemory
-	{
-		uint8 autoFinePorta, autoPortaUp, autoPortaDown, autoVolSlide, autoVibrato;
-		uint8 vibratoMem, autoTremolo, autoTonePorta, tonePortaMem;
-	};
-	std::vector<ChannelMemory> channelMemory(m_nChannels);
-	uint8 globalVolSlide = 0;
 	uint8 speedFrac = static_cast<uint8>(fileHeader.speedFrac);
-
 	for(uint16 pat = 0; pat < numPatterns; pat++)
 	{
 		PATTERNINDEX actualPat = pat;
@@ -419,8 +411,6 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			auto rowBase = Patterns[actualPat].GetRow(row);
 
-			bool didGlobalVolSlide = false;
-
 			// if a fractional speed value is in use then determine if we should stick a fine pattern delay somewhere
 			bool shouldDelay;
 			switch(speedFrac & 3)
@@ -436,17 +426,13 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 
 			for(CHANNELINDEX chn = 0; chn < channels; chn++)
 			{
-				ChannelMemory &chnMem = channelMemory[chn];
 				ModCommand &m = rowBase[chn];
 				const auto [instr, note, command, param] = file.ReadArray<uint8, 4>();
 
 				m.instr   = instr;
 				m.param   = param;
 				if(note)
-				{
 					m.note = NOTE_MIDDLEC - 36 + note;
-					chnMem = ChannelMemory();
-				}
 
 				// Volume slides not only have their nibbles swapped, but the up and down parameters also add up
 				const int totalSlide = -static_cast<int>(m.param >> 4) + (m.param & 0x0F);
@@ -458,8 +444,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					uint16 ciaTempo = (static_cast<uint16>(command & 0x0F) << 8) | m.param;
 					if(ciaTempo)
 					{
-						m.param = mpt::saturate_round<ModCommand::PARAM>(ConvertTempo(ciaTempo).ToDouble());
-						m.command = CMD_TEMPO;
+						m.SetEffectCommand(CMD_TEMPO, mpt::saturate_round<ModCommand::PARAM>(ConvertTempo(ciaTempo).ToDouble()));
 					}
 				} else switch(command)
 				{
@@ -468,64 +453,51 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 						m.command = CMD_ARPEGGIO;
 					break;
 				case 0x01: // portamento up
-					m.command = CMD_PORTAMENTOUP;
+					if(m.param)
+						m.command = CMD_PORTAMENTOUP;
 					break;
 				case 0x02: // portamento down
-					m.command = CMD_PORTAMENTODOWN;
+					if(m.param)
+						m.command = CMD_PORTAMENTODOWN;
 					break;
 				case 0x03: // auto fine portamento up
-					chnMem.autoFinePorta = 0x10 | std::min(m.param, ModCommand::PARAM(15));
-					chnMem.autoPortaUp = 0;
-					chnMem.autoPortaDown = 0;
-					chnMem.autoTonePorta = 0;
+					m.command = CMD_AUTO_PORTAUP_FINE;
 					break;
 				case 0x04: // auto fine portamento down
-					chnMem.autoFinePorta = 0x20 | std::min(m.param, ModCommand::PARAM(15));
-					chnMem.autoPortaUp = 0;
-					chnMem.autoPortaDown = 0;
-					chnMem.autoTonePorta = 0;
+					m.command = CMD_AUTO_PORTADOWN_FINE;
 					break;
 				case 0x05: // auto portamento up
-					chnMem.autoFinePorta = 0;
-					chnMem.autoPortaUp = m.param;
-					chnMem.autoPortaDown = 0;
-					chnMem.autoTonePorta = 0;
+					m.command = CMD_AUTO_PORTAUP;
 					break;
 				case 0x06: // auto portamento down
-					chnMem.autoFinePorta = 0;
-					chnMem.autoPortaUp = 0;
-					chnMem.autoPortaDown = m.param;
-					chnMem.autoTonePorta = 0;
+					m.command = CMD_AUTO_PORTADOWN;
 					break;
 				case 0x07: // set global volume
 					m.command = CMD_GLOBALVOLUME;
-					globalVolSlide = 0;
 					break;
 				case 0x08: // auto global fine volume slide
-					globalVolSlide = slideParam;
+					if(totalSlide < 0)
+						m.SetEffectCommand(CMD_GLOBALVOLSLIDE, 0xF0 | slideParam);
+					else if(totalSlide > 0)
+						m.SetEffectCommand(CMD_GLOBALVOLSLIDE, slideParam | 0x0F);
 					break;
 				case 0x09: // fine portamento up
-					m.command = CMD_MODCMDEX;
-					m.param = 0x10 | std::min(m.param, ModCommand::PARAM(15));
+					m.SetEffectCommand(CMD_MODCMDEX, 0x10 | std::min(m.param, ModCommand::PARAM(15)));
 					break;
 				case 0x0A: // fine portamento down
-					m.command = CMD_MODCMDEX;
-					m.param = 0x20 | std::min(m.param, ModCommand::PARAM(15));
+					m.SetEffectCommand(CMD_MODCMDEX, 0x20 | std::min(m.param, ModCommand::PARAM(15)));
 					break;
 				case 0x0B: // auto fine volume slide
-					chnMem.autoVolSlide = slideParam;
+					m.SetEffectCommand(CMD_AUTO_VOLUMESLIDE, slideParam);
 					break;
 				case 0x0C: // set volume
-					m.volcmd = VOLCMD_VOLUME;
-					m.vol = m.param;
-					chnMem.autoVolSlide = 0;
+					m.SetVolumeCommand(VOLCMD_VOLUME, std::min(m.param, ModCommand::PARAM(64)));
 					break;
 				case 0x0D: // volume slide (param is swapped compared to .mod)
 					if(totalSlide < 0)
 						m.SetVolumeCommand(VOLCMD_VOLSLIDEDOWN, slideParam & 0x0F);
 					else if(totalSlide > 0)
 						m.SetVolumeCommand(VOLCMD_VOLSLIDEUP, slideParam >> 4);
-					chnMem.autoVolSlide = 0;
 					break;
 				case 0x0E: // set filter (also uses opposite value compared to .mod)
 					m.SetEffectCommand(CMD_MODCMDEX, 1 ^ (m.param ? 1 : 0));
@@ -535,25 +507,16 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					m.SetEffectCommand(CMD_SPEED, m.param >> 4);
 					break;
 				case 0x10: // auto vibrato
-					chnMem.autoVibrato = m.param;
-					chnMem.vibratoMem = 0;
+					m.command = CMD_VIBRATO;
 					break;
 				case 0x11: // auto tremolo
-					if(m.param & 0xF)
-						chnMem.autoTremolo = m.param;
-					else
-						chnMem.autoTremolo = 0;
+					m.command = CMD_TREMOLO;
 					break;
 				case 0x12: // pattern break
 					m.command = CMD_PATTERNBREAK;
 					break;
 				case 0x13: // auto tone portamento
-					chnMem.autoFinePorta = 0;
-					chnMem.autoPortaUp = 0;
-					chnMem.autoPortaDown = 0;
-					chnMem.autoTonePorta = m.param;
-
-					chnMem.tonePortaMem = 0;
+					m.command = CMD_TONEPORTAMENTO;
 					break;
 				case 0x14: // position jump
 					m.command = CMD_POSITIONJUMP;
@@ -561,13 +524,11 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 				case 0x16: // start loop sequence
 					if(m.instr && m.instr <= loopInfo.size())
 					{
-						STPLoopList &loopList = loopInfo[m.instr - 1];
-
+						const STPLoopList &loopList = loopInfo[m.instr - 1];
 						m.param--;
 						if(m.param < std::min(std::size(ModSample().cues), loopList.size()))
 						{
-							m.volcmd = VOLCMD_OFFSET;
-							m.vol = m.param;
+							m.SetVolumeCommand(VOLCMD_OFFSET, m.param);
 						}
 					}
 					break;
@@ -575,7 +536,6 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					if(m.instr && m.instr <= loopInfo.size())
 					{
 						STPLoopList &loopList = loopInfo[m.instr - 1];
-
 						m.param--;
 						if(m.param < loopList.size())
 						{
@@ -588,13 +548,11 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 				case 0x18: // play sequence without loop
 					if(m.instr && m.instr <= loopInfo.size())
 					{
-						STPLoopList &loopList = loopInfo[m.instr - 1];
-
+						const STPLoopList &loopList = loopInfo[m.instr - 1];
 						m.param--;
 						if(m.param < std::min(std::size(ModSample().cues), loopList.size()))
 						{
-							m.volcmd = VOLCMD_OFFSET;
-							m.vol = m.param;
+							m.SetVolumeCommand(VOLCMD_OFFSET, m.param);
 						}
 						// switch to non-looped version of sample and create it if needed
 						if(!nonLooped[m.instr - 1] && CanAddMoreSamples())
@@ -606,7 +564,6 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					if(m.instr && m.instr <= loopInfo.size())
 					{
 						STPLoopList &loopList = loopInfo[m.instr - 1];
-
 						m.param--;
 						if(m.param < loopList.size())
 						{
@@ -617,7 +574,7 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					}
 					break;
 				case 0x1D: // fine volume slide (nibble order also swapped)
-					if(totalSlide < 0)  // slide down
+					if(totalSlide < 0) // slide down
 						m.SetEffectCommand(CMD_MODCMDEX, 0xB0 | (slideParam & 0x0F));
 					else if(totalSlide > 0)
 						m.SetEffectCommand(CMD_MODCMDEX, 0xA0 | (slideParam >> 4));
@@ -626,12 +583,9 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					// just behave like either a normal fade or a notecut
 					// depending on the speed
 					if(m.param & 0xF0)
-					{
-						chnMem.autoVolSlide = m.param >> 4;
-					} else
-					{
-						m.SetEffectCommand(CMD_MODCMDEX, 0xC0 | (m.param & 0xF));
-					}
+						m.SetEffectCommand(CMD_AUTO_VOLUMESLIDE, m.param >> 4);
+					else
+						m.SetEffectCommand(CMD_MODCMDEX, 0xC0 | (m.param & 0x0F));
 					break;
 				case 0x21: // note delay
 					m.SetEffectCommand(CMD_MODCMDEX, 0xD0 | std::min(m.param, ModCommand::PARAM(15)));
@@ -660,95 +614,21 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 					break;
 				}
 
-				bool didVolSlide = false;
-
-				// try to put volume slide in volume command
-				if(chnMem.autoVolSlide && m.volcmd == VOLCMD_NONE)
-				{
-					if(chnMem.autoVolSlide & 0xF0)
-					{
-						m.volcmd = VOLCMD_FINEVOLUP;
-						m.vol = chnMem.autoVolSlide >> 4;
-					} else
-					{
-						m.volcmd = VOLCMD_FINEVOLDOWN;
-						m.vol = chnMem.autoVolSlide & 0xF;
-					}
-					didVolSlide = true;
-				}
-
 				// try to place/combine all remaining running effects.
-				if(m.command == CMD_NONE)
+				if(shouldDelay && m.command == CMD_NONE)
 				{
-					if(chnMem.autoPortaUp)
-					{
-						m.command = CMD_PORTAMENTOUP;
-						m.param = chnMem.autoPortaUp;
-
-					} else if(chnMem.autoPortaDown)
-					{
-						m.command = CMD_PORTAMENTODOWN;
-						m.param = chnMem.autoPortaDown;
-					} else if(chnMem.autoFinePorta)
-					{
-						m.command = CMD_MODCMDEX;
-						m.param = chnMem.autoFinePorta;
-
-					} else if(chnMem.autoTonePorta)
-					{
-						m.command = CMD_TONEPORTAMENTO;
-						m.param = chnMem.tonePortaMem = chnMem.autoTonePorta;
-
-					} else if(chnMem.autoVibrato)
-					{
-						m.command = CMD_VIBRATO;
-						m.param = chnMem.vibratoMem = chnMem.autoVibrato;
-
-					} else if(!didVolSlide && chnMem.autoVolSlide)
-					{
-						m.command = CMD_VOLUMESLIDE;
-						m.param = chnMem.autoVolSlide;
-						// convert to a "fine" value by setting the other nibble to 0xF
-						if(m.param & 0x0F)
-							m.param |= 0xF0;
-						else if(m.param & 0xF0)
-							m.param |= 0x0F;
-						didVolSlide = true;
-						MPT_UNUSED(didVolSlide);
-
-					} else if(chnMem.autoTremolo)
-					{
-						m.command = CMD_TREMOLO;
-						m.param = chnMem.autoTremolo;
-
-					} else if(shouldDelay)
-					{
-						// insert a fine pattern delay here
-						m.command = CMD_S3MCMDEX;
-						m.param = 0x61;
-						shouldDelay = false;
-
-					} else if(!didGlobalVolSlide && globalVolSlide)
-					{
-						m.command = CMD_GLOBALVOLSLIDE;
-						m.param = globalVolSlide;
-						// convert to a "fine" value by setting the other nibble to 0xF
-						if(m.param & 0x0F)
-							m.param |= 0xF0;
-						else if(m.param & 0xF0)
-							m.param |= 0x0F;
-
-						didGlobalVolSlide = true;
-					}
+					// insert a fine pattern delay here
+					m.SetEffectCommand(CMD_S3MCMDEX, 0x61);
+					shouldDelay = false;
 				}
 			}
 
-			// TODO: create/use extra channels for global volslide/delay if needed
+			// TODO: create/use extra channels for delay if needed?
 		}
 	}
 
 	// after we know how many channels there really are...
-	m_nSamplePreAmp = 256 / m_nChannels;
+	m_nSamplePreAmp = 256 / GetNumChannels();
 	// Setup channel pan positions and volume
 	SetupMODPanning(true);
 
@@ -797,13 +677,9 @@ bool CSoundFile::ReadSTP(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// make duplicate samples for this individual section if needed
 				if(info.looped)
-				{
 					ConvertLoopSlice(Samples[smp], Samples[info.looped], info.loopStart, info.loopLength, true);
-				}
 				if(info.nonLooped)
-				{
 					ConvertLoopSlice(Samples[smp], Samples[info.nonLooped], info.loopStart, info.loopLength, false);
-				}
 			}
 		}
 	}

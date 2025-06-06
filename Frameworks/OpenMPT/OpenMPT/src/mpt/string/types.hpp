@@ -185,16 +185,18 @@ constexpr Tdstchar unsafe_char_convert(Tsrcchar src) noexcept {
 using widestring = std::wstring;
 using widestring_view = std::wstring_view;
 using widechar = wchar_t;
-#define MPT_WIDECHAR(x)    L##x
-#define MPT_WIDELITERAL(x) L##x
-#define MPT_WIDESTRING(x)  std::wstring(L##x)
+#define MPT_WIDECHAR(x)       L##x
+#define MPT_WIDELITERAL(x)    L##x
+#define MPT_WIDESTRING(x)     std::wstring(L##x)
+#define MPT_WIDESTRINGVIEW(x) std::wstring_view(L##x)
 #else // MPT_COMPILER_QUIRK_NO_WCHAR
 using widestring = std::u32string;
 using widestring_view = std::u32string_view;
 using widechar = char32_t;
-#define MPT_WIDECHAR(x)    U##x
-#define MPT_WIDELITERAL(x) U##x
-#define MPT_WIDESTRING(x)  std::u32string(U##x)
+#define MPT_WIDECHAR(x)       U##x
+#define MPT_WIDELITERAL(x)    U##x
+#define MPT_WIDESTRING(x)     std::u32string(U##x)
+#define MPT_WIDESTRINGVIEW(x) std::u32string_view(U##x)
 #endif // !MPT_COMPILER_QUIRK_NO_WCHAR
 
 
@@ -283,10 +285,10 @@ using winstring_view = mpt::tstring_view;
 using u8string = std::u8string;
 using u8string_view = std::u8string_view;
 using u8char = char8_t;
-#define MPT_U8CHAR(x)      u8##x
-#define MPT_U8LITERAL(x)   u8##x
-#define MPT_U8STRING(x)    std::u8string(u8##x)
-#define MPT_U8STRINVIEW(x) std::u8string_view(u8##x)
+#define MPT_U8CHAR(x)       u8##x
+#define MPT_U8LITERAL(x)    u8##x
+#define MPT_U8STRING(x)     std::u8string(u8##x)
+#define MPT_U8STRINGVIEW(x) std::u8string_view(u8##x)
 
 #else // !C++20
 

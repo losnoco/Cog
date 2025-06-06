@@ -85,10 +85,10 @@
 // ok
 #elif (__EMSCRIPTEN_major__ == 3) && (__EMSCRIPTEN_minor__ > 1)
 // ok
-#elif (__EMSCRIPTEN_major__ == 3) && (__EMSCRIPTEN_minor__ == 1) && (__EMSCRIPTEN_tiny__ >= 1)
+#elif (__EMSCRIPTEN_major__ == 3) && (__EMSCRIPTEN_minor__ == 1) && (__EMSCRIPTEN_tiny__ >= 51)
 // ok
 #else
-#error "Emscripten >= 3.1.1 is required."
+#error "Emscripten >= 3.1.51 is required."
 #endif
 #endif
 

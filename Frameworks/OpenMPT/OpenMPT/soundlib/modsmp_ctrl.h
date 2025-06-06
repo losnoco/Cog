@@ -23,12 +23,6 @@ struct ModChannel;
 namespace ctrlSmp
 {
 
-// Replaces sample in 'smp' with given sample and frees the old sample.
-void ReplaceSample(ModSample &smp, void *pNewSample,  const SmpLength newLength, CSoundFile &sndFile);
-
-// Propagate loop point changes to player
-bool UpdateLoopPoints(const ModSample &smp, CSoundFile &sndFile);
-
 // Reverse sample data
 bool ReverseSample(ModSample &smp, SmpLength start, SmpLength end, CSoundFile &sndFile);
 

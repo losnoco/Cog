@@ -12,16 +12,14 @@
 #pragma once
 
 #include "openmpt/all/BuildSettings.hpp"
-
-OPENMPT_NAMESPACE_BEGIN
-class CSoundFile;
-OPENMPT_NAMESPACE_END
 #include "Snd_defs.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
 #ifdef MODPLUG_TRACKER
 
+class CSoundFile;
+struct InstrumentEnvelope;
 
 struct DLSREGION
 {

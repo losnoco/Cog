@@ -10,8 +10,8 @@
 
 
 #include "stdafx.h"
-#include "Mixer.h"
 #include "SoundFilePlayConfig.h"
+#include "Mixer.h"
 
 OPENMPT_NAMESPACE_BEGIN
 

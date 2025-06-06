@@ -12,9 +12,12 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#include "Snd_defs.h"
 #include "openmpt/base/Endian.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
+
+class IMixPlugin;
 
 enum
 {
@@ -23,14 +26,6 @@ enum
 	kZxxMacros    = 128,  // Number of fixed macros
 	kMacroLength  = 32,   // Max number of chars per macro
 };
-
-OPENMPT_NAMESPACE_END
-
-#ifdef MODPLUG_TRACKER
-#include "plugins/PluginStructs.h"
-#endif // MODPLUG_TRACKER
-
-OPENMPT_NAMESPACE_BEGIN
 
 // Parametered macro presets
 enum ParameteredMacro
