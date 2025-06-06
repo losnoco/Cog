@@ -234,8 +234,15 @@ static BOOL consentLastEnabled = NO;
 			[playlistLoader addDatabase];
 		} else if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]]) {
 			[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:newFilename]]];
-		} else {
+		} else if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:oldFilename]]){
+			/* Without the above check, it appears the code was retrieving a nil NSURL from the nonexistent path
+			 * Then adding it to the playlist and crashing further down the line
+			 * Nobody on a new setup should be seeing this open anything, so it should fall through to the
+			 * notice below.
+			 */
 			[playlistLoader addURL:[NSURL fileURLWithPath:[basePath stringByAppendingPathComponent:oldFilename]]];
+		} else {
+			ALog(@"No playlist found, leaving it empty.");
 		}
 	}
 
