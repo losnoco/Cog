@@ -384,7 +384,6 @@ typedef enum {
     meta_SEG,
     meta_RIFF_IMA,
     meta_KNON,
-    meta_ZWDSP,             /* Zack and Wiki */
     meta_VGS,               /* Guitar Hero Encore - Rocks the 80s */
     meta_DCS_WAV,
     meta_SMP,
@@ -506,7 +505,6 @@ typedef enum {
     meta_MTAF,
     meta_ALP,
     meta_WPD,
-    meta_MN_STR,            /* Mini Ninjas (PC/PS3/WII) */
     meta_MCSS,
     meta_PS2_HSF,           /* Lowrider (PS2) */
     meta_IVAG,
@@ -598,7 +596,6 @@ typedef enum {
     meta_HD3_BD3,           /* Sony PS3 bank */
     meta_BNK_SONY,          /* Sony Scream Tool bank */
     meta_SSCF,
-    meta_DSP_VAG,           /* Penny-Punching Princess (Switch) sfx */
     meta_DSP_ITL,           /* Charinko Hero (GC) */
     meta_A2M,               /* Scooby-Doo! Unmasked (PS2) */
     meta_AHV,               /* Headhunter (PS2) */
@@ -722,6 +719,8 @@ typedef enum {
     meta_OOR,
     meta_MIO,
     meta_AUDIOPKG,
+    meta_SWAR,
+    meta_IVB,
 } meta_t;
 
 #endif

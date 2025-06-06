@@ -352,7 +352,6 @@ static const char* extension_list[] = {
     "mib",
     "mic",
     "mio",
-    "mnstr",
     "mogg",
     //"m4a", //common
     //"m4v", //common
@@ -580,6 +579,7 @@ static const char* extension_list[] = {
     "svs",
     "svg",
     "swag",
+    "swar",
     "swav",
     "swd",
     "switch", //txth/reserved (.m4a-x.switch) [Ikinari Maou (Switch)]
@@ -728,7 +728,6 @@ static const char* extension_list[] = {
     "zsd",
     "zsm",
     "zss",
-    "zwdsp",
     "zwv",
 
     "vgmstream" /* fake extension, catch-all for FFmpeg/txth/etc */
@@ -833,10 +832,10 @@ static const coding_info coding_info_list[] = {
         {coding_XA,                 "CD-ROM XA 4-bit ADPCM"},
         {coding_XA8,                "CD-ROM XA 8-bit ADPCM"},
         {coding_XA_EA,              "Electronic Arts XA 4-bit ADPCM"},
-        {coding_PSX,                "Playstation 4-bit ADPCM"},
-        {coding_PSX_badflags,       "Playstation 4-bit ADPCM (bad flags)"},
-        {coding_PSX_cfg,            "Playstation 4-bit ADPCM (configurable)"},
-        {coding_PSX_pivotal,        "Playstation 4-bit ADPCM (Pivotal)"},
+        {coding_PSX,                "PlayStation 4-bit ADPCM"},
+        {coding_PSX_badflags,       "PlayStation 4-bit ADPCM (bad flags)"},
+        {coding_PSX_cfg,            "PlayStation 4-bit ADPCM (configurable)"},
+        {coding_PSX_pivotal,        "PlayStation 4-bit ADPCM (Pivotal)"},
         {coding_HEVAG,              "Sony HEVAG 4-bit ADPCM"},
 
         {coding_EA_XA,              "Electronic Arts EA-XA 4-bit ADPCM v1"},
@@ -1158,7 +1157,6 @@ static const meta_info meta_info_list[] = {
         {meta_SEG,                  "Stormfront SEG header"},
         {meta_RIFF_IMA,             "Square Enix RIFF IMA eader"},
         {meta_KNON,                 "Paon KNON header"},
-        {meta_ZWDSP,                "Zack and Wiki custom DSP Header"},
         {meta_GCA,                  "GCA DSP Header"},
         {meta_SPT_SPD,              "SPT+SPD DSP Header"},
         {meta_ISH_ISD,              "ISH+ISD DSP Header"},
@@ -1264,7 +1262,6 @@ static const meta_info meta_info_list[] = {
         {meta_MTAF,                 "Konami MTAF header"},
         {meta_ALP,                  "High Voltage ALP header"},
         {meta_WPD,                  "Navel WPD header"},
-        {meta_MN_STR,               "Mini Ninjas 'STR' header"},
         {meta_MCSS,                 "Guerilla MCSS header"},
         {meta_PS2_HSF,              "Lowrider 'HSF' header"},
         {meta_IVAG,                 "Namco IVAG header"},
@@ -1358,7 +1355,6 @@ static const meta_info meta_info_list[] = {
         {meta_HD3_BD3,              "Sony HD3+BD3 header"},
         {meta_BNK_SONY,             "Sony BNK header"},
         {meta_SSCF,                 "Square Enix SSCF header"},
-        {meta_DSP_VAG,              ".VAG DSP header"},
         {meta_DSP_ITL,              ".ITL DSP header"},
         {meta_A2M,                  "Artificial Mind & Movement A2M header"},
         {meta_AHV,                  "Amuze AHV header"},
@@ -1481,6 +1477,8 @@ static const meta_info meta_info_list[] = {
         {meta_OOR,                  "age .OOR header"},
         {meta_MIO,                  "Entis .MIO header"},
         {meta_AUDIOPKG,             "Inevitable .AUDIOPKG header"},
+        {meta_SWAR,                 "Nintendo SWAR header"},
+        {meta_IVB,                  "Metro IVB header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
