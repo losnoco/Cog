@@ -400,7 +400,7 @@ static int _init_vgmstream_ogg_vorbis_tests(STREAMFILE* sf, ogg_vorbis_io_config
                 /* try in ../(file) too since that's how the .isl is stored on disc */
                 char isl_path[PATH_LIMIT];
                 snprintf(isl_path, sizeof(isl_path), "../%s", isl_name);
-                sf_isl = open_streamfile_by_filename(sf, isl_path);
+                sf_isl = open_streamfile_by_pathname(sf, isl_path);
             }
 
             if (sf_isl) {
@@ -739,6 +739,14 @@ static VGMSTREAM* _init_vgmstream_ogg_vorbis_config(STREAMFILE* sf, off_t start,
                 if (m == 4) {
                     loop_flag = 1;
                     loop_end_found = 1;
+                }
+            }
+            else if (strstr(comment,"COMMENT=SetSample ") == comment) {   /* Ore no Tsure wa Hito de Nashi (PC) */
+                int unk0; // always 0 (delay?)
+                int m = sscanf(comment,"COMMENT=SetSample %d,%d,%d", &unk0, &loop_start, &loop_end);
+                if (m == 3) {
+                    loop_flag = true;
+                    loop_end_found = true;
                 }
             }
             else if (strstr(comment,"L=") == comment) { /* Kamaitachi no Yoru 2 (PS2) */
