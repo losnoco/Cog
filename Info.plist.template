@@ -661,7 +661,6 @@
 				<string>mib</string>
 				<string>mic</string>
 				<string>mio</string>
-				<string>mnstr</string>
 				<string>mogg</string>
 				<string>move</string>
 				<string>mpdsp</string>
@@ -873,6 +872,7 @@
 				<string>svs</string>
 				<string>svg</string>
 				<string>swag</string>
+				<string>swar</string>
 				<string>swav</string>
 				<string>swd</string>
 				<string>switch</string>
@@ -1012,7 +1012,6 @@
 				<string>zsd</string>
 				<string>zsm</string>
 				<string>zss</string>
-				<string>zwdsp</string>
 				<string>zwv</string>
 				<string>vgmstream</string>
 			</array>
@@ -1548,16 +1547,23 @@
 				<string>amf</string>
 				<string>ams</string>
 				<string>c67</string>
+				<string>cba</string>
 				<string>dbm</string>
 				<string>digi</string>
 				<string>dmf</string>
 				<string>dsm</string>
 				<string>dsym</string>
 				<string>dtm</string>
+				<string>etx</string>
 				<string>far</string>
+				<string>fc</string>
+				<string>fc13</string>
+				<string>fc14</string>
 				<string>fmt</string>
 				<string>fst</string>
+				<string>ftm</string>
 				<string>imf</string>
+				<string>ims</string>
 				<string>ice</string>
 				<string>j2b</string>
 				<string>m15</string>
@@ -1573,17 +1579,22 @@
 				<string>psm</string>
 				<string>pt36</string>
 				<string>ptm</string>
+				<string>puma</string>
+				<string>rtm</string>
 				<string>sfx</string>
 				<string>sfx2</string>
+				<string>smod</string>
 				<string>st26</string>
 				<string>stk</string>
 				<string>stm</string>
 				<string>stx</string>
 				<string>stp</string>
 				<string>symmod</string>
+				<string>gmc</string>
 				<string>gtk</string>
 				<string>gt2</string>
 				<string>ult</string>
+				<string>unic</string>
 				<string>wow</string>
 				<string>xmf</string>
 				<string>gdm</string>
