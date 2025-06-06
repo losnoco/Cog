@@ -1112,6 +1112,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 }
 
 - (NSArray *)addURL:(NSURL *)url {
+	if(!url) return [NSArray array];
 	return [self insertURLs:@[url] atIndex:(int)[[playlistController content] count] sort:NO];
 }
 
