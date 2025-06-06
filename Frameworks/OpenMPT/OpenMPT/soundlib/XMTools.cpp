@@ -9,10 +9,11 @@
 
 
 #include "stdafx.h"
-#include "Loaders.h"
 #include "XMTools.h"
+#include "Loaders.h"
 #include "Sndfile.h"
 #include "../common/version.h"
+
 #include <algorithm>
 
 
@@ -147,7 +148,7 @@ void XMInstrument::ConvertEnvelopeToMPT(InstrumentEnvelope &mptEnv, uint8 numPoi
 			// value. Try to compensate by adding the missing high byte."
 			// Note: MPT 1.07's XI instrument saver omitted the high byte of envelope nodes.
 			// This might be the source for some broken envelopes in IT and XM files.
-			mptEnv[i].tick |= mptEnv[i - 1].tick & 0xFF00;
+			mptEnv[i].tick |= static_cast<uint16>(mptEnv[i - 1].tick & 0xFF00u);
 			if(mptEnv[i].tick < mptEnv[i - 1].tick)
 				mptEnv[i].tick += 0x100;
 		}

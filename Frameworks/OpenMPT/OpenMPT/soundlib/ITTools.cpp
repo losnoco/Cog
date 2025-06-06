@@ -9,8 +9,8 @@
 
 
 #include "stdafx.h"
-#include "Loaders.h"
 #include "ITTools.h"
+#include "Loaders.h"
 #include "Tables.h"
 #include "../common/mptStringBuffer.h"
 #include "../common/version.h"
@@ -42,14 +42,14 @@ void ITEnvelope::ConvertToIT(const InstrumentEnvelope &mptEnv, uint8 envOffset, 
 		// Attention: Full MPTM envelope is stored in extended instrument properties
 		for(uint32 ev = 0; ev < num; ev++)
 		{
-			data[ev].value = static_cast<int8>(mptEnv[ev].value) - envOffset;
+			data[ev].value = static_cast<int8>(static_cast<int8>(mptEnv[ev].value) - envOffset);
 			data[ev].tick = mptEnv[ev].tick;
 		}
 	} else
 	{
 		// Fix non-existing envelopes so that they can still be edited in Impulse Tracker.
 		num = 2;
-		data[0].value = data[1].value = envDefault - envOffset;
+		data[0].value = data[1].value = static_cast<int8>(envDefault - envOffset);
 		data[1].tick = 10;
 	}
 }
@@ -75,7 +75,7 @@ void ITEnvelope::ConvertToMPT(InstrumentEnvelope &mptEnv, uint8 envOffset, uint8
 	// Attention: Full MPTM envelope is stored in extended instrument properties
 	for(uint32 ev = 0; ev < std::min(uint8(25), num); ev++)
 	{
-		mptEnv[ev].value = Clamp<int8, int8>(data[ev].value + envOffset, 0, 64);
+		mptEnv[ev].value = Clamp<int8, int8>(static_cast<int8>(data[ev].value + envOffset), 0, 64);
 		mptEnv[ev].tick = data[ev].tick;
 		if(ev > 0 && mptEnv[ev].tick < mptEnv[ev - 1].tick && !(mptEnv[ev].tick & 0xFF00))
 		{
@@ -83,7 +83,7 @@ void ITEnvelope::ConvertToMPT(InstrumentEnvelope &mptEnv, uint8 envOffset, uint8
 			// NoGap.it was saved with MPT 1.07 - 1.09, which *normally* doesn't do this in IT files.
 			// However... It turns out that MPT 1.07 omitted the high byte of envelope nodes when saving an XI instrument file, and it looks like
 			// Instrument 2 and 3 in NoGap.it were loaded from XI files.
-			mptEnv[ev].tick |= mptEnv[ev - 1].tick & 0xFF00;
+			mptEnv[ev].tick |= static_cast<uint16>(mptEnv[ev - 1].tick & 0xFF00u);
 			if(mptEnv[ev].tick < mptEnv[ev - 1].tick)
 				mptEnv[ev].tick += 0x100;
 		}
@@ -195,7 +195,7 @@ uint32 ITInstrument::ConvertToIT(const ModInstrument &mptIns, bool compatExport,
 
 	// MIDI Setup
 	if(mptIns.nMidiProgram > 0)
-		mpr = mptIns.nMidiProgram - 1u;
+		mpr = static_cast<uint8>(mptIns.nMidiProgram - 1u);
 	else
 		mpr = 0xFF;
 	if(mptIns.wMidiBank > 0)
@@ -316,7 +316,7 @@ uint32 ITInstrument::ConvertToMPT(ModInstrument &mptIns, MODTYPE modFormat) cons
 		if(mbank[0] < 128)
 			bank = mbank[0] + 1;
 		if(mbank[1] < 128)
-			bank += (mbank[1] << 7);
+			bank += static_cast<uint16>(mbank[1] << 7);
 		mptIns.wMidiBank = bank;
 	}
 	mptIns.nMidiChannel = mch;

@@ -11,8 +11,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../Sndfile.h"
 #include "DigiBoosterEcho.h"
+#include "../Sndfile.h"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -117,7 +117,7 @@ PlugParamValue DigiBoosterEcho::GetParameter(PlugParamIndex index)
 }
 
 
-void DigiBoosterEcho::SetParameter(PlugParamIndex index, PlugParamValue value)
+void DigiBoosterEcho::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kEchoNumParameters)
 	{

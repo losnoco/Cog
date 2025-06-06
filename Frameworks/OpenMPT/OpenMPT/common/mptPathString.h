@@ -19,7 +19,15 @@
 #include "mpt/path/os_path.hpp"
 #include "mpt/string/types.hpp"
 
+#if defined(MODPLUG_TRACKER)
+#include "mpt/string_transcode/transcode.hpp"
+#endif
+
 #include "mptString.h"
+
+#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
+#include <windows.h>
+#endif
 
 
 
@@ -64,14 +72,13 @@ inline mpt::ustring ToUString(const T &x)
 
 
 
-#if MPT_OS_WINDOWS
-#if !(MPT_WINRT_BEFORE(MPT_WIN_10))
-// Returns the absolute path for a potentially relative path and removes ".." or "." components. (same as GetFullPathNameW)
-mpt::PathString GetAbsolutePath(const mpt::PathString &path);
-#endif
-#endif // MPT_OS_WINDOWS
+#if defined(MODPLUG_TRACKER)
 
-#if defined(MODPLUG_TRACKER) && MPT_OS_WINDOWS
+
+
+#if MPT_OS_WINDOWS
+
+
 
 // Relative / absolute paths conversion
 
@@ -79,33 +86,34 @@ mpt::PathString AbsolutePathToRelative(const mpt::PathString &p, const mpt::Path
 	
 mpt::PathString RelativePathToAbsolute(const mpt::PathString &p, const mpt::PathString &relativeTo);
 
-#endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
 
 
-
-#if MPT_OS_WINDOWS
 #if !MPT_OS_WINDOWS_WINRT
-int PathCompareNoCase(const PathString &a, const PathString &b);
+inline int PathCompareNoCase(const PathString &a, const PathString &b)
+{
+	return lstrcmpi(a.AsNative().c_str(), b.AsNative().c_str());
+}
 #endif // !MPT_OS_WINDOWS_WINRT
-#endif
+
+
+
+#endif // MPT_OS_WINDOWS
+
+
+
+template <typename Tstring>
+inline Tstring SanitizePathComponent(const Tstring &str)
+{
+	return mpt::transcode<Tstring>(mpt::native_path::FromNative(mpt::transcode<mpt::native_path::raw_path_type>(str)).AsSanitizedComponent().AsNative());
+}
+
+
+
+#endif // MODPLUG_TRACKER
 
 
 
 } // namespace mpt
-
-
-
-#if defined(MODPLUG_TRACKER)
-
-// Sanitize a filename (remove special chars)
-
-mpt::ustring SanitizePathComponent(mpt::ustring str);
-
-#if defined(MPT_WITH_MFC)
-CString SanitizePathComponent(CString str);
-#endif // MPT_WITH_MFC
-
-#endif // MODPLUG_TRACKER
 
 
 

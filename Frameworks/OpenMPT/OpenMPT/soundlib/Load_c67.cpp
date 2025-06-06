@@ -115,7 +115,7 @@ static void TranslateVolume(ModCommand &m, uint8 volume, bool isFM)
 
 	volume &= 0x0F;
 	m.volcmd = VOLCMD_VOLUME;
-	m.vol = isFM ? fmVolume[volume] : (4u + volume * 4u);
+	m.vol = isFM ? fmVolume[volume] : static_cast<ModCommand::VOL>((4u + volume * 4u));
 }
 
 
@@ -137,7 +137,7 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	}
@@ -157,19 +157,17 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	InitializeGlobals(MOD_TYPE_S3M);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_S3M, 4 + 9);
 
-	m_modFormat.formatName = U_("CDFM");
-	m_modFormat.type = U_("c67");
-	m_modFormat.madeWithTracker = U_("Composer 670");
+	m_modFormat.formatName = UL_("CDFM");
+	m_modFormat.type = UL_("c67");
+	m_modFormat.madeWithTracker = UL_("Composer 670");
 	m_modFormat.charset = mpt::Charset::CP437;
 
-	m_nDefaultSpeed = fileHeader.speed;
-	m_nDefaultTempo.Set(143);
+	Order().SetDefaultSpeed(fileHeader.speed);
+	Order().SetDefaultTempoInt(143);
 	Order().SetRestartPos(fileHeader.restartPos);
 	m_nSamples = 64;
-	m_nChannels = 4 + 9;
 	m_playBehaviour.set(kOPLBeatingOscillators);
 	m_SongFlags.set(SONG_IMPORTED);
 
@@ -233,8 +231,8 @@ bool CSoundFile::ReadC67(FileReader &file, ModLoadingFlags loadFlags)
 				ModCommand &m = *pattern.GetpModCommand(row, cmd);
 				const auto [note, instrVol] = patChunk.ReadArray<uint8, 2>();
 				bool fmChn = (cmd >= 4);
-				m.note = NOTE_MIN + (fmChn ? 12 : 36) + (note & 0x0F) + ((note >> 4) & 0x07) * 12;
-				m.instr = (fmChn ? 33 : 1) + (instrVol >> 4) + ((note & 0x80) >> 3);
+				m.note = static_cast<ModCommand::NOTE>(NOTE_MIN + (fmChn ? 12 : 36) + (note & 0x0F) + ((note >> 4) & 0x07) * 12);
+				m.instr = static_cast<ModCommand::INSTR>((fmChn ? 33 : 1) + (instrVol >> 4) + ((note & 0x80) >> 3));
 				TranslateVolume(m, instrVol, fmChn);
 			} else if(cmd >= 0x20 && cmd <= 0x2C)
 			{

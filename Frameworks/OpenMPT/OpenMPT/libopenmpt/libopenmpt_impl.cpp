@@ -46,7 +46,6 @@
 
 #include "common/version.h"
 #include "common/misc_util.h"
-#include "common/Dither.h"
 #include "common/FileReader.h"
 #include "common/Logging.h"
 #include "soundlib/Sndfile.h"
@@ -76,6 +75,14 @@ MPT_WARNING("Warning: Platform (Windows) supports multi-threading, however the t
 #if MPT_CLANG_AT_LEAST(5,0,0) && MPT_CLANG_BEFORE(11,0,0) && defined(__powerpc__) && !defined(__powerpc64__)
 MPT_WARNING("Warning: libopenmpt is known to trigger bad code generation with Clang 5..10 on powerpc (32bit) when using -O3. See <https://bugs.llvm.org/show_bug.cgi?id=46683>.")
 #endif
+
+#if defined(ENABLE_TESTS)
+#if defined(MPT_COMPILER_QUIRK_WINDOWS_FSTREAM_NO_WCHAR)
+#if MPT_GCC_BEFORE(9,1,0)
+MPT_WARNING("Warning: MinGW with GCC earlier than 9.1 detected. Standard library does neither provide std::fstream wchar_t overloads nor std::filesystem with wchar_t support. Unicode filename support is thus unavailable.")
+#endif // MPT_GCC_AT_LEAST(9,1,0)
+#endif // MPT_COMPILER_QUIRK_WINDOWS_FSTREAM_NO_WCHAR
+#endif // ENABLE_TESTS
 
 #endif // !MPT_BUILD_SILENCE_LIBOPENMPT_CONFIGURATION_WARNINGS
 
@@ -224,7 +231,7 @@ std::string get_string( const std::string & key ) {
 		return get_source_revision_string();
 	} else if ( key == "source_is_modified" ) {
 		return OpenMPT::SourceInfo::Current().IsDirty() ? "1" : "0";
-	} else if ( key == "source_has_mixed_revision" ) {
+	} else if ( key == "source_has_mixed_revisions" ) {
 		return OpenMPT::SourceInfo::Current().HasMixedRevisions() ? "1" : "0";
 	} else if ( key == "source_is_package" ) {
 		return OpenMPT::SourceInfo::Current().IsPackage() ? "1" : "0";
@@ -306,11 +313,13 @@ void module_impl::PushToCSoundFileLog( int loglevel, const std::string & text ) 
 	m_sndFile->AddToLog( static_cast<OpenMPT::LogLevel>( loglevel ), mpt::transcode<mpt::ustring>( mpt::common_encoding::utf8, text ) );
 }
 
-module_impl::subsong_data::subsong_data( double duration, std::int32_t start_row, std::int32_t start_order, std::int32_t sequence )
+module_impl::subsong_data::subsong_data( double duration, std::int32_t start_row, std::int32_t start_order, std::int32_t sequence, std::int32_t restart_row, std::int32_t restart_order )
 	: duration(duration)
 	, start_row(start_row)
 	, start_order(start_order)
 	, sequence(sequence)
+	, restart_row(restart_row)
+	, restart_order(restart_order)
 {
 	return;
 }
@@ -436,7 +445,7 @@ module_impl::subsongs_type module_impl::get_subsongs() const {
 	for ( OpenMPT::SEQUENCEINDEX seq = 0; seq < m_sndFile->Order.GetNumSequences(); ++seq ) {
 		const std::vector<OpenMPT::GetLengthType> lengths = m_sndFile->GetLength( OpenMPT::eNoAdjust, OpenMPT::GetLengthTarget( true ).StartPos( seq, 0, 0 ) );
 		for ( const auto & l : lengths ) {
-			subsongs.push_back( subsong_data( l.duration, l.startRow, l.startOrder, seq ) );
+			subsongs.push_back( subsong_data( l.duration, l.startRow, l.startOrder, seq, l.restartRow, l.restartOrder ) );
 		}
 	}
 	return subsongs;
@@ -512,7 +521,7 @@ std::size_t module_impl::read_wrapper( std::size_t count, std::int16_t * left, s
 	OpenMPT::AudioTargetBufferWithGain<mpt::audio_span_planar<std::int16_t>> target( mpt::audio_span_planar<std::int16_t>( buffers, valid_channels( buffers, std::size( buffers ) ), count ), *m_Dithers, m_Gain );
 	while ( count > 0 ) {
 		std::size_t count_chunk = m_sndFile->Read(
-			static_cast<OpenMPT::CSoundFile::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::CSoundFile::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
+			static_cast<OpenMPT::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
 			target
 			);
 		if ( count_chunk == 0 ) {
@@ -523,7 +532,7 @@ std::size_t module_impl::read_wrapper( std::size_t count, std::int16_t * left, s
 	}
 	if ( count_read == 0 && m_ctl_play_at_end == song_end_action::continue_song ) {
 		// This is the song end, but allow the song or loop to restart on the next call
-		m_sndFile->m_SongFlags.reset(OpenMPT::SONG_ENDREACHED);
+		m_sndFile->m_PlayState.m_flags.reset(OpenMPT::SONG_ENDREACHED);
 	}
 	return count_read;
 }
@@ -535,7 +544,7 @@ std::size_t module_impl::read_wrapper( std::size_t count, float * left, float * 
 	OpenMPT::AudioTargetBufferWithGain<mpt::audio_span_planar<float>> target( mpt::audio_span_planar<float>( buffers, valid_channels( buffers, std::size( buffers ) ), count ), *m_Dithers, m_Gain );
 	while ( count > 0 ) {
 		std::size_t count_chunk = m_sndFile->Read(
-			static_cast<OpenMPT::CSoundFile::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::CSoundFile::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
+			static_cast<OpenMPT::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
 			target
 			);
 		if ( count_chunk == 0 ) {
@@ -546,7 +555,7 @@ std::size_t module_impl::read_wrapper( std::size_t count, float * left, float * 
 	}
 	if ( count_read == 0 && m_ctl_play_at_end == song_end_action::continue_song ) {
 		// This is the song end, but allow the song or loop to restart on the next call
-		m_sndFile->m_SongFlags.reset(OpenMPT::SONG_ENDREACHED);
+		m_sndFile->m_PlayState.m_flags.reset(OpenMPT::SONG_ENDREACHED);
 	}
 	return count_read;
 }
@@ -557,7 +566,7 @@ std::size_t module_impl::read_interleaved_wrapper( std::size_t count, std::size_
 	OpenMPT::AudioTargetBufferWithGain<mpt::audio_span_interleaved<std::int16_t>> target( mpt::audio_span_interleaved<std::int16_t>( interleaved, channels, count ), *m_Dithers, m_Gain );
 	while ( count > 0 ) {
 		std::size_t count_chunk = m_sndFile->Read(
-			static_cast<OpenMPT::CSoundFile::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::CSoundFile::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
+			static_cast<OpenMPT::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
 			target
 			);
 		if ( count_chunk == 0 ) {
@@ -568,7 +577,7 @@ std::size_t module_impl::read_interleaved_wrapper( std::size_t count, std::size_
 	}
 	if ( count_read == 0 && m_ctl_play_at_end == song_end_action::continue_song ) {
 		// This is the song end, but allow the song or loop to restart on the next call
-		m_sndFile->m_SongFlags.reset(OpenMPT::SONG_ENDREACHED);
+		m_sndFile->m_PlayState.m_flags.reset(OpenMPT::SONG_ENDREACHED);
 	}
 	return count_read;
 }
@@ -579,7 +588,7 @@ std::size_t module_impl::read_interleaved_wrapper( std::size_t count, std::size_
 	OpenMPT::AudioTargetBufferWithGain<mpt::audio_span_interleaved<float>> target( mpt::audio_span_interleaved<float>( interleaved, channels, count ), *m_Dithers, m_Gain );
 	while ( count > 0 ) {
 		std::size_t count_chunk = m_sndFile->Read(
-			static_cast<OpenMPT::CSoundFile::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::CSoundFile::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
+			static_cast<OpenMPT::samplecount_t>( std::min( static_cast<std::uint64_t>( count ), static_cast<std::uint64_t>( std::numeric_limits<OpenMPT::samplecount_t>::max() / 2 / 4 / 4 ) ) ), // safety margin / samplesize / channels
 			target
 			);
 		if ( count_chunk == 0 ) {
@@ -590,7 +599,7 @@ std::size_t module_impl::read_interleaved_wrapper( std::size_t count, std::size_
 	}
 	if ( count_read == 0 && m_ctl_play_at_end == song_end_action::continue_song ) {
 		// This is the song end, but allow the song or loop to restart on the next call
-		m_sndFile->m_SongFlags.reset(OpenMPT::SONG_ENDREACHED);
+		m_sndFile->m_PlayState.m_flags.reset(OpenMPT::SONG_ENDREACHED);
 	}
 	return count_read;
 }
@@ -1075,6 +1084,15 @@ double module_impl::get_duration_seconds() const {
 	}
 	return subsongs[m_current_subsong].duration;
 }
+
+double module_impl::get_time_at_position( std::int32_t order, std::int32_t row ) const {
+	const auto t = m_sndFile->GetLength( OpenMPT::eNoAdjust, OpenMPT::GetLengthTarget( static_cast<OpenMPT::ORDERINDEX>( order ), static_cast<OpenMPT::ROWINDEX>( row ) ) ).back();
+	if ( t.targetReached )
+		return t.duration;
+	else
+		return -1.0;
+}
+
 void module_impl::select_subsong( std::int32_t subsong ) {
 	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
 	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
@@ -1093,6 +1111,24 @@ void module_impl::select_subsong( std::int32_t subsong ) {
 std::int32_t module_impl::get_selected_subsong() const {
 	return m_current_subsong;
 }
+
+std::int32_t module_impl::get_restart_order( std::int32_t subsong ) const {
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
+	if ( subsong < 0 || subsong >= static_cast<std::int32_t>( subsongs.size() ) ) {
+		throw openmpt::exception( "invalid subsong" );
+	}
+	return subsongs[subsong].restart_order;
+}
+std::int32_t module_impl::get_restart_row( std::int32_t subsong ) const {
+	std::unique_ptr<subsongs_type> subsongs_temp = has_subsongs_inited() ? std::unique_ptr<subsongs_type>() : std::make_unique<subsongs_type>( get_subsongs() );
+	const subsongs_type & subsongs = has_subsongs_inited() ? m_subsongs : *subsongs_temp;
+	if ( subsong < 0 || subsong >= static_cast<std::int32_t>( subsongs.size() ) ) {
+		throw openmpt::exception( "invalid subsong" );
+	}
+	return subsongs[subsong].restart_row;
+}
+
 void module_impl::set_repeat_count( std::int32_t repeat_count ) {
 	m_sndFile->SetRepeatCount( repeat_count );
 }
@@ -1123,8 +1159,8 @@ double module_impl::set_position_seconds( double seconds ) {
 	}
 	m_sndFile->SetCurrentOrder( static_cast<OpenMPT::ORDERINDEX>( subsong->start_order ) );
 	OpenMPT::GetLengthType t = m_sndFile->GetLength( m_ctl_seek_sync_samples ? OpenMPT::eAdjustSamplePositions : OpenMPT::eAdjust, OpenMPT::GetLengthTarget( seconds ).StartPos( static_cast<OpenMPT::SEQUENCEINDEX>( subsong->sequence ), static_cast<OpenMPT::ORDERINDEX>( subsong->start_order ), static_cast<OpenMPT::ROWINDEX>( subsong->start_row ) ) ).back();
-	m_sndFile->m_PlayState.m_nNextOrder = m_sndFile->m_PlayState.m_nCurrentOrder = t.targetReached ? t.lastOrder : t.endOrder;
-	m_sndFile->m_PlayState.m_nNextRow = t.targetReached ? t.lastRow : t.endRow;
+	m_sndFile->m_PlayState.m_nNextOrder = m_sndFile->m_PlayState.m_nCurrentOrder = t.targetReached ? t.restartOrder : t.endOrder;
+	m_sndFile->m_PlayState.m_nNextRow = t.targetReached ? t.restartRow : t.endRow;
 	m_sndFile->m_PlayState.m_nTickCount = OpenMPT::CSoundFile::TICKS_ROW_FINISHED;
 	m_currentPositionSeconds = base_seconds + t.duration;
 	return m_currentPositionSeconds;
@@ -1415,9 +1451,9 @@ std::vector<std::string> module_impl::get_order_names() const {
 		if ( m_sndFile->Patterns.IsValidIndex( pat ) ) {
 			retval.push_back( mod_string_to_utf8( m_sndFile->Patterns[ m_sndFile->Order()[i] ].GetName() ) );
 		} else {
-			if ( pat == m_sndFile->Order.GetIgnoreIndex() ) {
+			if ( pat == OpenMPT::PATTERNINDEX_SKIP ) {
 				retval.push_back( "+++ skip" );
-			} else if ( pat == m_sndFile->Order.GetInvalidPatIndex() ) {
+			} else if ( pat == OpenMPT::PATTERNINDEX_INVALID ) {
 				retval.push_back( "--- stop" );
 			} else {
 				retval.push_back( "???" );
@@ -1457,11 +1493,51 @@ std::int32_t module_impl::get_order_pattern( std::int32_t o ) const {
 	}
 	return m_sndFile->Order()[o];
 }
+
+bool module_impl::is_order_skip_entry( std::int32_t order ) const {
+	if ( order < 0 || order >= m_sndFile->Order().GetLengthTailTrimmed() ) {
+		return false;
+	}
+	return is_pattern_skip_item( m_sndFile->Order()[order] );
+}
+bool module_impl::is_pattern_skip_item( std::int32_t pattern ) {
+	return pattern == OpenMPT::PATTERNINDEX_SKIP;
+}
+bool module_impl::is_order_stop_entry( std::int32_t order ) const {
+	if ( order < 0 || order >= m_sndFile->Order().GetLengthTailTrimmed() ) {
+		return false;
+	}
+	return is_pattern_stop_item( m_sndFile->Order()[order] );
+}
+bool module_impl::is_pattern_stop_item( std::int32_t pattern ) {
+	return pattern == OpenMPT::PATTERNINDEX_INVALID;
+}
+
 std::int32_t module_impl::get_pattern_num_rows( std::int32_t p ) const {
 	if ( !mpt::is_in_range( p, std::numeric_limits<OpenMPT::PATTERNINDEX>::min(), std::numeric_limits<OpenMPT::PATTERNINDEX>::max() ) || !m_sndFile->Patterns.IsValidPat( static_cast<OpenMPT::PATTERNINDEX>( p ) ) ) {
 		return 0;
 	}
 	return m_sndFile->Patterns[p].GetNumRows();
+}
+
+std::int32_t module_impl::get_pattern_rows_per_beat( std::int32_t p ) const {
+	if ( !mpt::is_in_range( p, std::numeric_limits<OpenMPT::PATTERNINDEX>::min(), std::numeric_limits<OpenMPT::PATTERNINDEX>::max() ) || !m_sndFile->Patterns.IsValidPat( static_cast<OpenMPT::PATTERNINDEX>( p ) ) ) {
+		return 0;
+	}
+	if ( m_sndFile->Patterns[p].GetOverrideSignature() ) {
+		return m_sndFile->Patterns[p].GetRowsPerBeat();
+	}
+	return m_sndFile->m_nDefaultRowsPerBeat;
+}
+
+std::int32_t module_impl::get_pattern_rows_per_measure( std::int32_t p ) const {
+	if ( !mpt::is_in_range( p, std::numeric_limits<OpenMPT::PATTERNINDEX>::min(), std::numeric_limits<OpenMPT::PATTERNINDEX>::max() ) || !m_sndFile->Patterns.IsValidPat( static_cast<OpenMPT::PATTERNINDEX>( p ) ) ) {
+		return 0;
+	}
+	if ( m_sndFile->Patterns[p].GetOverrideSignature() ) {
+		return m_sndFile->Patterns[p].GetRowsPerMeasure();
+	}
+	return m_sndFile->m_nDefaultRowsPerMeasure;
 }
 
 std::uint8_t module_impl::get_pattern_row_channel_command( std::int32_t p, std::int32_t r, std::int32_t c, int cmd ) const {
@@ -1539,7 +1615,7 @@ std::pair< std::string, std::string > module_impl::format_and_highlight_pattern_
 			break;
 		case module::command_volumeffect:
 			return std::make_pair(
-					cell.IsPcNote() ? std::string(" ") : cell.volcmd != OpenMPT::VOLCMD_NONE ? std::string( 1, m_sndFile->GetModSpecifications().GetVolEffectLetter( cell.volcmd ) ) : std::string(" ")
+					cell.IsPcNote() ? std::string(" ") : std::string( 1, OpenMPT::CModSpecifications::GetGenericVolEffectLetter( cell.volcmd ) )
 				,
 					cell.IsPcNote() ? std::string(" ") : cell.volcmd != OpenMPT::VOLCMD_NONE ? std::string("u") : std::string(" ")
 				);
@@ -1605,7 +1681,7 @@ std::pair< std::string, std::string > module_impl::format_and_highlight_pattern_
 		high += cell.instr ? std::string("ii") : std::string("..");
 	}
 	if ( ( width == 0 ) || ( width >= 9 ) ) {
-		text += cell.IsPcNote() ? std::string(" ") + OpenMPT::mpt::afmt::HEX0<2>( cell.GetValueVolCol() & 0xff ) : cell.volcmd != OpenMPT::VOLCMD_NONE ? std::string( 1, m_sndFile->GetModSpecifications().GetVolEffectLetter( cell.volcmd ) ) + OpenMPT::mpt::afmt::HEX0<2>( cell.vol ) : std::string(" ..");
+		text += cell.IsPcNote() ? std::string(" ") + OpenMPT::mpt::afmt::HEX0<2>( cell.GetValueVolCol() & 0xff ) : cell.volcmd != OpenMPT::VOLCMD_NONE ? std::string( 1, OpenMPT::CModSpecifications::GetGenericVolEffectLetter( cell.volcmd ) ) + OpenMPT::mpt::afmt::HEX0<2>( cell.vol ) : std::string(" ..");
 		high += cell.IsPcNote() ? std::string(" vv") : cell.volcmd != OpenMPT::VOLCMD_NONE ? std::string("uvv") : std::string(" ..");
 	}
 	if ( ( width == 0 ) || ( width >= 13 ) ) {

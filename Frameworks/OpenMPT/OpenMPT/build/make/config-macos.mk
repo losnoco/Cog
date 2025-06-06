@@ -1,4 +1,5 @@
 
+NO_NO_UNDEFINED_LINKER_FLAG=1
 NO_PULSEAUDIO?=1
 include build/make/config-clang.mk
 # Mac OS X overrides

@@ -94,8 +94,6 @@ MPT_TEST_GROUP_INLINE("mpt/base/saturate_cast")
 	MPT_TEST_EXPECT_EQUAL(mpt::saturate_cast<uint32>(std::numeric_limits<int64>::max() - 1), std::numeric_limits<uint32>::max());
 
 	MPT_TEST_EXPECT_EQUAL(mpt::saturate_cast<int32>(std::numeric_limits<uint64>::max() - 1), std::numeric_limits<int32>::max());
-
-	MPT_TEST_EXPECT_EQUAL(mpt::saturate_cast<uint32>(static_cast<double>(std::numeric_limits<int64>::max())), std::numeric_limits<uint32>::max());
 }
 
 } // namespace saturate_cast

@@ -183,7 +183,7 @@ namespace openmpt {
 		if ( volume < 0.0 || volume > 1.0 ) {
 			throw openmpt::exception("invalid global volume");
 		}
-		m_sndFile->m_PlayState.Chn[channel].nGlobalVol = mpt::saturate_round<std::int32_t>(volume * 64.0);
+		m_sndFile->m_PlayState.Chn[channel].nGlobalVol = mpt::saturate_round<std::uint8_t>(volume * 64.0);
 	}
 
 	double module_ext_impl::get_channel_volume( std::int32_t channel ) const {

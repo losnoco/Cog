@@ -129,7 +129,6 @@ private:
 	std::string token;
 #if !defined(MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE)
 	std::unique_ptr<std::random_device> prd;
-	bool rd_reliable{false};
 #endif // !MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE
 	std::unique_ptr<std::mt19937> rd_fallback;
 
@@ -165,13 +164,12 @@ public:
 #if !defined(MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE)
 		try {
 			prd = std::make_unique<std::random_device>();
-			rd_reliable = ((*prd).entropy() > 0.0);
+			if (!((*prd).entropy() > 0.0)) {
+				init_fallback();
+			}
 		} catch (mpt::out_of_memory e) {
 			mpt::rethrow_out_of_memory(e);
 		} catch (const std::exception &) {
-			rd_reliable = false;
-		}
-		if (!rd_reliable) {
 			init_fallback();
 		}
 #else  // MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE
@@ -183,13 +181,12 @@ public:
 #if !defined(MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE)
 		try {
 			prd = std::make_unique<std::random_device>(token);
-			rd_reliable = ((*prd).entropy() > 0.0);
+			if (!((*prd).entropy() > 0.0)) {
+				init_fallback();
+			}
 		} catch (mpt::out_of_memory e) {
 			mpt::rethrow_out_of_memory(e);
 		} catch (const std::exception &) {
-			rd_reliable = false;
-		}
-		if (!rd_reliable) {
 			init_fallback();
 		}
 #else  // MPT_COMPILER_QUIRK_RANDOM_NO_RANDOM_DEVICE
@@ -240,13 +237,10 @@ public:
 					}
 				}
 			} catch (const std::exception &) {
-				rd_reliable = false;
 				init_fallback();
 			}
-		} else {
-			rd_reliable = false;
 		}
-		if (!rd_reliable) {
+		if (rd_fallback) {
 			// std::random_device is unreliable
 			//  XOR the generated random number with more entropy from the time-seeded
 			// PRNG.
@@ -309,7 +303,7 @@ public:
 };
 
 
-using deterministc_random_device = mpt::prng_random_device<mpt::lcg_musl, mpt::prng_random_device_deterministic_seeder>;
+using deterministic_random_device = mpt::prng_random_device<mpt::lcg_musl, mpt::prng_random_device_deterministic_seeder>;
 
 
 } // namespace MPT_INLINE_NS

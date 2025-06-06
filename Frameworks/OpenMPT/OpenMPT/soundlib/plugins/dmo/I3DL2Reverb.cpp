@@ -11,8 +11,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "I3DL2Reverb.h"
+#include "../../Sndfile.h"
 #ifdef MODPLUG_TRACKER
 #include "../../../sounddsp/Reverb.h"
 #endif // MODPLUG_TRACKER
@@ -342,7 +342,7 @@ PlugParamValue I3DL2Reverb::GetParameter(PlugParamIndex index)
 }
 
 
-void I3DL2Reverb::SetParameter(PlugParamIndex index, PlugParamValue value)
+void I3DL2Reverb::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kI3DL2ReverbNumParameters)
 	{

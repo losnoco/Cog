@@ -30,7 +30,7 @@ namespace openmpt123 {
 inline constexpr auto portaudio_encoding = mpt::common_encoding::utf8;
 
 struct portaudio_exception : public exception {
-	portaudio_exception( PaError code ) : exception( mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetErrorText( code ) ) ) { }
+	portaudio_exception( PaError code ) : exception( MPT_USTRING("PortAudio: ") + mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetErrorText( code ) ) ) { }
 };
 
 typedef void (*PaUtilLogCallback ) (const char *log);
@@ -258,38 +258,44 @@ public:
 
 #define portaudio_stream_raii portaudio_stream_blocking_raii
 
-static mpt::ustring show_portaudio_devices( concat_stream<mpt::ustring> & log ) {
-	string_concat_stream<mpt::ustring> devices;
-	devices << MPT_USTRING(" portaudio:") << lf;
+inline std::vector<mpt::ustring> show_portaudio_devices( concat_stream<mpt::ustring> & log ) {
+	std::vector<mpt::ustring> devices;
 	portaudio_raii portaudio( false, log );
 	for ( PaDeviceIndex i = 0; i < Pa_GetDeviceCount(); ++i ) {
 		if ( Pa_GetDeviceInfo( i ) && Pa_GetDeviceInfo( i )->maxOutputChannels > 0 ) {
-			devices << MPT_USTRING("    ") << i << MPT_USTRING(": ");
+			string_concat_stream<mpt::ustring> device;
+			device << i << MPT_USTRING(": ");
 			if ( Pa_GetHostApiInfo( Pa_GetDeviceInfo( i )->hostApi ) && Pa_GetHostApiInfo( Pa_GetDeviceInfo( i )->hostApi )->name ) {
-				devices << mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetHostApiInfo( Pa_GetDeviceInfo( i )->hostApi )->name );
+				device << mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetHostApiInfo( Pa_GetDeviceInfo( i )->hostApi )->name );
 			} else {
-				devices << MPT_USTRING("Host API ") << Pa_GetDeviceInfo( i )->hostApi;
+				device << MPT_USTRING("Host API ") << Pa_GetDeviceInfo( i )->hostApi;
 			}
 			if ( Pa_GetHostApiInfo( Pa_GetDeviceInfo( i )->hostApi ) ) {
 				if ( i == Pa_GetHostApiInfo( Pa_GetDeviceInfo( i )->hostApi )->defaultOutputDevice ) {
-					devices << MPT_USTRING(" (default)");
+					device << MPT_USTRING(" (default)");
 				}
 			}
-			devices << MPT_USTRING(" - ");
+			device << MPT_USTRING(" - ");
 			if ( Pa_GetDeviceInfo( i )->name ) {
-				devices << mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetDeviceInfo( i )->name );
+				device << mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetDeviceInfo( i )->name );
 			} else {
-				devices << MPT_USTRING("Device ") << i;
+				device << MPT_USTRING("Device ") << i;
 			}
-			devices << MPT_USTRING(" (");
-			devices << MPT_USTRING("high latency: ") << Pa_GetDeviceInfo( i )->defaultHighOutputLatency;
-			devices << MPT_USTRING(", ");
-			devices << MPT_USTRING("low latency: ") << Pa_GetDeviceInfo( i )->defaultLowOutputLatency;
-			devices << MPT_USTRING(")");
-			devices << lf;
+			device << MPT_USTRING(" (");
+			device << MPT_USTRING("high latency: ") << Pa_GetDeviceInfo( i )->defaultHighOutputLatency;
+			device << MPT_USTRING(", ");
+			device << MPT_USTRING("low latency: ") << Pa_GetDeviceInfo( i )->defaultLowOutputLatency;
+			device << MPT_USTRING(")");
+			devices.push_back( device.str() );
 		}
 	}
-	return devices.str();
+	return devices;
+}
+
+inline mpt::ustring show_portaudio_version() {
+	string_concat_stream<mpt::ustring> log;
+	log << mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetVersionText() ) << MPT_USTRING(" (") << Pa_GetVersion() << MPT_USTRING(") <http://portaudio.com/>");
+	return log.str();
 }
 
 } // namespace openmpt123

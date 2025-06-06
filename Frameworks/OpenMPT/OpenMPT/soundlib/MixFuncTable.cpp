@@ -12,11 +12,10 @@
 
 
 #include "stdafx.h"
-
-#include "Mixer.h"
-#include "Snd_defs.h"
-#include "ModChannel.h"
 #include "MixFuncTable.h"
+#include "Mixer.h"
+#include "ModChannel.h"
+#include "Snd_defs.h"
 
 #ifdef MPT_INTMIXER
 #include "IntMixer.h"

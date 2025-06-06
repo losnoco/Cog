@@ -6,8 +6,8 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#include "mpt/base/float.hpp"
 #include "mpt/base/integer.hpp"
-#include "mpt/base/floatingpoint.hpp"
 
 
 
@@ -25,8 +25,8 @@ using uint32 = mpt::uint32;
 using uint64 = mpt::uint64;
 
 using nativefloat = mpt::nativefloat;
-using float32 = mpt::float32;
-using float64 = mpt::float64;
+using somefloat32 = mpt::somefloat32;
+using somefloat64 = mpt::somefloat64;
 using namespace mpt::float_literals;
 
 

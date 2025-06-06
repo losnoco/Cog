@@ -88,6 +88,9 @@
 #define ENABLE_TESTS
 #endif
 
+// Enable generation and verification of playback traces
+#define MPT_ENABLE_PLAYBACK_TRACE
+
 // Disable any file saving functionality (not really useful except for the player library)
 //#define MODPLUG_NO_FILESAVE
 
@@ -118,6 +121,10 @@
 #define MPT_ENABLE_ARCH_INTRINSICS
 
 #define MPT_ENABLE_UPDATE
+
+#if defined(MPT_BUILD_DEBUG)
+#define MPT_ENABLE_PLAYBACK_TEST_MENU
+#endif
 
 // Disable unarchiving support
 //#define NO_ARCHIVE_SUPPORT
@@ -157,6 +164,7 @@
 
 #if defined(LIBOPENMPT_BUILD_TEST)
 #define ENABLE_TESTS
+#define MPT_ENABLE_PLAYBACK_TRACE
 #else
 #define MODPLUG_NO_FILESAVE
 #endif
@@ -230,19 +238,19 @@
 #endif
 
 #if defined(MPT_ENABLE_ARCH_INTRINSICS)
-#if MPT_COMPILER_MSVC && MPT_ARCH_X86
+#if MPT_ARCH_X86
 
 #define MPT_ENABLE_ARCH_X86
 
-#define MPT_ENABLE_ARCH_INTRINSICS_SSE
-#define MPT_ENABLE_ARCH_INTRINSICS_SSE2
+#define MPT_WANT_ARCH_INTRINSICS_X86_SSE
+#define MPT_WANT_ARCH_INTRINSICS_X86_SSE2
 
-#elif MPT_COMPILER_MSVC && MPT_ARCH_AMD64
+#elif MPT_ARCH_AMD64
 
 #define MPT_ENABLE_ARCH_AMD64
 
-#define MPT_ENABLE_ARCH_INTRINSICS_SSE
-#define MPT_ENABLE_ARCH_INTRINSICS_SSE2
+#define MPT_WANT_ARCH_INTRINSICS_X86_SSE
+#define MPT_WANT_ARCH_INTRINSICS_X86_SSE2
 
 #endif // arch
 #endif // MPT_ENABLE_ARCH_INTRINSICS
@@ -326,6 +334,8 @@
 #endif
 
 #endif
+
+#define MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT
 
 
 

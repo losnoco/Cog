@@ -8,7 +8,7 @@
 #include "openmpt/all/BuildSettings.hpp"
 
 #include "mpt/audio/sample.hpp"
-#include "mpt/base/floatingpoint.hpp"
+#include "mpt/base/float.hpp"
 
 #include <type_traits>
 

@@ -233,22 +233,41 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_DTM);
-	InitializeChannels();
-	m_SongFlags.set(SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS);
+	std::string songName;
+	file.ReadString<mpt::String::maybeNullTerminated>(songName, fileHeader.headerSize - (sizeof(fileHeader) - 8u));
+
+	auto chunks = ChunkReader(file).ReadChunks<DTMChunk>(1);
+
+	// Read pattern properties
+	uint32 patternFormat;
+	if(FileReader chunk = chunks.GetChunk(DTMChunk::idPATT))
+	{
+		const uint16 numChannels = chunk.ReadUint16BE();
+		if(numChannels < 1 || numChannels > 32)
+			return false;
+
+		InitializeGlobals(MOD_TYPE_DTM, numChannels);
+
+		Patterns.ResizeArray(chunk.ReadUint16BE());  // Number of stored patterns, may be lower than highest pattern number
+		patternFormat = chunk.ReadUint32BE();
+		if(patternFormat != DTM_PT_PATTERN_FORMAT && patternFormat != DTM_204_PATTERN_FORMAT && patternFormat != DTM_206_PATTERN_FORMAT)
+			return false;
+	} else
+	{
+		return false;
+	}
+
+	m_SongFlags.set(SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS | SONG_FASTPORTAS);
 	m_playBehaviour.reset(kPeriodsAreHertz);
 	m_playBehaviour.reset(kITVibratoTremoloPanbrello);
 	// Various files have a default speed or tempo of 0
 	if(fileHeader.tempo)
-		m_nDefaultTempo.Set(fileHeader.tempo);
+		Order().SetDefaultTempoInt(fileHeader.tempo);
 	if(fileHeader.speed)
-		m_nDefaultSpeed = fileHeader.speed;
+		Order().SetDefaultSpeed(fileHeader.speed);
 	if(fileHeader.stereoMode == 0)
 		SetupMODPanning(true);
-
-	file.ReadString<mpt::String::maybeNullTerminated>(m_songName, fileHeader.headerSize - (sizeof(fileHeader) - 8u));
-
-	auto chunks = ChunkReader(file).ReadChunks<DTMChunk>(1);
+	m_songName = std::move(songName);
 
 	// Read order list
 	if(FileReader chunk = chunks.GetChunk(DTMChunk::idS_Q_))
@@ -263,32 +282,12 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	}
 
-	// Read pattern properties
-	uint32 patternFormat;
-	if(FileReader chunk = chunks.GetChunk(DTMChunk::idPATT))
-	{
-		m_nChannels = chunk.ReadUint16BE();
-		if(m_nChannels < 1 || m_nChannels > 32)
-		{
-			return false;
-		}
-		Patterns.ResizeArray(chunk.ReadUint16BE());	// Number of stored patterns, may be lower than highest pattern number
-		patternFormat = chunk.ReadUint32BE();
-		if(patternFormat != DTM_PT_PATTERN_FORMAT && patternFormat != DTM_204_PATTERN_FORMAT && patternFormat != DTM_206_PATTERN_FORMAT)
-		{
-			return false;
-		}
-	} else
-	{
-		return false;
-	}
-
 	// Read global info
 	if(FileReader chunk = chunks.GetChunk(DTMChunk::idSV19))
 	{
 		chunk.Skip(2);	// Ticks per quarter note, typically 24
 		uint32 fractionalTempo = chunk.ReadUint32BE();
-		m_nDefaultTempo = TEMPO(m_nDefaultTempo.GetInt() + fractionalTempo / 4294967296.0);
+		Order().SetDefaultTempo(TEMPO(Order().GetDefaultTempo().GetInt() + fractionalTempo / 4294967296.0));
 
 		uint16be panning[32];
 		chunk.ReadArray(panning);
@@ -416,7 +415,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 		if(patternFormat == DTM_206_PATTERN_FORMAT)
 		{
 			// The stored data is actually not row-based, but tick-based.
-			numRows /= m_nDefaultSpeed;
+			numRows /= Order().GetDefaultSpeed();
 		}
 		if(!(loadFlags & loadPatternData) || patNum > 255 || !Patterns.Insert(patNum, numRows))
 		{
@@ -472,7 +471,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 						tick += (delay & 0x7F) * 0x100 + rowChunk.ReadUint8();
 					else
 						tick += delay;
-					position = std::div(tick, m_nDefaultSpeed);
+					position = std::div(tick, Order().GetDefaultSpeed());
 				}
 			}
 		} else
@@ -486,13 +485,12 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 					const auto [note, instrVol, instrCmd, param] = data;
 					if(note > 0 && note < 0x80)
 					{
-						m.note = (note >> 4) * 12 + (note & 0x0F) + NOTE_MIN + 11;
+						m.note = static_cast<ModCommand::NOTE>((note >> 4) * 12 + (note & 0x0F) + NOTE_MIN + 11);
 					}
 					uint8 vol = instrVol >> 2;
 					if(vol)
 					{
-						m.volcmd = VOLCMD_VOLUME;
-						m.vol = vol - 1u;
+						m.SetVolumeCommand(VOLCMD_VOLUME, static_cast<ModCommand::VOL>(vol - 1u));
 					}
 					m.instr = ((instrVol & 0x03) << 4) | (instrCmd >> 4);
 					command = instrCmd & 0x0F;
@@ -500,7 +498,7 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 				} else
 				{
 					std::tie(command, m.param) = ReadMODPatternEntry(data, m);
-					m.instr |= data[0] & 0x30;	// Allow more than 31 instruments
+					m.instr |= static_cast<ModCommand::INSTR>(data[0] & 0x30u);  // Allow more than 31 instruments
 				}
 				ConvertModCommand(m, command, m.param);
 				// Fix commands without memory and slide nibble precedence
@@ -575,20 +573,20 @@ bool CSoundFile::ReadDTM(FileReader &file, ModLoadingFlags loadFlags)
 	mpt::ustring tracker;
 	if(patternFormat == DTM_206_PATTERN_FORMAT)
 	{
-		tracker = U_("Digital Home Studio");
+		tracker = UL_("Digital Home Studio");
 	} else if(patternFormat == DTM_PT_PATTERN_FORMAT)
 	{
-		tracker = U_("Digital Tracker 2.3");
+		tracker = UL_("Digital Tracker 2.3");
 	} else if(FileReader chunk = chunks.GetChunk(DTMChunk::idVERS))
 	{
 		uint32 version = chunk.ReadUint32BE();
 		tracker = MPT_UFORMAT("Digital Tracker {}.{}")(version >> 4, version & 0x0F);
 	} else
 	{
-		tracker = U_("Digital Tracker");
+		tracker = UL_("Digital Tracker");
 	}
-	m_modFormat.formatName = U_("Digital Tracker");
-	m_modFormat.type = U_("dtm");
+	m_modFormat.formatName = UL_("Digital Tracker");
+	m_modFormat.type = UL_("dtm");
 	m_modFormat.madeWithTracker = std::move(tracker);
 	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 

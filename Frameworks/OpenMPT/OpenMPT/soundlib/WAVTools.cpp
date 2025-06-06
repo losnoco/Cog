@@ -9,8 +9,8 @@
 
 
 #include "stdafx.h"
-#include "Loaders.h"
 #include "WAVTools.h"
+#include "Loaders.h"
 #include "Tagging.h"
 #include "../common/version.h"
 #ifndef MODPLUG_NO_FILESAVE
@@ -163,7 +163,7 @@ uint16 WAVReader::GetFileCodePage(FileReader::ChunkList<RIFFChunk> &chunks)
 		if(iSFT.ReadMagic("OpenMPT"))
 		{
 			std::string versionString;
-			iSFT.ReadString<mpt::String::maybeNullTerminated>(versionString, iSFT.BytesLeft());
+			iSFT.ReadString<mpt::String::maybeNullTerminated>(versionString, mpt::saturate_cast<std::size_t>(iSFT.BytesLeft()));
 			versionString = mpt::trim(versionString);
 			Version version = Version::Parse(mpt::ToUnicode(mpt::Charset::ISO8859_1, versionString));
 			if(version && version < MPT_V("1.28.00.02"))
@@ -195,7 +195,7 @@ void WAVReader::ApplySampleSettings(ModSample &sample, mpt::Charset sampleCharse
 	if(textChunk.IsValid())
 	{
 		std::string sampleNameEncoded;
-		textChunk.ReadString<mpt::String::nullTerminated>(sampleNameEncoded, textChunk.GetLength());
+		textChunk.ReadString<mpt::String::nullTerminated>(sampleNameEncoded, mpt::saturate_cast<std::size_t>(textChunk.GetLength()));
 		sampleName = mpt::ToCharset(sampleCharset, mpt::ToUnicode(codePage, mpt::Charset::Windows1252, sampleNameEncoded));
 	}
 	if(isDLS)
@@ -282,7 +282,7 @@ void WAVReader::ApplySampleSettings(ModSample &sample, mpt::Charset sampleCharse
 			// internal metadata gets converted to Unicode, we must adjust this to
 			// also specify encoding.
 			xtraChunk.ReadString<mpt::String::nullTerminated>(sampleName, MAX_SAMPLENAME);
-			xtraChunk.ReadString<mpt::String::nullTerminated>(sample.filename, xtraChunk.BytesLeft());
+			xtraChunk.ReadString<mpt::String::nullTerminated>(sample.filename, mpt::saturate_cast<std::size_t>(xtraChunk.BytesLeft()));
 		}
 	}
 }
@@ -333,183 +333,6 @@ void WAVSampleLoop::ConvertToWAV(SmpLength start, SmpLength end, bool bidi)
 
 #ifndef MODPLUG_NO_FILESAVE
 
-///////////////////////////////////////////////////////////
-// WAV Writing
-
-
-// Output to stream: Initialize with std::ostream*.
-WAVWriter::WAVWriter(mpt::IO::OFileBase &stream)
-	: s(stream)
-{
-	// Skip file header for now
-	mpt::IO::SeekRelative(s, sizeof(RIFFHeader));
-}
-
-
-WAVWriter::~WAVWriter()
-{
-	MPT_ASSERT(finalized);
-}
-
-
-// Finalize the file by closing the last open chunk and updating the file header. Returns total size of file.
-mpt::IO::Offset WAVWriter::Finalize()
-{
-	FinalizeChunk();
-
-	mpt::IO::Offset totalSize = mpt::IO::TellWrite(s);
-
-	RIFFHeader fileHeader;
-	Clear(fileHeader);
-	fileHeader.magic = RIFFHeader::idRIFF;
-	fileHeader.length = mpt::saturate_cast<uint32>(totalSize - 8);
-	fileHeader.type = RIFFHeader::idWAVE;
-
-	mpt::IO::SeekBegin(s);
-	mpt::IO::Write(s, fileHeader);
-	mpt::IO::SeekAbsolute(s, totalSize);
-	finalized = true;
-
-	return totalSize;
-}
-
-
-// Write a new chunk header to the file.
-void WAVWriter::StartChunk(RIFFChunk::ChunkIdentifiers id)
-{
-	FinalizeChunk();
-
-	chunkHeaderPos = mpt::IO::TellWrite(s);
-	chunkHeader.id = id;
-	mpt::IO::SeekRelative(s, sizeof(chunkHeader));
-}
-
-
-// End current chunk by updating the chunk header and writing a padding byte if necessary.
-void WAVWriter::FinalizeChunk()
-{
-	if(chunkHeaderPos != 0)
-	{
-		const mpt::IO::Offset position = mpt::IO::TellWrite(s);
-
-		const mpt::IO::Offset chunkSize = position - (chunkHeaderPos + sizeof(RIFFChunk));
-		chunkHeader.length = mpt::saturate_cast<uint32>(chunkSize);
-
-		mpt::IO::SeekAbsolute(s, chunkHeaderPos);
-		mpt::IO::Write(s, chunkHeader);
-
-		mpt::IO::SeekAbsolute(s, position);
-
-		if((chunkSize % 2u) != 0)
-		{
-			// Write padding
-			uint8 padding = 0;
-			mpt::IO::Write(s, padding);
-		}
-
-		chunkHeaderPos = 0;
-	}
-}
-
-
-// Write the WAV format to the file.
-void WAVWriter::WriteFormat(uint32 sampleRate, uint16 bitDepth, uint16 numChannels, WAVFormatChunk::SampleFormats encoding)
-{
-	StartChunk(RIFFChunk::idfmt_);
-	WAVFormatChunk wavFormat;
-	Clear(wavFormat);
-
-	bool extensible = (numChannels > 2);
-
-	wavFormat.format = static_cast<uint16>(extensible ? WAVFormatChunk::fmtExtensible : encoding);
-	wavFormat.numChannels = numChannels;
-	wavFormat.sampleRate = sampleRate;
-	wavFormat.blockAlign = static_cast<uint16>((bitDepth * numChannels + 7u) / 8u);
-	wavFormat.byteRate = wavFormat.sampleRate * wavFormat.blockAlign;
-	wavFormat.bitsPerSample = bitDepth;
-
-	mpt::IO::Write(s, wavFormat);
-
-	if(extensible)
-	{
-		WAVFormatChunkExtension extFormat;
-		Clear(extFormat);
-		extFormat.size = sizeof(WAVFormatChunkExtension) - sizeof(uint16);
-		extFormat.validBitsPerSample = bitDepth;
-		switch(numChannels)
-		{
-		case 1:
-			extFormat.channelMask = 0x0004;	// FRONT_CENTER
-			break;
-		case 2:
-			extFormat.channelMask = 0x0003;	// FRONT_LEFT | FRONT_RIGHT
-			break;
-		case 3:
-			extFormat.channelMask = 0x0103;	// FRONT_LEFT | FRONT_RIGHT | BACK_CENTER
-			break;
-		case 4:
-			extFormat.channelMask = 0x0033;	// FRONT_LEFT | FRONT_RIGHT | BACK_LEFT | BACK_RIGHT
-			break;
-		default:
-			extFormat.channelMask = 0;
-			break;
-		}
-		extFormat.subFormat = mpt::UUID(static_cast<uint16>(encoding), 0x0000, 0x0010, 0x800000AA00389B71ull);
-		mpt::IO::Write(s, extFormat);
-	}
-}
-
-
-// Write text tags to the file.
-void WAVWriter::WriteMetatags(const FileTags &tags)
-{
-	StartChunk(RIFFChunk::idCSET);
-	mpt::IO::Write(s, mpt::as_le(uint16(65001)));  // code page    (UTF-8)
-	mpt::IO::Write(s, mpt::as_le(uint16(0)));      // country code (unset)
-	mpt::IO::Write(s, mpt::as_le(uint16(0)));      // language     (unset)
-	mpt::IO::Write(s, mpt::as_le(uint16(0)));      // dialect      (unset)
-
-	StartChunk(RIFFChunk::idLIST);
-	const char info[] = { 'I', 'N', 'F', 'O' };
-	mpt::IO::Write(s, info);
-
-	WriteTag(RIFFChunk::idINAM, tags.title);
-	WriteTag(RIFFChunk::idIART, tags.artist);
-	WriteTag(RIFFChunk::idIPRD, tags.album);
-	WriteTag(RIFFChunk::idICRD, tags.year);
-	WriteTag(RIFFChunk::idICMT, tags.comments);
-	WriteTag(RIFFChunk::idIGNR, tags.genre);
-	WriteTag(RIFFChunk::idTURL, tags.url);
-	WriteTag(RIFFChunk::idISFT, tags.encoder);
-	//WriteTag(RIFFChunk::      , tags.bpm);
-	WriteTag(RIFFChunk::idTRCK, tags.trackno);
-}
-
-
-// Write a single tag into a open idLIST chunk
-void WAVWriter::WriteTag(RIFFChunk::ChunkIdentifiers id, const mpt::ustring &utext)
-{
-	std::string text = mpt::ToCharset(mpt::Charset::UTF8, utext);
-	text = text.substr(0, uint32_max - 1u);
-	if(!text.empty())
-	{
-		const uint32 length = mpt::saturate_cast<uint32>(text.length() + 1);
-
-		RIFFChunk chunk;
-		Clear(chunk);
-		chunk.id = static_cast<uint32>(id);
-		chunk.length = length;
-		mpt::IO::Write(s, chunk);
-		mpt::IO::Write(s, mpt::byte_cast<mpt::const_byte_span>(mpt::span(text.c_str(), length)));
-
-		if((length % 2u) != 0)
-		{
-			uint8 padding = 0;
-			mpt::IO::Write(s, padding);
-		}
-	}
-}
-
 
 WAVSampleWriter::WAVSampleWriter(mpt::IO::OFileBase &stream)
 	: WAVWriter(stream)
@@ -525,11 +348,16 @@ WAVSampleWriter::~WAVSampleWriter()
 
 
 // Write a sample loop information chunk to the file.
-void WAVSampleWriter::WriteLoopInformation(const ModSample &sample)
+void WAVSampleWriter::WriteLoopInformation(const ModSample &sample, SmpLength rangeStart, SmpLength rangeEnd)
 {
 	if(!sample.uFlags[CHN_LOOP | CHN_SUSTAINLOOP] && !ModCommand::IsNote(sample.rootNote))
 	{
 		return;
+	}
+	if(rangeEnd <= rangeStart)
+	{
+		rangeStart = 0;
+		rangeEnd = sample.nLength;
 	}
 
 	StartChunk(RIFFChunk::idsmpl);
@@ -544,16 +372,17 @@ void WAVSampleWriter::WriteLoopInformation(const ModSample &sample)
 	info.ConvertToWAV(sampleRate, sample.rootNote);
 
 	// Set up loops
-	WAVSampleLoop loops[2];
-	Clear(loops);
-	if(sample.uFlags[CHN_SUSTAINLOOP])
+	std::array<WAVSampleLoop, 2> loops{{}};
+	const bool writeSustainLoop = sample.uFlags[CHN_SUSTAINLOOP] && sample.nSustainStart < rangeEnd && sample.nSustainEnd >= rangeStart;
+	const bool writeNormalLoop = sample.uFlags[CHN_LOOP] && sample.nLoopStart < rangeEnd && sample.nLoopEnd >= rangeStart;
+	if(writeSustainLoop)
 	{
-		loops[info.numLoops++].ConvertToWAV(sample.nSustainStart, sample.nSustainEnd, sample.uFlags[CHN_PINGPONGSUSTAIN]);
+		loops[info.numLoops++].ConvertToWAV(std::max(sample.nSustainStart, rangeStart) - rangeStart, std::clamp(sample.nSustainEnd, rangeStart, rangeEnd) - rangeStart, sample.uFlags[CHN_PINGPONGSUSTAIN]);
 	}
-	if(sample.uFlags[CHN_LOOP])
+	if(writeNormalLoop)
 	{
-		loops[info.numLoops++].ConvertToWAV(sample.nLoopStart, sample.nLoopEnd, sample.uFlags[CHN_PINGPONGLOOP]);
-	} else if(sample.uFlags[CHN_SUSTAINLOOP])
+		loops[info.numLoops++].ConvertToWAV(std::max(sample.nLoopStart, rangeStart) - rangeStart, std::clamp(sample.nLoopEnd, rangeStart, rangeEnd) - rangeStart, sample.uFlags[CHN_PINGPONGLOOP]);
+	} else if(writeSustainLoop)
 	{
 		// Since there are no "loop types" to distinguish between sustain and normal loops, OpenMPT assumes
 		// that the first loop is a sustain loop if there are two loops. If we only want a sustain loop,
@@ -570,12 +399,18 @@ void WAVSampleWriter::WriteLoopInformation(const ModSample &sample)
 
 
 // Write a sample's cue points to the file.
-void WAVSampleWriter::WriteCueInformation(const ModSample &sample)
+void WAVSampleWriter::WriteCueInformation(const ModSample &sample, SmpLength rangeStart, SmpLength rangeEnd)
 {
+	if(rangeEnd <= rangeStart)
+	{
+		rangeStart = 0;
+		rangeEnd = sample.nLength;
+	}
+
 	uint32 numMarkers = 0;
 	for(const auto cue : sample.cues)
 	{
-		if(cue < sample.nLength)
+		if(mpt::is_in_range(cue, rangeStart, rangeEnd))
 			numMarkers++;
 	}
 
@@ -584,10 +419,9 @@ void WAVSampleWriter::WriteCueInformation(const ModSample &sample)
 	uint32 i = 0;
 	for(const auto cue : sample.cues)
 	{
-		if(cue < sample.nLength)
+		if(mpt::is_in_range(cue, rangeStart, rangeEnd))
 		{
-			WAVCuePoint cuePoint;
-			cuePoint.ConvertToWAV(i++, cue);
+			WAVCuePoint cuePoint = ConvertToWAVCuePoint(i++, cue - rangeStart);
 			mpt::IO::Write(s, cuePoint);
 		}
 	}
@@ -620,6 +454,7 @@ void WAVSampleWriter::WriteExtraInformation(const ModSample &sample, MODTYPE mod
 		mpt::IO::Write(s, filename);
 	}
 }
+
 
 #endif // MODPLUG_NO_FILESAVE
 

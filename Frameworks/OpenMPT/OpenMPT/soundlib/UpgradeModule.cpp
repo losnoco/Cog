@@ -431,9 +431,11 @@ void CSoundFile::UpgradeModule()
 			// OpenMPT 1.18 fixed the depth of random pan in compatible mode.
 			// OpenMPT 1.26 fixes it in normal mode too.
 			if(!compatModeIT || m_dwLastSavedWithVersion < MPT_V("1.18.00.00"))
-			{
 				ins->nPanSwing = static_cast<uint8>((ins->nPanSwing + 3) / 4u);
-			}
+
+			// Before OpenMPT 1.26 (r6129), it was possible to trigger MIDI notes using channel plugins if the instrument had a valid MIDI channel.
+			if(!ins->nMixPlug && ins->HasValidMIDIChannel() && m_dwLastSavedWithVersion >= MPT_V("1.17.00.00"))
+				m_playBehaviour.set(kMIDINotesFromChannelPlugin);
 		}
 	}
 
@@ -596,6 +598,11 @@ void CSoundFile::UpgradeModule()
 			{ kITPitchPanSeparation,          MPT_V("1.30.00.53") },
 			{ kITResetFilterOnPortaSmpChange, MPT_V("1.30.08.02") },
 			{ kITInitialNoteMemory,           MPT_V("1.31.00.25") },
+			{ kITNoSustainOnPortamento,       MPT_V("1.32.00.13") },
+			{ kITEmptyNoteMapSlotIgnoreCell,  MPT_V("1.32.00.13") },
+			{ kITOffsetWithInstrNumber,       MPT_V("1.32.00.15") },
+			{ kITDoublePortamentoSlides,      MPT_V("1.32.00.27") },
+			{ kITCarryAfterNoteOff,           MPT_V("1.32.00.40") },
 		};
 
 		for(const auto &b : behaviours)
@@ -619,6 +626,8 @@ void CSoundFile::UpgradeModule()
 			{ kFT2NoteDelayWithoutInstr,     MPT_V("1.28.00.44") },
 			{ kITFT2DontResetNoteOffOnPorta, MPT_V("1.29.00.34") },
 			{ kFT2PortaResetDirection,       MPT_V("1.30.00.40") },
+			{ kFT2AutoVibratoAbortSweep,     MPT_V("1.32.00.29") },
+			{ kFT2OffsetMemoryRequiresNote,  MPT_V("1.32.00.43") },
 		};
 
 		for(const auto &b : behaviours)
@@ -737,6 +746,7 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
+#ifndef NO_PLUGINS
 	if(m_dwLastSavedWithVersion >= MPT_V("1.27.00.42") && m_dwLastSavedWithVersion < MPT_V("1.30.00.46") && hasAnyPlugins)
 	{
 		// The Flanger DMO plugin is almost identical to the Chorus... but only almost.
@@ -785,6 +795,31 @@ void CSoundFile::UpgradeModule()
 			}
 		}
 	}
+
+	if(m_dwLastSavedWithVersion >= MPT_V("1.17") && m_dwLastSavedWithVersion < MPT_V("1.32.00.30") && hasAnyPlugins)
+	{
+		for(const auto &plugin : m_MixPlugins)
+		{
+			if(plugin.Info.dwPluginId1 == PLUGMAGIC('V', 's', 't', 'P'))
+			{
+				m_playBehaviour.set(kLegacyPPQpos);
+				break;
+			}
+		}
+	}
+
+	if(m_dwLastSavedWithVersion < MPT_V("1.32.00.38") && hasAnyPlugins)
+	{
+		for(const auto &plugin : m_MixPlugins)
+		{
+			if(plugin.Info.dwPluginId1 == PLUGMAGIC('V', 's', 't', 'P'))
+			{
+				m_playBehaviour.set(kLegacyPluginNNABehaviour);
+				break;
+			}
+		}
+	}
+#endif
 }
 
 OPENMPT_NAMESPACE_END

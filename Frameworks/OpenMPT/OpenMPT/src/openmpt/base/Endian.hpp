@@ -39,10 +39,10 @@ using uint8be = mpt::packed<uint8, mpt::endian::big>;
 
 
 
-using IEEE754binary32LE = mpt::IEEE754binary_types<mpt::float_traits<float32>::is_ieee754_binary32ne, mpt::endian::native>::IEEE754binary32LE;
-using IEEE754binary32BE = mpt::IEEE754binary_types<mpt::float_traits<float32>::is_ieee754_binary32ne, mpt::endian::native>::IEEE754binary32BE;
-using IEEE754binary64LE = mpt::IEEE754binary_types<mpt::float_traits<float64>::is_ieee754_binary64ne, mpt::endian::native>::IEEE754binary64LE;
-using IEEE754binary64BE = mpt::IEEE754binary_types<mpt::float_traits<float64>::is_ieee754_binary64ne, mpt::endian::native>::IEEE754binary64BE;
+using IEEE754binary32LE = mpt::IEEE754binary_types<mpt::float_traits<somefloat32>::is_float32 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian, mpt::endian::native>::IEEE754binary32LE;
+using IEEE754binary32BE = mpt::IEEE754binary_types<mpt::float_traits<somefloat32>::is_float32 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian, mpt::endian::native>::IEEE754binary32BE;
+using IEEE754binary64LE = mpt::IEEE754binary_types<mpt::float_traits<somefloat64>::is_float64 && mpt::float_traits<somefloat64>::is_ieee754_binary && mpt::float_traits<somefloat64>::is_native_endian, mpt::endian::native>::IEEE754binary64LE;
+using IEEE754binary64BE = mpt::IEEE754binary_types<mpt::float_traits<somefloat64>::is_float64 && mpt::float_traits<somefloat64>::is_ieee754_binary && mpt::float_traits<somefloat64>::is_native_endian, mpt::endian::native>::IEEE754binary64BE;
 
 
 // unaligned

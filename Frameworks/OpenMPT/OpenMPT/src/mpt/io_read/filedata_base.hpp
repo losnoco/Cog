@@ -86,7 +86,7 @@ public:
 		if (pos >= dataLength) {
 			return dst.first(0);
 		}
-		return data->Read(dataOffset + pos, dst.first(std::min(dst.size(), dataLength - pos)));
+		return data->Read(dataOffset + pos, dst.first(static_cast<std::size_t>(std::min(static_cast<pos_type>(dst.size()), dataLength - pos))));
 	}
 	bool CanRead(pos_type pos, pos_type length) const override {
 		if ((pos == dataLength) && (length == 0)) {

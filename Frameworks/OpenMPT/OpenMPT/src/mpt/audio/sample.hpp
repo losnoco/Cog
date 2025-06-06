@@ -5,7 +5,7 @@
 
 
 
-#include "mpt/base/floatingpoint.hpp"
+#include "mpt/base/float.hpp"
 #include "mpt/base/integer.hpp"
 #include "mpt/base/namespace.hpp"
 

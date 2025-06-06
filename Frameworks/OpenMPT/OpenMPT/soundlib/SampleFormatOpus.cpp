@@ -58,11 +58,11 @@ static int OpusfileFilereaderSeek(void *stream, opus_int64 offset, int whence)
 	{
 	case SEEK_SET:
 		{
-			if(!mpt::in_range<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::pos_type>(offset))
 			{
 				return -1;
 			}
-			return file.Seek(mpt::saturate_cast<FileReader::off_t>(offset)) ? 0 : -1;
+			return file.Seek(mpt::saturate_cast<FileReader::pos_type>(offset)) ? 0 : -1;
 		}
 		break;
 	case SEEK_CUR:
@@ -73,32 +73,32 @@ static int OpusfileFilereaderSeek(void *stream, opus_int64 offset, int whence)
 				{
 					return -1;
 				}
-				if(!mpt::in_range<FileReader::off_t>(0-offset))
+				if(!mpt::in_range<FileReader::pos_type>(0-offset))
 				{
 					return -1;
 				}
-				return file.SkipBack(mpt::saturate_cast<FileReader::off_t>(0 - offset)) ? 0 : -1;
+				return file.SkipBack(mpt::saturate_cast<FileReader::pos_type>(0 - offset)) ? 0 : -1;
 			} else
 			{
-				if(!mpt::in_range<FileReader::off_t>(offset))
+				if(!mpt::in_range<FileReader::pos_type>(offset))
 				{
 					return -1;
 				}
-				return file.Skip(mpt::saturate_cast<FileReader::off_t>(offset)) ? 0 : -1;
+				return file.Skip(mpt::saturate_cast<FileReader::pos_type>(offset)) ? 0 : -1;
 			}
 		}
 		break;
 	case SEEK_END:
 		{
-			if(!mpt::in_range<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::pos_type>(offset))
 			{
 				return -1;
 			}
-			if(!mpt::in_range<FileReader::off_t>(file.GetLength() + offset))
+			if(!mpt::in_range<FileReader::pos_type>(file.GetLength() + offset))
 			{
 				return -1;
 			}
-			return file.Seek(mpt::saturate_cast<FileReader::off_t>(file.GetLength() + offset)) ? 0 : -1;
+			return file.Seek(mpt::saturate_cast<FileReader::pos_type>(file.GetLength() + offset)) ? 0 : -1;
 		}
 		break;
 	default:

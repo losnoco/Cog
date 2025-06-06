@@ -9,26 +9,30 @@
 
 
 #include "stdafx.h"
-#include "../Sndfile.h"
 #include "PlugInterface.h"
-#include "PluginManager.h"
 #include "../../common/FileReader.h"
+#include "../Sndfile.h"
+#include "PluginManager.h"
 #ifdef MODPLUG_TRACKER
-#include "../../mptrack/Moddoc.h"
-#include "../../mptrack/Mainfrm.h"
-#include "../../mptrack/InputHandler.h"
 #include "../../mptrack/AbstractVstEditor.h"
 #include "../../mptrack/DefaultVstEditor.h"
+#include "../../mptrack/InputHandler.h"
+#include "../../mptrack/Mainfrm.h"
+#include "../../mptrack/Moddoc.h"
+#include "../../mptrack/Reporting.h"
+#include "../../mptrack/TrackerSettings.h"
+#include "../../mptrack/WindowMessages.h"
 // LoadProgram/SaveProgram
+#include "../mod_specifications.h"
+#include "../../common/mptFileIO.h"
 #include "../../mptrack/FileDialog.h"
 #include "../../mptrack/VstPresets.h"
 #include "mpt/io_file/inputfile.hpp"
 #include "mpt/io_file_read/inputfile_filecursor.hpp"
 #include "mpt/io_file/outputfile.hpp"
-#include "../../common/mptFileIO.h"
 #include "mpt/fs/fs.hpp"
-#include "../mod_specifications.h"
 #endif // MODPLUG_TRACKER
+
 #include "../../soundlib/AudioCriticalSection.h"
 #include "mpt/base/aligned_array.hpp"
 #include "mpt/io/base.hpp"
@@ -235,24 +239,15 @@ void IMixPlugin::ProcessMixOps(float * MPT_RESTRICT pOutL, float * MPT_RESTRICT 
 	// -> mixop == 4 : MIX -= middle - WET * wetRatio + middle - DRY
 	// -> mixop == 5 : MIX_L += wetRatio * (WET_L - DRY_L) + dryRatio * (DRY_R - WET_R)
 	//                 MIX_R += dryRatio * (WET_L - DRY_L) + wetRatio * (DRY_R - WET_R)
+	// -> mixop == 6:  same as normal, but forces dry ratio to 1
 
-	MPT_ASSERT(m_pMixStruct != nullptr);
+	const PluginMixMode mixop = m_pMixStruct->GetMixMode();
 
-	int mixop;
-	if(IsInstrument())
-	{
-		// Force normal mix mode for instruments
-		mixop = 0;
-	} else
-	{
-		mixop = m_pMixStruct->GetMixMode();
-	}
-
-	float wetRatio = 1 - m_pMixStruct->fDryRatio;
-	float dryRatio = IsInstrument() ? 1 : m_pMixStruct->fDryRatio; // Always mix full dry if this is an instrument
+	float wetRatio = 1.f - m_pMixStruct->fDryRatio;
+	float dryRatio = (mixop == PluginMixMode::Instrument) ? 1.f : m_pMixStruct->fDryRatio;
 
 	// Wet / Dry range expansion [0,1] -> [-1,1]
-	if(GetNumInputChannels() > 0 && m_pMixStruct->IsExpandedMix())
+	if(m_pMixStruct->IsExpandedMix())
 	{
 		wetRatio = 2.0f * wetRatio - 1.0f;
 		dryRatio = -wetRatio;
@@ -269,17 +264,17 @@ void IMixPlugin::ProcessMixOps(float * MPT_RESTRICT pOutL, float * MPT_RESTRICT 
 	{
 
 	// Default mix
-	case 0:
+	case PluginMixMode::Default:
+	case PluginMixMode::Instrument:
 		for(uint32 i = 0; i < numFrames; i++)
 		{
-			//rewbs.wetratio - added the factors. [20040123]
 			pOutL[i] += leftPlugOutput[i] * wetRatio + plugInputL[i] * dryRatio;
 			pOutR[i] += rightPlugOutput[i] * wetRatio + plugInputR[i] * dryRatio;
 		}
 		break;
 
 	// Wet subtract
-	case 1:
+	case PluginMixMode::WetSubtract:
 		for(uint32 i = 0; i < numFrames; i++)
 		{
 			pOutL[i] += plugInputL[i] - leftPlugOutput[i] * wetRatio;
@@ -288,7 +283,7 @@ void IMixPlugin::ProcessMixOps(float * MPT_RESTRICT pOutL, float * MPT_RESTRICT 
 		break;
 
 	// Dry subtract
-	case 2:
+	case PluginMixMode::DrySubtract:
 		for(uint32 i = 0; i < numFrames; i++)
 		{
 			pOutL[i] += leftPlugOutput[i] - plugInputL[i] * dryRatio;
@@ -297,7 +292,7 @@ void IMixPlugin::ProcessMixOps(float * MPT_RESTRICT pOutL, float * MPT_RESTRICT 
 		break;
 
 	// Mix subtract
-	case 3:
+	case PluginMixMode::MixSubtract:
 		for(uint32 i = 0; i < numFrames; i++)
 		{
 			pOutL[i] -= leftPlugOutput[i] - plugInputL[i] * wetRatio;
@@ -306,17 +301,17 @@ void IMixPlugin::ProcessMixOps(float * MPT_RESTRICT pOutL, float * MPT_RESTRICT 
 		break;
 
 	// Middle subtract
-	case 4:
+	case PluginMixMode::MiddleSubtract:
 		for(uint32 i = 0; i < numFrames; i++)
 		{
-			float middle = (pOutL[i] + plugInputL[i] + pOutR[i] + plugInputR[i]) / 2.0f;
+			float middle = (pOutL[i] + plugInputL[i] + pOutR[i] + plugInputR[i]) * 0.5f;
 			pOutL[i] -= middle - leftPlugOutput[i] * wetRatio + middle - plugInputL[i];
 			pOutR[i] -= middle - rightPlugOutput[i] * wetRatio + middle - plugInputR[i];
 		}
 		break;
 
 	// Left / Right balance
-	case 5:
+	case PluginMixMode::LRBalance:
 		if(m_pMixStruct->IsExpandedMix())
 		{
 			wetRatio /= 2.0f;
@@ -332,8 +327,8 @@ void IMixPlugin::ProcessMixOps(float * MPT_RESTRICT pOutL, float * MPT_RESTRICT 
 	}
 
 	// If dry mix is ticked, we add the unprocessed buffer,
-	// except if this is an instrument since then it has already been done:
-	if(m_pMixStruct->IsWetMix() && !IsInstrument())
+	// except with the instrument mixop as it has already been done:
+	if(m_pMixStruct->IsDryMix() && mixop != PluginMixMode::Instrument)
 	{
 		for(uint32 i = 0; i < numFrames; i++)
 		{
@@ -380,6 +375,14 @@ float IMixPlugin::RenderSilence(uint32 numFrames)
 	}
 
 	return maxVal;
+}
+
+
+bool IMixPlugin::MidiSend(uint32 midiCode)
+{
+	std::array<std::byte, 4> midiData;
+	memcpy(midiData.data(), &midiCode, 4);
+	return MidiSend(mpt::as_span(midiData.data(), std::min(static_cast<uint8>(midiData.size()), MIDIEvents::GetEventLength(mpt::byte_cast<uint8>(midiData[0])))));
 }
 
 
@@ -639,7 +642,7 @@ bool IMixPlugin::SaveProgram()
 	}
 
 	CString progName = m_Factory.libraryName.ToCString() + _T(" - ") + GetCurrentProgramName();
-	progName = SanitizePathComponent(progName);
+	progName = mpt::SanitizePathComponent(progName);
 
 	FileDialog dlg = SaveFileDialog()
 		.DefaultExtension("fxb")
@@ -1000,32 +1003,24 @@ bool IMidiPlugin::IsNotePlaying(uint8 note, CHANNELINDEX trackerChn)
 }
 
 
-void IMidiPlugin::ReceiveMidi(uint32 midiCode)
+void IMidiPlugin::MoveChannel(CHANNELINDEX from, CHANNELINDEX to)
 {
-	ResetSilence();
+	if(from >= std::size(m_MidiCh[GetMidiChannel(from)].noteOnMap[0]) || to >= std::size(m_MidiCh[GetMidiChannel(from)].noteOnMap[0]))
+		return;
 
-	// I think we should only route events to plugins that are explicitely specified as output plugins of the current plugin.
-	// This should probably use GetOutputPlugList here if we ever get to support multiple output plugins.
-	PLUGINDEX receiver;
-	if(m_pMixStruct != nullptr && (receiver = m_pMixStruct->GetOutputPlugin()) != PLUGINDEX_INVALID)
+	for(auto &noteOnMap : m_MidiCh[GetMidiChannel(from)].noteOnMap)
 	{
-		IMixPlugin *plugin = m_SndFile.m_MixPlugins[receiver].pMixPlugin;
-		// Add all events to the plugin's queue.
-		plugin->MidiSend(midiCode);
+		noteOnMap[to] = noteOnMap[from];
+		noteOnMap[from] = 0;
 	}
-
-#ifdef MODPLUG_TRACKER
-	if(m_recordMIDIOut)
-	{
-		// Spam MIDI data to all views
-		::PostMessage(CMainFrame::GetMainFrame()->GetMidiRecordWnd(), WM_MOD_MIDIMSG, midiCode, reinterpret_cast<LPARAM>(this));
-	}
-#endif // MODPLUG_TRACKER
 }
 
 
-void IMidiPlugin::ReceiveSysex(mpt::const_byte_span sysex)
+void IMidiPlugin::ReceiveMidi(mpt::const_byte_span midiData)
 {
+	if(midiData.empty())
+		return;
+
 	ResetSilence();
 
 	// I think we should only route events to plugins that are explicitely specified as output plugins of the current plugin.
@@ -1035,8 +1030,18 @@ void IMidiPlugin::ReceiveSysex(mpt::const_byte_span sysex)
 	{
 		IMixPlugin *plugin = m_SndFile.m_MixPlugins[receiver].pMixPlugin;
 		// Add all events to the plugin's queue.
-		plugin->MidiSysexSend(sysex);
+		plugin->MidiSend(midiData);
 	}
+
+#ifdef MODPLUG_TRACKER
+	if(m_recordMIDIOut && midiData[0] != std::byte{0xF0})
+	{
+		// Spam MIDI data to all views
+		uint32 midiCode = 0;
+		memcpy(&midiCode, midiData.data(), std::min(sizeof(midiCode), midiData.size()));
+		::PostMessage(CMainFrame::GetMainFrame()->GetMidiRecordWnd(), WM_MOD_MIDIMSG, midiCode, reinterpret_cast<LPARAM>(this));
+	}
+#endif  // MODPLUG_TRACKER
 }
 
 

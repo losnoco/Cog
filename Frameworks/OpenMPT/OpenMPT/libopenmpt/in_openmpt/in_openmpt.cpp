@@ -212,11 +212,7 @@ static std::basic_string<TCHAR> generate_infotext( const std::basic_string<TCHAR
 }
 
 static void config( HWND hwndParent ) {
-#if 1
 	libopenmpt::plugin::gui_edit_settings( &self->settings, hwndParent, TEXT(SHORT_TITLE) );
-#else
-	static_cast<void>(hwndParent);
-#endif
 	apply_options();
 }
 
@@ -227,18 +223,9 @@ static void about( HWND hwndParent ) {
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
-	about << std::endl;
-	about << "Show full credits?" << std::endl;
-	if ( MessageBox( hwndParent, StringToWINAPI( StringDecode( about.str(), CP_UTF8 ) ).c_str(), TEXT(SHORT_TITLE), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
-		return;
-	}
 	std::ostringstream credits;
-	credits << openmpt::string::get( "credits" );
-#if 1
-	libopenmpt::plugin::gui_show_file_info( hwndParent, TEXT(SHORT_TITLE), StringToWINAPI( StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ) );
-#else
-	MessageBox( hwndParent, StringToWINAPI( StringReplace(StringDecode(credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ).c_str(), TEXT(SHORT_TITLE), MB_OK );
-#endif
+	credits << openmpt::string::get( "credits" ) << std::endl;
+	libopenmpt::plugin::gui_show_about( hwndParent, TEXT(SHORT_TITLE), StringReplace( StringToWINAPI( StringDecode( about.str(), CP_UTF8 ) ), TEXT("\n"), TEXT("\r\n") ), StringReplace( StringToWINAPI( StringDecode( credits.str(), CP_UTF8 ) ), TEXT("\n"), TEXT("\r\n") ) );
 }
 
 static void init() {

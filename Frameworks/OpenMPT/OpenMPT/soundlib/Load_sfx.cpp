@@ -60,7 +60,7 @@ struct SFXSampleHeader
 	uint16be loopStart;
 	uint16be loopLength;
 
-	// Convert an MOD sample header to OpenMPT's internal sample header.
+	// Convert an SFX sample header to OpenMPT's internal sample header.
 	void ConvertToMPT(ModSample &mptSmp, uint32 length) const
 	{
 		mptSmp.Initialize(MOD_TYPE_MOD);
@@ -168,11 +168,11 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 	SFXFileHeader fileHeader;
 	if(file.Seek(0x3C) && file.ReadStruct(fileHeader) && fileHeader.IsValid(15))
 	{
-		InitializeGlobals(MOD_TYPE_SFX);
+		InitializeGlobals(MOD_TYPE_SFX, 4);
 		m_nSamples = 15;
 	} else if(file.Seek(0x7C) && file.ReadStruct(fileHeader) && fileHeader.IsValid(31))
 	{
-		InitializeGlobals(MOD_TYPE_SFX);
+		InitializeGlobals(MOD_TYPE_SFX, 4);
 		m_nSamples = 31;
 	} else
 	{
@@ -190,10 +190,9 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 	}
 	file.Skip(sizeof(SFXFileHeader));
 
-	m_nChannels = 4;
 	m_nInstruments = 0;
-	m_nDefaultTempo = TEMPO((14565.0 * 122.0) / fileHeader.speed);
-	m_nDefaultSpeed = 6;
+	Order().SetDefaultTempo(TEMPO((14565.0 * 122.0) / fileHeader.speed));
+	Order().SetDefaultSpeed(6);
 	m_nMinPeriod = 14 * 4;
 	m_nMaxPeriod = 3424 * 4;
 	m_nSamplePreAmp = 64;
@@ -449,7 +448,7 @@ bool CSoundFile::ReadSFX(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	m_modFormat.formatName = m_nSamples == 15 ? MPT_UFORMAT("SoundFX 1.{}")(version) : U_("SoundFX 2.0 / MultiMedia Sound");
+	m_modFormat.formatName = m_nSamples == 15 ? MPT_UFORMAT("SoundFX 1.{}")(version) : UL_("SoundFX 2.0 / MultiMedia Sound");
 	m_modFormat.type = m_nSamples == 15 ? UL_("sfx") : UL_("sfx2");
 	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 

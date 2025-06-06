@@ -14,6 +14,8 @@ endif
 
 ifneq ($(STDCXX),)
 CXXFLAGS_STDCXX = -std=$(STDCXX) -fexceptions -frtti
+else ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=gnu++23 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++23' ; fi ), c++23)
+CXXFLAGS_STDCXX = -std=gnu++23 -fexceptions -frtti
 else ifeq ($(shell printf '\n' > bin/empty.cpp ; if $(CXX) -std=gnu++20 -c bin/empty.cpp -o bin/empty.out > /dev/null 2>&1 ; then echo 'c++20' ; fi ), c++20)
 CXXFLAGS_STDCXX = -std=gnu++20 -fexceptions -frtti
 else
@@ -21,6 +23,10 @@ CXXFLAGS_STDCXX = -std=gnu++17 -fexceptions -frtti
 endif
 ifneq ($(STDC),)
 CFLAGS_STDC = -std=$(STDC)
+else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=gnu23 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c23' ; fi ), c23)
+CFLAGS_STDC = -std=gnu23
+else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=gnu18 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c18' ; fi ), c18)
+CFLAGS_STDC = -std=gnu18
 else ifeq ($(shell printf '\n' > bin/empty.c ; if $(CC) -std=gnu17 -c bin/empty.c -o bin/empty.out > /dev/null 2>&1 ; then echo 'c17' ; fi ), c17)
 CFLAGS_STDC = -std=gnu17
 else
@@ -68,6 +74,8 @@ CXXFLAGS += -ffunction-sections -fdata-sections
 CFLAGS   += -ffunction-sections -fdata-sections
 LDFLAGS  += -Wl,--gc-sections
 
+MPT_COMPILER_NOALLOCAH=1
+
 CXXFLAGS += -march=i586 -m80387 -mtune=pentium
 CFLAGS   += -march=i586 -m80387 -mtune=pentium
 
@@ -96,11 +104,19 @@ XMP_OPENMPT=1
 
 IS_CROSS=1
 
+ifeq ($(ALLOW_LGPL),1)
+LOCAL_ZLIB=1
+LOCAL_MPG123=1
+LOCAL_OGG=1
+LOCAL_VORBIS=1
+else
 NO_ZLIB=1
 NO_MPG123=1
 NO_OGG=1
 NO_VORBIS=1
 NO_VORBISFILE=1
+endif
+
 NO_PORTAUDIO=1
 NO_PORTAUDIOCPP=1
 NO_PULSEAUDIO=1

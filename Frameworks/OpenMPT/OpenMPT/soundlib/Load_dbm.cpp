@@ -221,7 +221,7 @@ static std::pair<EffectCommand, uint8> ConvertDBMEffect(const uint8 cmd, uint8 p
 		break;
 
 	case CMD_PATTERNBREAK:
-		param = ((param >> 4) * 10) + (param & 0x0F);
+		param = static_cast<uint8>(((param >> 4) * 10) + (param & 0x0F));
 		break;
 
 #ifdef MODPLUG_TRACKER
@@ -297,7 +297,7 @@ static std::pair<EffectCommand, uint8> ConvertDBMEffect(const uint8 cmd, uint8 p
 
 	case CMD_MIDI:
 		// Encode echo parameters into fixed MIDI macros
-		param = 128 + (cmd - 32) * 32 + param / 8;
+		param = static_cast<uint8>(128 + (cmd - 32) * 32 + param / 8);
 		break;
 
 	default:
@@ -380,10 +380,8 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	}
 
-	InitializeGlobals(MOD_TYPE_DBM);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_DBM, Clamp<uint16, uint16>(infoData.channels, 1, MAX_BASECHANNELS));  // Note: MAX_BASECHANNELS is currently 192, but DBPro 3 apparently supports up to 254 channels.
 	m_SongFlags = SONG_ITCOMPATGXX | SONG_ITOLDEFFECTS;
-	m_nChannels = Clamp<uint16, uint16>(infoData.channels, 1, MAX_BASECHANNELS);	// note: MAX_BASECHANNELS is currently 127, but DBPro 2 supports up to 128 channels, DBPro 3 apparently up to 254.
 	m_nInstruments = std::min(static_cast<INSTRUMENTINDEX>(infoData.instruments), static_cast<INSTRUMENTINDEX>(MAX_INSTRUMENTS - 1));
 	m_nSamples = std::min(static_cast<SAMPLEINDEX>(infoData.samples), static_cast<SAMPLEINDEX>(MAX_SAMPLES - 1));
 	m_playBehaviour.set(kSlidesAtSpeed1);
@@ -392,8 +390,8 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 	m_playBehaviour.reset(kITInstrWithNoteOff);
 	m_playBehaviour.reset(kITInstrWithNoteOffOldEffects);
 
-	m_modFormat.formatName = U_("DigiBooster Pro");
-	m_modFormat.type = U_("dbm");
+	m_modFormat.formatName = UL_("DigiBooster Pro");
+	m_modFormat.type = UL_("dbm");
 	m_modFormat.madeWithTracker = MPT_UFORMAT("DigiBooster Pro {}.{}")(mpt::ufmt::hex(fileHeader.trkVerHi), mpt::ufmt::hex(fileHeader.trkVerLo));
 	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 
@@ -553,7 +551,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 					if(note == 0x1F)
 						m.note = NOTE_KEYOFF;
 					else if(note > 0 && note < 0xFE)
-						m.note = ((note >> 4) * 12) + (note & 0x0F) + 13;
+						m.note = static_cast<ModCommand::NOTE>(((note >> 4) * 12) + (note & 0x0F) + 13);
 				}
 				if(b & 0x02)
 				{
@@ -575,7 +573,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 						std::swap(param1, param2);
 					} else if(cmd1 == CMD_TONEPORTAMENTO && cmd2 == CMD_OFFSET && param2 == 0)
 					{
-						// Offset + Portmaneto: Ignore portamento. If the offset command has a non-zero parameter, keep it for effect memory.
+						// Offset + Portamento: Ignore portamento. If the offset command has a non-zero parameter, keep it for effect memory.
 						cmd2 = CMD_NONE;
 					} else if(cmd2 == CMD_TONEPORTAMENTO && cmd1 == CMD_OFFSET && param1 == 0)
 					{
@@ -608,7 +606,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 		if(hasEchoEnable)
 		{
 			// If there are any Vxx effects to dynamically enable / disable echo, use the CHN_NOFX flag.
-			for(CHANNELINDEX i = 0; i < m_nChannels; i++)
+			for(CHANNELINDEX i = 0; i < GetNumChannels(); i++)
 			{
 				ChnSettings[i].nMixPlugin = 1;
 				ChnSettings[i].dwFlags.set(CHN_NOFX);
@@ -625,7 +623,7 @@ bool CSoundFile::ReadDBM(FileReader &file, ModLoadingFlags loadFlags)
 			for(uint16 i = 0; i < maskLen; i++)
 			{
 				bool enabled = (dspChunk.ReadUint8() == 0);
-				if(i < m_nChannels)
+				if(i < GetNumChannels())
 				{
 					if(hasEchoEnable)
 					{

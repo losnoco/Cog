@@ -7,40 +7,40 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := openmpt
 
 ifeq ($(NDK_MAJOR),)
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++17
 else
 ifeq ($(NDK_MAJOR),21)
 # clang 9
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++17
 else ifeq ($(NDK_MAJOR),22)
 # clang 11
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++20
 else ifeq ($(NDK_MAJOR),23)
 # clang 12
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++20
 else ifeq ($(NDK_MAJOR),24)
 # clang 14
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++20
 else ifeq ($(NDK_MAJOR),25)
 # clang 14
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++20
 else ifeq ($(NDK_MAJOR),26)
 # clang 17
-LOCAL_CFLAGS   += -std=c17
+LOCAL_CFLAGS   += -std=c18
 LOCAL_CPPFLAGS += -std=c++20
 else ifeq ($(NDK_MAJOR),27)
 # clang 18
-LOCAL_CFLAGS   += -std=c17
-LOCAL_CPPFLAGS += -std=c++20
+LOCAL_CFLAGS   += -std=c23
+LOCAL_CPPFLAGS += -std=c++23
 else
-LOCAL_CFLAGS   += -std=c17
-LOCAL_CPPFLAGS += -std=c++20
+LOCAL_CFLAGS   += -std=c23
+LOCAL_CPPFLAGS += -std=c++23
 endif
 endif
 
@@ -124,8 +124,6 @@ endif
 LOCAL_SRC_FILES += \
 	common/ComponentManager.cpp \
 	common/Logging.cpp \
-	common/mptFileIO.cpp \
-	common/mptFileTemporary.cpp \
 	common/mptFileType.cpp \
 	common/mptPathString.cpp \
 	common/mptRandom.cpp \
@@ -146,6 +144,7 @@ LOCAL_SRC_FILES += \
 	soundlib/Dlsbank.cpp \
 	soundlib/Fastmix.cpp \
 	soundlib/InstrumentExtensions.cpp \
+	soundlib/InstrumentSynth.cpp \
 	soundlib/ITCompression.cpp \
 	soundlib/ITTools.cpp \
 	soundlib/Load_667.cpp \
@@ -153,20 +152,28 @@ LOCAL_SRC_FILES += \
 	soundlib/Load_amf.cpp \
 	soundlib/Load_ams.cpp \
 	soundlib/Load_c67.cpp \
+	soundlib/Load_cba.cpp \
 	soundlib/Load_dbm.cpp \
 	soundlib/Load_digi.cpp \
 	soundlib/Load_dmf.cpp \
 	soundlib/Load_dsm.cpp \
 	soundlib/Load_dsym.cpp \
 	soundlib/Load_dtm.cpp \
+	soundlib/Load_etx.cpp \
 	soundlib/Load_far.cpp \
+	soundlib/Load_fc.cpp \
 	soundlib/Load_fmt.cpp \
+	soundlib/Load_ftm.cpp \
 	soundlib/Load_gdm.cpp \
+	soundlib/Load_gmc.cpp \
 	soundlib/Load_gt2.cpp \
+	soundlib/Load_ice.cpp \
 	soundlib/Load_imf.cpp \
+	soundlib/Load_ims.cpp \
 	soundlib/Load_it.cpp \
 	soundlib/Load_itp.cpp \
 	soundlib/load_j2b.cpp \
+	soundlib/Load_kris.cpp \
 	soundlib/Load_mdl.cpp \
 	soundlib/Load_med.cpp \
 	soundlib/Load_mid.cpp \
@@ -178,19 +185,26 @@ LOCAL_SRC_FILES += \
 	soundlib/Load_okt.cpp \
 	soundlib/Load_plm.cpp \
 	soundlib/Load_psm.cpp \
+	soundlib/Load_pt36.cpp \
 	soundlib/Load_ptm.cpp \
+	soundlib/Load_puma.cpp \
+	soundlib/Load_rtm.cpp \
 	soundlib/Load_s3m.cpp \
 	soundlib/Load_sfx.cpp \
+	soundlib/Load_stk.cpp \
 	soundlib/Load_stm.cpp \
 	soundlib/Load_stp.cpp \
 	soundlib/Load_symmod.cpp \
-	soundlib/Load_ult.cpp \
+	soundlib/Load_tcb.cpp \
 	soundlib/Load_uax.cpp \
+	soundlib/Load_ult.cpp \
+	soundlib/Load_unic.cpp \
 	soundlib/Load_wav.cpp \
 	soundlib/Load_xm.cpp \
 	soundlib/Load_xmf.cpp \
 	soundlib/Message.cpp \
 	soundlib/MIDIEvents.cpp \
+	soundlib/MIDIMacroParser.cpp \
 	soundlib/MIDIMacros.cpp \
 	soundlib/MixerLoops.cpp \
 	soundlib/MixerSettings.cpp \
@@ -202,12 +216,15 @@ LOCAL_SRC_FILES += \
 	soundlib/ModSequence.cpp \
 	soundlib/modsmp_ctrl.cpp \
 	soundlib/mod_specifications.cpp \
+	soundlib/MODTools.cpp \
 	soundlib/MPEGFrame.cpp \
 	soundlib/OggStream.cpp \
 	soundlib/OPL.cpp \
 	soundlib/Paula.cpp \
 	soundlib/patternContainer.cpp \
 	soundlib/pattern.cpp \
+	soundlib/PlaybackTest.cpp \
+	soundlib/PlayState.cpp \
 	soundlib/RowVisitor.cpp \
 	soundlib/S3MTools.cpp \
 	soundlib/SampleFormats.cpp \

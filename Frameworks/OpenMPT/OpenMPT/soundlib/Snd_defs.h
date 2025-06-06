@@ -1,5 +1,5 @@
 /*
- * Snd_Defs.h
+ * Snd_defs.h
  * ----------
  * Purpose: Basic definitions of data types, enums, etc. for the playback engine core.
  * Notes  : (currently none)
@@ -27,7 +27,8 @@ using ORDERINDEX = uint16;
 inline constexpr ORDERINDEX ORDERINDEX_INVALID = uint16_max;
 inline constexpr ORDERINDEX ORDERINDEX_MAX = uint16_max - 1;
 using PATTERNINDEX = uint16;
-inline constexpr PATTERNINDEX PATTERNINDEX_INVALID = uint16_max;
+inline constexpr PATTERNINDEX PATTERNINDEX_INVALID = uint16_max;   // "---" in order list
+inline constexpr PATTERNINDEX PATTERNINDEX_SKIP = uint16_max - 1;  // "+++" in order list
 using PLUGINDEX = uint8;
 inline constexpr PLUGINDEX PLUGINDEX_INVALID = uint8_max;
 using SAMPLEINDEX = uint16;
@@ -47,7 +48,7 @@ inline constexpr ROWINDEX MAX_ROWS_PER_BEAT        = 65536;
 inline constexpr ROWINDEX DEFAULT_ROWS_PER_BEAT    = 4;
 inline constexpr ROWINDEX DEFAULT_ROWS_PER_MEASURE = 16;
 
-inline constexpr ROWINDEX MAX_PATTERN_ROWS       = 1024;
+inline constexpr ROWINDEX MAX_PATTERN_ROWS       = 4096;
 inline constexpr ORDERINDEX MAX_ORDERS           = ORDERINDEX_MAX + 1;
 inline constexpr PATTERNINDEX MAX_PATTERNS       = 4000;
 inline constexpr SAMPLEINDEX MAX_SAMPLES         = 4000;
@@ -56,10 +57,15 @@ inline constexpr PLUGINDEX MAX_MIXPLUGINS        = 250;
 
 inline constexpr SEQUENCEINDEX MAX_SEQUENCES     = 50;
 
-inline constexpr CHANNELINDEX MAX_BASECHANNELS   = 127; // Maximum pattern channels.
+inline constexpr CHANNELINDEX MAX_BASECHANNELS   = 192; // Maximum pattern channels.
 inline constexpr CHANNELINDEX MAX_CHANNELS       = 256; // Maximum number of mixing channels.
 
 enum { FREQ_FRACBITS = 4 }; // Number of fractional bits in return value of CSoundFile::GetFreqFromPeriod()
+
+using samplecount_t = uint32;  // Number of rendered samples
+
+using PlugParamIndex = uint32;
+using PlugParamValue = float;
 
 // String lengths (including trailing null char)
 enum
@@ -105,6 +111,8 @@ enum MODTYPE
 	MOD_TYPE_STP  = 0x8000000,
 	MOD_TYPE_PLM  = 0x10000000,
 	MOD_TYPE_SFX  = 0x20000000,
+
+	MOD_TYPE_MOD_PC = MOD_TYPE_MOD | MOD_TYPE_XM,
 };
 DECLARE_FLAGSET(MODTYPE)
 
@@ -122,8 +130,29 @@ enum class ModContainerType
 };
 
 
+enum class AutoSlideCommand
+{
+	TonePortamento,
+	TonePortamentoWithDuration,
+	PortamentoUp,
+	PortamentoDown,
+	FinePortamentoUp,
+	FinePortamentoDown,
+	PortamentoFC,
+	FineVolumeSlideUp,
+	FineVolumeSlideDown,
+	VolumeDownETX,
+	VolumeSlideSTK,
+	VolumeDownWithDuration,
+	GlobalVolumeSlide,
+	Vibrato,
+	Tremolo,
+	NumCommands
+};
+
+
 // Module channel / sample flags
-enum ChannelFlags
+enum ChannelFlags : uint32
 {
 	// Sample Flags
 	CHN_16BIT           = 0x01,        // 16-bit sample
@@ -154,9 +183,8 @@ enum ChannelFlags
 	CHN_EXTRALOUD       = 0x400000,    // Force sample to play at 0dB
 	CHN_REVERB          = 0x800000,    // Apply reverb on this channel
 	CHN_NOREVERB        = 0x1000000,   // Disable reverb on this channel
-	CHN_SOLO            = 0x2000000,   // Solo channel
-	CHN_NOFX            = 0x4000000,   // Dry channel (no plugins)
-	CHN_SYNCMUTE        = 0x8000000,   // Keep sample sync on mute
+	CHN_NOFX            = 0x2000000,   // Dry channel (no plugins)
+	CHN_SYNCMUTE        = 0x4000000,   // Keep sample sync on mute
 
 	// Sample flags (only present in ModSample::uFlags, may overlap with CHN_CHANNELFLAGS)
 	SMP_MODIFIED        = 0x2000,      // Sample data has been edited in the tracker
@@ -165,8 +193,8 @@ enum ChannelFlags
 };
 DECLARE_FLAGSET(ChannelFlags)
 
-#define CHN_SAMPLEFLAGS (CHN_16BIT | CHN_LOOP | CHN_PINGPONGLOOP | CHN_SUSTAINLOOP | CHN_PINGPONGSUSTAIN | CHN_PANNING | CHN_STEREO | CHN_PINGPONGFLAG | CHN_REVERSE | CHN_SURROUND | CHN_ADLIB)
-#define CHN_CHANNELFLAGS (~CHN_SAMPLEFLAGS | CHN_SURROUND)
+inline constexpr ChannelFlags CHN_SAMPLEFLAGS = (CHN_16BIT | CHN_LOOP | CHN_PINGPONGLOOP | CHN_SUSTAINLOOP | CHN_PINGPONGSUSTAIN | CHN_PANNING | CHN_STEREO | CHN_PINGPONGFLAG | CHN_REVERSE | CHN_SURROUND | CHN_ADLIB).as_enum();
+inline constexpr ChannelFlags CHN_CHANNELFLAGS = (~CHN_SAMPLEFLAGS | CHN_SURROUND).as_enum();
 
 // Sample flags fit into the first 16 bits, and with the current memory layout, storing them as a 16-bit integer packs struct ModSample nicely.
 using SampleFlags = FlagSet<ChannelFlags, uint16>;
@@ -185,13 +213,10 @@ DECLARE_FLAGSET(EnvelopeFlags)
 
 
 // Envelope value boundaries
-enum : uint8
-{
-	ENVELOPE_MIN = 0,   // Vertical min value of a point
-	ENVELOPE_MID = 32,  // Vertical middle line
-	ENVELOPE_MAX = 64,  // Vertical max value of a point
-};
-#define MAX_ENVPOINTS  240 // Maximum length of each instrument envelope
+inline constexpr uint8 ENVELOPE_MIN = 0;     // Vertical min value of a point
+inline constexpr uint8 ENVELOPE_MID = 32;    // Vertical middle line
+inline constexpr uint8 ENVELOPE_MAX = 64;    // Vertical max value of a point
+inline constexpr uint8 MAX_ENVPOINTS = 240;  // Maximum length of each instrument envelope
 
 
 // Instrument-specific flags
@@ -250,35 +275,47 @@ enum class DuplicateNoteAction : uint8
 };
 
 
-// Module flags - contains both song configuration and playback state... Use SONG_FILE_FLAGS and SONG_PLAY_FLAGS distinguish between the two.
+enum PlayFlags : uint16
+{
+	SONG_PATTERNLOOP     =  0x01,  // Loop current pattern (pattern editor)
+	SONG_STEP            =  0x02,  // Song is in "step" mode (pattern editor)
+	SONG_PAUSED          =  0x04,  // Song is paused (no tick processing, just rendering audio)
+	SONG_FADINGSONG      =  0x08,  // Song is fading out
+	SONG_ENDREACHED      =  0x10,  // Song is finished
+	SONG_FIRSTTICK       =  0x20,  // Is set when the current tick is the first tick of the row
+	SONG_MPTFILTERMODE   =  0x40,  // Local filter mode (reset filter on each note)
+	SONG_SURROUNDPAN     =  0x80,  // Pan in the rear channels
+	SONG_POSJUMP         = 0x100,  // Position jump encountered
+	SONG_BREAKTOROW      = 0x200,  // Break to row command encountered
+	SONG_POSITIONCHANGED = 0x400,  // Report to plugins that we jumped around in the module
+};
+DECLARE_FLAGSET(PlayFlags)
+
+
 enum SongFlags
 {
-	SONG_FASTVOLSLIDES =       0x02,  // Old Scream Tracker 3.0 volume slides
-	SONG_ITOLDEFFECTS  =       0x04,  // Old Impulse Tracker effect implementations
-	SONG_ITCOMPATGXX   =       0x08,  // IT "Compatible Gxx" (IT's flag to behave more like other trackers w/r/t portamento effects)
-	SONG_LINEARSLIDES  =       0x10,  // Linear slides vs. Amiga slides
-	SONG_PATTERNLOOP   =       0x20,  // Loop current pattern (pattern editor)
-	SONG_STEP          =       0x40,  // Song is in "step" mode (pattern editor)
-	SONG_PAUSED        =       0x80,  // Song is paused (no tick processing, just rendering audio)
-	SONG_FADINGSONG    =     0x0100,  // Song is fading out
-	SONG_ENDREACHED    =     0x0200,  // Song is finished
-	SONG_FIRSTTICK     =     0x1000,  // Is set when the current tick is the first tick of the row
-	SONG_MPTFILTERMODE =     0x2000,  // Local filter mode (reset filter on each note)
-	SONG_SURROUNDPAN   =     0x4000,  // Pan in the rear channels
-	SONG_EXFILTERRANGE =     0x8000,  // Cutoff Filter has double frequency range (up to ~10Khz)
-	SONG_AMIGALIMITS   =   0x1'0000,  // Enforce amiga frequency limits
-	SONG_S3MOLDVIBRATO =   0x2'0000,  // ScreamTracker 2 vibrato in S3M files
-	SONG_BREAKTOROW    =   0x8'0000,  // Break to row command encountered (internal flag, do not touch)
-	SONG_POSJUMP       =  0x10'0000,  // Position jump encountered (internal flag, do not touch)
-	SONG_PT_MODE       =  0x20'0000,  // ProTracker 1/2 playback mode
-	SONG_PLAYALLSONGS  =  0x40'0000,  // Play all subsongs consecutively (libopenmpt)
-	SONG_ISAMIGA       =  0x80'0000,  // Is an Amiga module and thus qualifies to be played using the Paula BLEP resampler
-	SONG_IMPORTED      = 0x100'0000,  // Song type does not represent actual module format / was imported from a different format (OpenMPT)
+	SONG_FASTPORTAS          =     0x01,  // Portamentos are executed on every tick
+	SONG_FASTVOLSLIDES       =     0x02,  // Old Scream Tracker 3.0 volume slides (executed on every tick)
+	SONG_ITOLDEFFECTS        =     0x04,  // Old Impulse Tracker effect implementations
+	SONG_ITCOMPATGXX         =     0x08,  // IT "Compatible Gxx" (IT's flag to behave more like other trackers w/r/t portamento effects)
+	SONG_LINEARSLIDES        =     0x10,  // Linear slides vs. Amiga slides
+	SONG_EXFILTERRANGE       =     0x20,  // Cutoff Filter has double frequency range (up to ~10Khz)
+	SONG_AMIGALIMITS         =     0x40,  // Enforce amiga frequency limits
+	SONG_S3MOLDVIBRATO       =     0x80,  // ScreamTracker 2 vibrato in S3M files
+	SONG_PT_MODE             =    0x100,  // ProTracker 1/2 playback mode
+	SONG_ISAMIGA             =    0x200,  // Is an Amiga module and thus qualifies to be played using the Paula BLEP resampler
+	SONG_IMPORTED            =    0x400,  // Song type does not represent actual module format / was imported from a different format (OpenMPT)
+	SONG_PLAYALLSONGS        =    0x800,  // Play all subsongs consecutively (libopenmpt)
+	SONG_AUTO_TONEPORTA      =   0x1000,  // Tone portamento command is continued automatically
+	SONG_AUTO_TONEPORTA_CONT =   0x2000,  // Auto tone portamento is not interruped by a tone portamento with parameter 0
+	SONG_AUTO_GLOBALVOL      =   0x4000,  // Global volume slide command is continued automatically
+	SONG_AUTO_VIBRATO        =   0x8000,  // Vibrato command is continued automatically
+	SONG_AUTO_TREMOLO        = 0x1'8000,  // Tremolo command is continued automatically
+	SONG_AUTO_VOLSLIDE_STK   = 0x2'0000,  // Automatic volume slide command is interpreted like in STK files (rather than like in STP files)
+	SONG_FORMAT_NO_VOLCOL    = 0x4'0000,  // The original (imported) format has no volume column, so it can be hidden in the pattern editor.
 };
 DECLARE_FLAGSET(SongFlags)
 
-#define SONG_FILE_FLAGS (SONG_FASTVOLSLIDES|SONG_ITOLDEFFECTS|SONG_ITCOMPATGXX|SONG_LINEARSLIDES|SONG_EXFILTERRANGE|SONG_AMIGALIMITS|SONG_S3MOLDVIBRATO|SONG_PT_MODE|SONG_ISAMIGA|SONG_IMPORTED)
-#define SONG_PLAY_FLAGS (~SONG_FILE_FLAGS)
 
 // Global Options (Renderer)
 #ifndef NO_AGC
@@ -305,6 +342,16 @@ DECLARE_FLAGSET(SongFlags)
 
 inline constexpr uint32 MAX_GLOBAL_VOLUME = 256;
 inline constexpr uint32 MAX_PREAMP = 2000;
+
+// When to execute a position override event
+enum class OrderTransitionMode : uint8
+{
+	AtPatternEnd,
+	AtMeasureEnd,
+	AtBeatEnd,
+	AtRowEnd,
+};
+
 
 // Resampling modes
 enum ResamplingMode : uint8
@@ -558,6 +605,18 @@ enum PlayBehaviour
 	kITResetFilterOnPortaSmpChange, // Filter is reset on portamento if sample is swapped
 	kITInitialNoteMemory,           // Initial "last note memory" for each channel is C-0 and not "no note"
 	kPluginDefaultProgramAndBank1,  // Default program and bank is set to 1 for plugins, so if an instrument is set to either of those, the program / bank change event is not sent to the plugin
+	kITNoSustainOnPortamento,       // Do not re-enable sustain loop on portamento, even when switching between samples
+	kITEmptyNoteMapSlotIgnoreCell,  // IT ignores the entire pattern cell when trying to play an unmapped note of an instrument
+	kITOffsetWithInstrNumber,       // IT applies offset commands even if just an instrument number without note is present
+	kContinueSampleWithoutInstr,    // FTM: A note without instrument number continues looped samples with the new pitch instead of retriggering them
+	kMIDINotesFromChannelPlugin,    // Behaviour before OpenMPT 1.26: Channel plugin can be used to send MIDI notes
+	kITDoublePortamentoSlides,      // IT only reads parameters once per row, so if two commands sharing effect parameters are found in the two effect columns, they influence each other
+	kS3MIgnoreCombinedFineSlides,   // S3M commands Kxy and Lxy ignore fine slides
+	kFT2AutoVibratoAbortSweep,      // Key-off before auto-vibrato sweep-in is complete resets auto-vibrato depth
+	kLegacyPPQpos,                  // Report fake PPQ position to VST plugins
+	kLegacyPluginNNABehaviour,      // Plugin notes with NNA=continue are affected by note-offs etc.
+	kITCarryAfterNoteOff,           // Envelope Carry continues to function as normal even after note-off
+	kFT2OffsetMemoryRequiresNote,   // Offset memory is only updated when offset command is next to a note
 
 	// Add new play behaviours here.
 

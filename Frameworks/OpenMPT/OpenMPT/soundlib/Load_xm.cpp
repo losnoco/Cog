@@ -79,11 +79,11 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 	{
 	case SEEK_SET:
 		{
-			if(!mpt::in_range<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::pos_type>(offset))
 			{
 				return -1;
 			}
-			return file.Seek(mpt::saturate_cast<FileReader::off_t>(offset)) ? 0 : -1;
+			return file.Seek(mpt::saturate_cast<FileReader::pos_type>(offset)) ? 0 : -1;
 		}
 		break;
 	case SEEK_CUR:
@@ -94,32 +94,32 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 				{
 					return -1;
 				}
-				if(!mpt::in_range<FileReader::off_t>(0-offset))
+				if(!mpt::in_range<FileReader::pos_type>(0-offset))
 				{
 					return -1;
 				}
-				return file.SkipBack(mpt::saturate_cast<FileReader::off_t>(0 - offset)) ? 0 : -1;
+				return file.SkipBack(mpt::saturate_cast<FileReader::pos_type>(0 - offset)) ? 0 : -1;
 			} else
 			{
-				if(!mpt::in_range<FileReader::off_t>(offset))
+				if(!mpt::in_range<FileReader::pos_type>(offset))
 				{
 					return -1;
 				}
-				return file.Skip(mpt::saturate_cast<FileReader::off_t>(offset)) ? 0 : -1;
+				return file.Skip(mpt::saturate_cast<FileReader::pos_type>(offset)) ? 0 : -1;
 			}
 		}
 		break;
 	case SEEK_END:
 		{
-			if(!mpt::in_range<FileReader::off_t>(offset))
+			if(!mpt::in_range<FileReader::pos_type>(offset))
 			{
 				return -1;
 			}
-			if(!mpt::in_range<FileReader::off_t>(file.GetLength() + offset))
+			if(!mpt::in_range<FileReader::pos_type>(file.GetLength() + offset))
 			{
 				return -1;
 			}
-			return file.Seek(mpt::saturate_cast<FileReader::off_t>(file.GetLength() + offset)) ? 0 : -1;
+			return file.Seek(mpt::saturate_cast<FileReader::pos_type>(file.GetLength() + offset)) ? 0 : -1;
 		}
 		break;
 	default:
@@ -130,7 +130,7 @@ static int VorbisfileFilereaderSeek(void *datasource, ogg_int64_t offset, int wh
 static long VorbisfileFilereaderTell(void *datasource)
 {
 	FileReader &file = *mpt::void_ptr<FileReader>(datasource);
-	FileReader::off_t result = file.GetPosition();
+	FileReader::pos_type result = file.GetPosition();
 	if(!mpt::in_range<long>(result))
 	{
 		return -1;
@@ -217,7 +217,7 @@ static std::vector<SAMPLEINDEX> AllocateXMSamples(CSoundFile &sndFile, SAMPLEIND
 				candidateSlot = static_cast<SAMPLEINDEX>(std::find(usedSamples.begin() + 1, usedSamples.end(), false) - usedSamples.begin());
 			} else
 			{
-				// No unused sampel slots: Give up :(
+				// No unused sample slots: Give up :(
 				break;
 			}
 		}
@@ -243,7 +243,7 @@ static void ReadXMPatterns(FileReader &file, const XMFileHeader &fileHeader, CSo
 	sndFile.Patterns.ResizeArray(fileHeader.patterns);
 	for(PATTERNINDEX pat = 0; pat < fileHeader.patterns; pat++)
 	{
-		FileReader::off_t curPos = file.GetPosition();
+		FileReader::pos_type curPos = file.GetPosition();
 		const uint32 headerSize = file.ReadUint32LE();
 		if(headerSize < 8 || !file.CanRead(headerSize - 4))
 			break;
@@ -497,7 +497,7 @@ static bool ReadSampleData(ModSample &sample, SampleIO sampleFlags, FileReader &
 									CopyAudio(mpt::audio_span_interleaved(sample.sample8() + (offset * sample.GetNumChannels()), sample.GetNumChannels(), decodedSamples), mpt::audio_span_planar(output, channels, decodedSamples));
 								}
 							}
-							offset += decodedSamples;
+							offset += static_cast<SmpLength>(decodedSamples);
 						}
 					}
 				} else
@@ -595,7 +595,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		return false;
 	}
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(GetHeaderMinimumAdditionalSize(fileHeader))))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(GetHeaderMinimumAdditionalSize(fileHeader))))
 	{
 		return false;
 	} else if(loadFlags == onlyVerifyHeader)
@@ -603,8 +603,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_XM);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_XM, fileHeader.channels);
 	m_nMixLevels = MixLevels::Compatible;
 
 	FlagSet<TrackerVersions> madeWith(verUnknown);
@@ -692,12 +691,11 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	m_nMaxPeriod = 31999;
 
 	Order().SetRestartPos(fileHeader.restartPos);
-	m_nChannels = fileHeader.channels;
 	m_nInstruments = std::min(static_cast<uint16>(fileHeader.instruments), static_cast<uint16>(MAX_INSTRUMENTS - 1));
 	if(fileHeader.speed)
-		m_nDefaultSpeed = fileHeader.speed;
+		Order().SetDefaultSpeed(fileHeader.speed);
 	if(fileHeader.tempo)
-		m_nDefaultTempo = Clamp(TEMPO(fileHeader.tempo, 0), ModSpecs::xmEx.GetTempoMin(), ModSpecs::xmEx.GetTempoMax());
+		Order().SetDefaultTempo(Clamp(TEMPO(fileHeader.tempo, 0), ModSpecs::xmEx.GetTempoMin(), ModSpecs::xmEx.GetTempoMax()));
 
 	m_SongFlags.reset();
 	m_SongFlags.set(SONG_LINEARSLIDES, (fileHeader.flags & XMFileHeader::linearSlides) != 0);
@@ -757,12 +755,12 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// ModPlug Tracker Alpha
 				m_dwLastSavedWithVersion = MPT_V("1.00.00.A5");
-				madeWithTracker = U_("ModPlug Tracker 1.0 alpha");
+				madeWithTracker = UL_("ModPlug Tracker 1.0 alpha");
 			} else if(instrHeader.size == 263)
 			{
 				// ModPlug Tracker Beta (Beta 1 still behaves like Alpha, but Beta 3.3 does it this way)
 				m_dwLastSavedWithVersion = MPT_V("1.00.00.B3");
-				madeWithTracker = U_("ModPlug Tracker 1.0 beta");
+				madeWithTracker = UL_("ModPlug Tracker 1.0 beta");
 			} else
 			{
 				// WTF?
@@ -999,7 +997,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	// Read mix plugins information
 	if(file.CanRead(8))
 	{
-		FileReader::off_t oldPos = file.GetPosition();
+		FileReader::pos_type oldPos = file.GetPosition();
 		LoadMixPlugins(file);
 		if(file.GetPosition() != oldPos)
 		{
@@ -1013,18 +1011,18 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		if(madeWith[verModPlugBidiFlag])
 		{
 			m_dwLastSavedWithVersion = MPT_V("1.11");
-			madeWithTracker = U_("ModPlug Tracker 1.0 - 1.11");
+			madeWithTracker = UL_("ModPlug Tracker 1.0 - 1.11");
 		} else if(madeWith[verNewModPlug] && !madeWith[verPlayerPRO])
 		{
-			m_dwLastSavedWithVersion = MPT_V("1.16.00.00");
-			madeWithTracker = U_("ModPlug Tracker 1.0 - 1.16");
+			m_dwLastSavedWithVersion = MPT_V("1.16");
+			madeWithTracker = UL_("ModPlug Tracker 1.0 - 1.16");
 		} else if(madeWith[verNewModPlug] && madeWith[verPlayerPRO])
 		{
 			m_dwLastSavedWithVersion = MPT_V("1.16");
-			madeWithTracker = U_("ModPlug Tracker 1.0 - 1.16 / PlayerPRO");
+			madeWithTracker = UL_("ModPlug Tracker 1.0 - 1.16 / PlayerPRO");
 		} else if(!madeWith[verNewModPlug] && madeWith[verPlayerPRO])
 		{
-			madeWithTracker = U_("PlayerPRO");
+			madeWithTracker = UL_("PlayerPRO");
 		}
 	}
 
@@ -1073,13 +1071,13 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		if(madeWith[verDigiTrakker] && sampleReserved == 0 && (lastInstrType ? lastInstrType : -1) == -1)
 		{
-			madeWithTracker = U_("DigiTrakker");
+			madeWithTracker = UL_("DigiTrakker");
 		} else if(madeWith[verFT2Generic])
 		{
-			madeWithTracker = U_("FastTracker 2 or compatible");
+			madeWithTracker = UL_("FastTracker 2 or compatible");
 		} else
 		{
-			madeWithTracker = U_("Unknown");
+			madeWithTracker = UL_("Unknown");
 		}
 	}
 
@@ -1091,16 +1089,16 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 
 	LoadExtendedSongProperties(file, true, &isOpenMPTMade);
 
-	if(isOpenMPTMade && m_dwLastSavedWithVersion < MPT_V("1.17.00.00"))
+	if(isOpenMPTMade && m_dwLastSavedWithVersion < MPT_V("1.17"))
 	{
 		// Up to OpenMPT 1.17.02.45 (r165), it was possible that the "last saved with" field was 0
 		// when saving a file in OpenMPT for the first time.
-		m_dwLastSavedWithVersion = MPT_V("1.17.00.00");
+		m_dwLastSavedWithVersion = MPT_V("1.17");
 	}
 
-	if(m_dwLastSavedWithVersion >= MPT_V("1.17.00.00"))
+	if(m_dwLastSavedWithVersion >= MPT_V("1.17"))
 	{
-		madeWithTracker = U_("OpenMPT ") + m_dwLastSavedWithVersion.ToUString();
+		madeWithTracker = UL_("OpenMPT ") + m_dwLastSavedWithVersion.ToUString();
 	}
 
 	// We no longer allow any --- or +++ items in the order list now.
@@ -1109,7 +1107,7 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 		if(!Patterns.IsValidPat(0xFE))
 			Order().RemovePattern(0xFE);
 		if(!Patterns.IsValidPat(0xFF))
-			Order().Replace(0xFF, Order.GetInvalidPatIndex());
+			Order().Replace(0xFF, PATTERNINDEX_INVALID);
 	}
 
 	m_modFormat.formatName = MPT_UFORMAT("FastTracker 2 v{}.{}")(fileHeader.version >> 8, mpt::ufmt::hex0<2>(fileHeader.version & 0xFF));
@@ -1118,16 +1116,16 @@ bool CSoundFile::ReadXM(FileReader &file, ModLoadingFlags loadFlags)
 	if(isOXM)
 	{
 		m_modFormat.originalFormatName = std::move(m_modFormat.formatName);
-		m_modFormat.formatName = U_("OggMod FastTracker 2");
-		m_modFormat.type = U_("oxm");
-		m_modFormat.originalType = U_("xm");
+		m_modFormat.formatName = UL_("OggMod FastTracker 2");
+		m_modFormat.type = UL_("oxm");
+		m_modFormat.originalType = UL_("xm");
 	} else
 	{
-		m_modFormat.type = U_("xm");
+		m_modFormat.type = UL_("xm");
 	}
 
 	if(anyADPCM)
-		m_modFormat.madeWithTracker += U_(" (ADPCM packed)");
+		m_modFormat.madeWithTracker += UL_(" (ADPCM packed)");
 
 	return true;
 }
@@ -1166,8 +1164,8 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 	fileHeader.size = sizeof(XMFileHeader) - 60;	// minus everything before this field
 	fileHeader.restartPos = Order().GetRestartPos();
 
-	fileHeader.channels = m_nChannels;
-	if((m_nChannels % 2u) && m_nChannels < 32)
+	fileHeader.channels = GetNumChannels();
+	if((GetNumChannels() % 2u) && GetNumChannels() < 32)
 	{
 		// Avoid odd channel count for FT2 compatibility
 		fileHeader.channels++;
@@ -1189,7 +1187,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 	for(ORDERINDEX ord = 0; ord < trimmedLength; ord++)
 	{
 		PATTERNINDEX pat = Order()[ord];
-		if(pat == Order.GetIgnoreIndex() || pat == Order.GetInvalidPatIndex() || pat > uint8_max)
+		if(pat == PATTERNINDEX_SKIP || pat == PATTERNINDEX_INVALID || pat > uint8_max)
 		{
 			changeOrderList = true;
 		} else if(numOrders < orderLimit)
@@ -1220,8 +1218,8 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 	fileHeader.flags = fileHeader.flags;
 
 	// Fasttracker 2 will happily accept any tempo faster than 255 BPM. XMPlay does also support this, great!
-	fileHeader.tempo = mpt::saturate_cast<uint16>(m_nDefaultTempo.GetInt());
-	fileHeader.speed = static_cast<uint16>(Clamp(m_nDefaultSpeed, 1u, 31u));
+	fileHeader.tempo = mpt::saturate_cast<uint16>(Order().GetDefaultTempo().GetInt());
+	fileHeader.speed = static_cast<uint16>(Clamp(Order().GetDefaultSpeed(), 1u, 31u));
 
 	mpt::IO::Write(f, fileHeader);
 
@@ -1257,17 +1255,20 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 		// Empty patterns are always loaded as 64-row patterns in FT2, regardless of their real size...
 		bool emptyPattern = true;
 
-		for(size_t j = m_nChannels * numRows; j > 0; j--, p++)
+		for(size_t j = GetNumChannels() * numRows; j > 0; j--, p++)
 		{
 			// Don't write more than 32 channels
-			if(compatibilityExport && m_nChannels - ((j - 1) % m_nChannels) > 32) continue;
+			if(compatibilityExport && GetNumChannels() - ((j - 1) % GetNumChannels()) > 32) continue;
 
 			uint8 note = p->note, command = 0, param = 0;
 			ModSaveCommand(*p, command, param, true, compatibilityExport);
 
-			if (note >= NOTE_MIN_SPECIAL) note = 97; else
-			if ((note <= 12) || (note > 96+12)) note = 0; else
-			note -= 12;
+			if(note >= NOTE_MIN_SPECIAL)
+				note = 97;
+			else if(note < NOTE_MIN + 12 || note >= NOTE_MIN + 12 + 96)
+				note = 0;
+			else
+				note -= 12;
 			uint8 vol = 0;
 			if (p->volcmd != VOLCMD_NONE)
 			{
@@ -1339,7 +1340,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 				if (b & 16) s[len++] = param;
 			}
 
-			if(addChannel && (j % m_nChannels == 1 || m_nChannels == 1))
+			if(addChannel && (j % GetNumChannels() == 1 || GetNumChannels() == 1))
 			{
 				ASSERT_CAN_WRITE(1);
 				s[len++] = 0x80;
@@ -1505,7 +1506,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 		// Writing Channel Names
 		{
 			CHANNELINDEX numNamedChannels = 0;
-			for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+			for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 			{
 				if (ChnSettings[chn].szName[0]) numNamedChannels = chn + 1;
 			}
@@ -1527,7 +1528,7 @@ bool CSoundFile::SaveXM(std::ostream &f, bool compatibilityExport)
 		SaveMixPlugins(&f);
 		if(GetNumInstruments())
 		{
-			SaveExtendedInstrumentProperties(writeInstruments, f);
+			SaveExtendedInstrumentProperties(0, MOD_TYPE_XM, f);
 		}
 		SaveExtendedSongProperties(f);
 	}

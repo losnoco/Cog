@@ -12,130 +12,23 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
-#include "mpt/uuid/uuid.hpp"
-
-#include "../common/FileReader.h"
-#include "Loaders.h"
-
 #ifndef MODPLUG_NO_FILESAVE
-#include "mpt/io/io.hpp"
 #include "mpt/io/io_virtual_wrapper.hpp"
 #endif
+
+#include "openmpt/soundfile_data/wav.hpp"
+#ifndef MODPLUG_NO_FILESAVE
+#include "openmpt/soundfile_write/wav_write.hpp"
+#endif
+
+#include "../common/FileReader.h"
+
+#include "Loaders.h"
+
 
 OPENMPT_NAMESPACE_BEGIN
 
 struct FileTags;
-
-// RIFF header
-struct RIFFHeader
-{
-	// 32-Bit chunk identifiers
-	enum RIFFMagic
-	{
-		idRIFF	= MagicLE("RIFF"),	// magic for WAV files
-		idLIST	= MagicLE("LIST"),	// magic for samples in DLS banks
-		idWAVE	= MagicLE("WAVE"),	// type for WAV files
-		idwave	= MagicLE("wave"),	// type for samples in DLS banks
-	};
-
-	uint32le magic;		// RIFF (in WAV files) or LIST (in DLS banks)
-	uint32le length;	// Size of the file, not including magic and length
-	uint32le type;		// WAVE (in WAV files) or wave (in DLS banks)
-};
-
-MPT_BINARY_STRUCT(RIFFHeader, 12)
-
-
-// General RIFF Chunk header
-struct RIFFChunk
-{
-	// 32-Bit chunk identifiers
-	enum ChunkIdentifiers
-	{
-		idfmt_	= MagicLE("fmt "),	// Sample format information
-		iddata	= MagicLE("data"),	// Sample data
-		idpcm_	= MagicLE("pcm "),	// IMA ADPCM samples
-		idfact	= MagicLE("fact"),	// Compressed samples
-		idsmpl	= MagicLE("smpl"),	// Sampler and loop information
-		idinst	= MagicLE("inst"),	// Instrument information
-		idLIST	= MagicLE("LIST"),	// List of chunks
-		idxtra	= MagicLE("xtra"),	// OpenMPT extra infomration
-		idcue_	= MagicLE("cue "),	// Cue points
-		idwsmp	= MagicLE("wsmp"),	// DLS bank samples
-		idCSET	= MagicLE("CSET"),	// Character Set
-		id____	= 0x00000000,	// Found when loading buggy MPT samples
-
-		// Identifiers in "LIST" chunk
-		idINAM	= MagicLE("INAM"), // title
-		idISFT	= MagicLE("ISFT"), // software
-		idICOP	= MagicLE("ICOP"), // copyright
-		idIART	= MagicLE("IART"), // artist
-		idIPRD	= MagicLE("IPRD"), // product (album)
-		idICMT	= MagicLE("ICMT"), // comment
-		idIENG	= MagicLE("IENG"), // engineer
-		idISBJ	= MagicLE("ISBJ"), // subject
-		idIGNR	= MagicLE("IGNR"), // genre
-		idICRD	= MagicLE("ICRD"), // date created
-
-		idYEAR  = MagicLE("YEAR"), // year
-		idTRCK  = MagicLE("TRCK"), // track number
-		idTURL  = MagicLE("TURL"), // url
-	};
-
-	uint32le id;		// See ChunkIdentifiers
-	uint32le length;	// Chunk size without header
-
-	size_t GetLength() const
-	{
-		return length;
-	}
-
-	ChunkIdentifiers GetID() const
-	{
-		return static_cast<ChunkIdentifiers>(id.get());
-	}
-};
-
-MPT_BINARY_STRUCT(RIFFChunk, 8)
-
-
-// Format Chunk
-struct WAVFormatChunk
-{
-	// Sample formats
-	enum SampleFormats
-	{
-		fmtPCM			= 1,
-		fmtFloat		= 3,
-		fmtALaw			= 6,
-		fmtULaw			= 7,
-		fmtIMA_ADPCM	= 17,
-		fmtMP3			= 85,
-		fmtExtensible	= 0xFFFE,
-	};
-
-	uint16le format;			// Sample format, see SampleFormats
-	uint16le numChannels;		// Number of audio channels
-	uint32le sampleRate;		// Sample rate in Hz
-	uint32le byteRate;			// Bytes per second (should be freqHz * blockAlign)
-	uint16le blockAlign;		// Size of a sample, in bytes (do not trust this value, it's incorrect in some files)
-	uint16le bitsPerSample;		// Bits per sample
-};
-
-MPT_BINARY_STRUCT(WAVFormatChunk, 16)
-
-
-// Extension of the WAVFormatChunk structure, used if format == formatExtensible
-struct WAVFormatChunkExtension
-{
-	uint16le    size;
-	uint16le    validBitsPerSample;
-	uint32le    channelMask;
-	mpt::GUIDms subFormat;
-};
-
-MPT_BINARY_STRUCT(WAVFormatChunkExtension, 24)
-
 
 // Sample information chunk
 struct WAVSampleInfoChunk
@@ -262,29 +155,18 @@ struct WAVExtraChunk
 MPT_BINARY_STRUCT(WAVExtraChunk, 16)
 
 
-// Sample cue point structure for the "cue " chunk
-struct WAVCuePoint
+// Set up sample information
+inline WAVCuePoint ConvertToWAVCuePoint(uint32 id_, SmpLength offset_)
 {
-	uint32le id;			// Unique identification value
-	uint32le position;		// Play order position
-	uint32le riffChunkID;	// RIFF ID of corresponding data chunk
-	uint32le chunkStart;	// Byte Offset of Data Chunk
-	uint32le blockStart;	// Byte Offset to sample of First Channel
-	uint32le offset;		// Byte Offset to sample byte of First Channel
-
-	// Set up sample information
-	void ConvertToWAV(uint32 id_, SmpLength offset_)
-	{
-		id = id_;
-		position = offset_;
-		riffChunkID = static_cast<uint32>(RIFFChunk::iddata);
-		chunkStart = 0;	// we use no Wave List Chunk (wavl) as we have only one data block, so this should be 0.
-		blockStart = 0;	// ditto
-		offset = offset_;
-	}
-};
-
-MPT_BINARY_STRUCT(WAVCuePoint, 24)
+	WAVCuePoint result{};
+	result.id = id_;
+	result.position = offset_;
+	result.riffChunkID = static_cast<uint32>(RIFFChunk::iddata);
+	result.chunkStart = 0;	// we use no Wave List Chunk (wavl) as we have only one data block, so this should be 0.
+	result.blockStart = 0;	// ditto
+	result.offset = offset_;
+	return result;
+}
 
 
 class WAVReader
@@ -294,7 +176,7 @@ protected:
 	FileReader sampleData, smplChunk, instChunk, xtraChunk, wsmpChunk, cueChunk;
 	FileReader::ChunkList<RIFFChunk> infoChunk;
 
-	FileReader::off_t sampleLength;
+	FileReader::pos_type sampleLength;
 	WAVFormatChunk formatInfo;
 	uint16 subFormat;
 	uint16 codePage;
@@ -331,41 +213,9 @@ public:
 	void ApplySampleSettings(ModSample &sample, mpt::Charset sampleCharset, mpt::charbuf<MAX_SAMPLENAME> &sampleName);
 };
 
+
 #ifndef MODPLUG_NO_FILESAVE
 
-class WAVWriter
-{
-protected:
-	// Output stream
-	mpt::IO::OFileBase &s;
-
-	// Currently written chunk
-	mpt::IO::Offset chunkHeaderPos = 0;
-	RIFFChunk chunkHeader;
-	bool finalized = false;
-
-public:
-	// Output to stream
-	WAVWriter(mpt::IO::OFileBase &stream);
-	~WAVWriter();
-
-	// Finalize the file by closing the last open chunk and updating the file header. Returns total size of file.
-	mpt::IO::Offset Finalize();
-	// Begin writing a new chunk to the file.
-	void StartChunk(RIFFChunk::ChunkIdentifiers id);
-
-	// Write the WAV format to the file.
-	void WriteFormat(uint32 sampleRate, uint16 bitDepth, uint16 numChannels, WAVFormatChunk::SampleFormats encoding);
-	// Write text tags to the file.
-	void WriteMetatags(const FileTags &tags);
-
-protected:
-	// End current chunk by updating the chunk header and writing a padding byte if necessary.
-	void FinalizeChunk();
-
-	// Write a single tag into a open idLIST chunk
-	void WriteTag(RIFFChunk::ChunkIdentifiers id, const mpt::ustring &utext);
-};
 
 class WAVSampleWriter
 	: public WAVWriter
@@ -377,9 +227,9 @@ public:
 
 public:
 	// Write a sample loop information chunk to the file.
-	void WriteLoopInformation(const ModSample &sample);
+	void WriteLoopInformation(const ModSample &sample, SmpLength rangeStart = 0, SmpLength rangeEnd = 0);
 	// Write a sample's cue points to the file.
-	void WriteCueInformation(const ModSample &sample);
+	void WriteCueInformation(const ModSample &sample, SmpLength rangeStart = 0, SmpLength rangeEnd = 0);
 	// Write MPT's sample information chunk to the file.
 	void WriteExtraInformation(const ModSample &sample, MODTYPE modType, const char *sampleName = nullptr);
 };

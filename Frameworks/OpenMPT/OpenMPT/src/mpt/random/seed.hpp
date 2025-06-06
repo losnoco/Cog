@@ -6,8 +6,12 @@
 
 
 #include "mpt/base/namespace.hpp"
+#include "mpt/base/numeric.hpp"
+#include "mpt/random/engine.hpp"
+#include "mpt/random/random.hpp"
 
 #include <array>
+#include <memory>
 #include <random>
 
 #include <cstddef>
@@ -26,9 +30,8 @@ private:
 public:
 	template <typename Trd>
 	explicit seed_seq_values(Trd & rd) {
-		std::uniform_int_distribution<unsigned int> random_int{};
 		for (std::size_t i = 0; i < N; ++i) {
-			seeds[i] = random_int(rd);
+			seeds[i] = mpt::random<unsigned int>(rd);
 		}
 	}
 	const unsigned int * begin() const {
@@ -38,6 +41,22 @@ public:
 		return seeds.data() + N;
 	}
 };
+
+
+
+template <typename Trng, typename Trd>
+inline Trng make_prng(Trd & rd) {
+	constexpr std::size_t num_seed_values = mpt::align_up<std::size_t>(mpt::engine_seed_traits<Trng>::seed_bits, sizeof(unsigned int) * 8) / (sizeof(unsigned int) * 8);
+	if constexpr (num_seed_values > 128) {
+		std::unique_ptr<mpt::seed_seq_values<num_seed_values>> values = std::make_unique<mpt::seed_seq_values<num_seed_values>>(rd);
+		std::seed_seq seed(values.begin(), values.end());
+		return Trng(seed);
+	} else {
+		mpt::seed_seq_values<num_seed_values> values(rd);
+		std::seed_seq seed(values.begin(), values.end());
+		return Trng(seed);
+	}
+}
 
 
 

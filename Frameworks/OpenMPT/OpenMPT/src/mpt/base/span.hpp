@@ -122,14 +122,6 @@ public:
 		return m_data[index];
 	}
 
-	bool operator==(const span & other) const noexcept {
-		return size() == other.size() && (m_data == other.m_data || std::equal(begin(), end(), other.begin()));
-	}
-
-	bool operator!=(const span & other) const noexcept {
-		return !(*this == other);
-	}
-
 	pointer data() const noexcept {
 		return m_data;
 	}
@@ -185,6 +177,11 @@ inline span<T> as_span(std::array<T, N> & cont) {
 template <typename T, std::size_t N>
 inline span<const T> as_span(const std::array<T, N> & cont) {
 	return span<const T>(cont);
+}
+
+template <typename Ca, typename Cb>
+bool span_elements_equal(const Ca & a, const Cb & b) {
+	return a.size() == b.size() && (a.data() == b.data() || std::equal(a.begin(), a.end(), b.begin()));
 }
 
 

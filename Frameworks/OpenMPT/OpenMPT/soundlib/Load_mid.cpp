@@ -12,6 +12,7 @@
 #include "Loaders.h"
 #include "Dlsbank.h"
 #include "MIDIEvents.h"
+#include "mod_specifications.h"
 #ifdef MODPLUG_TRACKER
 #include "../mptrack/TrackerSettings.h"
 #include "../mptrack/Moddoc.h"
@@ -624,12 +625,11 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 	}
 
-	InitializeGlobals(MOD_TYPE_MID);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_MID, GetModSpecifications(MOD_TYPE_MPT).channelsMax);
 
 #ifdef MODPLUG_TRACKER
 	const uint32 quantize = Clamp(TrackerSettings::Instance().midiImportQuantize.Get(), 4u, 256u);
-	const ROWINDEX patternLen = Clamp(TrackerSettings::Instance().midiImportPatternLen.Get(), ROWINDEX(1), MAX_PATTERN_ROWS);
+	const ROWINDEX patternLen = Clamp(TrackerSettings::Instance().midiImportPatternLen.Get(), GetModSpecifications().patternRowsMin, GetModSpecifications().patternRowsMax);
 	const uint8 ticksPerRow = Clamp(TrackerSettings::Instance().midiImportTicks.Get(), uint8(2), uint8(16));
 #else
 	const uint32 quantize = 32;		// Must be 4 or higher
@@ -643,22 +643,21 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	const ORDERINDEX MPT_MIDI_IMPORT_MAX_ORDERS = MAX_ORDERS;
 #endif
 
-	m_songArtist = U_("MIDI Conversion");
-	m_modFormat.formatName = U_("Standard MIDI File");
+	m_songArtist = UL_("MIDI Conversion");
+	m_modFormat.formatName = UL_("Standard MIDI File");
 	m_modFormat.type = isRIFF ? UL_("rmi") : UL_("mid");
-	m_modFormat.madeWithTracker = U_("Standard MIDI File");
+	m_modFormat.madeWithTracker = UL_("Standard MIDI File");
 	m_modFormat.charset = mpt::Charset::ISO8859_1;
 
 	SetMixLevels(MixLevels::v1_17RC3);
 	m_nTempoMode = TempoMode::Modern;
 	m_SongFlags = SONG_LINEARSLIDES;
-	m_nDefaultTempo.Set(120);
-	m_nDefaultSpeed = ticksPerRow;
-	m_nChannels = MAX_BASECHANNELS;
+	TEMPO tempo{120, 0};
+	Order().SetDefaultTempo(tempo);
+	Order().SetDefaultSpeed(ticksPerRow);
 	m_nDefaultRowsPerBeat = quantize / 4;
 	m_nDefaultRowsPerMeasure = 4 * m_nDefaultRowsPerBeat;
 	m_nSamplePreAmp = m_nVSTiVolume = 32;
-	TEMPO tempo = m_nDefaultTempo;
 	uint16 ppqn = fileHeader.division;
 	if(ppqn & 0x8000)
 	{
@@ -671,10 +670,10 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	Order().clear();
 
 	std::array<MidiChannelState, NUM_MIDI_CHANNELS> midiChnStatus;
-	const CHANNELINDEX tempoChannel = m_nChannels - 2, globalVolChannel = m_nChannels - 1;
+	const CHANNELINDEX tempoChannel = GetNumChannels() - 2, globalVolChannel = GetNumChannels() - 1;
 	const uint16 numTracks = fileHeader.numTracks;
 	std::vector<TrackState> tracks(numTracks);
-	std::vector<ModChannelState> modChnStatus(m_nChannels);
+	std::vector<ModChannelState> modChnStatus(GetNumChannels());
 	std::bitset<NUM_MIDI_CHANNELS> drumChns;
 	drumChns.set(MIDI_DRUMCHANNEL - 1);
 	drumChns.set(MIDI_DRUMCHANNEL + 15);
@@ -839,7 +838,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 					TEMPO newTempo(60000000.0 / tempoInt);
 					if(!tick)
 					{
-						m_nDefaultTempo = newTempo;
+						Order().SetDefaultTempo(newTempo);
 					} else if(newTempo != tempo)
 					{
 						patRow[tempoChannel].command = CMD_TEMPO;
@@ -1231,7 +1230,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 				// Need a normal slide.
 				absDiff /= 4 * (ticksPerRow - 1);
 				LimitMax(absDiff, 0xDF);
-				m.param = static_cast<uint8>(absDiff);
+				m.param = static_cast<ModCommand::PARAM>(absDiff);
 				realDiff = absDiff * 4 * (ticksPerRow - 1);
 			}
 			chnState.porta += realDiff * mpt::signum(diff);
@@ -1284,8 +1283,8 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 	Order.SetSequence(0);
 
 	std::vector<CHANNELINDEX> channels;
-	channels.reserve(m_nChannels);
-	for(CHANNELINDEX i = 0; i < m_nChannels; i++)
+	channels.reserve(GetNumChannels());
+	for(CHANNELINDEX i = 0; i < GetNumChannels(); i++)
 	{
 		if(modChnStatus[i].midiCh != ModChannelState::NOMIDI
 #ifdef MODPLUG_TRACKER
@@ -1360,7 +1359,7 @@ bool CSoundFile::ReadMID(FileReader &file, ModLoadingFlags loadFlags)
 			continue;
 		}
 
-		const mpt::PathString &midiMapName = midiLib[midiCode];
+		const mpt::PathString &midiMapName = midiLib[midiCode].value_or(P_(""));
 		if(!midiMapName.empty())
 		{
 			// Load from DLS/SF2 Bank

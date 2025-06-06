@@ -151,6 +151,8 @@ namespace MIDIEvents
 	uint32 NoteOn(uint8 midiChannel, uint8 note, uint8 velocity);
 	// Build a MIDI System Event
 	uint8 System(SystemEvent eventType);
+	// Build a MIDI Song Position Event
+	uint32 SongPosition(uint16 quarterNotes);
 
 	// Get MIDI channel from a MIDI event
 	uint8 GetChannelFromEvent(uint32 midiMsg);

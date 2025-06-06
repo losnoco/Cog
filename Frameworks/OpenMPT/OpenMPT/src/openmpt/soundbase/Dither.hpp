@@ -9,6 +9,7 @@
 #include "mpt/base/macros.hpp"
 #include "mpt/random/default_engines.hpp"
 #include "mpt/random/engine.hpp"
+#include "mpt/random/seed.hpp"
 #include "openmpt/soundbase/MixSample.hpp"
 
 #include <vector>

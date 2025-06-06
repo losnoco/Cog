@@ -477,6 +477,98 @@ inline constexpr char32_t CharsetTableAtariST[256] = {
 	0x03B1, 0x03B2, 0x0393, 0x03C0, 0x03A3, 0x03C3, 0x00B5, 0x03C4, 0x03A6, 0x0398, 0x03A9, 0x03B4, 0x222E, 0x03C6, 0x2208, 0x2229,
 	0x2261, 0x00B1, 0x2265, 0x2264, 0x2320, 0x2321, 0x00F7, 0x2248, 0x00B0, 0x2219, 0x00B7, 0x221A, 0x207F, 0x00B2, 0x00B3, 0x00AF};
 
+
+
+template <typename Tdststring>
+inline void encode_single_utf16(Tdststring & out, char32_t ucs4) {
+	static_assert(sizeof(typename Tdststring::value_type) == 2);
+	if (ucs4 <= 0xffff) {
+		out.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint16>(static_cast<uint32>(ucs4))));
+	} else {
+		uint32 surrogate = static_cast<uint32>(ucs4) - 0x10000;
+		uint16 hi_sur = static_cast<uint16>((0x36 << 10) | ((surrogate >> 10) & ((1 << 10) - 1)));
+		uint16 lo_sur = static_cast<uint16>((0x37 << 10) | ((surrogate >> 0) & ((1 << 10) - 1)));
+		out.push_back(static_cast<typename Tdststring::value_type>(hi_sur));
+		out.push_back(static_cast<typename Tdststring::value_type>(lo_sur));
+	}
+}
+
+template <typename Tsrcstring>
+inline char32_t decode_single_utf16(std::size_t & i, const Tsrcstring & in) {
+	static_assert(sizeof(typename Tsrcstring::value_type) == 2);
+	char32_t ucs4 = 0;
+	typename Tsrcstring::value_type wc = in[i];
+	uint16 c = static_cast<uint16>(wc);
+	if (i + 1 < in.length()) {
+		// check for surrogate pair
+		uint16 hi_sur = in[i + 0];
+		uint16 lo_sur = in[i + 1];
+		if (hi_sur >> 10 == 0x36 && lo_sur >> 10 == 0x37) {
+			// surrogate pair
+			++i;
+			hi_sur &= (1 << 10) - 1;
+			lo_sur &= (1 << 10) - 1;
+			ucs4 = (static_cast<uint32>(hi_sur) << 10) | (static_cast<uint32>(lo_sur) << 0);
+		} else {
+			// no surrogate pair
+			ucs4 = static_cast<char32_t>(c);
+		}
+	} else {
+		// no surrogate possible
+		ucs4 = static_cast<char32_t>(c);
+	}
+	return ucs4;
+}
+
+
+
+inline void encode_single_wide(mpt::widestring & out, char32_t ucs4) {
+	if constexpr (sizeof(mpt::widechar) == 2) {
+		if (ucs4 <= 0xffff) {
+			out.push_back(static_cast<mpt::widechar>(static_cast<uint16>(static_cast<uint32>(ucs4))));
+		} else {
+			uint32 surrogate = static_cast<uint32>(ucs4) - 0x10000;
+			uint16 hi_sur = static_cast<uint16>((0x36 << 10) | ((surrogate >> 10) & ((1 << 10) - 1)));
+			uint16 lo_sur = static_cast<uint16>((0x37 << 10) | ((surrogate >> 0) & ((1 << 10) - 1)));
+			out.push_back(static_cast<mpt::widechar>(hi_sur));
+			out.push_back(static_cast<mpt::widechar>(lo_sur));
+		}
+	} else {
+		out.push_back(static_cast<mpt::widechar>(static_cast<uint32>(ucs4)));
+	}
+}
+
+inline char32_t decode_single_wide(std::size_t & i, const mpt::widestring & in) {
+	char32_t ucs4 = 0;
+	mpt::widechar wc = in[i];
+	if constexpr (sizeof(mpt::widechar) == 2) {
+		uint16 c = static_cast<uint16>(wc);
+		if (i + 1 < in.length()) {
+			// check for surrogate pair
+			uint16 hi_sur = in[i + 0];
+			uint16 lo_sur = in[i + 1];
+			if (hi_sur >> 10 == 0x36 && lo_sur >> 10 == 0x37) {
+				// surrogate pair
+				++i;
+				hi_sur &= (1 << 10) - 1;
+				lo_sur &= (1 << 10) - 1;
+				ucs4 = (static_cast<uint32>(hi_sur) << 10) | (static_cast<uint32>(lo_sur) << 0);
+			} else {
+				// no surrogate pair
+				ucs4 = static_cast<char32_t>(c);
+			}
+		} else {
+			// no surrogate possible
+			ucs4 = static_cast<char32_t>(c);
+		}
+	} else {
+		ucs4 = static_cast<char32_t>(static_cast<uint32>(wc));
+	}
+	return ucs4;
+}
+
+
+
 template <typename Tsrcstring>
 inline mpt::widestring decode_8bit(const Tsrcstring & str, const char32_t (&table)[256], mpt::widechar replacement = MPT_WIDECHAR('\uFFFD')) {
 	mpt::widestring res;
@@ -484,7 +576,7 @@ inline mpt::widestring decode_8bit(const Tsrcstring & str, const char32_t (&tabl
 	for (std::size_t i = 0; i < str.length(); ++i) {
 		std::size_t c = static_cast<std::size_t>(mpt::char_value(str[i]));
 		if (c < std::size(table)) {
-			res.push_back(static_cast<mpt::widechar>(table[c]));
+			encode_single_wide(res, table[c]);
 		} else {
 			res.push_back(replacement);
 		}
@@ -497,7 +589,7 @@ inline Tdststring encode_8bit(const mpt::widestring & str, const char32_t (&tabl
 	Tdststring res;
 	res.reserve(str.length());
 	for (std::size_t i = 0; i < str.length(); ++i) {
-		char32_t c = static_cast<char32_t>(str[i]);
+		char32_t c = decode_single_wide(i, str);
 		bool found = false;
 		// Try non-control characters first.
 		// In cases where there are actual characters mirrored in this range (like in AMS/AMS2 character sets),
@@ -535,7 +627,7 @@ inline mpt::widestring decode_8bit_no_c1(const Tsrcstring & str, const char32_t 
 		if ((0x80 <= c) && (c <= 0x9f)) {
 			res.push_back(replacement);
 		} else if (c < std::size(table)) {
-			res.push_back(static_cast<mpt::widechar>(table[c]));
+			encode_single_wide(res, table[c]);
 		} else {
 			res.push_back(replacement);
 		}
@@ -548,7 +640,7 @@ inline Tdststring encode_8bit_no_c1(const mpt::widestring & str, const char32_t 
 	Tdststring res;
 	res.reserve(str.length());
 	for (std::size_t i = 0; i < str.length(); ++i) {
-		char32_t c = static_cast<char32_t>(str[i]);
+		char32_t c = decode_single_wide(i, str);
 		bool found = false;
 		// Try non-control characters first.
 		// In cases where there are actual characters mirrored in this range (like in AMS/AMS2 character sets),
@@ -587,7 +679,7 @@ inline mpt::widestring decode_ascii(const Tsrcstring & str, mpt::widechar replac
 	for (std::size_t i = 0; i < str.length(); ++i) {
 		uint8 c = mpt::char_value(str[i]);
 		if (c <= 0x7f) {
-			res.push_back(static_cast<mpt::widechar>(static_cast<uint32>(c)));
+			encode_single_wide(res, static_cast<char32_t>(static_cast<uint32>(c)));
 		} else {
 			res.push_back(replacement);
 		}
@@ -600,9 +692,9 @@ inline Tdststring encode_ascii(const mpt::widestring & str, char replacement = '
 	Tdststring res;
 	res.reserve(str.length());
 	for (std::size_t i = 0; i < str.length(); ++i) {
-		char32_t c = static_cast<char32_t>(str[i]);
+		char32_t c = decode_single_wide(i, str);
 		if (c <= 0x7f) {
-			res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(c)));
+			res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(static_cast<uint32>(c))));
 		} else {
 			res.push_back(replacement);
 		}
@@ -617,7 +709,7 @@ inline mpt::widestring decode_iso8859_1(const Tsrcstring & str, mpt::widechar re
 	res.reserve(str.length());
 	for (std::size_t i = 0; i < str.length(); ++i) {
 		uint8 c = mpt::char_value(str[i]);
-		res.push_back(static_cast<mpt::widechar>(static_cast<uint32>(c)));
+		encode_single_wide(res, static_cast<char32_t>(static_cast<uint32>(c)));
 	}
 	return res;
 }
@@ -627,7 +719,7 @@ inline Tdststring encode_iso8859_1(const mpt::widestring & str, char replacement
 	Tdststring res;
 	res.reserve(str.length());
 	for (std::size_t i = 0; i < str.length(); ++i) {
-		char32_t c = static_cast<char32_t>(str[i]);
+		char32_t c = decode_single_wide(i, str);
 		if (c <= 0xff) {
 			res.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint8>(c)));
 		} else {
@@ -681,18 +773,8 @@ inline mpt::widestring decode_utf8(const Tsrcstring & str, mpt::widechar replace
 						charsleft = 0;
 						continue;
 					}
-					if (ucs4 <= 0xffff) {
-						out.push_back(static_cast<mpt::widechar>(ucs4));
-					} else {
-						uint32 surrogate = static_cast<uint32>(ucs4) - 0x10000;
-						uint16 hi_sur = static_cast<uint16>((0x36 << 10) | ((surrogate >> 10) & ((1 << 10) - 1)));
-						uint16 lo_sur = static_cast<uint16>((0x37 << 10) | ((surrogate >> 0) & ((1 << 10) - 1)));
-						out.push_back(hi_sur);
-						out.push_back(lo_sur);
-					}
-				} else {
-					out.push_back(static_cast<mpt::widechar>(ucs4));
 				}
+				encode_single_wide(out, ucs4);
 				ucs4 = 0;
 			}
 		}
@@ -710,31 +792,7 @@ inline Tdststring encode_utf8(const mpt::widestring & str, typename Tdststring::
 	const mpt::widestring & in = str;
 	Tdststring out;
 	for (std::size_t i = 0; i < in.length(); i++) {
-		mpt::widechar wc = in[i];
-		char32_t ucs4 = 0;
-		if constexpr (sizeof(mpt::widechar) == 2) {
-			uint16 c = static_cast<uint16>(wc);
-			if (i + 1 < in.length()) {
-				// check for surrogate pair
-				uint16 hi_sur = in[i + 0];
-				uint16 lo_sur = in[i + 1];
-				if (hi_sur >> 10 == 0x36 && lo_sur >> 10 == 0x37) {
-					// surrogate pair
-					++i;
-					hi_sur &= (1 << 10) - 1;
-					lo_sur &= (1 << 10) - 1;
-					ucs4 = (static_cast<uint32>(hi_sur) << 10) | (static_cast<uint32>(lo_sur) << 0);
-				} else {
-					// no surrogate pair
-					ucs4 = static_cast<char32_t>(c);
-				}
-			} else {
-				// no surrogate possible
-				ucs4 = static_cast<char32_t>(c);
-			}
-		} else {
-			ucs4 = static_cast<char32_t>(wc);
-		}
+		char32_t ucs4 = decode_single_wide(i, in);
 		if (ucs4 > 0x1fffff) {
 			out.push_back(replacement);
 			continue;
@@ -783,27 +841,7 @@ inline Tdststring utf32_from_utf16(const Tsrcstring & in, mpt::widechar replacem
 	Tdststring out;
 	out.reserve(in.length());
 	for (std::size_t i = 0; i < in.length(); i++) {
-		char16_t wc = static_cast<char16_t>(static_cast<uint16>(in[i]));
-		char32_t ucs4 = 0;
-		uint16 c = static_cast<uint16>(wc);
-		if (i + 1 < in.length()) {
-			// check for surrogate pair
-			uint16 hi_sur = in[i + 0];
-			uint16 lo_sur = in[i + 1];
-			if (hi_sur >> 10 == 0x36 && lo_sur >> 10 == 0x37) {
-				// surrogate pair
-				++i;
-				hi_sur &= (1 << 10) - 1;
-				lo_sur &= (1 << 10) - 1;
-				ucs4 = (static_cast<uint32>(hi_sur) << 10) | (static_cast<uint32>(lo_sur) << 0);
-			} else {
-				// no surrogate pair
-				ucs4 = static_cast<char32_t>(c);
-			}
-		} else {
-			// no surrogate possible
-			ucs4 = static_cast<char32_t>(c);
-		}
+		char32_t ucs4 = decode_single_utf16(i, in);
 		out.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint32>(ucs4)));
 	}
 	return out;
@@ -821,15 +859,7 @@ inline Tdststring utf16_from_utf32(const Tsrcstring & in, mpt::widechar replacem
 			out.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint16>(replacement)));
 			continue;
 		}
-		if (ucs4 <= 0xffff) {
-			out.push_back(static_cast<typename Tdststring::value_type>(static_cast<uint16>(ucs4)));
-		} else {
-			uint32 surrogate = static_cast<uint32>(ucs4) - 0x10000;
-			uint16 hi_sur = static_cast<uint16>((0x36 << 10) | ((surrogate >> 10) & ((1 << 10) - 1)));
-			uint16 lo_sur = static_cast<uint16>((0x37 << 10) | ((surrogate >> 0) & ((1 << 10) - 1)));
-			out.push_back(static_cast<typename Tdststring::value_type>(hi_sur));
-			out.push_back(static_cast<typename Tdststring::value_type>(lo_sur));
-		}
+		encode_single_utf16(out, ucs4);
 	}
 	return out;
 }

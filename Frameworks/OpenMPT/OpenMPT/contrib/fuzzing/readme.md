@@ -10,13 +10,13 @@ Contents:
   module formats to make the life of the fuzzer a bit easier.
 * `fuzz-main.sh`: Script to launch the main fuzzing process. If you want to
   use just one fuzzer instance, run this one.
-* `fuzz-secondary[1|2].sh`: Scripts to launch the secondary fuzzing process. It
-  is recommended to run at least two fuzzer instances, as the deterministic and
+* `fuzz-secondary[1|2|3].sh`: Scripts to launch the secondary fuzzing processes.
+  It is recommended to run at least 2 fuzzer instances, as the deterministic and
   random fuzz mode have been found to complement each other really well. The two
   scripts are set up to use different exploration strategies.
 * `fuzz-settings.sh`: Set up your preferences and afl settings here before the
   first run.
-* `fuzz.c`: A tiny C program that is used by the fuzzer to test libopenmpt.
+* `fuzz.cpp`: A tiny C++ program that is used by the fuzzer to test libopenmpt.
 * `get-afl.sh`: A simple script to obtain the latest version of afl++.
   You can also make it download from a specific branch or tag, e.g.
   `GET_AFL_VERSION=stable ./get-afl.sh` to download the latest stable but
@@ -43,9 +43,8 @@ How to use
   The default setup mounts a tmpfs folder for all temporary files. You may
   change this behaviour if you do not have root privileges.
 * Run `fuzz-main.sh` for the first (deterministic) instance of afl-fuzz.
-* For a "secondary" instance to run on another core, run `fuzz-secondary1.sh`
-  and/or `fuzz-secondary2.sh`.
+* For a "secondary" instance to run on another core, run `fuzz-secondary1.sh`,
+  `fuzz-secondary2.sh` and `fuzz-secondary3.sh`.
 * If you want to make use of even more cores, create more copies of
-  `fuzz-secondary2.sh` and adjust "infile03" / "fuzzer03" to
-  "infile04" / "fuzzer04" and so on (they need to be unique). Try varying the
-  fuzzing strategey (the -p parameter) to get results more quickly.
+  `fuzz-secondary2.sh` and adjust "fuzzer03" to "fuzzer05" and so on (they need to be unique).
+  Try varying the fuzzing strategy (the -p parameter) to get more varied results quickly.

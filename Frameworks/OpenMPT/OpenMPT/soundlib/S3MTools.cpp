@@ -9,8 +9,8 @@
 
 
 #include "stdafx.h"
-#include "Loaders.h"
 #include "S3MTools.h"
+#include "Loaders.h"
 #include "../common/mptStringBuffer.h"
 
 

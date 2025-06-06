@@ -30,14 +30,41 @@
 
 
 // constexpr
+
 #define MPT_CONSTEXPRINLINE constexpr MPT_FORCEINLINE
-#if MPT_CXX_AT_LEAST(20)
+
+#if MPT_CXX_AT_LEAST(23)
 #define MPT_CONSTEXPR20_FUN constexpr MPT_FORCEINLINE
 #define MPT_CONSTEXPR20_VAR constexpr
-#else // !C++20
+#define MPT_CONSTEXPR23_FUN constexpr MPT_FORCEINLINE
+#define MPT_CONSTEXPR23_VAR constexpr
+#elif MPT_CXX_AT_LEAST(20)
+#define MPT_CONSTEXPR20_FUN constexpr MPT_FORCEINLINE
+#define MPT_CONSTEXPR20_VAR constexpr
+#define MPT_CONSTEXPR23_FUN MPT_FORCEINLINE
+#define MPT_CONSTEXPR23_VAR const
+#else // C++
 #define MPT_CONSTEXPR20_FUN MPT_FORCEINLINE
 #define MPT_CONSTEXPR20_VAR const
-#endif // C++20
+#define MPT_CONSTEXPR23_FUN MPT_FORCEINLINE
+#define MPT_CONSTEXPR23_VAR const
+#endif // C++
+
+#if !defined(MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_ALGORITHM)
+#define MPT_CONSTEXPR20_ALGORITHM_FUN MPT_CONSTEXPR20_FUN
+#define MPT_CONSTEXPR20_ALGORITHM_VAR MPT_CONSTEXPR20_VAR
+#else
+#define MPT_CONSTEXPR20_ALGORITHM_FUN MPT_CONSTEXPR23_FUN
+#define MPT_CONSTEXPR20_ALGORITHM_VAR MPT_CONSTEXPR23_VAR
+#endif
+
+#if !defined(MPT_LIBCXX_QUIRK_NO_CXX20_CONSTEXPR_CONTAINER)
+#define MPT_CONSTEXPR20_CONTAINER_FUN MPT_CONSTEXPR20_FUN
+#define MPT_CONSTEXPR20_CONTAINER_VAR MPT_CONSTEXPR20_VAR
+#else
+#define MPT_CONSTEXPR20_CONTAINER_FUN MPT_CONSTEXPR23_FUN
+#define MPT_CONSTEXPR20_CONTAINER_VAR MPT_CONSTEXPR23_VAR
+#endif
 
 
 
@@ -47,6 +74,25 @@
 // fallback to constexpr
 #define MPT_CONSTEVAL MPT_CONSTEXPRINLINE
 #endif // C++20
+
+
+
+#if MPT_CXX_AT_LEAST(20)
+#define MPT_CONSTEVAL_NOEXCEPT noexcept
+#else // !C++20
+#define MPT_CONSTEVAL_NOEXCEPT
+#endif // C++20
+
+
+
+#define MPT_FORCE_CONSTEXPR_EXPRESSION(expr) [&]() { \
+	constexpr auto x = (expr); \
+	return x; \
+}()
+#define MPT_FORCE_CONSTEXPR_VALUE(val) []() { \
+	constexpr auto x = (val); \
+	return x; \
+}()
 
 
 
@@ -141,6 +187,30 @@
 #else
 #define MPT_RESTRICT
 #endif
+
+
+
+#if MPT_CXX_AT_LEAST(23) && !MPT_GCC_BEFORE(13, 0, 0) && !MPT_CLANG_BEFORE(19, 0, 0) && !MPT_COMPILER_MSVC
+#define MPT_ASSUME(expr) [[assume(expr)]]
+#else // !C++23
+#if MPT_COMPILER_CLANG
+#define MPT_ASSUME(expr) __builtin_assume(expr)
+#endif
+#if MPT_COMPILER_MSVC
+#define MPT_ASSUME(expr) __assume(expr)
+#endif
+#if MPT_COMPILER_GCC
+#define MPT_ASSUME(expr) \
+	do { \
+		if (!expr) { \
+			__builtin_unreachable(); \
+		} \
+	} while (0)
+#endif
+#if !defined(MPT_ASSUME)
+#define MPT_ASSUME(expr) MPT_DISCARD(expr)
+#endif
+#endif // C++23
 
 
 

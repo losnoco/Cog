@@ -95,7 +95,7 @@ public:
 #ifdef MPT_BUILD_FUZZER
 
 //  Use deterministic seeding
-using random_device = deterministc_random_device;
+using random_device = deterministic_random_device;
 
 #else // !MPT_BUILD_FUZZER
 

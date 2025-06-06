@@ -9,8 +9,8 @@
 
 
 #include "stdafx.h"
-#include "Sndfile.h"
 #include "ModInstrument.h"
+#include "Sndfile.h"
 
 
 OPENMPT_NAMESPACE_BEGIN
@@ -152,24 +152,11 @@ void InstrumentEnvelope::Sanitize(uint8 maxValue)
 }
 
 
-ModInstrument::ModInstrument(SAMPLEINDEX sample)
-{
-	SetCutoff(0, false);
-	SetResonance(0, false);
-
-	pitchToTempoLock.Set(0);
-
-	pTuning = CSoundFile::GetDefaultTuning();
-
-	AssignSample(sample);
-	ResetNoteMap();
-}
-
-
 // Translate instrument properties between two given formats.
 void ModInstrument::Convert(MODTYPE fromType, MODTYPE toType)
 {
 	MPT_UNREFERENCED_PARAMETER(fromType);
+	synth.Clear();
 
 	if(toType & MOD_TYPE_XM)
 	{
@@ -307,6 +294,7 @@ void ModInstrument::Sanitize(MODTYPE modType)
 	VolEnv.Sanitize();
 	PanEnv.Sanitize();
 	PitchEnv.Sanitize(range);
+	synth.Sanitize();
 
 	for(size_t i = 0; i < std::size(NoteMap); i++)
 	{

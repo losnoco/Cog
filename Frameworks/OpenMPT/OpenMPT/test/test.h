@@ -17,6 +17,10 @@ OPENMPT_NAMESPACE_BEGIN
 
 namespace Test {
 
+void PrintHeader();
+
+void PrintFooter();
+
 void DoTests();
 
 } // namespace Test

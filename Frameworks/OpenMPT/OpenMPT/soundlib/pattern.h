@@ -68,7 +68,7 @@ public:
 	// Deallocate pattern data.
 	void Deallocate();
 
-	// Removes all modcommands from the pattern.
+	// Empties all ModCommands in the pattern.
 	void ClearCommands() noexcept;
 
 	// Returns associated soundfile.
@@ -81,6 +81,7 @@ public:
 	// Set pattern signature (rows per beat, rows per measure). Returns true on success.
 	bool SetSignature(const ROWINDEX rowsPerBeat, const ROWINDEX rowsPerMeasure) noexcept;
 	void RemoveSignature() noexcept { m_RowsPerBeat = m_RowsPerMeasure = 0; }
+	static bool IsValidSignature(const ROWINDEX rowsPerBeat, const ROWINDEX rowsPerMeasure) noexcept;
 
 	bool HasTempoSwing() const noexcept { return !m_tempoSwing.empty(); }
 	const TempoSwing& GetTempoSwing() const noexcept { return m_tempoSwing; }
@@ -88,7 +89,7 @@ public:
 	void RemoveTempoSwing() noexcept { m_tempoSwing.clear(); }
 
 	// Pattern name functions - bool functions return true on success.
-	bool SetName(const std::string &newName);
+	bool SetName(std::string newName);
 	bool SetName(const char *newName, size_t maxChars);
 	template<size_t bufferSize>
 	bool SetName(const char (&buffer)[bufferSize])
@@ -131,7 +132,7 @@ protected:
 protected:
 	std::vector<ModCommand> m_ModCommands;
 	ROWINDEX m_Rows = 0;
-	ROWINDEX m_RowsPerBeat = 0;    // patterns-specific time signature. if != 0, this is implicitely set.
+	ROWINDEX m_RowsPerBeat = 0;    // patterns-specific time signature. if != 0, the time signature is used automatically.
 	ROWINDEX m_RowsPerMeasure = 0; // ditto
 	TempoSwing m_tempoSwing;
 	std::string m_PatternName;
@@ -152,17 +153,17 @@ class EffectWriter
 	friend class CPattern;
 	
 	// Row advance mode
-	enum RetryMode
+	enum RetryMode : uint8
 	{
-		rmIgnore,			// If effect can't be written, abort.
-		rmTryNextRow,		// If effect can't be written, try next row.
-		rmTryPreviousRow,	// If effect can't be written, try previous row.
+		rmIgnore,          // If effect can't be written, abort.
+		rmTryNextRow,      // If effect can't be written, try next row.
+		rmTryPreviousRow,  // If effect can't be written, try previous row.
 	};
 
 public:
 	// Constructors with effect commands
-	EffectWriter(EffectCommand cmd, ModCommand::PARAM param) : m_command(cmd), m_param(param), m_isVolEffect(false) { Init(); }
-	EffectWriter(VolumeCommand cmd, ModCommand::VOL param) : m_volcmd(cmd), m_vol(param), m_isVolEffect(true) { Init(); }
+	EffectWriter(EffectCommand cmd, ModCommand::PARAM param) : m_command(cmd), m_param(param), m_isVolEffect(false) { }
+	EffectWriter(VolumeCommand cmd, ModCommand::VOL param) : m_volcmd(cmd), m_vol(param), m_isVolEffect(true) { }
 
 	// Additional constructors:
 	// Set row in which writing should start
@@ -176,9 +177,9 @@ public:
 	EffectWriter &RetryPreviousRow() { m_retryMode = rmTryPreviousRow; return *this; }
 
 protected:
-	RetryMode m_retryMode;
-	ROWINDEX m_row;
-	CHANNELINDEX m_channel;
+	ROWINDEX m_row = 0;
+	CHANNELINDEX m_channel = CHANNELINDEX_INVALID;  // Any channel by default
+	RetryMode m_retryMode = rmIgnore;
 
 	union
 	{
@@ -191,19 +192,9 @@ protected:
 		ModCommand::VOL m_vol;
 	};
 
-	bool m_retry : 1;
-	bool m_allowMultiple : 1;
-	bool m_isVolEffect : 1;
-
-	// Common data initialisation
-	void Init()
-	{
-		m_row = 0;
-		m_channel = CHANNELINDEX_INVALID;	// Any channel
-		m_retryMode = rmIgnore;			// If effect couldn't be written, abort.
-		m_retry = true;
-		m_allowMultiple = false;		// Stop if same type of effect is encountered
-	}
+	bool m_retry = true;
+	bool m_allowMultiple = false;
+	bool m_isVolEffect = false;
 };
 
 

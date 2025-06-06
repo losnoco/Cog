@@ -25,11 +25,12 @@
 #include <optional>
 #endif // MODPLUG_TRACKER && MPT_OS_WINDOWS
 
+#if defined(MPT_FALLBACK_TIMEZONE_C)
+#include <ctime>
+#endif // MPT_FALLBACK_TIMEZONE_C
+
 #if MPT_OS_WINDOWS
 #include <windows.h>
-#if defined(MODPLUG_TRACKER)
-#include <mmsystem.h>
-#endif
 #endif
 
 
@@ -41,6 +42,8 @@ namespace mpt
 namespace Date
 {
 
+
+
 #if defined(MODPLUG_TRACKER)
 
 #if MPT_OS_WINDOWS
@@ -51,7 +54,11 @@ namespace ANSI
 uint64 Now()
 {
 	FILETIME filetime;
+#if MPT_WIN_AT_LEAST(MPT_WIN_8)
+	GetSystemTimePreciseAsFileTime(&filetime);
+#else
 	GetSystemTimeAsFileTime(&filetime);
+#endif
 	return ((uint64)filetime.dwHighDateTime << 32 | filetime.dwLowDateTime);
 }
 
@@ -90,6 +97,8 @@ mpt::ustring ToUString(uint64 time100ns)
 #endif // MPT_OS_WINDOWS
 
 #endif // MODPLUG_TRACKER
+
+
 
 namespace nochrono
 {
@@ -391,102 +400,6 @@ mpt::ustring ToShortenedISO8601(Local date)
 } // namespace Date
 } // namespace mpt
 
-
-
-#ifdef MODPLUG_TRACKER
-
-namespace Util
-{
-
-#if MPT_OS_WINDOWS
-
-void MultimediaClock::Init()
-{
-	m_CurrentPeriod = 0;
-}
-
-void MultimediaClock::SetPeriod(uint32 ms)
-{
-	TIMECAPS caps = {};
-	if(timeGetDevCaps(&caps, sizeof(caps)) != MMSYSERR_NOERROR)
-	{
-		return;
-	}
-	if((caps.wPeriodMax == 0) || (caps.wPeriodMin > caps.wPeriodMax))
-	{
-		return;
-	}
-	ms = std::clamp(mpt::saturate_cast<UINT>(ms), caps.wPeriodMin, caps.wPeriodMax);
-	if(timeBeginPeriod(ms) != MMSYSERR_NOERROR)
-	{
-		return;
-	}
-	m_CurrentPeriod = ms;
-}
-
-void MultimediaClock::Cleanup()
-{
-	if(m_CurrentPeriod > 0)
-	{
-		if(timeEndPeriod(m_CurrentPeriod) != MMSYSERR_NOERROR)
-		{
-			// should not happen
-			MPT_ASSERT_NOTREACHED();
-		}
-		m_CurrentPeriod = 0;
-	}
-}
-
-MultimediaClock::MultimediaClock()
-{
-	Init();
-}
-
-MultimediaClock::MultimediaClock(uint32 ms)
-{
-	Init();
-	SetResolution(ms);
-}
-
-MultimediaClock::~MultimediaClock()
-{
-	Cleanup();
-}
-
-uint32 MultimediaClock::SetResolution(uint32 ms)
-{
-	if(m_CurrentPeriod == ms)
-	{
-		return m_CurrentPeriod;
-	}
-	Cleanup();
-	if(ms != 0)
-	{
-		SetPeriod(ms);
-	}
-	return GetResolution();
-}
-
-uint32 MultimediaClock::GetResolution() const
-{
-	return m_CurrentPeriod;
-}
-
-uint32 MultimediaClock::Now() const
-{
-	return timeGetTime();
-}
-
-uint64 MultimediaClock::NowNanoseconds() const
-{
-	return (uint64)timeGetTime() * (uint64)1000000;
-}
-
-#endif // MPT_OS_WINDOWS
-
-} // namespace Util
-
-#endif // MODPLUG_TRACKER
 
 
 OPENMPT_NAMESPACE_END

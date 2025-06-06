@@ -6,7 +6,7 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
-#include "mpt/base/floatingpoint.hpp"
+#include "mpt/base/float.hpp"
 #include "mpt/base/macros.hpp"
 #include "mpt/base/memory.hpp"
 #include "openmpt/base/Endian.hpp"
@@ -290,11 +290,11 @@ template <std::size_t loLoByteIndex, std::size_t loHiByteIndex, std::size_t hiLo
 struct DecodeFloat32
 {
 	using input_t = std::byte;
-	using output_t = float32;
+	using output_t = somefloat32;
 	static constexpr std::size_t input_inc = 4;
 	MPT_FORCEINLINE output_t operator()(const input_t *inBuf)
 	{
-		float32 val = IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
+		somefloat32 val = IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
 		val = mpt::sanitize_nan(val);
 		if(std::isinf(val))
 		{
@@ -314,12 +314,12 @@ template <std::size_t loLoByteIndex, std::size_t loHiByteIndex, std::size_t hiLo
 struct DecodeScaledFloat32
 {
 	using input_t = std::byte;
-	using output_t = float32;
+	using output_t = somefloat32;
 	static constexpr std::size_t input_inc = 4;
 	float factor;
 	MPT_FORCEINLINE output_t operator()(const input_t *inBuf)
 	{
-		float32 val = IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
+		somefloat32 val = IEEE754binary32LE(inBuf[loLoByteIndex], inBuf[loHiByteIndex], inBuf[hiLoByteIndex], inBuf[hiHiByteIndex]);
 		val = mpt::sanitize_nan(val);
 		if(std::isinf(val))
 		{
@@ -344,11 +344,11 @@ template <std::size_t b0, std::size_t b1, std::size_t b2, std::size_t b3, std::s
 struct DecodeFloat64
 {
 	using input_t = std::byte;
-	using output_t = float64;
+	using output_t = somefloat64;
 	static constexpr std::size_t input_inc = 8;
 	MPT_FORCEINLINE output_t operator()(const input_t *inBuf)
 	{
-		float64 val = IEEE754binary64LE(inBuf[b0], inBuf[b1], inBuf[b2], inBuf[b3], inBuf[b4], inBuf[b5], inBuf[b6], inBuf[b7]);
+		somefloat64 val = IEEE754binary64LE(inBuf[b0], inBuf[b1], inBuf[b2], inBuf[b3], inBuf[b4], inBuf[b5], inBuf[b6], inBuf[b7]);
 		val = mpt::sanitize_nan(val);
 		if(std::isinf(val))
 		{

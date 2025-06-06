@@ -12,11 +12,13 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#include "InstrumentSynth.h"
 #include "modcommand.h"
 #include "tuningbase.h"
 #include "Snd_defs.h"
 #include "openmpt/base/FlagSet.hpp"
 #include "../common/misc_util.h"
+
 #include <map>
 #include <set>
 
@@ -33,8 +35,8 @@ struct EnvelopeNode
 	tick_t tick = 0;   // Envelope node position (x axis)
 	value_t value = 0; // Envelope node value (y axis)
 
-	EnvelopeNode() { }
-	EnvelopeNode(tick_t tick, value_t value) : tick(tick), value(value) { }
+	constexpr EnvelopeNode() = default;
+	constexpr EnvelopeNode(tick_t tick, value_t value) : tick{tick}, value{value} { }
 
 	bool operator== (const EnvelopeNode &other) const { return tick == other.tick && value == other.value; }
 };
@@ -107,6 +109,7 @@ struct ModInstrument
 
 	TEMPO pitchToTempoLock;      // BPM at which the samples assigned to this instrument loop correctly (0 = unset)
 	CTuning *pTuning = nullptr;  // sample tuning assigned to this instrument
+	InstrumentSynth synth;       // Synth scripts for this instrument
 
 	InstrumentEnvelope VolEnv;    // Volume envelope data
 	InstrumentEnvelope PanEnv;    // Panning envelope data
@@ -125,16 +128,21 @@ struct ModInstrument
 	// WHEN adding new members here, ALSO update InstrumentExtensions.cpp
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	ModInstrument(SAMPLEINDEX sample = 0);
+	MPT_CONSTEXPR20_CONTAINER_FUN explicit ModInstrument(SAMPLEINDEX sample = 0)
+		: NoteMap{mpt::generate_array<uint8, 128>([](std::size_t i){ return static_cast<uint8>(NOTE_MIN + i); })}
+		, Keyboard{mpt::init_array<SAMPLEINDEX, 128>(sample)}
+	{
+		return;
+	}
 
 	// Assign all notes to a given sample.
-	void AssignSample(SAMPLEINDEX sample)
+	MPT_CONSTEXPR20_ALGORITHM_FUN void AssignSample(SAMPLEINDEX sample)
 	{
 		Keyboard.fill(sample);
 	}
 
 	// Reset note mapping (i.e. every note is mapped to itself)
-	void ResetNoteMap()
+	MPT_CONSTEXPR20_ALGORITHM_FUN void ResetNoteMap()
 	{
 		std::iota(NoteMap.begin(), NoteMap.end(), static_cast<uint8>(NOTE_MIN));
 	}
@@ -146,23 +154,23 @@ struct ModInstrument
 	// Transpose entire note mapping by given number of semitones
 	void Transpose(int8 amount);
 
-	bool IsCutoffEnabled() const { return (nIFC & 0x80) != 0; }
-	bool IsResonanceEnabled() const { return (nIFR & 0x80) != 0; }
-	uint8 GetCutoff() const { return (nIFC & 0x7F); }
-	uint8 GetResonance() const { return (nIFR & 0x7F); }
-	void SetCutoff(uint8 cutoff, bool enable) { nIFC = std::min(cutoff, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
-	void SetResonance(uint8 resonance, bool enable) { nIFR = std::min(resonance, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
+	MPT_CONSTEXPRINLINE bool IsCutoffEnabled() const { return (nIFC & 0x80) != 0; }
+	MPT_CONSTEXPRINLINE bool IsResonanceEnabled() const { return (nIFR & 0x80) != 0; }
+	MPT_CONSTEXPRINLINE uint8 GetCutoff() const { return (nIFC & 0x7F); }
+	MPT_CONSTEXPRINLINE uint8 GetResonance() const { return (nIFR & 0x7F); }
+	MPT_CONSTEXPRINLINE void SetCutoff(uint8 cutoff, bool enable) { nIFC = std::min(cutoff, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
+	MPT_CONSTEXPRINLINE void SetResonance(uint8 resonance, bool enable) { nIFR = std::min(resonance, uint8(0x7F)) | (enable ? 0x80 : 0x00); }
 
-	bool HasValidMIDIChannel() const { return (nMidiChannel >= 1 && nMidiChannel <= 17); }
+	MPT_CONSTEXPRINLINE bool HasValidMIDIChannel() const { return (nMidiChannel >= 1 && nMidiChannel <= 17); }
 	uint8 GetMIDIChannel(const ModChannel &channel, CHANNELINDEX chn) const;
 
-	void SetTuning(CTuning *pT)
+	MPT_CONSTEXPRINLINE void SetTuning(CTuning *pT)
 	{
 		pTuning = pT;
 	}
 
 	// Get a reference to a specific envelope of this instrument
-	const InstrumentEnvelope &GetEnvelope(EnvelopeType envType) const
+	MPT_CONSTEXPRINLINE const InstrumentEnvelope &GetEnvelope(EnvelopeType envType) const
 	{
 		switch(envType)
 		{

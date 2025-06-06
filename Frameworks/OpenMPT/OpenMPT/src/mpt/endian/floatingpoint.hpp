@@ -6,7 +6,7 @@
 
 
 #include "mpt/base/bit.hpp"
-#include "mpt/base/floatingpoint.hpp"
+#include "mpt/base/float.hpp"
 #include "mpt/base/macros.hpp"
 #include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"
@@ -27,8 +27,8 @@ inline namespace MPT_INLINE_NS {
 
 
 // 1.0f --> 0x3f800000u
-MPT_FORCEINLINE uint32 EncodeIEEE754binary32(float32 f) {
-	if constexpr (mpt::float_traits<float32>::is_ieee754_binary32ne) {
+MPT_FORCEINLINE uint32 EncodeIEEE754binary32(somefloat32 f) {
+	if constexpr (mpt::float_traits<somefloat32>::is_float32 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian) {
 		return mpt::bit_cast<uint32>(f);
 	} else {
 		int e = 0;
@@ -55,8 +55,8 @@ MPT_FORCEINLINE uint32 EncodeIEEE754binary32(float32 f) {
 	}
 }
 
-MPT_FORCEINLINE uint64 EncodeIEEE754binary64(float64 f) {
-	if constexpr (mpt::float_traits<float64>::is_ieee754_binary64ne) {
+MPT_FORCEINLINE uint64 EncodeIEEE754binary64(somefloat64 f) {
+	if constexpr (mpt::float_traits<somefloat64>::is_float64 && mpt::float_traits<somefloat64>::is_ieee754_binary && mpt::float_traits<somefloat64>::is_native_endian) {
 		return mpt::bit_cast<uint64>(f);
 	} else {
 		int e = 0;
@@ -84,9 +84,9 @@ MPT_FORCEINLINE uint64 EncodeIEEE754binary64(float64 f) {
 }
 
 // 0x3f800000u --> 1.0f
-MPT_FORCEINLINE float32 DecodeIEEE754binary32(uint32 i) {
-	if constexpr (mpt::float_traits<float32>::is_ieee754_binary32ne) {
-		return mpt::bit_cast<float32>(i);
+MPT_FORCEINLINE somefloat32 DecodeIEEE754binary32(uint32 i) {
+	if constexpr (mpt::float_traits<somefloat32>::is_float32 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian) {
+		return mpt::bit_cast<somefloat32>(i);
 	} else {
 		uint32 mant = (i & 0x007fffffu) >> 0;
 		uint32 expo = (i & 0x7f800000u) >> 23;
@@ -95,20 +95,20 @@ MPT_FORCEINLINE float32 DecodeIEEE754binary32(uint32 i) {
 			float m = sign ? -static_cast<float>(mant) : static_cast<float>(mant);
 			int e = static_cast<int>(expo) - 127 + 1 - 24;
 			float f = std::ldexp(m, e);
-			return static_cast<float32>(f);
+			return static_cast<somefloat32>(f);
 		} else {
 			mant |= 0x00800000u;
 			float m = sign ? -static_cast<float>(mant) : static_cast<float>(mant);
 			int e = static_cast<int>(expo) - 127 + 1 - 24;
 			float f = std::ldexp(m, e);
-			return static_cast<float32>(f);
+			return static_cast<somefloat32>(f);
 		}
 	}
 }
 
-MPT_FORCEINLINE float64 DecodeIEEE754binary64(uint64 i) {
-	if constexpr (mpt::float_traits<float64>::is_ieee754_binary64ne) {
-		return mpt::bit_cast<float64>(i);
+MPT_FORCEINLINE somefloat64 DecodeIEEE754binary64(uint64 i) {
+	if constexpr (mpt::float_traits<somefloat64>::is_float64 && mpt::float_traits<somefloat64>::is_ieee754_binary && mpt::float_traits<somefloat64>::is_native_endian) {
+		return mpt::bit_cast<somefloat64>(i);
 	} else {
 		uint64 mant = (i & 0x000fffffffffffffull) >> 0;
 		uint64 expo = (i & 0x7ff0000000000000ull) >> 52;
@@ -117,13 +117,13 @@ MPT_FORCEINLINE float64 DecodeIEEE754binary64(uint64 i) {
 			double m = sign ? -static_cast<double>(mant) : static_cast<double>(mant);
 			int e = static_cast<int>(expo) - 1023 + 1 - 53;
 			double f = std::ldexp(m, e);
-			return static_cast<float64>(f);
+			return static_cast<somefloat64>(f);
 		} else {
 			mant |= 0x0010000000000000ull;
 			double m = sign ? -static_cast<double>(mant) : static_cast<double>(mant);
 			int e = static_cast<int>(expo) - 1023 + 1 - 53;
 			double f = std::ldexp(m, e);
-			return static_cast<float64>(f);
+			return static_cast<somefloat64>(f);
 		}
 	}
 }
@@ -141,10 +141,10 @@ public:
 		return bytes[i];
 	}
 	IEEE754binary32Emulated() = default;
-	MPT_FORCEINLINE explicit IEEE754binary32Emulated(float32 f) {
+	MPT_FORCEINLINE explicit IEEE754binary32Emulated(somefloat32 f) {
 		SetInt32(EncodeIEEE754binary32(f));
 	}
-	MPT_FORCEINLINE IEEE754binary32Emulated & operator=(float32 f) {
+	MPT_FORCEINLINE IEEE754binary32Emulated & operator=(somefloat32 f) {
 		SetInt32(EncodeIEEE754binary32(f));
 		return *this;
 	}
@@ -157,7 +157,14 @@ public:
 		bytes[2] = b2;
 		bytes[3] = b3;
 	}
-	MPT_FORCEINLINE operator float32() const {
+	MPT_FORCEINLINE operator somefloat32() const {
+		return DecodeIEEE754binary32(GetInt32());
+	}
+	MPT_FORCEINLINE self_t & set(somefloat32 f) {
+		SetInt32(EncodeIEEE754binary32(f));
+		return *this;
+	}
+	MPT_FORCEINLINE somefloat32 get() const {
 		return DecodeIEEE754binary32(GetInt32());
 	}
 	MPT_FORCEINLINE self_t & SetInt32(uint32 i) {
@@ -196,10 +203,10 @@ public:
 		return bytes[i];
 	}
 	IEEE754binary64Emulated() = default;
-	MPT_FORCEINLINE explicit IEEE754binary64Emulated(float64 f) {
+	MPT_FORCEINLINE explicit IEEE754binary64Emulated(somefloat64 f) {
 		SetInt64(EncodeIEEE754binary64(f));
 	}
-	MPT_FORCEINLINE IEEE754binary64Emulated & operator=(float64 f) {
+	MPT_FORCEINLINE IEEE754binary64Emulated & operator=(somefloat64 f) {
 		SetInt64(EncodeIEEE754binary64(f));
 		return *this;
 	}
@@ -213,7 +220,14 @@ public:
 		bytes[6] = b6;
 		bytes[7] = b7;
 	}
-	MPT_FORCEINLINE operator float64() const {
+	MPT_FORCEINLINE operator somefloat64() const {
+		return DecodeIEEE754binary64(GetInt64());
+	}
+	MPT_FORCEINLINE self_t & set(somefloat64 f) {
+		SetInt64(EncodeIEEE754binary64(f));
+		return *this;
+	}
+	MPT_FORCEINLINE somefloat64 get() const {
 		return DecodeIEEE754binary64(GetInt64());
 	}
 	MPT_FORCEINLINE self_t & SetInt64(uint64 i) {
@@ -280,7 +294,7 @@ static_assert(mpt::check_binary_size<IEEE754binary64EmulatedLE>(8));
 template <mpt::endian endian = mpt::endian::native>
 struct IEEE754binary32Native {
 public:
-	float32 value;
+	somefloat32 value;
 
 public:
 	MPT_FORCEINLINE std::byte GetByte(std::size_t i) const {
@@ -293,10 +307,10 @@ public:
 		}
 	}
 	IEEE754binary32Native() = default;
-	MPT_FORCEINLINE explicit IEEE754binary32Native(float32 f) {
+	MPT_FORCEINLINE explicit IEEE754binary32Native(somefloat32 f) {
 		value = f;
 	}
-	MPT_FORCEINLINE IEEE754binary32Native & operator=(float32 f) {
+	MPT_FORCEINLINE IEEE754binary32Native & operator=(somefloat32 f) {
 		value = f;
 		return *this;
 	}
@@ -312,7 +326,14 @@ public:
 			value = DecodeIEEE754binary32(0u | (static_cast<uint32>(b0) << 24) | (static_cast<uint32>(b1) << 16) | (static_cast<uint32>(b2) << 8) | (static_cast<uint32>(b3) << 0));
 		}
 	}
-	MPT_FORCEINLINE operator float32() const {
+	MPT_FORCEINLINE operator somefloat32() const {
+		return value;
+	}
+	MPT_FORCEINLINE IEEE754binary32Native & set(somefloat32 f) {
+		value = f;
+		return *this;
+	}
+	MPT_FORCEINLINE somefloat32 get() const {
 		return value;
 	}
 	MPT_FORCEINLINE IEEE754binary32Native & SetInt32(uint32 i) {
@@ -333,7 +354,7 @@ public:
 template <mpt::endian endian = mpt::endian::native>
 struct IEEE754binary64Native {
 public:
-	float64 value;
+	somefloat64 value;
 
 public:
 	MPT_FORCEINLINE std::byte GetByte(std::size_t i) const {
@@ -346,10 +367,10 @@ public:
 		}
 	}
 	IEEE754binary64Native() = default;
-	MPT_FORCEINLINE explicit IEEE754binary64Native(float64 f) {
+	MPT_FORCEINLINE explicit IEEE754binary64Native(somefloat64 f) {
 		value = f;
 	}
-	MPT_FORCEINLINE IEEE754binary64Native & operator=(float64 f) {
+	MPT_FORCEINLINE IEEE754binary64Native & operator=(somefloat64 f) {
 		value = f;
 		return *this;
 	}
@@ -362,7 +383,14 @@ public:
 			value = DecodeIEEE754binary64(0ull | (static_cast<uint64>(b0) << 56) | (static_cast<uint64>(b1) << 48) | (static_cast<uint64>(b2) << 40) | (static_cast<uint64>(b3) << 32) | (static_cast<uint64>(b4) << 24) | (static_cast<uint64>(b5) << 16) | (static_cast<uint64>(b6) << 8) | (static_cast<uint64>(b7) << 0));
 		}
 	}
-	MPT_FORCEINLINE operator float64() const {
+	MPT_FORCEINLINE operator somefloat64() const {
+		return value;
+	}
+	MPT_FORCEINLINE IEEE754binary64Native & set(somefloat64 f) {
+		value = f;
+		return *this;
+	}
+	MPT_FORCEINLINE somefloat64 get() const {
 		return value;
 	}
 	MPT_FORCEINLINE IEEE754binary64Native & SetInt64(uint64 i) {
@@ -412,10 +440,10 @@ struct IEEE754binary_types<true, mpt::endian::big> {
 	using IEEE754binary64BE = IEEE754binary64Native<>;
 };
 
-using IEEE754binary32LE = IEEE754binary_types<mpt::float_traits<float32>::is_ieee754_binary32ne, mpt::endian::native>::IEEE754binary32LE;
-using IEEE754binary32BE = IEEE754binary_types<mpt::float_traits<float32>::is_ieee754_binary32ne, mpt::endian::native>::IEEE754binary32BE;
-using IEEE754binary64LE = IEEE754binary_types<mpt::float_traits<float64>::is_ieee754_binary64ne, mpt::endian::native>::IEEE754binary64LE;
-using IEEE754binary64BE = IEEE754binary_types<mpt::float_traits<float64>::is_ieee754_binary64ne, mpt::endian::native>::IEEE754binary64BE;
+using IEEE754binary32LE = IEEE754binary_types<mpt::float_traits<somefloat32>::is_float32 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian, mpt::endian::native>::IEEE754binary32LE;
+using IEEE754binary32BE = IEEE754binary_types<mpt::float_traits<somefloat32>::is_float32 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian, mpt::endian::native>::IEEE754binary32BE;
+using IEEE754binary64LE = IEEE754binary_types<mpt::float_traits<somefloat32>::is_float64 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian, mpt::endian::native>::IEEE754binary64LE;
+using IEEE754binary64BE = IEEE754binary_types<mpt::float_traits<somefloat32>::is_float64 && mpt::float_traits<somefloat32>::is_ieee754_binary && mpt::float_traits<somefloat32>::is_native_endian, mpt::endian::native>::IEEE754binary64BE;
 
 static_assert(sizeof(IEEE754binary32LE) == 4);
 static_assert(sizeof(IEEE754binary32BE) == 4);

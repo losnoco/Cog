@@ -37,13 +37,6 @@ CPatternContainer &CPatternContainer::operator=(CPatternContainer &&other) noexc
 }
 
 
-void CPatternContainer::ClearPatterns()
-{
-	DestroyPatterns();
-	m_Patterns.assign(m_Patterns.size(), CPattern(*this));
-}
-
-
 void CPatternContainer::DestroyPatterns()
 {
 	m_Patterns.clear();
@@ -178,6 +171,18 @@ PATTERNINDEX CPatternContainer::GetNumNamedPatterns() const noexcept
 	return 0;
 }
 
+
+PATTERNINDEX CPatternContainer::GetRemainingCapacity() const noexcept
+{
+	PATTERNINDEX numRemaining = m_rSndFile.GetModSpecifications().patternsMax;
+	const PATTERNINDEX size = std::min(Size(), numRemaining);
+	for(PATTERNINDEX pat = 0; pat < size; pat++)
+	{
+		if(m_Patterns[pat].IsValid())
+			numRemaining--;
+	}
+	return numRemaining;
+}
 
 
 void WriteModPatterns(std::ostream& oStrm, const CPatternContainer& patc)

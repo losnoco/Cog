@@ -5,6 +5,7 @@
 
 
 
+#include "mpt/base/detect.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/random/engine.hpp"
 
@@ -98,10 +99,36 @@ public:
 };
 
 
-template <typename T, typename Trng>
+template <typename T, typename Trng, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>
+inline T random(Trng & rng, T min, T max) {
+#if MPT_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4018) // '<': signed/unsigned mismatch
+#endif                          // MPT_COMPILER_MSVC
+	static_assert(std::numeric_limits<T>::is_integer);
+	if constexpr (std::is_same<T, uint8>::value) {
+		using dis_type = std::uniform_int_distribution<unsigned int>;
+		dis_type dis(min, max);
+		return static_cast<T>(dis(rng));
+	} else if constexpr (std::is_same<T, int8>::value) {
+		using dis_type = std::uniform_int_distribution<int>;
+		dis_type dis(min, max);
+		return static_cast<T>(dis(rng));
+	} else {
+		using dis_type = std::uniform_int_distribution<T>;
+		dis_type dis(min, max);
+		return static_cast<T>(dis(rng));
+	}
+#if MPT_COMPILER_MSVC
+#pragma warning(pop)
+#endif // MPT_COMPILER_MSVC
+}
+
+
+template <typename T, typename Trng, typename std::enable_if<std::is_floating_point<T>::value, bool>::type = true>
 inline T random(Trng & rng, T min, T max) {
 	static_assert(!std::numeric_limits<T>::is_integer);
-	typedef mpt::uniform_real_distribution<T> dis_type;
+	using dis_type = mpt::uniform_real_distribution<T>;
 	dis_type dis(min, max);
 	return static_cast<T>(dis(rng));
 }

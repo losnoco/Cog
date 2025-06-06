@@ -64,11 +64,11 @@ struct Normalize<int32>
 };
 
 template <>
-struct Normalize<float32>
+struct Normalize<somefloat32>
 {
-	using input_t = float32;
-	using output_t = float32;
-	using peak_t = float32;
+	using input_t = somefloat32;
+	using output_t = somefloat32;
+	using peak_t = somefloat32;
 	float maxVal;
 	float maxValInv;
 	MPT_FORCEINLINE Normalize()
@@ -104,11 +104,11 @@ struct Normalize<float32>
 };
 
 template <>
-struct Normalize<float64>
+struct Normalize<somefloat64>
 {
-	using input_t = float64;
-	using output_t = float64;
-	using peak_t = float64;
+	using input_t = somefloat64;
+	using output_t = somefloat64;
+	using peak_t = somefloat64;
 	double maxVal;
 	double maxValInv;
 	MPT_FORCEINLINE Normalize()

@@ -10,14 +10,15 @@
 
 
 #include "stdafx.h"
-#include <ostream>
 #include "ITCompression.h"
+#include "ModSample.h"
+#include "SampleCopy.h"
+#include "../common/misc_util.h"
 #include "mpt/io/base.hpp"
 #include "mpt/io/io.hpp"
 #include "mpt/io/io_stdstream.hpp"
-#include "../common/misc_util.h"
-#include "ModSample.h"
-#include "SampleCopy.h"
+
+#include <ostream>
 
 
 OPENMPT_NAMESPACE_BEGIN

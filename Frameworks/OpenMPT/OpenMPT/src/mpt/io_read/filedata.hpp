@@ -5,12 +5,17 @@
 
 
 
+#if !defined(MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT)
+#include "mpt/base/integer.hpp"
+#endif // !MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT
 #include "mpt/base/memory.hpp"
 #include "mpt/base/namespace.hpp"
 
 #include <algorithm>
 
+#if defined(MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT)
 #include <cstddef>
+#endif // MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT
 
 
 
@@ -25,7 +30,11 @@ namespace IO {
 
 class IFileData {
 public:
+#if !defined(MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT)
+	using pos_type = uint64;
+#else  // MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT
 	using pos_type = std::size_t;
+#endif // MPT_CONFIGURATION_IO_READ_FILEDATA_NO_64BIT
 
 protected:
 	IFileData() = default;

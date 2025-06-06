@@ -114,7 +114,7 @@ PlugParamValue Compressor::GetParameter(PlugParamIndex index)
 }
 
 
-void Compressor::SetParameter(PlugParamIndex index, PlugParamValue value)
+void Compressor::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kCompNumParameters)
 	{
@@ -177,6 +177,8 @@ CString Compressor::GetParamLabel(PlugParamIndex param)
 	case kCompRelease:
 	case kCompPredelay:
 		return _T("ms");
+	case kCompRatio:
+		return _T(": 1");
 	}
 	return CString();
 }

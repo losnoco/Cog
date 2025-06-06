@@ -11,8 +11,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "Echo.h"
+#include "../../Sndfile.h"
 #endif // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
@@ -96,7 +96,7 @@ PlugParamValue Echo::GetParameter(PlugParamIndex index)
 }
 
 
-void Echo::SetParameter(PlugParamIndex index, PlugParamValue value)
+void Echo::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kEchoNumParameters)
 	{

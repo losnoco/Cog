@@ -10,6 +10,8 @@ amf="DMF\x0E"
 ams="Extreme"
 ams="AMShdr\x1A\x00\x02\x02"
 
+cba="CBA\xF9"
+
 #dbm="DBM0"
 dbm="NAME"
 dbm="INFO"
@@ -48,10 +50,17 @@ dtm="S.Q."
 dtm="DAPT"
 dtm="DAIT"
 
+etx="EASYTRAX 1.0\x01\x00z\x01\x20\x00\x00\x00\x20\x04\x00\x00"
+
 far="FAR\xFE"
 far="\x0D\x0A\x1A"
 
+fc="SMOD"
+fc="FC14"
+
 fmt="FMTracker\x01\x01"
+
+ftm="FTMN\x03\x03\x00\x08\x20\x20\x00\xFF\x3F\x03\x06\x10"
 
 gdm="GDM\xFE"
 gdm="\x0D\x0A\x1AGMFS\x01\x00"
@@ -126,6 +135,8 @@ j2b="ORDR"
 j2b="AI  "
 j2b="AS  "
 
+kris="KRIS"
+
 MDL="DMDL"
 # Most chunk IDs are commented out as they are substrings of other dictionary entries
 #mdl="IN"
@@ -146,9 +157,7 @@ mo3="MO3\x05"
 # A couple of magic bytes are commented out because they do not modify the loader's behaviour, apart from setting a "made with" string.
 mod="M.K."
 #mod="M!K!"
-mod="M&K!"
 mod="N.T."
-#mod="FEST"
 #mod="NSMS"
 #mod="LARD"
 mod="OKTA"
@@ -169,6 +178,10 @@ sfx="SO31"
 # External Startrekker instrument files.
 stam="ST1.3 ModuleINFO"
 stam="AudioSculpture10"
+
+hmn="M&K!"
+#hmn="FEST"
+hmn="Mupp"
 
 mptm="->MPT_ORIGINAL_IT<-"
 mptm=".tpm"
@@ -239,7 +252,13 @@ stp="STP3\x02"
 
 symmod="SymM\x00\x00\x00\x01\xFF\xFF\xFF\xFF\x00\x00\x00"
 
+tcb="AN COOL.\x01\x00\x00\x00\x0D\x00"
+#tcb="AN COOL!"
+
 ult="MAS_UTrack_V004"
+
+#unic="UNIC"
+#unic="\x00\x00\x00\x00"
 
 umx="\xC1\x83\x2A\x9E"
 umx="music"
@@ -348,3 +367,9 @@ iff="CHAN"
 iff="MHDR"
 iff="MDAT"
 iff="NAME"
+
+puma="patt"
+puma="inst"
+puma="insf"
+
+rtm="RTMM "

@@ -37,12 +37,23 @@ static const char * const license =
 
 #include "openmpt123_config.hpp"
 
-#if defined(__MINGW32__) && !defined(__MINGW64__)
+#include "mpt/base/detect_compiler.hpp"
+#include "mpt/base/detect_os.hpp"
+#include "mpt/base/detect_quirks.hpp"
+
+#if defined(MPT_LIBC_QUIRK_REQUIRES_SYS_TYPES_H)
 #include <sys/types.h>
 #endif
 
-#include "mpt/base/check_platform.hpp"
+#include "mpt/base/algorithm.hpp"
 #include "mpt/base/detect.hpp"
+#include "mpt/main/main.hpp"
+
+#include "mpt/random/crand.hpp"
+#include "mpt/random/default_engines.hpp"
+#include "mpt/random/device.hpp"
+#include "mpt/random/engine.hpp"
+#include "mpt/random/seed.hpp"
 
 #include <algorithm>
 #include <deque>
@@ -54,7 +65,6 @@ static const char * const license =
 #include <map>
 #include <memory>
 #include <optional>
-#include <random>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -67,43 +77,18 @@ static const char * const license =
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <ctime>
 
-#if MPT_OS_DJGPP
-#include <conio.h>
-#include <crt0.h>
-#include <dpmi.h>
-#include <fcntl.h>
-#include <io.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <termios.h>
-#include <unistd.h>
-#elif MPT_OS_WINDOWS
-#include <conio.h>
-#include <fcntl.h>
-#include <io.h>
-#include <stdio.h>
-#if defined(__MINGW32__) && !defined(__MINGW64__)
-#include <string.h>
-#endif
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <windows.h>
+#if MPT_OS_WINDOWS
 #include <mmsystem.h>
 #include <mmreg.h>
-#else
-#include <termios.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #endif
 
 #include <libopenmpt/libopenmpt.hpp>
 
 #include "openmpt123.hpp"
+#include "openmpt123_exception.hpp"
+#include "openmpt123_stdio.hpp"
+#include "openmpt123_terminal.hpp"
 
 #include "openmpt123_flac.hpp"
 #include "openmpt123_mmio.hpp"
@@ -144,67 +129,25 @@ struct show_long_version_number_exception : public std::exception {
 
 constexpr auto libopenmpt_encoding = mpt::common_encoding::utf8;
 
-#if MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
-bool IsConsole( DWORD stdHandle ) {
-	HANDLE hStd = GetStdHandle( stdHandle );
-	if ( ( hStd != NULL ) && ( hStd != INVALID_HANDLE_VALUE ) ) {
-		DWORD mode = 0;
-		if ( GetConsoleMode( hStd, &mode ) != FALSE ) {
-			return true;
-		}
-	}
-	return false;
-}
-#endif // MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
 
-bool IsTerminal( int fd ) {
-#if MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
-	if ( !_isatty( fd ) ) {
-		return false;
-	}
-	DWORD stdHandle = 0;
-	if ( fd == 0 ) {
-		stdHandle = STD_INPUT_HANDLE;
-	} else if ( fd == 1 ) {
-		stdHandle = STD_OUTPUT_HANDLE;
-	} else if ( fd == 2 ) {
-		stdHandle = STD_ERROR_HANDLE;
-	}
-	return IsConsole( stdHandle );
-#else
-	return isatty( fd ) ? true : false;
-#endif
-}
-
-#if !MPT_OS_WINDOWS
-
-static termios saved_attributes;
-
-static void reset_input_mode() {
-	tcsetattr( STDIN_FILENO, TCSANOW, &saved_attributes );
-}
-
-static void set_input_mode() {
-	termios tattr;
-	if ( !isatty( STDIN_FILENO ) ) {
-		return;
-	}
-	tcgetattr( STDIN_FILENO, &saved_attributes );
-	atexit( reset_input_mode );
-	tcgetattr( STDIN_FILENO, &tattr );
-	tattr.c_lflag &= ~( ICANON | ECHO );
-	tattr.c_cc[VMIN] = 1;
-	tattr.c_cc[VTIME] = 0;
-	tcsetattr( STDIN_FILENO, TCSAFLUSH, &tattr );
-}
-
-#endif
-
-class file_audio_stream_raii : public file_audio_stream_base {
+class file_audio_stream : public file_audio_stream_base {
 private:
 	std::unique_ptr<file_audio_stream_base> impl;
 public:
-	file_audio_stream_raii( const commandlineflags & flags, const mpt::native_path & filename, concat_stream<mpt::ustring> & log )
+	static void show_versions([[maybe_unused]] concat_stream<mpt::ustring> & log ) {
+#ifdef MPT_WITH_FLAC
+		log << MPT_USTRING(" FLAC ") << mpt::transcode<mpt::ustring>( mpt::source_encoding, FLAC__VERSION_STRING ) << MPT_USTRING(", ") << mpt::transcode<mpt::ustring>( mpt::source_encoding, FLAC__VENDOR_STRING ) << MPT_USTRING(", API ") << FLAC_API_VERSION_CURRENT << MPT_USTRING(".") << FLAC_API_VERSION_REVISION << MPT_USTRING(".") << FLAC_API_VERSION_AGE << MPT_USTRING(" <https://xiph.org/flac/>") << lf;
+#endif
+#ifdef MPT_WITH_SNDFILE
+		char sndfile_info[128];
+		std::memset( sndfile_info, 0, sizeof( sndfile_info ) );
+		sf_command( 0, SFC_GET_LIB_VERSION, sndfile_info, sizeof( sndfile_info ) );
+		sndfile_info[127] = '\0';
+		log << MPT_USTRING(" libsndfile ") << mpt::transcode<mpt::ustring>( sndfile_encoding, sndfile_info ) << MPT_USTRING(" <http://mega-nerd.com/libsndfile/>") << lf;
+#endif
+	}
+public:
+	file_audio_stream( const commandlineflags & flags, const mpt::native_path & filename, [[maybe_unused]] concat_stream<mpt::ustring> & log )
 		: impl(nullptr)
 	{
 		if ( !flags.force_overwrite ) {
@@ -220,11 +163,11 @@ public:
 #if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
 		} else if ( flags.output_extension == MPT_NATIVE_PATH("wav") ) {
 			impl = std::make_unique<mmio_stream_raii>( filename, flags, log );
-#endif				
+#endif
 #ifdef MPT_WITH_FLAC
 		} else if ( flags.output_extension == MPT_NATIVE_PATH("flac") ) {
 			impl = std::make_unique<flac_stream_raii>( filename, flags, log );
-#endif				
+#endif
 #ifdef MPT_WITH_SNDFILE
 		} else {
 			impl = std::make_unique<sndfile_stream_raii>( filename, flags, log );
@@ -234,7 +177,7 @@ public:
 			throw exception( MPT_USTRING("file format handler '") + mpt::transcode<mpt::ustring>( flags.output_extension ) + MPT_USTRING("' not found") );
 		}
 	}
-	virtual ~file_audio_stream_raii() {
+	virtual ~file_audio_stream() {
 		return;
 	}
 	void write_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
@@ -249,7 +192,148 @@ public:
 	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		impl->write( buffers, frames );
 	}
-};                                                                                                                
+};
+
+class realtime_audio_stream : public write_buffers_interface {
+private:
+	std::unique_ptr<write_buffers_interface> impl;
+public:
+	static void show_versions( [[maybe_unused]] concat_stream<mpt::ustring> & log ) {
+#ifdef MPT_WITH_SDL2
+		log << MPT_USTRING(" ") << show_sdl2_version() << lf;
+#endif
+#ifdef MPT_WITH_PULSEAUDIO
+		log << MPT_USTRING(" ") << show_pulseaudio_version() << lf;
+#endif
+#ifdef MPT_WITH_PORTAUDIO
+		log << MPT_USTRING(" ") << show_portaudio_version() << lf;
+#endif
+	}
+	static void show_drivers( concat_stream<mpt::ustring> & drivers ) {
+		drivers << MPT_USTRING(" Available drivers:") << lf;
+		drivers << MPT_USTRING("    default") << lf;
+#if defined( MPT_WITH_PULSEAUDIO )
+		drivers << MPT_USTRING("    pulseaudio") << lf;
+#endif
+#if defined( MPT_WITH_SDL2 )
+		drivers << MPT_USTRING("    sdl2") << lf;
+#endif
+#if defined( MPT_WITH_PORTAUDIO )
+		drivers << MPT_USTRING("    portaudio") << lf;
+#endif
+#if MPT_OS_WINDOWS
+		drivers << MPT_USTRING("    waveout") << lf;
+#endif
+#if defined( MPT_WITH_ALLEGRO42 )
+		drivers << MPT_USTRING("    allegro42") << lf;
+#endif
+	}
+	static void show_devices( concat_stream<mpt::ustring> & devices, [[maybe_unused]] concat_stream<mpt::ustring> & log ) {
+		devices << MPT_USTRING(" Available devices:") << lf;
+		devices << MPT_USTRING("    default: default") << lf;
+#if defined( MPT_WITH_PULSEAUDIO )
+		devices << MPT_USTRING(" pulseaudio:") << lf;
+		{
+			auto devs = show_pulseaudio_devices( log );
+			for ( const auto & dev : devs ) {
+				devices << MPT_USTRING("    ") << dev << lf;
+			}
+		}
+#endif
+#if defined( MPT_WITH_SDL2 )
+		devices << MPT_USTRING(" SDL2:") << lf;
+		{
+			auto devs = show_sdl2_devices( log );
+			for ( const auto & dev : devs ) {
+				devices << MPT_USTRING("    ") << dev << lf;
+			}
+		}
+#endif
+#if defined( MPT_WITH_PORTAUDIO )
+		devices << MPT_USTRING(" portaudio:") << lf;
+		{
+			auto devs = show_portaudio_devices( log );
+			for ( const auto & dev : devs ) {
+				devices << MPT_USTRING("    ") << dev << lf;
+			}
+		}
+#endif
+#if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
+		devices << MPT_USTRING(" waveout:") << lf;
+		{
+			auto devs = show_waveout_devices( log );
+			for ( const auto & dev : devs ) {
+				devices << MPT_USTRING("    ") << dev << lf;
+			}
+		}
+#endif
+#if defined( MPT_WITH_ALLEGRO42 )
+		devices << MPT_USTRING(" allegro42:") << lf;
+		{
+			auto devs = show_allegro42_devices( log );
+			for ( const auto & dev : devs ) {
+				devices << MPT_USTRING("    ") << dev << lf;
+			}
+		}
+#endif
+	}
+public:
+	realtime_audio_stream( commandlineflags & flags, [[maybe_unused]] concat_stream<mpt::ustring> & log )
+		: impl(nullptr)
+	{
+		if constexpr ( false ) {
+			// nothing
+#if defined( MPT_WITH_PULSEAUDIO )
+		} else if ( flags.driver == MPT_USTRING("pulseaudio") || flags.driver.empty() ) {
+			impl = std::make_unique<pulseaudio_stream_raii>( flags, log );
+#endif
+#if defined( MPT_WITH_SDL2 )
+		} else if ( flags.driver == MPT_USTRING("sdl2") || flags.driver.empty() ) {
+			impl = std::make_unique<sdl2_stream_raii>( flags, log );
+#endif
+#if defined( MPT_WITH_PORTAUDIO )
+		} else if ( flags.driver == MPT_USTRING("portaudio") || flags.driver.empty() ) {
+			impl = std::make_unique<portaudio_stream_raii>( flags, log );
+#endif
+#if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
+		} else if ( flags.driver == MPT_USTRING("waveout") || flags.driver.empty() ) {
+			impl = std::make_unique<waveout_stream_raii>( flags, log );
+#endif
+#if defined( MPT_WITH_ALLEGRO42 )
+		} else if ( flags.driver == MPT_USTRING("allegro42") || flags.driver.empty() ) {
+			impl = std::make_unique<allegro42_stream_raii>( flags, log );
+#endif
+		} else if ( flags.driver.empty() ) {
+			throw exception(MPT_USTRING("openmpt123 is compiled without any audio driver"));
+		} else {
+			throw exception( MPT_USTRING("audio driver '") + flags.driver + MPT_USTRING("' not found") );
+		}
+	}
+	virtual ~realtime_audio_stream() {
+		return;
+	}
+	void write_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
+		impl->write_metadata( metadata );
+	}
+	void write_updated_metadata( std::map<mpt::ustring, mpt::ustring> metadata ) override {
+		impl->write_updated_metadata( metadata );
+	}
+	void write( const std::vector<float*> buffers, std::size_t frames ) override {
+		impl->write( buffers, frames );
+	}
+	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
+		impl->write( buffers, frames );
+	}
+	bool unpause() override {
+		return impl->unpause();
+	}
+	bool sleep( int ms ) override {
+		return impl->sleep( ms );
+	}
+	bool is_dummy() const override {
+		return impl->is_dummy();
+	}
+};
 
 static mpt::ustring ctls_to_string( const std::map<std::string, std::string> & ctls ) {
 	mpt::ustring result;
@@ -424,38 +508,8 @@ static void show_banner( concat_stream<mpt::ustring> & log, verbosity banner ) {
 	log << lf;
 	log << MPT_USTRING("  libopenmpt compiler: ") << mpt::transcode<mpt::ustring>( libopenmpt_encoding, openmpt::string::get( "build_compiler" ) ) << lf;
 	log << MPT_USTRING("  libopenmpt features: ") << mpt::transcode<mpt::ustring>( libopenmpt_encoding, openmpt::string::get( "library_features" ) ) << lf;
-#ifdef MPT_WITH_SDL2
-	log << MPT_USTRING(" libSDL2 ");
-	SDL_version sdlver;
-	std::memset( &sdlver, 0, sizeof( SDL_version ) );
-	SDL_GetVersion( &sdlver );
-	log << static_cast<int>( sdlver.major ) << MPT_USTRING(".") << static_cast<int>( sdlver.minor ) << MPT_USTRING(".") << static_cast<int>( sdlver.patch );
-	const char * revision = SDL_GetRevision();
-	if ( revision ) {
-		log << MPT_USTRING(" (") << mpt::transcode<mpt::ustring>( sdl2_encoding, revision ) << MPT_USTRING(")");
-	}
-	log << MPT_USTRING(", ");
-	std::memset( &sdlver, 0, sizeof( SDL_version ) );
-	SDL_VERSION( &sdlver );
-	log << MPT_USTRING("API: ") << static_cast<int>( sdlver.major ) << MPT_USTRING(".") << static_cast<int>( sdlver.minor ) << MPT_USTRING(".") << static_cast<int>( sdlver.patch );
-	log << MPT_USTRING(" <https://libsdl.org/>") << lf;
-#endif
-#ifdef MPT_WITH_PULSEAUDIO
-	log << MPT_USTRING(" ") << MPT_USTRING("libpulse, libpulse-simple") << MPT_USTRING(" (headers ") << mpt::transcode<mpt::ustring>( pulseaudio_encoding, pa_get_headers_version() ) << MPT_USTRING(", API ") << PA_API_VERSION << MPT_USTRING(", PROTOCOL ") << PA_PROTOCOL_VERSION << MPT_USTRING(", library ") << mpt::transcode<mpt::ustring>( pulseaudio_encoding, ( pa_get_library_version() ? pa_get_library_version() : "unknown" ) ) << MPT_USTRING(") <https://www.freedesktop.org/wiki/Software/PulseAudio/>") << lf;
-#endif
-#ifdef MPT_WITH_PORTAUDIO
-	log << MPT_USTRING(" ") << mpt::transcode<mpt::ustring>( portaudio_encoding, Pa_GetVersionText() ) << MPT_USTRING(" (") << Pa_GetVersion() << MPT_USTRING(") <http://portaudio.com/>") << lf;
-#endif
-#ifdef MPT_WITH_FLAC
-	log << MPT_USTRING(" FLAC ") << mpt::transcode<mpt::ustring>( mpt::source_encoding, FLAC__VERSION_STRING ) << MPT_USTRING(", ") << mpt::transcode<mpt::ustring>( mpt::source_encoding, FLAC__VENDOR_STRING ) << MPT_USTRING(", API ") << FLAC_API_VERSION_CURRENT << MPT_USTRING(".") << FLAC_API_VERSION_REVISION << MPT_USTRING(".") << FLAC_API_VERSION_AGE << MPT_USTRING(" <https://xiph.org/flac/>") << lf;
-#endif
-#ifdef MPT_WITH_SNDFILE
-	char sndfile_info[128];
-	std::memset( sndfile_info, 0, sizeof( sndfile_info ) );
-	sf_command( 0, SFC_GET_LIB_VERSION, sndfile_info, sizeof( sndfile_info ) );
-	sndfile_info[127] = '\0';
-	log << MPT_USTRING(" libsndfile ") << mpt::transcode<mpt::ustring>( sndfile_encoding, sndfile_info ) << MPT_USTRING(" <http://mega-nerd.com/libsndfile/>") << lf;
-#endif
+	realtime_audio_stream::show_versions( log );
+	file_audio_stream::show_versions( log );
 	log << lf;
 }
 
@@ -1030,53 +1084,15 @@ void render_loop( commandlineflags & flags, Tmod & mod, double & duration, texto
 
 		if ( flags.mode == Mode::UI ) {
 
-#if MPT_OS_DJGPP
-
-			while ( kbhit() ) {
-				int c = getch();
-				if ( !handle_keypress( c, flags, mod, audio_stream ) ) {
-					return;
-				}
-			}
-
-#elif MPT_OS_WINDOWS && defined( UNICODE ) && !MPT_OS_WINDOWS_WINRT
-
-			while ( _kbhit() ) {
-				wint_t c = _getwch();
-				if ( !handle_keypress( c, flags, mod, audio_stream ) ) {
-					return;
-				}
-			}
-
-#elif MPT_OS_WINDOWS
-
-			while ( _kbhit() ) {
-				int c = _getch();
-				if ( !handle_keypress( c, flags, mod, audio_stream ) ) {
-					return;
-				}
-			}
-
-#else
-
-			while ( true ) {
-				pollfd pollfds;
-				pollfds.fd = STDIN_FILENO;
-				pollfds.events = POLLIN;
-				poll(&pollfds, 1, 0);
-				if ( !( pollfds.revents & POLLIN ) ) {
+			while ( terminal_input::is_input_available() ) {
+				auto c = terminal_input::read_input_char();
+				if ( !c ) {
 					break;
 				}
-				char c = 0;
-				if ( read( STDIN_FILENO, &c, 1 ) != 1 ) {
-					break;
-				}
-				if ( !handle_keypress( c, flags, mod, audio_stream ) ) {
+				if ( !handle_keypress( *c, flags, mod, audio_stream ) ) {
 					return;
 				}
 			}
-
-#endif
 
 			if ( flags.paused ) {
 				audio_stream.sleep( flags.ui_redraw_interval );
@@ -1635,15 +1651,15 @@ static void render_file( commandlineflags & flags, const mpt::native_path & file
 }
 
 
-static mpt::native_path get_random_filename( std::set<mpt::native_path> & filenames, std::default_random_engine & prng ) {
-	std::size_t index = std::uniform_int_distribution<std::size_t>( 0, filenames.size() - 1 )( prng );
+static mpt::native_path get_random_filename( std::set<mpt::native_path> & filenames, mpt::good_engine & prng ) {
+	std::size_t index = mpt::random<std::size_t>( prng, 0, filenames.size() - 1 );
 	std::set<mpt::native_path>::iterator it = filenames.begin();
 	std::advance( it, index );
 	return *it;
 }
 
 
-static void render_files( commandlineflags & flags, textout & log, write_buffers_interface & audio_stream, std::default_random_engine & prng ) {
+static void render_files( commandlineflags & flags, textout & log, write_buffers_interface & audio_stream, mpt::good_engine & prng ) {
 	if ( flags.randomize ) {
 		std::shuffle( flags.filenames.begin(), flags.filenames.end(), prng );
 	}
@@ -1941,23 +1957,7 @@ static void parse_openmpt123( commandlineflags & flags, const std::vector<mpt::u
 					// nothing
 				} else if ( nextarg == MPT_USTRING("help") ) {
 					string_concat_stream<mpt::ustring> drivers;
-					drivers << MPT_USTRING(" Available drivers:") << lf;
-					drivers << MPT_USTRING("    default") << lf;
-#if defined( MPT_WITH_PULSEAUDIO )
-					drivers << MPT_USTRING("    pulseaudio") << lf;
-#endif
-#if defined( MPT_WITH_SDL2 )
-					drivers << MPT_USTRING("    sdl2") << lf;
-#endif
-#if defined( MPT_WITH_PORTAUDIO )
-					drivers << MPT_USTRING("    portaudio") << lf;
-#endif
-#if MPT_OS_WINDOWS
-					drivers << MPT_USTRING("    waveout") << lf;
-#endif
-#if defined( MPT_WITH_ALLEGRO42 )
-					drivers << MPT_USTRING("    allegro42") << lf;
-#endif
+					realtime_audio_stream::show_drivers( drivers );
 					throw show_help_exception( drivers.str() );
 				} else if ( nextarg == MPT_USTRING("default") ) {
 					flags.driver = MPT_USTRING("");
@@ -1970,23 +1970,7 @@ static void parse_openmpt123( commandlineflags & flags, const std::vector<mpt::u
 					// nothing
 				} else if ( nextarg == MPT_USTRING("help") ) {
 					string_concat_stream<mpt::ustring> devices;
-					devices << MPT_USTRING(" Available devices:") << lf;
-					devices << MPT_USTRING("    default: default") << lf;
-#if defined( MPT_WITH_PULSEAUDIO )
-					devices << show_pulseaudio_devices(log);
-#endif
-#if defined( MPT_WITH_SDL2 )
-					devices << show_sdl2_devices( log );
-#endif
-#if defined( MPT_WITH_PORTAUDIO )
-					devices << show_portaudio_devices( log );
-#endif
-#if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
-					devices << show_waveout_devices( log );
-#endif
-#if defined( MPT_WITH_ALLEGRO42 )
-					devices << show_allegro42_devices( log );
-#endif
+					realtime_audio_stream::show_devices( devices, log );
 					throw show_help_exception( devices.str() );
 				} else if ( nextarg == MPT_USTRING("default") ) {
 					flags.device = MPT_USTRING("");
@@ -2125,124 +2109,13 @@ static void parse_openmpt123( commandlineflags & flags, const std::vector<mpt::u
 
 }
 
-#if MPT_OS_WINDOWS
+static mpt::uint8 main( std::vector<mpt::ustring> args ) {
 
-class FD_utf8_raii {
-private:
-	FILE * file;
-	int old_mode;
-public:
-	FD_utf8_raii( FILE * file, bool set_utf8 )
-		: file(file)
-		, old_mode(-1)
-	{
-		if ( set_utf8 ) {
-			fflush( file );
-			#if defined(UNICODE)
-				old_mode = _setmode( _fileno( file ), _O_U8TEXT );
-			#else
-				old_mode = _setmode( _fileno( file ), _O_TEXT );
-			#endif
-			if ( old_mode == -1 ) {
-				throw exception( MPT_USTRING("failed to set TEXT mode on file descriptor") );
-			}
-		}
-	}
-	~FD_utf8_raii()
-	{
-		if ( old_mode != -1 ) {
-			fflush( file );
-			old_mode = _setmode( _fileno( file ), old_mode );
-		}
-	}
-};
+	FILE_mode_guard stdout_text_guard( stdout, FILE_mode::text );
+	FILE_mode_guard stderr_text_guard( stderr, FILE_mode::text );
 
-class FD_binary_raii {
-private:
-	FILE * file;
-	int old_mode;
-public:
-	FD_binary_raii( FILE * file, bool set_binary )
-		: file(file)
-		, old_mode(-1)
-	{
-		if ( set_binary ) {
-			fflush( file );
-			old_mode = _setmode( _fileno( file ), _O_BINARY );
-			if ( old_mode == -1 ) {
-				throw exception( MPT_USTRING("failed to set binary mode on file descriptor") );
-			}
-		}
-	}
-	~FD_binary_raii()
-	{
-		if ( old_mode != -1 ) {
-			fflush( file );
-			old_mode = _setmode( _fileno( file ), old_mode );
-		}
-	}
-};
-
-#endif
-
-#if MPT_OS_DJGPP
-/* Work-around <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=45977> */
-/* clang-format off */
-extern "C" {
-	int _crt0_startup_flags = 0
-		| _CRT0_FLAG_NONMOVE_SBRK          /* force interrupt compatible allocation */
-		| _CRT0_DISABLE_SBRK_ADDRESS_WRAP  /* force NT compatible allocation */
-		| _CRT0_FLAG_LOCK_MEMORY           /* lock all code and data at program startup */
-		| 0;
-}
-/* clang-format on */
-#endif /* MPT_OS_DJGPP */
-#if MPT_OS_WINDOWS && defined(UNICODE)
-static int wmain( int wargc, wchar_t * wargv [] ) {
-#else
-static int main( int argc, char * argv [] ) {
-#endif
-	#if MPT_OS_DJGPP
-		assert(mpt::platform::libc().is_ok());
-		_crt0_startup_flags &= ~_CRT0_FLAG_LOCK_MEMORY;  /* disable automatic locking for all further memory allocations */
-	#endif /* MPT_OS_DJGPP */
-	std::vector<mpt::ustring> args;
-	#if MPT_OS_WINDOWS && defined(UNICODE)
-		for ( int arg = 0; arg < wargc; ++arg ) {
-			args.push_back( mpt::transcode<mpt::ustring>( wargv[arg] ) );
-		}
-	#else
-		for ( int arg = 0; arg < argc; ++arg ) {
-			args.push_back( mpt::transcode<mpt::ustring>( mpt::logical_encoding::locale, argv[arg] ) );
-		}
-	#endif
-
-#if MPT_OS_WINDOWS
-	FD_utf8_raii stdin_utf8_guard( stdin, true );
-	FD_utf8_raii stdout_utf8_guard( stdout, true );
-	FD_utf8_raii stderr_utf8_guard( stderr, true );
-#endif
-	textout_dummy dummy_log;
-#if MPT_OS_WINDOWS && !MPT_WINRT_BEFORE(MPT_WIN_10)
-#if defined(UNICODE)
-	textout_ostream_console std_out( std::wcout, STD_OUTPUT_HANDLE );
-	textout_ostream_console std_err( std::wclog, STD_ERROR_HANDLE );
-#else
-	textout_ostream_console std_out( std::cout, STD_OUTPUT_HANDLE );
-	textout_ostream_console std_err( std::clog, STD_ERROR_HANDLE );
-#endif
-#elif MPT_OS_WINDOWS
-#if defined(UNICODE)
-	textout_wostream std_out( std::wcout );
-	textout_wostream std_err( std::wclog );
-#else
-	textout_ostream std_out( std::cout );
-	textout_ostream std_err( std::clog );
-#endif
-#else
-	textout_ostream std_out( std::cout );
-	textout_ostream std_err( std::clog );
-#endif
+	textout_wrapper<textout_destination::destination_stdout> std_out;
+	textout_wrapper<textout_destination::destination_stderr> std_err;
 
 	commandlineflags flags;
 
@@ -2317,39 +2190,25 @@ static int main( int argc, char * argv [] ) {
 
 	try {
 
-		bool stdin_can_ui = true;
-		for ( const auto & filename : flags.filenames ) {
-			if ( filename == MPT_NATIVE_PATH("-") ) {
-				stdin_can_ui = false;
-				break;
-			}
-		}
+		const FILE_mode stdin_mode = mpt::contains( flags.filenames, MPT_NATIVE_PATH("-") ) ? FILE_mode::binary : FILE_mode::text;
+		const FILE_mode stdout_mode = flags.use_stdout ? FILE_mode::binary : FILE_mode::text;
 
-		bool stdout_can_ui = true;
-		if ( flags.use_stdout ) {
-			stdout_can_ui = false;
-		}
+		[[maybe_unused]] const bool stdin_text = ( stdin_mode == FILE_mode::text );
+		[[maybe_unused]] const bool stdin_data = ( stdin_mode == FILE_mode::binary );
+		[[maybe_unused]] const bool stdout_text = ( stdout_mode == FILE_mode::text );
+		[[maybe_unused]] const bool stdout_data = ( stdout_mode == FILE_mode::binary );
 
-		// set stdin binary
-#if MPT_OS_WINDOWS
-		FD_binary_raii stdin_guard( stdin, !stdin_can_ui );
-#endif
+		// set stdin/stdout to binary for data input/output
+		[[maybe_unused]] std::optional<FILE_mode_guard> stdin_guard{ stdin_data ? std::make_optional<FILE_mode_guard>( stdin, FILE_mode::binary ) : std::nullopt };
+		[[maybe_unused]] std::optional<FILE_mode_guard> stdout_guard{ stdout_data ? std::make_optional<FILE_mode_guard>( stdout, FILE_mode::binary ) : std::nullopt };
 
-		// set stdout binary
-#if MPT_OS_WINDOWS
-		FD_binary_raii stdout_guard( stdout, !stdout_can_ui );
-#endif
+		// setup terminal input
+		[[maybe_unused]] std::optional<FILE_mode_guard> stdin_text_guard{ stdin_text ? std::make_optional<FILE_mode_guard>( stdin, FILE_mode::text ) : std::nullopt };
+		[[maybe_unused]] std::optional<terminal_ui_guard> input_guard{ stdin_text && ( flags.mode == Mode::UI ) ? std::make_optional<terminal_ui_guard>() : std::nullopt };
 
-		// setup terminal
-		#if !MPT_OS_WINDOWS
-			if ( stdin_can_ui ) {
-				if ( flags.mode == Mode::UI ) {
-					set_input_mode();
-				}
-			}
-		#endif
-		
-		textout & log = flags.quiet ? static_cast<textout&>( dummy_log ) : static_cast<textout&>( stdout_can_ui ? std_out : std_err );
+		// choose text output between quiet/stdout/stderr
+		textout_dummy dummy_log;
+		textout & log = flags.quiet ? static_cast<textout&>( dummy_log ) : stdout_text ? static_cast<textout&>( std_out ) : static_cast<textout&>( std_err );
 
 		show_banner( log, flags.banner );
 
@@ -2363,16 +2222,9 @@ static int main( int argc, char * argv [] ) {
 
 		log.writeout();
 
-		std::default_random_engine prng;
-		try {
-			std::random_device rd;
-			std::seed_seq seq{ rd(), static_cast<unsigned int>( std::time( NULL ) ) };
-			prng = std::default_random_engine{ seq };
-		} catch ( const std::exception & ) {
-			std::seed_seq seq{ static_cast<unsigned int>( std::time( NULL ) ) };
-			prng = std::default_random_engine{ seq };
-		}
-		std::srand( std::uniform_int_distribution<unsigned int>()( prng ) );
+		mpt::sane_random_device rd;
+		mpt::good_engine prng = mpt::make_prng<mpt::good_engine>( rd );
+		mpt::crand::reseed( prng );
 
 		switch ( flags.mode ) {
 			case Mode::Probe: {
@@ -2393,45 +2245,17 @@ static int main( int argc, char * argv [] ) {
 					render_files( flags, log, stdout_audio_stream, prng );
 				} else if ( !flags.output_filename.empty() ) {
 					flags.apply_default_buffer_sizes();
-					file_audio_stream_raii file_audio_stream( flags, flags.output_filename, log );
+					file_audio_stream file_audio_stream( flags, flags.output_filename, log );
 					render_files( flags, log, file_audio_stream, prng );
-#if defined( MPT_WITH_PULSEAUDIO )
-				} else if ( flags.driver == MPT_USTRING("pulseaudio") || flags.driver.empty() ) {
-					pulseaudio_stream_raii pulseaudio_stream( flags, log );
-					render_files( flags, log, pulseaudio_stream, prng );
-#endif
-#if defined( MPT_WITH_SDL2 )
-				} else if ( flags.driver == MPT_USTRING("sdl2") || flags.driver.empty() ) {
-					sdl2_stream_raii sdl2_stream( flags, log );
-					render_files( flags, log, sdl2_stream, prng );
-#endif
-#if defined( MPT_WITH_PORTAUDIO )
-				} else if ( flags.driver == MPT_USTRING("portaudio") || flags.driver.empty() ) {
-					portaudio_stream_raii portaudio_stream( flags, log );
-					render_files( flags, log, portaudio_stream, prng );
-#endif
-#if MPT_OS_WINDOWS && !MPT_OS_WINDOWS_WINRT
-				} else if ( flags.driver == MPT_USTRING("waveout") || flags.driver.empty() ) {
-					waveout_stream_raii waveout_stream( flags );
-					render_files( flags, log, waveout_stream, prng );
-#endif
-#if defined( MPT_WITH_ALLEGRO42 )
-				} else if ( flags.driver == MPT_USTRING("allegro42") || flags.driver.empty() ) {
-					allegro42_stream_raii allegro42_stream( flags, log );
-					render_files( flags, log, allegro42_stream, prng );
-#endif
 				} else {
-					if ( flags.driver.empty() ) {
-						throw exception( MPT_USTRING("openmpt123 is compiled without any audio driver") );
-					} else {
-						throw exception( MPT_USTRING("audio driver '") + flags.driver + MPT_USTRING("' not found") );
-					}
+					realtime_audio_stream audio_stream( flags, log );
+					render_files( flags, log, audio_stream, prng );
 				}
 			} break;
 			case Mode::Render: {
 				for ( const auto & filename : flags.filenames ) {
 					flags.apply_default_buffer_sizes();
-					file_audio_stream_raii file_audio_stream( flags, filename + MPT_NATIVE_PATH(".") + flags.output_extension, log );
+					file_audio_stream file_audio_stream( flags, filename + MPT_NATIVE_PATH(".") + flags.output_extension, log );
 					render_file( flags, filename, log, file_audio_stream );
 					flags.playlist_index++;
 				}
@@ -2446,30 +2270,6 @@ static int main( int argc, char * argv [] ) {
 		std_err << MPT_USTRING("Error parsing command line.") << lf;
 		std_err.writeout();
 		return 1;
-#ifdef MPT_WITH_ALLEGRO42
-	} catch ( allegro42_exception & e ) {
-		std_err << MPT_USTRING("Allegro-4.2 error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
-		std_err.writeout();
-		return 1;
-#endif
-#ifdef MPT_WITH_PULSEAUDIO
-	} catch ( pulseaudio_exception & e ) {
-		std_err << MPT_USTRING("PulseAudio error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
-		std_err.writeout();
-		return 1;
-#endif
-#ifdef MPT_WITH_PORTAUDIO
-	} catch ( portaudio_exception & e ) {
-		std_err << MPT_USTRING("PortAudio error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
-		std_err.writeout();
-		return 1;
-#endif
-#ifdef MPT_WITH_SDL2
-	} catch ( sdl2_exception & e ) {
-		std_err << MPT_USTRING("SDL2 error: ") << mpt::get_exception_text<mpt::ustring>( e ) << lf;
-		std_err.writeout();
-		return 1;
-#endif
 	} catch ( silent_exit_exception & ) {
 		return 0;
 	} catch ( exception & e ) {
@@ -2491,17 +2291,5 @@ static int main( int argc, char * argv [] ) {
 
 } // namespace openmpt123
 
-#if MPT_OS_WINDOWS && defined(UNICODE)
-#if defined(__GNUC__) || (defined(__clang__) && !defined(_MSC_VER))
-// mingw64 does only default to special C linkage for "main", but not for "wmain".
-extern "C" int wmain( int wargc, wchar_t * wargv [] );
-extern "C"
-#endif
-int wmain( int wargc, wchar_t * wargv [] ) {
-	return openmpt123::wmain( wargc, wargv );
-}
-#else
-int main( int argc, char * argv [] ) {
-	return openmpt123::main( argc, argv );
-}
-#endif
+
+MPT_MAIN_IMPLEMENT_MAIN(openmpt123)

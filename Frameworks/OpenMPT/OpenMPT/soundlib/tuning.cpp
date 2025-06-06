@@ -70,13 +70,14 @@ static_assert(CTuning::s_RatioTableFineSizeMaxDefault < static_cast<USTEPINDEXTY
 
 CTuning::CTuning()
 {
-#if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(13, 1, 0)
+#if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(12, 3, 0)
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109455
+// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100366
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overflow"
 #endif
 	m_RatioTable.resize(s_RatioTableSizeDefault, 1);
-#if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(13, 1, 0)
+#if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(12, 3, 0)
 #pragma GCC diagnostic pop
 #endif
 }

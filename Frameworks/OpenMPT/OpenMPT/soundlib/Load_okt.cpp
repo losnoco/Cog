@@ -136,7 +136,7 @@ static void ReadOKTPattern(FileReader &chunk, PATTERNINDEX pat, CSoundFile &sndF
 					// Default volume only works on raw Paula channels
 					if(pairedChn[chn] && sample.nVolume < 256)
 						m.SetVolumeCommand(VOLCMD_VOLUME, 64);
-					
+
 					// If channel and sample type don't match, stop this channel (add 100 to the instrument number to make it understandable what happened during import)
 					if((sample.cues[0] == 1 && pairedChn[chn] != 0) || (sample.cues[0] == 0 && pairedChn[chn] == 0))
 					{
@@ -326,10 +326,10 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 	std::array<int8, 8> pairedChn{{}};
 	ORDERINDEX numOrders = 0;
 
-	InitializeGlobals(MOD_TYPE_OKT);
+	InitializeGlobals(MOD_TYPE_OKT, 0);
 
-	m_modFormat.formatName = U_("Oktalyzer");
-	m_modFormat.type = U_("okt");
+	m_modFormat.formatName = UL_("Oktalyzer");
+	m_modFormat.type = UL_("okt");
 	m_modFormat.charset = mpt::Charset::Amiga_no_C1;
 
 	// Go through IFF chunks...
@@ -347,20 +347,21 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 		{
 		case OktIffChunk::idCMOD:
 			// Channel setup table
-			if(m_nChannels == 0 && chunk.GetLength() >= 8)
+			if(GetNumChannels() == 0 && chunk.CanRead(8))
 			{
 				const auto chnTable = chunk.ReadArray<uint16be, 4>();
+				ChnSettings.reserve(8);
+				CHANNELINDEX realChn = 0;
 				for(CHANNELINDEX chn = 0; chn < 4; chn++)
 				{
 					if(chnTable[chn])
 					{
-						pairedChn[m_nChannels] = 1;
-						pairedChn[m_nChannels + 1] = -1;
-						ChnSettings[m_nChannels].Reset();
-						ChnSettings[m_nChannels++].nPan = (((chn & 3) == 1) || ((chn & 3) == 2)) ? 0xC0 : 0x40;
+						pairedChn[realChn++] = 1;
+						pairedChn[realChn] = -1;
+						ChnSettings.emplace_back().nPan = (((chn & 3) == 1) || ((chn & 3) == 2)) ? 0xC0 : 0x40;
 					}
-					ChnSettings[m_nChannels].Reset();
-					ChnSettings[m_nChannels++].nPan = (((chn & 3) == 1) || ((chn & 3) == 2)) ? 0xC0 : 0x40;
+					realChn++;
+					ChnSettings.emplace_back().nPan = (((chn & 3) == 1) || ((chn & 3) == 2)) ? 0xC0 : 0x40;
 				}
 
 				if(loadFlags == onlyVerifyHeader)
@@ -383,7 +384,7 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 			// Read default speed
 			if(chunk.GetLength() >= 2)
 			{
-				m_nDefaultSpeed = Clamp(chunk.ReadUint16BE(), uint16(1), uint16(255));
+				Order().SetDefaultSpeed(Clamp(chunk.ReadUint16BE(), uint16(1), uint16(255)));
 			}
 			break;
 
@@ -423,14 +424,15 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	// If there wasn't even a CMOD chunk, we can't really load this.
-	if(m_nChannels == 0)
+	if(GetNumChannels() == 0)
 		return false;
 
-	m_nDefaultTempo.Set(125);
+	Order().SetDefaultTempoInt(125);
 	m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 	m_nSamplePreAmp = m_nVSTiVolume = 48;
 	m_nMinPeriod = 113 * 4;
 	m_nMaxPeriod = 856 * 4;
+	m_SongFlags.set(SONG_FASTPORTAS);
 
 	// Fix orderlist
 	Order().resize(numOrders);
@@ -455,7 +457,6 @@ bool CSoundFile::ReadOKT(FileReader &file, ModLoadingFlags loadFlags)
 
 		ModSample &mptSample = Samples[smp];
 		const bool needCopy = mptSample.cues[1] != 0;
-		mptSample.SetDefaultCuePoints();
 		if(mptSample.nLength == 0)
 			continue;
 

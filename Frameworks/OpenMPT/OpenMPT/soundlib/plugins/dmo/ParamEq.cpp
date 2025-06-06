@@ -11,8 +11,8 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "ParamEq.h"
+#include "../../Sndfile.h"
 #include "mpt/base/numbers.hpp"
 #endif // !NO_PLUGINS
 
@@ -86,7 +86,7 @@ PlugParamValue ParamEq::GetParameter(PlugParamIndex index)
 }
 
 
-void ParamEq::SetParameter(PlugParamIndex index, PlugParamValue value)
+void ParamEq::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kEqNumParameters)
 	{

@@ -206,27 +206,25 @@ bool CSoundFile::ReadDSM(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	}
 
-	InitializeGlobals(MOD_TYPE_DSM);
+	InitializeGlobals(MOD_TYPE_DSM, std::max(songHeader.numChannels.get(), uint16(1)));
 
-	m_modFormat.formatName = U_("DSIK Format");
-	m_modFormat.type = U_("dsm");
+	m_modFormat.formatName = UL_("DSIK Format");
+	m_modFormat.type = UL_("dsm");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	m_songName = mpt::String::ReadBuf(mpt::String::maybeNullTerminated, songHeader.songName);
-	m_nChannels = std::max(songHeader.numChannels.get(), uint16(1));
-	m_nDefaultSpeed = songHeader.speed;
-	m_nDefaultTempo.Set(songHeader.bpm);
+	Order().SetDefaultSpeed(songHeader.speed);
+	Order().SetDefaultTempoInt(songHeader.bpm);
 	m_nDefaultGlobalVolume = std::min(songHeader.globalVol.get(), uint8(64)) * 4u;
 	if(!m_nDefaultGlobalVolume) m_nDefaultGlobalVolume = MAX_GLOBAL_VOLUME;
 	if(songHeader.mastervol == 0x80)
-		m_nSamplePreAmp = std::min(256u / m_nChannels, 128u);
+		m_nSamplePreAmp = std::min(256u / GetNumChannels(), 128u);
 	else
 		m_nSamplePreAmp = songHeader.mastervol & 0x7F;
 
 	// Read channel panning
-	for(CHANNELINDEX chn = 0; chn < 16; chn++)
+	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{
-		ChnSettings[chn].Reset();
 		if(songHeader.panPos[chn] <= 0x80)
 		{
 			ChnSettings[chn].nPan = songHeader.panPos[chn] * 2;
@@ -369,7 +367,7 @@ struct DSmFileHeader
 
 	uint32 GetHeaderMinimumAdditionalSize() const noexcept
 	{
-		return numChannels + numOrders + numSamples * sizeof(DSmSampleHeader);
+		return static_cast<uint32>(numChannels + numOrders + numSamples * sizeof(DSmSampleHeader));
 	}
 };
 
@@ -400,9 +398,8 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 	if(loadFlags == onlyVerifyHeader)
 		return true;
 
-	InitializeGlobals(MOD_TYPE_MOD);
+	InitializeGlobals(MOD_TYPE_MOD, fileHeader.numChannels);
 	m_SongFlags = SONG_IMPORTED;
-	m_nChannels = fileHeader.numChannels;
 	static_assert(MAX_BASECHANNELS >= 32 && MAX_SAMPLES > 255);
 	m_nSamples = fileHeader.numSamples;
 	m_nDefaultGlobalVolume = Util::muldivr_unsigned(fileHeader.globalVol, MAX_GLOBAL_VOLUME, 100);
@@ -410,9 +407,8 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.title);
 	m_songArtist = mpt::ToUnicode(mpt::Charset::CP437, mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.artist));
 
-	for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{
-		ChnSettings[chn].Reset();
 		ChnSettings[chn].nPan = (file.ReadUint8() & 0x0F) * 0x11;
 	}
 	
@@ -424,15 +420,15 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 	}
 	numPatterns++;
 
-	if(!file.CanRead((numPatterns * m_nChannels * 8) + (m_nSamples * sizeof(DSmSampleHeader)) + (numPatterns * m_nChannels * 64 * 4)))
+	if(!file.CanRead((numPatterns * GetNumChannels() * 8) + (m_nSamples * sizeof(DSmSampleHeader)) + (numPatterns * GetNumChannels() * 64 * 4)))
 		return false;
 
 	// Track names for each pattern - we only read the track names of the first pattern
-	for(CHANNELINDEX chn = 0; chn < m_nChannels; chn++)
+	for(CHANNELINDEX chn = 0; chn < GetNumChannels(); chn++)
 	{
 		ChnSettings[chn].szName = mpt::String::ReadBuf(mpt::String::spacePadded, file.ReadArray<char, 8>());
 	}
-	file.Skip((numPatterns - 1) * m_nChannels * 8);
+	file.Skip((numPatterns - 1) * GetNumChannels() * 8);
 
 	for(SAMPLEINDEX smp = 1; smp <= m_nSamples; smp++)
 	{
@@ -447,7 +443,7 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		if(!(loadFlags & loadPatternData) || !Patterns.Insert(pat, 64))
 		{
-			file.Skip(m_nChannels * 64 * 4);
+			file.Skip(GetNumChannels() * 64 * 4);
 			continue;
 		}
 		for(ModCommand &m : Patterns[pat])
@@ -499,8 +495,7 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 			{
 				// Offset + volume
 				m.command = CMD_OFFSET;
-				m.volcmd = VOLCMD_VOLUME;
-				m.vol = (data[2] & 0x0F) * 4 + 4;
+				m.SetVolumeCommand(VOLCMD_VOLUME, static_cast<ModCommand::VOL>((data[2] & 0x0F) * 4 + 4));
 			} else if(data[2] <= 0x0F || data[2] == 0x11 || data[2] == 0x12)
 			{
 				// 0x11 and 0x12 support the full 5-octave range, 0x01 and 0x02 presumably only the ProTracker 3-octave range
@@ -520,8 +515,8 @@ bool CSoundFile::ReadDSm(FileReader &file, ModLoadingFlags loadFlags)
 		}
 	}
 
-	m_modFormat.formatName = U_("Dynamic Studio");
-	m_modFormat.type = U_("dsm");
+	m_modFormat.formatName = UL_("Dynamic Studio");
+	m_modFormat.type = UL_("dsm");
 	m_modFormat.charset = mpt::Charset::CP437;
 
 	return true;

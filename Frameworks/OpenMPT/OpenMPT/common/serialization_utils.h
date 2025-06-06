@@ -60,7 +60,6 @@ enum class StatusLevel : uint8
 	Failure = 0x2,
 	Note    = 0x1,
 	None    = 0x0,
-	Max = 0xff,
 };
 
 enum class StatusMessages : uint32
@@ -89,8 +88,6 @@ enum class StatusMessages : uint32
 	SNW_INSUFFICIENT_DATASIZETYPE                = 0x00'10'00'00,
 
 	SNRW_BADGIVEN_STREAM                         = 0x01'00'00'00,
-
-	Max = 0xffffffff,
 };
 
 struct Status
@@ -149,6 +146,7 @@ enum Rwf
 	RwfRTwoBytesDescChar,	// Read. True if map description characters are two bytes.
 	RwfRHeaderIsRead,		// Read. True when header is read.
 	RwfRwHasMap,			// Read/write. True if map exists.
+
 	RwfNumFlags
 };
 

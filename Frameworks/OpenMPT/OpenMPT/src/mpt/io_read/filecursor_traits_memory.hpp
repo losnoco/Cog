@@ -11,6 +11,8 @@
 #include "mpt/io_read/filedata.hpp"
 #include "mpt/io_read/filedata_memory.hpp"
 
+#include <cstddef>
+
 
 
 namespace mpt {
@@ -47,7 +49,7 @@ public:
 	}
 
 	static value_data_type make_chunk(shared_data_type data, pos_type position, pos_type size) {
-		return mpt::as_span(data.GetRawData() + position, size);
+		return mpt::as_span(data.GetRawData() + static_cast<std::size_t>(position), static_cast<std::size_t>(size));
 	}
 };
 

@@ -11,9 +11,9 @@
 #include "stdafx.h"
 
 #ifndef NO_PLUGINS
-#include "../../Sndfile.h"
 #include "Gargle.h"
-#endif // !NO_PLUGINS
+#include "../../Sndfile.h"
+#endif  // !NO_PLUGINS
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -116,7 +116,7 @@ PlugParamValue Gargle::GetParameter(PlugParamIndex index)
 }
 
 
-void Gargle::SetParameter(PlugParamIndex index, PlugParamValue value)
+void Gargle::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kGargleNumParameters)
 	{

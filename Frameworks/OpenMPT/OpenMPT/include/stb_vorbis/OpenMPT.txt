@@ -3,6 +3,7 @@ https://github.com/nothings/stb/blob/master/stb_vorbis.c v1.22
 commit 5a0bb8b1c1b1ca3f4e2485f4114c1c8ea021b781 (2021-07-12)
 
 Modifications:
+ *  <https://github.com/nothings/stb/pull/1746> has been applied.
  *  Use of alloca has been replaced with malloc, as alloca is not in C99 and
     fails to compile.
  *  Macro redefinition of alloca with mingw-w64 has been fixed.
@@ -10,4 +11,3 @@ Modifications:
 
 For building, premake is used to generate Visual Studio project files.
 See ../build/premake/ for details.
-

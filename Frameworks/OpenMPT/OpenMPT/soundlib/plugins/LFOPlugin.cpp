@@ -18,6 +18,7 @@
 #include "../../mptrack/plugins/LFOPluginEditor.h"
 #endif // MODPLUG_TRACKER
 #include "mpt/base/numbers.hpp"
+#include "mpt/random/seed.hpp"
 
 OPENMPT_NAMESPACE_BEGIN
 
@@ -135,7 +136,7 @@ PlugParamValue LFOPlugin::GetParameter(PlugParamIndex index)
 }
 
 
-void LFOPlugin::SetParameter(PlugParamIndex index, PlugParamValue value)
+void LFOPlugin::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	ResetSilence();
 	value = mpt::safe_clamp(value, 0.0f, 1.0f);
@@ -195,19 +196,10 @@ void LFOPlugin::PositionChanged()
 }
 
 
-bool LFOPlugin::MidiSend(uint32 midiCode)
+bool LFOPlugin::MidiSend(mpt::const_byte_span midiData)
 {
 	if(IMixPlugin *plugin = GetOutputPlugin())
-		return plugin->MidiSend(midiCode);
-	else
-		return true;
-}
-
-
-bool LFOPlugin::MidiSysexSend(mpt::const_byte_span sysex)
-{
-	if(IMixPlugin *plugin = GetOutputPlugin())
-		return plugin->MidiSysexSend(sysex);
+		return plugin->MidiSend(midiData);
 	else
 		return true;
 }
@@ -342,7 +334,7 @@ void LFOPlugin::SetChunk(const ChunkData &chunk, bool)
 {
 	FileReader file(chunk);
 	PluginData data;
-	if(file.ReadStructPartial(data, file.BytesLeft())
+	if(file.ReadStructPartial(data, mpt::saturate_cast<std::size_t>(file.BytesLeft()))
 		&& !memcmp(data.magic, "LFO ", 4)
 		&& data.version == 0)
 	{

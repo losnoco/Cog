@@ -174,6 +174,12 @@ public:
 	T * operator->() {
 		return m_value.get();
 	}
+	const T * get() const {
+		return m_value.get();
+	}
+	T * get() {
+		return m_value.get();
+	}
 };
 
 

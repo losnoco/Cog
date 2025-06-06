@@ -2,7 +2,8 @@
  * Load_gt2.cpp
  * ------------
  * Purpose: Graoumf Tracker 1/2 module loader (GTK and GT2)
- * Notes  : DSPs (delay, filter) are currently not supported. They are kinda tricky because DSP to track assignments are established using pattern commands and can change at any time.
+ * Notes  : DSPs (delay, filter) are currently not supported.
+ *          They are kinda tricky because DSP to track assignments are established using pattern commands and can change at any time.
  * Authors: OpenMPT Devs
  * The OpenMPT source code is released under the BSD license. Read LICENSE for more details.
  */
@@ -204,7 +205,7 @@ static void TranslateGraoumfEffect(CSoundFile &sndFile, ModCommand &m, const uin
 		if(!m.IsNote() || !param)
 			break;
 		m.command = CMD_FINETUNE;
-		m.param = 0x80 + ((param & 0xF0) >> 1) - ((param & 0x0F) << 3);
+		m.param = static_cast<ModCommand::PARAM>(0x80 + ((param & 0xF0) >> 1) - ((param & 0x0F) << 3));
 		if(!sndFile.GetNumInstruments())
 		{
 			// Need instruments for correct pitch wheel depth
@@ -393,7 +394,7 @@ static void TranslateGraoumfEffect(CSoundFile &sndFile, ModCommand &m, const uin
 		break;
 	case 0xBA:  // BAxx: Fine Offset
 		m.command = CMD_OFFSET;
-		m.param = (m.param + 15u) / 16u;
+		m.param = static_cast<ModCommand::PARAM>((m.param + 15u) / 16u);
 		break;
 	case 0xBB:  // BBxx: Very Fine Offset
 		m.command = CMD_OFFSET;
@@ -459,8 +460,8 @@ static void TranslateGraoumfEffect(CSoundFile &sndFile, ModCommand &m, const uin
 						m.vol = 9;
 					} else
 					{
-						m.command = CMD_TONEPORTAMENTO;
-						m.param = 0xFF;
+						m.command = CMD_TONEPORTA_DURATION;
+						m.param = 0;
 					}
 				}
 			}
@@ -525,23 +526,21 @@ bool CSoundFile::ReadGTK(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	if(!fileHeader.Validate())
 		return false;
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(fileHeader.GetHeaderMinimumAdditionalSize())))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(fileHeader.GetHeaderMinimumAdditionalSize())))
 		return false;
 	if(loadFlags == onlyVerifyHeader)
 		return true;
 
 	// Globals
-	InitializeGlobals(MOD_TYPE_MPT);
-	InitializeChannels();
+	InitializeGlobals(MOD_TYPE_MPT, fileHeader.numChannels);
 	m_SongFlags.set(SONG_IMPORTED);
 	m_playBehaviour = GetDefaultPlaybackBehaviour(MOD_TYPE_IT);
 	m_playBehaviour.set(kApplyOffsetWithoutNote);
-	m_nChannels = fileHeader.numChannels;
 	SetupMODPanning(true);
 
-	m_modFormat.madeWithTracker = U_("Graoumf Tracker");
+	m_modFormat.madeWithTracker = UL_("Graoumf Tracker");
 	m_modFormat.formatName = MPT_UFORMAT("Graoumf Tracker v{}")(fileHeader.fileVersion);
-	m_modFormat.type = U_("gtk");
+	m_modFormat.type = UL_("gtk");
 	m_modFormat.charset = mpt::Charset::ISO8859_1_no_C1;
 
 	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
@@ -599,8 +598,8 @@ bool CSoundFile::ReadGTK(FileReader &file, ModLoadingFlags loadFlags)
 
 	Patterns.ResizeArray(numPatterns);
 	const uint8 eventSize = fileHeader.fileVersion < 4 ? 4 : 5;
-	TEMPO currentTempo = m_nDefaultTempo;
-	uint32 currentSpeed = m_nDefaultSpeed;
+	TEMPO currentTempo = Order().GetDefaultTempo();
+	uint32 currentSpeed = Order().GetDefaultSpeed();
 	for(PATTERNINDEX pat = 0; pat < numPatterns; pat++)
 	{
 		if(!(loadFlags & loadPatternData) || !file.CanRead(fileHeader.numRows * GetNumChannels() * eventSize) || !Patterns.Insert(pat, fileHeader.numRows))
@@ -967,7 +966,7 @@ struct GT2SampleV1
 		mptSmp.Initialize(MOD_TYPE_IT);
 		mptSmp.Set16BitCuePoints();
 
-		mptSmp.nGlobalVol = volume / 4u;
+		mptSmp.nGlobalVol = static_cast<uint16>(volume / 4u);
 		if(defaultPan > 0)
 		{
 			mptSmp.uFlags.set(CHN_PANNING);
@@ -1034,149 +1033,123 @@ struct GT2MixPresetTrack
 MPT_BINARY_STRUCT(GT2MixPresetTrack, 8)
 
 
-static EnvelopeNode::value_t ConvertGT2EnvelopeValue(const EnvelopeType envType, int32 value)
-{
-	if(envType == ENV_VOLUME)
-		value = Util::muldivr(value, ENVELOPE_MAX, 16384);
-	else if(envType == ENV_PANNING)
-		value = Util::muldivr(value, ENVELOPE_MAX, 4096);
-	else
-		value = mpt::saturate_round<int32>(mpt::log2(8192.0 / std::max(value, int32(1))) * 24.0 + (ENVELOPE_MID - 24));
-	return static_cast<EnvelopeNode::value_t>(Clamp(value, ENVELOPE_MIN, ENVELOPE_MAX));
-}
-
-static void ConvertGT2Envelope(ModInstrument &mptIns, const EnvelopeType envType, const uint16 envNum, std::vector<FileReader> &envChunks)
+static void ConvertGT2Envelope(InstrumentSynth &synth, const uint16 envNum, std::vector<FileReader> &envChunks)
 {
 	if(!envNum)
 		return;
-	auto &mptEnv = mptIns.GetEnvelope(envType);
 	for(auto &chunk : envChunks)
 	{
 		chunk.Rewind();
 		if(chunk.ReadUint16BE() != envNum)
 			continue;
 		chunk.Skip(20);  // Name
-		uint32 chunkOffset = 24;
-		const uint32 keyoffOffset = chunk.ReadUint16BE() + chunkOffset;
-		bool keyOffRequested = false, addSustainAtEnd = true;
+		const uint16 keyoffOffset = chunk.ReadUint16BE();
+		uint16 jumpOffset = 0;
 
-		int16 step = 0;
-		uint8 speed = 1;
-		uint8 counter = 0;
-		uint32 counterOffset = 0;  // Position of last encountered counter (to avoid infinite parsing loops)
-		int32 initValue = 16384;
-		if(envType == ENV_PITCH)
-			initValue = 4096;
-		else if(envType == ENV_PANNING)
-			initValue = 2048;
-		int32 value = initValue;
-
-		std::map<uint32, uint32> offsetToPoint;
-		mptEnv.assign(1, {0u, (envType == ENV_VOLUME) ? ENVELOPE_MAX : ENVELOPE_MID});
+		std::map<uint16, uint16> offsetToIndex;
+		auto &events = synth.m_scripts.emplace_back();
+		events.push_back(InstrumentSynth::Event::GTK_KeyOff(keyoffOffset));
 		while(chunk.CanRead(1))
 		{
-			offsetToPoint[static_cast<uint32>(chunk.GetPosition())] = mptEnv.size();
-			const uint8 command = chunk.ReadUint8();
-			if(command == 0)
+			const uint16 chunkPos = static_cast<uint16>(chunk.GetPosition() - 24);
+			if(!jumpOffset && chunkPos >= keyoffOffset)
 			{
-				if(keyoffOffset <= chunkOffset)
-					break;
-				keyOffRequested = true;
+				events.push_back(InstrumentSynth::Event::StopScript());
+				jumpOffset = keyoffOffset;
 			}
+
+			offsetToIndex[chunkPos] = static_cast<uint16>(events.size());
+			const uint8 command = chunk.ReadUint8();
 			switch(command)
 			{
+			case 0x00:  // 00: End
+				events.push_back(InstrumentSynth::Event::StopScript());
+				break;
 			case 0x01:  // 01: Unconditional Jump
-				if(!mptEnv.dwFlags[ENV_SUSTAIN])
-				{
-					mptEnv.nSustainStart = static_cast<decltype(mptEnv.nSustainStart)>(offsetToPoint[chunk.ReadUint16BE()]);
-					mptEnv.nSustainEnd = static_cast<decltype(mptEnv.nSustainEnd)>(mptEnv.size() - 1);
-					mptEnv.dwFlags.set(ENV_SUSTAIN);
-				}
+				events.push_back(InstrumentSynth::Event::Jump(jumpOffset + chunk.ReadUint16BE()));
 				break;
 			case 0x02:  // 02: Wait
-				{
-					uint16 delay = std::max(chunk.ReadUint16BE(), uint16(1));
-					value += step * speed * delay;
-					if(delay > 1)
-						mptEnv.emplace_back(mpt::saturate_cast<EnvelopeNode::tick_t>(mptEnv.back().tick + delay - 1u), ConvertGT2EnvelopeValue(envType, value));
-					mptEnv.emplace_back(mpt::saturate_cast<EnvelopeNode::tick_t>(mptEnv.back().tick + 1u), ConvertGT2EnvelopeValue(envType, value));
-				}
+				events.push_back(InstrumentSynth::Event::Delay(std::max(chunk.ReadUint16BE(), uint16(1)) - 1));
 				break;
 			case 0x03:  // 03: Set Counter
-				counter = chunk.ReadUint8();
-				counterOffset = static_cast<uint32>(chunk.GetPosition());
+				events.push_back(InstrumentSynth::Event::SetLoopCounter(std::max(chunk.ReadUint8(), uint8(1)) - 1, true));
 				break;
 			case 0x04:  // 04: Loop
-				if(const uint32 loopStart = chunk.ReadUint16BE() + chunkOffset; loopStart >= counterOffset && counter)
-				{
-					if(--counter)
-						chunk.Seek(loopStart);
-				} else if(counter)
-				{
-					// This is an infinite loop.
-					mptEnv.nLoopStart = static_cast<decltype(mptEnv.nLoopStart)>(offsetToPoint[loopStart]);
-					mptEnv.nLoopEnd = static_cast<decltype(mptEnv.nLoopEnd)>(mptEnv.size() - 1);
-					mptEnv.dwFlags.set(ENV_LOOP);
-				}
+				events.push_back(InstrumentSynth::Event::EvaluateLoopCounter(jumpOffset + chunk.ReadUint16BE()));
 				break;
 			case 0x05:  // 05: Key Off
-				keyOffRequested = true;
-				addSustainAtEnd = false;
+				events.push_back(InstrumentSynth::Event::Jump(keyoffOffset));
 				break;
 
 			case 0x80:  // 80: Set Volume (16384 = 100%, max = 32767)
+				events.push_back(InstrumentSynth::Event::GTK_SetVolume(chunk.ReadUint16BE()));
+				break;
 			case 0xA0:  // A0: Set Tone (4096 = normal period)
+				events.push_back(InstrumentSynth::Event::GTK_SetPitch(chunk.ReadUint16BE()));
+				break;
 			case 0xC0:  // C0: Set Panning (2048 = normal position)
-				value = chunk.ReadUint16BE();
-				mptEnv.back().value = ConvertGT2EnvelopeValue(envType, value);
+				events.push_back(InstrumentSynth::Event::GTK_SetPanning(chunk.ReadUint16BE()));
 				break;
 
 			case 0x81:  // 81: Set Volume step
+				events.push_back(InstrumentSynth::Event::GTK_SetVolumeStep(chunk.ReadInt16BE()));
+				break;
 			case 0xA1:  // A1: Set Tone step
+				events.push_back(InstrumentSynth::Event::GTK_SetPitchStep(chunk.ReadInt16BE()));
+				break;
 			case 0xC1:  // C1: Set Pan step
-				step = chunk.ReadInt16BE();
+				events.push_back(InstrumentSynth::Event::GTK_SetPanningStep(chunk.ReadInt16BE()));
 				break;
 			case 0x82:  // 82: Set Volume speed
 			case 0xA2:  // A2: Set Tone speed
 			case 0xC2:  // C2: Set Pan speed
-				speed = std::max(chunk.ReadUint8(), uint8(1));
+				events.push_back(InstrumentSynth::Event::GTK_SetSpeed(std::max(chunk.ReadUint8(), uint8(1))));
 				break;
 
-				// Various more complex features are not implemented as I couldn't find any actual GT2 modules using the envelope feature at all.
 			case 0x87:  // 87: Tremor On
+				events.push_back(InstrumentSynth::Event::GTK_EnableTremor(true));
+				break;
 			case 0x88:  // 88: Tremor Off
+				events.push_back(InstrumentSynth::Event::GTK_EnableTremor(false));
+				break;
+			case 0x89:  // 89: Set Tremor Time 1
+				events.push_back(InstrumentSynth::Event::GTK_SetTremorTime(std::max(chunk.ReadUint8(), uint8(1)), 0));
+				break;
+			case 0x8A:  // 8A: Set Tremor Time 2
+				events.push_back(InstrumentSynth::Event::GTK_SetTremorTime(0, std::max(chunk.ReadUint8(), uint8(1))));
+				break;
+
 			case 0x83:  // 83: Tremolo On
+				events.push_back(InstrumentSynth::Event::GTK_EnableTremolo(true));
+				break;
 			case 0x84:  // 84: Tremolo Off
-			case 0xA3:  // A3: Vibrato On
-			case 0xA4:  // A4: Vibrato Off
+				events.push_back(InstrumentSynth::Event::GTK_EnableTremolo(false));
 				break;
 			case 0x85:  // 85: Set Tremolo Width
+				events.push_back(InstrumentSynth::Event::GTK_SetVibratoParams(std::max(chunk.ReadUint8(), uint8(1)), 0));
+				break;
 			case 0x86:  // 86: Set Tremolo Speed
-			case 0x89:  // 89: Set Tremor Time 1
-			case 0x8A:  // 8A: Set Tremor Time 2
+				events.push_back(InstrumentSynth::Event::GTK_SetVibratoParams(0, std::max(chunk.ReadUint8(), uint8(1))));
+				break;
+
+			case 0xA3:  // A3: Vibrato On
+				events.push_back(InstrumentSynth::Event::GTK_EnableVibrato(true));
+				break;
+			case 0xA4:  // A4: Vibrato Off
+				events.push_back(InstrumentSynth::Event::GTK_EnableVibrato(false));
+				break;
 			case 0xA5:  // A5: Set Vibrato Width
+				events.push_back(InstrumentSynth::Event::GTK_SetVibratoParams(std::max(chunk.ReadUint8(), uint8(1)), 0));
+				break;
 			case 0xA6:  // A6: Set Vibrato Speed
-				chunk.Skip(1);
+				events.push_back(InstrumentSynth::Event::GTK_SetVibratoParams(0, std::max(chunk.ReadUint8(), uint8(1))));
 				break;
 			}
-
-			if(keyOffRequested && keyoffOffset > chunkOffset)
-			{
-				// Enter key-off section, but only if we can read more than just the expected end marker byte
-				chunkOffset = keyoffOffset;
-				if(!chunk.Seek(chunkOffset) || !chunk.CanRead(2))
-					break;
-				if(!mptEnv.dwFlags[ENV_SUSTAIN] && addSustainAtEnd)
-				{
-					mptEnv.nSustainStart = mptEnv.nSustainEnd = static_cast<decltype(mptEnv.nSustainEnd)>(mptEnv.size() - 1);
-					mptEnv.dwFlags.set(ENV_SUSTAIN);
-				}
-				value = initValue;
-				mptEnv.emplace_back(mpt::saturate_cast<EnvelopeNode::tick_t>(mptEnv.back().tick + 1u), ConvertGT2EnvelopeValue(envType, value));
-				mptEnv.nReleaseNode = mptEnv.nSustainEnd + 1;
-			}
 		}
-		mptEnv.dwFlags.set(ENV_ENABLED);
+		for(auto &event : events)
+		{
+			event.FixupJumpTarget(offsetToIndex);
+		}
 		break;
 	}
 }
@@ -1202,14 +1175,29 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 		return false;
 	if(!fileHeader.Validate())
 		return false;
-	if(!file.CanRead(mpt::saturate_cast<FileReader::off_t>(fileHeader.GetHeaderMinimumAdditionalSize())))
+	if(!file.CanRead(mpt::saturate_cast<FileReader::pos_type>(fileHeader.GetHeaderMinimumAdditionalSize())))
 		return false;
 	if(loadFlags == onlyVerifyHeader)
 		return true;
 
+	std::vector<uint16be> pannedTracks;
+	file.ReadVector(pannedTracks, fileHeader.numPannedTracks);
+
+	ChunkReader chunkFile(file);
+	auto chunks = chunkFile.ReadChunksUntil<GT2Chunk>(1, GT2Chunk::idENDC);
+
+	if(auto chunk = chunks.GetChunk(GT2Chunk::idPATS); chunk.CanRead(2))
+	{
+		if(uint16 channels = chunk.ReadUint16BE(); channels >= 1 && channels <= MAX_BASECHANNELS)
+			InitializeGlobals(MOD_TYPE_MPT, channels);
+		else
+			return false;
+	} else
+	{
+		return false;
+	}
+
 	// Globals
-	InitializeGlobals(MOD_TYPE_MPT);
-	InitializeChannels();
 	m_SongFlags.set(SONG_IMPORTED | SONG_EXFILTERRANGE);
 	m_playBehaviour = GetDefaultPlaybackBehaviour(MOD_TYPE_IT);
 	m_playBehaviour.set(kFT2ST3OffsetOutOfRange, fileHeader.fileVersion >= 6);
@@ -1221,44 +1209,28 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 	mptHistory.loadDate.year = fileHeader.year;
 	m_FileHistory.push_back(mptHistory);
 
-	m_nChannels = 32;
 	m_modFormat.madeWithTracker = mpt::ToUnicode(mpt::Charset::ASCII, mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.trackerName));
 	m_modFormat.formatName = (fileHeader.fileVersion <= 5 ? MPT_UFORMAT("Graoumf Tracker v{}") : MPT_UFORMAT("Graoumf Tracker 2 v{}"))(fileHeader.fileVersion);
-	m_modFormat.type = U_("gt2");
+	m_modFormat.type = UL_("gt2");
 	m_modFormat.charset = mpt::Charset::ISO8859_1_no_C1;
 
 	m_songName = mpt::String::ReadBuf(mpt::String::spacePadded, fileHeader.songName);
 
 	m_nSamplePreAmp = 256;
-	m_nDefaultGlobalVolume = 384 / (3 + m_nChannels);  // See documentation on command 5xxx
+	m_nDefaultGlobalVolume = 384 / (3 + GetNumChannels());  // See documentation on command 5xxx: Default linear master volume is 12288 / (3 + number of channels)
 
 	if(fileHeader.fileVersion <= 5)
 	{
-		m_nDefaultSpeed = std::max(fileHeader.speed.get(), uint16(1));
-		m_nDefaultTempo.Set(std::max(fileHeader.tempo.get(), uint16(1)));
+		Order().SetDefaultSpeed(std::max(fileHeader.speed.get(), uint16(1)));
+		Order().SetDefaultTempoInt(std::max(fileHeader.tempo.get(), uint16(1)));
 		m_nDefaultGlobalVolume = std::min(Util::muldivr_unsigned(fileHeader.masterVol, MAX_GLOBAL_VOLUME, 4095), uint32(MAX_GLOBAL_VOLUME));
-		uint16 tracks = fileHeader.numPannedTracks;
-		LimitMax(tracks, MAX_BASECHANNELS);
+		const CHANNELINDEX tracks = std::min(static_cast<CHANNELINDEX>(pannedTracks.size()), GetNumChannels());
 		for(CHANNELINDEX chn = 0; chn < tracks; chn++)
 		{
-			ChnSettings[chn].nPan = std::min(static_cast<uint16>(Util::muldivr_unsigned(file.ReadUint16BE(), 256, 4095)), uint16(256));
+			ChnSettings[chn].nPan = std::min(static_cast<uint16>(Util::muldivr_unsigned(pannedTracks[chn], 256, 4095)), uint16(256));
 		}
 	}
 	file.Seek(fileHeader.headerSize);
-
-	ChunkReader chunkFile(file);
-	auto chunks = chunkFile.ReadChunksUntil<GT2Chunk>(1, GT2Chunk::idENDC);
-
-	if(auto chunk = chunks.GetChunk(GT2Chunk::idPATS); chunk.CanRead(2))
-	{
-		if(uint16 channels = chunk.ReadUint16BE(); channels >= 1 && channels <= MAX_BASECHANNELS)
-			m_nChannels = channels;
-		else
-			return false;
-	} else
-	{
-		return false;
-	}
 
 	if(auto chunk = chunks.GetChunk(GT2Chunk::idSONG); chunk.CanRead(2))
 	{
@@ -1287,7 +1259,8 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 	{
 		// Only channel mute status is of interest here
 		uint32 muteStatus = chunk.ReadUint32BE();
-		for(CHANNELINDEX i = 0; i < 32; i++)
+		const CHANNELINDEX numChannels = std::min(GetNumChannels(), CHANNELINDEX(32));
+		for(CHANNELINDEX i = 0; i < numChannels; i++)
 		{
 			ChnSettings[i].dwFlags.set(CHN_MUTE, !(muteStatus & (1u << i)));
 		}
@@ -1296,8 +1269,8 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 	if(auto chunk = chunks.GetChunk(GT2Chunk::idTCN2); chunk.CanRead(12))
 	{
 		const auto [chunkVersion, bpmInt, bpmFract, speed, timeSigNum, timeSigDenum] = chunk.ReadArray<uint16be, 6>();
-		m_nDefaultTempo = TEMPO(Clamp<uint16, uint16>(bpmInt, 32, 999), Util::muldivr_unsigned(bpmFract, TEMPO::fractFact, 65536));
-		m_nDefaultSpeed = Clamp<uint16, uint16>(speed, 1, 255);
+		Order().SetDefaultTempo(TEMPO(Clamp<uint16, uint16>(bpmInt, 32, 999), Util::muldivr_unsigned(bpmFract, TEMPO::fractFact, 65536)));
+		Order().SetDefaultSpeed(Clamp<uint16, uint16>(speed, 1, 255));
 		m_nDefaultRowsPerBeat = 16 / Clamp<uint16, uint16>(timeSigDenum, 1, 16);
 		m_nDefaultRowsPerMeasure = m_nDefaultRowsPerBeat * Clamp<uint16, uint16>(timeSigNum, 1, 16);
 		if(chunkVersion >= 1)
@@ -1454,10 +1427,10 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 		if(instr.version == 0)
 		{
 			// Old "envelopes"
-			mptIns->nFadeOut = 0;
-			ConvertGT2Envelope(*mptIns, ENV_VOLUME, instr.volEnv, volEnvChunks);
-			ConvertGT2Envelope(*mptIns, ENV_PANNING, instr.panEnv, panEnvChunks);
-			ConvertGT2Envelope(*mptIns, ENV_PITCH, instr.toneEnv, pitchEnvChunks);
+			mptIns->nFadeOut = instr.volEnv ? 0 : 32768;
+			ConvertGT2Envelope(mptIns->synth, instr.volEnv, volEnvChunks);
+			ConvertGT2Envelope(mptIns->synth, instr.panEnv, panEnvChunks);
+			ConvertGT2Envelope(mptIns->synth, instr.toneEnv, pitchEnvChunks);
 		} else
 		{
 			GT2InstrumentExt instrExt;
@@ -1520,8 +1493,8 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 
 	auto patterns = chunks.GetAllChunks(GT2Chunk::idPATD);
 	Patterns.ResizeArray(static_cast<PATTERNINDEX>(patterns.size()));
-	TEMPO currentTempo = m_nDefaultTempo;
-	uint32 currentSpeed = m_nDefaultSpeed;
+	TEMPO currentTempo = Order().GetDefaultTempo();
+	uint32 currentSpeed = Order().GetDefaultSpeed();
 	for(auto &patChunk : patterns)
 	{
 		if(!(loadFlags & loadPatternData) || !patChunk.CanRead(24))
@@ -1578,7 +1551,7 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 		{
 			GT2TrackName trackName;
 			chunk.ReadStruct(trackName);
-			if(trackName.type == 0 && trackName.trackNumber < m_nChannels)
+			if(trackName.type == 0 && trackName.trackNumber < GetNumChannels())
 			{
 				ChnSettings[trackName.trackNumber].szName = mpt::String::ReadBuf(mpt::String::spacePadded, trackName.name);
 			}

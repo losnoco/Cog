@@ -739,6 +739,11 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 				case kControl:
 					control.Parse(key, value);
 					break;
+				case kNone:
+				case kCurve:
+				case kEffect:
+				case kUnknown:
+					break;
 				}
 			} else
 			{
@@ -896,7 +901,7 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 		if(region.ampEnv.release > 0)
 		{
 			const double tickDuration = m_PlayState.m_nSamplesPerTick / static_cast<double>(GetSampleRate());
-			pIns->nFadeOut = std::min(mpt::saturate_cast<uint32>(32768.0 * tickDuration / region.ampEnv.release), uint32(32767));
+			pIns->nFadeOut = std::min(mpt::saturate_trunc<uint32>(32768.0 * tickDuration / region.ampEnv.release), uint32(32767));
 			if(GetType() == MOD_TYPE_IT)
 				pIns->nFadeOut = std::min((pIns->nFadeOut + 16u) & ~31u, uint32(8192));
 		}
@@ -932,6 +937,10 @@ bool CSoundFile::ReadSFZInstrument(INSTRUMENTINDEX nInstr, FileReader &file)
 			case SFZRegion::LoopMode::kNoLoop:
 			case SFZRegion::LoopMode::kOneShot:
 				sample.uFlags.reset(CHN_LOOP | CHN_SUSTAINLOOP);
+				break;
+			case SFZRegion::LoopMode::kUnspecified:
+				MPT_ASSERT_NOTREACHED();
+				break;
 			}
 		}
 		if(region.loopEnd > region.loopStart)
@@ -1136,7 +1145,7 @@ bool CSoundFile::SaveSFZInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 	case TempoMode::Modern:
 		f << ", " << m_PlayState.m_nMusicSpeed << " ticks per row, " << m_PlayState.m_nCurrentRowsPerBeat << " rows per beat (modern tempo mode)";
 		break;
-	default:
+	case TempoMode::NumModes:
 		MPT_ASSERT_NOTREACHED();
 		break;
 	}

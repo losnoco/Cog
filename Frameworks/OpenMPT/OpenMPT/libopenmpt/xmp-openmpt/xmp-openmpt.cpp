@@ -42,10 +42,6 @@ static const char * xmp_openmpt_string = "OpenMPT (" OPENMPT_API_VERSION_STRING 
 static const char * xmp_openmpt_string = "OpenMPT (" OPENMPT_API_VERSION_STRING ")";
 #endif
 
-#define USE_XMPLAY_FILE_IO
-
-#define USE_XMPLAY_ISTREAM
-
 // XMPLAY expects a WINAPI (which is __stdcall) function using an undecorated symbol name which conflicts with the provided declaration.
 #if defined(__GNUC__)
 #define XMPIN_GetInterface XMPIN_GetInterface_Dummy
@@ -145,14 +141,11 @@ protected:
 	}
 public:
 	xmp_openmpt_settings()
-		: libopenmpt::plugin::settings(TEXT(SHORT_TITLE), false)
+		: libopenmpt::plugin::settings(TEXT(SHORT_TITLE), false, TEXT("XMPlay output format"))
 	{
 		return;
 	}
-	virtual ~xmp_openmpt_settings()
-	{
-		return;
-	}
+	virtual ~xmp_openmpt_settings() = default;
 };
 
 struct self_xmplay_t {
@@ -180,9 +173,6 @@ struct self_xmplay_t {
 			delete mod;
 			mod = 0;
 		}
-	}
-	~self_xmplay_t() {
-		return;
 	}
 };
 
@@ -504,45 +494,29 @@ static void WINAPI openmpt_About( HWND win ) {
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
-	about << std::endl;
-	about << "Show full credits?" << std::endl;
-	if ( MessageBox( win, StringToWINAPI( StringDecode( about.str(), CP_UTF8 ) ).c_str(), TEXT(SHORT_TITLE), MB_ICONINFORMATION | MB_YESNOCANCEL | MB_DEFBUTTON1 ) != IDYES ) {
-		return;
-	}
 	std::ostringstream credits;
 	credits << openmpt::string::get( "credits" );
 	credits << "Additional thanks to:" << std::endl;
 	credits << std::endl;
 	credits << "Arseny Kapoulkine for pugixml" << std::endl;
 	credits << "https://pugixml.org/" << std::endl;
-#if 1
-	libopenmpt::plugin::gui_show_file_info( win, TEXT(SHORT_TITLE), StringToWINAPI( StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ) );
-#else
-	MessageBox( win, StringToWINAPI( StringReplace( StringDecode( credits.str(), CP_UTF8 ), L"\n", L"\r\n" ) ).c_str(), TEXT(SHORT_TITLE), MB_OK );
-#endif
+	libopenmpt::plugin::gui_show_about( win, TEXT(SHORT_TITLE), StringReplace( StringToWINAPI( StringDecode( about.str(), CP_UTF8 ) ), TEXT("\n"), TEXT("\r\n") ), StringReplace( StringToWINAPI( StringDecode( credits.str(), CP_UTF8 ) ), TEXT("\n"), TEXT("\r\n") ) );
 }
 
 static void WINAPI openmpt_Config( HWND win ) {
-#if 1
 	libopenmpt::plugin::gui_edit_settings( &self->settings, win, TEXT(SHORT_TITLE) );
-#else
-	static_cast<void>(win);
-#endif
 	apply_and_save_options();
 }
-
-#ifdef USE_XMPLAY_FILE_IO
-
-#ifdef USE_XMPLAY_ISTREAM
 
 class xmplay_streambuf : public std::streambuf {
 public:
 	explicit xmplay_streambuf( XMPFILE & file );
 private:
+	xmplay_streambuf( const xmplay_streambuf & ) = delete;
+	xmplay_streambuf & operator = ( const xmplay_streambuf & ) = delete;
+protected:
 	int_type underflow() override;
-	xmplay_streambuf( const xmplay_streambuf & );
-	xmplay_streambuf & operator = ( const xmplay_streambuf & );
-private:
+protected:
 	XMPFILE & file;
 	static inline constexpr std::size_t put_back = 4096;
 	static inline constexpr std::size_t buf_size = 65536;
@@ -550,43 +524,116 @@ private:
 }; // class xmplay_streambuf
 
 xmplay_streambuf::xmplay_streambuf( XMPFILE & file_ ) : file(file_), buffer(buf_size) {
-	char * end = &buffer.front() + buffer.size();
-	setg( end, end, end );
+	setg( buffer.data(), buffer.data() + buffer.size(), buffer.data() + buffer.size() );
 }
 
 std::streambuf::int_type xmplay_streambuf::underflow() {
 	if ( gptr() < egptr() ) {
 		return traits_type::to_int_type( *gptr() );
 	}
-	char * base = &buffer.front();
-	char * start = base;
-	if ( eback() == base ) {
-		std::size_t put_back_count = std::min( put_back, static_cast<std::size_t>( egptr() - base ) );
-		std::memmove( base, egptr() - put_back_count, put_back_count );
-		start += put_back_count;
-	}
-	std::size_t n = xmpffile->Read( file, start, buffer.size() - ( start - base ) );
-	setg( base, start, start + n );
-	if ( n == 0 ) {
+	std::size_t put_back_count = std::min( put_back, static_cast<std::size_t>( egptr() - buffer.data() ) );
+	std::memmove( buffer.data(), egptr() - put_back_count, put_back_count );
+	std::size_t readcount = xmpffile->Read( file, buffer.data() + put_back_count, buffer.size() - put_back_count );
+	setg( buffer.data(), buffer.data() + put_back_count, buffer.data() + put_back_count + readcount );
+	if ( readcount == 0 ) {
 		return traits_type::eof();
 	}
 	return traits_type::to_int_type( *gptr() );
+}
+
+#include <fstream>
+class xmplay_streambuf_seekable : public xmplay_streambuf {
+public:
+	explicit xmplay_streambuf_seekable( XMPFILE & file );
+private:
+	xmplay_streambuf_seekable( const xmplay_streambuf_seekable & ) = delete;
+	xmplay_streambuf_seekable & operator = ( const xmplay_streambuf_seekable & ) = delete;
+private:
+	pos_type seekoff( off_type off, std::ios::seekdir dir, std::ios::openmode which ) override;
+	pos_type seekpos( pos_type pos, std::ios::openmode which ) override;
+}; // class xmplay_streambuf_seekable
+
+xmplay_streambuf_seekable::xmplay_streambuf_seekable( XMPFILE & file )
+	: xmplay_streambuf(file)
+{
+	return;
+}
+
+std::streambuf::pos_type xmplay_streambuf_seekable::seekoff( off_type off, std::ios::seekdir dir, std::ios::openmode which ) {
+	if ( !(which & std::ios::in) ) {
+		return pos_type(off_type(-1));
+	}
+	if ( (dir == std::ios::cur) && (off == 0) ) {
+		// shortcut without invalidating buffer
+		return xmpffile->Tell64( file ) - (egptr() - gptr());
+	}
+	if ( (dir == std::ios::beg) && (off == static_cast<std::int64_t>( xmpffile->Tell64( file ) ) - (egptr() - gptr())) ) {
+		// shortcut without invalidating buffer
+		return off;
+	}
+	switch ( dir ) {
+		case std::ios::beg:
+			if ( !xmpffile->Seek64( file, off ) ) {
+				return pos_type(off_type(-1));
+			}
+			break;
+		case std::ios::cur:
+			if ( !xmpffile->Seek64( file, xmpffile->Tell64( file ) - (egptr() - gptr()) + off ) ) {
+				return pos_type(off_type(-1));
+			}
+			break;
+		case std::ios::end:
+			if ( !xmpffile->Seek64( file, xmpffile->GetSize64( file ) + off ) ) {
+				return pos_type(off_type(-1));
+			}
+			break;
+		default:
+			return pos_type(off_type(-1));
+			break;
+	}
+	setg( buffer.data(), buffer.data() + buffer.size(), buffer.data() + buffer.size() );
+	return xmpffile->Tell64( file );
+}
+
+std::streambuf::pos_type xmplay_streambuf_seekable::seekpos( pos_type pos, std::ios::openmode which ) {
+	if ( !(which & std::ios::in) ) {
+		return pos_type(off_type(-1));
+	}
+	if ( pos == static_cast<std::int64_t>( xmpffile->Tell64( file ) - (egptr() - gptr()) ) ) {
+		// shortcut without invalidating buffer
+		return pos;
+	}
+	if ( !xmpffile->Seek64( file, pos ) ) {
+		return pos_type(off_type(-1));
+	}
+	setg( buffer.data(), buffer.data() + buffer.size(), buffer.data() + buffer.size() );
+	return xmpffile->Tell64( file );
 }
 
 class xmplay_istream : public std::istream {
 private:
 	xmplay_streambuf buf;
 private:
-	xmplay_istream( const xmplay_istream & );
-	xmplay_istream & operator = ( const xmplay_istream & );
+	xmplay_istream( const xmplay_istream & ) = delete;
+	xmplay_istream & operator = ( const xmplay_istream & ) = delete;
 public:
 	xmplay_istream( XMPFILE & file ) : std::istream(&buf), buf(file) {
 		return;
 	}
-	~xmplay_istream() {
+}; // class xmplay_istream
+
+class xmplay_istream_seekable : public std::istream {
+private:
+	xmplay_streambuf_seekable buf;
+private:
+	xmplay_istream_seekable( const xmplay_istream_seekable & ) = delete;
+	xmplay_istream_seekable & operator = ( const xmplay_istream_seekable & ) = delete;
+public:
+	xmplay_istream_seekable( XMPFILE & file ) : std::istream(&buf), buf(file) {
 		return;
 	}
-}; // class xmplay_istream
+}; // class xmplay_istream_seekable
+
 
 // Stream for memory-based files (required for could_open_probability)
 struct xmplay_membuf : std::streambuf {
@@ -603,25 +650,6 @@ struct xmplay_imemstream : virtual xmplay_membuf, std::istream {
 			return;
 	}
 };
-
-#else // !USE_XMPLAY_ISTREAM
-
-static std::vector<char> read_XMPFILE_vector( XMPFILE & file ) {
-	std::vector<char> data( xmpffile->GetSize( file ) );
-	if ( data.size() != xmpffile->Read( file, data.data(), data.size() ) ) {
-		return std::vector<char>();
-	}
-	return data;
-}
-
-static std::string read_XMPFILE_string( XMPFILE & file ) {
-	std::vector<char> data = read_XMPFILE_vector( file );
-	return std::string( data.begin(), data.end() );
-}
-
-#endif // USE_XMPLAY_ISTREAM
-
-#endif // USE_XMPLAY_FILE_IO
 
 static std::string string_replace( std::string str, const std::string & oldStr, const std::string & newStr ) {
 	std::size_t pos = 0;
@@ -842,40 +870,33 @@ static std::string sanitize_xmplay_multiline_string( const std::string & str ) {
 static BOOL WINAPI openmpt_CheckFile( const char * filename, XMPFILE file ) {
 	static_cast<void>( filename );
 	try {
-		#ifdef USE_XMPLAY_FILE_IO
-			#ifdef USE_XMPLAY_ISTREAM
-				switch ( xmpffile->GetType( file ) ) {
-					case XMPFILE_TYPE_MEMORY:
-						{
-							xmplay_imemstream s( reinterpret_cast<const char *>( xmpffile->GetMemory( file ) ), xmpffile->GetSize( file ) );
-							return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
-						}
-						break;
-					case XMPFILE_TYPE_FILE:
-					case XMPFILE_TYPE_NETFILE:
-					case XMPFILE_TYPE_NETSTREAM:
-					default:
-						{
-							xmplay_istream s( file );
-							return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
-						}
-						break;
-				}
-			#else
-				if ( xmpffile->GetType( file ) == XMPFILE_TYPE_MEMORY ) {
-					std::string data( reinterpret_cast<const char*>( xmpffile->GetMemory( file ) ), xmpffile->GetSize( file ) );
-					std::istringstream s( data );
-					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
-				} else {
-					std::string data = read_XMPFILE_string( file );
-					std::istringstream s(data);
+		switch ( xmpffile->GetType( file ) ) {
+			case XMPFILE_TYPE_MEMORY:
+				{
+					xmplay_imemstream s( reinterpret_cast<const char *>( xmpffile->GetMemory( file ) ), xmpffile->GetSize( file ) );
 					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
 				}
-			#endif
-		#else
-			std::ifstream s( filename, std::ios_base::binary );
-			return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
-		#endif
+				break;
+			case XMPFILE_TYPE_FILE:
+			case XMPFILE_TYPE_NETFILE:
+				{
+					if ( xmpfmisc->GetVersion() >= 0x03080200 ) {
+						xmplay_istream_seekable s( file );
+						return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+					} else {
+						xmplay_istream s( file );
+						return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+					}
+				}
+				break;
+			case XMPFILE_TYPE_NETSTREAM:
+			default:
+				{
+					xmplay_istream s( file );
+					return ( openmpt::probe_file_header( openmpt::probe_file_header_flags_default2, s ) == openmpt::probe_file_header_result_success ) ? TRUE : FALSE;
+				}
+				break;
+		}
 	} catch ( ... ) {
 		return FALSE;
 	}
@@ -891,40 +912,36 @@ static DWORD WINAPI openmpt_GetFileInfo( const char * filename, XMPFILE file, fl
 			{ "load.skip_plugins", "1" },
 			{ "load.skip_samples", "1" },
 		};
-		#ifdef USE_XMPLAY_FILE_IO
-			#ifdef USE_XMPLAY_ISTREAM
-				switch ( xmpffile->GetType( file ) ) {
-					case XMPFILE_TYPE_MEMORY:
-						{
-							openmpt::module mod( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
-							subsongs = build_xmplay_file_info( mod, length, tags );
-						}
-						break;
-					case XMPFILE_TYPE_FILE:
-					case XMPFILE_TYPE_NETFILE:
-					case XMPFILE_TYPE_NETSTREAM:
-					default:
-						{
-							xmplay_istream s( file );
-							openmpt::module mod( s, std::clog, ctls );
-							subsongs = build_xmplay_file_info( mod, length, tags );
-						}
-						break;
-				}
-			#else
-				if ( xmpffile->GetType( file ) == XMPFILE_TYPE_MEMORY ) {
+		switch ( xmpffile->GetType( file ) ) {
+			case XMPFILE_TYPE_MEMORY:
+				{
 					openmpt::module mod( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
 					subsongs = build_xmplay_file_info( mod, length, tags );
-				} else {
-					openmpt::module mod( read_XMPFILE_vector( file ), std::clog, ctls );
+				}
+				break;
+			case XMPFILE_TYPE_FILE:
+			case XMPFILE_TYPE_NETFILE:
+				{
+					if ( xmpfmisc->GetVersion() >= 0x03080200 ) {
+						xmplay_istream_seekable s( file );
+						openmpt::module mod( s, std::clog, ctls );
+						subsongs = build_xmplay_file_info( mod, length, tags );
+					} else {
+						xmplay_istream s( file );
+						openmpt::module mod( s, std::clog, ctls );
+						subsongs = build_xmplay_file_info( mod, length, tags );
+					}
+				}
+				break;
+			case XMPFILE_TYPE_NETSTREAM:
+			default:
+				{
+					xmplay_istream s( file );
+					openmpt::module mod( s, std::clog, ctls );
 					subsongs = build_xmplay_file_info( mod, length, tags );
 				}
-			#endif
-		#else
-			std::ifstream s( filename, std::ios_base::binary );
-			openmpt::module mod( s, std::clog, ctls );
-			subsongs = build_xmplay_file_info( mod, length, tags );
-#endif
+				break;
+		}
 	} catch ( ... ) {
 		if ( length ) *length = nullptr;
 		if ( tags ) *tags = nullptr;
@@ -945,32 +962,30 @@ static DWORD WINAPI openmpt_Open( const char * filename, XMPFILE file ) {
 			{ "play.at_end", "continue" },
 		};
 		self->delete_mod();
-		#ifdef USE_XMPLAY_FILE_IO
-			#ifdef USE_XMPLAY_ISTREAM
-				switch ( xmpffile->GetType( file ) ) {
-					case XMPFILE_TYPE_MEMORY:
-						self->mod = new openmpt::module_ext( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
-						break;
-					case XMPFILE_TYPE_FILE:
-					case XMPFILE_TYPE_NETFILE:
-					case XMPFILE_TYPE_NETSTREAM:
-					default:
-						{
-							xmplay_istream s( file );
-							self->mod = new openmpt::module_ext( s, std::clog, ctls );
-						}
-						break;
+		switch ( xmpffile->GetType( file ) ) {
+			case XMPFILE_TYPE_MEMORY:
+				self->mod = new openmpt::module_ext( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
+				break;
+			case XMPFILE_TYPE_FILE:
+			case XMPFILE_TYPE_NETFILE:
+				{
+					if ( xmpfmisc->GetVersion() >= 0x03080200 ) {
+						xmplay_istream_seekable s( file );
+						self->mod = new openmpt::module_ext( s, std::clog, ctls );
+					} else {
+						xmplay_istream s( file );
+						self->mod = new openmpt::module_ext( s, std::clog, ctls );
+					}
 				}
-			#else
-				if ( xmpffile->GetType( file ) == XMPFILE_TYPE_MEMORY ) {
-					self->mod = new openmpt::module_ext( xmpffile->GetMemory( file ), xmpffile->GetSize( file ), std::clog, ctls );
-				} else {
-					self->mod = new openmpt::module_ext( read_XMPFILE_vector( file ), std::clog, ctls );
+				break;
+			case XMPFILE_TYPE_NETSTREAM:
+			default:
+				{
+					xmplay_istream s( file );
+					self->mod = new openmpt::module_ext( s, std::clog, ctls );
 				}
-			#endif
-		#else
-			self->mod = new openmpt::module_ext( std::ifstream( filename, std::ios_base::binary ), std::clog, ctls );
-		#endif
+				break;
+		}
 		self->on_new_mod();
 		clear_current_timeinfo();
 		reset_timeinfos();
@@ -1677,11 +1692,6 @@ static void WINAPI VisButton( DWORD /* x */ , DWORD /* y */ ) {
 #endif
 
 static XMPIN xmpin = {
-#ifdef USE_XMPLAY_FILE_IO
-	0 |
-#else
-	XMPIN_FLAG_NOXMPFILE |
-#endif
 	XMPIN_FLAG_CONFIG | XMPIN_FLAG_LOOP,
 	xmp_openmpt_string,
 	nullptr, // "libopenmpt\0mptm/mptmz",

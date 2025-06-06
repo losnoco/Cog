@@ -33,8 +33,6 @@ public:
 	CPatternContainer &operator=(const CPatternContainer &other);
 	CPatternContainer &operator=(CPatternContainer &&other) noexcept;
 
-	// Empty and initialize all patterns.
-	void ClearPatterns();
 	// Delete all patterns.
 	void DestroyPatterns();
 	
@@ -91,6 +89,8 @@ public:
 	// Returns index of highest pattern with pattern named + 1.
 	PATTERNINDEX GetNumNamedPatterns() const noexcept;
 
+	// Number of patterns that can still be added, respecting the current format's limitations
+	PATTERNINDEX GetRemainingCapacity() const noexcept;
 
 private:
 	std::vector<CPattern> m_Patterns;

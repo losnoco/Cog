@@ -149,7 +149,7 @@ PlugParamValue Chorus::GetParameter(PlugParamIndex index)
 }
 
 
-void Chorus::SetParameter(PlugParamIndex index, PlugParamValue value)
+void Chorus::SetParameter(PlugParamIndex index, PlugParamValue value, PlayState *, CHANNELINDEX)
 {
 	if(index < kChorusNumParameters)
 	{

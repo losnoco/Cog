@@ -50,9 +50,9 @@ protected:
 
 	class DelayLine : private std::vector<float>
 	{
-		int32 m_length;
-		int32 m_position;
-		int32 m_delayPosition;
+		int32 m_length = 0;
+		int32 m_position = 0;
+		int32 m_delayPosition = 0;
 
 	public:
 		void Init(int32 ms, int32 padding, uint32 sampleRate, int32 delayTap = 0);
@@ -110,7 +110,7 @@ public:
 
 	PlugParamIndex GetNumParameters() const override { return kI3DL2ReverbNumParameters; }
 	PlugParamValue GetParameter(PlugParamIndex index) override;
-	void SetParameter(PlugParamIndex index, PlugParamValue value) override;
+	void SetParameter(PlugParamIndex index, PlugParamValue value, PlayState * = nullptr, CHANNELINDEX = CHANNELINDEX_INVALID) override;
 
 	void Resume() override;
 	void Suspend() override { m_isResumed = false; }
