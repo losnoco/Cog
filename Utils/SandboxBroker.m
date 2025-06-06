@@ -420,6 +420,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 }
 
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
+	if(!fileUrl) return NULL;
 	NSURL *folderUrl = [SandboxBroker urlWithoutFragment:fileUrl];
 	if(![folderUrl isFileURL]) return NULL;
 

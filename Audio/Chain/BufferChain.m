@@ -52,10 +52,14 @@
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
+	if(!url) {
+		DLog(@"Player attempted to play invalid file...");
+		return NO;
+	}
 	[self setStreamURL:url];
 	[self setUserInfo:userInfo];
 
-	if (![self buildChain]) {
+	if(![self buildChain]) {
 		DLog(@"Couldn't build processing chain...");
 		return NO;
 	}
