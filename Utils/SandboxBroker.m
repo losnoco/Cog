@@ -100,6 +100,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	if(![url isFileURL]) return url;
 
 	NSString *s = [url path];
+	if(!s) return NULL; // Cool, the resource no longer exists!
 
 	NSRange fragmentRange = [s rangeOfString:@"#"
 									 options:NSBackwardsSearch];
@@ -270,6 +271,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 	if(![fileUrl isFileURL]) return;
 
 	NSURL *url = [SandboxBroker urlWithoutFragment:fileUrl];
+	if(!url) return;
 
 	dispatch_async_reentrant(dispatch_get_main_queue(), ^{
 		SandboxEntry *_entry = nil;
@@ -422,7 +424,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 - (const void *)beginFolderAccess:(NSURL *)fileUrl {
 	if(!fileUrl) return NULL;
 	NSURL *folderUrl = [SandboxBroker urlWithoutFragment:fileUrl];
-	if(![folderUrl isFileURL]) return NULL;
+	if(!folderUrl || ![folderUrl isFileURL]) return NULL;
 
 	__block SandboxEntry *_entry = nil;
 
