@@ -21,6 +21,16 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @implementation PlaylistEntry (Extension)
 
+// The following is needed for handling any tag names with periods in them, as KVE wants to treat these as nested objects
+// Let's hack in U+2024 and hope nobody notices!
++ (NSString *)keyForMetaTag:(NSString *)tagName {
+	return [tagName stringByReplacingOccurrencesOfString:@"." withString:@"․"];
+}
+
++ (NSString *)metaTagForKey:(NSString *)key {
+	return [key stringByReplacingOccurrencesOfString:@"․" withString:@"."];
+}
+
 // The following read-only keys depend on the values of other properties
 
 + (NSSet *)keyPathsForValuesAffectingUrl {
@@ -523,7 +533,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		}
 		self.volume = 1;
 		for(NSString *key in metadata) {
-			NSString *lowerKey = [key lowercaseString];
+			NSString *tagName = [PlaylistEntry metaTagForKey:key];
+			NSString *lowerKey = [tagName lowercaseString];
 			id valueObj = [metadata objectForKey:key];
 			NSArray *values = nil;
 			NSString *firstValue = nil;
@@ -582,7 +593,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 			} else if([lowerKey isEqualToString:@"albumart"]) {
 				self.albumArt = dataValue;
 			} else {
-				[metaDict setObject:values forKey:lowerKey];
+				[metaDict setObject:values forKey:key];
 			}
 		}
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDict];
@@ -862,8 +873,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
 		NSDictionary *metaDict = (NSDictionary *)metaObj;
+		NSString *realKey = [PlaylistEntry keyForMetaTag:tagName];
 
-		NSArray *values = [metaDict objectForKey:tagName];
+		NSArray *values = [metaDict objectForKey:realKey];
 
 		if(values) {
 			return [values componentsJoinedByString:@", "];
@@ -883,8 +895,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
 		NSDictionary *metaDict = (NSDictionary *)metaObj;
 		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
+		NSString *realKey = [PlaylistEntry keyForMetaTag:tagName];
 
-		[metaDictCopy removeObjectForKey:tagName];
+		[metaDictCopy removeObjectForKey:realKey];
 
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
 	}
@@ -903,8 +916,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
 		NSDictionary *metaDict = (NSDictionary *)metaObj;
 		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
+		NSString *realKey = [PlaylistEntry keyForMetaTag:tagName];
 
-		[metaDictCopy setObject:values forKey:tagName];
+		[metaDictCopy setObject:values forKey:realKey];
 
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
 	}
@@ -916,8 +930,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
 		NSDictionary *metaDict = (NSDictionary *)metaObj;
 		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
+		NSString *realKey = [PlaylistEntry keyForMetaTag:tagName];
 
-		NSArray *values = [metaDictCopy objectForKey:tagName];
+		NSArray *values = [metaDictCopy objectForKey:realKey];
 		NSMutableArray *valuesCopy;
 		if(values) {
 			valuesCopy = [values mutableCopy];
@@ -926,7 +941,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		}
 		[valuesCopy addObject:value];
 		values = [NSArray arrayWithArray:valuesCopy];
-		[metaDictCopy setObject:values forKey:tagName];
+		[metaDictCopy setObject:values forKey:realKey];
 
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
 	}
