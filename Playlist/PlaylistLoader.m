@@ -349,6 +349,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
++ (NSString *)keyForPath:(NSString *)path {
+	return [path stringByReplacingOccurrencesOfString:@"." withString:@"%2E"];
+}
+
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
 	__block NSMutableSet *uniqueURLs = [NSMutableSet set];
 
@@ -396,7 +400,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:url];
 						NSArray *pathURLs = [self fileURLsAtPath:[url path]];
 						for(NSURL *url in pathURLs) {
-							[expandedURLs setValue:url forKey:[url absoluteString]];
+							[expandedURLs setValue:url forKey:[PlaylistLoader keyForPath:[url absoluteString]]];
 						}
 					} else if(addOtherFilesInFolder) {
 						NSURL *folderUrl = [url URLByDeletingLastPathComponent];
@@ -404,18 +408,18 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 							[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
 							NSArray *pathURLs = [self fileURLsAtPath:[folderUrl path]];
 							for(NSURL *url in pathURLs) {
-								[expandedURLs setValue:url forKey:[url absoluteString]];
+								[expandedURLs setValue:url forKey:[PlaylistLoader keyForPath:[url absoluteString]]];
 							}
 							[folderURLs addObject:folderUrl];
 						}
 					} else {
 						[[SandboxBroker sharedSandboxBroker] addFileIfMissing:url];
-						[expandedURLs setValue:url forKey:[url absoluteString]];
+						[expandedURLs setValue:url forKey:[PlaylistLoader keyForPath:[url absoluteString]]];
 					}
 				}
 			} else {
 				// Non-file URL..
-				[expandedURLs setValue:url forKey:[url absoluteString]];
+				[expandedURLs setValue:url forKey:[PlaylistLoader keyForPath:[url absoluteString]]];
 			}
 			
 			[pathTask finish];
