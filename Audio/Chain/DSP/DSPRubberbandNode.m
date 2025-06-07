@@ -363,6 +363,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 - (void)setEndOfStream:(BOOL)e {
 	if(endOfStream && !e) {
+		while(processEntered);
 		[self fullShutdown];
 	}
 	[super setEndOfStream:e];
