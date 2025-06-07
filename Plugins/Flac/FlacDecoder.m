@@ -181,10 +181,11 @@ FLAC__StreamDecoderWriteStatus WriteCallback(const FLAC__StreamDecoder *decoder,
 }
 
 static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *value) {
-	NSMutableArray *array = [dict valueForKey:tag];
+	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
+	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
 		array = [[NSMutableArray alloc] init];
-		[dict setObject:array forKey:tag];
+		[dict setObject:array forKey:realKey];
 	}
 	[array addObject:value];
 }
