@@ -392,7 +392,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	for(url in urls) {
 		id<SentrySpan> pathTask = [sandboxTask startChildWithOperation:@"Process one folder" description:[NSString stringWithFormat:@"Processing file or folder: %@", url]];
 		@try {
+			if(!url) continue;
 			if([url isFileURL]) {
+				if(![url path]) continue;
 				BOOL isDir;
 				if([[NSFileManager defaultManager] fileExistsAtPath:[url path] isDirectory:&isDir]) {
 					if(isDir == YES) {
@@ -419,6 +421,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 			} else {
 				// Non-file URL..
+				if(![url absoluteString]) continue;
 				[expandedURLs setValue:url forKey:[PlaylistLoader keyForPath:[url absoluteString]]];
 			}
 			
@@ -810,7 +813,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 - (void)loadInfoForEntries:(NSArray *)entries {
 	NSMutableDictionary *queueThisJob = [[NSMutableDictionary alloc] init];
 	for(PlaylistEntry *pe in entries) {
-		if(!pe || !pe.urlString || pe.deLeted || pe.metadataLoaded) continue;
+		if(!pe || !pe.urlString || ![pe.urlString length] || pe.deLeted || pe.metadataLoaded) continue;
 
 		NSString *path = pe.urlString;
 		NSMutableArray *entrySet = [queueThisJob objectForKey:path];
@@ -1160,7 +1163,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		NSMutableIndexSet *pruneSet = [[NSMutableIndexSet alloc] init];
 		NSUInteger index = 0;
 		for(PlaylistEntry *pe in resultsCopy) {
-			if(pe.deLeted || !pe.urlString || [pe.urlString length] < 1) {
+			if(pe.deLeted || !pe.urlString || ![pe.urlString length]) {
 				[pruneSet addIndex:index];
 				[moc deleteObject:pe];
 			}
