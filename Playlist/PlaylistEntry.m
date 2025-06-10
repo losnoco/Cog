@@ -399,7 +399,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	if(!path || ![path length]) {
-		return nil;
+		return [NSURL URLWithString:@"silence://10"];
 	}
 
 	NSRange protocolRange = [path rangeOfString:@"://"];
