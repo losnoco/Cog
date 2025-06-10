@@ -1147,7 +1147,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					EDBE8EF825E7E641001EB4A4 = {
 						CreatedOnToolsVersion = 12.5;
@@ -1320,6 +1320,7 @@
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1380,6 +1381,7 @@
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
