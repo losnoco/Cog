@@ -10,6 +10,8 @@
 
 #import "SandboxBroker.h"
 
+#import "Logging.h"
+
 @implementation FileSource
 
 + (void)initialize {
@@ -34,6 +36,10 @@
 	sbHandle = [sandboxBroker beginFolderAccess:url];
 
 	NSString *path = [url path];
+	if(!path) {
+		ALog(@"Invalid URL: %@", url);
+		return NO;
+	}
 
 	fex_type_t type;
 	fex_err_t error = fex_identify_file(&type, [path UTF8String]);
