@@ -686,7 +686,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					8DC2EF4F0486A6940098B216 = {
 						LastSwiftMigration = 1330;
@@ -881,7 +881,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -902,6 +901,7 @@
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
 			};
@@ -934,7 +934,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -950,6 +949,7 @@
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
