@@ -714,7 +714,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "CogAudio" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -929,6 +929,7 @@
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
 			};
@@ -976,6 +977,7 @@
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
