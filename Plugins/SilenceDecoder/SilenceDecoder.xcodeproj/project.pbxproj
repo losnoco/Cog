@@ -113,7 +113,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83F9D7E21A884B44007ABEC2 /* Build configuration list for PBXProject "SilenceDecoder" */;
@@ -213,6 +213,7 @@
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Debug;
 		};
@@ -265,6 +266,7 @@
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Release;
 		};
