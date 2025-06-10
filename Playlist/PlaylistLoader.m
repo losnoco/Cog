@@ -473,11 +473,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				id<SentrySpan> innerTask = nil;
 				NSURL *url = nil;
 				@try {
+					url = obj;
+
 					if(containerTask) {
 						pathTask = [containerTask startChildWithOperation:@"Process path as container" description:[NSString stringWithFormat:@"Checking if file is container: %@", url]];
 					}
-
-					url = obj;
 					[lock lock];
 					if([uniqueURLs containsObject:url]) {
 						[lock unlock];
