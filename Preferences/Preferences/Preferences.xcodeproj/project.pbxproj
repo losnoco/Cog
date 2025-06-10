@@ -409,7 +409,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "Preferences" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -683,6 +683,7 @@
 					dynamic_lookup,
 				);
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SYMROOT = ../../build;
 			};
 			name = Debug;
@@ -732,6 +733,7 @@
 					dynamic_lookup,
 				);
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SYMROOT = ../../build;
 			};
 			name = Release;
