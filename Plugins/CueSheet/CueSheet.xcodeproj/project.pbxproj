@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17DA346E0CC04FCD0003F6B2 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */; };
+		83D833AC2DF95A89009970AF /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D833AB2DF95A89009970AF /* CogAudio.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		8E8D42260CBB0F5800135C1B /* CueSheetContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42250CBB0F5800135C1B /* CueSheetContainer.m */; };
@@ -32,6 +33,7 @@
 		838EE8BB29A8600900CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		839DA7D0274A2EA9001B18E5 /* AudioMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioMetadataReader.h; path = ../../Audio/AudioMetadataReader.h; sourceTree = "<group>"; };
 		839DA7D3274A2FD4001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
+		83D833AB2DF95A89009970AF /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F0E6B5287CAB4100D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* CueSheet.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueSheet.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -53,6 +55,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+				83D833AC2DF95A89009970AF /* CogAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +119,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83D833AB2DF95A89009970AF /* CogAudio.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";

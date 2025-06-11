@@ -67,24 +67,29 @@
 	NSError *error = nil;
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	const void *sbHandle = [[sandboxBrokerClass sharedSandboxBroker] beginFolderAccess:[NSURL fileURLWithPath:filename]];
-	NSString *contents = [NSString stringWithContentsOfFile:filename usedEncoding:&encoding error:&error];
-	if(error) {
-		error = nil;
-		contents = [NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:&error];
+	NSFileHandle *file = [NSFileHandle fileHandleForReadingAtPath:filename];
+	NSData *data = nil;
+	NSString *contents = nil;
+	if(file) {
+		if(@available(macOS 10.15, *)) {
+			data = [file readDataToEndOfFileAndReturnError:&error];
+		} else {
+			data = [file readDataToEndOfFile];
+			if(!data)
+				error = [NSError errorWithDomain:NSPOSIXErrorDomain code:EIO userInfo:nil];
+		}
+	} else {
+		error = [NSError errorWithDomain:NSPOSIXErrorDomain code:ENOENT userInfo:nil];
 	}
-	if(error) {
-		error = nil;
-		contents = [NSString stringWithContentsOfFile:filename encoding:CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000) error:&error];
-	}
-	if(error) {
-		error = nil;
-		contents = [NSString stringWithContentsOfFile:filename encoding:NSWindowsCP1251StringEncoding error:&error];
-	}
-	if(error) {
-		error = nil;
-		contents = [NSString stringWithContentsOfFile:filename encoding:NSISOLatin1StringEncoding error:&error];
-	}
+	file = nil;
 	[[sandboxBrokerClass sharedSandboxBroker] endFolderAccess:sbHandle];
+	if(data) {
+		NSMutableData *terminatedData = [data mutableCopy];
+		const char z = '\0';
+		[terminatedData appendBytes:&z length:sizeof(z)];
+		contents = guess_encoding_of_string([terminatedData bytes]);
+	}
+
 	if(error || !contents) {
 		ALog(@"Could not open file...%@ %@ %@", filename, contents, error);
 		return;
