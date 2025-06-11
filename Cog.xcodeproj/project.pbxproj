@@ -103,6 +103,12 @@
 		8327DBA9293CAD2400CD0580 /* Organya.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8327DB94293C923500CD0580 /* Organya.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
+		833985602DF97F7700828A3B /* Cog26Play.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8339855F2DF97F7700828A3B /* Cog26Play.icon */; };
+		833985652DF97F8100828A3B /* Cog26PlayColorful.icon in Resources */ = {isa = PBXBuildFile; fileRef = 833985642DF97F8000828A3B /* Cog26PlayColorful.icon */; };
+		833985672DF97F8C00828A3B /* Cog26Pause.icon in Resources */ = {isa = PBXBuildFile; fileRef = 833985662DF97F8C00828A3B /* Cog26Pause.icon */; };
+		833985692DF97F9300828A3B /* Cog26PauseColorful.icon in Resources */ = {isa = PBXBuildFile; fileRef = 833985682DF97F9300828A3B /* Cog26PauseColorful.icon */; };
+		8339856B2DF97F9C00828A3B /* Cog26Stop.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8339856A2DF97F9C00828A3B /* Cog26Stop.icon */; };
+		8339856D2DF97FA300828A3B /* Cog26StopColorful.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8339856C2DF97FA300828A3B /* Cog26StopColorful.icon */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834B05EA2859C006000B7DC0 /* TotalTimeTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 834B05E92859C006000B7DC0 /* TotalTimeTransformer.m */; };
@@ -908,6 +914,12 @@
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+Visibility.m"; sourceTree = "<group>"; };
 		832CFC532851AA37002AC26F /* NSView+Visibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+Visibility.h"; sourceTree = "<group>"; };
+		8339855F2DF97F7700828A3B /* Cog26Play.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Cog26Play.icon; sourceTree = "<group>"; };
+		833985642DF97F8000828A3B /* Cog26PlayColorful.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Cog26PlayColorful.icon; sourceTree = "<group>"; };
+		833985662DF97F8C00828A3B /* Cog26Pause.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Cog26Pause.icon; sourceTree = "<group>"; };
+		833985682DF97F9300828A3B /* Cog26PauseColorful.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Cog26PauseColorful.icon; sourceTree = "<group>"; };
+		8339856A2DF97F9C00828A3B /* Cog26Stop.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Cog26Stop.icon; sourceTree = "<group>"; };
+		8339856C2DF97FA300828A3B /* Cog26StopColorful.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Cog26StopColorful.icon; sourceTree = "<group>"; };
 		833D0C2027C4ABA00060E16A /* ScriptAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptAdditions.h; sourceTree = "<group>"; };
 		833D0C2427C4ABB80060E16A /* ScriptAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptAdditions.m; sourceTree = "<group>"; };
 		833F681E1CDBCAA700AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1471,6 +1483,12 @@
 			isa = PBXGroup;
 			children = (
 				839C95792DF8E70900D007EB /* Cog26.icon */,
+				8339855F2DF97F7700828A3B /* Cog26Play.icon */,
+				833985642DF97F8000828A3B /* Cog26PlayColorful.icon */,
+				833985662DF97F8C00828A3B /* Cog26Pause.icon */,
+				833985682DF97F9300828A3B /* Cog26PauseColorful.icon */,
+				8339856A2DF97F9C00828A3B /* Cog26Stop.icon */,
+				8339856C2DF97FA300828A3B /* Cog26StopColorful.icon */,
 				0A1B412E286F6301008A6A44 /* Localizable.stringsdict */,
 				83D0380E24A40DF2004CF90F /* CogAssets.xcassets */,
 				83859520234FEB35004E9946 /* Cog.entitlements */,
@@ -2457,6 +2475,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8339856B2DF97F9C00828A3B /* Cog26Stop.icon in Resources */,
 				83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */,
 				83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */,
 				83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */,
@@ -2472,16 +2491,21 @@
 				839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */,
 				171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */,
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
+				833985692DF97F9300828A3B /* Cog26PauseColorful.icon in Resources */,
 				839C957A2DF8E70900D007EB /* Cog26.icon in Resources */,
 				839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */,
 				830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,
 				171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */,
+				833985652DF97F8100828A3B /* Cog26PlayColorful.icon in Resources */,
+				833985602DF97F7700828A3B /* Cog26Play.icon in Resources */,
 				17818A950C0B27AC001C4916 /* aiff.icns in Resources */,
 				17818A960C0B27AC001C4916 /* ape.icns in Resources */,
 				17818A970C0B27AC001C4916 /* m3u.icns in Resources */,
 				17818A980C0B27AC001C4916 /* mpc.icns in Resources */,
 				17818A990C0B27AC001C4916 /* shn.icns in Resources */,
+				8339856D2DF97FA300828A3B /* Cog26StopColorful.icon in Resources */,
+				833985672DF97F8C00828A3B /* Cog26Pause.icon in Resources */,
 				17818A9A0C0B27AC001C4916 /* wav.icns in Resources */,
 				17818A9B0C0B27AC001C4916 /* wv.icns in Resources */,
 				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
@@ -2950,6 +2974,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = Cog26;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -3019,6 +3044,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = Cog26;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
