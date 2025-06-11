@@ -63,7 +63,6 @@
 }
 
 - (void)parseFile:(NSString *)filename {
-	NSStringEncoding encoding;
 	NSError *error = nil;
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	const void *sbHandle = [[sandboxBrokerClass sharedSandboxBroker] beginFolderAccess:[NSURL fileURLWithPath:filename]];
