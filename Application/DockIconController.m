@@ -43,10 +43,18 @@ static NSString *CogCustomDockIconsReloadNotification = @"CogCustomDockIconsRelo
 }
 
 static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
-	if(colorfulIcons) {
-		return [baseName stringByAppendingString:@"Colorful"];
+	if(@available(macOS 26.0, *)) {
+		if(colorfulIcons) {
+			return [@"Cog26" stringByAppendingString:[baseName stringByAppendingString:@"Colorful"]];
+		} else {
+			return [@"Cog26" stringByAppendingString:baseName];
+		}
 	} else {
-		return [baseName stringByAppendingString:@"Normal"];
+		if(colorfulIcons) {
+			return [baseName stringByAppendingString:@"Colorful"];
+		} else {
+			return [baseName stringByAppendingString:@"Normal"];
+		}
 	}
 }
 
@@ -137,6 +145,11 @@ static NSString *getCustomIconName(NSString *baseName) {
 		drawIcon = YES;
 	}
 
+	BOOL glassIcons = NO;
+	if(@available(macOS 26.0, *)) {
+		glassIcons = YES;
+	}
+
 	NSDockTile *dockTile = [NSApp dockTile];
 
 	if(drawIcon) {
@@ -154,20 +167,30 @@ static NSString *getCustomIconName(NSString *baseName) {
 		}
 
 		NSSize badgeSize = [badgeImage size];
-
-		NSImage *newDockImage = (useCustomDockIcons && !useCustomDockIconsPlaque) ? [[NSImage alloc] initWithSize:NSMakeSize(1024, 1024)] : [dockImage copy];
-		[newDockImage lockFocus];
-
-		[badgeImage drawInRect:NSMakeRect(0, 0, 1024, 1024)
-		              fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
-		             operation:NSCompositingOperationSourceOver
-		              fraction:1.0];
-
-		[newDockImage unlockFocus];
-
-		imageView = [[NSImageView alloc] init];
-		[imageView setImage:newDockImage];
-		[dockTile setContentView:imageView];
+		
+		if(!glassIcons || useCustomDockIcons) {
+			NSImage *newDockImage = (useCustomDockIcons && !useCustomDockIconsPlaque) ? [[NSImage alloc] initWithSize:NSMakeSize(2048, 2048)] : [dockImage copy];
+			[newDockImage lockFocus];
+			
+			[badgeImage drawInRect:NSMakeRect(0, 0, 2048, 2048)
+						  fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
+						 operation:NSCompositingOperationSourceOver
+						  fraction:1.0];
+			
+			[newDockImage unlockFocus];
+			
+			imageView = [[NSImageView alloc] init];
+			[imageView setImage:newDockImage];
+			[dockTile setContentView:imageView];
+		} else {
+			if (@available(macOS 26.0, *)) {
+				glassView = [[NSGlassEffectContainerView alloc] initWithFrame:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)];
+			}
+			imageView = [[NSImageView alloc] init];
+			[imageView setImage:badgeImage];
+			[glassView setContentView:imageView];
+			[dockTile setContentView:glassView];
+		}
 
 		progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, dockTile.size.width, 10.0)];
 		[progressIndicator setStyle:NSProgressIndicatorStyleBar];
@@ -184,9 +207,19 @@ static NSString *getCustomIconName(NSString *baseName) {
 
 	if(displayProgress) {
 		if(!imageView) {
+			NSImage *dockImage = [NSApp applicationIconImage];
+			NSSize size = [dockImage size];
+			if(@available(macOS 26.0, *)) {
+				glassView = [[NSGlassEffectContainerView alloc] initWithFrame:NSMakeRect(0, 0, size.width, size.height)];
+			}
 			imageView = [[NSImageView alloc] init];
-			[imageView setImage:[NSApp applicationIconImage]];
-			[dockTile setContentView:imageView];
+			[imageView setImage:dockImage];
+			if(@available(macOS 26.0, *)) {
+				[glassView setContentView:imageView];
+				[dockTile setContentView:glassView];
+			} else {
+				[dockTile setContentView:imageView];
+			}
 		}
 
 		if(!progressIndicator) {
