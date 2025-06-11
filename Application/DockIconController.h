@@ -28,6 +28,8 @@
 
 	NSImageView *imageView;
 	NSProgressIndicator *progressIndicator;
+
+	NSGlassEffectContainerView *glassView API_AVAILABLE(macosx(26.0));
 }
 
 @end
