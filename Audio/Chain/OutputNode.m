@@ -176,7 +176,9 @@
 	Node *finalNode = nil;
 	if(rubberbandNode) {
 		finalNode = [[controller bufferChain] finalNode];
-		[rubberbandNode setPreviousNode:finalNode];
+		if(finalNode) {
+			[rubberbandNode setPreviousNode:finalNode];
+		}
 	}
 
 	return !!finalNode;
@@ -186,7 +188,9 @@
 	Node *finalNode = nil;
 	if(rubberbandNode) {
 		finalNode = [[controller bufferChain] finalNode];
-		[rubberbandNode setPreviousNode:finalNode];
+		if(finalNode) {
+			[rubberbandNode setPreviousNode:finalNode];
+		}
 	}
 
 	NSArray *DSPs = [self DSPs];
