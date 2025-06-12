@@ -982,6 +982,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	[fadedBuffers addObject:buffer];
 	[fadedBuffersLock unlock];
 	[outputLock unlock];
+	cutOffInput = NO;
 }
 
 - (void)fadeIn {
@@ -990,7 +991,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 125.0f);
 	fading = YES;
 	faded = NO;
-	cutOffInput = NO;
 }
 
 @end
