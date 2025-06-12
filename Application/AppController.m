@@ -669,7 +669,7 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@(44100) forKey:@"synthSampleRate"];
 
 	[userDefaultsValuesDict setObject:@NO forKey:@"alwaysStopAfterCurrent"];
-	[userDefaultsValuesDict setObject:@YES forKey:@"selectionFollowsPlayback"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"selectionFollowsPlayback"];
 
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
