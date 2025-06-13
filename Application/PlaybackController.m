@@ -379,6 +379,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (IBAction)seek:(id)sender {
+	if(![sender respondsToSelector:@selector(doubleValue)]) {
+		ALog(@"Someone sent [PlaybackController seek:] a non-seekbar object: %@", sender);
+		return;
+	}
+
 	double time = [sender doubleValue];
 
 	[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(time), nil];
