@@ -130,10 +130,8 @@ static VisualizationController *_sharedController = nil;
 
 	@synchronized(self) {
 		if(!sampleRate) {
-			bzero(outPCM, 4096 * sizeof(float));
-			if(outFFT) {
-				bzero(outFFT, 2048 * sizeof(float));
-			}
+			if(outPCM) bzero(outPCM, 4096 * sizeof(float));
+			if(outFFT) bzero(outFFT, 2048 * sizeof(float));
 			return;
 		}
 		int latencySamples = (int)(sampleRate * (self->latency + latency)) + 2048;
