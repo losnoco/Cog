@@ -148,7 +148,7 @@ void ddb_analyzer_tick(ddb_analyzer_t *analyzer) {
 			}
 
 			float bound = -analyzer->db_lower_bound;
-			float height = (20 * log10(norm_h) + bound) / bound;
+			float height = (norm_h + bound) / bound;
 
 			if(ch == 0) {
 				bar->height = height;
