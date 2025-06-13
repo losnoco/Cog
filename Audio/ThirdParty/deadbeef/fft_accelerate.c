@@ -24,17 +24,28 @@
 #include "fft.h"
 #include <Accelerate/Accelerate.h>
 
-static int _fft_size;
-static float *_input_real;
-static float *_input_imaginary;
-static float *_output_real;
-static float *_output_imaginary;
-static float *_hamming;
-static float *_sq_mags;
+// Some newer spectrum calculation methodology, adapted but not copied wholesale
+// Mostly about a dozen or two lines of Cocoa and vDSP code
 
-static vDSP_DFT_Setup _dft_setup;
+// AudioSpectrum: A sample app using Audio Unit and vDSP
+// By Keijiro Takahashi, 2013, 2014
+// https://github.com/keijiro/AudioSpectrum
+
+struct SpectrumData
+{
+	unsigned long length;
+	Float32 data[0];
+};
+
+static int _fft_size = 0;
+static vDSP_DFT_Setup _dftSetup = NULL;
+static DSPSplitComplex _dftBuffer = {0};
+static Float32 *_window = NULL;
+
+static struct SpectrumData *_rawSpectrum = NULL;
 
 // Apparently _mm_malloc is Intel-only on newer macOS targets, so use supported posix_memalign
+// malloc() is allegedly aligned on macOS, but I don't know for sure
 static void *_memalign_calloc(size_t count, size_t size, size_t align) {
 	size *= count;
 	void *ret = NULL;
@@ -50,57 +61,66 @@ _init_buffers(int fft_size) {
 	if(fft_size != _fft_size) {
 		fft_free();
 
-		_input_real = _memalign_calloc(fft_size * 2, sizeof(float), 16);
-		_input_imaginary = _memalign_calloc(fft_size * 2, sizeof(float), 16);
-		_hamming = _memalign_calloc(fft_size * 2, sizeof(float), 16);
-		_sq_mags = _memalign_calloc(fft_size, sizeof(float), 16);
-		_output_real = _memalign_calloc(fft_size * 2 + 1, sizeof(float), 16);
-		_output_imaginary = _memalign_calloc(fft_size * 2 + 1, sizeof(float), 16);
+		_dftSetup = vDSP_DFT_zrop_CreateSetup(NULL, fft_size * 2, vDSP_DFT_FORWARD);
 
-		_dft_setup = vDSP_DFT_zop_CreateSetup(NULL, fft_size * 2, FFT_FORWARD);
-		vDSP_hamm_window(_hamming, fft_size * 2, 0);
+		_dftBuffer.realp = _memalign_calloc(fft_size, sizeof(Float32), 16);
+		_dftBuffer.imagp = _memalign_calloc(fft_size, sizeof(Float32), 16);
+
+		_window = _memalign_calloc(fft_size * 2, sizeof(Float32), 16);
+		vDSP_blkman_window(_window, fft_size * 2, 0);
+
+		Float32 normFactor = 2.0f / (fft_size * 2);
+		vDSP_vsmul(_window, 1, &normFactor, _window, 1, fft_size * 2);
+
+		_rawSpectrum = (struct SpectrumData *) _memalign_calloc(sizeof(struct SpectrumData) + sizeof(Float32) * fft_size, 1, 16);
+		_rawSpectrum->length = fft_size;
 
 		_fft_size = fft_size;
 	}
 }
 
 void fft_calculate(const float *data, float *freq, int fft_size) {
-	int dft_size = fft_size * 2;
-
 	_init_buffers(fft_size);
 
-	vDSP_vmul(data, 1, _hamming, 1, _input_real, 1, dft_size);
+	// Split the waveform
+	DSPSplitComplex dest = { _dftBuffer.realp, _dftBuffer.imagp };
+	vDSP_ctoz((const DSPComplex*)data, 2, &dest, 1, fft_size);
 
-	vDSP_DFT_Execute(_dft_setup, _input_real, _input_imaginary, _output_real, _output_imaginary);
+	// Apply the window function
+	vDSP_vmul(_dftBuffer.realp, 1, _window, 2, _dftBuffer.realp, 1, fft_size);
+	vDSP_vmul(_dftBuffer.imagp, 1, _window + 1, 2, _dftBuffer.imagp, 1, fft_size);
 
-	DSPSplitComplex split_complex = {
-		.realp = _output_real,
-		.imagp = _output_imaginary
-	};
-	vDSP_zvmags(&split_complex, 1, _sq_mags, 1, fft_size);
+	// DFT
+	vDSP_DFT_Execute(_dftSetup, _dftBuffer.realp, _dftBuffer.imagp, _dftBuffer.realp, _dftBuffer.imagp);
 
-	int sq_count = fft_size;
-	vvsqrtf(_sq_mags, _sq_mags, &sq_count);
+	// Zero out the Nyquist value
+	_dftBuffer.imagp[0] = 0.0;
 
-	float mult = 2.f / fft_size;
-	vDSP_vsmul(_sq_mags, 1, &mult, freq, 1, fft_size);
+	// Calculate power spectrum
+	Float32 *rawSpectrum = _rawSpectrum->data;
+	vDSP_zvmags(&_dftBuffer, 1, rawSpectrum, 1, fft_size);
+
+	// Add -128dB offset to avoid log(0)
+	float kZeroOffset = 1.5849e-13;
+	vDSP_vsadd(rawSpectrum, 1, &kZeroOffset, rawSpectrum, 1, fft_size);
+
+	// Convert power to decibel
+	float kZeroDB = 0.70710678118f; // 1/sqrt(2)
+	vDSP_vdbcon(rawSpectrum, 1, &kZeroDB, rawSpectrum, 1, fft_size, 0);
+
+	cblas_scopy(fft_size, rawSpectrum, 1, freq, 1);
 }
 
 void fft_free(void) {
-	free(_input_real);
-	free(_input_imaginary);
-	free(_hamming);
-	free(_sq_mags);
-	free(_output_real);
-	free(_output_imaginary);
-	if(_dft_setup != NULL) {
-		vDSP_DFT_DestroySetup(_dft_setup);
+	free(_dftBuffer.realp);
+	free(_dftBuffer.imagp);
+	free(_window);
+	free(_rawSpectrum);
+	if(_dftSetup != NULL) {
+		vDSP_DFT_DestroySetup(_dftSetup);
 	}
-	_input_real = NULL;
-	_input_imaginary = NULL;
-	_hamming = NULL;
-	_sq_mags = NULL;
-	_dft_setup = NULL;
-	_output_real = NULL;
-	_output_imaginary = NULL;
+	_dftBuffer.realp = NULL;
+	_dftBuffer.imagp = NULL;
+	_window = NULL;
+	_rawSpectrum = NULL;
 }
