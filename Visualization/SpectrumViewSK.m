@@ -11,6 +11,8 @@
 
 #import <Metal/Metal.h>
 
+#import <Accelerate/Accelerate.h>
+
 #import "analyzer.h"
 
 #import "Logging.h"
@@ -416,16 +418,14 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	for(int i = 0; i < 11; ++i) {
 		float maxValue = 0.0;
 		float maxMax = 0.0;
-		for(int j = 0; j < maxBars; ++j) {
+		{
 			const int barBase = i * barStep;
-			const int barIndex = barBase + j;
-			if(barIndex < _draw_data.bar_count) {
-				if(bar[barIndex].bar_height > maxValue) {
-					maxValue = bar[barIndex].bar_height;
-				}
-				if(bar[barIndex].peak_ypos > maxMax) {
-					maxMax = bar[barIndex].peak_ypos;
-				}
+			const int barEnd = (barBase + maxBars) <= _draw_data.bar_count ? (barBase + maxBars) : _draw_data.bar_count;
+			{
+				const int stride = sizeof(ddb_analyzer_draw_bar_t) / sizeof(Float32);
+				const int barCount = barEnd - barBase + 1;
+				vDSP_maxv(&bar[barBase].bar_height, stride, &maxValue, barCount);
+				vDSP_maxv(&bar[barBase].peak_ypos, stride, &maxMax, barCount);
 			}
 		}
 		SCNNode *node = nodes[i + 1];
