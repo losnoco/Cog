@@ -111,7 +111,7 @@ void fft_calculate(const float *data, float *freq, int fft_size) {
 	cblas_scopy(fft_size, rawSpectrum, 1, freq, 1);
 }
 
-void fft_free(void) {
+void __attribute__((destructor)) fft_free(void) {
 	free(_dftBuffer.realp);
 	free(_dftBuffer.imagp);
 	free(_window);
