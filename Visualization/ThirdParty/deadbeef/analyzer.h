@@ -23,6 +23,8 @@
 #ifndef analyzer_h
 #define analyzer_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,6 +54,7 @@ typedef struct {
 	float xpos;
 	float peak_ypos;
 	float bar_height;
+	uint32_t unused;
 } ddb_analyzer_draw_bar_t;
 
 typedef struct {
