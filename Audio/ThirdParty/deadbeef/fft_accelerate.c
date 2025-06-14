@@ -123,4 +123,5 @@ void fft_free(void) {
 	_dftBuffer.imagp = NULL;
 	_window = NULL;
 	_rawSpectrum = NULL;
+	_dftSetup = NULL;
 }
