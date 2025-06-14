@@ -60,19 +60,24 @@ static void
 _init_buffers(int fft_size) {
 	if(fft_size != _fft_size) {
 		fft_free();
+		_fft_size = 0;
 
 		_dftSetup = vDSP_DFT_zrop_CreateSetup(NULL, fft_size * 2, vDSP_DFT_FORWARD);
+		if(!_dftSetup) return;
 
 		_dftBuffer.realp = _memalign_calloc(fft_size, sizeof(Float32), 16);
 		_dftBuffer.imagp = _memalign_calloc(fft_size, sizeof(Float32), 16);
+		if(!_dftBuffer.realp || !_dftBuffer.imagp) return;
 
 		_window = _memalign_calloc(fft_size * 2, sizeof(Float32), 16);
+		if(!_window) return;
 		vDSP_blkman_window(_window, fft_size * 2, 0);
 
 		Float32 normFactor = 2.0f / (fft_size * 2);
 		vDSP_vsmul(_window, 1, &normFactor, _window, 1, fft_size * 2);
 
 		_rawSpectrum = (struct SpectrumData *) _memalign_calloc(sizeof(struct SpectrumData) + sizeof(Float32) * fft_size, 1, 16);
+		if(!_rawSpectrum) return;
 		_rawSpectrum->length = fft_size;
 
 		_fft_size = fft_size;
@@ -80,7 +85,14 @@ _init_buffers(int fft_size) {
 }
 
 void fft_calculate(const float *data, float *freq, int fft_size) {
+	if(!freq || !fft_size) return;
 	_init_buffers(fft_size);
+	if(!_fft_size || !data) {
+		// Decibels
+		float kZeroLevel = -128.0;
+		vDSP_vfill(&kZeroLevel, freq, 1, fft_size);
+		return;
+	}
 
 	// Split the waveform
 	DSPSplitComplex dest = { _dftBuffer.realp, _dftBuffer.imagp };
