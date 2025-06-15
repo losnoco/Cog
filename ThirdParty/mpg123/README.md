@@ -1,4 +1,4 @@
-Built from the latest version indicated by Homebrew, 1.29.3, using the
+Built from the latest version indicated by Homebrew, 1.32.10, using the
 following commands:
 
 ```
