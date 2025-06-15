@@ -1079,8 +1079,10 @@ void CSoundFile::ResetChannels()
 	for(CHANNELINDEX channel = 0; channel < m_PlayState.Chn.size(); channel++)
 	{
 		ModChannel &chn = m_PlayState.Chn[channel];
+		chn.dwFlags.set(CHN_NOTEFADE);
 		chn.nROfs = chn.nLOfs = 0;
 		chn.nLength = 0;
+		chn.nFadeOutVol = 0;
 		if(chn.dwFlags[CHN_ADLIB] && m_opl)
 			m_opl->NoteCut(channel);
 	}
@@ -1225,6 +1227,7 @@ PlayBehaviourSet CSoundFile::GetSupportedPlaybackBehaviour(MODTYPE type)
 		playBehaviour.set(kITOffsetWithInstrNumber);
 		playBehaviour.set(kITDoublePortamentoSlides);
 		playBehaviour.set(kITCarryAfterNoteOff);
+		playBehaviour.set(kITNoteCutWithPorta);
 		break;
 
 	case MOD_TYPE_XM:

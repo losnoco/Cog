@@ -366,10 +366,17 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 				return false;
 			}
 #endif
+#if (MPG123_API_VERSION >= 49) && MPT_USE_MPG123_PORTABLE_API
+			if(mpg123_open_handle64(mh, &file))
+			{
+				return false;
+			}
+#else
 			if(mpg123_open_handle(mh, &file))
 			{
 				return false;
 			}
+#endif
 			if(mpg123_scan(mh))
 			{
 				return false;
@@ -456,10 +463,17 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 				return false;
 			}
 #endif
+#if (MPG123_API_VERSION >= 49) && MPT_USE_MPG123_PORTABLE_API
+			if(mpg123_open_handle64(mh, &file))
+			{
+				return false;
+			}
+#else
 			if(mpg123_open_handle(mh, &file))
 			{
 				return false;
 			}
+#endif
 			if(mpg123_scan(mh))
 			{
 				return false;
@@ -550,10 +564,17 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 		return false;
 	}
 #endif
+#if (MPG123_API_VERSION >= 49) && MPT_USE_MPG123_PORTABLE_API
+	if(mpg123_open_handle64(mh, &file))
+	{
+		return false;
+	}
+#else
 	if(mpg123_open_handle(mh, &file))
 	{
 		return false;
 	}
+#endif
 	if(mpg123_scan(mh))
 	{
 		return false;

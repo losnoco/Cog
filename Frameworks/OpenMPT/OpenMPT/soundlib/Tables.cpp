@@ -112,6 +112,7 @@ static constexpr ModFormatInfo modFormatInfo[] =
 	{ UL_("Scream Tracker Music Interface Kit"), "stx" },
 	{ UL_("Soundtracker Pro II"),                "stp" },
 	{ UL_("Symphonie"),                          "symmod"},
+	{ UL_("TCB Tracker"),                        "tcb" },
 	{ UL_("Game Music Creator"),                 "gmc" },
 	{ UL_("Graoumf Tracker"),                    "gtk" },
 	{ UL_("Graoumf Tracker 1 / 2"),              "gt2" },

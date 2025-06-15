@@ -222,7 +222,7 @@ uint32 ITInstrument::ConvertToIT(const ModInstrument &mptIns, bool compatExport,
 	std::vector<bool> smpCount(sndFile.GetNumSamples(), false);
 	for(int i = 0; i < 120; i++)
 	{
-		keyboard[i * 2] = (mptIns.NoteMap[i] >= NOTE_MIN && mptIns.NoteMap[i] <= NOTE_MAX) ? (mptIns.NoteMap[i] - NOTE_MIN) : static_cast<uint8>(i);
+		keyboard[i * 2] = (mptIns.NoteMap[i] >= NOTE_MIN && mptIns.NoteMap[i] <= NOTE_MIN + 119) ? (mptIns.NoteMap[i] - NOTE_MIN) : static_cast<uint8>(i);
 
 		const SAMPLEINDEX smp = mptIns.Keyboard[i];
 		if(smp < MAX_SAMPLES && smp < 256)

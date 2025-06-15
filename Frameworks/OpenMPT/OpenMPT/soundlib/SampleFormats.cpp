@@ -2427,7 +2427,8 @@ bool CSoundFile::SaveITIInstrument(INSTRUMENTINDEX nInstr, std::ostream &f, cons
 	// Create sample assignment table
 	std::vector<SAMPLEINDEX> smptable;
 	std::vector<uint8> smpmap(GetNumSamples(), 0);
-	for(size_t i = 0; i < NOTE_MAX; i++)
+	static_assert(NOTE_MAX >= 120);
+	for(size_t i = 0; i < 120; i++)
 	{
 		const SAMPLEINDEX smp = pIns->Keyboard[i];
 		if(smp && smp <= GetNumSamples())

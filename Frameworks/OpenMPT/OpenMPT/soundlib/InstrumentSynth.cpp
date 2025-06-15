@@ -205,13 +205,23 @@ void InstrumentSynth::States::NextTick(PlayState &playState, CHANNELINDEX channe
 	states.resize(scripts.size());
 	for(size_t i = 0; i < scripts.size(); i++)
 	{
+		auto &script = scripts[i];
 		auto &state = states[i];
 		if(chn.triggerNote)
 			mpt::reconstruct(state);
-		if(i == 1 && chn.rowCommand.command == CMD_MED_SYNTH_JUMP && chn.isFirstTick)
-			state.JumpToPosition(scripts[i], chn.rowCommand.param);
 
-		state.NextTick(scripts[i], playState, channel, sndFile, *this);
+		if(i == 1 && chn.rowCommand.command == CMD_MED_SYNTH_JUMP && chn.isFirstTick)
+		{
+			// Ugly special case: If the script didn't run yet (not triggered on same row), we need to run at least the first SetStepSpeed command.
+			if(state.m_nextRow == 0 && !script.empty() && script[0].type == Event::Type::SetStepSpeed)
+			{
+				state.EvaluateEvent(script[0], playState, channel, sndFile, *this);
+				state.m_stepsRemain = 0;
+			}
+			state.JumpToPosition(script, chn.rowCommand.param);
+		}
+
+		state.NextTick(script, playState, channel, sndFile, *this);
 	}
 }
 

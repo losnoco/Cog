@@ -183,7 +183,7 @@ bool CSoundFile::ReadTCB(FileReader &file, ModLoadingFlags loadFlags)
 	}
 
 	m_modFormat.formatName = newFormat ? UL_("TCB Tracker") : UL_("TCB Tracker (Beta Format)");
-	m_modFormat.type = UL_("mod");
+	m_modFormat.type = UL_("tcb");  // Official file extension is MOD (which is the only extension TCB Tracker accepts), but both ModLand and Fujiology use TCB instead, and this makes it easier to differentiate the format for library users...
 	m_modFormat.madeWithTracker = newFormat ? UL_("TCB Tracker 1.0 - 2.0") : UL_("TCB Tracker Beta");
 	m_modFormat.charset = mpt::Charset::AtariST;
 

@@ -6124,11 +6124,30 @@ void CSoundFile::DoFreqSlide(ModChannel &chn, int32 &period, int32 amount, bool 
 
 void CSoundFile::NoteCut(CHANNELINDEX nChn, uint32 nTick, bool cutSample)
 {
-	if (m_PlayState.m_nTickCount == nTick)
+	ModChannel &chn = m_PlayState.Chn[nChn];
+	auto tickCount = m_PlayState.m_nTickCount;
+
+	// IT compatibility: If there is a note and a tone portamento next to a Note Cut effect,
+	// the Note Cut is not executed - unless there is also a row delay effect and we are on the second repetition of the row.
+	// Test case: SCx-Reset.it
+	if(m_playBehaviour[kITNoteCutWithPorta] && chn.rowCommand.IsNote() && chn.rowCommand.IsTonePortamento())
 	{
-		ModChannel &chn = m_PlayState.Chn[nChn];
+		const uint32 rowLength = m_PlayState.m_nMusicSpeed + m_PlayState.m_nFrameDelay;
+		if(m_PlayState.m_nTickCount < rowLength)
+			return;
+		if(m_PlayState.m_nPatternDelay != 0 && m_PlayState.m_nTickCount >= rowLength)
+			tickCount %= rowLength;
+	}
+
+	if(tickCount == nTick)
+	{
 		if(cutSample)
 		{
+			// IT compatibility: Picking up a note after a Note Cut effect through a lone instrument number also restores the
+			// original note pitch without any portamento slides, as if there was a note.
+			// Test case: SCx-Reset.it
+			if(m_playBehaviour[kITNoteCutWithPorta])
+				chn.nPeriod = 0;
 			chn.increment.Set(0);
 			chn.nFadeOutVol = 0;
 			chn.dwFlags.set(CHN_NOTEFADE);
