@@ -45,26 +45,26 @@ inline constexpr uint32 DETERMINISTIC_RNG_SEED = 3141592653u; // pi
 
 
 template <typename T>
-struct default_radom_seed_hash {
+struct default_random_seed_hash {
 };
 
 template <>
-struct default_radom_seed_hash<uint8> {
+struct default_random_seed_hash<uint8> {
 	using type = mpt::crc16;
 };
 
 template <>
-struct default_radom_seed_hash<uint16> {
+struct default_random_seed_hash<uint16> {
 	using type = mpt::crc16;
 };
 
 template <>
-struct default_radom_seed_hash<uint32> {
+struct default_random_seed_hash<uint32> {
 	using type = mpt::crc32c;
 };
 
 template <>
-struct default_radom_seed_hash<uint64> {
+struct default_random_seed_hash<uint64> {
 	using type = mpt::crc64_jones;
 };
 
@@ -79,7 +79,7 @@ public:
 		// would be a hash function with proper avalanche characteristics or a block
 		// or stream cipher with any pre-choosen random key and IV. The only aspect we
 		// really need here is whitening of the bits.
-		typename mpt::default_radom_seed_hash<T>::type hash;
+		typename mpt::default_random_seed_hash<T>::type hash;
 
 #if !defined(MPT_LIBCXX_QUIRK_NO_CHRONO)
 		{

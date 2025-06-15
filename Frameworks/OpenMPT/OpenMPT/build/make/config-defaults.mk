@@ -55,6 +55,7 @@ MPT_COMPILER_NOALLOCAH=1
 
 else ifeq ($(HOST_FLAVOUR),HAIKU)
 
+NO_PULSEAUDIO?=1
 # In Haiku x86 32bit (but not 64bit),
 # modern compilers need a -x86 suffix.
 UNAME_P:=$(shell uname -p)

@@ -6,6 +6,7 @@
 
 
 #include "mpt/base/detect.hpp"
+#include "mpt/base/integer.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/random/engine.hpp"
 

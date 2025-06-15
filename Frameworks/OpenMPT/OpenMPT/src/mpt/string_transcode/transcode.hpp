@@ -1696,6 +1696,9 @@ inline Tdststring encode(logical_encoding encoding, const mpt::widestring & src)
 	switch (encoding) {
 		case logical_encoding::locale:
 #if defined(MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE)
+#if defined(MPT_LIBCXX_QUIRK_ASSUME_USER_LOCALE_UTF8)
+			return encode_utf8<Tdststring>(src);
+#else
 			try {
 				return encode_locale<Tdststring>(std::locale(""), src);
 			} catch (mpt::out_of_memory e) {
@@ -1718,6 +1721,7 @@ inline Tdststring encode(logical_encoding encoding, const mpt::widestring & src)
 				// nothing
 			}
 			return encode_ascii<Tdststring>(src);
+#endif
 #else
 			return encode_locale<Tdststring>(std::locale(""), src);
 #endif
@@ -1917,6 +1921,9 @@ inline mpt::widestring decode(logical_encoding encoding, const Tsrcstring & src)
 	switch (encoding) {
 		case logical_encoding::locale:
 #if defined(MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE)
+#if defined(MPT_LIBCXX_QUIRK_ASSUME_USER_LOCALE_UTF8)
+			return decode_utf8(src);
+#else
 			try {
 				return decode_locale(std::locale(""), src);
 			} catch (mpt::out_of_memory e) {
@@ -1939,12 +1946,13 @@ inline mpt::widestring decode(logical_encoding encoding, const Tsrcstring & src)
 				// nothing
 			}
 			return decode_ascii(src);
+#endif
 #else
 			return decode_locale(std::locale(""), src);
 #endif
 			break;
 		case logical_encoding::active_locale:
-#if defined(MPT_LIBCXX_QUIRK_BROKEN_USER_LOCALE)
+#if defined(MPT_LIBCXX_QUIRK_BROKEN_ACTIVE_LOCALE)
 			try {
 				return decode_locale(std::locale(), src);
 			} catch (mpt::out_of_memory e) {
