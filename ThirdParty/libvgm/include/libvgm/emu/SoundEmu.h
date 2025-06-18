@@ -10,14 +10,25 @@ extern "C"
 #include "EmuStructs.h"
 
 /**
- * @brief Retrieve a list of all available sound cores for a device.
+ * @brief Retrieve a list of all available sound cores for a device. Uses built-in sound devices.
+ *        [deprecated - use SndEmu_GetDevDecl instead]
  *
  * @param deviceID ID of the sound device (see DEVID_ constants in SoundDevs.h)
  * @return an array of DEV_DEF* that is terminated by a NULL pointer
  */
-const DEV_DEF** SndEmu_GetDevDefList(UINT8 deviceID);
+const DEV_DEF* const* SndEmu_GetDevDefList(DEV_ID deviceID);
 /**
- * @brief Initializes emulation for a sound device.
+ * @brief Return the device declaration of a sound device.
+ *        Devices in the user-specified device list take priority.
+ *
+ * @param deviceID ID of the sound device (see DEVID_ constants in SoundDevs.h)
+ * @param userDevList user-supplied sound device list, must be terminated with a NULL pointer, list can be NULL
+ * @param opts option flags, see EST_OPT constants
+ * @return pointer to device declaration or NULL if the device is not found
+ */
+const DEV_DECL* SndEmu_GetDevDecl(DEV_ID deviceID, const DEV_DECL** userDevList, UINT8 opts);
+/**
+ * @brief Initializes emulation for a sound device. Uses built-in sound devices.
  *
  * @param deviceID ID of the sound device to be emulated (see DEVID constants in SoundDevs.h)
  * @param cfg chip-dependent configuration structure, contains various settings
@@ -25,7 +36,20 @@ const DEV_DEF** SndEmu_GetDevDefList(UINT8 deviceID);
  *        caller has to free information about linkable devices
  * @return error code. 0 = success, see EERR constants
  */
-UINT8 SndEmu_Start(UINT8 deviceID, const DEV_GEN_CFG* cfg, DEV_INFO* retDevInf);
+UINT8 SndEmu_Start(DEV_ID deviceID, const DEV_GEN_CFG* cfg, DEV_INFO* retDevInf);
+/**
+ * @brief Initializes emulation for a sound device.
+ *        Devices in the user-specified device list take priority with fallback to the default list for missing cores.
+ *
+ * @param deviceID ID of the sound device to be emulated (see DEVID constants in SoundDevs.h)
+ * @param cfg chip-dependent configuration structure, contains various settings
+ * @param retDevInf pointer to DEV_INFO structure that gets filled with device information,
+ *        caller has to free information about linkable devices
+ * @param userDevList user-supplied sound device list, must be terminated with a NULL pointer, list can be NULL
+ * @param opts option flags, see EST_OPT constants
+ * @return error code. 0 = success, see EERR constants
+ */
+UINT8 SndEmu_Start2(DEV_ID deviceID, const DEV_GEN_CFG* cfg, DEV_INFO* retDevInf, const DEV_DECL** userDevList, UINT8 opts);
 /**
  * @brief Deinitializes the sound core.
  *
@@ -62,8 +86,14 @@ UINT8 SndEmu_GetDeviceFunc(const DEV_DEF* devInf, UINT8 funcType, UINT8 rwType, 
  *            ONLY used when long names are enabled
  * @return pointer to name of the device
  */
-const char* SndEmu_GetDevName(UINT8 deviceID, UINT8 opts, const DEV_GEN_CFG* devCfg);
+const char* SndEmu_GetDevName(DEV_ID deviceID, UINT8 opts, const DEV_GEN_CFG* devCfg);
 
+
+extern const DEV_DECL* sndEmu_Devices[];	// list of built-in sound devices, terminated by a NULL pointer
+
+
+#define EST_OPT_NO_DEFAULT	0x01	// SndEmu_Start option: don't use default built-in device list
+#define EST_OPT_STRICT_OVRD	0x02	// SndEmu_Start option: strict override (no fallback for missing cores)
 
 #define EERR_OK			0x00
 #define EERR_MORE_FOUND	0x01	// success, but more items were found

@@ -2,7 +2,7 @@
 #define __PLAYERBASE_HPP__
 
 #include "../stdtype.h"
-#include "../emu/EmuStructs.h"	// for DEV_GEN_CFG
+#include "../emu/EmuStructs.h"	// for DEV_DECL, DEV_GEN_CFG
 #include "../emu/Resampler.h"	// for WAVE_32BS
 #include "../utils/DataLoader.h"
 #include <vector>
@@ -61,11 +61,12 @@ struct PLR_SONG_INFO
 struct PLR_DEV_INFO
 {
 	UINT32 id;		// device ID
-	UINT8 type;		// device type
+	DEV_ID type;	// device type
 	UINT8 instance;	// instance ID of this device type (0xFF -> N/A for this format)
 	UINT16 volume;	// output volume (0x100 = 100%)
 	UINT32 core;	// FCC of device emulation core
 	UINT32 smplRate;	// current sample rate (0 if not running)
+	const DEV_DECL* devDecl;	// device declaration
 	const DEV_GEN_CFG* devCfg;	// device configuration parameters
 };
 
@@ -79,7 +80,7 @@ struct PLR_PAN_OPTS
 	INT16 chnPan[2][32];	// channel panning [TODO: rethink how this should be really configured]
 };
 
-#define PLR_DEV_ID(chip, instance)	(0x80000000 | (instance << 16) | (chip << 0))
+#define PLR_DEV_ID(chip, instance)	(0x80000000U | (instance << 16) | (chip << 0))
 
 struct PLR_DEV_OPTS
 {
@@ -90,6 +91,11 @@ struct PLR_DEV_OPTS
 	UINT32 coreOpts;
 	PLR_MUTE_OPTS muteOpts;
 	PLR_PAN_OPTS panOpts;
+};
+
+struct PLR_GEN_OPTS
+{
+	UINT32 pbSpeed; // playback speed (16.16 fixed point scale, 0x10000 = 100%)
 };
 
 
@@ -120,12 +126,14 @@ public:
 	virtual UINT8 SetDeviceMuting(UINT32 id, const PLR_MUTE_OPTS& muteOpts) = 0;
 	virtual UINT8 GetDeviceMuting(UINT32 id, PLR_MUTE_OPTS& muteOpts) const = 0;
 	// player-specific options
-	//virtual UINT8 SetPlayerOptions(const ###_PLAY_OPTIONS& playOpts) = 0;
-	//virtual UINT8 GetPlayerOptions(###_PLAY_OPTIONS& playOpts) const = 0;
+	//virtual UINT8 SetPlayerOptions(const PLR_GEN_OPTS& playOpts) = 0;
+	//virtual UINT8 GetPlayerOptions(PLR_GEN_OPTS& playOpts) const = 0;
 	
 	virtual UINT32 GetSampleRate(void) const;
 	virtual UINT8 SetSampleRate(UINT32 sampleRate);
+	virtual double GetPlaybackSpeed(void) const;
 	virtual UINT8 SetPlaybackSpeed(double speed);
+	virtual void SetUserDevices(const DEV_DECL** userDevList, UINT8 devStartOpts);
 	virtual void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	virtual void SetFileReqCallback(PLAYER_FILEREQ_CB cbFunc, void* cbParam);
 	virtual void SetLogCallback(PLAYER_LOG_CB cbFunc, void* cbParam);
@@ -149,6 +157,8 @@ public:
 	
 protected:
 	UINT32 _outSmplRate;
+	const DEV_DECL** _userDevList;
+	UINT8 _devStartOpts;
 	PLAYER_EVENT_CB _eventCbFunc;
 	void* _eventCbParam;
 	PLAYER_FILEREQ_CB _fileReqCbFunc;
