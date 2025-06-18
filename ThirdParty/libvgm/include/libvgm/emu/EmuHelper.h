@@ -39,6 +39,7 @@ INLINE void INIT_DEVINF(DEV_INFO* devInf, DEV_DATA* devData, UINT32 sampleRate, 
 	devInf->dataPtr = devData;
 	devInf->sampleRate = sampleRate;
 	devInf->devDef = devDef;
+	devInf->devDecl = NULL;
 	
 	devInf->linkDevCount = 0;
 	devInf->linkDevs = NULL;

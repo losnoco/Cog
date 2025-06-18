@@ -42,10 +42,10 @@ struct VGM_HEADER
 
 struct VGM_PLAY_OPTIONS
 {
+	PLR_GEN_OPTS genOpts;
 	UINT32 playbackHz;	// set to 60 (NTSC) or 50 (PAL) for region-specific song speed adjustment
 						// Note: requires VGM_HEADER.recordHz to be non-zero to work.
 	UINT8 hardStopOld;	// enforce silence at end of old VGMs (<1.50), fixes Key Off events being trimmed off
-	UINT32 playbackSpeedScale; // Set to 0x10000 for 1.0 speed, or 16.16 fixed point
 };
 
 
@@ -61,10 +61,12 @@ public:
 	{
 		VGM_BASEDEV base;
 		UINT8 vgmChipType;
-		UINT8 chipType;
+		DEV_ID chipType;
 		UINT8 chipID;
 		UINT32 flags;
 		size_t optID;
+		size_t cfgID;
+		DEVFUNC_READ_A8D8 read8;		// read 8-bit data from 8-bit register/offset (required by K007232)
 		DEVFUNC_WRITE_A8D8 write8;		// write 8-bit data to 8-bit register/offset
 		DEVFUNC_WRITE_A16D8 writeM8;	// write 8-bit data to 16-bit memory offset
 		DEVFUNC_WRITE_A8D16 writeD16;	// write 16-bit data to 8-bit register/offset
@@ -87,12 +89,6 @@ public:
 	};
 
 protected:
-	struct HDR_CHIP_DEF
-	{
-		UINT8 devType;
-		UINT16 volume;
-		UINT32 clock;
-	};
 	struct XHDR_DATA32
 	{
 		UINT8 type;
@@ -109,7 +105,7 @@ protected:
 	{
 		size_t deviceID;	// index for _devices array
 		UINT8 vgmChipType;
-		UINT8 type;
+		DEV_ID type;
 		UINT8 instance;
 		std::vector<UINT8> cfgData;
 	};
@@ -167,6 +163,7 @@ public:
 	
 	//UINT32 GetSampleRate(void) const;
 	UINT8 SetSampleRate(UINT32 sampleRate);
+	double GetPlaybackSpeed(void) const;
 	UINT8 SetPlaybackSpeed(double speed);
 	//void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	//void SetFileReqCallback(PLAYER_FILEREQ_CB cbFunc, void* cbParam);
@@ -262,7 +259,7 @@ protected:
 	void Cmd_SegaPCM_Mem(void);				// command C0 - SegaPCM memory write
 	void Cmd_RF5C_Mem(void);				// command C1/C2 - RF5C68/164 memory write
 	void Cmd_RF5C_Reg(void);				// command B0/B1 - RF5C68/164 register write
-	void Cmd_PWM_Reg(void);					// command B2 - PWM register write (4-bit offset, 12-bit data)
+	void Cmd_Ofs4_Data12(void);				// command B2/42 - PWM/K005289 register write (4-bit offset, 12-bit data)
 	void Cmd_QSound_Reg(void);				// command C4 - QSound register write (16-bit data, 8-bit offset)
 	static void WriteQSound_A(CHIP_DEVICE* cDev, UINT8 ofs, UINT16 data);	// write by calling write8
 	static void WriteQSound_B(CHIP_DEVICE* cDev, UINT8 ofs, UINT16 data);	// write by calling writeD16
@@ -271,6 +268,7 @@ protected:
 	void Cmd_YMW_Bank(void);				// command C3 - YMW258 bank write (Ofs8_Data16 with remapping)
 	void Cmd_SAA_Reg(void);					// command BD - SAA1099 register write (Reg8_Data8 with remapping)
 	void Cmd_OKIM6295_Reg(void);			// command B8 - OKIM6295 register write (Ofs8_Data8 with minor fixes)
+	void Cmd_K007232_Reg(void);				// command 41 - K007232 register write (Ofs8_Data8 with minor fixes)
 	void Cmd_AY_Stereo(void);				// command 30 - set AY8910 stereo mask
 	
 	CPCONV* _cpcUTF16;	// UTF-16 LE -> UTF-8 codepage conversion
@@ -278,12 +276,13 @@ protected:
 	DATA_LOADER *_dLoad;
 	const UINT8* _fileData;	// data pointer for quick access, equals _dLoad->GetFileData().data()
 	std::vector<UINT8> _yrwRom;	// cache for OPL4 sample ROM (yrw801.rom)
+	UINT8 _shownCmdWarnings[0x100];
 	
 	enum
 	{
 		_HDR_BUF_SIZE = 0x100,
-		_OPT_DEV_COUNT = 0x29,
-		_CHIP_COUNT = 0x29,
+		_OPT_DEV_COUNT = 0x2c,
+		_CHIP_COUNT = 0x2c,
 		_PCM_BANK_COUNT = 0x40
 	};
 	
@@ -319,17 +318,15 @@ protected:
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
 	UINT64 _ttMult;
-	UINT64 _ttDiv;
-
 	UINT64 _lastTsMult;
 	UINT64 _lastTsDiv;
 	
-	UINT32 _filePos;
-	UINT32 _fileTick;
-	UINT32 _playTick;
-	UINT32 _playSmpl;
-	UINT32 _curLoop;
-	UINT32 _lastLoopTick;
+	UINT32 _filePos;	// file offset of next command to parse
+	UINT32 _fileTick;	// tick time of next command to parse
+	UINT32 _playTick;	// tick time when last parsing was issued (up to 1 Render() call behind current position)
+	UINT32 _playSmpl;	// sample time
+	UINT32 _curLoop;	// current repetition, 0 = first playthrough, 1 = repeating 1st time
+	UINT32 _lastLoopTick;	// tick time of last loop, used for "0-sample-loop" detection
 	
 	UINT8 _playState;
 	UINT8 _psTrigger;	// used to temporarily trigger special commands
@@ -338,8 +335,8 @@ protected:
 	//PLAYER_FILEREQ_CB _fileReqCbFunc;
 	//void* _fileReqCbParam;
 	
-	static const UINT8 _OPT_DEV_LIST[_OPT_DEV_COUNT];	// list of configurable libvgm devices (different from VGM chip list]
-	static const UINT8 _DEV_LIST[_CHIP_COUNT];	// VGM chip ID -> libvgm device ID
+	static const DEV_ID _OPT_DEV_LIST[_OPT_DEV_COUNT];	// list of configurable libvgm devices (different from VGM chip list]
+	static const DEV_ID _DEV_LIST[_CHIP_COUNT];	// VGM chip ID -> libvgm device ID
 	static const UINT32 _CHIPCLK_OFS[_CHIP_COUNT];	// file offsets for chip clocks in VGM header
 	static const UINT16 _CHIP_VOLUME[_CHIP_COUNT];	// default volume for chips
 	static const UINT16 _PB_VOL_AMNT[_CHIP_COUNT];	// amount of the chip's playback volume in overall gain

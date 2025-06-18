@@ -10,6 +10,13 @@
 #define PLAYSTATE_FADE	0x10	// is fading
 #define PLAYSTATE_FIN	0x20	// finished playing (file end + fading + trailing silence)
 
+#define PLAYTIME_LOOP_EXCL	0x00	// excluding loops, jumps back in time when the file loops
+#define PLAYTIME_LOOP_INCL	0x01	// including loops, no jumping back
+#define PLAYTIME_TIME_FILE	0x00	// file time, progresses slower/faster when playback speed is adjusted
+#define PLAYTIME_TIME_PBK	0x02	// playback time, file duration will be longer/shorter when playback speed is adjusted
+#define PLAYTIME_WITH_FADE	0x10	// include fade out time (looping songs only)
+#define PLAYTIME_WITH_SLNC	0x20	// include silence after songs
+
 // TODO: find a proper name for this class
 class PlayerA
 {
@@ -54,8 +61,8 @@ public:
 	void SetLogCallback(PLAYER_LOG_CB cbFunc, void* cbParam);
 	UINT8 GetState(void) const;
 	UINT32 GetCurPos(UINT8 unit) const;
-	double GetCurTime(UINT8 includeLoops) const;
-	double GetTotalTime(UINT8 includeLoops) const;
+	double GetCurTime(UINT8 flags) const;
+	double GetTotalTime(UINT8 flags) const;
 	UINT32 GetCurLoop(void) const;
 	double GetLoopTime(void) const;
 	PlayerBase* GetPlayer(void);

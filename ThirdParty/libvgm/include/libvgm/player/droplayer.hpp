@@ -68,8 +68,8 @@ struct DRO_HEADER
 #define DRO_V2OPL3_ENFORCE	0x02	// always enforce OPL3 mode when the DRO says DualOPL2
 struct DRO_PLAY_OPTIONS
 {
+	PLR_GEN_OPTS genOpts;
 	UINT8 v2opl3Mode;	// DRO v2 DualOPL2 -> OPL3 fixes
-	UINT32 playbackSpeedScale; // Set to 0x10000 for 1.0 speed, or 16.16 fixed point
 };
 
 
@@ -113,6 +113,7 @@ public:
 	
 	//UINT32 GetSampleRate(void) const;
 	UINT8 SetSampleRate(UINT32 sampleRate);
+	double GetPlaybackSpeed(void) const;
 	UINT8 SetPlaybackSpeed(double speed);
 	//void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	UINT32 Tick2Sample(UINT32 ticks) const;
@@ -159,7 +160,7 @@ private:
 	const UINT8* _fileData;	// data pointer for quick access, equals _dLoad->GetFileData().data()
 	
 	DRO_HEADER _fileHdr;
-	std::vector<UINT8> _devTypes;
+	std::vector<DEV_ID> _devTypes;
 	std::vector<UINT8> _devPanning;
 	std::vector<DEV_GEN_CFG> _devCfgs;
 	UINT8 _realHwType;
@@ -178,7 +179,7 @@ private:
 	// tick/sample conversion rates
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
-
+	UINT64 _ttMult;
 	UINT64 _lastTsMult;
 	UINT64 _lastTsDiv;
 	

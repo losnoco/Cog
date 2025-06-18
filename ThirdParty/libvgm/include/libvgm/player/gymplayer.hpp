@@ -39,7 +39,7 @@ struct GYM_HEADER
 
 struct GYM_PLAY_OPTIONS
 {
-	UINT32 playbackSpeedScale; // Set to 0x10000 for 1.0 speed, or 16.16 fixed point
+	PLR_GEN_OPTS genOpts;
 };
 
 
@@ -48,7 +48,7 @@ class GYMPlayer : public PlayerBase
 private:
 	struct DevCfg
 	{
-		UINT8 type;
+		DEV_ID type;
 		UINT16 volume;
 		std::vector<UINT8> data;
 	};
@@ -89,6 +89,7 @@ public:
 	
 	//UINT32 GetSampleRate(void) const;
 	UINT8 SetSampleRate(UINT32 sampleRate);
+	double GetPlaybackSpeed(void) const;
 	UINT8 SetPlaybackSpeed(double speed);
 	//void SetEventCallback(PLAYER_EVENT_CB cbFunc, void* cbParam);
 	UINT32 Tick2Sample(UINT32 ticks) const;
@@ -159,7 +160,7 @@ private:
 	// tick/sample conversion rates
 	UINT64 _tsMult;
 	UINT64 _tsDiv;
-	
+	UINT64 _ttMult;
 	UINT64 _lastTsMult;
 	UINT64 _lastTsDiv;
 	

@@ -2,7 +2,7 @@
 #define __COMMON_DEF_H__
 
 #include "stdtype.h"
-#include "stdbool.h"
+#include "_stdbool.h"
 
 #ifndef INLINE
 #if defined(_MSC_VER)

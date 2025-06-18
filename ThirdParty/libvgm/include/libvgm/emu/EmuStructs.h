@@ -6,13 +6,24 @@ extern "C"
 {
 #endif
 
+#ifdef _MSC_VER
+#pragma warning (disable: 4200)	// disable warning for "T arr[];" in structs
+#endif
+
 #include "../stdtype.h"
 #include "snddef.h"
 
-typedef struct _device_definition DEV_DEF;
+typedef UINT8 DEV_ID;
+typedef struct _device_core_definition DEV_DEF;
+typedef struct _device_declaration DEV_DECL;
 typedef struct _device_info DEV_INFO;
 typedef struct _device_generic_config DEV_GEN_CFG;
 typedef struct _device_link_info DEVLINK_INFO;
+
+
+typedef const char* (*DEVDECLFUNC_NAME)(const DEV_GEN_CFG* devCfg);
+typedef UINT16 (*DEVDECLFUNC_CHNCOUNT)(const DEV_GEN_CFG* devCfg);
+typedef const char** (*DEVDECLFUNC_CHNNAMES)(const DEV_GEN_CFG* devCfg);
 
 
 typedef void (*DEVCB_SRATE_CHG)(void* userParam, UINT32 newSRate);
@@ -24,7 +35,7 @@ typedef void (*DEVFUNC_UPDATE)(void* info, UINT32 samples, DEV_SMPL** outputs);
 typedef void (*DEVFUNC_OPTMASK)(void* info, UINT32 optionBits);
 typedef void (*DEVFUNC_PANALL)(void* info, const INT16* channelPanVal);
 typedef void (*DEVFUNC_SRCCB)(void* info, DEVCB_SRATE_CHG SmpRateChgCallback, void* paramPtr);
-typedef UINT8 (*DEVFUNC_LINKDEV)(void* info, UINT8 devID, const DEV_INFO* devInfLink);
+typedef UINT8 (*DEVFUNC_LINKDEV)(void* info, UINT8 linkID, const DEV_INFO* devInfLink);
 typedef void (*DEVFUNC_SETLOGCB)(void* info, DEVCB_LOG logFunc, void* userParam);
 
 typedef UINT8 (*DEVFUNC_READ_A8D8)(void* info, UINT8 addr);
@@ -85,7 +96,7 @@ typedef struct _devdef_readwrite_function
 	void* funcPtr;
 } DEVDEF_RWFUNC;
 
-struct _device_definition
+struct _device_core_definition
 {
 	const char* name;	// name of the device
 	const char* author;	// author/origin of emulation
@@ -106,18 +117,27 @@ struct _device_definition
 	
 	const DEVDEF_RWFUNC* rwFuncs;	// terminated by (funcPtr == NULL)
 };	// DEV_DEF
+struct _device_declaration
+{
+	DEV_ID deviceID;				// device ID (DEVID_ constant), for device enumeration
+	DEVDECLFUNC_NAME name;			// return name of the device
+	DEVDECLFUNC_CHNCOUNT channelCount;	// return number of channels (for muting / panning)
+	DEVDECLFUNC_CHNNAMES channelNames;	// return list of names for each channel or NULL (no special channel names)
+	const DEV_DEF* cores[];			// list of supported sound cores, terminated by NULL pointer
+};	// DEV_DECL
 struct _device_info
 {
-	DEV_DATA* dataPtr;	// points to chip data structure
-	UINT32 sampleRate;
-	const DEV_DEF* devDef;
+	DEV_DATA* dataPtr;		// points to chip data structure
+	UINT32 sampleRate;		// sample rate of the Update() function
+	const DEV_DEF* devDef;	// points to device definition
+	const DEV_DECL* devDecl;	// points to device declaration (will be NULL when calling DEV_DEV::Start() directly)
 	
 	UINT32 linkDevCount;	// number of link-able devices
 	DEVLINK_INFO* linkDevs;	// [freed by caller]
 };	// DEV_INFO
 struct _device_link_info
 {
-	UINT8 devID;		// device ID (DEVID_ constant)
+	DEV_ID devID;		// device ID (DEVID_ constant)
 	UINT8 linkID;		// device link ID
 	DEV_GEN_CFG* cfg;	// pointer to DEV_GEN_CFG structures and derivates [freed by caller]
 };	// DEVLINK_INFO

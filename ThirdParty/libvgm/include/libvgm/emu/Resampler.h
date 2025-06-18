@@ -10,24 +10,28 @@ extern "C"
 #include "snddef.h"	// for DEV_SMPL
 #include "EmuStructs.h"
 
-typedef struct _waveform_32bit_stereo
+typedef struct _waveform_32bit_stereo WAVE_32BS;
+typedef struct _resampling_state RESMPL_STATE;
+
+typedef void (*RESAMPLER_FUNC)(RESMPL_STATE* CAA, UINT32 length, WAVE_32BS* retSample);
+
+struct _waveform_32bit_stereo
 {
 	DEV_SMPL L;
 	DEV_SMPL R;
-} WAVE_32BS;
-typedef struct _resampling_state
+};
+// Resampler Modes
+#define RSMODE_LINEAR	0x00	// linear interpolation (good quality)
+#define RSMODE_NEAREST	0x01	// nearest-neighbour (low quality)
+#define RSMODE_LUP_NDWN	0x02	// nearest-neighbour downsampling, interpolation upsampling
+struct _resampling_state
 {
 	UINT32 smpRateSrc;
 	UINT32 smpRateDst;
 	INT16 volumeL;
 	INT16 volumeR;
-	// Resampler Type:
-	//	00 - Old
-	//	01 - Upsampling
-	//	02 - Copy
-	//	03 - Downsampling
-	UINT8 resampleMode;	// can be FF [auto] or Resampler Type
-	UINT8 resampler;
+	UINT8 resampleMode;	// see RSMODE_ constants
+	RESAMPLER_FUNC resampler;
 	DEVFUNC_UPDATE StreamUpdate;
 	void* su_DataPtr;
 	UINT32 smpP;		// Current Sample (Playback Rate)
@@ -37,7 +41,7 @@ typedef struct _resampling_state
 	WAVE_32BS nSmpl;	// Next Sample
 	UINT32 smplBufSize;
 	DEV_SMPL* smplBufs[2];
-} RESMPL_STATE;
+};
 
 // ---- resampler helper functions (for quick/comfortable initialization) ----
 /**
