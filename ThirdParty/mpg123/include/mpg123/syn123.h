@@ -1112,7 +1112,7 @@ void syn123_be2host(void *buf, size_t samplesize, size_t samplecount);
 // anywhere, also to avoid using non-standard types like ssize_t.
 #if !defined(SYN123_PORTABLE_API) && !defined(SYN123_NO_LARGEFUNC)
 
-/* A little hack to help MSVC not having ssize_t, duplicated in internal header. */
+/** A little hack to help MSVC not having ssize_t, duplicated in internal header. */
 #ifdef _MSC_VER
 #include <stddef.h>
 typedef ptrdiff_t syn123_ssize_t;
