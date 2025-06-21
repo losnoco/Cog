@@ -26,6 +26,7 @@
 		83747C272862DB9F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83B73B612D8FC0A900A57F08 /* minimp3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minimp3.h; sourceTree = "<group>"; };
 		83B73B622D8FC0A900A57F08 /* minimp3_ex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minimp3_ex.h; sourceTree = "<group>"; };
+		83CB566A2E064FAC003DD379 /* NSDictionary+Optional.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Optional.h"; path = "../../Utils/NSDictionary+Optional.h"; sourceTree = "<group>"; };
 		83F97B6728600F9300A70B97 /* CVbriHeader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CVbriHeader.c; sourceTree = "<group>"; };
 		83F97B6828600F9300A70B97 /* CVbriHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVbriHeader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -51,6 +52,7 @@
 				834A42BB287AFB0700EB9D9B /* AudioChunk.h */,
 				8372C93A27C786DD00E250C9 /* HTTPSource.h */,
 				8372C93927C7866B00E250C9 /* Logging.h */,
+				83CB566A2E064FAC003DD379 /* NSDictionary+Optional.h */,
 				8372C93827C7865A00E250C9 /* Plugin.h */,
 				8372C93327C7861300E250C9 /* MP3Decoder.h */,
 				8372C93427C7861300E250C9 /* MP3Decoder.m */,

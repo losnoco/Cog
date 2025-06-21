@@ -14,6 +14,8 @@
 
 #import "Logging.h"
 
+#import "NSDictionary+Optional.h"
+
 #import "id3tag.h"
 
 #import "CVbriHeader.h"
@@ -376,7 +378,19 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 }
 
 - (NSDictionary *)metadata {
-	return @{ @"artist": artist, @"album": album, @"title": title, @"genre": genre };
+	const NSString* keys[] = {
+		@"artist",
+		@"album",
+		@"title",
+		@"genre"
+	};
+	const id values[] = {
+		artist,
+		album,
+		title,
+		genre
+	};
+	return [NSDictionary initWithOptionalObjects:values forKeys:keys count:sizeof(keys) / sizeof(keys[0])];
 }
 
 + (NSArray *)fileTypes {
