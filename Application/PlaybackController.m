@@ -120,9 +120,9 @@ NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 - (void)initDefaults {
 	NSDictionary *defaultsDictionary = @{ @"volume": @(75.0),
-										  @"pitch": @(1.0),
-										  @"tempo": @(1.0),
-										  @"speedLock": @(YES),
+		                                  @"pitch": @(1.0),
+		                                  @"tempo": @(1.0),
+		                                  @"speedLock": @(YES),
 		                                  @"GraphicEQenable": @(NO),
 		                                  @"GraphicEQpreset": @(-1),
 		                                  @"GraphicEQtrackgenre": @(NO),
