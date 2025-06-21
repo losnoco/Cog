@@ -214,8 +214,8 @@
 		839065F22853338700636FBB /* dsd2float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsd2float.h; sourceTree = "<group>"; };
 		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
-		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
-		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
+		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../Utils/NSDictionary+Merge.h"; sourceTree = SOURCE_ROOT; };
+		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../Utils/NSDictionary+Merge.m"; sourceTree = SOURCE_ROOT; };
 		839E56E12879450300DFB5F4 /* HrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfData.h; sourceTree = "<group>"; };
 		839E56E22879450300DFB5F4 /* Endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Endianness.h; sourceTree = "<group>"; };
 		839E56E32879450300DFB5F4 /* HrtfData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HrtfData.cpp; sourceTree = "<group>"; };
