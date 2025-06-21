@@ -12,6 +12,8 @@
 
 #import "Logging.h"
 
+#import "NSDictionary+Optional.h"
+
 #import <libvgm/player/droplayer.hpp>
 #import <libvgm/player/gymplayer.hpp>
 #import <libvgm/player/s98player.hpp>
@@ -160,13 +162,21 @@ static std::string FCC2Str(UINT32 fcc) {
 	DataLoader_Deinit(dLoad);
 	free(fileData);
 
-	NSDictionary* dict = @{ @"codec": system,
-		                    @"album": album,
-		                    @"title": title,
-		                    @"artist": artist,
-		                    @"year": year };
-
-	return dict;
+	const NSString* keys[] = {
+		@"codec",
+		@"album",
+		@"title",
+		@"artist",
+		@"year"
+	};
+	const id values[] = {
+		system,
+		album,
+		title,
+		artist,
+		year
+	};
+	return [NSDictionary initWithOptionalObjects:values forKeys:keys count:sizeof(keys) / sizeof(keys[0])];
 }
 
 @end

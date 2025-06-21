@@ -13,6 +13,7 @@
 
 #import "AudioMetadataReader.h"
 #import "NSDictionary+Merge.h"
+#import "NSDictionary+Optional.h"
 
 @implementation CueSheetMetadataReader
 
@@ -100,20 +101,31 @@
 }
 
 + (NSDictionary *)processDataForTrack:(CueSheetTrack *)track {
-	NSMutableDictionary *cuesheetMetadata = [[NSMutableDictionary alloc] init];
-
-	if([track artist]) [cuesheetMetadata setValue:[track artist] forKey:@"artist"];
-	if([track album]) [cuesheetMetadata setValue:[track album] forKey:@"album"];
-	if([track title]) [cuesheetMetadata setValue:[track title] forKey:@"title"];
-	if([[track track] intValue]) [cuesheetMetadata setValue:@([[track track] intValue]) forKey:@"track"];
-	if([track genre]) [cuesheetMetadata setValue:[track genre] forKey:@"genre"];
-	if([[track year] intValue]) [cuesheetMetadata setValue:@([[track year] intValue]) forKey:@"year"];
-	if([track albumGain]) [cuesheetMetadata setValue:@([track albumGain]) forKey:@"replaygain_album_gain"];
-	if([track albumPeak]) [cuesheetMetadata setValue:@([track albumPeak]) forKey:@"replaygain_album_peak"];
-	if([track trackGain]) [cuesheetMetadata setValue:@([track trackGain]) forKey:@"replaygain_track_gain"];
-	if([track trackPeak]) [cuesheetMetadata setValue:@([track trackPeak]) forKey:@"replaygain_track_peak"];
-
-	return [NSDictionary dictionaryWithDictionary:cuesheetMetadata];
+	const NSString* keys[] = {
+		@"artist",
+		@"album",
+		@"title",
+		@"track",
+		@"genre",
+		@"year",
+		@"replaygain_album_gain",
+		@"replaygain_album_peak",
+		@"replaygain_track_gain",
+		@"replaygain_track_peak"
+	};
+	const id values[] = {
+		[track artist],
+		[track album],
+		[track title],
+		@([[track track] intValue]),
+		[track genre],
+		@([[track year] intValue]),
+		@([track albumGain]),
+		@([track albumPeak]),
+		@([track trackGain]),
+		@([track trackPeak])
+	};
+	return [NSDictionary initWithOptionalObjects:values forKeys:keys count:sizeof(keys) / sizeof(keys[0])];
 }
 
 @end

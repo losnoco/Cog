@@ -11,6 +11,8 @@
 
 #import "Logging.h"
 
+#import "NSDictionary+Optional.h"
+
 #import <stdlib.h>
 #import <string.h>
 
@@ -628,7 +630,19 @@ static void http_stream_reset(HTTPSource *fp) {
 }
 
 - (NSDictionary *)metadata {
-	return @{ @"genre": genre, @"album": album, @"artist": artist, @"title": title };
+	const NSString* keys[] = {
+		@"genre",
+		@"album",
+		@"artist",
+		@"title"
+	};
+	const id values[] = {
+		genre,
+		album,
+		artist,
+		title
+	};
+	return [NSDictionary initWithOptionalObjects:values forKeys:keys count:sizeof(keys) / sizeof(keys[0])];
 }
 
 - (BOOL)seekable {

@@ -101,6 +101,8 @@
 		83A349752D5C50A10096D530 /* DSPHRTFNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A349742D5C50A10096D530 /* DSPHRTFNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83A349772D5C50B20096D530 /* DSPHRTFNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A349762D5C50B20096D530 /* DSPHRTFNode.m */; };
 		83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */; };
+		83CB56652E06464D003DD379 /* NSDictionary+Optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CB56632E06464D003DD379 /* NSDictionary+Optional.h */; };
+		83CB56662E06464D003DD379 /* NSDictionary+Optional.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CB56642E06464D003DD379 /* NSDictionary+Optional.m */; };
 		83F843202D5C6272008C123B /* HeadphoneFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F8431E2D5C6272008C123B /* HeadphoneFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83F843212D5C6272008C123B /* HeadphoneFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */; };
 		83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F843222D5C66DA008C123B /* DSPEqualizerNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -231,6 +233,8 @@
 		83A349742D5C50A10096D530 /* DSPHRTFNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPHRTFNode.h; sourceTree = "<group>"; };
 		83A349762D5C50B20096D530 /* DSPHRTFNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPHRTFNode.m; sourceTree = "<group>"; };
 		83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CogAudio-Bridging-Header.h"; sourceTree = "<group>"; };
+		83CB56632E06464D003DD379 /* NSDictionary+Optional.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Optional.h"; path = "../Utils/NSDictionary+Optional.h"; sourceTree = SOURCE_ROOT; };
+		83CB56642E06464D003DD379 /* NSDictionary+Optional.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Optional.m"; path = "../Utils/NSDictionary+Optional.m"; sourceTree = SOURCE_ROOT; };
 		83F8431E2D5C6272008C123B /* HeadphoneFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadphoneFilter.h; sourceTree = "<group>"; };
 		83F8431F2D5C6272008C123B /* HeadphoneFilter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HeadphoneFilter.mm; sourceTree = "<group>"; };
 		83F843222D5C66DA008C123B /* DSPEqualizerNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPEqualizerNode.h; sourceTree = "<group>"; };
@@ -427,6 +431,8 @@
 		17D21CDC0B8BE5B400D1EBDE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				83CB56632E06464D003DD379 /* NSDictionary+Optional.h */,
+				83CB56642E06464D003DD379 /* NSDictionary+Optional.m */,
 				839065F22853338700636FBB /* dsd2float.h */,
 				8328995527CB51B700D7F028 /* SHA256Digest.h */,
 				8328995627CB51B700D7F028 /* SHA256Digest.m */,
@@ -611,6 +617,7 @@
 				83A3496D2D5C40490096D530 /* DSPFSurroundNode.h in Headers */,
 				83A3496B2D5C3F430096D530 /* DSPRubberbandNode.h in Headers */,
 				17D21CA50B8BE4BA00D1EBDE /* InputNode.h in Headers */,
+				83CB56652E06464D003DD379 /* NSDictionary+Optional.h in Headers */,
 				833738EA2D5EA52500278628 /* DSPDownmixNode.h in Headers */,
 				83F843232D5C66DA008C123B /* DSPEqualizerNode.h in Headers */,
 				834A41A9287A90AB00EB9D9B /* freesurround_decoder.h in Headers */,
@@ -765,6 +772,7 @@
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */,
 				83A349722D5C41810096D530 /* FSurroundFilter.mm in Sources */,
+				83CB56662E06464D003DD379 /* NSDictionary+Optional.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
 				835DD2742ACAF5AD0057E319 /* lpc.c in Sources */,
