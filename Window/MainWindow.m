@@ -19,8 +19,6 @@
 void showSentryConsent(NSWindow *window) {
 	BOOL askedConsent = [[NSUserDefaults standardUserDefaults] boolForKey:@"sentryAskedConsent"];
 	if(!askedConsent) {
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"rubberbandEngine": @"disabled" }];
-
 		[window orderFront:window];
 
 		NSAlert *alert = [[NSAlert alloc] init];
@@ -36,8 +34,6 @@ void showSentryConsent(NSWindow *window) {
 		}];
 		
 		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"sentryAskedConsent"];
-	} else {
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"rubberbandEngine": @"faster" }];
 	}
 }
 
