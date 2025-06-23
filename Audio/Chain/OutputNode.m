@@ -33,11 +33,11 @@
 	VisualizationNode *visualizationNode;
 }
 
-- (void)setup {
-	[self setupWithInterval:NO];
+- (BOOL)setup {
+	return [self setupWithInterval:NO];
 }
 
-- (void)setupWithInterval:(BOOL)resumeInterval {
+- (BOOL)setupWithInterval:(BOOL)resumeInterval {
 	if(!resumeInterval) {
 		amountPlayed = 0.0;
 		amountPlayedInterval = 0.0;
@@ -49,23 +49,26 @@
 
 	output = [[OutputCoreAudio alloc] initWithController:self];
 
-	[output setup];
+	if(![output setup]) {
+		output = nil;
+		return NO;
+	}
 
 	if(!DSPsLaunched) {
 		rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:nil latency:0.1];
-		if(!rubberbandNode) return;
+		if(!rubberbandNode) return NO;
 		fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
-		if(!fsurroundNode) return;
+		if(!fsurroundNode) return NO;
 		equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
-		if(!equalizerNode) return;
+		if(!equalizerNode) return NO;
 		hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
-		if(!hrtfNode) return;
+		if(!hrtfNode) return NO;
 		downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
-		if(!downmixNode) return;
+		if(!downmixNode) return NO;
 
 		// Approximately double the chunk size for Vis at 44100Hz
 		visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:8192.0 / 44100.0];
-		if(!visualizationNode) return;
+		if(!visualizationNode) return NO;
 
 		[self setPreviousNode:visualizationNode];
 
@@ -75,6 +78,8 @@
 
 		previousInput = nil;
 	}
+
+	return YES;
 }
 
 - (void)seek:(double)time {

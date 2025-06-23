@@ -79,7 +79,9 @@
 	}
 	if(!output) {
 		output = [[OutputNode alloc] initWithController:self previous:nil];
-		[output setupWithInterval:resumeInterval];
+		if(![output setupWithInterval:resumeInterval]) {
+			return;
+		}
 	}
 	[output setVolume:volume];
 	@synchronized(chainQueue) {

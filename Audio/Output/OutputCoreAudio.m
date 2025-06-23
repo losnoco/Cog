@@ -223,8 +223,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	while(!stopping) {
 		@autoreleasepool {
 			if(outputdevicechanged) {
-				[self updateDeviceFormat];
-				outputdevicechanged = NO;
+				if([self updateDeviceFormat]) {
+					outputdevicechanged = NO;
+				} else {
+					usleep(2000);
+					continue;
+				}
 			}
 
 			if([outputController shouldReset]) {
@@ -474,6 +478,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (BOOL)updateDeviceFormat {
 	AVAudioFormat *format = _au.outputBusses[0].format;
+	if(!format) {
+		return NO;
+	}
 
 	if(!_deviceFormat || ![_deviceFormat isEqual:format]) {
 		NSError *err;
@@ -805,7 +812,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		[_au allocateRenderResourcesAndReturnError:&err];
 
-		[self updateDeviceFormat];
+		if(![self updateDeviceFormat]) {
+			return NO;
+		}
 
 		visController = [VisualizationController sharedController];
 
