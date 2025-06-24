@@ -9,7 +9,7 @@
 #import "FeedbackSocket.h"
 #import <Cocoa/Cocoa.h>
 
-@interface FeedbackController : NSWindowController <FeedbackSocketDelegate> {
+@interface FeedbackController : NSWindowController {
 	IBOutlet NSTextField* nameView;
 	IBOutlet NSTextField* emailView;
 	IBOutlet NSTextView* messageView;
