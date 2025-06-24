@@ -1106,7 +1106,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					83CA24121D7BC47C00F2EA53 = {
 						DevelopmentTeam = "";
@@ -1115,7 +1115,7 @@
 				};
 			};
 			buildConfigurationList = 83CA240D1D7BC47C00F2EA53 /* Build configuration list for PBXProject "mGBA" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

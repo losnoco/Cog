@@ -177,7 +177,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					8314D6301A354DFE00EEE8E6 = {
 						DevelopmentTeam = "";
@@ -186,7 +186,7 @@
 				};
 			};
 			buildConfigurationList = 8314D62C1A354DFE00EEE8E6 /* Build configuration list for PBXProject "sidplay" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
