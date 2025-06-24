@@ -40,7 +40,7 @@ static simd_float4x4 convertMatrix(CMRotationMatrix r) {
 
 static NSLock *motionManagerLock = nil;
 API_AVAILABLE(macos(14.0)) static CMHeadphoneMotionManager *motionManager = nil;
-static DSPHRTFNode  *registeredMotionListener = nil;
+static DSPHRTFNode __weak *registeredMotionListener = nil;
 #endif
 
 static void registerMotionListener(DSPHRTFNode *listener) {
@@ -55,7 +55,8 @@ static void registerMotionListener(DSPHRTFNode *listener) {
 			[motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion * _Nullable motion, NSError * _Nullable error) {
 				if(motion) {
 					[motionManagerLock lock];
-					[registeredMotionListener reportMotion:convertMatrix(motion.attitude.rotationMatrix)];
+					if(registeredMotionListener)
+						[registeredMotionListener reportMotion:convertMatrix(motion.attitude.rotationMatrix)];
 					[motionManagerLock unlock];
 				}
 			}];
