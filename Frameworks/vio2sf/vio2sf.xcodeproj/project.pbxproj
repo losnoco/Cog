@@ -296,7 +296,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					83DE0C05180A9BD400269051 = {
 						DevelopmentTeam = "";
@@ -305,7 +305,7 @@
 				};
 			};
 			buildConfigurationList = 83DE0C00180A9BD400269051 /* Build configuration list for PBXProject "vio2sf" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

@@ -252,7 +252,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					83848FB71807623F00E7332D = {
 						DevelopmentTeam = "";
@@ -261,7 +261,7 @@
 				};
 			};
 			buildConfigurationList = 83848FB21807623F00E7332D /* Build configuration list for PBXProject "SSEQPlayer" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

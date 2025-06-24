@@ -559,7 +559,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					83D3C4D3201C654F005564CB = {
 						ProvisioningStyle = Manual;
@@ -567,7 +567,7 @@
 				};
 			};
 			buildConfigurationList = 83D3C4CE201C654F005564CB /* Build configuration list for PBXProject "libAdPlug" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

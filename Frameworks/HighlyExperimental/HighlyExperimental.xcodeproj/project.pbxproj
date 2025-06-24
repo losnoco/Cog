@@ -189,7 +189,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					8360EF0F17F92C91005208A4 = {
 						DevelopmentTeam = "";
@@ -198,7 +198,7 @@
 				};
 			};
 			buildConfigurationList = 8360EF0A17F92C91005208A4 /* Build configuration list for PBXProject "HighlyExperimental" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

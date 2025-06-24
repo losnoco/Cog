@@ -1155,7 +1155,7 @@
 				};
 			};
 			buildConfigurationList = EDBE8EF325E7E641001EB4A4 /* Build configuration list for PBXProject "sidplayfp" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

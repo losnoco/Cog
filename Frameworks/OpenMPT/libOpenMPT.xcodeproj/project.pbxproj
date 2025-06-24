@@ -2348,7 +2348,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					83E5EFBC1FFEF7CC00659F0F = {
 						ProvisioningStyle = Manual;
@@ -2356,7 +2356,7 @@
 				};
 			};
 			buildConfigurationList = 83E5EFB71FFEF7CC00659F0F /* Build configuration list for PBXProject "libOpenMPT" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (

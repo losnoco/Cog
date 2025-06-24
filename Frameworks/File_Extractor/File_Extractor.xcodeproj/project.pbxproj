@@ -632,8 +632,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				LastUpgradeCheck = 1640;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					8359FF3B17FEF39F0060F3ED = {
 						DevelopmentTeam = "";
@@ -642,7 +642,7 @@
 				};
 			};
 			buildConfigurationList = 8359FF3617FEF39F0060F3ED /* Build configuration list for PBXProject "File_Extractor" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
