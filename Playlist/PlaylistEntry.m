@@ -536,6 +536,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 			NSString *tagName = [PlaylistEntry metaTagForKey:key];
 			NSString *lowerKey = [tagName lowercaseString];
 			id valueObj = [metadata objectForKey:key];
+			id genericValue;
 			NSArray *values = nil;
 			NSString *firstValue = nil;
 			NSData *dataValue = nil;
@@ -544,15 +545,22 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 				if([values count]) {
 					firstValue = values[0];
 				}
+				genericValue = values;
 			} else if([valueObj isKindOfClass:[NSString class]]) {
 				firstValue = (NSString *)valueObj;
 				values = @[firstValue];
+				genericValue = values;
 			} else if([valueObj isKindOfClass:[NSNumber class]]) {
 				NSNumber *numberValue = (NSNumber *)valueObj;
 				firstValue = [numberValue stringValue];
 				values = @[firstValue];
+				genericValue = values;
 			} else if([valueObj isKindOfClass:[NSData class]]) {
 				dataValue = (NSData *)valueObj;
+				genericValue = dataValue;
+			} else {
+				// Unknown object in metadata block
+				genericValue = valueObj;
 			}
 			if([lowerKey isEqualToString:@"bitrate"]) {
 				self.bitrate = [firstValue intValue];
@@ -593,7 +601,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 			} else if([lowerKey isEqualToString:@"albumart"]) {
 				self.albumArt = dataValue;
 			} else {
-				[metaDict setObject:values forKey:key];
+				[metaDict setObject:genericValue forKey:key];
 			}
 		}
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDict];

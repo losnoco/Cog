@@ -39,7 +39,6 @@
 
 	NSMutableArray *tracks = [NSMutableArray array];
 
-	BOOL embedded = NO;
 	CueSheet *cuesheet = nil;
 	NSDictionary *fileMetadata;
 
@@ -79,7 +78,6 @@
 		if(sheetString && [sheetString length]) {
 			cuesheet = [CueSheet cueSheetWithString:sheetString withFilename:[url path]];
 		}
-		embedded = YES;
 	} else
 		cuesheet = [CueSheet cueSheetWithFile:[url path]];
 

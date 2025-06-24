@@ -798,7 +798,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	int seekBytesSkip = 0;
 
-	int errcode;
+	int errcode = 0;
 
 	int8_t *targetBuf = (int8_t *)buf;
 	memset(buf, 0, bytesToRead);

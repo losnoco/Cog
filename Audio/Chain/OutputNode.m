@@ -191,7 +191,7 @@
 
 - (void)reconnectInputAndReplumb {
 	Node *finalNode = nil;
-	if(rubberbandNode) {
+	if(DSPsLaunched) {
 		finalNode = [[controller bufferChain] finalNode];
 		if(finalNode) {
 			[rubberbandNode setPreviousNode:finalNode];

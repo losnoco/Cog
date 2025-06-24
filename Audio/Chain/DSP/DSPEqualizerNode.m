@@ -146,7 +146,6 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 - (BOOL)fullInit {
 	if(enableEqualizer) {
 		AudioComponentDescription desc;
-		NSError *err;
 
 		desc.componentType = kAudioUnitType_Effect;
 		desc.componentSubType = kAudioUnitSubType_GraphicEQ;
@@ -161,8 +160,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			return NO;
 		}
 
-		OSStatus _err = AudioComponentInstanceNew(comp, &_eq);
-		if(err) {
+		OSStatus status = AudioComponentInstanceNew(comp, &_eq);
+		if(status != noErr) {
 			return NO;
 		}
 
@@ -209,8 +208,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
 
-		_err = AudioUnitInitialize(_eq);
-		if(_err != noErr) {
+		status = AudioUnitInitialize(_eq);
+		if(status != noErr) {
 			return NO;
 		}
 

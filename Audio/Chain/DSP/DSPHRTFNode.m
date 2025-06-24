@@ -27,6 +27,7 @@ static void * kDSPHRTFNodeContext = &kDSPHRTFNodeContext;
 
 static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDigResetHeadTracking";
 
+#ifdef MOTION_MANAGER
 static simd_float4x4 convertMatrix(CMRotationMatrix r) {
 	simd_float4x4 matrix = {
 		simd_make_float4(r.m33, -r.m31, r.m32, 0.0f),
@@ -37,7 +38,6 @@ static simd_float4x4 convertMatrix(CMRotationMatrix r) {
 	return matrix;
 }
 
-#ifdef MOTION_MANAGER
 static NSLock *motionManagerLock = nil;
 API_AVAILABLE(macos(14.0)) static CMHeadphoneMotionManager *motionManager = nil;
 static DSPHRTFNode  *registeredMotionListener = nil;

@@ -44,6 +44,7 @@ static void samples_len(unsigned* r1, unsigned* r2, unsigned N, unsigned M)     
 {
     if (r1 == 0 || r2 == 0) return;
     unsigned v = local_gcd(*r1, *r2);        // v = 300
+	if (v == 0) return;
     *r1 /= v; *r2 /= v;                        // r1 = 147; r2 = 160  == 1/300th of second
     unsigned n = (v + N-1) / N;                // n = 300/20 = 15 times
     unsigned z = max(*r1, *r2);        // z = 160

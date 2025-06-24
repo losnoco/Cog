@@ -578,6 +578,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		[containerQueue waitUntilAllOperationsAreFinished];
 
 		progress = weakProgress;
+		[self setProgressJobStatus:progress];
 
 		[containerTask finish];
 	}
@@ -681,8 +682,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 	
 	DLog(@"Valid urls: %@", validURLs);
-
-	progress = 0.0;
 
 	// Create actual entries
 	int count = (int)[validURLs count];
@@ -867,10 +866,10 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 	double progressstep;
 
-	if(metadataLoadInProgress && [queueThisJob count]) {
+	if(metadataLoadInProgress) {
 		progressstep = 100.0 / (double)([queueThisJob count] + 1);
 		progress = progressstep;
-	} else if([queueThisJob count]) {
+	} else {
 		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"")];
 		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"") percentOfTotal:50.0];
 

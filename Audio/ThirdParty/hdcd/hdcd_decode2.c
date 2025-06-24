@@ -1044,8 +1044,8 @@ static int hdcd_envelope(int32_t *samples, int count, int stride, int gain, int 
 
     /* hold a steady level */
     if (gain == 0x800000) {
-        if (count > 0)
-            samples += count * stride;
+        /*if (count > 0)
+            samples += count * stride;*/
     } else {
         while (--count >= 0) {
             APPLY_GAIN(*samples, gain);

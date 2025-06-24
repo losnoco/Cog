@@ -197,7 +197,6 @@
 			[panel setCanChooseFiles:NO];
 			[panel setFloatingPanel:YES];
 			[panel setDirectoryURL:[NSURL fileURLWithPath:pi.path]];
-			[panel setTitle:@"Open to add path"];
 			NSInteger result = [panel runModal];
 			if(result == NSModalResponseOK) {
 				[sandboxPathBehaviorController addUrl:[panel URL]];

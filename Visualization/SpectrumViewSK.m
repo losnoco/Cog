@@ -56,7 +56,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 @implementation SpectrumViewSK
 
-+ (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame {
++ (SpectrumViewSK *_Nullable)createGuardWithFrame:(NSRect)frame {
 	if (![NSUserDefaults.standardUserDefaults boolForKey:@"spectrumSceneKit"])
 		return nil;
 
