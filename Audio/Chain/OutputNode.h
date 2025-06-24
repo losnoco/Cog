@@ -39,8 +39,6 @@
 - (BOOL)selectNextBuffer;
 - (void)endOfInputPlayed;
 
-- (BOOL)endOfStream;
-
 - (BOOL)chainQueueHasTracks;
 
 - (double)secondsBuffered;
