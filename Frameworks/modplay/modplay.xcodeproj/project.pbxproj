@@ -150,13 +150,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0900;
-				ORGANIZATIONNAME = "Christopher Snowhill";
-				TargetAttributes = {
-					83F4D53918D82105009B2DE6 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
-					};
-				};
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83F4D53418D82105009B2DE6 /* Build configuration list for PBXProject "modplay" */;
 			compatibilityVersion = "Xcode 3.2";

@@ -428,12 +428,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					8360EEE317F92AC8005208A4 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 8360EEDF17F92AC8005208A4 /* Build configuration list for PBXProject "HighlyComplete" */;
 			compatibilityVersion = "Xcode 12.0";

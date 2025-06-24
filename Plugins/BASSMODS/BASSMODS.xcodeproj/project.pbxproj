@@ -174,13 +174,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0900;
-				ORGANIZATIONNAME = "Christopher Snowhill";
-				TargetAttributes = {
-					839BCFD11965133E00947767 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
-					};
-				};
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 839BCFCD1965133E00947767 /* Build configuration list for PBXProject "BASSMODS" */;
 			compatibilityVersion = "Xcode 3.2";

@@ -599,13 +599,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = "Christopher Snowhill";
-				TargetAttributes = {
-					83C8B62118AF57770071B040 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
-					};
-				};
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83C8B61C18AF57770071B040 /* Build configuration list for PBXProject "lazyusf" */;
 			compatibilityVersion = "Xcode 3.2";

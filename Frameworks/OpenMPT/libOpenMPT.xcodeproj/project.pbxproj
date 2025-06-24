@@ -2349,11 +2349,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83E5EFBC1FFEF7CC00659F0F = {
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83E5EFB71FFEF7CC00659F0F /* Build configuration list for PBXProject "libOpenMPT" */;
 			compatibilityVersion = "Xcode 12.0";

@@ -961,12 +961,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83C8B62118AF57770071B040 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83C8B61C18AF57770071B040 /* Build configuration list for PBXProject "lazyusf2" */;
 			compatibilityVersion = "Xcode 12.0";
