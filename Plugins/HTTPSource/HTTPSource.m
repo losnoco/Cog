@@ -256,7 +256,7 @@ static size_t handle_icy_headers(size_t avail, HTTPSource *fp, char *ptr) {
 
 		fp->icyheader = 1;
 
-		// check for ternmination marker
+		// check for termination marker
 		if(avail >= 4 && !memcmp(ptr, "\r\n\r\n", 4)) {
 			avail -= 4;
 			ptr += 4;
