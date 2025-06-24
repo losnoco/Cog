@@ -157,6 +157,8 @@ static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config
 	}
 	cblas_scopy((int)count, inBuffer, 2, outBuffer, 1);
 	vDSP_vadd(outBuffer, 1, inBuffer + 1, 2, outBuffer, 1, count);
+	const float scale = 0.5f;
+	vDSP_vsmul(outBuffer, 1, &scale, outBuffer, 1, count);
 }
 
 static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, float *outBuffer, int outchannels, uint32_t outconfig, size_t count) {

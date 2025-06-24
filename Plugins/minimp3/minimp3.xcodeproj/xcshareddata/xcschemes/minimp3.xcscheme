@@ -15,9 +15,9 @@
                   <BuildableReference
                      BuildableIdentifier = "primary"
                      BlueprintIdentifier = "8372C92227C785BD00E250C9"
-                     BuildableName = "MAD.bundle"
-                     BlueprintName = "MAD"
-                     ReferencedContainer = "container:MAD.xcodeproj">
+                     BuildableName = "minimp3.bundle"
+                     BlueprintName = "minimp3"
+                     ReferencedContainer = "container:minimp3.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
             </ActionContent>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8372C92227C785BD00E250C9"
-               BuildableName = "MAD.bundle"
-               BlueprintName = "MAD"
-               ReferencedContainer = "container:MAD.xcodeproj">
+               BuildableName = "minimp3.bundle"
+               BlueprintName = "minimp3"
+               ReferencedContainer = "container:minimp3.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8372C92227C785BD00E250C9"
-            BuildableName = "MAD.bundle"
-            BlueprintName = "MAD"
-            ReferencedContainer = "container:MAD.xcodeproj">
+            BuildableName = "minimp3.bundle"
+            BlueprintName = "minimp3"
+            ReferencedContainer = "container:minimp3.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
