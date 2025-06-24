@@ -351,17 +351,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			AudioObjectAddPropertyListener(kAudioObjectSystemObject, &theAddress, default_device_changed, (__bridge void *_Nullable)(self));
 			defaultdevicelistenerapplied = YES;
 		}
-	} else {
-		err = noErr;
 	}
 
-	if(err != noErr) {
-		DLog(@"No output device with ID %d could be found.", deviceID);
-
-		return err;
-	}
-
-	return err;
+	return noErr;
 }
 
 - (BOOL)setOutputDeviceWithDeviceDict:(NSDictionary *)deviceDict {
@@ -415,15 +407,18 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		.mElement = kAudioObjectPropertyElementMaster
 	};
 
-	__Verify_noErr(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize));
+	OSStatus status = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize);
+	if(status != noErr) return;
 	UInt32 nDevices = propsize / (UInt32)sizeof(AudioDeviceID);
 	AudioDeviceID *devids = (AudioDeviceID *)malloc(propsize);
-	__Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, devids));
+	status = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, devids);
+	if(status != noErr) return;
 
 	theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
 	AudioDeviceID systemDefault;
 	propsize = sizeof(systemDefault);
-	__Verify_noErr(AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, &systemDefault));
+	status = AudioObjectGetPropertyData(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize, &systemDefault);
+	if(status != noErr) return;
 
 	theAddress.mScope = kAudioDevicePropertyScopeOutput;
 
@@ -431,17 +426,23 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		UInt32 isAlive = 0;
 		propsize = sizeof(isAlive);
 		theAddress.mSelector = kAudioDevicePropertyDeviceIsAlive;
-		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &isAlive));
+		status = AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &isAlive);
+		if(status != noErr) return;
 		if(!isAlive) continue;
 
 		CFStringRef name = NULL;
 		propsize = sizeof(name);
 		theAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
-		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name));
+		status = AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, &name);
+		if(status != noErr) return;
 
 		propsize = 0;
 		theAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
-		__Verify_noErr(AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize));
+		status = AudioObjectGetPropertyDataSize(devids[i], &theAddress, 0, NULL, &propsize);
+		if(status != noErr) {
+			if(name) CFRelease(name);
+			return;
+		}
 
 		if(propsize < sizeof(UInt32)) {
 			if(name) CFRelease(name);
@@ -449,7 +450,15 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		}
 
 		AudioBufferList *bufferList = (AudioBufferList *)malloc(propsize);
-		__Verify_noErr(AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList));
+		if(!bufferList) {
+			if(name) CFRelease(name);
+			return;
+		}
+		status = AudioObjectGetPropertyData(devids[i], &theAddress, 0, NULL, &propsize, bufferList);
+		if(status != noErr) {
+			if(name) CFRelease(name);
+			return;
+		}
 		UInt32 bufferCount = bufferList->mNumberBuffers;
 		free(bufferList);
 
@@ -466,7 +475,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			  systemDefault,
 			  &stop);
 
-		CFRelease(name);
+		if(name) CFRelease(name);
 
 		if(stop) {
 			break;

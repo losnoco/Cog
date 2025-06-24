@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (SandboxBroker *)sharedSandboxBroker;
 
-+ (NSURL *)urlWithoutFragment:(NSURL *)url;
++ (NSURL *_Nullable)urlWithoutFragment:(NSURL *)url;
 + (BOOL)isPath:(NSURL *)path aSubdirectoryOf:(NSURL *)directory;
 
 + (void)cleanupFolderAccess;
@@ -28,8 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)requestFolderForFile:(NSURL *)fileUrl;
 
-- (const void *)beginFolderAccess:(NSURL *)fileUrl;
-- (void)endFolderAccess:(const void *)handle;
+- (const void *_Nullable)beginFolderAccess:(NSURL *)fileUrl;
+- (void)endFolderAccess:(const void *_Nullable)handle;
 
 - (BOOL)areAllPathsSafe:(NSArray *)urls;
 

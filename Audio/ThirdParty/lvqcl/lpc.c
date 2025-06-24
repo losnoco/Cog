@@ -139,7 +139,7 @@ static void vorbis_lpc_predict(float *coeff, float *prime, int m, float *data, l
 }
 
 void lpc_extrapolate2(float *const data, const size_t data_len, const int nch, const int lpc_order, const size_t extra_bkwd, const size_t extra_fwd, void **extrapolate_buffer, size_t *extrapolate_buffer_size) {
-	const size_t max_to_prime = (data_len < lpc_order) ? data_len : lpc_order;
+	//const size_t max_to_prime = (data_len < lpc_order) ? data_len : lpc_order;
 	const size_t min_data_len = (data_len < lpc_order) ? lpc_order : data_len;
 
 	const size_t tdata_size = sizeof(float) * (extra_bkwd + min_data_len + extra_fwd);
@@ -153,6 +153,7 @@ void lpc_extrapolate2(float *const data, const size_t data_len, const int nch, c
 	if(new_size > *extrapolate_buffer_size) {
 		*extrapolate_buffer = realloc(*extrapolate_buffer, new_size);
 		*extrapolate_buffer_size = new_size;
+		if(!*extrapolate_buffer) return;
 	}
 
 	double *aut = (double *)(*extrapolate_buffer);

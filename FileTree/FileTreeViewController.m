@@ -55,7 +55,6 @@
 	if(path) {
 		[panel setDirectoryURL:[NSURL fileURLWithPath:path]];
 	}
-	[panel setTitle:@"Open to choose tree path"];
 	NSInteger result = [panel runModal];
 	if(result == NSModalResponseOK) {
 		[[SandboxBroker sharedSandboxBroker] addFolderIfMissing:[panel URL]];

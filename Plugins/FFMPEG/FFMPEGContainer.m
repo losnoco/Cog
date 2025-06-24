@@ -47,8 +47,6 @@
 	AVFormatContext *formatCtx = NULL;
 	AVIOContext *ioCtx = NULL;
 
-	BOOL isStream = NO;
-
 	uint8_t *buffer = NULL;
 
 	FFMPEGReader *reader = nil;
@@ -60,8 +58,6 @@
 	   [[url pathExtension] isEqualToString:@"m3u8"]) {
 		[source close];
 		source = nil;
-
-		isStream = YES;
 
 		formatCtx = avformat_alloc_context();
 		if(!formatCtx) {
@@ -112,8 +108,8 @@
 	}
 
 	int streamIndex = -1;
-	int metadataIndex = -1;
-	int attachedPicIndex = -1;
+	//int metadataIndex = -1;
+	//int attachedPicIndex = -1;
 	AVCodecParameters *codecPar;
 
 	for(i = 0; i < formatCtx->nb_streams; i++) {
@@ -123,9 +119,9 @@
 			DLog(@"audio codec found");
 			streamIndex = i;
 		} else if(codecPar->codec_id == AV_CODEC_ID_TIMED_ID3) {
-			metadataIndex = i;
+			//metadataIndex = i;
 		} else if(stream->disposition & AV_DISPOSITION_ATTACHED_PIC) {
-			attachedPicIndex = i;
+			//attachedPicIndex = i;
 		} else {
 			stream->discard = AVDISCARD_ALL;
 		}

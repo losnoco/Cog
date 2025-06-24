@@ -872,7 +872,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				if(!inputChanged) {
 					memcpy(&tempData[buffer_adder], inputBuffer, samplesRead * 2);
 					inputBuffer = &tempData[buffer_adder];
-					inputChanged = YES;
+					//inputChanged = YES;
 				}
 				convert_u16_to_s16((int16_t *)inputBuffer, samplesRead);
 			}
@@ -912,10 +912,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			vDSP_vflt32((const int *)inputBuffer, 1, (float *)(&tempData[buffer_adder]), 1, samplesRead);
 			float scale = (1ULL << 31) / gain;
 			vDSP_vsdiv((const float *)(&tempData[buffer_adder]), 1, &scale, (float *)(&tempData[buffer_adder]), 1, samplesRead);
-			bitsPerSample = 32;
+			//bitsPerSample = 32;
 			bytesReadFromInput = samplesRead * sizeof(float);
-			isUnsigned = NO;
-			isFloat = YES;
+			//isUnsigned = NO;
+			//isFloat = YES;
 			inputBuffer = &tempData[buffer_adder];
 		}
 

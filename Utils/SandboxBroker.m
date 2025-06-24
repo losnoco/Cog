@@ -96,11 +96,11 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	return [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 }
 
-+ (NSURL *)urlWithoutFragment:(NSURL *)url {
++ (NSURL *_Nullable)urlWithoutFragment:(NSURL *)url {
 	if(![url isFileURL]) return url;
 
 	NSString *s = [url path];
-	if(!s) return NULL; // Cool, the resource no longer exists!
+	if(!s) return nil; // Cool, the resource no longer exists!
 
 	NSRange fragmentRange = [s rangeOfString:@"#"
 									 options:NSBackwardsSearch];
@@ -116,12 +116,12 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 }
 
 - (id)init {
-	id _self = [super init];
-	if(_self) {
+	self = [super init];
+	if(self) {
 		storage = [[NSMutableArray alloc] init];
 	}
 
-	return _self;
+	return self;
 }
 
 - (void)shutdown {
@@ -421,7 +421,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 	}];
 }
 
-- (const void *)beginFolderAccess:(NSURL *)fileUrl {
+- (const void *_Nullable)beginFolderAccess:(NSURL *)fileUrl {
 	if(!fileUrl) return NULL;
 	NSURL *folderUrl = [SandboxBroker urlWithoutFragment:fileUrl];
 	if(!folderUrl || ![folderUrl isFileURL]) return NULL;
@@ -459,7 +459,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 		return NULL;
 }
 
-- (void)endFolderAccess:(const void *)handle {
+- (void)endFolderAccess:(const void *_Nullable)handle {
 	if(!handle) return;
 	SandboxEntry *entry = CFBridgingRelease(handle);
 	if(!entry) return;

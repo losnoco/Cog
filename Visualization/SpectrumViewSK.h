@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL isListening;
 @property(nonatomic) BOOL isWorking;
 
-+ (SpectrumViewSK *)createGuardWithFrame:(NSRect)frame;
++ (SpectrumViewSK *_Nullable)createGuardWithFrame:(NSRect)frame;
 
 - (void)enableCameraControl;
 - (void)startPlayback;

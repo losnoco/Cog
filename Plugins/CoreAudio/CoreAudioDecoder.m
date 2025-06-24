@@ -166,7 +166,7 @@ static SInt64 getSizeProc(void *clientData) {
 	asbdSize = sizeof(asbd);
 	err = ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileDataFormat, &asbdSize, &asbd);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 
@@ -174,7 +174,7 @@ static SInt64 getSizeProc(void *clientData) {
 	size = sizeof(total);
 	err = ExtAudioFileGetProperty(_in, kExtAudioFileProperty_FileLengthFrames, &size, &total);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 	totalFrames = total;
@@ -182,7 +182,7 @@ static SInt64 getSizeProc(void *clientData) {
 	size = sizeof(afi);
 	err = ExtAudioFileGetProperty(_in, kExtAudioFileProperty_AudioFile, &size, &afi);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 
@@ -193,7 +193,7 @@ static SInt64 getSizeProc(void *clientData) {
 		if(err == kAudioFileUnsupportedPropertyError) {
 			formatBitsPerSample = 0; // floating point formats apparently don't return this any more
 		} else {
-			err = ExtAudioFileDispose(_in);
+			/*err =*/ ExtAudioFileDispose(_in);
 			return NO;
 		}
 	}
@@ -202,36 +202,36 @@ static SInt64 getSizeProc(void *clientData) {
 	size = sizeof(_bitrate);
 	err = AudioFileGetProperty(afi, kAudioFilePropertyBitRate, &size, &_bitrate);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 
 	err = AudioFileGetPropertyInfo(afi, kAudioFilePropertyChannelLayout, &size, NULL);
 	if(err != noErr || size == 0) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 	AudioChannelLayout *acl = malloc(size);
 	err = AudioFileGetProperty(afi, kAudioFilePropertyChannelLayout, &size, acl);
 	if(err != noErr) {
 		free(acl);
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 
 	uint32_t config = 0;
 	for(uint32_t i = 0; i < acl->mNumberChannelDescriptions; ++i) {
 		int channelNumber = ffat_get_channel_id(acl->mChannelDescriptions[i].mChannelLabel);
-		if(channelNumber >= 0) {
-			if(config & (1 << channelNumber)) {
+		if(channelNumber >= 0 && channelNumber <= 31) {
+			if(config & (1U << channelNumber)) {
 				free(acl);
-				err = ExtAudioFileDispose(_in);
+				/*err =*/ ExtAudioFileDispose(_in);
 				return NO;
 			}
 			config |= 1 << channelNumber;
 		} else {
 			free(acl);
-			err = ExtAudioFileDispose(_in);
+			/*err =*/ ExtAudioFileDispose(_in);
 			return NO;
 		}
 	}
@@ -246,7 +246,7 @@ static SInt64 getSizeProc(void *clientData) {
 	size = sizeof(formatName);
 	err = AudioFormatGetProperty(kAudioFormatProperty_FormatName, asbdSize, &asbd, &size, &formatName);
 	if(err != noErr) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 
@@ -298,7 +298,7 @@ static SInt64 getSizeProc(void *clientData) {
 
 	err = ExtAudioFileSetProperty(_in, kExtAudioFileProperty_ClientDataFormat, sizeof(result), &result);
 	if(noErr != err) {
-		err = ExtAudioFileDispose(_in);
+		/*err =*/ ExtAudioFileDispose(_in);
 		return NO;
 	}
 

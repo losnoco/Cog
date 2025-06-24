@@ -60,7 +60,6 @@ static void
 _init_buffers(int fft_size) {
 	if(fft_size != _fft_size) {
 		fft_free();
-		_fft_size = 0;
 
 		_dftSetup = vDSP_DFT_zrop_CreateSetup(NULL, fft_size * 2, vDSP_DFT_FORWARD);
 		if(!_dftSetup) return;
@@ -136,4 +135,5 @@ void __attribute__((destructor)) fft_free(void) {
 	_window = NULL;
 	_rawSpectrum = NULL;
 	_dftSetup = NULL;
+	_fft_size = 0;
 }

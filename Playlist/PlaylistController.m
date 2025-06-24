@@ -452,8 +452,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	float fontSize = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"fontSize"];
 	
-	BOOL cellRating = NO;
-
 	if(pe) {
 		cellIdentifier = [tableColumn identifier];
 		NSUInteger index = [cellIdentifiers indexOfObject:cellIdentifier];
@@ -527,7 +525,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 					rating = 5;
 				cellText = [@"" stringByPaddingToLength:rating withString:filledStar startingAtIndex:0];
 				cellText = [cellText stringByPaddingToLength:5 withString:emptyStar startingAtIndex:0];
-				cellRating = YES;
 				break;
 			}
 
