@@ -148,12 +148,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					8343781B17F93CB500584396 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 8343781617F93CB500584396 /* Build configuration list for PBXProject "psflib" */;
 			compatibilityVersion = "Xcode 12.0";

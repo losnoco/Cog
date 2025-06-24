@@ -600,7 +600,6 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.preferences;
 				PRODUCT_NAME = Preferences;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
 				ZERO_LINK = YES;
@@ -621,7 +620,6 @@
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.preferences;
 				PRODUCT_NAME = Preferences;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = preferencePane;
 			};

@@ -236,13 +236,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0900;
-				ORGANIZATIONNAME = "Christopher Snowhill";
-				TargetAttributes = {
-					83A0F46E1816CE5E00119DB4 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
-					};
-				};
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83A0F46A1816CE5E00119DB4 /* Build configuration list for PBXProject "playptmod" */;
 			compatibilityVersion = "Xcode 3.2";

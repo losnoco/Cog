@@ -297,12 +297,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83DE0C05180A9BD400269051 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83DE0C00180A9BD400269051 /* Build configuration list for PBXProject "vio2sf" */;
 			compatibilityVersion = "Xcode 12.0";

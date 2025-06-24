@@ -187,11 +187,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83D3C5F2201C674D005564CB = {
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83D3C5EE201C674D005564CB /* Build configuration list for PBXProject "AdPlug" */;
 			compatibilityVersion = "Xcode 12.0";

@@ -1107,12 +1107,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83CA24121D7BC47C00F2EA53 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83CA240D1D7BC47C00F2EA53 /* Build configuration list for PBXProject "mGBA" */;
 			compatibilityVersion = "Xcode 12.0";

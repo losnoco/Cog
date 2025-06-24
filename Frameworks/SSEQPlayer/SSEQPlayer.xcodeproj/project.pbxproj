@@ -253,12 +253,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83848FB71807623F00E7332D = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83848FB21807623F00E7332D /* Build configuration list for PBXProject "SSEQPlayer" */;
 			compatibilityVersion = "Xcode 12.0";

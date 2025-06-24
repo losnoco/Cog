@@ -144,12 +144,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					836FB555182053D700B3AD2D = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 836FB550182053D700B3AD2D /* Build configuration list for PBXProject "HivelyPlayer" */;
 			compatibilityVersion = "Xcode 12.0";

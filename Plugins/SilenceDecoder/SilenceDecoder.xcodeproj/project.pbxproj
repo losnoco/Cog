@@ -115,12 +115,6 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1620;
 				ORGANIZATIONNAME = "";
-				TargetAttributes = {
-					83F9D7E61A884B44007ABEC2 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
-					};
-				};
 			};
 			buildConfigurationList = 83F9D7E21A884B44007ABEC2 /* Build configuration list for PBXProject "SilenceDecoder" */;
 			compatibilityVersion = "Xcode 12.0";
