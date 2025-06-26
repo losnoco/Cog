@@ -45,10 +45,27 @@
 
 	if(results && [results count] > 0) {
 		for(SandboxToken *token in results) {
+			BOOL isDisconnected = NO;
 			BOOL isStale = YES;
 			NSError *err = nil;
-			NSURL *bookmarkUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
-			[self addObject:@{ @"path": token.path, @"valid": ((!bookmarkUrl || isStale) ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")), @"isFolder": @(token.folder), @"token": token }];
+			{
+				NSDictionary *dict = [NSURL resourceValuesForKeys:@[NSURLVolumeURLKey] fromBookmarkData:token.bookmark];
+				if(dict) {
+					NSURL *volumeUrl = dict[NSURLVolumeURLKey];
+					if(volumeUrl && [volumeUrl isFileURL] && [volumeUrl path]) {
+						if(![[NSFileManager defaultManager] fileExistsAtPath:[volumeUrl path]]) {
+							isDisconnected = YES;
+						}
+					}
+				}
+			}
+
+			if(!isDisconnected) {
+				NSURL *bookmarkUrl = [NSURL URLByResolvingBookmarkData:token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
+				[self addObject:@{ @"path": token.path, @"valid": ((!bookmarkUrl || isStale) ? NSLocalizedPrefString(@"ValidNo") : NSLocalizedPrefString(@"ValidYes")), @"isFolder": @(token.folder), @"token": token }];
+			} else {
+				[self addObject:@{ @"path": token.path, @"valid": NSLocalizedPrefString(@"ValidNo"), @"isFolder": @(token.folder), @"token": token }];
+			}
 		}
 	}
 }
