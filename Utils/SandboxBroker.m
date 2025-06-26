@@ -193,6 +193,18 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 	}];
 
 	if(ret) {
+		NSDictionary *dict = [NSURL resourceValuesForKeys:@[NSURLVolumeURLKey] fromBookmarkData:ret.token.bookmark];
+		if(dict) {
+			NSURL *volumeUrl = dict[NSURLVolumeURLKey];
+			if(volumeUrl && [volumeUrl isFileURL] && [volumeUrl path]) {
+				if(![[NSFileManager defaultManager] fileExistsAtPath:[volumeUrl path]]) {
+					return nil;
+				}
+			}
+		}
+	}
+
+	if(ret) {
 		BOOL isStale;
 		NSError *err = nil;
 		NSURL *secureUrl = [NSURL URLByResolvingBookmarkData:ret.token.bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:nil bookmarkDataIsStale:&isStale error:&err];
