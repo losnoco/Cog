@@ -196,18 +196,28 @@
 }
 
 - (void)seekToTime:(double)time {
+	[output fadeOutBackground];
+	[output setVolume:volume];
+
+	[output seek:time];
+	[bufferChain seek:time];
+
 	CogStatus status = (CogStatus)currentPlaybackStatus;
-	NSURL *url;
+	BOOL paused = status == CogStatusPaused;
 	id userInfo;
-	NSDictionary *rgi;
 
 	@synchronized(chainQueue) {
-		url = [bufferChain streamURL];
 		userInfo = [bufferChain userInfo];
-		rgi = [bufferChain rgInfo];
 	}
 
-	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time andResumeInterval:YES];
+	if(paused) {
+		[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
+		if(time > 0.0) {
+			[self updatePosition:userInfo];
+		}
+	} else {
+		[output fadeIn];
+	}
 }
 
 - (void)setVolume:(double)v {
