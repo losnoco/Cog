@@ -694,7 +694,7 @@
 		while(atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
 			[semaphore signal]; // Gotta poke this periodically
 			if(mainThread)
-				[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+				[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
 			else
 				usleep(500);
 		}
