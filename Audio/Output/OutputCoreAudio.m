@@ -133,6 +133,10 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 - (id)initWithController:(OutputNode *)c {
 	self = [super init];
 	if(self) {
+		buffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
+		writeSemaphore = [[Semaphore alloc] init];
+		readSemaphore = [[Semaphore alloc] init];
+
 		outputController = c;
 		volume = 1.0;
 		outputDeviceID = -1;
@@ -208,6 +212,26 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	return NO;
 }
 
+- (NSArray *)DSPs {
+	if(DSPsLaunched) {
+		return @[hrtfNode, downmixNode];
+	} else {
+		return @[];
+	}
+}
+
+- (DSPDownmixNode *)downmix {
+	return downmixNode;
+}
+
+- (void)launchDSPs {
+	NSArray *DSPs = [self DSPs];
+
+	for (Node *node in DSPs) {
+		[node launchThread];
+	}
+}
+
 - (void)threadEntry:(id)arg {
 	@autoreleasepool {
 		NSThread *currentThread = [NSThread currentThread];
@@ -236,14 +260,15 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				[outputLock lock];
 				started = NO;
 				restarted = NO;
-				[outputBuffer reset];
+				[buffer reset];
+				[self setShouldReset:YES];
 				[outputLock unlock];
 			}
 
 			if(stopping)
 				break;
 
-			if(!cutOffInput && ![outputBuffer isFull]) {
+			if(!cutOffInput && ![buffer isFull]) {
 				[self renderAndConvert];
 				rendered = YES;
 			} else {
@@ -556,7 +581,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[outputController setFormat:&deviceFormat channelConfig:deviceChannelConfig];
 		
 		[outputLock lock];
-		[outputBuffer reset];
+		[buffer reset];
+		[self setShouldReset:YES];
 		[outputLock unlock];
 
 		if(started) {
@@ -639,8 +665,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	size_t frameCount = 0;
 	if(chunk && (frameCount = [chunk frameCount])) {
 		[outputLock lock];
-		[outputBuffer addChunk:chunk];
+		[buffer addChunk:chunk];
 		[outputLock unlock];
+		[readSemaphore signal];
 	}
 	
 	if(streamFormatChanged) {
@@ -691,8 +718,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				while(renderedSamples < frameCount) {
 					[refLock lock];
 					AudioChunk *chunk = nil;
-					if(_self->outputBuffer && ![_self->outputBuffer isEmpty]) {
-						chunk = [_self->outputBuffer removeSamples:frameCount - renderedSamples];
+					if(![_self->downmixNode.buffer isEmpty]) {
+						chunk = [self->downmixNode.buffer removeSamples:frameCount - renderedSamples];
 					}
 					[refLock unlock];
 
@@ -827,15 +854,19 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		visController = [VisualizationController sharedController];
 
+		hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:self latency:0.03];
+		downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
+
+		[self setShouldContinue:YES];
+		[self setEndOfStream:NO];
+
+		DSPsLaunched = YES;
+		[self launchDSPs];
+
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
 		
-		outputBuffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
-		if(!outputBuffer) {
-			return NO;
-		}
-
 		return (err == nil);
 	}
 }
@@ -857,7 +888,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (double)latency {
-	return [outputBuffer listDuration];
+	return [buffer listDuration] + [[hrtfNode buffer] listDuration] + [[downmixNode buffer] listDuration];
 }
 
 - (void)start {
@@ -932,6 +963,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				usleep(5000);
 			}
 		}
+		if(DSPsLaunched) {
+			[self setShouldContinue:NO];
+			[hrtfNode setShouldContinue:NO];
+			[downmixNode setShouldContinue:NO];
+			hrtfNode = nil;
+			downmixNode = nil;
+			DSPsLaunched = NO;
+		}
 #ifdef OUTPUT_LOG
 		if(_logFile) {
 			[_logFile closeFile];
@@ -995,9 +1034,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	cutOffInput = YES;
 	[outputLock lock];
 	[fadedBuffersLock lock];
-	FadedBuffer *buffer = [[FadedBuffer alloc] initWithBuffer:outputBuffer fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
-	outputBuffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
-	[fadedBuffers addObject:buffer];
+	FadedBuffer *fbuffer = [[FadedBuffer alloc] initWithBuffer:buffer fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
+	buffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
+	[fadedBuffers addObject:fbuffer];
 	[fadedBuffersLock unlock];
 	[outputLock unlock];
 	cutOffInput = NO;

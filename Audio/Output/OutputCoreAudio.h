@@ -25,7 +25,11 @@ using std::atomic_long;
 #import <simd/simd.h>
 
 #import <CogAudio/ChunkList.h>
-#import <CogAudio/HeadphoneFilter.h>
+
+#import <CogAudio/Node.h>
+
+#import <CogAudio/DSPDownmixNode.h>
+#import <CogAudio/DSPHRTFNode.h>
 
 //#define OUTPUT_LOG
 
@@ -33,11 +37,8 @@ using std::atomic_long;
 
 @class AudioChunk;
 
-@interface OutputCoreAudio : NSObject {
+@interface OutputCoreAudio : Node {
 	OutputNode *outputController;
-
-	dispatch_semaphore_t writeSemaphore;
-	dispatch_semaphore_t readSemaphore;
 
 	NSLock *outputLock;
 
@@ -96,7 +97,9 @@ using std::atomic_long;
 	
 	BOOL shouldPlayOutBuffer;
 
-	ChunkList *outputBuffer;
+	BOOL DSPsLaunched;
+	DSPHRTFNode *hrtfNode;
+	DSPDownmixNode *downmixNode;
 
 #ifdef OUTPUT_LOG
 	NSFileHandle *_logFile;
@@ -128,5 +131,7 @@ using std::atomic_long;
 
 - (AudioStreamBasicDescription)deviceFormat;
 - (uint32_t)deviceChannelConfig;
+
+- (DSPDownmixNode *)downmix;
 
 @end
