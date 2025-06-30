@@ -13,10 +13,8 @@
 
 #import "DSPRubberbandNode.h"
 #import "DSPFSurroundNode.h"
-#import "DSPHRTFNode.h"
 #import "DSPEqualizerNode.h"
 #import "VisualizationNode.h"
-#import "DSPDownmixNode.h"
 
 #import "Logging.h"
 
@@ -27,9 +25,7 @@
 
 	DSPRubberbandNode *rubberbandNode;
 	DSPFSurroundNode *fsurroundNode;
-	DSPHRTFNode *hrtfNode;
 	DSPEqualizerNode *equalizerNode;
-	DSPDownmixNode *downmixNode;
 	VisualizationNode *visualizationNode;
 }
 
@@ -61,13 +57,9 @@
 		if(!fsurroundNode) return NO;
 		equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
 		if(!equalizerNode) return NO;
-		hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:equalizerNode latency:0.03];
-		if(!hrtfNode) return NO;
-		downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
-		if(!downmixNode) return NO;
 
 		// Approximately double the chunk size for Vis at 44100Hz
-		visualizationNode = [[VisualizationNode alloc] initWithController:self previous:downmixNode latency:8192.0 / 44100.0];
+		visualizationNode = [[VisualizationNode alloc] initWithController:self previous:equalizerNode latency:8192.0 / 44100.0];
 		if(!visualizationNode) return NO;
 
 		[self setPreviousNode:visualizationNode];
@@ -171,7 +163,7 @@
 
 - (NSArray *)DSPs {
 	if(DSPsLaunched) {
-		return @[rubberbandNode, fsurroundNode, equalizerNode, hrtfNode, downmixNode, visualizationNode];
+		return @[rubberbandNode, fsurroundNode, equalizerNode, visualizationNode];
 	} else {
 		return @[];
 	}
@@ -288,7 +280,11 @@
 				formatChanged = YES;
 			}
 		}
-		if(downmixNode && output && !formatChanged) {
+		DSPDownmixNode *downmixNode = nil;
+		if(output) {
+			downmixNode = [output downmix];
+		}
+		if(downmixNode && !formatChanged) {
 			outputFormat = [output deviceFormat];
 			outputChannelConfig = [output deviceChannelConfig];
 			AudioStreamBasicDescription currentOutputFormat = [downmixNode nodeFormat];
@@ -303,7 +299,7 @@
 			if(converter) {
 				[converter setOutputFormat:format];
 			}
-			if(downmixNode && output) {
+			if(downmixNode) {
 				[downmixNode setOutputFormat:[output deviceFormat] withChannelConfig:[output deviceChannelConfig]];
 			}
 			if(inputNode) {
@@ -327,8 +323,6 @@
 		}
 		previousNode = nil;
 		visualizationNode = nil;
-		downmixNode = nil;
-		hrtfNode = nil;
 		fsurroundNode = nil;
 		rubberbandNode = nil;
 		previousInput = nil;
@@ -393,7 +387,7 @@
 }
 
 - (id)downmix {
-	return downmixNode;
+	return [output downmix];
 }
 
 @end
