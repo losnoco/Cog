@@ -16,6 +16,7 @@
 	float *visAudio;
 	int visAudioCursor, visAudioSize;
 	uint64_t visSamplesPosted;
+	BOOL ignoreLatency;
 }
 
 static VisualizationController *_sharedController = nil;
@@ -35,6 +36,7 @@ static VisualizationController *_sharedController = nil;
 		visAudio = NULL;
 		visAudioSize = 0;
 		latency = 0;
+		ignoreLatency = YES;
 	}
 	return self;
 }
@@ -48,6 +50,7 @@ static VisualizationController *_sharedController = nil;
 		latency = 0;
 		visAudioCursor = 0;
 		visSamplesPosted = 0;
+		ignoreLatency = YES;
 		if(visAudio && visAudioSize) {
 			bzero(visAudio, sizeof(float) * visAudioSize);
 		}
@@ -99,7 +102,7 @@ static VisualizationController *_sharedController = nil;
 
 - (void)postLatency:(double)latency {
 	self->latency = latency;
-	assert(latency < 45.0);
+	ignoreLatency = (latency >= 45.0) || (latency < 0.0);
 }
 
 - (double)readSampleRate {
@@ -115,7 +118,7 @@ static VisualizationController *_sharedController = nil;
 - (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT latencyOffset:(double)latency {
 	if(!outPCM && !outFFT) return;
 
-	if(!visAudio || !visAudioSize) {
+	if(ignoreLatency || !visAudio || !visAudioSize) {
 		if(outPCM) bzero(outPCM, sizeof(float) * 4096);
 		if(outFFT) bzero(outFFT, sizeof(float) * 2048);
 		return;
