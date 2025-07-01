@@ -101,8 +101,13 @@ static VisualizationController *_sharedController = nil;
 }
 
 - (void)postLatency:(double)latency {
-	ignoreLatency = (latency >= 45.0) || (latency < 0.0);
-	self->latency = latency;
+	if((latency >= 45.0) || (latency < 0.0)) [[clang::unlikely]] {
+		ignoreLatency = YES;
+		self->latency = latency;
+	} else {
+		self->latency = latency;
+		ignoreLatency = NO;
+	}
 }
 
 - (double)readSampleRate {
