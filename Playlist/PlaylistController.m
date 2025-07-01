@@ -374,7 +374,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 	ldiv_t weeksAndDays;
 
 	for(PlaylistEntry *pe in [self arrangedObjects]) {
-		if(!isnan([pe.length doubleValue])) tt += [pe.length doubleValue];
+		if(pe && !pe.deLeted && pe.length) {
+			if(!isnan([pe.length doubleValue])) tt += [pe.length doubleValue];
+		}
 	}
 
 	long sec = (long)(tt);
