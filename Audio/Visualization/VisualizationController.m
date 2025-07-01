@@ -17,6 +17,7 @@
 	int visAudioCursor, visAudioSize;
 	uint64_t visSamplesPosted;
 	BOOL ignoreLatency;
+	double sinePhase;
 }
 
 static VisualizationController *_sharedController = nil;
@@ -37,6 +38,7 @@ static VisualizationController *_sharedController = nil;
 		visAudioSize = 0;
 		latency = 0;
 		ignoreLatency = YES;
+		sinePhase = 0.0;
 	}
 	return self;
 }
@@ -51,6 +53,7 @@ static VisualizationController *_sharedController = nil;
 		visAudioCursor = 0;
 		visSamplesPosted = 0;
 		ignoreLatency = YES;
+		sinePhase = 0.0;
 		if(visAudio && visAudioSize) {
 			bzero(visAudio, sizeof(float) * visAudioSize);
 		}
@@ -120,27 +123,44 @@ static VisualizationController *_sharedController = nil;
 	return visSamplesPosted;
 }
 
+- (void)generateSineWave:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT {
+	double sinePhase = self->sinePhase;
+	self->sinePhase = fmod(sinePhase + (M_PI / 90.0), M_PI * 2.0);
+	if(outPCM || outFFT) {
+		const double stepSize = M_PI * 2.0 * 5.0 / 4096.0;
+		double sineStep = sinePhase;
+		for(int i = 0; i < 2048; ++i) {
+			double sinePoint = sin(sineStep);
+			if(outPCM) {
+				outPCM[i * 2] = sinePoint;
+				outPCM[i * 2 + 1] = sin(sineStep + stepSize);
+			}
+			if(outFFT) {
+				outFFT[i] = sinePoint * -40.0 - 40.0;
+			}
+			sineStep = fmod(sineStep + stepSize * 2, M_PI * 2.0);
+		}
+	}
+}
+
 - (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT latencyOffset:(double)latency {
 	if(!outPCM && !outFFT) return;
 
 	if(ignoreLatency || !visAudio || !visAudioSize) {
-		if(outPCM) bzero(outPCM, sizeof(float) * 4096);
-		if(outFFT) bzero(outFFT, sizeof(float) * 2048);
+		[self generateSineWave:outPCM visFFT:outFFT];
 		return;
 	}
 
 	void *visAudioTemp = calloc(sizeof(float), 4096);
 	if(!visAudioTemp) {
-		if(outPCM) bzero(outPCM, sizeof(float) * 4096);
-		if(outFFT) bzero(outFFT, sizeof(float) * 2048);
+		[self generateSineWave:outPCM visFFT:outFFT];
 		return;
 	}
 
 	@synchronized(self) {
 		if(!sampleRate) {
 			free(visAudioTemp);
-			if(outPCM) bzero(outPCM, 4096 * sizeof(float));
-			if(outFFT) bzero(outFFT, 2048 * sizeof(float));
+			[self generateSineWave:outPCM visFFT:outFFT];
 			return;
 		}
 		int latencySamples = (int)(sampleRate * (self->latency + latency)) + 2048;
