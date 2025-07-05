@@ -658,7 +658,6 @@
 		837CEAFC23487F2C00E62A4A /* raw_wavm.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAE723487F2B00E62A4A /* raw_wavm.c */; };
 		837CEAFD23487F2C00E62A4A /* psf.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAE823487F2B00E62A4A /* psf.c */; };
 		837CEAFE23487F2C00E62A4A /* jstm_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAE923487F2B00E62A4A /* jstm_streamfile.h */; };
-		837CEAFF23487F2C00E62A4A /* raw_snds.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAEA23487F2B00E62A4A /* raw_snds.c */; };
 		837CEB0023487F2C00E62A4A /* smk.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAEB23487F2B00E62A4A /* smk.c */; };
 		837CEB0123487F2C00E62A4A /* xmu.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAEC23487F2C00E62A4A /* xmu.c */; };
 		837CEB0223487F2C00E62A4A /* raw_int.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAED23487F2C00E62A4A /* raw_int.c */; };
@@ -1618,7 +1617,6 @@
 		837CEAE723487F2B00E62A4A /* raw_wavm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = raw_wavm.c; sourceTree = "<group>"; };
 		837CEAE823487F2B00E62A4A /* psf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psf.c; sourceTree = "<group>"; };
 		837CEAE923487F2B00E62A4A /* jstm_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jstm_streamfile.h; sourceTree = "<group>"; };
-		837CEAEA23487F2B00E62A4A /* raw_snds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = raw_snds.c; sourceTree = "<group>"; };
 		837CEAEB23487F2B00E62A4A /* smk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smk.c; sourceTree = "<group>"; };
 		837CEAEC23487F2C00E62A4A /* xmu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xmu.c; sourceTree = "<group>"; };
 		837CEAED23487F2C00E62A4A /* raw_int.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = raw_int.c; sourceTree = "<group>"; };
@@ -2617,7 +2615,6 @@
 				837CEADD23487F2A00E62A4A /* raw_pcm.c */,
 				836F6EE718BDC2190095E648 /* raw_rsf.c */,
 				836F6EEA18BDC2190095E648 /* raw_s14_sss.c */,
-				837CEAEA23487F2B00E62A4A /* raw_snds.c */,
 				837CEAE723487F2B00E62A4A /* raw_wavm.c */,
 				836F6EE218BDC2190095E648 /* redspark.c */,
 				834FE0D9215C79EA000A5D3D /* rfrm.c */,
@@ -3609,7 +3606,6 @@
 				834F7E842C709F5B003AC386 /* apa3.c in Sources */,
 				834FE106215C79ED000A5D3D /* utk.c in Sources */,
 				8373342B23F60CDC00DE14DC /* fwse.c in Sources */,
-				837CEAFF23487F2C00E62A4A /* raw_snds.c in Sources */,
 				83031EDC243C510500C3F3E0 /* vid1.c in Sources */,
 				834F7DD02C7093EA003AC386 /* icelib.c in Sources */,
 				83AA5D271F6E2F9C0020821C /* stma.c in Sources */,
