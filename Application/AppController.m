@@ -247,14 +247,11 @@ static BOOL consentLastEnabled = NO;
 
 		if(results && [results count] > 0) {
 			PlaylistEntry *pe = results[0];
+			// Select this track
+			[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] byExtendingSelection:NO];
 			if([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"]) {
+				// And play it
 				[playbackController playEntryAtIndex:pe.index startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
-			} else {
-				pe.current = NO;
-				pe.stopAfter = NO;
-				pe.currentPosition = 0.0;
-				pe.countAdded = NO;
-				[playlistController commitPersistentStore];
 			}
 			// Bug fix
 			if([results count] > 1) {
@@ -262,6 +259,7 @@ static BOOL consentLastEnabled = NO;
 					PlaylistEntry *pe = results[i];
 					[pe setCurrent:NO];
 				}
+				[playlistController commitPersistentStore];
 			}
 		}
 	}
