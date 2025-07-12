@@ -104,7 +104,7 @@ namespace Organya {
 				auto& c = carrier, &f = frequency, &a = amplitude;
 				double mainpos = c.offset, maindelta = 256*c.pitch/nsamples;
 				for(size_t i=0; i<result.size(); ++i) {
-					auto s = [=](double p=1) { return 256*p*i/nsamples; };
+					auto s = [this,i](double p=1) { return 256*p*i/nsamples; };
 					// Take sample from each of the three signal generators:
 					int freqval = f.wave[0xFF & int(f.offset + s(f.pitch))] * f.level;
 					int ampval  = a.wave[0xFF & int(a.offset + s(a.pitch))] * a.level;
@@ -121,7 +121,7 @@ namespace Organya {
 		void Load(FILE* fp) { // Load PXT file from disk and initialize synthesizer.
 			/* C++11 simplifies things by a great deal.              */
 			/* This function would be a lot more complex without it. */
-			auto f = [=](){ return (int) fgetv(fp); };
+			auto f = [fp](){ return (int) fgetv(fp); };
 			for(auto&c: channels)
 				c = { f() != 0, f(), // enabled, length
 					{ Waveforms[f()%6], fgetv(fp), f(), f() }, // carrier wave
