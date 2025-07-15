@@ -656,6 +656,7 @@
 				<string>mds</string>
 				<string>mdsp</string>
 				<string>med</string>
+				<string>mhwk</string>
 				<string>mjb</string>
 				<string>mi4</string>
 				<string>mib</string>
@@ -829,7 +830,7 @@
 				<string>skx</string>
 				<string>slb</string>
 				<string>sli</string>
-				<string>smc</string>
+				<string>smh</string>
 				<string>smk</string>
 				<string>smp</string>
 				<string>smv</string>
@@ -851,6 +852,7 @@
 				<string>spsd</string>
 				<string>spw</string>
 				<string>srsa</string>
+				<string>srcd</string>
 				<string>ss2</string>
 				<string>ssd</string>
 				<string>ssf</string>

@@ -36,7 +36,7 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/ffmpeg/lib/libavformat.61.dylib
 /ThirdParty/ffmpeg/lib/libavutil.59.dylib
 /ThirdParty/ffmpeg/lib/libswresample.5.dylib
-/ThirdParty/flac/lib/libFLAC.12.dylib
+/ThirdParty/flac/lib/libFLAC.14.dylib
 /ThirdParty/libid3tag/lib/libid3tag.a
 /ThirdParty/libmad/lib/libmad.a
 /ThirdParty/libopenmpt/lib/libopenmpt.a

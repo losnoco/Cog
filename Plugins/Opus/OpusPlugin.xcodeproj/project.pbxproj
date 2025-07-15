@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8301C14928780C1A00651A6E /* libFLAC.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8301C14828780C1A00651A6E /* libFLAC.12.dylib */; };
+		8301C14928780C1A00651A6E /* libFLAC.14.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8301C14828780C1A00651A6E /* libFLAC.14.dylib */; };
 		83186316285CEC91001422CC /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 83186315285CEC91001422CC /* NSDictionary+Merge.m */; };
 		834D19102D7F956400F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D190F2D7F956400F13B89 /* CogAudio.framework */; };
 		836EF0CF27BB952F00BF35B2 /* libopusfile.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */; };
@@ -29,7 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8301C14828780C1A00651A6E /* libFLAC.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.12.dylib; path = ../../ThirdParty/flac/lib/libFLAC.12.dylib; sourceTree = "<group>"; };
+		8301C14828780C1A00651A6E /* libFLAC.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.14.dylib; path = ../../ThirdParty/flac/lib/libFLAC.14.dylib; sourceTree = "<group>"; };
 		83186314285CEC91001422CC /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		83186315285CEC91001422CC /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		833F68411CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 			files = (
 				834D19102D7F956400F13B89 /* CogAudio.framework in Frameworks */,
 				8375B04017FFEA400092A79F /* Cocoa.framework in Frameworks */,
-				8301C14928780C1A00651A6E /* libFLAC.12.dylib in Frameworks */,
+				8301C14928780C1A00651A6E /* libFLAC.14.dylib in Frameworks */,
 				836EF0CF27BB952F00BF35B2 /* libopusfile.0.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -100,7 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				834D190F2D7F956400F13B89 /* CogAudio.framework */,
-				8301C14828780C1A00651A6E /* libFLAC.12.dylib */,
+				8301C14828780C1A00651A6E /* libFLAC.14.dylib */,
 				836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */,
 				8375B03F17FFEA400092A79F /* Cocoa.framework */,
 				8375B04117FFEA400092A79F /* Other Frameworks */,

@@ -129,7 +129,7 @@
 		836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C427BB919300BF35B2 /* libogg.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		836EF0CB27BB91EE00BF35B2 /* libFLAC.12.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C727BB91BC00BF35B2 /* libFLAC.12.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836EF0CB27BB91EE00BF35B2 /* libFLAC.14.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0C727BB91BC00BF35B2 /* libFLAC.14.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836EF0E127BB98AB00BF35B2 /* libopusfile.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836F5BF91A357A01002730CC /* sidplay.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8314D6411A354DFF00EEE8E6 /* sidplay.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -719,7 +719,7 @@
 				836DF617298F6F1700CD0580 /* libsoxr.0.dylib in CopyFiles */,
 				836EF0E127BB98AB00BF35B2 /* libopusfile.0.dylib in CopyFiles */,
 				836EF0E027BB98A800BF35B2 /* libopus.0.dylib in CopyFiles */,
-				836EF0CB27BB91EE00BF35B2 /* libFLAC.12.dylib in CopyFiles */,
+				836EF0CB27BB91EE00BF35B2 /* libFLAC.14.dylib in CopyFiles */,
 				836EF0CA27BB91EB00BF35B2 /* libvorbis.0.dylib in CopyFiles */,
 				83256B69286661FC0036D9C0 /* libmpg123.0.dylib in CopyFiles */,
 				836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */,
@@ -948,7 +948,7 @@
 		836EF0C427BB919300BF35B2 /* libogg.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libogg.0.dylib; path = ThirdParty/ogg/lib/libogg.0.dylib; sourceTree = "<group>"; };
 		836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbis.0.dylib; path = ThirdParty/vorbis/lib/libvorbis.0.dylib; sourceTree = "<group>"; };
 		836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
-		836EF0C727BB91BC00BF35B2 /* libFLAC.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.12.dylib; path = ThirdParty/flac/lib/libFLAC.12.dylib; sourceTree = "<group>"; };
+		836EF0C727BB91BC00BF35B2 /* libFLAC.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.14.dylib; path = ThirdParty/flac/lib/libFLAC.14.dylib; sourceTree = "<group>"; };
 		836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopus.0.dylib; path = ThirdParty/opus/lib/libopus.0.dylib; sourceTree = "<group>"; };
 		836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopusfile.0.dylib; path = ThirdParty/opusfile/lib/libopusfile.0.dylib; sourceTree = "<group>"; };
 		836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vgmstream.xcodeproj; path = Plugins/vgmstream/vgmstream.xcodeproj; sourceTree = "<group>"; };
@@ -1148,7 +1148,7 @@
 				835FAC7D27BCDF5B00BA8562 /* libavif.a */,
 				836EF0CD27BB94F100BF35B2 /* libopusfile.0.dylib */,
 				836EF0CC27BB94E100BF35B2 /* libopus.0.dylib */,
-				836EF0C727BB91BC00BF35B2 /* libFLAC.12.dylib */,
+				836EF0C727BB91BC00BF35B2 /* libFLAC.14.dylib */,
 				836EF0C527BB91AB00BF35B2 /* libvorbis.0.dylib */,
 				836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */,
 				836EF0C427BB919300BF35B2 /* libogg.0.dylib */,
