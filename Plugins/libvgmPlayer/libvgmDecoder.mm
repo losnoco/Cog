@@ -242,11 +242,16 @@ const int masterVol = 0x10000; // Fixed point 16.16
 
 		int numSamples = framesToDo * numChannels * (numBitsPerSample / 8);
 
-		mainPlr->Render(numSamples, buf);
+		UINT32 numRendered = mainPlr->Render(numSamples, buf);
 
-		buf = (void*)(((uint8_t*)buf) + numSamples);
+		buf = (void*)(((uint8_t*)buf) + numRendered);
 
-		framesDone += framesToDo;
+		UINT32 framesRendered = numRendered / (numChannels * (numBitsPerSample / 8));
+
+		framesDone += framesRendered;
+
+		if(framesRendered < framesToDo)
+			break;
 	}
 
 	[chunk setStreamTimestamp:streamTimestamp];
