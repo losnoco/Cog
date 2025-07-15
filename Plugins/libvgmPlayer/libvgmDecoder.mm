@@ -24,6 +24,8 @@
 
 @implementation libvgmDecoder
 
+enum { bufferSize = 1024 };
+
 #ifdef _DEBUG
 const int logLevel = DEVLOG_DEBUG;
 #else
@@ -99,6 +101,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		fileData = NULL;
 		dLoad = NULL;
 		mainPlr = NULL;
+		sampleBuffer = NULL;
 	}
 	return self;
 }
@@ -130,62 +133,71 @@ const int masterVol = 0x10000; // Fixed point 16.16
 	BOOL repeatOne = IsRepeatOneSet();
 	uint32_t maxLoops = repeatOne ? 0 : (uint32_t)loopCount;
 
-	mainPlr = new PlayerA;
-	mainPlr->RegisterPlayerEngine(new VGMPlayer);
-	mainPlr->RegisterPlayerEngine(new S98Player);
-	mainPlr->RegisterPlayerEngine(new DROPlayer);
-	mainPlr->RegisterPlayerEngine(new GYMPlayer);
-	mainPlr->SetEventCallback(FilePlayCallback, (__bridge void*)(self));
-	mainPlr->SetFileReqCallback(RequestFileCallback, NULL);
-	mainPlr->SetLogCallback(PlayerLogCallback, NULL);
-	{
-		PlayerA::Config pCfg = mainPlr->GetConfiguration();
-		pCfg.masterVol = masterVol;
-		pCfg.loopCount = maxLoops;
-		pCfg.fadeSmpls = (int)ceil(sampleRate * fadeTime); // fade over configured duration
-		pCfg.endSilenceSmpls = sampleRate / 2; // 0.5 seconds of silence at the end
-		pCfg.pbSpeed = 1.0;
-		mainPlr->SetConfiguration(pCfg);
+	try {
+		mainPlr = new PlayerA;
+		mainPlr->RegisterPlayerEngine(new VGMPlayer);
+		mainPlr->RegisterPlayerEngine(new S98Player);
+		mainPlr->RegisterPlayerEngine(new DROPlayer);
+		mainPlr->RegisterPlayerEngine(new GYMPlayer);
+		mainPlr->SetEventCallback(FilePlayCallback, (__bridge void*)(self));
+		mainPlr->SetFileReqCallback(RequestFileCallback, NULL);
+		mainPlr->SetLogCallback(PlayerLogCallback, NULL);
+		{
+			PlayerA::Config pCfg = mainPlr->GetConfiguration();
+			pCfg.masterVol = masterVol;
+			pCfg.loopCount = maxLoops;
+			pCfg.fadeSmpls = (int)ceil(sampleRate * fadeTime); // fade over configured duration
+			pCfg.endSilenceSmpls = sampleRate / 2; // 0.5 seconds of silence at the end
+			pCfg.pbSpeed = 1.0;
+			mainPlr->SetConfiguration(pCfg);
+		}
+		mainPlr->SetOutputSettings((int)ceil(sampleRate), numChannels, numBitsPerSample, smplAlloc);
+
+		[source seek:0 whence:SEEK_END];
+		size_t size = [source tell];
+		[source seek:0 whence:SEEK_SET];
+
+		fileData = (UINT8*)malloc(size);
+		if(!fileData)
+			return NO;
+
+		size_t bytesRead = [source read:fileData amount:size];
+
+		if(bytesRead != size)
+			return NO;
+
+		dLoad = MemoryLoader_Init(fileData, (unsigned int)size);
+		if(!dLoad)
+			return NO;
+
+		DataLoader_SetPreloadBytes(dLoad, 0x100);
+		if(DataLoader_Load(dLoad))
+			return NO;
+
+		if(mainPlr->LoadFile(dLoad))
+			return NO;
+
+		PlayerBase* player = mainPlr->GetPlayer();
+
+		mainPlr->SetLoopCount(maxLoops);
+		if(player->GetPlayerType() == FCC_VGM) {
+			VGMPlayer* vgmplay = dynamic_cast<VGMPlayer*>(player);
+			mainPlr->SetLoopCount(vgmplay->GetModifiedLoopCount(maxLoops));
+		}
+
+		length = player->Tick2Second(player->GetTotalTicks()) * sampleRate;
+
+		[self setTrackEnded:NO];
+
+		mainPlr->Start();
+	} catch(std::exception& e) {
+		ALog(@"Exception caught opening file: %s\n", e.what());
+		return NO;
 	}
-	mainPlr->SetOutputSettings((int)ceil(sampleRate), numChannels, numBitsPerSample, smplAlloc);
 
-	[source seek:0 whence:SEEK_END];
-	size_t size = [source tell];
-	[source seek:0 whence:SEEK_SET];
-
-	fileData = (UINT8*)malloc(size);
-	if(!fileData)
+	sampleBuffer = (UINT8*) malloc(bufferSize * numChannels * (numBitsPerSample / 8));
+	if(!sampleBuffer)
 		return NO;
-
-	size_t bytesRead = [source read:fileData amount:size];
-
-	if(bytesRead != size)
-		return NO;
-
-	dLoad = MemoryLoader_Init(fileData, (unsigned int)size);
-	if(!dLoad)
-		return NO;
-
-	DataLoader_SetPreloadBytes(dLoad, 0x100);
-	if(DataLoader_Load(dLoad))
-		return NO;
-
-	if(mainPlr->LoadFile(dLoad))
-		return NO;
-
-	PlayerBase* player = mainPlr->GetPlayer();
-
-	mainPlr->SetLoopCount(maxLoops);
-	if(player->GetPlayerType() == FCC_VGM) {
-		VGMPlayer* vgmplay = dynamic_cast<VGMPlayer*>(player);
-		mainPlr->SetLoopCount(vgmplay->GetModifiedLoopCount(maxLoops));
-	}
-
-	length = player->Tick2Second(player->GetTotalTicks()) * sampleRate;
-
-	[self setTrackEnded:NO];
-
-	mainPlr->Start();
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -215,47 +227,52 @@ const int masterVol = 0x10000; // Fixed point 16.16
 	id audioChunkClass = NSClassFromString(@"AudioChunk");
 	AudioChunk* chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
 
-	int frames = 1024;
-	const size_t bytesPerFrame = [chunk format].mBytesPerFrame;
-	uint8_t buffer[frames * bytesPerFrame];
+	int frames = bufferSize;
+	const int bytesPerFrame = [chunk format].mBytesPerFrame;
 
-	void* buf = (void*)buffer;
+	void* buf = (void*)sampleBuffer;
 
 	BOOL repeatOne = IsRepeatOneSet();
 	uint32_t maxLoops = repeatOne ? 0 : (uint32_t)loopCount;
 
-	PlayerBase* player = mainPlr->GetPlayer();
-	mainPlr->SetLoopCount(maxLoops);
-	if(player->GetPlayerType() == FCC_VGM) {
-		VGMPlayer* vgmplay = dynamic_cast<VGMPlayer*>(player);
-		mainPlr->SetLoopCount(vgmplay->GetModifiedLoopCount(maxLoops));
-	}
-
-	double streamTimestamp = mainPlr->GetCurTime(0);
-
+	double streamTimestamp;
 	UInt32 framesDone = 0;
 
-	while(framesDone < frames) {
-		UInt32 framesToDo = frames - framesDone;
-		if(framesToDo > smplAlloc)
-			framesToDo = smplAlloc;
+	try {
+		PlayerBase* player = mainPlr->GetPlayer();
+		mainPlr->SetLoopCount(maxLoops);
+		if(player->GetPlayerType() == FCC_VGM) {
+			VGMPlayer* vgmplay = dynamic_cast<VGMPlayer*>(player);
+			mainPlr->SetLoopCount(vgmplay->GetModifiedLoopCount(maxLoops));
+		}
 
-		int numSamples = framesToDo * numChannels * (numBitsPerSample / 8);
+		streamTimestamp = mainPlr->GetCurTime(0);
 
-		UINT32 numRendered = mainPlr->Render(numSamples, buf);
+		while(framesDone < frames) {
+			UInt32 framesToDo = frames - framesDone;
+			if(framesToDo > smplAlloc)
+				framesToDo = smplAlloc;
 
-		buf = (void*)(((uint8_t*)buf) + numRendered);
+			int numSamples = framesToDo * bytesPerFrame;
 
-		UINT32 framesRendered = numRendered / (numChannels * (numBitsPerSample / 8));
+			UINT32 numRendered = mainPlr->Render(numSamples, buf);
 
-		framesDone += framesRendered;
+			buf = (void*)(((uint8_t*)buf) + numRendered);
 
-		if(framesRendered < framesToDo)
-			break;
+			UINT32 framesRendered = numRendered / bytesPerFrame;
+
+			framesDone += framesRendered;
+
+			if(framesRendered < framesToDo)
+				break;
+		}
+	} catch(std::exception& e) {
+		ALog(@"Exception caught while playing track: %s\n", e.what());
+		return nil;
 	}
 
 	[chunk setStreamTimestamp:streamTimestamp];
-	[chunk assignSamples:buffer frameCount:framesDone];
+	[chunk assignSamples:sampleBuffer frameCount:framesDone];
 
 	return chunk;
 }
@@ -269,16 +286,24 @@ const int masterVol = 0x10000; // Fixed point 16.16
 }
 
 - (void)close {
-	if(mainPlr) {
-		mainPlr->Stop();
-		mainPlr->UnloadFile();
-
-		delete mainPlr;
-		mainPlr = NULL;
+	if(sampleBuffer) {
+		free(sampleBuffer);
+		sampleBuffer = NULL;
 	}
-	if(dLoad) {
-		DataLoader_Deinit(dLoad);
-		dLoad = NULL;
+	try {
+		if(mainPlr) {
+			mainPlr->Stop();
+			mainPlr->UnloadFile();
+			
+			delete mainPlr;
+			mainPlr = NULL;
+		}
+		if(dLoad) {
+			DataLoader_Deinit(dLoad);
+			dLoad = NULL;
+		}
+	} catch(std::exception& e) {
+		ALog(@"Exception caught cleaning up player: %s\n", e.what());
 	}
 	if(fileData) {
 		free(fileData);
