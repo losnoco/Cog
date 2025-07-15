@@ -19,6 +19,7 @@
 	DATA_LOADER* dLoad;
 	PlayerA* mainPlr;
 	id<CogSource> source;
+	UINT8* sampleBuffer;
 	double sampleRate;
 	long loopCount;
 	double fadeTime;
