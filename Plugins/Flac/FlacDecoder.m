@@ -337,6 +337,8 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	FLAC__StreamDecoderInitStatus ret;
 
 	if(isOggFlac) {
+		FLAC__stream_decoder_set_decode_chained_stream(decoder, true);
+
 		ret = FLAC__stream_decoder_init_ogg_stream(decoder,
 		                                           ReadCallback,
 		                                           ([source seekable] ? SeekCallback : NULL),
@@ -384,8 +386,13 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	AudioChunk *chunk = nil;
 
 	while (blockBufferFrames <= 0) {
-		if(FLAC__stream_decoder_get_state(decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
+		FLAC__StreamDecoderState state = FLAC__stream_decoder_get_state(decoder);
+		if(state == FLAC__STREAM_DECODER_END_OF_STREAM) {
 			return nil;
+		} else if(state == FLAC__STREAM_DECODER_END_OF_LINK) {
+			if(!FLAC__stream_decoder_finish_link(decoder)) {
+				return nil;
+			}
 		}
 
 		if(!FLAC__stream_decoder_process_single(decoder)) {

@@ -1816,7 +1816,7 @@ void op_set_decode_callback(OggOpusFile *_of,
 #define OP_TRACK_GAIN    (3008)
 
 /**Gain offset type that indicates that the provided offset should be used as
-    the gain directly, without applying any the header or track gains.*/
+    the gain directly, without applying any of the header or track gains.*/
 #define OP_ABSOLUTE_GAIN (3009)
 
 /**Sets the gain to be used for decoded output.

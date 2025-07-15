@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17C93D360B8FDA66008627D6 /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93D340B8FDA66008627D6 /* VorbisDecoder.m */; };
-		8301C14B287810F300651A6E /* libFLAC.12.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8301C14A287810F300651A6E /* libFLAC.12.dylib */; };
+		8301C14B287810F300651A6E /* libFLAC.14.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8301C14A287810F300651A6E /* libFLAC.14.dylib */; };
 		83186313285CEBD2001422CC /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 83186312285CEBD2001422CC /* NSDictionary+Merge.m */; };
 		834D19172D7F95A600F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19162D7F95A600F13B89 /* CogAudio.framework */; };
 		836EF0D627BB969D00BF35B2 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */; };
@@ -26,7 +26,7 @@
 		17C93D330B8FDA66008627D6 /* VorbisDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VorbisDecoder.h; sourceTree = "<group>"; };
 		17C93D340B8FDA66008627D6 /* VorbisDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VorbisDecoder.m; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* VorbisPlugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VorbisPlugin_Prefix.pch; sourceTree = "<group>"; };
-		8301C14A287810F300651A6E /* libFLAC.12.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.12.dylib; path = ../../ThirdParty/flac/lib/libFLAC.12.dylib; sourceTree = "<group>"; };
+		8301C14A287810F300651A6E /* libFLAC.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.14.dylib; path = ../../ThirdParty/flac/lib/libFLAC.14.dylib; sourceTree = "<group>"; };
 		83186311285CEBD2001422CC /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		83186312285CEBD2001422CC /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		834A42AB287AF0B000EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
@@ -51,7 +51,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				834D19172D7F95A600F13B89 /* CogAudio.framework in Frameworks */,
-				8301C14B287810F300651A6E /* libFLAC.12.dylib in Frameworks */,
+				8301C14B287810F300651A6E /* libFLAC.14.dylib in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 				836EF0DF27BB987000BF35B2 /* libvorbis.0.dylib in Frameworks */,
 				836EF0D627BB969D00BF35B2 /* libvorbisfile.3.dylib in Frameworks */,
@@ -111,7 +111,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8301C14A287810F300651A6E /* libFLAC.12.dylib */,
+				8301C14A287810F300651A6E /* libFLAC.14.dylib */,
 				836EF0DE27BB987000BF35B2 /* libvorbis.0.dylib */,
 				836EF0D427BB969D00BF35B2 /* libvorbisfile.3.dylib */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,

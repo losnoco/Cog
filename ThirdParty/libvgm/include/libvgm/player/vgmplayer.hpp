@@ -248,6 +248,7 @@ protected:
 	void Cmd_GGStereo(void);				// command 4F - set GameGear Stereo mask
 	void Cmd_SN76489(void);					// command 50 - SN76489 register write
 	void Cmd_Reg8_Data8(void);				// command 51/54/55/5A..5D - Register, Data (8-bit)
+	void Cmd_MSM5205_Reg(void);				// command 32 - MSM5205 register write (4-bit offset, 4-bit data)
 	void Cmd_CPort_Reg8_Data8(void);		// command 52/53/56..59/5E/5F - Port (in command byte), Register, Data (8-bit)
 	void Cmd_Port_Reg8_Data8(void);			// command D0..D2 - Port, Register, Data (8-bit)
 	void Cmd_Ofs8_Data8(void);				// command B3/B5..BB/BE/BF - Offset (8-bit), Data (8-bit)
@@ -281,8 +282,8 @@ protected:
 	enum
 	{
 		_HDR_BUF_SIZE = 0x100,
-		_OPT_DEV_COUNT = 0x2c,
-		_CHIP_COUNT = 0x2c,
+		_OPT_DEV_COUNT = 0x2d,
+		_CHIP_COUNT = 0x2d,
 		_PCM_BANK_COUNT = 0x40
 	};
 	
