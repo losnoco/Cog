@@ -347,6 +347,7 @@ static const char* extension_list[] = {
     "mds",
     "mdsp",
     "med",
+    "mhwk",
     "mjb",
     "mi4", //fake extension for .mib (renamed, to be removed)
     "mib",
@@ -536,7 +537,7 @@ static const char* extension_list[] = {
     "skx",
     "slb", //txth/reserved [THE Nekomura no Hitobito (PS2)]
     "sli",
-    "smc",
+    "smh",
     "smk",
     "smp",
     "smv",
@@ -558,6 +559,7 @@ static const char* extension_list[] = {
     "spsd",
     "spw",
     "srsa",
+    "srcd",
     "ss2",
     "ssd", //txth/reserved [Zack & Wiki (Wii)]
     "ssf",
@@ -1253,7 +1255,7 @@ static const meta_info meta_info_list[] = {
         {meta_LSF_N1NJ4N,           "Gizmondo Studios Helsingborg LSF header"},
         {meta_XWAV,                 "feelplus XWAV header"},
         {meta_RAW_SNDS,             "PC .snds raw header"},
-        {meta_HYPERSCAN_KVAG,       "Mattel Hyperscan KVAG"},
+        {meta_KVAG,                 "Mattel KVAG header"},
         {meta_PSND,                 "Polarbit PSND header"},
         {meta_ADP_WILDFIRE,         "Wildfire ADP! header"},
         {meta_QD_ADP,               "Quantic Dream .ADP header"},
@@ -1479,6 +1481,8 @@ static const meta_info meta_info_list[] = {
         {meta_AUDIOPKG,             "Inevitable .AUDIOPKG header"},
         {meta_SWAR,                 "Nintendo SWAR header"},
         {meta_IVB,                  "Metro IVB header"},
+        {meta_SRCD,                 "Capcom SRCD header"},
+        {meta_MHWK,                 "Broderbund MHWK header"}
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
