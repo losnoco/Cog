@@ -701,7 +701,7 @@ VGMSTREAM * init_vgmstream_msb_msh(STREAMFILE * streamFile);
 
 VGMSTREAM * init_vgmstream_txtp(STREAMFILE * streamFile);
 
-VGMSTREAM * init_vgmstream_smc_smh(STREAMFILE * streamFile);
+VGMSTREAM* init_vgmstream_smh_smc(STREAMFILE* sf);
 
 VGMSTREAM * init_vgmstream_ppst(STREAMFILE *streamFile);
 
@@ -1034,5 +1034,9 @@ VGMSTREAM* init_vgmstream_audiopkg(STREAMFILE* sf);
 VGMSTREAM* init_vgmstream_swar(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_ivb(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_mhwk(STREAMFILE* sf);
+
+VGMSTREAM* init_vgmstream_srcd(STREAMFILE* sf);
 
 #endif

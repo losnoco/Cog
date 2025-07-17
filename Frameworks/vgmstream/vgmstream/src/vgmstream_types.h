@@ -496,7 +496,7 @@ typedef enum {
     meta_LSF_N1NJ4N,        /* .lsf n1nj4n Fastlane Street Racing (iPhone) */
     meta_XWAV,
     meta_RAW_SNDS,
-    meta_HYPERSCAN_KVAG,    /* Hyperscan KVAG/BVG */
+    meta_KVAG,
     meta_PSND,
     meta_ADP_WILDFIRE,
     meta_QD_ADP,
@@ -721,6 +721,8 @@ typedef enum {
     meta_AUDIOPKG,
     meta_SWAR,
     meta_IVB,
+    meta_SRCD,
+    meta_MHWK
 } meta_t;
 
 #endif
