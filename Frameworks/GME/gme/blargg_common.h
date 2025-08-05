@@ -4,19 +4,22 @@
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
+#include "blargg_config.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <limits.h>
 
-#undef BLARGG_COMMON_H
-// allow blargg_config.h to #include blargg_common.h
-#include "blargg_config.h"
-#ifndef BLARGG_COMMON_H
-#define BLARGG_COMMON_H
+#if defined(__GNUC__)
+#define BLARGG_PRINTFN(x,y) __attribute__((__format__(__printf__,x,y)))
+#else
+#define BLARGG_PRINTFN(x,y)
+#endif
 
 // BLARGG_RESTRICT: equivalent to restrict, where supported
-#if __GNUC__ >= 3 || _MSC_VER >= 1100
+#if (defined(__GNUC__) && (__GNUC__ >= 3)) || \
+    (defined(_MSC_VER) && (_MSC_VER >= 1100))
 	#define BLARGG_RESTRICT __restrict
 #else
 	#define BLARGG_RESTRICT
@@ -27,10 +30,23 @@
 	#define STATIC_CAST(T,expr) ((T) (expr))
 #endif
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1910
+	#define blaarg_static_assert(cond, msg) static_assert(cond, msg)
+#else
+	#define blaarg_static_assert(cond, msg) assert(cond)
+#endif
+
 // blargg_err_t (0 on success, otherwise error string)
 #ifndef blargg_err_t
 	typedef const char* blargg_err_t;
 #endif
+
+// Apply minus sign to unsigned type and prevent the warning being shown
+template<typename T>
+inline T uMinus(T in)
+{
+	return ~(in - 1);
+}
 
 // blargg_vector - very lightweight vector of POD types (no constructor/destructor)
 template<class T>
@@ -66,7 +82,8 @@ public:
 	#define BLARGG_DISABLE_NOTHROW \
 		void* operator new ( size_t s ) noexcept { return malloc( s ); }\
 		void* operator new ( size_t s, const std::nothrow_t& ) noexcept { return malloc( s ); }\
-		void operator delete ( void* p ) noexcept { free( p ); }
+		void operator delete ( void* p ) noexcept { free( p ); }\
+		void operator delete ( void* p, const std::nothrow_t&) noexcept { free( p ); }
 #endif
 
 // Use to force disable exceptions for a specific allocation no matter what class
@@ -79,74 +96,7 @@ public:
 #define BLARGG_2CHAR( a, b ) \
 	((a&0xFF)*0x100L + (b&0xFF))
 
-// BLARGG_COMPILER_HAS_BOOL: If 0, provides bool support for old compiler. If 1,
-// compiler is assumed to support bool. If undefined, availability is determined.
-#ifndef BLARGG_COMPILER_HAS_BOOL
-	#if defined (__MWERKS__)
-		#if !__option(bool)
-			#define BLARGG_COMPILER_HAS_BOOL 0
-		#endif
-	#elif defined (_MSC_VER)
-		#if _MSC_VER < 1100
-			#define BLARGG_COMPILER_HAS_BOOL 0
-		#endif
-	#elif defined (__GNUC__)
-		// supports bool
-	#elif __cplusplus < 199711
-		#define BLARGG_COMPILER_HAS_BOOL 0
-	#endif
-#endif
-#if defined (BLARGG_COMPILER_HAS_BOOL) && !BLARGG_COMPILER_HAS_BOOL
-	// If you get errors here, modify your blargg_config.h file
-	typedef int bool;
-	const bool true  = 1;
-	const bool false = 0;
-#endif
-
-#if defined(__has_cpp_attribute)
-# if __has_cpp_attribute(maybe_unused)
-#  define BLARGG_MAYBE_UNUSED [[maybe_unused]]
-# endif
-#endif
-
-#ifndef BLARGG_MAYBE_UNUSED
-# define BLARGG_MAYBE_UNUSED
-#endif
-
-// blargg_long/blargg_ulong = at least 32 bits, int if it's big enough
-
-#if INT_MAX < 0x7FFFFFFF || LONG_MAX == 0x7FFFFFFF
-	typedef long blargg_long;
-#else
-	typedef int blargg_long;
-#endif
-
-#if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
-	typedef unsigned long blargg_ulong;
-#else
-	typedef unsigned blargg_ulong;
-#endif
-
 // int8_t etc.
+#include <stdint.h>
 
-// TODO: Add CMake check for this, although I'd likely just point affected
-// persons to a real compiler...
-#if 1 || defined (HAVE_STDINT_H)
-	#include <stdint.h>
-#endif
-
-#if __GNUC__ >= 3
-	#define BLARGG_DEPRECATED __attribute__ ((deprecated))
-#else
-	#define BLARGG_DEPRECATED
-#endif
-
-// Use in place of "= 0;" for a pure virtual, since these cause calls to std C++ lib.
-// During development, BLARGG_PURE( x ) expands to = 0;
-// virtual int func() BLARGG_PURE( { return 0; } )
-#ifndef BLARGG_PURE
-	#define BLARGG_PURE( def ) def
-#endif
-
-#endif
 #endif

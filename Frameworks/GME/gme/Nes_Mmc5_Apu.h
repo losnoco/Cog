@@ -12,11 +12,11 @@ class Nes_Mmc5_Apu : public Nes_Apu {
 public:
 	enum { regs_addr = 0x5000 };
 	enum { regs_size = 0x16 };
-	
+
 	enum { osc_count  = 3 };
 	void write_register( blip_time_t, unsigned addr, int data );
 	void osc_output( int i, Blip_Buffer* );
-	
+
 	enum { exram_size = 1024 };
 	unsigned char exram [exram_size];
 };
@@ -47,10 +47,10 @@ inline void Nes_Mmc5_Apu::write_register( blip_time_t time, unsigned addr, int d
 	case 0x5011: // DAC
 		Nes_Apu::write_register( time, addr - 0x1000, data );
 		break;
-	
+
 	case 0x5010: // some things write to this for some reason
 		break;
-	
+
 #ifdef BLARGG_DEBUG_H
 	default:
 			debug_printf( "Unmapped MMC5 APU write: $%04X <- $%02X\n", addr, data );

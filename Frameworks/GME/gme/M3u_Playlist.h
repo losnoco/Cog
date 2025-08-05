@@ -13,11 +13,11 @@ public:
 	blargg_err_t load( const char* path );
 	blargg_err_t load( Data_Reader& in );
 	blargg_err_t load( void const* data, long size );
-	
+
 	// Line number of first parse error, 0 if no error. Any lines with parse
 	// errors are ignored.
 	int first_error() const { return first_error_; }
-	
+
 	struct info_t
 	{
 		const char* title;
@@ -31,7 +31,7 @@ public:
 		const char* copyright;
 	};
 	info_t const& info() const { return info_; }
-	
+
 	struct entry_t
 	{
 		const char* file; // filename without stupid ::TYPE suffix
@@ -48,15 +48,15 @@ public:
 	};
 	entry_t const& operator [] ( int i ) const { return entries [i]; }
 	int size() const { return entries.size(); }
-	
+
 	void clear();
-	
+
 private:
 	blargg_vector<entry_t> entries;
 	blargg_vector<char> data;
 	int first_error_;
 	info_t info_;
-	
+
 	blargg_err_t parse();
 	blargg_err_t parse_();
 };

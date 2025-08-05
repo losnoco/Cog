@@ -20,9 +20,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-double const fm_gain = 3.0; // FM emulators are internally quieter to avoid 16-bit overflow
-double const rolloff = 0.990;
-double const oversample_factor = 1.0;
+static double const fm_gain = 3.0; // FM emulators are internally quieter to avoid 16-bit overflow
+static double const rolloff = 0.990;
+static double const oversample_factor = 1.0;
 
 using std::min;
 using std::max;
@@ -30,16 +30,18 @@ using std::max;
 Vgm_Emu::Vgm_Emu()
 {
 	disable_oversampling_ = false;
+	psg_dual = false;
+	psg_t6w28 = false;
 	psg_rate   = 0;
 	set_type( gme_vgm_type );
-	
+
 	static int const types [8] = {
 		wave_type | 1, wave_type | 0, wave_type | 2, noise_type | 0
 	};
 	set_voice_types( types );
-	
+
 	set_silence_lookahead( 1 ); // tracks should already be trimmed
-	
+
 	set_equalizer( make_equalizer( -14.0, 80 ) );
 }
 
@@ -88,17 +90,17 @@ static void parse_gd3( byte const* in, byte const* end, track_info_t* out )
 	in = get_gd3_str ( in, end, out->comment );
 }
 
-int const gd3_header_size = 12;
+static int const gd3_header_size = 12;
 
 static long check_gd3_header( byte const* h, long remain )
 {
 	if ( remain < gd3_header_size ) return 0;
 	if ( memcmp( h, "Gd3 ", 4 ) ) return 0;
 	if ( get_le32( h + 4 ) >= 0x200 ) return 0;
-	
+
 	long gd3_size = get_le32( h + 8 );
 	if ( gd3_size > remain - gd3_header_size ) return 0;
-	
+
 	return gd3_size;
 }
 
@@ -106,19 +108,19 @@ byte const* Vgm_Emu::gd3_data( int* size ) const
 {
 	if ( size )
 		*size = 0;
-	
+
 	long gd3_offset = get_le32( header().gd3_offset ) - 0x2C;
 	if ( gd3_offset < 0 )
 		return 0;
-	
+
 	byte const* gd3 = data + header_size + gd3_offset;
 	long gd3_size = check_gd3_header( gd3, data_end - gd3 );
 	if ( !gd3_size )
 		return 0;
-	
+
 	if ( size )
 		*size = gd3_size + gd3_header_size;
-	
+
 	return gd3;
 }
 
@@ -145,12 +147,12 @@ static void get_vgm_length( Vgm_Emu::header_t const& h, track_info_t* out )
 blargg_err_t Vgm_Emu::track_info_( track_info_t* out, int ) const
 {
 	get_vgm_length( header(), out );
-	
+
 	int size;
 	byte const* gd3 = gd3_data( &size );
 	if ( gd3 )
 		parse_gd3( gd3 + gd3_header_size, gd3 + size, out );
-	
+
 	return 0;
 }
 
@@ -165,18 +167,18 @@ struct Vgm_File : Gme_Info_
 {
 	Vgm_Emu::header_t h;
 	blargg_vector<byte> gd3;
-	
+
 	Vgm_File() { set_type( gme_vgm_type ); }
-	
+
 	blargg_err_t load_( Data_Reader& in )
 	{
 		long file_size = in.remain();
 		if ( file_size <= Vgm_Emu::header_size )
 			return gme_wrong_file_type;
-		
+
 		RETURN_ERR( in.read( &h, Vgm_Emu::header_size ) );
 		RETURN_ERR( check_vgm_header( h ) );
-		
+
 		long gd3_offset = get_le32( h.gd3_offset ) - 0x2C;
 		long remain = file_size - Vgm_Emu::header_size - gd3_offset;
 		byte gd3_h [gd3_header_size];
@@ -193,7 +195,7 @@ struct Vgm_File : Gme_Info_
 		}
 		return 0;
 	}
-	
+
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
 		get_vgm_length( h, out );
@@ -226,7 +228,7 @@ void Vgm_Emu::set_tempo_( double t )
 		// TODO: remove? calculates vgm_rate more accurately (above differs at most by one Hz only)
 		//blip_time_factor = (long) floor( double (1L << blip_time_bits) * psg_rate / 44100 / t + 0.5 );
 		//vgm_rate = (long) floor( double (1L << blip_time_bits) * psg_rate / blip_time_factor + 0.5 );
-		
+
 		fm_time_factor = 2 + (long) floor( fm_rate * (1L << fm_time_bits) / vgm_rate + 0.5 );
 	}
 }
@@ -324,17 +326,17 @@ void Vgm_Emu::mute_voices_( int mask )
 
 blargg_err_t Vgm_Emu::load_mem_( byte const* new_data, long new_size )
 {
-	assert( offsetof (header_t,unused2 [8]) == header_size );
-	
+	blaarg_static_assert( offsetof (header_t,unused2 [8]) == header_size, "VGM Header layout incorrect!" );
+
 	if ( new_size <= header_size )
 		return gme_wrong_file_type;
-	
+
 	header_t const& h = *(header_t const*) new_data;
-	
+
 	RETURN_ERR( check_vgm_header( h ) );
-	
+
 	check( get_le32( h.version ) <= 0x150 );
-	
+
 	// psg rate
 	psg_rate = get_le32( h.psg_rate );
 	if ( !psg_rate )
@@ -343,25 +345,25 @@ blargg_err_t Vgm_Emu::load_mem_( byte const* new_data, long new_size )
 	psg_t6w28 = ( psg_rate & 0x80000000 ) != 0;
 	psg_rate &= 0x0FFFFFFF;
 	blip_buf.clock_rate( psg_rate );
-	
+
 	data     = new_data;
 	data_end = new_data + new_size;
-	
+
 	// get loop
 	loop_begin = data_end;
 	if ( get_le32( h.loop_offset ) )
 		loop_begin = &data [get_le32( h.loop_offset ) + offsetof (header_t,loop_offset)];
-	
+
 	set_voice_count( psg[0].osc_count );
-	
+
 	RETURN_ERR( setup_fm() );
-	
+
 	static const char* const fm_names [] = {
 		"FM 1", "FM 2", "FM 3", "FM 4", "FM 5", "FM 6", "PCM", "PSG"
 	};
 	static const char* const psg_names [] = { "Square 1", "Square 2", "Square 3", "Noise" };
 	set_voice_names( uses_fm ? fm_names : psg_names );
-	
+
 	// do after FM in case output buffer is changed
 	return Classic_Emu::setup_buffer( psg_rate );
 }
@@ -374,11 +376,11 @@ blargg_err_t Vgm_Emu::setup_fm()
 	bool ym2413_dual = ( ym2413_rate & 0x40000000 ) != 0;
 	if ( ym2413_rate && get_le32( header().version ) < 0x110 )
 		update_fm_rates( &ym2413_rate, &ym2612_rate );
-	
+
 	uses_fm = false;
-	
+
 	fm_rate = blip_buf.sample_rate() * oversample_factor;
-	
+
 	if ( ym2612_rate )
 	{
 		ym2612_rate &= ~0xC0000000;
@@ -395,7 +397,7 @@ blargg_err_t Vgm_Emu::setup_fm()
 		}
 		set_voice_count( 8 );
 	}
-	
+
 	if ( !uses_fm && ym2413_rate )
 	{
 		ym2413_rate &= ~0xC0000000;
@@ -418,7 +420,7 @@ blargg_err_t Vgm_Emu::setup_fm()
 		}
 		set_voice_count( 8 );
 	}
-	
+
 	if ( uses_fm )
 	{
 		RETURN_ERR( Dual_Resampler::reset( blip_buf.length() * blip_buf.sample_rate() / 1000 ) );
@@ -435,7 +437,7 @@ blargg_err_t Vgm_Emu::setup_fm()
 		psg[0].volume( gain() );
 		psg[1].volume( gain() );
 	}
-	
+
 	return 0;
 }
 
@@ -447,7 +449,7 @@ blargg_err_t Vgm_Emu::start_track_( int track )
 	psg[0].reset( get_le16( header().noise_feedback ), header().noise_width );
 	if ( psg_dual )
 		psg[1].reset( get_le16( header().noise_feedback ), header().noise_width );
-	
+
 	dac_disabled = -1;
 	pos          = data + header_size;
 	pcm_data     = pos;
@@ -461,7 +463,7 @@ blargg_err_t Vgm_Emu::start_track_( int track )
 		if ( data_offset )
 			pos += data_offset + offsetof (header_t,data_offset) - 0x40;
 	}
-	
+
 	if ( uses_fm )
 	{
 		if ( ym2413[0].enabled() )
@@ -469,13 +471,13 @@ blargg_err_t Vgm_Emu::start_track_( int track )
 
 		if ( ym2413[1].enabled() )
 			ym2413[1].reset();
-		
+
 		if ( ym2612[0].enabled() )
 			ym2612[0].reset();
 
 		if ( ym2612[1].enabled() )
 			ym2612[1].reset();
-		
+
 		fm_time_offset = 0;
 		blip_buf.clear();
 		Dual_Resampler::clear();
@@ -496,7 +498,7 @@ blargg_err_t Vgm_Emu::play_( long count, sample_t* out )
 {
 	if ( !uses_fm )
 		return Classic_Emu::play_( count, out );
-		
+
 	Dual_Resampler::dual_play( count, out, blip_buf );
 	return 0;
 }

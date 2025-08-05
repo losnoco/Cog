@@ -17,13 +17,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include <string.h>
 
-int const fract_range = 65536;
+static int const fract_range = 65536;
 
 void Nes_Fds_Apu::reset()
 {
 	memset( regs_, 0, sizeof regs_ );
 	memset( mod_wave, 0, sizeof mod_wave );
-	
+
 	last_time     = 0;
 	env_delay     = 0;
 	sweep_delay   = 0;
@@ -33,7 +33,7 @@ void Nes_Fds_Apu::reset()
 	mod_fract     = fract_range;
 	mod_pos       = 0;
 	mod_write_pos = 0;
-	
+
 	static byte const initial_regs [0x0B] = {
 		0x80,       // disable envelope
 		0, 0, 0xC0, // disable wave and lfo
@@ -70,19 +70,19 @@ void Nes_Fds_Apu::write_( unsigned addr, int data )
 				else
 					env_speed = (data & 0x3F) + 1;
 				break;
-			
+
 			case 0x4084:
 				if ( data & 0x80 )
 					sweep_gain = data & 0x3F;
 				else
 					sweep_speed = (data & 0x3F) + 1;
 				break;
-			
+
 			case 0x4085:
 				mod_pos = mod_write_pos;
 				regs (0x4085) = data & 0x7F;
 				break;
-			
+
 			case 0x4088:
 				if ( regs (0x4087) & 0x80 )
 				{
@@ -117,36 +117,36 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 	if ( wave_freq && output_ && !((regs (0x4089) | regs (0x4083)) & 0x80) )
 	{
 		output_->set_modified();
-		
+
 		// master_volume
 		#define MVOL_ENTRY( percent ) (master_vol_max * percent + 50) / 100
 		static unsigned char const master_volumes [4] = {
 			MVOL_ENTRY( 100 ), MVOL_ENTRY( 67 ), MVOL_ENTRY( 50 ), MVOL_ENTRY( 40 )
 		};
 		int const master_volume = master_volumes [regs (0x4089) & 0x03];
-		
+
 		// lfo_period
 		blip_time_t lfo_period = regs (0x408A) * lfo_tempo;
 		if ( regs (0x4083) & 0x40 )
 			lfo_period = 0;
-		
+
 		// sweep setup
 		blip_time_t sweep_time = last_time + sweep_delay;
 		blip_time_t const sweep_period = lfo_period * sweep_speed;
 		if ( !sweep_period || regs (0x4084) & 0x80 )
 			sweep_time = final_end_time;
-		
+
 		// envelope setup
 		blip_time_t env_time = last_time + env_delay;
 		blip_time_t const env_period = lfo_period * env_speed;
 		if ( !env_period || regs (0x4080) & 0x80 )
 			env_time = final_end_time;
-		
+
 		// modulation
 		int mod_freq = 0;
 		if ( !(regs (0x4087) & 0x80) )
 			mod_freq = (regs (0x4087) & 0x0F) * 0x100 + regs (0x4086);
-		
+
 		blip_time_t end_time = last_time;
 		do
 		{
@@ -161,7 +161,7 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 				else
 					regs (0x4084) |= 0x80; // optimization only
 			}
-			
+
 			// envelope
 			if ( env_time <= end_time )
 			{
@@ -173,13 +173,13 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 				else
 					regs (0x4080) |= 0x80; // optimization only
 			}
-			
+
 			// new end_time
 			blip_time_t const start_time = end_time;
 			end_time = final_end_time;
 			if ( end_time > env_time   ) end_time = env_time;
 			if ( end_time > sweep_time ) end_time = sweep_time;
-			
+
 			// frequency modulation
 			int freq = wave_freq;
 			if ( mod_freq )
@@ -188,7 +188,7 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 				blip_time_t mod_time = start_time + (mod_fract + mod_freq - 1) / mod_freq;
 				if ( end_time > mod_time )
 					end_time = mod_time;
-				
+
 				// run modulator up to next clock and save old sweep_bias
 				int sweep_bias = regs (0x4085);
 				mod_fract -= (end_time - start_time) * mod_freq;
@@ -196,7 +196,7 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 				{
 					mod_fract += fract_range;
 					check( (unsigned) mod_fract <= fract_range );
-					
+
 					static short const mod_table [8] = { 0, +1, +2, +4, 0, -4, -2, -1 };
 					int mod = mod_wave [mod_pos];
 					mod_pos = (mod_pos + 1) & (wave_size - 1);
@@ -205,7 +205,7 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 						new_sweep_bias = 0;
 					regs (0x4085) = new_sweep_bias;
 				}
-				
+
 				// apply frequency modulation
 				sweep_bias = (sweep_bias ^ 0x40) - 0x40;
 				int factor = sweep_bias * sweep_gain;
@@ -223,26 +223,26 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 				if ( freq <= 0 )
 					continue;
 			}
-			
+
 			// wave
 			int wave_fract = this->wave_fract;
 			blip_time_t delay = (wave_fract + freq - 1) / freq;
 			blip_time_t time = start_time + delay;
-			
+
 			if ( time <= end_time )
 			{
 				// at least one wave clock within start_time...end_time
-				
+
 				blip_time_t const min_delay = fract_range / freq;
 				int wave_pos = this->wave_pos;
-				
+
 				int volume = env_gain;
 				if ( volume > vol_max )
 					volume = vol_max;
 				volume *= master_volume;
-				
+
 				int const min_fract = min_delay * freq;
-				
+
 				do
 				{
 					// clock wave
@@ -254,27 +254,27 @@ void Nes_Fds_Apu::run_until( blip_time_t final_end_time )
 						last_amp = amp;
 						synth.offset_inline( time, delta, output_ );
 					}
-					
+
 					wave_fract += fract_range - delay * freq;
 					check( unsigned (fract_range - wave_fract) < freq );
-					
+
 					// delay until next clock
 					delay = min_delay;
 					if ( wave_fract > min_fract )
 						delay++;
 					check( delay && delay == (wave_fract + freq - 1) / freq );
-					
+
 					time += delay;
 				}
 				while ( time <= end_time ); // TODO: using < breaks things, but <= is wrong
-				
+
 				this->wave_pos = wave_pos;
 			}
 			this->wave_fract = wave_fract - (end_time - (time - delay)) * freq;
 			check( this->wave_fract > 0 );
 		}
 		while ( end_time < final_end_time );
-		
+
 		env_delay   = env_time   - final_end_time; check( env_delay >= 0 );
 		sweep_delay = sweep_time - final_end_time; check( sweep_delay >= 0 );
 	}

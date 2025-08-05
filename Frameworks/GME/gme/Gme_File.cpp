@@ -61,6 +61,11 @@ blargg_err_t Gme_File::load_( Data_Reader& in )
 {
 	RETURN_ERR( file_data.resize( in.remain() ) );
 	RETURN_ERR( in.read( file_data.begin(), file_data.size() ) );
+	if ( type()->track_count == 1 )
+	{
+		RETURN_ERR( tracks.resize( 2 ) );
+		tracks[0] = 0, tracks[1] = file_data.size();
+	}
 	return load_mem_( file_data.begin(), file_data.size() );
 }
 
@@ -78,7 +83,7 @@ blargg_err_t Gme_File::post_load( blargg_err_t err )
 		post_load_();
 	else
 		unload();
-	
+
 	return err;
 }
 
@@ -88,6 +93,22 @@ blargg_err_t Gme_File::load_mem( void const* in, long size )
 {
 	pre_load();
 	return post_load( load_mem_( (byte const*) in, size ) );
+}
+
+blargg_err_t Gme_File::load_tracks( void const* in, long* sizes, int count )
+{
+	pre_load();
+	if ( type()->track_count != 1 )
+		return "File type must have a fixed track count of 1";
+	set_track_count( count );
+	RETURN_ERR( tracks.resize( count + 1 ) );
+	long size = 0;
+	for ( int i = 0; i < count; size += sizes[i++] )
+		tracks[i] = size;
+	tracks[count] = size;
+	RETURN_ERR( file_data.resize( size ) );
+	memcpy( file_data.begin(), in, size );
+	return post_load( load_mem_( file_data.begin(), tracks[1] ) );
 }
 
 blargg_err_t Gme_File::load( Data_Reader& in )
@@ -116,31 +137,31 @@ void Gme_File::copy_field_( char* out, const char* in, int in_size )
 {
 	if ( !in || !*in )
 		return;
-	
+
 	// remove spaces/junk from beginning
 	while ( in_size && unsigned (*in - 1) <= ' ' - 1 )
 	{
 		in++;
 		in_size--;
 	}
-	
+
 	// truncate
 	if ( in_size > max_field_ )
 		in_size = max_field_;
-	
+
 	// find terminator
 	int len = 0;
 	while ( len < in_size && in [len] )
 		len++;
-	
+
 	// remove spaces/junk from end
 	while ( len && unsigned (in [len - 1]) <= ' ' )
 		len--;
-	
+
 	// copy
 	out [len] = 0;
 	memcpy( out, in, len );
-	
+
 	// strip out stupid fields that should have been left blank
 	if ( !strcmp( out, "?" ) || !strcmp( out, "<?>" ) || !strcmp( out, "< ? >" ) )
 		out [0] = 0;
@@ -155,7 +176,7 @@ blargg_err_t Gme_File::remap_track_( int* track_io ) const
 {
 	if ( (unsigned) *track_io >= (unsigned) track_count() )
 		return "Invalid track";
-	
+
 	if ( (unsigned) *track_io < (unsigned) playlist.size() )
 	{
 		M3u_Playlist::entry_t const& e = playlist [*track_io];
@@ -186,7 +207,7 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 	out->play_length   = -1;
 	out->repeat_count  = -1;
 	out->song [0]      = 0;
-	
+
 	out->game [0]      = 0;
 	out->author [0]    = 0;
 	out->composer [0]  = 0;
@@ -201,13 +222,13 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 	out->disc [0]      = 0;
 	out->track [0]     = 0;
 	out->ost [0]       = 0;
-	
+
 	copy_field_( out->system, type()->system );
-	
+
 	int remapped = track;
 	RETURN_ERR( remap_track_( &remapped ) );
 	RETURN_ERR( track_info_( out, remapped ) );
-	
+
 	// override with m3u info
 	if ( playlist.size() )
 	{
@@ -221,7 +242,7 @@ blargg_err_t Gme_File::track_info( track_info_t* out, int track ) const
 		copy_field_( out->dumper, i.ripping );
 		copy_field_( out->tagger, i.tagging );
 		copy_field_( out->date, i.date );
-		
+
 		M3u_Playlist::entry_t const& e = playlist [track];
 		copy_field_( out->song, e.name );
 		if ( e.length >= 0 ) out->length       = e.length;

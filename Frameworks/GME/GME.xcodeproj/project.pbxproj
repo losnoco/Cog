@@ -82,7 +82,6 @@
 		17C8F2470CBED286008D969D /* Sms_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1DE0CBED286008D969D /* Sms_Apu.h */; };
 		17C8F24F0CBED286008D969D /* Spc_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F1E60CBED286008D969D /* Spc_Emu.cpp */; };
 		17C8F2500CBED286008D969D /* Spc_Emu.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C8F1E70CBED286008D969D /* Spc_Emu.h */; };
-		8302AF4F2784668C0066143E /* vrc7tone.h in Headers */ = {isa = PBXBuildFile; fileRef = 8302AF4E2784668C0066143E /* vrc7tone.h */; };
 		83489CBB2783015300BDCEA2 /* gme_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CB12783015200BDCEA2 /* gme_types.h */; };
 		83489CBC2783015300BDCEA2 /* nes_cpu_io.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CB22783015300BDCEA2 /* nes_cpu_io.h */; };
 		83489CBD2783015300BDCEA2 /* hes_cpu_io.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CB32783015300BDCEA2 /* hes_cpu_io.h */; };
@@ -100,17 +99,21 @@
 		83489CD82783C98600BDCEA2 /* Nes_Vrc7_Apu.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CD62783C98600BDCEA2 /* Nes_Vrc7_Apu.h */; };
 		83489CD92783C98600BDCEA2 /* Nes_Vrc7_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83489CD72783C98600BDCEA2 /* Nes_Vrc7_Apu.cpp */; };
 		83489CE02783CAC100BDCEA2 /* gb_cpu_io.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CDA2783CAC000BDCEA2 /* gb_cpu_io.h */; };
-		83489CE12783CAC100BDCEA2 /* 2413tone.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CDB2783CAC000BDCEA2 /* 2413tone.h */; };
-		83489CE32783CAC100BDCEA2 /* emu2413.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CDD2783CAC100BDCEA2 /* emu2413.h */; };
-		83489CE52783CAC100BDCEA2 /* emu2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 83489CDF2783CAC100BDCEA2 /* emu2413.c */; };
-		83489CEA2783CADC00BDCEA2 /* panning.c in Sources */ = {isa = PBXBuildFile; fileRef = 83489CE72783CADC00BDCEA2 /* panning.c */; };
-		83489CEB2783CADC00BDCEA2 /* panning.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CE82783CADC00BDCEA2 /* panning.h */; };
-		83489CED2783D86700BDCEA2 /* mamedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CEC2783D86700BDCEA2 /* mamedef.h */; };
-		83489CEF2783D89300BDCEA2 /* emutypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83489CEE2783D89300BDCEA2 /* emutypes.h */; };
 		8370B7AD17F615FE001A4D7A /* Spc_Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8370B70A17F615FE001A4D7A /* Spc_Filter.cpp */; };
 		8370B7AE17F615FE001A4D7A /* Spc_Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B70B17F615FE001A4D7A /* Spc_Filter.h */; };
 		8370B7AF17F615FE001A4D7A /* Spc_Sfm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8370B70C17F615FE001A4D7A /* Spc_Sfm.cpp */; };
 		8370B7B017F615FE001A4D7A /* Spc_Sfm.h in Headers */ = {isa = PBXBuildFile; fileRef = 8370B70D17F615FE001A4D7A /* Spc_Sfm.h */; };
+		83BDCDD02E41A269003FC007 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 83BDCDC92E41A269003FC007 /* LICENSE */; };
+		83BDCDD12E41A269003FC007 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 83BDCDCD2E41A269003FC007 /* README.md */; };
+		83BDCDD22E41A269003FC007 /* emu2413_NESpatches.txt in Resources */ = {isa = PBXBuildFile; fileRef = 83BDCDC72E41A269003FC007 /* emu2413_NESpatches.txt */; };
+		83BDCDD32E41A269003FC007 /* panning.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCDCB2E41A269003FC007 /* panning.h */; };
+		83BDCDD42E41A269003FC007 /* 2413tone.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCDC42E41A269003FC007 /* 2413tone.h */; };
+		83BDCDD52E41A269003FC007 /* emutypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCDC82E41A269003FC007 /* emutypes.h */; };
+		83BDCDD62E41A269003FC007 /* mamedef.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCDCA2E41A269003FC007 /* mamedef.h */; };
+		83BDCDD72E41A269003FC007 /* emu2413.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCDC52E41A269003FC007 /* emu2413.h */; };
+		83BDCDD82E41A269003FC007 /* vrc7tone.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCDCE2E41A269003FC007 /* vrc7tone.h */; };
+		83BDCDD92E41A269003FC007 /* emu2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BDCDC62E41A269003FC007 /* emu2413.c */; };
+		83BDCDDA2E41A269003FC007 /* panning.c in Sources */ = {isa = PBXBuildFile; fileRef = 83BDCDCC2E41A269003FC007 /* panning.c */; };
 		83FC5D5E181B47FB00B917E5 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D3B181B47FB00B917E5 /* dsp.cpp */; };
 		83FC5D5F181B47FB00B917E5 /* dsp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83FC5D3C181B47FB00B917E5 /* dsp.hpp */; };
 		83FC5D78181B47FB00B917E5 /* smp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83FC5D57181B47FB00B917E5 /* smp.cpp */; };
@@ -203,7 +206,6 @@
 		17C8F1DE0CBED286008D969D /* Sms_Apu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Sms_Apu.h; path = gme/Sms_Apu.h; sourceTree = "<group>"; };
 		17C8F1E60CBED286008D969D /* Spc_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Emu.cpp; path = gme/Spc_Emu.cpp; sourceTree = "<group>"; };
 		17C8F1E70CBED286008D969D /* Spc_Emu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Spc_Emu.h; path = gme/Spc_Emu.h; sourceTree = "<group>"; };
-		8302AF4E2784668C0066143E /* vrc7tone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vrc7tone.h; sourceTree = "<group>"; };
 		833F68361CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83489CB12783015200BDCEA2 /* gme_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gme_types.h; path = gme/gme_types.h; sourceTree = "<group>"; };
 		83489CB22783015300BDCEA2 /* nes_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nes_cpu_io.h; path = gme/nes_cpu_io.h; sourceTree = "<group>"; };
@@ -222,14 +224,6 @@
 		83489CD62783C98600BDCEA2 /* Nes_Vrc7_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Nes_Vrc7_Apu.h; path = gme/Nes_Vrc7_Apu.h; sourceTree = SOURCE_ROOT; };
 		83489CD72783C98600BDCEA2 /* Nes_Vrc7_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Nes_Vrc7_Apu.cpp; path = gme/Nes_Vrc7_Apu.cpp; sourceTree = SOURCE_ROOT; };
 		83489CDA2783CAC000BDCEA2 /* gb_cpu_io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gb_cpu_io.h; path = gme/gb_cpu_io.h; sourceTree = "<group>"; };
-		83489CDB2783CAC000BDCEA2 /* 2413tone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 2413tone.h; sourceTree = "<group>"; };
-		83489CDC2783CAC100BDCEA2 /* emu2413_NESpatches.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu2413_NESpatches.txt; sourceTree = "<group>"; };
-		83489CDD2783CAC100BDCEA2 /* emu2413.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emu2413.h; sourceTree = "<group>"; };
-		83489CDF2783CAC100BDCEA2 /* emu2413.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = emu2413.c; sourceTree = "<group>"; };
-		83489CE72783CADC00BDCEA2 /* panning.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = panning.c; sourceTree = "<group>"; };
-		83489CE82783CADC00BDCEA2 /* panning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = panning.h; sourceTree = "<group>"; };
-		83489CEC2783D86700BDCEA2 /* mamedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mamedef.h; sourceTree = "<group>"; };
-		83489CEE2783D89300BDCEA2 /* emutypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emutypes.h; sourceTree = "<group>"; };
 		835C889022CC1884001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8370B70A17F615FE001A4D7A /* Spc_Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Filter.cpp; path = gme/Spc_Filter.cpp; sourceTree = "<group>"; };
 		8370B70B17F615FE001A4D7A /* Spc_Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spc_Filter.h; path = gme/Spc_Filter.h; sourceTree = "<group>"; };
@@ -237,6 +231,17 @@
 		8370B70D17F615FE001A4D7A /* Spc_Sfm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spc_Sfm.h; path = gme/Spc_Sfm.h; sourceTree = "<group>"; };
 		83747B7F2862D4DB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		838EE8BD29A8600A00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		83BDCDC42E41A269003FC007 /* 2413tone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 2413tone.h; sourceTree = "<group>"; };
+		83BDCDC52E41A269003FC007 /* emu2413.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = emu2413.h; sourceTree = "<group>"; };
+		83BDCDC62E41A269003FC007 /* emu2413.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = emu2413.c; sourceTree = "<group>"; };
+		83BDCDC72E41A269003FC007 /* emu2413_NESpatches.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = emu2413_NESpatches.txt; sourceTree = "<group>"; };
+		83BDCDC82E41A269003FC007 /* emutypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = emutypes.h; sourceTree = "<group>"; };
+		83BDCDC92E41A269003FC007 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		83BDCDCA2E41A269003FC007 /* mamedef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mamedef.h; sourceTree = "<group>"; };
+		83BDCDCB2E41A269003FC007 /* panning.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = panning.h; sourceTree = "<group>"; };
+		83BDCDCC2E41A269003FC007 /* panning.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = panning.c; sourceTree = "<group>"; };
+		83BDCDCD2E41A269003FC007 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		83BDCDCE2E41A269003FC007 /* vrc7tone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vrc7tone.h; sourceTree = "<group>"; };
 		83F0E6B7287CAB4100D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83FC5D3B181B47FB00B917E5 /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dsp.cpp; sourceTree = "<group>"; };
 		83FC5D3C181B47FB00B917E5 /* dsp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dsp.hpp; sourceTree = "<group>"; };
@@ -339,7 +344,7 @@
 		17C8F1860CBED26C008D969D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				83489CF02783DC4F00BDCEA2 /* ext */,
+				83BDCDCF2E41A269003FC007 /* ext */,
 				83FC5D35181B47FB00B917E5 /* higan */,
 				17C8F18B0CBED286008D969D /* Ay_Apu.cpp */,
 				17C8F18C0CBED286008D969D /* Ay_Apu.h */,
@@ -447,22 +452,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		83489CF02783DC4F00BDCEA2 /* ext */ = {
-			isa = PBXGroup;
-			children = (
-				83489CDB2783CAC000BDCEA2 /* 2413tone.h */,
-				83489CDC2783CAC100BDCEA2 /* emu2413_NESpatches.txt */,
-				83489CDF2783CAC100BDCEA2 /* emu2413.c */,
-				83489CDD2783CAC100BDCEA2 /* emu2413.h */,
-				83489CEE2783D89300BDCEA2 /* emutypes.h */,
-				83489CEC2783D86700BDCEA2 /* mamedef.h */,
-				83489CE72783CADC00BDCEA2 /* panning.c */,
-				83489CE82783CADC00BDCEA2 /* panning.h */,
-				8302AF4E2784668C0066143E /* vrc7tone.h */,
-			);
-			path = ext;
-			sourceTree = "<group>";
-		};
 		83747B7E2862D4DB0021245F /* Xcode-config */ = {
 			isa = PBXGroup;
 			children = (
@@ -470,6 +459,25 @@
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
+		83BDCDCF2E41A269003FC007 /* ext */ = {
+			isa = PBXGroup;
+			children = (
+				83BDCDC42E41A269003FC007 /* 2413tone.h */,
+				83BDCDC52E41A269003FC007 /* emu2413.h */,
+				83BDCDC62E41A269003FC007 /* emu2413.c */,
+				83BDCDC72E41A269003FC007 /* emu2413_NESpatches.txt */,
+				83BDCDC82E41A269003FC007 /* emutypes.h */,
+				83BDCDC92E41A269003FC007 /* LICENSE */,
+				83BDCDCA2E41A269003FC007 /* mamedef.h */,
+				83BDCDCB2E41A269003FC007 /* panning.h */,
+				83BDCDCC2E41A269003FC007 /* panning.c */,
+				83BDCDCD2E41A269003FC007 /* README.md */,
+				83BDCDCE2E41A269003FC007 /* vrc7tone.h */,
+			);
+			name = ext;
+			path = gme/ext;
 			sourceTree = "<group>";
 		};
 		83FC5D35181B47FB00B917E5 /* higan */ = {
@@ -546,22 +554,25 @@
 				17C8F1FF0CBED286008D969D /* Blip_Buffer.h in Headers */,
 				17C8F2010CBED286008D969D /* Classic_Emu.h in Headers */,
 				17C8F2030CBED286008D969D /* Data_Reader.h in Headers */,
+				83BDCDD32E41A269003FC007 /* panning.h in Headers */,
+				83BDCDD42E41A269003FC007 /* 2413tone.h in Headers */,
+				83BDCDD52E41A269003FC007 /* emutypes.h in Headers */,
+				83BDCDD62E41A269003FC007 /* mamedef.h in Headers */,
+				83BDCDD72E41A269003FC007 /* emu2413.h in Headers */,
+				83BDCDD82E41A269003FC007 /* vrc7tone.h in Headers */,
 				17C8F2050CBED286008D969D /* Dual_Resampler.h in Headers */,
 				17C8F2070CBED286008D969D /* Effects_Buffer.h in Headers */,
 				17C8F2090CBED286008D969D /* Fir_Resampler.h in Headers */,
 				83489CD82783C98600BDCEA2 /* Nes_Vrc7_Apu.h in Headers */,
-				83489CEB2783CADC00BDCEA2 /* panning.h in Headers */,
 				83FC5DAE181B8B1900B917E5 /* spc700.hpp in Headers */,
 				17C8F20B0CBED286008D969D /* Gb_Apu.h in Headers */,
 				83FC5DAB181B8B1900B917E5 /* registers.hpp in Headers */,
 				17C8F20E0CBED286008D969D /* Gb_Cpu.h in Headers */,
 				83489CC22783015300BDCEA2 /* sap_cpu_io.h in Headers */,
-				8302AF4F2784668C0066143E /* vrc7tone.h in Headers */,
 				83489CBD2783015300BDCEA2 /* hes_cpu_io.h in Headers */,
 				17C8F2100CBED286008D969D /* Gb_Oscs.h in Headers */,
 				17C8F2120CBED286008D969D /* Gbs_Emu.h in Headers */,
 				83489CE02783CAC100BDCEA2 /* gb_cpu_io.h in Headers */,
-				83489CEF2783D89300BDCEA2 /* emutypes.h in Headers */,
 				83489CD12783BF6D00BDCEA2 /* Nes_Mmc5_Apu.h in Headers */,
 				83489CC02783015300BDCEA2 /* Ay_Cpu.h in Headers */,
 				83FC5D9A181B675900B917E5 /* SPC_DSP.h in Headers */,
@@ -578,9 +589,7 @@
 				17C8F2290CBED286008D969D /* M3u_Playlist.h in Headers */,
 				17C8F22B0CBED286008D969D /* Multi_Buffer.h in Headers */,
 				17C8F22D0CBED286008D969D /* Music_Emu.h in Headers */,
-				83489CED2783D86700BDCEA2 /* mamedef.h in Headers */,
 				17C8F22F0CBED286008D969D /* Nes_Apu.h in Headers */,
-				83489CE32783CAC100BDCEA2 /* emu2413.h in Headers */,
 				17C8F2320CBED286008D969D /* Nes_Cpu.h in Headers */,
 				17C8F2340CBED286008D969D /* Nes_Fme7_Apu.h in Headers */,
 				17C8F2360CBED286008D969D /* Nes_Namco_Apu.h in Headers */,
@@ -595,7 +604,6 @@
 				8370B7AE17F615FE001A4D7A /* Spc_Filter.h in Headers */,
 				17C8F2500CBED286008D969D /* Spc_Emu.h in Headers */,
 				83489CC12783015300BDCEA2 /* Sms_Oscs.h in Headers */,
-				83489CE12783CAC100BDCEA2 /* 2413tone.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,6 +664,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83BDCDD02E41A269003FC007 /* LICENSE in Resources */,
+				83BDCDD12E41A269003FC007 /* README.md in Resources */,
+				83BDCDD22E41A269003FC007 /* emu2413_NESpatches.txt in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -672,14 +683,14 @@
 				17C8F1F80CBED286008D969D /* Ay_Emu.cpp in Sources */,
 				17C8F1FE0CBED286008D969D /* Blip_Buffer.cpp in Sources */,
 				17C8F2000CBED286008D969D /* Classic_Emu.cpp in Sources */,
-				83489CEA2783CADC00BDCEA2 /* panning.c in Sources */,
 				8370B7AF17F615FE001A4D7A /* Spc_Sfm.cpp in Sources */,
 				17C8F2020CBED286008D969D /* Data_Reader.cpp in Sources */,
 				83FC5D78181B47FB00B917E5 /* smp.cpp in Sources */,
 				17C8F2040CBED286008D969D /* Dual_Resampler.cpp in Sources */,
 				17C8F2060CBED286008D969D /* Effects_Buffer.cpp in Sources */,
 				17C8F2080CBED286008D969D /* Fir_Resampler.cpp in Sources */,
-				83489CE52783CAC100BDCEA2 /* emu2413.c in Sources */,
+				83BDCDD92E41A269003FC007 /* emu2413.c in Sources */,
+				83BDCDDA2E41A269003FC007 /* panning.c in Sources */,
 				17C8F20A0CBED286008D969D /* Gb_Apu.cpp in Sources */,
 				17C8F20D0CBED286008D969D /* Gb_Cpu.cpp in Sources */,
 				17C8F20F0CBED286008D969D /* Gb_Oscs.cpp in Sources */,
@@ -756,6 +767,7 @@
 					HAVE_STDINT_H,
 					"DEBUG=1",
 					"VGM_YM2612_NUKED=1",
+					"BLARGG_LITTLE_ENDIAN=1",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
@@ -789,6 +801,7 @@
 					HAVE_STDINT_H,
 					NDEBUG,
 					"VGM_YM2612_NUKED=1",
+					"BLARGG_LITTLE_ENDIAN=1",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";

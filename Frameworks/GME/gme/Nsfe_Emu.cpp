@@ -58,7 +58,7 @@ static blargg_err_t read_strs( Data_Reader& in, long size, blargg_vector<char>& 
 	RETURN_ERR( chars.resize( size + 1 ) );
 	chars [size] = 0; // in case last string doesn't have terminator
 	RETURN_ERR( in.read( &chars [0], size ) );
-	
+
 	RETURN_ERR( strs.resize( 128 ) );
 	int count = 0;
 	for ( int i = 0; i < size; i++ )
@@ -69,7 +69,7 @@ static blargg_err_t read_strs( Data_Reader& in, long size, blargg_vector<char>& 
 		while ( i < size && chars [i] )
 			i++;
 	}
-	
+
 	return strs.resize( count );
 }
 
@@ -96,8 +96,8 @@ struct nsfe_info_t
 blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 {
 	int const nsfe_info_size = 16;
-	assert( offsetof (nsfe_info_t,unused [6]) == nsfe_info_size );
-	
+	blaarg_static_assert( offsetof (nsfe_info_t,unused [6]) == nsfe_info_size, "NSFE Info header layout incorrect!" );
+
 	// check header
 	byte signature [4];
 	blargg_err_t err = in.read( signature, sizeof signature );
@@ -105,13 +105,13 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 		return (err == in.eof_error ? gme_wrong_file_type : err);
 	if ( memcmp( signature, "NSFE", 4 ) )
 		return gme_wrong_file_type;
-	
+
 	// free previous info
 	track_name_data.clear();
 	track_names.clear();
 	playlist.clear();
 	track_times.clear();
-	
+
 	// default nsf header
 	static const Nsf_Emu::header_t base_header =
 	{
@@ -128,7 +128,7 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 	};
 	Nsf_Emu::header_t& header = info;
 	header = base_header;
-	
+
 	// parse tags
 	int phase = 0;
 	while ( phase != 3 )
@@ -136,26 +136,26 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 		// read size and tag
 		byte block_header [2] [4];
 		RETURN_ERR( in.read( block_header, sizeof block_header ) );
-		blargg_long size = get_le32( block_header [0] );
-		blargg_long tag  = get_le32( block_header [1] );
+		int32_t size = get_le32( block_header [0] );
+		int32_t tag  = get_le32( block_header [1] );
 
 		if ( size < 0 )
 			return "Corrupt file";
-		
+
 		//debug_printf( "tag: %c%c%c%c\n", char(tag), char(tag>>8), char(tag>>16), char(tag>>24) );
-		
+
 		switch ( tag )
 		{
 			case BLARGG_4CHAR('O','F','N','I'): {
 				check( phase == 0 );
 				if ( size < 8 )
 					return "Corrupt file";
-				
+
 				nsfe_info_t finfo;
 				finfo.track_count = 1;
 				finfo.first_track = 0;
-				
-				RETURN_ERR( in.read( &finfo, min( size, (blargg_long) nsfe_info_size ) ) );
+
+				RETURN_ERR( in.read( &finfo, min( size, (int32_t) nsfe_info_size ) ) );
 				if ( size > nsfe_info_size )
 					RETURN_ERR( in.skip( size - nsfe_info_size ) );
 				phase = 1;
@@ -167,48 +167,48 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 				memcpy( info.load_addr, finfo.load_addr, 2 * 3 );
 				break;
 			}
-			
+
 			case BLARGG_4CHAR('K','N','A','B'):
 				if ( size > (int) sizeof info.banks )
 					return "Corrupt file";
 				RETURN_ERR( in.read( info.banks, size ) );
 				break;
-			
+
 			case BLARGG_4CHAR('h','t','u','a'): {
 				blargg_vector<char> chars;
 				blargg_vector<const char*> strs;
 				RETURN_ERR( read_strs( in, size, chars, strs ) );
 				int n = strs.size();
-				
+
 				if ( n > 3 )
 					copy_str( strs [3], info.dumper, sizeof info.dumper );
-				
+
 				if ( n > 2 )
 					copy_str( strs [2], info.copyright, sizeof info.copyright );
-				
+
 				if ( n > 1 )
 					copy_str( strs [1], info.author, sizeof info.author );
-				
+
 				if ( n > 0 )
 					copy_str( strs [0], info.game, sizeof info.game );
-				
+
 				break;
 			}
-			
+
 			case BLARGG_4CHAR('e','m','i','t'):
 				RETURN_ERR( track_times.resize( size / 4 ) );
 				RETURN_ERR( in.read( track_times.begin(), track_times.size() * 4 ) );
 				break;
-			
+
 			case BLARGG_4CHAR('l','b','l','t'):
 				RETURN_ERR( read_strs( in, size, track_name_data, track_names ) );
 				break;
-			
+
 			case BLARGG_4CHAR('t','s','l','p'):
 				RETURN_ERR( playlist.resize( size ) );
 				RETURN_ERR( in.read( &playlist [0], size ) );
 				break;
-			
+
 			case BLARGG_4CHAR('A','T','A','D'): {
 				check( phase == 1 );
 				phase = 2;
@@ -225,12 +225,12 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 				}
 				break;
 			}
-			
+
 			case BLARGG_4CHAR('D','N','E','N'):
 				check( phase == 2 );
 				phase = 3;
 				break;
-			
+
 			default:
 				// tags that can be skipped start with a lowercase character
 				check( islower( (tag >> 24) & 0xFF ) );
@@ -238,7 +238,7 @@ blargg_err_t Nsfe_Info::load( Data_Reader& in, Nsf_Emu* nsf_emu )
 				break;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -253,7 +253,7 @@ blargg_err_t Nsfe_Info::track_info_( track_info_t* out, int track ) const
 	}
 	if ( (unsigned) remapped < track_names.size() )
 		Gme_File::copy_field_( out->song, track_names [remapped] );
-	
+
 	GME_COPY_FIELD( info, out, game );
 	GME_COPY_FIELD( info, out, author );
 	GME_COPY_FIELD( info, out, copyright );
@@ -284,9 +284,9 @@ blargg_err_t Nsfe_Emu::track_info_( track_info_t* out, int track ) const
 struct Nsfe_File : Gme_Info_
 {
 	Nsfe_Info info;
-	
+
 	Nsfe_File() { set_type( gme_nsfe_type ); }
-	
+
 	blargg_err_t load_( Data_Reader& in )
 	{
 		RETURN_ERR( info.load( in, 0 ) );
@@ -294,7 +294,7 @@ struct Nsfe_File : Gme_Info_
 		set_track_count( info.info.track_count );
 		return 0;
 	}
-	
+
 	blargg_err_t track_info_( track_info_t* out, int track ) const
 	{
 		return info.track_info_( out, track );
@@ -312,7 +312,7 @@ blargg_err_t Nsfe_Emu::load_( Data_Reader& in )
 {
 	if ( loading )
 		return Nsf_Emu::load_( in );
-	
+
 	// TODO: this hacky recursion-avoidance could have subtle problems
 	loading = true;
 	blargg_err_t err = info.load( in, this );
