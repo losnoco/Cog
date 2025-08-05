@@ -90,7 +90,7 @@ public:
 		switch (new_mode) {
 			case FILE_mode::text:
 				fflush( file );
-				#if defined(UNICODE)
+				#if defined(UNICODE) && MPT_LIBC_MS_AT_LEAST(MPT_LIBC_MS_VER_UCRT)
 					old_mode = _setmode( _fileno( file ), _O_U8TEXT );
 				#else
 					old_mode = _setmode( _fileno( file ), _O_TEXT );

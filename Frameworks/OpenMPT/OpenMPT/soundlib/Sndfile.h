@@ -989,6 +989,7 @@ public:
 private:
 	void CreateStereoMix(int count);
 	bool MixChannel(int count, ModChannel &chn, CHANNELINDEX channel, bool doMix);
+	std::pair<mixsample_t *, mixsample_t *> GetChannelOffsets(const ModChannel &chn, CHANNELINDEX channel);
 public:
 	bool FadeSong(uint32 msec);
 private:
@@ -1109,7 +1110,7 @@ protected:
 	void FineVibrato(ModChannel &chn, uint32 param) const;
 	void AutoVolumeSlide(ModChannel &chn, ModCommand::PARAM param) const;
 	void VolumeDownETX(const PlayState &playState, ModChannel &chn, ModCommand::PARAM param) const;
-	void VolumeSlide(ModChannel &chn, ModCommand::PARAM param) const;
+	void VolumeSlide(ModChannel &chn, ModCommand::PARAM param, bool volCol = false) const;
 	void PanningSlide(ModChannel &chn, ModCommand::PARAM param, bool memory = true) const;
 	void ChannelVolSlide(ModChannel &chn, ModCommand::PARAM param) const;
 	void ChannelVolumeDownWithDuration(ModChannel &chn, uint16 param = uint16_max) const;

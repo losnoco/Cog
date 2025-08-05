@@ -604,6 +604,7 @@ void CSoundFile::UpgradeModule()
 			{ kITDoublePortamentoSlides,      MPT_V("1.32.00.27") },
 			{ kITCarryAfterNoteOff,           MPT_V("1.32.00.40") },
 			{ kITNoteCutWithPorta,            MPT_V("1.32.01.02") },
+			{ kITVolColNoSlidePropagation,    MPT_V("1.32.02.03") },
 		};
 
 		for(const auto &b : behaviours)

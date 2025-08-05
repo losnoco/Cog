@@ -256,6 +256,7 @@
 		83BB83FD2DF2BE22002077FC /* wav.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83BB83F72DF2BE22002077FC /* wav.hpp */; };
 		83BB83FE2DF2BE22002077FC /* wav_write.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83BB83F92DF2BE22002077FC /* wav_write.hpp */; };
 		83BB83FF2DF2BE22002077FC /* tags.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83BB83F62DF2BE22002077FC /* tags.hpp */; };
+		83BDCD912E418723003FC007 /* feature_fence.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83BDCD902E418723003FC007 /* feature_fence.hpp */; };
 		83E5EFD01FFEF9D200659F0F /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5EFCE1FFEF9D200659F0F /* config.h */; };
 		83E5FC661FFEFA0D00659F0F /* version.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2D1FFEFA0D00659F0F /* version.h */; };
 		83E5FC681FFEFA0D00659F0F /* stdafx.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E5FC2F1FFEFA0D00659F0F /* stdafx.h */; };
@@ -734,6 +735,7 @@
 		83BB83F72DF2BE22002077FC /* wav.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = wav.hpp; sourceTree = "<group>"; };
 		83BB83F92DF2BE22002077FC /* wav_write.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = wav_write.hpp; sourceTree = "<group>"; };
 		83BB83FA2DF2BE22002077FC /* wav_write.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = wav_write.cpp; sourceTree = "<group>"; };
+		83BDCD902E418723003FC007 /* feature_fence.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = feature_fence.hpp; sourceTree = "<group>"; };
 		83E5EFBD1FFEF7CC00659F0F /* libOpenMPT.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libOpenMPT.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83E5EFCE1FFEF9D200659F0F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = SOURCE_ROOT; };
 		83E5EFCF1FFEF9D200659F0F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
@@ -1487,6 +1489,7 @@
 			isa = PBXGroup;
 			children = (
 				83649BA62A03418500CD0580 /* arch.hpp */,
+				83BDCD902E418723003FC007 /* feature_fence.hpp */,
 				83649BA52A03418500CD0580 /* feature_flags.hpp */,
 				83649BA72A03418500CD0580 /* x86_amd64.hpp */,
 			);
@@ -2113,6 +2116,7 @@
 				83E5FCDB1FFEFA1A00659F0F /* libopenmpt_stream_callbacks_file.h in Headers */,
 				830996BA27787E9A00857684 /* base.hpp in Headers */,
 				83E5FDC31FFEFA8500659F0F /* MIDIEvents.h in Headers */,
+				83BDCD912E418723003FC007 /* feature_fence.hpp in Headers */,
 				83E5FDF81FFEFA8500659F0F /* Compressor.h in Headers */,
 				8309970C27787E9A00857684 /* detect_compiler.hpp in Headers */,
 				830996C227787E9A00857684 /* simple_integer.hpp in Headers */,

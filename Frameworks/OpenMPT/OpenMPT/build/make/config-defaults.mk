@@ -53,6 +53,13 @@ LDLIBS_PLATFORM=-lc++ -lc
 include build/make/config-clang.mk
 MPT_COMPILER_NOALLOCAH=1
 
+else ifeq ($(HOST_FLAVOUR),DRAGONFLY)
+
+NO_PORTAUDIOCPP?=1
+NO_PULSEAUDIO?=1
+include build/make/config-gcc.mk
+MPT_COMPILER_NOALLOCAH=1
+
 else ifeq ($(HOST_FLAVOUR),HAIKU)
 
 NO_PULSEAUDIO?=1

@@ -7,10 +7,9 @@
 
 #include "mpt/base/array.hpp"
 #include "mpt/base/detect.hpp"
-#include "mpt/base/namespace.hpp"
-
 #include "mpt/base/integer.hpp"
 #include "mpt/base/memory.hpp"
+#include "mpt/base/namespace.hpp"
 
 #include <array>
 
