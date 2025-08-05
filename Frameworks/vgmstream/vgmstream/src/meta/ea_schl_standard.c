@@ -46,20 +46,21 @@ VGMSTREAM* init_vgmstream_ea_schl(STREAMFILE* sf) {
         return NULL;
 
     /* check header */
-    if (read_u32be(0x00, sf) != EA_BLOCKID_HEADER &&  /* "SCHl" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_EN) && /* "SHEN" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_FR) && /* "SHFR" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_GE) && /* "SHGE" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_DE) && /* "SHDE" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_IT) && /* "SHIT" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_SP) && /* "SHSP" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_ES) && /* "SHES" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_MX) && /* "SHMX" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_RU) && /* "SHRU" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_JA) && /* "SHJA" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_JP) && /* "SHJP" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_PL) && /* "SHPL" */
-        read_u32be(0x00, sf) != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_BR))   /* "SHBR" */
+    uint32_t header = read_u32be(0x00, sf);
+    if (header != EA_BLOCKID_HEADER &&                           /* "SCHl" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_EN) && /* "SHEN" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_FR) && /* "SHFR" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_GE) && /* "SHGE" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_DE) && /* "SHDE" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_IT) && /* "SHIT" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_SP) && /* "SHSP" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_ES) && /* "SHES" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_MX) && /* "SHMX" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_RU) && /* "SHRU" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_JA) && /* "SHJA" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_JP) && /* "SHJP" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_PL) && /* "SHPL" */
+        header != (EA_BLOCKID_LOC_HEADER | EA_BLOCKID_LOC_BR))   /* "SHBR" */
         return NULL;
 
     /* Stream is divided into blocks/chunks: SCHl=audio header, SCCl=count of SCDl, SCDl=data xN, SCLl=loop end, SCEl=end.
@@ -180,6 +181,58 @@ VGMSTREAM* init_vgmstream_ea_schl_video(STREAMFILE* sf) {
     return vgmstream;
 
 fail:
+    close_vgmstream(vgmstream);
+    return NULL;
+}
+
+
+/* EA standalone PT variable header - rare, found during the transition from fixed header */
+VGMSTREAM* init_vgmstream_ea_pt(STREAMFILE* sf) {
+    VGMSTREAM* vgmstream = NULL;
+    STREAMFILE* sf_body = NULL;
+    off_t head_offset, body_offset;
+    size_t head_size;
+    int is_split = 0;
+
+
+    /* .pth: split [NBA Live 97 (PC)]
+     * .dat: joined [NBA Live 97/98 (PC)] */
+    /* often also found as nameless file pairs in bigfiles [FIFA 97 (PC)] */
+    if (check_extensions(sf, "pth")) {
+        sf_body = open_streamfile_by_ext(sf, "ptd");
+        if (!sf_body) goto fail;
+        is_split = 1;
+    }
+    else //if (!check_extensions(sf, "dat,ldat"))
+        return NULL;
+
+
+    if (is_split) {
+        head_size = get_streamfile_size(sf);
+        head_offset = 0x00;
+        body_offset = 0x00;
+    }
+    /* these contain multiple subsongs, but with no clear way
+     * to get each of their offsets, unimplemented for now */
+    //else { /* NBA 97 variant, NBA 98 has an even weirder variant */
+    //    head_size = read_u32le(0x00, sf);
+    //    head_offset = 0x04;
+    //    body_offset = head_offset + head_size;
+    //    sf_body = sf;
+    //}
+
+    if (!is_id32be(head_offset, sf, "PT\0\0")) /* does standalone GSTR also exist? */
+        goto fail;
+
+    vgmstream = load_vgmstream_ea_pt(sf, sf_body, head_offset, head_size, body_offset);
+    if (!vgmstream) goto fail;
+
+
+    if (is_split) close_streamfile(sf_body);
+    return vgmstream;
+
+fail:
+    if (is_split) close_streamfile(sf_body);
     close_vgmstream(vgmstream);
     return NULL;
 }
