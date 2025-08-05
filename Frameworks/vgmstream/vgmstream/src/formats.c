@@ -77,7 +77,6 @@ static const char* extension_list[] = {
     "asd",
     "asf",
     "asr",
-    "ass",
     "ast",
     "at3",
     "at9",
@@ -95,6 +94,7 @@ static const char* extension_list[] = {
     "awb",
     "awc",
     "awd",
+    "awx",
 
     "b1s", //txth/reserved [7 Wonders of the Ancient World (PS2)]
     "baf",
@@ -116,6 +116,7 @@ static const char* extension_list[] = {
     "binka", //FFmpeg/not parsed (BINK AUDIO)
     //"bin", //common
     "bk2",
+    "bkh",
     "bkr",  //txth/reserved [P.N.03 (GC), Viewtiful Joe (GC)]
     "blk",
     "bmdx", //fake extension (to be removed?)
@@ -149,11 +150,14 @@ static const char* extension_list[] = {
     "cnk",
     "cpk",
     "cps",
+    "crd",
     "csa", //txth/reserved [LEGO Racers 2 (PS2)]
     "csb",
     "csmp",
     "cvs", //txth/reserved [Aladdin in Nasira's Revenge (PS1)]
     "cwav",
+    "cxb",
+    "cxk", // ,acb+cpk/reserved [Dariusburst: Another Chronicle (AC)]
     "cxs",
 
     "d2", //txth/reserved [Dodonpachi Dai-Ou-Jou (PS2)]
@@ -170,12 +174,14 @@ static const char* extension_list[] = {
     "dic",
     "diva",
     "dmsg", //fake extension/header id for .sgt (to be removed)
+    "drm", //txth/reserved [Ben 10 (HyperScan), IWL (HyperScan)]
     "ds2", //txth/reserved [Star Wars Bounty Hunter (GC)]
     "dsb",
     "dsf",
     "dsp",
     "dspw",
     "dtk",
+    "dty",
     "dvi",
     "dyx", //txth/reserved [Shrek 4 (iOS)]
 
@@ -347,7 +353,7 @@ static const char* extension_list[] = {
     "mds",
     "mdsp",
     "med",
-    "mhwk",
+    "mhk",
     "mjb",
     "mi4", //fake extension for .mib (renamed, to be removed)
     "mib",
@@ -356,6 +362,7 @@ static const char* extension_list[] = {
     "mogg",
     //"m4a", //common
     //"m4v", //common
+    "mon",
     //"mov", //common
     "move",
     //"mp+", //common [Moonshine Runners (PC)]
@@ -449,6 +456,7 @@ static const char* extension_list[] = {
     "psf",
     "psh", //fake extension for .vsv (to be removed)
     "psn",
+    "pth",
     "pwb",
 
     "qwv", //txth/reserved [Bishi Bashi Champ Online (AC)]
@@ -553,19 +561,22 @@ static const char* extension_list[] = {
     "snz", //txth/reserved [Killzone HD (PS3)]
     "sod",
     "son",
-    "spd",
+    "spc",
+    "sph",
+    "spt",
     "spm",
     "sps",
     "spsd",
     "spw",
-    "srsa",
     "srcd",
+    "sre",
+    "srsa",
     "ss2",
     "ssd", //txth/reserved [Zack & Wiki (Wii)]
     "ssf",
     "ssm",
-    "sspr",
     "ssp",
+    "sspr",
     "sss",
     "ster",
     "sth",
@@ -686,6 +697,7 @@ static const char* extension_list[] = {
     "wvs",
     "wvx",
     "wxd",
+    "wxv",
 
     "x",
     "x360audio", //fake extension for Unreal Engine 3 XMA (real extension unknown)
@@ -1070,7 +1082,7 @@ static const meta_info meta_info_list[] = {
         {meta_PWB,                  "Double Fine WB header"},
         {meta_RAW_WAVM,             "Xbox .wavm raw header"},
         {meta_DSP_STR,              "Cauldron .STR header"},
-        {meta_EA_SCHL,              "Electronic Arts SCHl header"},
+        {meta_EA_SCHL,              "Electronic Arts SCHl header (variable)"},
         {meta_EA_SCHL_fixed,        "Electronic Arts SCHl header (fixed)"},
         {meta_CAF,                  "tri-Crescendo CAF header"},
         {meta_VPK,                  "SCE America VPK header"},
@@ -1151,7 +1163,6 @@ static const meta_info meta_info_list[] = {
         {meta_SPSD,                 "Sega Naomi SPSD header"},
         {meta_BGW,                  "Square Enix BGMStream header"},
         {meta_SPW,                  "Square Enix SeWave header"},
-        {meta_PS2_ASS,              "SystemSoft .ASS header"},
         {meta_NUB,                  "Namco NUB header"},
         {meta_IDSP_NL,              "Next Level IDSP header"},
         {meta_IDSP_IE,              "Inevitable Entertainment IDSP Header"},
@@ -1198,7 +1209,6 @@ static const meta_info meta_info_list[] = {
         {meta_DSP_KCEJE,            "Konami .DSP Header"},
         {meta_VGV,                  "Human Head .VGV header"},
         {meta_GCUB,                 "Sega GCub header"},
-        {meta_NGC_SCK_DSP,          "The Scorpion King SCK Header"},
         {meta_CAFF,                 "Apple Core Audio Format File header"},
         {meta_PC_MXST,              "Lego Island MxSt Header"},
         {meta_SAB,                  "Sensaura SAB header"},
@@ -1223,7 +1233,7 @@ static const meta_info meta_info_list[] = {
         {meta_SMPL,                 "Skonec SMPL header"},
         {meta_MSA,                  "Success .MSA header"},
         {meta_VOI,                  "Irem .VOI header"},
-        {meta_NGC_PDT,              "Hudson .PDT header"},
+        {meta_PDT,                  "Hudson .PDT header"},
         {meta_NGC_RKV,              "Legacy of Kain - Blood Omen 2 RKV GC header"},
         {meta_DSP_DDSP,             ".DDSP header"},
         {meta_P3D,                  "Radical P3D header"},
@@ -1300,7 +1310,8 @@ static const meta_info meta_info_list[] = {
         {meta_XA_XA30,              "Reflections XA30 header"},
         {meta_XA_04SW,              "Reflections 04SW header"},
         {meta_TXTH,                 "TXTH generic header"},
-        {meta_EA_BNK,               "Electronic Arts BNK header"},
+        {meta_EA_BNK,               "Electronic Arts BNK header (variable)"},
+        {meta_EA_BNK_fixed,         "Electronic Arts BNK header (fixed)"},
         {meta_SK_AUD,               "Silicon Knights AUD header"},
         {meta_AHX,                  "CRI AHX header"},
         {meta_STMA,                 "Angel Studios/Rockstar San Diego STMA header"},
@@ -1336,7 +1347,7 @@ static const meta_info meta_info_list[] = {
         {meta_EA_WVE_AD10,          "Electronic Arts WVE (Ad10) header"},
         {meta_STHD,                 "Dream Factory STHD header"},
         {meta_MP4,                  "MP4/AAC header"},
-        {meta_PCM_SRE,              "Capcom .PCM+SRE header"},
+        {meta_SRE_PCM,              "Capcom .SRE+PCM header"},
         {meta_DSP_MCADPCM,          "Bethesda .mcadpcm header"},
         {meta_UBI_LYN,              "Ubisoft LyN RIFF header"},
         {meta_MSB_MSH,              "Sony MultiStream MSH+MSB header"},

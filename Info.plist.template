@@ -401,7 +401,6 @@
 				<string>asd</string>
 				<string>asf</string>
 				<string>asr</string>
-				<string>ass</string>
 				<string>ast</string>
 				<string>at3</string>
 				<string>at9</string>
@@ -419,6 +418,7 @@
 				<string>awb</string>
 				<string>awc</string>
 				<string>awd</string>
+				<string>awx</string>
 				<string>b1s</string>
 				<string>baf</string>
 				<string>baka</string>
@@ -438,6 +438,7 @@
 				<string>bik2</string>
 				<string>binka</string>
 				<string>bk2</string>
+				<string>bkh</string>
 				<string>bkr</string>
 				<string>blk</string>
 				<string>bmdx</string>
@@ -470,11 +471,14 @@
 				<string>cnk</string>
 				<string>cpk</string>
 				<string>cps</string>
+				<string>crd</string>
 				<string>csa</string>
 				<string>csb</string>
 				<string>csmp</string>
 				<string>cvs</string>
 				<string>cwav</string>
+				<string>cxb</string>
+				<string>cxk</string>
 				<string>cxs</string>
 				<string>d2</string>
 				<string>da</string>
@@ -489,12 +493,14 @@
 				<string>dic</string>
 				<string>diva</string>
 				<string>dmsg</string>
+				<string>drm</string>
 				<string>ds2</string>
 				<string>dsb</string>
 				<string>dsf</string>
 				<string>dsp</string>
 				<string>dspw</string>
 				<string>dtk</string>
+				<string>dty</string>
 				<string>dvi</string>
 				<string>dyx</string>
 				<string>e4x</string>
@@ -656,13 +662,14 @@
 				<string>mds</string>
 				<string>mdsp</string>
 				<string>med</string>
-				<string>mhwk</string>
+				<string>mhk</string>
 				<string>mjb</string>
 				<string>mi4</string>
 				<string>mib</string>
 				<string>mic</string>
 				<string>mio</string>
 				<string>mogg</string>
+				<string>mon</string>
 				<string>move</string>
 				<string>mpdsp</string>
 				<string>mpds</string>
@@ -745,6 +752,7 @@
 				<string>psf</string>
 				<string>psh</string>
 				<string>psn</string>
+				<string>pth</string>
 				<string>pwb</string>
 				<string>qwv</string>
 				<string>r</string>
@@ -846,19 +854,22 @@
 				<string>snz</string>
 				<string>sod</string>
 				<string>son</string>
-				<string>spd</string>
+				<string>spc</string>
+				<string>sph</string>
+				<string>spt</string>
 				<string>spm</string>
 				<string>sps</string>
 				<string>spsd</string>
 				<string>spw</string>
-				<string>srsa</string>
 				<string>srcd</string>
+				<string>sre</string>
+				<string>srsa</string>
 				<string>ss2</string>
 				<string>ssd</string>
 				<string>ssf</string>
 				<string>ssm</string>
-				<string>sspr</string>
 				<string>ssp</string>
+				<string>sspr</string>
 				<string>sss</string>
 				<string>ster</string>
 				<string>sth</string>
@@ -973,6 +984,7 @@
 				<string>wvs</string>
 				<string>wvx</string>
 				<string>wxd</string>
+				<string>wxv</string>
 				<string>x</string>
 				<string>x360audio</string>
 				<string>xa</string>
