@@ -21,7 +21,7 @@ void calc_panning(float channels[2], int position)
 	else if ( position < -RANGE / 2 )
 		position = -RANGE / 2;
 	position += RANGE / 2;	// make -256..0..256 -> 0..256..512
-	
+
 	// Equal power law: equation is
 	// right = sin( position / range * pi / 2) * sqrt( 2 )
 	// left is equivalent to right with position = range - position

@@ -37,14 +37,16 @@ int const ram_addr = 0x2000;
 #endif
 
 // status flags
-BLARGG_MAYBE_UNUSED int const st_n = 0x80;
-BLARGG_MAYBE_UNUSED int const st_v = 0x40;
-BLARGG_MAYBE_UNUSED int const st_t = 0x20;
-BLARGG_MAYBE_UNUSED int const st_b = 0x10;
-BLARGG_MAYBE_UNUSED int const st_d = 0x08;
-BLARGG_MAYBE_UNUSED int const st_i = 0x04;
-BLARGG_MAYBE_UNUSED int const st_z = 0x02;
-BLARGG_MAYBE_UNUSED int const st_c = 0x01;
+enum {
+    st_n = 0x80,
+    st_v = 0x40,
+    st_t = 0x20,
+    st_b = 0x10,
+    st_d = 0x08,
+    st_i = 0x04,
+    st_z = 0x02,
+    st_c = 0x01
+};
 
 void Hes_Cpu::reset()
 {
@@ -94,7 +96,7 @@ bool Hes_Cpu::run( hes_time_t end_time )
 	state_t s = this->state_;
 	this->state = &s;
 	// even on x86, using s.time in place of s_time was slower
-	blargg_long s_time = s.time;
+	int32_t s_time = s.time;
 
 	// registers
 	uint_fast16_t pc = r.pc;
@@ -994,7 +996,7 @@ possibly_out_of_time:
 			hes_time_t new_time = end_time_;
 			if ( !(status & st_i) && new_time > irq_time_ )
 				new_time = irq_time_;
-			blargg_long delta = s.base - new_time;
+			int32_t delta = s.base - new_time;
 			s.base = new_time;
 			s_time += delta;
 		}
@@ -1062,7 +1064,7 @@ possibly_out_of_time:
 		status &= ~st_i;
 	handle_cli: {
 		this->r.status = status; // update externally-visible I flag
-		blargg_long delta = s.base - irq_time_;
+		int32_t delta = s.base - irq_time_;
 		if ( delta <= 0 )
 		{
 			if ( TIME < irq_time_ )
@@ -1093,7 +1095,7 @@ possibly_out_of_time:
 		status |= st_i;
 	handle_sei: {
 		this->r.status = status; // update externally-visible I flag
-		blargg_long delta = s.base - end_time_;
+		int32_t delta = s.base - end_time_;
 		s.base = end_time_;
 		s_time += delta;
 		if ( s_time < 0 )
@@ -1260,7 +1262,7 @@ interrupt:
 		status |= st_i;
 		this->r.status = status; // update externally-visible I flag
 
-		blargg_long delta = s.base - end_time_;
+		int32_t delta = s.base - end_time_;
 		s.base = end_time_;
 		s_time += delta;
 		goto loop;

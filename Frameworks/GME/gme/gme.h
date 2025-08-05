@@ -1,22 +1,36 @@
 /* Game music emulator library C interface (also usable from C++) */
 
-/* Game_Music_Emu 0.7.0 */
+/* Game_Music_Emu 0.6.4 */
 #ifndef GME_H
 #define GME_H
-
-#include "blargg_source.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define GME_VERSION 0x000700 /* 1 byte major, 1 byte minor, 1 byte patch-level */
+#define GME_VERSION 0x000604 /* 1 byte major, 1 byte minor, 1 byte patch-level */
 
 /* Error string returned by library functions, or NULL if no error (success) */
 typedef const char* gme_err_t;
 
 /* First parameter of most gme_ functions is a pointer to the Music_Emu */
 typedef struct Music_Emu Music_Emu;
+
+
+/* Setup compiler defines useful for exporting required public API symbols in gme.cpp */
+#ifndef BLARGG_EXPORT
+    #if defined (_WIN32)
+        #if defined(BLARGG_BUILD_DLL)
+            #define BLARGG_EXPORT __declspec(dllexport)
+        #else
+            #define BLARGG_EXPORT /* Leave blank: friendly with both static and shared linking. */
+        #endif
+    #elif defined (LIBGME_VISIBILITY)
+        #define BLARGG_EXPORT __attribute__((visibility ("default")))
+    #else
+        #define BLARGG_EXPORT
+    #endif
+#endif
 
 
 /******** Basic operations ********/
@@ -41,7 +55,12 @@ BLARGG_EXPORT void gme_delete( Music_Emu* );
 
 /* Set time to start fading track out. Once fade ends track_ended() returns true.
 Fade time can be changed while track is playing. */
-BLARGG_EXPORT void gme_set_fade( Music_Emu*, int start_msec, int length_msec );
+BLARGG_EXPORT void gme_set_fade( Music_Emu*, int start_msec );
+
+/** See gme_set_fade.
+ * @since 0.6.4
+ */
+BLARGG_EXPORT void gme_set_fade_msecs( Music_Emu*, int start_msec, int length_msecs );
 
 /**
  * If do_autoload_limit is nonzero, then automatically load track length
@@ -53,12 +72,13 @@ BLARGG_EXPORT void gme_set_fade( Music_Emu*, int start_msec, int length_msec );
  *
  * By default, playback limits are loaded and applied.
  *
- * @since 0.6.2
+ * @since 0.6.3
  */
 BLARGG_EXPORT void gme_set_autoload_playback_limit( Music_Emu *, int do_autoload_limit );
 
 /** See gme_set_autoload_playback_limit.
- * @since 0.6.2
+ * (This was actually added in 0.6.3, but wasn't exported because of a typo.)
+ * @since 0.6.4
  */
 BLARGG_EXPORT int gme_autoload_playback_limit( Music_Emu const* );
 
@@ -71,11 +91,19 @@ BLARGG_EXPORT int gme_tell( Music_Emu const* );
 /* Number of samples generated since beginning of track */
 BLARGG_EXPORT int gme_tell_samples( Music_Emu const* );
 
+/* Number of milliseconds played since beginning of track (scaled with tempo).
+ * @since 0.6.5 */
+BLARGG_EXPORT int gme_tell_scaled( Music_Emu const* );
+
 /* Seek to new time in track. Seeking backwards or far forward can take a while. */
 BLARGG_EXPORT gme_err_t gme_seek( Music_Emu*, int msec );
 
 /* Equivalent to restarting track then skipping n samples */
 BLARGG_EXPORT gme_err_t gme_seek_samples( Music_Emu*, int n );
+
+/* Seek to new time in track (scaled with tempo).
+ * @since 0.6.5 */
+BLARGG_EXPORT gme_err_t gme_seek_scaled( Music_Emu*, int msec );
 
 
 /******** Informational ********/
@@ -103,22 +131,22 @@ BLARGG_EXPORT gme_err_t gme_track_info( Music_Emu const*, gme_info_t** out, int 
 /* Frees track information */
 BLARGG_EXPORT void gme_free_info( gme_info_t* );
 
-struct BLARGG_EXPORT gme_info_t
+struct gme_info_t
 {
 	/* times in milliseconds; -1 if unknown */
 	int length;			/* total length, if file specifies it */
 	int intro_length;	/* length of song up to looping section */
 	int loop_length;	/* length of looping section */
-	
+
 	/* Length if available, otherwise intro_length+loop_length*2 if available,
 	otherwise a default of 150000 (2.5 minutes). */
 	int play_length;
 
 	/* fade length in milliseconds; -1 if unknown */
 	int fade_length;
-	
+
 	int i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15; /* reserved */
-	
+
 	/* empty string ("") if not available */
 	const char* system;
 	const char* game;
@@ -127,7 +155,7 @@ struct BLARGG_EXPORT gme_info_t
 	const char* copyright;
 	const char* comment;
 	const char* dumper;
-	
+
 	const char *s7,*s8,*s9,*s10,*s11,*s12,*s13,*s14,*s15; /* reserved */
 };
 
@@ -159,13 +187,17 @@ BLARGG_EXPORT void gme_mute_voice( Music_Emu*, int index, int mute );
 voices, 0 unmutes them all, 0x01 mutes just the first voice, etc. */
 BLARGG_EXPORT void gme_mute_voices( Music_Emu*, int muting_mask );
 
+/* Disable/Enable echo effect for SPC files */
+/* Available since 0.6.4 */
+BLARGG_EXPORT void gme_disable_echo( Music_Emu*, int disable );
+
 /* Frequency equalizer parameters (see gme.txt) */
 /* Implementers: If modified, also adjust Music_Emu::make_equalizer as needed */
-typedef struct BLARGG_EXPORT gme_equalizer_t
+typedef struct gme_equalizer_t
 {
 	double treble; /* -50.0 = muffled, 0 = flat, +5.0 = extra-crisp */
 	double bass;   /* 1 = full bass, 90 = average, 16000 = almost no bass */
-	
+
 	double d2,d3,d4,d5,d6,d7,d8,d9; /* reserved */
 } gme_equalizer_t;
 
@@ -195,7 +227,6 @@ extern BLARGG_EXPORT const gme_type_t
 	gme_nsfe_type,
 	gme_sap_type,
 	gme_spc_type,
-	gme_rsn_type,
 	gme_sfm_type,
 	gme_vgm_type,
 	gme_vgz_type;
@@ -215,7 +246,7 @@ BLARGG_EXPORT int gme_type_multitrack( gme_type_t );
 
 /* whether the pcm output retrieved by gme_play() will have all 8 voices rendered to their
  * individual stereo channel or (if false) these voices get mixed into one single stereo channel
- * @since 0.6.2 */
+ * @since 0.6.3 */
 BLARGG_EXPORT int gme_multi_channel( Music_Emu const* );
 
 /******** Advanced file loading ********/
@@ -239,7 +270,7 @@ BLARGG_EXPORT gme_type_t gme_identify_extension( const char path_or_extension []
  * Get typical file extension for a given music type.  This is not a replacement
  * for a file content identification library (but see gme_identify_header).
  *
- * @since 0.6.2
+ * @since 0.6.3
  */
 BLARGG_EXPORT const char* gme_type_extension( gme_type_t music_type );
 
@@ -254,7 +285,7 @@ BLARGG_EXPORT Music_Emu* gme_new_emu( gme_type_t, int sample_rate );
 /* Create new multichannel emulator and set sample rate. Returns NULL if out of memory.
  * If you only need track information, pass gme_info_only for sample_rate.
  * (see gme_multi_channel for more information on multichannel support)
- * @since 0.6.2
+ * @since 0.6.3
  */
 BLARGG_EXPORT Music_Emu* gme_new_emu_multi_channel( gme_type_t, int sample_rate );
 
@@ -263,6 +294,17 @@ BLARGG_EXPORT gme_err_t gme_load_file( Music_Emu*, const char path [] );
 
 /* Load music file from memory into emulator. Makes a copy of data passed. */
 BLARGG_EXPORT gme_err_t gme_load_data( Music_Emu*, void const* data, long size );
+
+/* Load multiple single-track music files from memory into emulator.
+ * @since 0.6.4
+ */
+BLARGG_EXPORT gme_err_t gme_load_tracks( Music_Emu* me,
+                                         void const* data, long* sizes, int count );
+
+/* Return the fixed track count of an emu file type
+ * @since 0.6.4
+ */
+BLARGG_EXPORT int gme_fixed_track_count( gme_type_t );
 
 /* Load music file using custom data reader function that will be called to
 read file data. Most emulators load the entire file in one read call. */

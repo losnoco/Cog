@@ -188,9 +188,9 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	}
 
 	if(IsRepeatOneSet())
-		gme_set_fade(emu, -1, 0);
+		gme_set_fade_msecs(emu, -1, 0);
 	else
-		gme_set_fade(emu, (int)(length - fade), (int)fade);
+		gme_set_fade_msecs(emu, (int)(length - fade), (int)fade);
 
 	double streamTimestamp = (double)(gme_tell(emu)) * 0.001;
 

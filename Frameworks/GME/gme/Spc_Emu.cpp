@@ -7,16 +7,6 @@
 #include <string.h>
 #include <algorithm>
 
-#ifdef RARDLL
-#define PASCAL
-#define CALLBACK
-#define LONG long
-#define HANDLE void *
-#define LPARAM intptr_t
-#define UINT __attribute__((unused)) unsigned int
-#include <dll.hpp>
-#endif
-
 /* Copyright (C) 2004-2009 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
 General Public License as published by the Free Software Foundation; either
@@ -35,17 +25,17 @@ using std::max;
 
 // TODO: support Spc_Filter's bass
 
-Spc_Emu::Spc_Emu( gme_type_t type )
+Spc_Emu::Spc_Emu()
 {
-	set_type( type );
-	
+	set_type( gme_spc_type );
+
 	static const char* const names [SuperFamicom::SPC_DSP::voice_count] = {
 		"DSP 1", "DSP 2", "DSP 3", "DSP 4", "DSP 5", "DSP 6", "DSP 7", "DSP 8"
 	};
 	set_voice_names( names );
-	
+
 	set_gain( 1.4 );
-	
+
 	enable_echo( true );
 }
 
@@ -59,19 +49,6 @@ long const head_size = Spc_Emu::header_size;
 byte const* Spc_Emu::trailer() const { return &file_data [min( file_size, spc_size )]; }
 
 long Spc_Emu::trailer_size() const { return max( 0L, file_size - spc_size ); }
-
-byte const* Rsn_Emu::trailer( int track ) const
-{
-	const byte *track_data = spc[track];
-	long track_size = spc[track + 1] - spc[track];
-	return &track_data [min( track_size, spc_size )];
-}
-
-long Rsn_Emu::trailer_size( int track ) const
-{
-	long track_size = spc[track + 1] - spc[track];
-	return max( 0L, track_size - spc_size );
-}
 
 static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 {
@@ -89,13 +66,13 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 		debug_printf( "Extra data after SPC xid6 info\n" );
 		end = in + info_size;
 	}
-	
+
 	int year = 0;
 	char copyright [256 + 5];
 	int copyright_len = 0;
 	int const year_len = 5;
 	int disc = 0, track = 0;
-	
+
 	while ( end - in >= 4 )
 	{
 		// header
@@ -109,7 +86,7 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 			check( false );
 			break; // block goes past end of data
 		}
-		
+
 		// handle specific block types
 		char* field = 0;
 		switch ( id )
@@ -123,7 +100,7 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 			case 0x11: disc = data;          break;
 			case 0x12: track = data;         break;
 			case 0x14: year = data;          break;
-			
+
 			//case 0x30: // intro length
 			// Many SPCs have intro length set wrong for looped tracks, making it useless
 			/*
@@ -141,7 +118,7 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 				}
 				break;
 			*/
-			
+
 			case 0x33:
 				check( len == 4 );
 				if ( len >= 4 )
@@ -149,12 +126,12 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 					out->fade_length = get_le32( in ) / 64;
 				}
 				break;
-			
+
 			case 0x13:
 				copyright_len = min( len, (int) sizeof copyright - year_len );
 				memcpy( &copyright [year_len], in, copyright_len );
 				break;
-			
+
 			default:
 				if ( id < 0x01 || (id > 0x07 && id < 0x10) ||
 						(id > 0x14 && id < 0x30) || id > 0x36 )
@@ -166,10 +143,10 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 			check( type == 1 );
 			Gme_File::copy_field_( field, (char const*) in, len );
 		}
-		
+
 		// skip to next block
 		in += len;
-		
+
 		// blocks are supposed to be 4-byte aligned with zero-padding...
 		byte const* unaligned = in;
 		while ( (in - begin) & 3 && in < end )
@@ -183,7 +160,7 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 			}
 		}
 	}
-	
+
 	char* p = &copyright [year_len];
 	if ( year )
 	{
@@ -197,13 +174,13 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 	}
 	if ( copyright_len )
 		Gme_File::copy_field_( out->copyright, p, copyright_len );
-	
+
 	if ( disc > 0 && disc <= 9 )
 	{
 		out->disc [0] = disc + '0';
 		out->disc [1] = 0;
 	}
-	
+
 	if ( track > 255 && track < ( ( 100 << 8 ) - 1 ) )
 	{
 		char* p = &copyright [3];
@@ -217,7 +194,7 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 		}
 		memcpy( out->track, p, &copyright [4] - p );
 	}
-	
+
 	check( in == end );
 }
 
@@ -245,7 +222,7 @@ static void get_spc_info( Spc_Emu::header_t const& h, byte const* xid6, long xid
 		len_secs = get_le16( h.len_secs );
 	if ( len_secs < 0x1FFF )
 		out->length = len_secs * 1000;
-	
+
 	long fade_msec = 0;
 	for ( i = 0; i < 4; i++ )
 	{
@@ -265,15 +242,15 @@ static void get_spc_info( Spc_Emu::header_t const& h, byte const* xid6, long xid
 		fade_msec = get_le32( h.fade_msec );
 	if ( fade_msec < 0x7FFF )
 		out->fade_length = fade_msec;
-	
+
 	int offset = (h.author [0] < ' ' || unsigned (h.author [0] - '0') <= 9);
 	Gme_File::copy_field_( out->author, &h.author [offset], sizeof h.author - offset );
-	
+
 	GME_COPY_FIELD( h, out, song );
 	GME_COPY_FIELD( h, out, game );
 	GME_COPY_FIELD( h, out, dumper );
 	GME_COPY_FIELD( h, out, comment );
-	
+
 	if ( xid6_size )
 		get_spc_xid6( xid6, xid6_size, out );
 }
@@ -281,12 +258,6 @@ static void get_spc_info( Spc_Emu::header_t const& h, byte const* xid6, long xid
 blargg_err_t Spc_Emu::track_info_( track_info_t* out, int ) const
 {
 	get_spc_info( header(), trailer(), trailer_size(), out );
-	return 0;
-}
-
-blargg_err_t Rsn_Emu::track_info_( track_info_t* out, int track ) const
-{
-	get_spc_info( header( track ), trailer( track ), trailer_size( track ), out );
 	return 0;
 }
 
@@ -301,15 +272,12 @@ struct Spc_File : Gme_Info_
 {
 	Spc_Emu::header_t header;
 	blargg_vector<byte> xid6;
-	
-	Spc_File( gme_type_t type ) { set_type( type ); }
-	Spc_File() : Spc_File( gme_spc_type ) {}
-	
+
+	Spc_File() { set_type( gme_spc_type ); }
+
 	blargg_err_t load_( Data_Reader& in )
 	{
 		long file_size = in.remain();
-		if ( is_archive )
-			return 0;
 		if ( file_size < 0x10180 )
 			return gme_wrong_file_type;
 		RETURN_ERR( in.read( &header, head_size ) );
@@ -323,7 +291,7 @@ struct Spc_File : Gme_Info_
 		}
 		return 0;
 	}
-	
+
 	blargg_err_t track_info_( track_info_t* out, int ) const
 	{
 		get_spc_info( header, xid6.begin(), xid6.size(), out );
@@ -336,106 +304,6 @@ static Music_Emu* new_spc_file() { return BLARGG_NEW Spc_File; }
 
 static gme_type_t_ const gme_spc_type_ = { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 };
 extern gme_type_t const gme_spc_type = &gme_spc_type_;
-
-
-#ifdef RARDLL
-static int CALLBACK call_rsn(UINT msg, LPARAM UserData, LPARAM P1, LPARAM P2)
-{
-	byte **bp = (byte **)UserData;
-	unsigned char *addr = (unsigned char *)P1;
-	memcpy( *bp, addr, P2 );
-	*bp += P2;
-	return 0;
-}
-#endif
-
-struct Rsn_File : Spc_File
-{
-	blargg_vector<byte*> spc;
-
-	Rsn_File() : Spc_File( gme_rsn_type ) { is_archive = true; }
-
-	blargg_err_t load_archive( const char* path )
-	{
-	#ifdef RARDLL
-		struct RAROpenArchiveData data = {
-			.ArcName = (char *)path,
-			.OpenMode = RAR_OM_LIST, .OpenResult = 0,
-			.CmtBuf = 0, .CmtBufSize = 0, .CmtSize = 0, .CmtState = 0
-		};
-
-		// get the size of all unpacked headers combined
-		long pos = 0;
-		int count = 0;
-		unsigned biggest = 0;
-		blargg_vector<byte> temp;
-		HANDLE PASCAL rar = RAROpenArchive( &data );
-		struct RARHeaderData head;
-		for ( ; RARReadHeader( rar, &head ) == ERAR_SUCCESS; count++ )
-		{
-			RARProcessFile( rar, RAR_SKIP, 0, 0 );
-			long xid6_size = head.UnpSize - spc_size;
-			if ( xid6_size > 0 )
-				pos += xid6_size;
-			pos += head_size;
-			biggest = max( biggest, head.UnpSize );
-		}
-		xid6.resize( pos );
-		spc.resize( count + 1 );
-		temp.resize( biggest );
-		RARCloseArchive( rar );
-
-		// copy the headers/xid6 and index them
-		byte *bp;
-		data.OpenMode = RAR_OM_EXTRACT;
-		rar = RAROpenArchive( &data );
-		RARSetCallback( rar, call_rsn, (intptr_t)&bp );
-		for ( count = 0, pos = 0; RARReadHeader( rar, &head ) == ERAR_SUCCESS; )
-		{
-			bp = &temp[0];
-			RARProcessFile( rar, RAR_TEST, 0, 0 );
-			if ( !check_spc_header( bp - head.UnpSize ) )
-			{
-				spc[count++] = &xid6[pos];
-				memcpy( &xid6[pos], &temp[0], head_size );
-				pos += head_size;
-				long xid6_size = head.UnpSize - spc_size;
-				if ( xid6_size > 0 )
-				{
-					memcpy( &xid6[pos], &temp[spc_size], xid6_size );
-					pos += xid6_size;
-				}
-			}
-		}
-		spc[count] = &xid6[pos];
-		set_track_count( count );
-		RARCloseArchive( rar );
-
-		return 0;
-	#else
-		(void) path;
-		return gme_wrong_file_type;
-	#endif
-	}
-
-	blargg_err_t track_info_( track_info_t* out, int track ) const
-	{
-		if ( static_cast<size_t>(track) >= spc.size() )
-			return "Invalid track";
-		long xid6_size = spc[track + 1] - ( spc[track] + head_size );
-		get_spc_info(
-			*(Spc_Emu::header_t const*) spc[track],
-			spc[track] + head_size, xid6_size, out
-		);
-		return 0;
-	}
-};
-
-static Music_Emu* new_rsn_emu () { return BLARGG_NEW Rsn_Emu ; }
-static Music_Emu* new_rsn_file() { return BLARGG_NEW Rsn_File; }
-
-static gme_type_t_ const gme_rsn_type_ = { "Super Nintendo", 0, &new_rsn_emu, &new_rsn_file, "RSN", 0 };
-extern gme_type_t const gme_rsn_type = &gme_rsn_type_;
 
 
 // Setup
@@ -466,14 +334,17 @@ void Spc_Emu::mute_voices_( int m )
 		smp.dsp.channel_enable( i, !( m & j ) );
 }
 
+void Spc_Emu::disable_echo_( bool disable )
+{
+	smp.dsp.spc_dsp.enable_echo( !disable );
+}
+
 blargg_err_t Spc_Emu::load_mem_( byte const* in, long size )
 {
-	assert( offsetof (header_t,unused2 [46]) == header_size );
+	blaarg_static_assert( offsetof (header_t,unused2 [46]) == header_size, "SPC Header layout incorrect!" );
 	file_data = in;
 	file_size = size;
 	set_voice_count( SuperFamicom::SPC_DSP::voice_count ); 
-	if ( is_archive )
-		return 0;
 	if ( size < 0x10180 )
 		return gme_wrong_file_type;
 	return check_spc_header( in );
@@ -493,36 +364,36 @@ blargg_err_t Spc_Emu::start_track_( int track )
 	filter.clear();
 	smp.reset();
 	const byte * ptr = file_data;
-	
+
 	Spc_Emu::header_t & header = *(Spc_Emu::header_t*)ptr;
 	ptr += sizeof(header);
-	
+
 	smp.regs.pc = header.pc[0] + header.pc[1] * 0x100;
 	smp.regs.a = header.a;
 	smp.regs.x = header.x;
 	smp.regs.y = header.y;
 	smp.regs.p = header.psw;
 	smp.regs.s = header.sp;
-	
+
 	memcpy( smp.apuram, ptr, sizeof smp.apuram );
-	
+
 	// clear input ports that contain out port data from dump
 	memset( smp.apuram + 0xF4, 0, 4 );
 	memcpy( smp.sfm_last, ptr + 0xF4, 4 );
-	
+
 	static const uint8_t regs_to_copy[][2] = {
 		{0xFC,0xFF}, {0xFB,0xFF}, {0xFA,0xFF}, {0xF9,0xFF},
 		{0xF8,0xFF}, {0xF2,0xFF}, {0xF1,0x87}
 	};
-	
+
 	for (auto n : regs_to_copy)
 		smp.op_buswrite( n[0], ptr[ n[0] ] & n[1] );
-	
+
 	smp.timer0.stage3_ticks = ptr[ 0xFD ] & 0x0F;
 	smp.timer1.stage3_ticks = ptr[ 0xFE ] & 0x0F;
 	smp.timer2.stage3_ticks = ptr[ 0xFF ] & 0x0F;
 	ptr += sizeof smp.apuram;
-	
+
 	smp.dsp.spc_dsp.load( ptr );
 
 #if 1
@@ -542,7 +413,7 @@ blargg_err_t Spc_Emu::start_track_( int track )
 	filter.set_gain( (int) (gain() * SPC_Filter::gain_unit) );
 	track_info_t spc_info;
 	RETURN_ERR( track_info_( &spc_info, track ) );
-	
+
 	// Set a default track length, need a non-zero fadeout
 	if ( autoload_playback_limit() && ( spc_info.length > 0 ) )
 		set_fade ( spc_info.length, 50 );
@@ -563,15 +434,15 @@ blargg_err_t Spc_Emu::skip_( long count )
 		count = long (count * resampler.ratio()) & ~1;
 		count -= resampler.skip_input( count );
 	}
-	
+
 	// TODO: shouldn't skip be adjusted for the 64 samples read afterwards?
-	
+
 	if ( count > 0 )
 	{
 		smp.skip( count );
 		filter.clear();
 	}
-	
+
 	// eliminate pop due to resampler
 	if ( sample_rate() != native_sample_rate )
 	{
@@ -587,7 +458,7 @@ blargg_err_t Spc_Emu::play_( long count, sample_t* out )
 {
 	if ( sample_rate() == native_sample_rate )
 		return play_and_filter( count, out );
-	
+
 	long remain = count;
 	while ( remain > 0 )
 	{
@@ -602,60 +473,3 @@ blargg_err_t Spc_Emu::play_( long count, sample_t* out )
 	check( remain == 0 );
 	return 0;
 }
-
-blargg_err_t Rsn_Emu::load_archive( const char* path )
-{
-#ifdef RARDLL
-	struct RAROpenArchiveData data = {
-		.ArcName = (char *)path,
-		.OpenMode = RAR_OM_LIST, .OpenResult = 0,
-		.CmtBuf = 0, .CmtBufSize = 0, .CmtSize = 0, .CmtState = 0
-	};
-
-	// get the file count and unpacked size
-	long pos = 0;
-	int count = 0;
-	HANDLE PASCAL rar = RAROpenArchive( &data );
-	struct RARHeaderData head;
-	for ( ; RARReadHeader( rar, &head ) == ERAR_SUCCESS; count++ )
-	{
-		RARProcessFile( rar, RAR_SKIP, 0, 0 );
-		pos += head.UnpSize;
-	}
-	rsn.resize( pos );
-	spc.resize( count + 1 );
-	RARCloseArchive( rar );
-
-	// copy the stream and index the tracks
-	byte *bp = &rsn[0];
-	data.OpenMode = RAR_OM_EXTRACT;
-	rar = RAROpenArchive( &data );
-	RARSetCallback( rar, call_rsn, (intptr_t)&bp );
-	for ( count = 0, pos = 0; RARReadHeader( rar, &head ) == ERAR_SUCCESS; )
-	{
-		RARProcessFile( rar, RAR_TEST, 0, 0 );
-		if ( !check_spc_header( bp - head.UnpSize ) )
-			spc[count++] = &rsn[pos];
-		pos += head.UnpSize;
-	}
-	spc[count] = &rsn[pos];
-	set_track_count( count );
-	RARCloseArchive( rar );
-
-	return 0;
-#else
-	(void) path;
-	return gme_wrong_file_type;
-#endif
-}
-
-blargg_err_t Rsn_Emu::start_track_( int track )
-{
-	if ( static_cast<size_t>(track) >= spc.size() )
-		return "Invalid track requested";
-	file_data = spc[track];
-	file_size = spc[track + 1] - spc[track];
-	return Spc_Emu::start_track_( track );
-}
-
-Rsn_Emu::~Rsn_Emu() { }

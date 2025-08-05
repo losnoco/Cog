@@ -14,21 +14,21 @@
 class Data_Reader {
 public:
 	virtual ~Data_Reader() { }
-	
+
 	static const char eof_error []; // returned by read() when request goes beyond end
-	
+
 	// Read at most count bytes and return number actually read, or <= 0 if error
 	virtual long read_avail( void*, long n ) = 0;
-	
+
 	// Read exactly count bytes and return error if they couldn't be read
 	virtual blargg_err_t read( void*, long count );
-	
+
 	// Number of bytes remaining until end of file
 	virtual long remain() const = 0;
-	
+
 	// Read and discard count bytes
 	virtual blargg_err_t skip( long count );
-	
+
 public:
 	Data_Reader() { }
 	typedef blargg_err_t error_t; // deprecated
@@ -43,13 +43,13 @@ class File_Reader : public Data_Reader {
 public:
 	// Size of file
 	virtual long size() const = 0;
-	
+
 	// Current position in file
 	virtual long tell() const = 0;
-	
+
 	// Go to new position
 	virtual blargg_err_t seek( long ) = 0;
-	
+
 	long remain() const;
 	blargg_err_t skip( long n );
 };
@@ -59,7 +59,7 @@ class Std_File_Reader : public File_Reader {
 public:
 	blargg_err_t open( const char* path );
 	void close();
-	
+
 public:
 	Std_File_Reader();
 	~Std_File_Reader();

@@ -16,13 +16,13 @@ public:
 	// True if custom buffer and custom equalization are supported
 	// TODO: move into Music_Emu and rename to something like supports_custom_buffer()
 	bool is_classic_emu() const { return !uses_fm; }
-	
+
 	blargg_err_t set_multi_channel ( bool is_enabled ) override;
-	
+
 	// Disable running FM chips at higher than normal rate. Will result in slightly
 	// more aliasing of high notes.
 	void disable_oversampling( bool disable = true ) { disable_oversampling_ = disable; }
-	
+
 	// VGM header format
 	enum { header_size = 0x40 };
 	struct header_t
@@ -45,12 +45,12 @@ public:
 		byte data_offset [4];
 		byte unused2 [8];
 	};
-	
+
 	// Header for currently loaded file
 	header_t const& header() const { return *(header_t const*) data; }
-	
+
 	static gme_type_t static_type() { return gme_vgm_type; }
-	
+
 public:
 	// deprecated
 	using Music_Emu::load;

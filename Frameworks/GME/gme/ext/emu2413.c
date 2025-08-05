@@ -55,8 +55,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "mamedef.h"
-#undef INLINE
 #include "emu2413.h"
 #include "panning.h" // Maxim
 
@@ -169,7 +167,7 @@ static unsigned char default_inst[OPLL_TONE_NUM][(16 + 3) * 8] = {
 #define EXPAND_BITS_X(x,s,d) (((x)<<((d)-(s)))|((1<<((d)-(s)))-1))
 
 /* Adjust envelope speed which depends on sampling rate. */
-#define RATE_ADJUST(x) (rate==49716?x:(e_uint32)((double)(x)*clk/72/rate + 0.5))        /* added 0.5 to round the value*/
+#define RATE_ADJUST(x) (rate==49716?(x):(e_uint32)((double)(x)*clk/72/rate + 0.5))      /* added 0.5 to round the value*/
 
 #define MOD(o,x) (&(o)->slot[(x)<<1])
 #define CAR(o,x) (&(o)->slot[((x)<<1)|1])
@@ -424,7 +422,8 @@ static double decaytime[16][4] = {
 static void
 makeDphaseARTable (void)
 {
-  e_int32 AR, Rks, RM, RL;
+  e_int32 AR, Rks, RM;
+  e_uint32 RL;
 
 #ifdef USE_SPEC_ENV_SPEED
   e_uint32 attacktable[16][4];
@@ -472,7 +471,8 @@ makeDphaseARTable (void)
 static void
 makeDphaseDRTable (void)
 {
-  e_int32 DR, Rks, RM, RL;
+  e_int32 DR, Rks, RM;
+  e_uint32 RL;
 
 #ifdef USE_SPEC_ENV_SPEED
   e_uint32 decaytable[16][4];
@@ -1000,7 +1000,7 @@ OPLL_new (e_uint32 clk, e_uint32 rate)
 
   maketables (clk, rate);
 
-  opll = (OPLL *) calloc (sizeof (OPLL), 1);
+  opll = (OPLL *) calloc (1, sizeof (OPLL));
   if (opll == NULL)
     return NULL;
 
