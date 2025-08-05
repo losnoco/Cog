@@ -11,9 +11,7 @@
 
 #if !MPT_PLATFORM_MULTITHREADED
 #define MPT_MUTEX_NONE 1
-#elif MPT_COMPILER_GENERIC
-#define MPT_MUTEX_STD 1
-#elif MPT_OS_WINDOWS && MPT_LIBCXX_GNU && !defined(_GLIBCXX_HAS_GTHREADS)
+#elif defined(MPT_LIBCXX_QUIRK_NO_STD_THREAD)
 #define MPT_MUTEX_WIN32 1
 #else
 #define MPT_MUTEX_STD 1
@@ -31,7 +29,7 @@
 
 #if MPT_MUTEX_STD
 #include <mutex>
-#ifdef MPT_COMPILER_QUIRK_COMPLEX_STD_MUTEX
+#ifdef MPT_LIBCXX_QUIRK_COMPLEX_STD_MUTEX
 #include <shared_mutex>
 #include <type_traits>
 #endif
@@ -48,7 +46,7 @@ inline namespace MPT_INLINE_NS {
 
 #if MPT_MUTEX_STD
 
-#ifdef MPT_COMPILER_QUIRK_COMPLEX_STD_MUTEX
+#ifdef MPT_LIBCXX_QUIRK_COMPLEX_STD_MUTEX
 using mutex = std::conditional<sizeof(std::shared_mutex) < sizeof(std::mutex), std::shared_mutex, std::mutex>::type;
 #else
 using mutex = std::mutex;

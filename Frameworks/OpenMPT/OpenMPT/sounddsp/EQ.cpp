@@ -102,6 +102,7 @@ void CEQ::ProcessTemplate(TMixSample *frontBuffer, TMixSample *rearBuffer, std::
 	unsigned int old_csr = 0;
 	if(CPU::HasFeatureSet(CPU::feature::sse) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
+		mpt::arch::feature_fence_aquire();
 		old_csr = _mm_getcsr();
 		_mm_setcsr((old_csr & ~(_MM_DENORMALS_ZERO_MASK | _MM_FLUSH_ZERO_MASK)) | _MM_DENORMALS_ZERO_ON | _MM_FLUSH_ZERO_ON);
 	}
@@ -124,6 +125,7 @@ void CEQ::ProcessTemplate(TMixSample *frontBuffer, TMixSample *rearBuffer, std::
 	if(CPU::HasFeatureSet(CPU::feature::sse) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
 		_mm_setcsr(old_csr);
+		mpt::arch::feature_fence_release();
 	}
 #endif
 }

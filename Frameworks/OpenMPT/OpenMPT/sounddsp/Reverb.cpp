@@ -159,7 +159,7 @@ const REFLECTIONPRESET gReflectionsPreset[ENVIRONMENT_NUMREFLECTIONS] =
 // Implementation
 //
 
-MPT_FORCEINLINE int32 ftol(float f) { return static_cast<int32>(f); }
+static MPT_FORCEINLINE int32 ftol(float f) { return static_cast<int32>(f); }
 
 static void I3dl2_to_Generic(
 				const SNDMIX_REVERB_PROPERTIES *pReverb,
@@ -597,6 +597,7 @@ void CReverb::ReverbProcessPostFiltering1x(const int32 * MPT_RESTRICT pRvb, int3
 #if defined(MPT_WANT_ARCH_INTRINSICS_X86_SSE2) && defined(MPT_ARCH_INTRINSICS_X86_SSE2)
 	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
+		mpt::arch::feature_fence_guard arch_feature_guard;
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
 		__m128i in = _mm_set1_epi32(0);
@@ -659,6 +660,7 @@ void CReverb::ReverbDCRemoval(int32 * MPT_RESTRICT pBuffer, uint32 nSamples)
 #if defined(MPT_WANT_ARCH_INTRINSICS_X86_SSE2) && defined(MPT_ARCH_INTRINSICS_X86_SSE2)
 	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
+		mpt::arch::feature_fence_guard arch_feature_guard;
 		__m128i nDCRRvb_Y1 = Load64SSE(gnDCRRvb_Y1);
 		__m128i nDCRRvb_X1 = Load64SSE(gnDCRRvb_X1);
 		while(nSamples--)
@@ -724,6 +726,7 @@ void CReverb::ProcessPreDelay(SWRvbRefDelay * MPT_RESTRICT pPreDelay, const int3
 #if defined(MPT_WANT_ARCH_INTRINSICS_X86_SSE2) && defined(MPT_ARCH_INTRINSICS_X86_SSE2)
 	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
+		mpt::arch::feature_fence_guard arch_feature_guard;
 		__m128i coeffs = _mm_cvtsi32_si128(pPreDelay->nCoeffs.lr);
 		__m128i history = _mm_cvtsi32_si128(pPreDelay->History.lr);
 		__m128i preDifCoeffs = _mm_cvtsi32_si128(pPreDelay->nPreDifCoeffs.lr);
@@ -796,6 +799,7 @@ void CReverb::ProcessReflections(SWRvbRefDelay * MPT_RESTRICT pPreDelay, LR16 * 
 #if defined(MPT_WANT_ARCH_INTRINSICS_X86_SSE2) && defined(MPT_ARCH_INTRINSICS_X86_SSE2)
 	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
+		mpt::arch::feature_fence_guard arch_feature_guard;
 		union
 		{
 			__m128i xmm;
@@ -891,6 +895,7 @@ void CReverb::ProcessLateReverb(SWLateReverb * MPT_RESTRICT pReverb, LR16 * MPT_
 #if defined(MPT_WANT_ARCH_INTRINSICS_X86_SSE2) && defined(MPT_ARCH_INTRINSICS_X86_SSE2)
 	if(CPU::HasFeatureSet(CPU::feature::sse2) && CPU::HasModesEnabled(CPU::mode::xmm128sse))
 	{
+		mpt::arch::feature_fence_guard arch_feature_guard;
 		int delayPos = pReverb->nDelayPos & RVBDLY_MASK;
 		__m128i rvbOutGains = Load64SSE(pReverb->RvbOutGains);
 		__m128i difCoeffs = Load64SSE(pReverb->nDifCoeffs);

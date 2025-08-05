@@ -4,6 +4,7 @@
 #define MPT_ARCH_ARCH_HPP
 
 
+#include "mpt/arch/feature_fence.hpp"
 #include "mpt/arch/feature_flags.hpp"
 #include "mpt/arch/x86_amd64.hpp"
 #include "mpt/base/detect.hpp"

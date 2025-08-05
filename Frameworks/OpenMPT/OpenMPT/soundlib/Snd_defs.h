@@ -618,6 +618,7 @@ enum PlayBehaviour
 	kITCarryAfterNoteOff,           // Envelope Carry continues to function as normal even after note-off
 	kFT2OffsetMemoryRequiresNote,   // Offset memory is only updated when offset command is next to a note
 	kITNoteCutWithPorta,            // Note Cut (SCx) resets note frequency and interacts with tone portamento with row delay
+	kITVolColNoSlidePropagation,    // Don't propagate volume command c/d parameter to regular command D memory
 
 	// Add new play behaviours here.
 

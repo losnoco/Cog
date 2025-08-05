@@ -97,7 +97,7 @@ struct MixLoopState
 	// Check how many samples can be rendered without encountering loop or sample end, and also update loop position / direction
 	MPT_FORCEINLINE uint32 GetSampleCount(ModChannel &chn, uint32 nSamples) const
 	{
-		int32 nLoopStart = chn.dwFlags[CHN_LOOP] ? chn.nLoopStart : 0;
+		const int32 nLoopStart = chn.dwFlags[CHN_LOOP] ? chn.nLoopStart : 0;
 		SamplePosition nInc = chn.increment;
 
 		if(nSamples <= 0 || nInc.IsZero() || !chn.nLength || !samplePointer)
@@ -227,35 +227,24 @@ struct MixLoopState
 		{
 			if(nPosInt >= lookaheadStart)
 			{
-#if 0
-				const uint32 oldCount = nSmpCount;
-
-				// When going backwards - we can only go back up to lookaheadStart.
-				// When going forwards - read through the whole pre-computed wrap-around buffer if possible.
-				// TODO: ProTracker sample swapping needs hard cut at sample end.
-				int32 samplesToRead = nInc.IsNegative()
-					? (nPosInt - lookaheadStart)
-					//: 2 * InterpolationMaxLookahead - (nPosInt - mixLoopState.lookaheadStart);
-					: (chn.nLoopEnd - nPosInt);
-				//LimitMax(samplesToRead, chn.nLoopEnd - chn.nLoopStart);
-				nSmpCount = SamplesToBufferLength(samplesToRead, chn);
-				Limit(nSmpCount, 1u, oldCount);
-#else
-				if (nInc.IsNegative())
+				if(nInc.IsNegative())
 				{
 					nSmpCount = DistanceToBufferLength(SamplePosition(lookaheadStart, 0), nPos, nInv);
-				} else
+					chn.pCurrentSample = lookaheadPointer;
+				} else if(nPosInt <= chn.nLoopEnd)
 				{
 					nSmpCount = DistanceToBufferLength(nPos, SamplePosition(chn.nLoopEnd, 0), nInv);
+					chn.pCurrentSample = lookaheadPointer;
+				} else
+				{
+					nSmpCount = DistanceToBufferLength(nPos, SamplePosition(chn.nLength, 0), nInv);
 				}
-#endif
-				chn.pCurrentSample = lookaheadPointer;
 				checkDest = false;
 			} else if(chn.dwFlags[CHN_WRAPPED_LOOP] && isAtLoopStart)
 			{
 				// We just restarted the loop, so interpolate correctly after wrapping around
 				nSmpCount = DistanceToBufferLength(nPos, SamplePosition(nLoopStart + InterpolationLookaheadBufferSize, 0), nInv);
-				chn.pCurrentSample = lookaheadPointer + (chn.nLoopEnd - nLoopStart) * chn.pModSample->GetBytesPerSample();
+				chn.pCurrentSample = lookaheadPointer + (chn.nLength - nLoopStart) * chn.pModSample->GetBytesPerSample();
 				checkDest = false;
 			} else if(nInc.IsPositive() && static_cast<SmpLength>(nPosDest) >= lookaheadStart && nSmpCount > 1)
 			{
@@ -325,12 +314,45 @@ void CSoundFile::CreateStereoMix(int count)
 }
 
 
+std::pair<mixsample_t *, mixsample_t *> CSoundFile::GetChannelOffsets(const ModChannel &chn, CHANNELINDEX channel)
+{
+	mixsample_t *pOfsR = &m_dryROfsVol;
+	mixsample_t *pOfsL = &m_dryLOfsVol;
+#ifndef NO_REVERB
+	if(((m_MixerSettings.DSPMask & SNDDSP_REVERB) && !chn.dwFlags[CHN_NOREVERB]) || chn.dwFlags[CHN_REVERB])
+	{
+		pOfsR = &m_RvbROfsVol;
+		pOfsL = &m_RvbLOfsVol;
+	}
+#endif
+	if(chn.dwFlags[CHN_SURROUND] && m_MixerSettings.gnChannels > 2)
+	{
+		pOfsR = &m_surroundROfsVol;
+		pOfsL = &m_surroundLOfsVol;
+	}
+	// Look for plugins associated with this implicit tracker channel.
+#ifndef NO_PLUGINS
+	const PLUGINDEX mixPlugin = GetBestPlugin(chn, channel, PrioritiseInstrument, RespectMutes);
+	if((mixPlugin > 0) && (mixPlugin <= MAX_MIXPLUGINS) && m_MixPlugins[mixPlugin - 1].pMixPlugin != nullptr)
+	{
+		// Render into plugin buffer instead of global buffer
+		SNDMIXPLUGINSTATE &mixState = m_MixPlugins[mixPlugin - 1].pMixPlugin->m_MixState;
+		if(mixState.pMixBuffer)
+		{
+			pOfsR = &mixState.nVolDecayR;
+			pOfsL = &mixState.nVolDecayL;
+		}
+	}
+#endif  // NO_PLUGINS
+	return std::make_pair(pOfsL, pOfsR);
+}
+
+
 bool CSoundFile::MixChannel(int count, ModChannel &chn, CHANNELINDEX channel, bool doMix)
 {
 	if(chn.pCurrentSample || chn.nLOfs || chn.nROfs)
 	{
-		mixsample_t *pOfsR = &m_dryROfsVol;
-		mixsample_t *pOfsL = &m_dryLOfsVol;
+		auto [pOfsL, pOfsR] = GetChannelOffsets(chn, channel);
 
 		uint32 functionNdx = MixFuncTable::ResamplingModeToMixFlags(static_cast<ResamplingMode>(chn.resamplingMode));
 		if(chn.dwFlags[CHN_16BIT]) functionNdx |= MixFuncTable::ndx16Bit;
@@ -345,15 +367,11 @@ bool CSoundFile::MixChannel(int count, ModChannel &chn, CHANNELINDEX channel, bo
 		{
 			m_Reverb.TouchReverbSendBuffer(ReverbSendBuffer, m_RvbROfsVol, m_RvbLOfsVol, count);
 			pbuffer = ReverbSendBuffer;
-			pOfsR = &m_RvbROfsVol;
-			pOfsL = &m_RvbLOfsVol;
 		}
 #endif
 		if(chn.dwFlags[CHN_SURROUND] && m_MixerSettings.gnChannels > 2)
 		{
 			pbuffer = MixRearBuffer;
-			pOfsR = &m_surroundROfsVol;
-			pOfsL = &m_surroundLOfsVol;
 		}
 
 		// Look for plugins associated with this implicit tracker channel.
@@ -366,8 +384,6 @@ bool CSoundFile::MixChannel(int count, ModChannel &chn, CHANNELINDEX channel, bo
 			if (mixState.pMixBuffer)
 			{
 				pbuffer = mixState.pMixBuffer;
-				pOfsR = &mixState.nVolDecayR;
-				pOfsL = &mixState.nVolDecayL;
 				if (!(mixState.dwFlags & SNDMIXPLUGINSTATE::psfMixReady))
 				{
 					StereoFill(pbuffer, count, *pOfsR, *pOfsL);

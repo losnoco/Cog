@@ -360,6 +360,9 @@ endif
 ifeq ($(UNAME_S),OpenBSD)
 HOST_FLAVOUR=OPENBSD
 endif
+ifeq ($(UNAME_S),DragonFly)
+HOST_FLAVOUR=DRAGONFLY
+endif
 ifeq ($(UNAME_S),Haiku)
 HOST_FLAVOUR=HAIKU
 endif
@@ -408,6 +411,8 @@ TAR_C=tar -c -N
 else
 TAR_C=tar -c -F pax -N
 endif
+else ifeq ($(findstring DragonFly,$(UNAME_S)),DragonFly)
+TAR_C=tar -c --format pax --numeric-owner --uname "" --gname "" --uid 0 --gid 0
 else ifeq ($(findstring BSD,$(UNAME_S)),BSD)
 TAR_C=tar -c --format pax --numeric-owner --uname "" --gname "" --uid 0 --gid 0
 else

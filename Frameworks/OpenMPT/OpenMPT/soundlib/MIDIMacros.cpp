@@ -357,8 +357,8 @@ std::string MIDIMacroConfig::Macro::NormalizedString() const
 {
 	std::string sanitizedMacro = *this;
 
-	std::string::size_type pos;
-	while((pos = sanitizedMacro.find_first_not_of("0123456789ABCDEFabchmnopsuvxyz")) != std::string::npos)
+	std::string::size_type pos = 0;
+	while((pos = sanitizedMacro.find_first_not_of("0123456789ABCDEFabchmnopsuvxyz", pos)) != std::string::npos)
 	{
 		sanitizedMacro.erase(pos, 1);
 	}

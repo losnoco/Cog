@@ -1017,33 +1017,68 @@ bool CSoundFile::ReadJ2B(FileReader &file, ModLoadingFlags loadFlags)
 
 	// Header is valid, now unpack the RIFF AM file using inflate
 	z_stream strm{};
-	if(inflateInit(&strm) != Z_OK)
+	int zlib_errc = Z_OK;
+	zlib_errc = inflateInit(&strm);
+	if(zlib_errc == Z_MEM_ERROR)
+	{
+		mpt::throw_out_of_memory();
+	} else if(zlib_errc < Z_OK)
+	{
 		return false;
+	}
 
 	uint32 remainRead = fileHeader.packedLength, remainWrite = fileHeader.unpackedLength, totalWritten = 0;
 	uint32 crc = 0;
-	std::vector<Bytef> amFileData(remainWrite);
+	std::vector<Bytef> amFileData;
 	int retVal = Z_OK;
-	while(remainRead && remainWrite && retVal != Z_STREAM_END)
+	try
 	{
-		Bytef buffer[mpt::IO::BUFFERSIZE_TINY];
-		uint32 readSize = std::min(static_cast<uint32>(sizeof(buffer)), remainRead);
-		file.ReadRaw(mpt::span(buffer, readSize));
-		crc = static_cast<uint32>(crc32(crc, buffer, readSize));
-
-		strm.avail_in = readSize;
-		strm.next_in = buffer;
-		do
+		amFileData.resize(remainWrite);
+		while(remainRead && remainWrite && retVal != Z_STREAM_END)
 		{
-			strm.avail_out = remainWrite;
-			strm.next_out = amFileData.data() + totalWritten;
-			retVal = inflate(&strm, Z_NO_FLUSH);
-			uint32 written = remainWrite - strm.avail_out;
-			totalWritten += written;
-			remainWrite -= written;
-		} while(remainWrite && strm.avail_out == 0);
+			Bytef buffer[mpt::IO::BUFFERSIZE_TINY];
+			uint32 readSize = std::min(static_cast<uint32>(sizeof(buffer)), remainRead);
+			file.ReadRaw(mpt::span(buffer, readSize));
+			crc = static_cast<uint32>(crc32(crc, buffer, readSize));
 
-		remainRead -= readSize;
+			strm.avail_in = readSize;
+			strm.next_in = buffer;
+			do
+			{
+				strm.avail_out = remainWrite;
+				strm.next_out = amFileData.data() + totalWritten;
+				zlib_errc = inflate(&strm, Z_NO_FLUSH);
+				if(zlib_errc == Z_BUF_ERROR)
+				{
+					// expected
+				} else if(zlib_errc == Z_MEM_ERROR)
+				{
+					mpt::throw_out_of_memory();
+				} else if(zlib_errc < Z_OK)
+				{
+					inflateEnd(&strm);
+					return false;
+				}
+				retVal = zlib_errc;
+				uint32 written = remainWrite - strm.avail_out;
+				totalWritten += written;
+				remainWrite -= written;
+			} while(remainWrite && strm.avail_out == 0);
+
+			remainRead -= readSize;
+		}
+	} catch(mpt::out_of_memory e)
+	{
+		inflateEnd(&strm);
+		mpt::rethrow_out_of_memory(e);	
+	} catch(const std::exception &)
+	{
+		inflateEnd(&strm);
+		return false;
+	} catch(...)
+	{
+		inflateEnd(&strm);
+		return false;
 	}
 	inflateEnd(&strm);
 

@@ -35,8 +35,10 @@
 //#include "mpt/crc/crc.hpp"
 #include "OggStream.h"
 #include <algorithm>
-#if MPT_PLATFORM_MULTITHREADED && !defined(MPT_COMPILER_QUIRK_NO_STDCPP_THREADS)
+#ifdef MPT_WITH_FLAC
+#if MPT_PLATFORM_MULTITHREADED && !defined(MPT_LIBCXX_QUIRK_NO_STD_THREAD)
 #include <thread>
+#endif
 #endif
 #ifdef MPT_WITH_OGG
 #if MPT_COMPILER_CLANG
@@ -698,7 +700,7 @@ bool CSoundFile::SaveFLACSample(SAMPLEINDEX nSample, std::ostream &f) const
 	FLAC__stream_encoder_set_metadata(encoder, metadata.data(), numBlocks);
 #ifdef MODPLUG_TRACKER
 	FLAC__stream_encoder_set_compression_level(encoder, TrackerSettings::Instance().m_FLACCompressionLevel);
-#if (FLAC_API_VERSION_CURRENT >= 14) && MPT_PLATFORM_MULTITHREADED && !defined(MPT_COMPILER_QUIRK_NO_STDCPP_THREADS)
+#if (FLAC_API_VERSION_CURRENT >= 14) && MPT_PLATFORM_MULTITHREADED && !defined(MPT_LIBCXX_QUIRK_NO_STD_THREAD)
 	uint32 threads = TrackerSettings::Instance().m_FLACMultithreading ? static_cast<uint32>(std::max(std::thread::hardware_concurrency(), static_cast<unsigned int>(1))) : static_cast<uint32>(1);
 	// Work-around <https://github.com/xiph/flac/issues/823>.
 	//FLAC__stream_encoder_set_num_threads(encoder, threads);

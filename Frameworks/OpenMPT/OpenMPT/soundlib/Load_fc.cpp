@@ -83,8 +83,9 @@ struct FCFileHeader
 			return false;
 
 		static constexpr uint32 MAX_FC_SIZE = 0x8'0000;  // According to manual: Sample memory allocated = 100,000 bytes
-		if(sequenceSize % sizeof(FCPlaylistEntry) > 1    // Some files have a mysterious extra byte
-		   || sequenceSize < sizeof(FCPlaylistEntry)      || sequenceSize > 256 * 13
+		const uint32 seqSize = SequenceSize();
+		if(seqSize % sizeof(FCPlaylistEntry) > 1  // Some files have a mysterious extra byte
+		   || seqSize < sizeof(FCPlaylistEntry)           || seqSize > 256 * 13
 		   || patternsSize % 64u     || !patternsSize     || patternsSize > 64 * 256     || patternsOffset > MAX_FC_SIZE
 		   || freqSequenceSize % 64u || !freqSequenceSize || freqSequenceSize > 64 * 256 || freqSequenceOffset > MAX_FC_SIZE
 		   || volSequenceSize % 64u  || !volSequenceSize  || volSequenceSize > 64 * 256  || volSequenceOffset > MAX_FC_SIZE
@@ -102,12 +103,22 @@ struct FCFileHeader
 
 	ORDERINDEX NumOrders() const
 	{
-		return static_cast<ORDERINDEX>(sequenceSize / sizeof(FCPlaylistEntry));
+		return static_cast<ORDERINDEX>(SequenceSize() / sizeof(FCPlaylistEntry));
 	}
 
 	uint32 GetHeaderMinimumAdditionalSize() const
 	{
-		return sequenceSize + (IsFC14() ? 80 : 0);
+		return SequenceSize() + (IsFC14() ? 80 : 0);
+	}
+
+	uint32 SequenceSize() const
+	{
+		// A broken copy of cult.smod has a sequence size of 0 but the sequence data is actually in the place where it's supposed to be
+		if(sequenceSize > 0)
+			return sequenceSize;
+		if(const uint32 headerSize = IsFC14() ? 180 : 100; patternsOffset > headerSize)
+			return patternsOffset - headerSize;
+		return 0;
 	}
 };
 

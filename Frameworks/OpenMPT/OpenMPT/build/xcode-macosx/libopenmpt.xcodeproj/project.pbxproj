@@ -364,6 +364,7 @@
 		54F2D0191B80C78B8982EE59 /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = algorithm.hpp; path = ../../src/mpt/base/algorithm.hpp; sourceTree = "<group>"; };
 		55356226EAAC215859487866 /* span.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = span.hpp; path = ../../src/mpt/audio/span.hpp; sourceTree = "<group>"; };
 		55C6E46D9A1589DFDC3CC2AD /* Dlsbank.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Dlsbank.cpp; path = ../../soundlib/Dlsbank.cpp; sourceTree = "<group>"; };
+		55E9D1C649E91B38CED43006 /* feature_fence.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = feature_fence.hpp; path = ../../src/mpt/arch/feature_fence.hpp; sourceTree = "<group>"; };
 		55EF6B83EC187D75AD7ED9C3 /* tests_endian_int24.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = tests_endian_int24.hpp; path = ../../src/mpt/endian/tests/tests_endian_int24.hpp; sourceTree = "<group>"; };
 		5609DBF3C331EA65C4C4DA33 /* utility.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = utility.hpp; path = ../../src/mpt/base/utility.hpp; sourceTree = "<group>"; };
 		567D9E616834DE53DDA2CCA1 /* InstrumentExtensions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InstrumentExtensions.cpp; path = ../../soundlib/InstrumentExtensions.cpp; sourceTree = "<group>"; };
@@ -1517,6 +1518,7 @@
 			isa = PBXGroup;
 			children = (
 				09573FAA7A79E09C30408DEA /* arch.hpp */,
+				55E9D1C649E91B38CED43006 /* feature_fence.hpp */,
 				1197459E05968F108A81A3DE /* feature_flags.hpp */,
 				473316F00DC10E627BC33530 /* x86_amd64.hpp */,
 			);

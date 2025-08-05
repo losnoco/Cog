@@ -15,5 +15,5 @@
 // Version definitions. The only thing that needs to be changed when changing version number.
 #define VER_MAJORMAJOR  1
 #define VER_MAJOR      32
-#define VER_MINOR      01
-#define VER_MINORMINOR 04
+#define VER_MINOR      03
+#define VER_MINORMINOR 00
