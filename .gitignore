@@ -25,7 +25,8 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/BASS/libbassmidi.dylib
 /ThirdParty/BASS/libbassopus.dylib
 /ThirdParty/BASS/libbasswv.dylib
-/ThirdParty/avif/lib/libaom.a
+/ThirdParty/avif/lib/libdav1d.a
+/ThirdParty/avif/lib/libyuv.a
 /ThirdParty/avif/lib/libavif.a
 /ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib
 /ThirdParty/fdk-aac/lib/libfdk-aac.a
