@@ -1,0 +1,22 @@
+[host_machine]
+system = 'darwin'
+cpu_family = 'aarch64'
+cpu = 'aarch64'
+endian = 'little'
+
+[binaries]
+c = 'clang'
+objc = 'clang'
+cpp = 'clang++'
+ar = 'ar'
+ld = 'ld'
+strip = 'strip'
+lipo = 'lipo'
+ranlib = 'ranlib'
+
+[built-in options]
+prefix = '/usr/local'
+c_args = ['-arch', 'arm64', '-mmacosx-version-min=11.0']
+c_link_args = ['-arch', 'arm64', '-mmacosx-version-min=11.0']
+default_library = 'static'
+buildtype = 'release'
