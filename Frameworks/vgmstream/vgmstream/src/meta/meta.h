@@ -1038,6 +1038,8 @@ VGMSTREAM* init_vgmstream_ivb(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_mhwk(STREAMFILE* sf);
 
+VGMSTREAM* init_vgmstream_cf_df(STREAMFILE* sf);
+
 VGMSTREAM* init_vgmstream_srcd(STREAMFILE* sf);
 
 #endif
