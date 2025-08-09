@@ -64,6 +64,9 @@
 
 		[self setPreviousNode:visualizationNode];
 
+		// Stop ephemeral input chains from propagating their reset signals to the persistent output chain
+		[rubberbandNode setResetBarrier:YES];
+
 		DSPsLaunched = YES;
 
 		[self launchDSPs];
