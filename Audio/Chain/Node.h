@@ -28,6 +28,7 @@
 	id __weak controller;
 
 	BOOL shouldReset;
+	BOOL resetBarrier; // Only set on implementations that should not inherit reset
 
 	BOOL inWrite;
 	BOOL inPeek;
@@ -78,6 +79,9 @@
 - (void)setShouldReset:(BOOL)s;
 - (BOOL)shouldReset;
 - (void)resetBackwards;
+
+// Chain prior to this node should not propagate resets to it
+- (void)setResetBarrier:(BOOL)b;
 
 - (void)setPreviousNode:(id _Nullable)p;
 - (id _Nullable)previousNode;

@@ -324,7 +324,7 @@ static uint64_t _Node_serial;
 		[writeSemaphore signal];
 		[[previousNode readSemaphore] timedWait:2000];
 		[accessLock lock];
-		if([previousNode shouldReset] == YES) {
+		if(!resetBarrier && [previousNode shouldReset] == YES) {
 			break;
 		}
 	}
@@ -341,7 +341,7 @@ static uint64_t _Node_serial;
 		return [[AudioChunk alloc] init];
 	}
 
-	if([previousNode shouldReset] == YES) {
+	if(!resetBarrier && [previousNode shouldReset] == YES) {
 		@autoreleasepool {
 			[buffer reset];
 		}
@@ -393,7 +393,7 @@ static uint64_t _Node_serial;
 		[writeSemaphore signal];
 		[[previousNode readSemaphore] timedWait:2000];
 		[accessLock lock];
-		if([previousNode shouldReset] == YES) {
+		if(!resetBarrier && [previousNode shouldReset] == YES) {
 			break;
 		}
 	}
@@ -410,7 +410,7 @@ static uint64_t _Node_serial;
 		return [[AudioChunk alloc] init];
 	}
 
-	if([previousNode shouldReset] == YES) {
+	if(!resetBarrier && [previousNode shouldReset] == YES) {
 		@autoreleasepool {
 			[buffer reset];
 		}
@@ -466,7 +466,7 @@ static uint64_t _Node_serial;
 
 	@autoreleasepool {
 		ret = [[previousNode buffer] removeAndMergeSamples:maxFrames callBlock:^BOOL{
-			if([previousNode shouldReset] == YES) {
+			if(!resetBarrier && [previousNode shouldReset] == YES) {
 				@autoreleasepool {
 					[buffer reset];
 				}
@@ -523,7 +523,7 @@ static uint64_t _Node_serial;
 
 	@autoreleasepool {
 		ret = [[previousNode buffer] removeAndMergeSamplesAsFloat32:maxFrames callBlock:^BOOL{
-			if([previousNode shouldReset] == YES) {
+			if(!resetBarrier && [previousNode shouldReset] == YES) {
 				@autoreleasepool {
 					[buffer reset];
 				}
@@ -608,6 +608,10 @@ static uint64_t _Node_serial;
 		[buffer reset];
 		[accessLock unlock];
 	}
+}
+
+- (void)setResetBarrier:(BOOL)b {
+	resetBarrier = b;
 }
 
 // Implementations should override
