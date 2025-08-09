@@ -71,7 +71,7 @@ static BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels
 		self->fadeTarget = fadeTarget;
 		lastBuffer = buffer;
 		const double maxFadeDurationMS = 1000.0 * [buffer listDuration];
-		const double fadeDuration = MIN(125.0f, maxFadeDurationMS);
+		const double fadeDuration = MIN(250.0f, maxFadeDurationMS);
 		fadeStep = ((fadeTarget - fadeLevel) / sampleRate) * (1000.0f / fadeDuration);
 	}
 	return self;
@@ -1023,10 +1023,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	return deviceChannelConfig;
 }
 
-// 125 milliseconds
+// 250 milliseconds
 - (void)fadeOut {
 	fadeTarget = 0.0f;
-	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 125.0f);
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 250.0f);
 	fading = YES;
 }
 
@@ -1046,7 +1046,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 - (void)fadeIn {
 	fadeLevel = 0.0f;
 	fadeTarget = 1.0f;
-	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 125.0f);
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 250.0f);
 	fading = YES;
 	faded = NO;
 }
