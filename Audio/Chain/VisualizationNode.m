@@ -78,6 +78,10 @@
 		inMerge = NO;
 
 		[self setPreviousNode:p];
+
+#ifdef LOG_CHAINS
+		[self initLogFiles];
+#endif
 	}
 
 	return self;
