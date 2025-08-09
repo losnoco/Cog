@@ -70,7 +70,7 @@ static uint64_t _Node_serial;
 		inMerge = NO;
 
 		[self setPreviousNode:p];
-		
+
 #ifdef LOG_CHAINS
 		[self initLogFiles];
 #endif
