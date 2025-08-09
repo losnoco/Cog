@@ -343,6 +343,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	while(processEntered) {
 		usleep(500);
 	}
+	shouldReset = YES;
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
