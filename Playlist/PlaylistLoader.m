@@ -276,9 +276,6 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 		}
 	}
 
-	NSSortDescriptor *sd_path = [[NSSortDescriptor alloc] initWithKey:@"path" ascending:YES];
-	[urls sortUsingDescriptors:@[sd_path]];
-
 	return urls;
 }
 
