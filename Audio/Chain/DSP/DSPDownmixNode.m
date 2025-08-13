@@ -17,8 +17,8 @@
 	DownmixProcessor *downmix;
 
 	BOOL stopping, paused;
-	BOOL processEntered;
 	BOOL formatSet;
+	NSRecursiveLock *mutex;
 
 	AudioStreamBasicDescription lastInputFormat;
 	AudioStreamBasicDescription inputFormat;
@@ -32,6 +32,9 @@
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super initWithController:c previous:p latency:latency];
+	if(self) {
+		mutex = [[NSRecursiveLock alloc] init];
+	}
 	return self;
 }
 
@@ -43,17 +46,22 @@
 }
 
 - (BOOL)fullInit {
+	[mutex lock];
 	if(formatSet) {
 		downmix = [[DownmixProcessor alloc] initWithInputFormat:inputFormat inputConfig:inputChannelConfig andOutputFormat:outputFormat outputConfig:outputChannelConfig];
 		if(!downmix) {
+			[mutex unlock];
 			return NO;
 		}
 	}
+	[mutex unlock];
 	return YES;
 }
 
 - (void)fullShutdown {
+	[mutex lock];
 	downmix = nil;
+	[mutex unlock];
 }
 
 - (BOOL)setup {
@@ -65,36 +73,31 @@
 
 - (void)cleanUp {
 	stopping = YES;
-	while(processEntered) {
-		usleep(500);
-	}
 	[self fullShutdown];
 	formatSet = NO;
 }
 
 - (void)resetBuffer {
 	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	[buffer reset];
 	paused = NO;
+	[mutex unlock];
 }
 
 - (void)setOutputFormat:(AudioStreamBasicDescription)format withChannelConfig:(uint32_t)config {
 	if(memcmp(&outputFormat, &format, sizeof(outputFormat)) != 0 ||
 	   outputChannelConfig != config) {
 		paused = YES;
-		while(processEntered) {
-			usleep(500);
-		}
+		[mutex lock];
 		[buffer reset];
 		[self fullShutdown];
-		paused = NO;
+        outputFormat = format;
+        outputChannelConfig = config;
+        formatSet = YES;
+        paused = NO;
+		[mutex unlock];
 	}
-	outputFormat = format;
-	outputChannelConfig = config;
-	formatSet = YES;
 }
 
 - (BOOL)paused {
@@ -132,15 +135,15 @@
 	if(stopping)
 		return nil;
 
-	processEntered = YES;
+	[mutex lock];
 
 	if(stopping || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -150,7 +153,7 @@
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -161,19 +164,19 @@
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(formatSet && ![self setup]) {
-			processEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!downmix) {
-		processEntered = NO;
+		[mutex unlock];
 		return [self readChunk:4096];
 	}
 
 	AudioChunk *chunk = [self readChunkAsFloat32:4096];
 	if(!chunk || ![chunk frameCount]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -194,7 +197,7 @@
 	[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 	[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
 
-	processEntered = NO;
+	[mutex unlock];
 	return outputChunk;
 }
 

@@ -27,7 +27,7 @@
 	void *rs;
 	double lastVisRate;
 
-	BOOL processEntered;
+	NSRecursiveLock *mutex;
 	BOOL stopping;
 	BOOL paused;
 	BOOL threadTerminated;
@@ -79,6 +79,8 @@
 
 		[self setPreviousNode:p];
 
+		mutex = [[NSRecursiveLock alloc] init];
+
 #ifdef LOG_CHAINS
 		[self initLogFiles];
 #endif
@@ -108,12 +110,11 @@
 
 - (void)resetBuffer {
 	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	[mutex unlock];
 }
 
 - (double)secondsBuffered {
@@ -129,9 +130,11 @@
 }
 
 - (BOOL)setup {
+	[mutex lock];
 	if(fabs(inputFormat.mSampleRate - 44100.0) > 1e-6) {
 		rs = rsstate_new(1, inputFormat.mSampleRate, 44100.0);
 		if(!rs) {
+			[mutex unlock];
 			return NO;
 		}
 		resamplerRemain = 0;
@@ -145,26 +148,27 @@
 
 	downmixer = [[DownmixProcessor alloc] initWithInputFormat:inputFormat inputConfig:inputChannelConfig andOutputFormat:visFormat outputConfig:visChannelConfig];
 	if(!downmixer) {
+		[mutex unlock];
 		return NO;
 	}
 
+	[mutex unlock];
 	return YES;
 }
 
 - (void)cleanUp {
 	stopping = YES;
-	while(processEntered) {
-		usleep(500);
-	}
 	[self fullShutdown];
 }
 
 - (void)fullShutdown {
+	[mutex lock];
 	if(rs) {
 		rsstate_delete(rs);
 		rs = NULL;
 	}
 	downmixer = nil;
+	[mutex unlock];
 }
 
 - (BOOL)paused {
@@ -201,10 +205,10 @@
 }
 
 - (void)processVis:(AudioChunk *)chunk {
-	processEntered = YES;
+	[mutex lock];
 
 	if(paused) {
-		processEntered = NO;
+		[mutex unlock];
 		return;
 	}
 
@@ -231,7 +235,7 @@
 		inputFormat = format;
 		inputChannelConfig = channelConfig;
 		if(![self setup]) {
-			processEntered = NO;
+			[mutex unlock];
 			return;
 		}
 	}
@@ -271,7 +275,7 @@
 		[self postVisPCM:&visAudio[0] amount:frameCount];
 	}
 
-	processEntered = NO;
+	[mutex unlock];
 }
 
 @end

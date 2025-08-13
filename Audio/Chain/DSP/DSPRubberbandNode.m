@@ -36,7 +36,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	BOOL isHDCD;
 
 	BOOL stopping, paused;
-	BOOL processEntered;
+	NSRecursiveLock *mutex;
 
 	BOOL flushed;
 
@@ -63,6 +63,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 		lastPitch = pitch;
 		lastTempo = tempo;
+
+		mutex = [[NSRecursiveLock alloc] init];
 
 		[self addObservers];
 	}
@@ -232,12 +234,16 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 }
 
 - (BOOL)fullInit {
+	[mutex lock];
+
 	RubberBandOptions options = [self getRubberbandOptions];
 	tslastoptions = options;
 	tschannels = inputFormat.mChannelsPerFrame;
 	ts = rubberband_new(inputFormat.mSampleRate, (int)tschannels, options, 1.0 / tempo, pitch);
-	if(!ts)
+	if(!ts) {
+		[mutex unlock];
 		return NO;
+	}
 
 	blockSize = rubberband_get_process_size_limit(ts);
 	toDrop = rubberband_get_start_delay(ts);
@@ -270,13 +276,14 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	countIn = 0.0;
 	countOut = 0;
 
+	[mutex unlock];
 	return YES;
 }
 
 - (void)partialInit {
 	if(stopping || paused || !ts) return;
 
-	processEntered = YES;
+	[mutex lock];
 
 	RubberBandOptions changed = tslastoptions ^ tsnewoptions;
 
@@ -313,14 +320,16 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	tsapplynewoptions = NO;
 
-	processEntered = NO;
+	[mutex unlock];
 }
 
 - (void)fullShutdown {
+	[mutex lock];
 	if(ts) {
 		rubberband_delete(ts);
 		ts = NULL;
 	}
+	[mutex unlock];
 }
 
 - (BOOL)setup {
@@ -332,21 +341,17 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 - (void)cleanUp {
 	stopping = YES;
-	while(processEntered) {
-		usleep(500);
-	}
 	[self fullShutdown];
 }
 
 - (void)resetBuffer {
 	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	shouldReset = YES;
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	[mutex unlock];
 }
 
 - (BOOL)paused {
@@ -356,19 +361,21 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 - (void)setPreviousNode:(id)p {
 	if(previousNode != p) {
 		paused = YES;
-		while(processEntered);
+		[mutex lock];
 		previousNode = p;
 		paused = NO;
+		[mutex unlock];
 	}
 }
 
 - (void)setEndOfStream:(BOOL)e {
 	if(endOfStream && !e) {
-		while(processEntered);
+		paused = YES;
 		[self fullShutdown];
 	}
 	[super setEndOfStream:e];
 	flushed = e;
+	paused = NO;
 }
 
 - (void)process {
@@ -412,15 +419,15 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(stopping)
 		return nil;
 
-	processEntered = YES;
+	[mutex lock];
 
 	if(stopping || flushed || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -430,7 +437,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -441,13 +448,13 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableRubberband && ![self setup]) {
-			processEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!ts) {
-		processEntered = NO;
+		[mutex unlock];
 		return [self readChunk:4096];
 	}
 
@@ -460,7 +467,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(samplesToProcess > 0) {
 		AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
 		if(!chunk || ![chunk frameCount]) {
-			processEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 
@@ -537,7 +544,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		streamTimestamp += chunkDuration * [outputChunk streamTimeRatio];
 	}
 
-	processEntered = NO;
+	[mutex unlock];
 	return outputChunk;
 }
 

@@ -25,7 +25,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	FSurroundFilter *fsurround;
 
 	BOOL stopping, paused;
-	BOOL processEntered;
+	NSRecursiveLock *mutex;
 
 	BOOL observersapplied;
 
@@ -45,6 +45,8 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	if(self) {
 		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
 		enableFSurround = [defaults boolForKey:@"enableFSurround"];
+
+		mutex = [[NSRecursiveLock alloc] init];
 
 		[self addObservers];
 	}
@@ -85,9 +87,12 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 }
 
 - (BOOL)fullInit {
+	[mutex lock];
+
 	if(enableFSurround && inputFormat.mChannelsPerFrame == 2) {
 		fsurround = [[FSurroundFilter alloc] initWithSampleRate:inputFormat.mSampleRate];
 		if(!fsurround) {
+			[mutex unlock];
 			return NO;
 		}
 		outputFormat = inputFormat;
@@ -101,11 +106,14 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		fsurround = nil;
 	}
 
+	[mutex unlock];
 	return YES;
 }
 
 - (void)fullShutdown {
+	[mutex lock];
 	fsurround = nil;
+	[mutex unlock];
 }
 
 - (BOOL)setup {
@@ -117,20 +125,17 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 
 - (void)cleanUp {
 	stopping = YES;
-	while(processEntered) {
-		usleep(500);
-	}
 	[self fullShutdown];
 }
 
 - (void)resetBuffer {
 	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
+	[mutex lock];
+    shouldReset = YES;
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	[mutex unlock];
 }
 
 - (BOOL)paused {
@@ -171,15 +176,15 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	if(stopping)
 		return nil;
 
-	processEntered = YES;
+	[mutex lock];
 
 	if(stopping || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -189,7 +194,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -200,13 +205,13 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableFSurround && ![self setup]) {
-			processEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!fsurround) {
-		processEntered = NO;
+		[mutex unlock];
 		return [self readChunk:4096];
 	}
 
@@ -215,7 +220,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 	size_t totalFrameCount = 0;
 	AudioChunk *chunk = [self readAndMergeChunksAsFloat32:totalRequestedSamples];
 	if(!chunk || ![chunk frameCount]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -268,7 +273,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		[outputChunk assignSamples:samplePtr frameCount:samplesRendered];
 	}
 
-	processEntered = NO;
+	[mutex unlock];
 	return outputChunk;
 }
 
