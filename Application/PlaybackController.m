@@ -81,6 +81,22 @@ extern BOOL kAppControllerShuttingDown;
 
 @end
 
+@interface FadeTimerData : NSObject {
+	double originalVolume;
+	int interval;
+	BOOL faded;
+}
+@property double originalVolume;
+@property int interval;
+@property BOOL faded;
+@end
+
+@implementation FadeTimerData
+@synthesize originalVolume;
+@synthesize interval;
+@synthesize faded;
+@end
+
 @implementation PlaybackController
 
 #define DEFAULT_SEEK 5
@@ -489,32 +505,37 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
  and the appropriate userInfo, which in this case is an NSNumber
  containing the current volume before we start fading. */
 - (void)audioFadeDown:(NSTimer *)audioTimer {
+	FadeTimerData *data = [audioTimer userInfo];
 	double volume = [audioPlayer volume];
-	double originalVolume = [[audioTimer userInfo] doubleValue];
+	double originalVolume = data.originalVolume;
 	double down = originalVolume / 10;
 
 	DLog(@"VOLUME IS %lf", volume);
 
-	if(volume > 0.0001) // YAY! Roundoff error!
-	{
+	if(volume > 0.0001) { // YAY! Roundoff error!
 		[audioPlayer volumeDown:down];
-	} else // volume is at 0 or below, we are ready to release the timer and move on
-	{
-		BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
-		const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
-
+	} else if(!data.faded) { // ACK HACK must do this once
+		data.faded = YES;
+		data.interval = 3; // ACK XXX slightly more than the current pause/seek fade interval, in 100ms steps
 		[audioPlayer pause];
-		[audioPlayer setVolume:originalVolume];
-		[volumeSlider setDoubleValue:logarithmicToLinear(originalVolume, MAX_VOLUME)];
-		[audioTimer invalidate];
+	} else { // done the above once, now
+		if((data.interval -= 1) <= 0) {
+			BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+			const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
-		fading = NO;
+			[audioPlayer setVolume:originalVolume];
+			[volumeSlider setDoubleValue:logarithmicToLinear(originalVolume, MAX_VOLUME)];
+			[audioTimer invalidate];
+
+			fading = NO;
+		}
 	}
 }
 
 - (void)audioFadeUp:(NSTimer *)audioTimer {
 	double volume = [audioPlayer volume];
-	double originalVolume = [[audioTimer userInfo] doubleValue];
+	FadeTimerData *data = [audioTimer userInfo];
+	double originalVolume = data.originalVolume;
 	double up = originalVolume / 10;
 
 	DLog(@"VOLUME IS %lf", volume);
@@ -545,14 +566,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		return;
 	fading = YES;
 
-	NSNumber *originalVolume = @([audioPlayer volume]);
+	FadeTimerData *data = [[FadeTimerData alloc] init];
+	data.originalVolume = [audioPlayer volume];
 	NSTimer *fadeTimer;
 
 	if(playbackStatus == CogStatusPlaying) {
 		fadeTimer = [NSTimer timerWithTimeInterval:time
 		                                    target:self
 		                                  selector:@selector(audioFadeDown:)
-		                                  userInfo:originalVolume
+		                                  userInfo:data
 		                                   repeats:YES];
 		[[NSRunLoop currentRunLoop] addTimer:fadeTimer forMode:NSRunLoopCommonModes];
 	} else {
@@ -560,7 +582,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		fadeTimer = [NSTimer timerWithTimeInterval:time
 		                                    target:self
 		                                  selector:@selector(audioFadeUp:)
-		                                  userInfo:originalVolume
+		                                  userInfo:data
 		                                   repeats:YES];
 		[[NSRunLoop currentRunLoop] addTimer:fadeTimer forMode:NSRunLoopCommonModes];
 		[self pauseResume:self];
