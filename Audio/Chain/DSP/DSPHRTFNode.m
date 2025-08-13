@@ -87,8 +87,8 @@ static void unregisterMotionListener(void) {
 	HeadphoneFilter *hrtf;
 
 	BOOL stopping, paused;
-	BOOL processEntered;
 	BOOL resetFilter;
+	NSRecursiveLock *mutex;
 
 	size_t needPrefill;
 
@@ -144,6 +144,8 @@ static void unregisterMotionListener(void) {
 
 		rotationMatrix = matrix_identity_float4x4;
 
+		mutex = [[NSRecursiveLock alloc] init];
+
 		[self addObservers];
 	}
 	return self;
@@ -198,6 +200,7 @@ static void unregisterMotionListener(void) {
 }
 
 - (BOOL)fullInit {
+	[mutex lock];
 	if(enableHrtf) {
 		NSURL *presetUrl = [[NSBundle mainBundle] URLForResource:@"SADIE_D02-96000" withExtension:@"mhr"];
 
@@ -229,6 +232,7 @@ static void unregisterMotionListener(void) {
 
 		hrtf = [[HeadphoneFilter alloc] initWithImpulseFile:presetUrl forSampleRate:inputFormat.mSampleRate withInputChannels:inputFormat.mChannelsPerFrame withConfig:inputChannelConfig withMatrix:matrix];
 		if(!hrtf) {
+			[mutex unlock];
 			return NO;
 		}
 
@@ -251,16 +255,19 @@ static void unregisterMotionListener(void) {
 		hrtf = nil;
 	}
 
+	[mutex unlock];
 	return YES;
 }
 
 - (void)fullShutdown {
+	[mutex lock];
 	hrtf = nil;
 	if(lastEnableHeadTracking) {
 		lastEnableHeadTracking = NO;
 		unregisterMotionListener();
 	}
 	resetFilter = NO;
+	[mutex unlock];
 }
 
 - (BOOL)setup {
@@ -272,20 +279,16 @@ static void unregisterMotionListener(void) {
 
 - (void)cleanUp {
 	stopping = YES;
-	while(processEntered) {
-		usleep(500);
-	}
 	[self fullShutdown];
 }
 
 - (void)resetBuffer {
 	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	[mutex unlock];
 }
 
 - (BOOL)paused {
@@ -326,15 +329,15 @@ static void unregisterMotionListener(void) {
 	if(stopping)
 		return nil;
 
-	processEntered = YES;
+	[mutex lock];
 
 	if(stopping || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -344,7 +347,7 @@ static void unregisterMotionListener(void) {
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -355,19 +358,19 @@ static void unregisterMotionListener(void) {
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableHrtf && ![self setup]) {
-			processEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!hrtf) {
-		processEntered = NO;
+		[mutex unlock];
 		return [self readChunk:4096];
 	}
 
 	AudioChunk *chunk = [self readChunkAsFloat32:4096];
 	if(!chunk || ![chunk frameCount]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -415,7 +418,7 @@ static void unregisterMotionListener(void) {
 	[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 	[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
 
-	processEntered = NO;
+	[mutex unlock];
 	return outputChunk;
 }
 

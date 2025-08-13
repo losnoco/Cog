@@ -29,7 +29,7 @@ static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
 	BOOL equalizerInitialized;
 
 	double equalizerPreamp;
-	
+
 	__weak AudioPlayer *audioPlayer;
 
 	AudioUnit _eq;
@@ -37,13 +37,13 @@ static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
 	AudioTimeStamp timeStamp;
 
 	BOOL stopping, paused;
-	BOOL processEntered;
-	
+	NSRecursiveLock *mutex;
+
 	BOOL observersapplied;
-	
+
 	AudioStreamBasicDescription lastInputFormat;
 	AudioStreamBasicDescription inputFormat;
-	
+
 	uint32_t lastInputChannelConfig, inputChannelConfig;
 	uint32_t outputChannelConfig;
 
@@ -95,6 +95,8 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		OutputNode *outputNode = c;
 		audioPlayer = [outputNode controller];
 
+		mutex = [[NSRecursiveLock alloc] init];
+
 		[self addObservers];
 	}
 	return self;
@@ -144,6 +146,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 }
 
 - (BOOL)fullInit {
+	[mutex lock];
 	if(enableEqualizer) {
 		AudioComponentDescription desc;
 
@@ -157,11 +160,13 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		comp = AudioComponentFindNext(comp, &desc);
 		if(!comp) {
+			[mutex unlock];
 			return NO;
 		}
 
 		OSStatus status = AudioComponentInstanceNew(comp, &_eq);
 		if(status != noErr) {
+			[mutex unlock];
 			return NO;
 		}
 
@@ -210,6 +215,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		status = AudioUnitInitialize(_eq);
 		if(status != noErr) {
+			[mutex unlock];
 			return NO;
 		}
 
@@ -221,10 +227,13 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		[[self audioPlayer] beginEqualizer:_eq];
 	}
 
+	[mutex unlock];
+
 	return YES;
 }
 
 - (void)fullShutdown {
+	[mutex lock];
 	if(_eq) {
 		if(equalizerInitialized) {
 			[[self audioPlayer] endEqualizer:_eq];
@@ -234,6 +243,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		AudioComponentInstanceDispose(_eq);
 		_eq = NULL;
 	}
+	[mutex unlock];
 }
 
 - (BOOL)setup {
@@ -245,20 +255,16 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 - (void)cleanUp {
 	stopping = YES;
-	while(processEntered) {
-		usleep(500);
-	}
 	[self fullShutdown];
 }
 
 - (void)resetBuffer {
 	paused = YES;
-	while(processEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	[mutex unlock];
 }
 
 - (BOOL)paused {
@@ -299,15 +305,15 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	if(stopping)
 		return nil;
 
-	processEntered = YES;
+	[mutex lock];
 
 	if(stopping || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -317,7 +323,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -328,19 +334,19 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableEqualizer && ![self setup]) {
-			processEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!equalizerInitialized) {
-		processEntered = NO;
+		[mutex unlock];
 		return [self readChunk:4096];
 	}
 
 	AudioChunk *chunk = [self readChunkAsFloat32:4096];
 	if(!chunk || ![chunk frameCount]) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -368,7 +374,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	OSStatus status = AudioUnitRender(_eq, NULL, &timeStamp, 0, (UInt32)frameCount, ioData);
 
 	if(status != noErr) {
-		processEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -393,7 +399,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
 	}
 
-	processEntered = NO;
+	[mutex unlock];
 	return outputChunk;
 }
 
