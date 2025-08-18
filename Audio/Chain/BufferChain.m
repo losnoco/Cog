@@ -10,6 +10,7 @@
 #import "AudioSource.h"
 #import "CoreAudioUtils.h"
 #import "DSPDownmixNode.h"
+#import "DSPFaderNode.h"
 #import "OutputNode.h"
 
 #import "AudioPlayer.h"

@@ -149,6 +149,8 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 	BOOL isError = NO;
 
+	BOOL signalReset = NO;
+
 	if([decoder respondsToSelector:@selector(isSilence)]) {
 		if([decoder isSilence]) {
 			isError = YES;
@@ -164,7 +166,8 @@ static void *kInputNodeContext = &kInputNodeContext;
 			OutputNode *outputNode = [audioPlayer output];
 
 			DLog(@"SEEKING! Resetting Buffer");
-			[outputNode resetBackwards];
+			[self resetBuffer];
+			[outputNode resetDSPs];
 
 			DLog(@"Reset buffer!");
 
@@ -180,6 +183,8 @@ static void *kInputNodeContext = &kInputNodeContext;
 			if(seekError) {
 				[controller setError:YES];
 			}
+
+			signalReset = YES;
 		}
 
 		AudioChunk *chunk;
@@ -189,6 +194,10 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 		if(chunk && [chunk frameCount]) {
 			@autoreleasepool {
+				if(signalReset) {
+					chunk.resetForward = YES;
+					signalReset = NO;
+				}
 				[self writeChunk:chunk];
 				chunk = nil;
 			}

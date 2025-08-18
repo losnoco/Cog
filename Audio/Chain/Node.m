@@ -42,6 +42,15 @@ static uint64_t _Node_serial;
 	logFileIn = [NSFileHandle fileHandleForWritingAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_input_%08lld.raw", [self className], _Node_serial++]] createFile:YES];
 	[_Node_lock unlock];
 }
+
+- (void)terminateLogFiles {
+	logFileOut = nil;
+	logFileIn = nil;
+}
+
+- (void)terminateLogOut {
+	logFileOut = nil;
+}
 #endif
 
 - (id)initWithController:(id)c previous:(id)p {
@@ -173,6 +182,11 @@ static uint64_t _Node_serial;
 	}
 
 	[accessLock lock];
+
+	if(chunk.resetForward) {
+		[buffer reset];
+		shouldReset = NO;
+	}
 
 	double durationList = [buffer listDuration];
 	double durationLeft = [buffer maxDuration] - durationList;
@@ -645,25 +659,6 @@ static uint64_t _Node_serial;
 // Buffering nodes should implement this
 - (double)secondsBuffered {
 	return 0.0;
-}
-
-// Reset everything in the chain
-- (void)resetBackwards {
-	[accessLock lock];
-	if(buffer) {
-		[self lockedResetBuffer];
-		[writeSemaphore signal];
-		[readSemaphore signal];
-	}
-	Node *node = previousNode;
-	while(node) {
-		[node unlockedResetBuffer];
-		[node setShouldReset:YES];
-		[[node writeSemaphore] signal];
-		[[node readSemaphore] signal];
-		node = [node previousNode];
-	}
-	[accessLock unlock];
 }
 
 @end

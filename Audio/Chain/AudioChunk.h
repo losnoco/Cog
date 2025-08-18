@@ -70,6 +70,7 @@ enum {
 	BOOL formatAssigned;
 	BOOL lossless;
 	BOOL hdcd;
+	BOOL resetForward;
 }
 
 @property AudioStreamBasicDescription format;
@@ -77,6 +78,7 @@ enum {
 @property double streamTimestamp;
 @property double streamTimeRatio;
 @property BOOL lossless;
+@property BOOL resetForward;
 
 + (uint32_t)guessChannelConfig:(uint32_t)channelCount;
 + (uint32_t)channelIndexFromConfig:(uint32_t)channelConfig forFlag:(uint32_t)flag;

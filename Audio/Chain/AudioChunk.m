@@ -19,6 +19,7 @@
 		formatAssigned = NO;
 		lossless = NO;
 		hdcd = NO;
+		resetForward = NO;
 		streamTimestamp = 0.0;
 		streamTimeRatio = 1.0;
 	}
@@ -34,6 +35,7 @@
 		[self setFormat:propertiesToASBD(properties)];
 		lossless = [[properties objectForKey:@"encoding"] isEqualToString:@"lossless"];
 		hdcd = NO;
+		resetForward = NO;
 		streamTimestamp = 0.0;
 		streamTimeRatio = 1.0;
 	}
@@ -46,6 +48,7 @@
 	[outputChunk setFormat:format];
 	[outputChunk setChannelConfig:channelConfig];
 	if(hdcd) [outputChunk setHDCD];
+	if(resetForward) outputChunk.resetForward = YES;
 	[outputChunk setStreamTimestamp:streamTimestamp];
 	[outputChunk setStreamTimeRatio:streamTimeRatio];
 	[outputChunk assignData:chunkData];
@@ -133,6 +136,7 @@ static const uint32_t AudioChannelConfigTable[] = {
 }
 
 @synthesize lossless;
+@synthesize resetForward;
 @synthesize streamTimestamp;
 @synthesize streamTimeRatio;
 

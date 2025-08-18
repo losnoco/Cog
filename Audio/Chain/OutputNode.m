@@ -78,10 +78,8 @@
 }
 
 - (void)seek:(double)time {
-	//	[output pause];
-	[self resetBuffer];
-
 	amountPlayed = time;
+	[output fader].timestamp = time;
 }
 
 - (void)process {
@@ -114,6 +112,11 @@
 - (void)fadeIn {
 	[self reconnectInputAndReplumb];
 	[output fadeIn];
+}
+
+- (void)faderFadeIn {
+	[self reconnectInputAndReplumb];
+	[output faderFadeIn];
 }
 
 - (void)incrementAmountPlayed:(double)seconds {
@@ -395,6 +398,10 @@
 
 - (id)downmix {
 	return [output downmix];
+}
+
+- (void)resetDSPs {
+	[rubberbandNode resetBuffer];
 }
 
 @end

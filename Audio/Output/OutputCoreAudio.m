@@ -27,80 +27,8 @@ extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 
-static BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels, size_t count, float *fadeLevel, float fadeStep, float fadeTarget) {
-	float _fadeLevel = *fadeLevel;
-	BOOL towardZero = fadeStep < 0.0;
-	BOOL stopping = NO;
-	size_t maxCount = (size_t)floor(fabs(fadeTarget - _fadeLevel) / fabs(fadeStep));
-	if(maxCount) {
-		size_t countToDo = MIN(count, maxCount);
-		for(size_t i = 0; i < channels; ++i) {
-			_fadeLevel = *fadeLevel;
-			vDSP_vrampmuladd(&inSamples[i], channels, &_fadeLevel, &fadeStep, &outSamples[i], channels, countToDo);
-		}
-	}
-	if(maxCount <= count) {
-		if(!towardZero && maxCount < count) {
-			vDSP_vadd(&inSamples[maxCount * channels], 1, &outSamples[maxCount * channels], 1, &outSamples[maxCount * channels], 1, (count - maxCount) * channels);
-		}
-		stopping = YES;
-	}
-	*fadeLevel = _fadeLevel;
-	return stopping;
-}
-
-@interface FadedBuffer : NSObject {
-	float fadeLevel;
-	float fadeStep;
-	float fadeTarget;
-
-	ChunkList *lastBuffer;
-}
-
-- (id)initWithBuffer:(ChunkList *)buffer fadeTarget:(float)fadeTarget sampleRate:(double)sampleRate;
-- (BOOL)mix:(float *)outputBuffer sampleCount:(size_t)samples channelCount:(size_t)channels;
-
-@end
-
-@implementation FadedBuffer
-
-- (id)initWithBuffer:(ChunkList *)buffer fadeTarget:(float)fadeTarget sampleRate:(double)sampleRate {
-	self = [super init];
-	if(self) {
-		fadeLevel = 1.0;
-		self->fadeTarget = fadeTarget;
-		lastBuffer = buffer;
-		const double maxFadeDurationMS = 1000.0 * [buffer listDuration];
-		const double fadeDuration = MIN(250.0f, maxFadeDurationMS);
-		fadeStep = ((fadeTarget - fadeLevel) / sampleRate) * (1000.0f / fadeDuration);
-	}
-	return self;
-}
-
-- (BOOL)mix:(float *)outputBuffer sampleCount:(size_t)samples channelCount:(size_t)channels {
-	if(lastBuffer) {
-		AudioChunk * chunk = [lastBuffer removeAndMergeSamples:samples callBlock:^BOOL{
-			// Always interrupt if buffer runs empty, because it is not being refilled any more
-			return true;
-		}];
-		if(chunk && [chunk frameCount]) {
-			// Will always be input request size or less
-			size_t samplesToMix = [chunk frameCount];
-			NSData *sampleData = [chunk removeSamples:samplesToMix];
-			return fadeAudio((const float *)[sampleData bytes], outputBuffer, channels, samplesToMix, &fadeLevel, fadeStep, fadeTarget);
-		}
-	}
-	// No buffer or no chunk, stream ended
-	return true;
-}
-
-@end
-
 @implementation OutputCoreAudio {
 	VisualizationController *visController;
-
-	NSLock *fadedBuffersLock;
-	NSMutableArray<FadedBuffer *> *fadedBuffers;
 }
 
 static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
@@ -133,7 +61,7 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 - (id)initWithController:(OutputNode *)c {
 	self = [super init];
 	if(self) {
-		buffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
+		buffer = [[ChunkList alloc] initWithMaximumDuration:2.0f * (fadeTimeMS / 1000.0f)];
 		writeSemaphore = [[Semaphore alloc] init];
 		readSemaphore = [[Semaphore alloc] init];
 
@@ -144,9 +72,6 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 		secondsHdcdSustained = 0;
 
 		outputLock = [[NSLock alloc] init];
-
-		fadedBuffersLock = [[NSLock alloc] init];
-		fadedBuffers = [[NSMutableArray alloc] init];
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
@@ -214,7 +139,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (NSArray *)DSPs {
 	if(DSPsLaunched) {
-		return @[hrtfNode, downmixNode];
+		return @[hrtfNode, downmixNode, faderNode];
 	} else {
 		return @[];
 	}
@@ -222,6 +147,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (DSPDownmixNode *)downmix {
 	return downmixNode;
+}
+
+- (DSPFaderNode *)fader {
+	return faderNode;
 }
 
 - (void)launchDSPs {
@@ -685,8 +614,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	__block AudioStreamBasicDescription *format = &deviceFormat;
 	__block void *refCon = (__bridge void *)self;
 	__block NSLock *refLock = self->outputLock;
-	__block NSLock *fadersLock = self->fadedBuffersLock;
-	__block NSMutableArray *faders = self->fadedBuffers;
 
 #ifdef OUTPUT_LOG
 	__block NSFileHandle *logFile = _logFile;
@@ -718,8 +645,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				while(renderedSamples < frameCount) {
 					[refLock lock];
 					AudioChunk *chunk = nil;
-					if(![_self->downmixNode.buffer isEmpty]) {
-						chunk = [self->downmixNode.buffer removeSamples:frameCount - renderedSamples];
+					if(![_self->bufferNode.buffer isEmpty]) {
+						chunk = [self->bufferNode.buffer removeSamples:frameCount - renderedSamples];
 					}
 					[refLock unlock];
 
@@ -756,18 +683,6 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			}
 
 			double secondsRendered = (double)renderedSamples / format->mSampleRate;
-
-			[fadersLock lock];
-			for(size_t i = 0; i < [faders count];) {
-				FadedBuffer *buffer = faders[i];
-				BOOL stopping = [buffer mix:outSamples sampleCount:frameCount channelCount:channels];
-				if(stopping) {
-					[faders removeObjectAtIndex:i];
-				} else {
-					++i;
-				}
-			}
-			[fadersLock unlock];
 
 			scale_by_volume(outSamples, frameCount * channels, _self->volume);
 
@@ -856,12 +771,18 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:self latency:0.03];
 		downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
+		faderNode = [[DSPFaderNode alloc] initWithController:self previous:downmixNode latency:0.03];
+
+		bufferNode = [[SimpleBuffer alloc] initWithController:self previous:faderNode latency:0.1];
 
 		[self setShouldContinue:YES];
 		[self setEndOfStream:NO];
 
+		[hrtfNode setResetBarrier:YES];
+
 		DSPsLaunched = YES;
 		[self launchDSPs];
+		[bufferNode launchThread];
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
 
@@ -888,7 +809,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (double)latency {
-	return [buffer listDuration] + [[hrtfNode buffer] listDuration] + [[downmixNode buffer] listDuration];
+	return [buffer listDuration] + [[hrtfNode buffer] listDuration] + [[downmixNode buffer] listDuration] + [[faderNode buffer] listDuration] + [[bufferNode buffer] listDuration];
 }
 
 - (void)start {
@@ -946,13 +867,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				} while(!commandStop && compareVal > 0 && compareMax-- > 0);
 			} else {
 				[self fadeOut];
-				[fadedBuffersLock lock];
-				while([fadedBuffers count]) {
-					[fadedBuffersLock unlock];
+				while(!faded && ![bufferNode endOfStream]) {
 					usleep(10000);
-					[fadedBuffersLock lock];
 				}
-				[fadedBuffersLock unlock];
 			}
 			[_au stopHardware];
 			_au = nil;
@@ -967,9 +884,15 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[self setShouldContinue:NO];
 			[hrtfNode setShouldContinue:NO];
 			[downmixNode setShouldContinue:NO];
+			[faderNode setShouldContinue:NO];
 			hrtfNode = nil;
 			downmixNode = nil;
+			faderNode = nil;
 			DSPsLaunched = NO;
+		}
+		if(bufferNode) {
+			[bufferNode setShouldContinue:NO];
+			bufferNode = nil;
 		}
 #ifdef OUTPUT_LOG
 		if(_logFile) {
@@ -1023,32 +946,62 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	return deviceChannelConfig;
 }
 
-// 250 milliseconds
 - (void)fadeOut {
 	fadeTarget = 0.0f;
-	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 250.0f);
+	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / fadeTimeMS);
 	fading = YES;
 }
 
 - (void)fadeOutBackground {
 	cutOffInput = YES;
-	[outputLock lock];
-	[fadedBuffersLock lock];
-	FadedBuffer *fbuffer = [[FadedBuffer alloc] initWithBuffer:buffer fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
-	buffer = [[ChunkList alloc] initWithMaximumDuration:0.5];
-	[fadedBuffers addObject:fbuffer];
-	[fadedBuffersLock unlock];
-	[outputLock unlock];
-	faded = YES;
+
+	[bufferNode setPreviousNode:nil];
+	[hrtfNode setPreviousNode:nil];
+
+	DSPHRTFNode *oldHrtf = hrtfNode;
+	DSPDownmixNode *oldDownmix = downmixNode;
+	DSPFaderNode *oldFader = faderNode;
+
+	float fadeLevel = [oldFader fadeLevel];
+
+	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:nil latency:0.03];
+	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
+	faderNode = [[DSPFaderNode alloc] initWithController:self previous:downmixNode latency:0.03];
+	[hrtfNode setResetBarrier:YES];
+	faderNode.timestamp = oldFader.timestamp;
+
+	ChunkList *oldBuffer = buffer;
+	buffer = [[ChunkList alloc] initWithMaximumDuration:2.0f * (fadeTimeMS / 1000.0f)];
+	FadedBuffer *fbuffer = [[FadedBuffer alloc] initWithBuffer:oldBuffer withDSPs:@[oldHrtf, oldDownmix, oldFader] fadeStart:fadeLevel fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
+	oldBuffer = nil;
+
+	oldHrtf = nil;
+	oldDownmix = nil;
+	oldFader = nil;
+
+	[hrtfNode setPreviousNode:self];
+	[bufferNode setPreviousNode:faderNode];
+	[self launchDSPs];
+
+	[faderNode appendFadeOut:fbuffer];
+
 	cutOffInput = NO;
 }
 
 - (void)fadeIn {
-	fadeLevel = 0.0f;
-	fadeTarget = 1.0f;
-	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / 250.0f);
-	fading = YES;
-	faded = NO;
+	if(fading || faded) {
+		fadeLevel = 0.0f;
+		fadeTarget = 1.0f;
+		fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / fadeTimeMS);
+		fading = YES;
+		faded = NO;
+	} else {
+		[faderNode fadeIn];
+	}
+}
+
+- (void)faderFadeIn {
+	[faderNode fadeIn];
 }
 
 @end
