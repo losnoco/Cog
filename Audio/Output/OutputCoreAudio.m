@@ -966,7 +966,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:nil latency:0.03];
 	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
-	faderNode = [[DSPFaderNode alloc] initWithController:self previous:downmixNode latency:0.03];
+	faderNode = [[DSPFaderNode alloc] initWithController:self previous:nil latency:0.03];
 	[hrtfNode setResetBarrier:YES];
 	faderNode.timestamp = oldFader.timestamp;
 
@@ -1002,6 +1002,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)faderFadeIn {
 	[faderNode fadeIn];
+	[faderNode setPreviousNode:downmixNode];
 }
 
 @end
