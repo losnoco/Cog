@@ -34,7 +34,7 @@
 	return self;
 }
 
-- (BOOL)buildChain {
+- (BOOL)buildChain:(BOOL)resetBuffers {
 	// Cut off output source
 	finalNode = nil;
 
@@ -44,6 +44,7 @@
 
 	inputNode = [[InputNode alloc] initWithController:self previous:nil];
 	if(!inputNode) return NO;
+	[inputNode setResetBuffers:resetBuffers];
 	converterNode = [[ConverterNode alloc] initWithController:self previous:inputNode];
 	if(!converterNode) return NO;
 
@@ -53,6 +54,10 @@
 }
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
+	return [self open:url withOutputFormat:outputFormat withUserInfo:userInfo withRGInfo:rgi resetBuffers:NO];
+}
+
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi resetBuffers:(BOOL)resetBuffers {
 	if(!url) {
 		DLog(@"Player attempted to play invalid file...");
 		return NO;
@@ -60,7 +65,7 @@
 	[self setStreamURL:url];
 	[self setUserInfo:userInfo];
 
-	if(![self buildChain]) {
+	if(![self buildChain:resetBuffers]) {
 		DLog(@"Couldn't build processing chain...");
 		return NO;
 	}
@@ -90,9 +95,13 @@
 }
 
 - (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
+	return [self openWithInput:i withOutputFormat:outputFormat withUserInfo:userInfo withRGInfo:rgi resetBuffers:NO];
+}
+
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi resetBuffers:(BOOL)resetBuffers {
 	DLog(@"New buffer chain!");
 	[self setUserInfo:userInfo];
-	if(![self buildChain]) {
+	if(![self buildChain:resetBuffers]) {
 		DLog(@"Couldn't build processing chain...");
 		return NO;
 	}
@@ -116,7 +125,7 @@
 {
 	DLog(@"New buffer chain!");
 	[self setUserInfo:userInfo];
-	if(![self buildChain]) {
+	if(![self buildChain:NO]) {
 		DLog(@"Couldn't build processing chain...");
 		return NO;
 	}

@@ -102,7 +102,7 @@
 		[self notifyStreamChanged:userInfo];
 	}
 
-	while(![bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi]) {
+	while(![bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi resetBuffers:YES]) {
 		bufferChain = nil;
 
 		[self requestNextStream:userInfo];
@@ -147,6 +147,8 @@
 		}
 	} else if(resumeInterval) {
 		[output faderFadeIn];
+	} else {
+		[output fadeIn];
 	}
 }
 
@@ -459,7 +461,7 @@
 	}
 
 	if(pathsEqual) {
-		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo resetBuffers:NO]) {
 			[newChain setStreamURL:nextStream];
 
 			@synchronized(chainQueue) {
@@ -478,7 +480,7 @@
 
 	NSURL *url = nextStream;
 
-	while(shouldContinue && ![newChain open:url withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo]) {
+	while(shouldContinue && ![newChain open:url withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo resetBuffers:NO]) {
 		if(nextStream == nil) {
 			newChain = nil;
 			if(output)

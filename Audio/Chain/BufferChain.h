@@ -26,12 +26,16 @@
 }
 
 - (id)initWithController:(id)c;
-- (BOOL)buildChain;
+- (BOOL)buildChain:(BOOL)resetBuffers;
 
 - (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 
+- (BOOL)open:(NSURL *)url withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi resetBuffers:(BOOL)resetBuffers;
+
 // Used when changing tracks to reuse the same decoder
 - (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
+
+- (BOOL)openWithInput:(InputNode *)i withOutputFormat:(AudioStreamBasicDescription)outputFormat withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi resetBuffers:(BOOL)resetBuffers;
 
 // Used when resetting the decoder on seek
 - (BOOL)openWithDecoder:(id<CogDecoder>)decoder

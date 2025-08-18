@@ -31,6 +31,8 @@
 
 	BOOL observersAdded;
 
+	BOOL shouldResetBuffers;
+
 	Semaphore *exitAtTheEndOfTheStream;
 }
 @property(readonly) Semaphore * _Nonnull exitAtTheEndOfTheStream;
@@ -50,5 +52,7 @@
 - (BOOL)setTrack:(NSURL *_Nonnull)track;
 
 - (id<CogDecoder>_Nonnull)decoder;
+
+- (void)setResetBuffers:(BOOL)resetBuffers;
 
 @end
