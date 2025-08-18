@@ -529,6 +529,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
+		if(chunk.resetForward) {
+			ret.resetForward = YES;
+			chunk.resetForward = NO;
+		}
 		listDuration -= [ret duration];
 		listDurationRatioed -= [ret durationRatioed];
 		inRemover = NO;
@@ -570,6 +574,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
+		if(chunk.resetForward) {
+			ret.resetForward = YES;
+			chunk.resetForward = NO;
+		}
 		listDuration -= [ret duration];
 		listDurationRatioed -= [ret durationRatioed];
 		inRemover = NO;
@@ -640,6 +648,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 		if([chunk isHDCD]) {
 			[outputChunk setHDCD];
+		}
+
+		if(chunk.resetForward) {
+			outputChunk.resetForward = YES;
 		}
 
 		size_t frameCount = [chunk frameCount];
@@ -933,6 +945,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	[outChunk setStreamTimestamp:streamTimestamp];
 	[outChunk setStreamTimeRatio:[inChunk streamTimeRatio]];
 	if(hdcdSustained) [outChunk setHDCD];
+	if(inChunk.resetForward) {
+		outChunk.resetForward = YES;
+	}
 	
 	[outChunk assignSamples:inputBuffer frameCount:bytesReadFromInput / floatFormat.mBytesPerPacket];
 

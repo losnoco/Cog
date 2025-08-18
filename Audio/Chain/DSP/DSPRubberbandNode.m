@@ -34,6 +34,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	double streamTimestamp;
 	double streamTimeRatio;
 	BOOL isHDCD;
+	BOOL isResetForward;
 
 	BOOL stopping, paused;
 	NSRecursiveLock *mutex;
@@ -473,7 +474,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 		streamTimestamp = [chunk streamTimestamp];
 		streamTimeRatio = [chunk streamTimeRatio];
-		isHDCD = [chunk isHDCD];
+		isHDCD = isHDCD || [chunk isHDCD];
+		isResetForward = isResetForward || chunk.resetForward;
 
 		size_t frameCount = [chunk frameCount];
 		countIn += ((double)frameCount) / tempo;
@@ -534,7 +536,14 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		if(inputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];
 		}
-		if(isHDCD) [outputChunk setHDCD];
+		if(isHDCD) {
+			[outputChunk setHDCD];
+			isHDCD = NO;
+		}
+		if(isResetForward) {
+			outputChunk.resetForward = YES;
+			isResetForward = NO;
+		}
 		[outputChunk setStreamTimestamp:streamTimestamp];
 		[outputChunk setStreamTimeRatio:streamTimeRatio * tempo];
 		[outputChunk assignSamples:&rsOutBuffer[0] frameCount:samplesBuffered];

@@ -124,7 +124,7 @@
 		bufferChain = [[BufferChain alloc] initWithController:self];
 	}
 
-	if(time > 0.0) {
+	if(resumeInterval || time > 0.0) {
 		[output seek:time];
 		[bufferChain seek:time];
 	}
@@ -146,7 +146,7 @@
 			[self updatePosition:userInfo];
 		}
 	} else if(resumeInterval) {
-		[output fadeIn];
+		[output faderFadeIn];
 	}
 }
 
@@ -196,27 +196,40 @@
 }
 
 - (void)seekToTime:(double)time {
-	[output fadeOutBackground];
-	[output setVolume:volume];
+	if(endOfInputReached) {
+		// This is a dirty hack in case the playback has finished with the track
+		// that the user thinks they're seeking into
+		CogStatus status = (CogStatus)currentPlaybackStatus;
+		NSURL *url;
+		id userInfo;
+		NSDictionary *rgi;
 
-	[output seek:time];
-	[bufferChain seek:time];
-
-	CogStatus status = (CogStatus)currentPlaybackStatus;
-	BOOL paused = status == CogStatusPaused;
-	id userInfo;
-
-	@synchronized(chainQueue) {
-		userInfo = [bufferChain userInfo];
-	}
-
-	if(paused) {
-		[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
-		if(time > 0.0) {
-			[self updatePosition:userInfo];
+		@synchronized(chainQueue) {
+			url = [bufferChain streamURL];
+			userInfo = [bufferChain userInfo];
+			rgi = [bufferChain rgInfo];
 		}
+
+		[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time andResumeInterval:YES];
 	} else {
-		[output fadeIn];
+		[output fadeOutBackground];
+
+		[output seek:time];
+		[bufferChain seek:time];
+
+		CogStatus status = (CogStatus)currentPlaybackStatus;
+		BOOL paused = status == CogStatusPaused;
+		id userInfo;
+
+		@synchronized(chainQueue) {
+			userInfo = [bufferChain userInfo];
+		}
+
+		if(paused) {
+			[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
+		}
+		[self updatePosition:userInfo];
+		[output faderFadeIn];
 	}
 }
 

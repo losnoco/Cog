@@ -268,6 +268,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 			[outputChunk setChannelConfig:outputChannelConfig];
 		}
 		if([chunk isHDCD]) [outputChunk setHDCD];
+		if(chunk.resetForward) outputChunk.resetForward = YES;
 		[outputChunk setStreamTimestamp:streamTimestamp];
 		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 		[outputChunk assignSamples:samplePtr frameCount:samplesRendered];

@@ -394,6 +394,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 			[outputChunk setChannelConfig:inputChannelConfig];
 		}
 		if([chunk isHDCD]) [outputChunk setHDCD];
+		if(chunk.resetForward) outputChunk.resetForward = YES;
 		[outputChunk setStreamTimestamp:streamTimestamp];
 		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 		[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];

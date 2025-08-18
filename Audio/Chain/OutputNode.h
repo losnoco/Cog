@@ -52,6 +52,7 @@
 - (void)fadeOut;
 - (void)fadeOutBackground;
 - (void)fadeIn;
+- (void)faderFadeIn;
 
 - (AudioChunk *)readChunk:(size_t)amount;
 
@@ -85,5 +86,7 @@
 - (id)controller;
 
 - (id)downmix;
+
+- (void)resetDSPs;
 
 @end

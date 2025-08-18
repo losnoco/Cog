@@ -151,6 +151,8 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 
 	convertEntered = YES;
 
+	BOOL resetProcessed = NO;
+
 	if(stopping || [self shouldContinue] == NO) {
 		convertEntered = NO;
 		return nil;
@@ -200,6 +202,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			config = [chunk channelConfig];
 			size_t bytesRead = frameCount * inf.mBytesPerPacket;
 			if(frameCount) {
+				if(chunk.resetForward) {
+					bytesReadFromInput = 0;
+					resetProcessed = YES;
+				}
 				NSData *samples = [chunk removeSamples:frameCount];
 				memcpy(((uint8_t *)inputBuffer) + bytesReadFromInput, [samples bytes], bytesRead);
 				if([chunk isHDCD]) {
@@ -351,6 +357,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		[chunk setStreamTimestamp:streamTimestamp];
 		[chunk setStreamTimeRatio:streamTimeRatio];
 		[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / floatFormat.mBytesPerPacket];
+		if(resetProcessed) chunk.resetForward = YES;
 		streamTimestamp += [chunk durationRatioed];
 		convertEntered = NO;
 		return chunk;

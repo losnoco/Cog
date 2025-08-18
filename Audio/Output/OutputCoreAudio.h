@@ -28,8 +28,11 @@ using std::atomic_long;
 
 #import <CogAudio/Node.h>
 
+#import <CogAudio/DSPFaderNode.h>
 #import <CogAudio/DSPDownmixNode.h>
 #import <CogAudio/DSPHRTFNode.h>
+
+#import <CogAudio/SimpleBuffer.h>
 
 //#define OUTPUT_LOG
 
@@ -100,6 +103,9 @@ using std::atomic_long;
 	BOOL DSPsLaunched;
 	DSPHRTFNode *hrtfNode;
 	DSPDownmixNode *downmixNode;
+	DSPFaderNode *faderNode;
+
+	SimpleBuffer *bufferNode;
 
 #ifdef OUTPUT_LOG
 	NSFileHandle *_logFile;
@@ -119,6 +125,7 @@ using std::atomic_long;
 - (void)fadeOut;
 - (void)fadeOutBackground;
 - (void)fadeIn;
+- (void)faderFadeIn;
 
 - (double)latency;
 
@@ -133,5 +140,6 @@ using std::atomic_long;
 - (uint32_t)deviceChannelConfig;
 
 - (DSPDownmixNode *)downmix;
+- (DSPFaderNode *)fader;
 
 @end

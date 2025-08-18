@@ -54,6 +54,8 @@
 
 #ifdef LOG_CHAINS
 - (void)initLogFiles;
+- (void)terminateLogFiles;
+- (void)terminateLogOut;
 #endif
 
 - (void)cleanUp;
@@ -78,7 +80,6 @@
 
 - (void)setShouldReset:(BOOL)s;
 - (BOOL)shouldReset;
-- (void)resetBackwards;
 
 // Chain prior to this node should not propagate resets to it
 - (void)setResetBarrier:(BOOL)b;
