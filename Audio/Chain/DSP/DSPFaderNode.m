@@ -93,6 +93,16 @@
 	return paused;
 }
 
+- (void)setPreviousNode:(id)p {
+	if(previousNode != p) {
+		paused = YES;
+		[mutex lock];
+		previousNode = p;
+		paused = NO;
+		[mutex unlock];
+	}
+}
+
 - (void)process {
 	while([self shouldContinue] == YES) {
 		if(paused || endOfStream) {
@@ -103,7 +113,7 @@
 			AudioChunk *chunk = nil;
 			chunk = [self convert];
 			if(!chunk || ![chunk frameCount]) {
-				if([previousNode endOfStream] == YES) {
+				if(previousNode && [previousNode endOfStream] == YES) {
 					usleep(500);
 					endOfStream = YES;
 					continue;
@@ -126,7 +136,7 @@
 
 	[mutex lock];
 
-	if(stopping || [self shouldContinue] == NO) {
+	if(stopping || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
 		[mutex unlock];
 		return nil;
 	}

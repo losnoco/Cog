@@ -47,6 +47,8 @@
 
 	BOOL observersAdded;
 
+	BOOL resetProcessed;
+
 	float volumeScale;
 
 	void *floatBuffer;

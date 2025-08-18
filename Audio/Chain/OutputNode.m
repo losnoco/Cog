@@ -103,10 +103,6 @@
 
 - (void)fadeOutBackground {
 	[output fadeOutBackground];
-	if(rubberbandNode) {
-		[rubberbandNode setPreviousNode:nil];
-		[rubberbandNode resetBuffer];
-	}
 }
 
 - (void)fadeIn {

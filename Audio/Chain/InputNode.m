@@ -149,7 +149,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 	BOOL isError = NO;
 
-	BOOL signalReset = NO;
+	BOOL signalReset = shouldResetBuffers;
 
 	if([decoder respondsToSelector:@selector(isSilence)]) {
 		if([decoder isSilence]) {
@@ -276,6 +276,10 @@ static void *kInputNodeContext = &kInputNodeContext;
 	[super setShouldContinue:s];
 	if(!s)
 		[self removeObservers];
+}
+
+- (void)setResetBuffers:(BOOL)resetBuffers {
+	shouldResetBuffers = resetBuffers;
 }
 
 - (void)dealloc {

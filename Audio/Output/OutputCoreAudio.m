@@ -779,6 +779,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[self setEndOfStream:NO];
 
 		[hrtfNode setResetBarrier:YES];
+		[downmixNode setOutputFormat:deviceFormat withChannelConfig:deviceChannelConfig];
 
 		DSPsLaunched = YES;
 		[self launchDSPs];
@@ -968,6 +969,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
 	faderNode = [[DSPFaderNode alloc] initWithController:self previous:nil latency:0.03];
 	[hrtfNode setResetBarrier:YES];
+	[downmixNode setOutputFormat:deviceFormat withChannelConfig:deviceChannelConfig];
 	faderNode.timestamp = oldFader.timestamp;
 
 	ChunkList *oldBuffer = buffer;
@@ -996,7 +998,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		fading = YES;
 		faded = NO;
 	} else {
-		[faderNode fadeIn];
+		[self faderFadeIn];
 	}
 }
 

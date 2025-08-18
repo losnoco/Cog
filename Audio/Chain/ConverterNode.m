@@ -61,6 +61,8 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 		convertEntered = NO;
 		paused = NO;
 
+		resetProcessed = NO;
+
 		skipResampler = YES;
 
 		extrapolateBuffer = NULL;
@@ -150,8 +152,6 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		return 0;
 
 	convertEntered = YES;
-
-	BOOL resetProcessed = NO;
 
 	if(stopping || [self shouldContinue] == NO) {
 		convertEntered = NO;
@@ -357,7 +357,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		[chunk setStreamTimestamp:streamTimestamp];
 		[chunk setStreamTimeRatio:streamTimeRatio];
 		[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / floatFormat.mBytesPerPacket];
-		if(resetProcessed) chunk.resetForward = YES;
+		if(resetProcessed) {
+			chunk.resetForward = YES;
+			resetProcessed = NO;
+		}
 		streamTimestamp += [chunk durationRatioed];
 		convertEntered = NO;
 		return chunk;
