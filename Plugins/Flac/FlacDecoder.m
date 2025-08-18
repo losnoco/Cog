@@ -40,8 +40,10 @@ FLAC__StreamDecoderSeekStatus SeekCallback(const FLAC__StreamDecoder *decoder, F
 
 	if(![[flacDecoder source] seek:absolute_byte_offset whence:SEEK_SET])
 		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
-	else
+	else {
+		[flacDecoder setEndOfStream:NO];
 		return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
+	}
 }
 
 FLAC__StreamDecoderTellStatus TellCallback(const FLAC__StreamDecoder *decoder, FLAC__uint64 *absolute_byte_offset, void *client_data) {
