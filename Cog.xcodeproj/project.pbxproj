@@ -90,6 +90,7 @@
 		51500000000000000000000B /* ShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000B /* ShortcutField.swift */; };
 		51500000000000000000000C /* SandboxPathModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000C /* SandboxPathModel.swift */; };
 		51500000000000000000000D /* AudioDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000D /* AudioDeviceModel.swift */; };
+		42777C332E54E091005B0E11 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42777C322E54E091005B0E11 /* Secrets.swift */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EB10D634206000AB68C /* SpotlightPlaylistController.m */; };
@@ -905,6 +906,7 @@
 		50500000000000000000000B /* ShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutField.swift; sourceTree = "<group>"; };
 		50500000000000000000000C /* SandboxPathModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxPathModel.swift; sourceTree = "<group>"; };
 		50500000000000000000000D /* AudioDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceModel.swift; sourceTree = "<group>"; };
+		42777C322E54E091005B0E11 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = Generated/Secrets.swift; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
@@ -1513,6 +1515,7 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				42777C322E54E091005B0E11 /* Secrets.swift */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -2035,6 +2038,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Cog" */;
 			buildPhases = (
+				421B41AA2E54B838007A2A49 /* Generate Swift secrets file */,
 				8384911C1807E9ED00E7332D /* Run version generator script */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -2552,6 +2556,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		421B41AA2E54B838007A2A49 /* Generate Swift secrets file */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-swift-secrets.sh",
+			);
+			name = "Generate Swift secrets file";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Generated/Secrets.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$SCRIPT_INPUT_FILE_0\n";
+			showEnvVarsInLog = 0;
+		};
 		8384911C1807E9ED00E7332D /* Run version generator script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2676,6 +2701,7 @@
 				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,
 				17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */,
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
+				42777C332E54E091005B0E11 /* Secrets.swift in Sources */,
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
 				1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */,
 				83E9986C2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift in Sources */,

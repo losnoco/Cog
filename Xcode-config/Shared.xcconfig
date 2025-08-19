@@ -52,3 +52,16 @@
 // Also, create this file if you wish to upload symbols to your server on build.
 // It should define SENTRY_URL, SENTRY_PROJECT to the ID number, and finally
 // SENTRY_AUTH_TOKEN to the developer authorization token for your instance.
+
+// Create a Secrets.xconfig file by copying Secrets.template.xcconfig
+// and provide your own values for the Last.FM API key.
+//
+// The keys below should remain empty here in case the Secrets.xcconfig
+// file is not present.
+LASTFM_API_KEY =
+LASTFM_API_SECRET = 
+LASTFM_SESSION = 
+
+#include? "Secrets.xcconfig"
+
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) LASTFM_API_KEY=$(LASTFM_API_KEY) LASTFM_API_SECRET=$(LASTFM_API_SECRET) LASTFM_SESSION=$(LASTFM_SESSION)
