@@ -315,12 +315,12 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 }
 
 - (long)seek:(long)frame {
-	uint32_t trueFrame = (uint32_t)frame;
+	uint64_t trueFrame = (uint64_t)frame;
 	if(isDSD) {
 		trueFrame /= 8;
 		frame = trueFrame * 8;
 	}
-	WavpackSeekSample(wpc, trueFrame);
+	WavpackSeekSample64(wpc, trueFrame);
 
 	self->frame = frame;
 
