@@ -210,7 +210,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 
 - (long)seek:(long)frame {
 	gme_err_t error;
-	error = gme_seek(emu, frame * sampleRate * 0.001);
+	error = gme_seek(emu, frame / (sampleRate * 0.001));
 	if(error) {
 		return -1;
 	}
