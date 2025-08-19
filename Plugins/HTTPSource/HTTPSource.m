@@ -654,7 +654,7 @@ static void http_stream_reset(HTTPSource *fp) {
 	if(whence == SEEK_END) {
 		if(position == 0) {
 			seektoend = 1;
-			return 0;
+			return YES;
 		}
 		DLog(@"curl: can't seek in curl stream relative to EOF");
 		return NO;
@@ -668,17 +668,17 @@ static void http_stream_reset(HTTPSource *fp) {
 		if(pos == position) {
 			skipbytes = 0;
 			[mutex unlock];
-			return 0;
+			return YES;
 		} else if(pos < position && pos + BUFFER_SIZE > position) {
 			skipbytes = position - pos;
 			[mutex unlock];
-			return 0;
+			return YES;
 		} else if(pos - position >= 0 && pos - position <= BUFFER_SIZE - remaining) {
 			skipbytes = 0;
 			remaining += pos - position;
 			pos = position;
 			[mutex unlock];
-			return 0;
+			return YES;
 		}
 	}
 	// reset stream, and start over
@@ -686,7 +686,7 @@ static void http_stream_reset(HTTPSource *fp) {
 	pos = position;
 	status = STATUS_SEEK;
 	[mutex unlock];
-	return 0;
+	return YES;
 }
 
 - (long)tell {
