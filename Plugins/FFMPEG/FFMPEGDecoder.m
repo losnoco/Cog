@@ -65,12 +65,31 @@ int ffmpeg_write(void *opaque, const uint8_t *buf, int buf_size) {
 
 int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence) {
 	FFMPEGReader *source = (__bridge FFMPEGReader*)opaque;
-	if(whence & AVSEEK_SIZE) {
-		return [source size];
-	}
-	whence &= ~(AVSEEK_SIZE | AVSEEK_FORCE);
+	int64_t seekPos = 0;
 	id<CogSource> file = [source file];
-	return [file seekable] ? ([file seek:offset whence:whence] ? [file tell] : -1) : -1;
+	size_t size = [file seekable] ? [source size] : [file tell];
+
+	switch(whence) {
+		case(AVSEEK_SIZE):
+			return [source size];
+		case(SEEK_SET):
+			seekPos = offset;
+			break;
+		case(SEEK_CUR):
+			seekPos = [file tell] + offset;
+			break;
+		case(SEEK_END):
+			seekPos = [source size] - offset;
+			break;
+		default:
+			return -1;
+	}
+
+	if(seekPos < 0 || seekPos > size) {
+		return -1;
+	}
+
+	return [file seek:seekPos whence:SEEK_SET] ? [file tell] : -1;
 }
 
 @implementation FFMPEGDecoder
