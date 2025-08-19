@@ -2,6 +2,10 @@
 xcuserdata
 /build
 
+# Secrets
+Secrets.xcconfig
+Generated/*
+
 # Special cog exceptions
 !Frameworks/OpenMPT/OpenMPT/build
 
