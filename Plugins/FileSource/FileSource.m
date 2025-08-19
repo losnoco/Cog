@@ -104,14 +104,14 @@
 		return NO;
 	}
 
-	return (fseek(_fd, position, whence) == 0);
+	return (fseeko(_fd, position, whence) == 0);
 }
 
 - (long)tell {
 	if(fex)
 		return offset;
 	else
-		return ftell(_fd);
+		return ftello(_fd);
 }
 
 - (long)read:(void *)buffer amount:(long)amount {
