@@ -85,6 +85,7 @@
 		17F561400C3BD4F30019975C /* CogAudio.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
+		42777C332E54E091005B0E11 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42777C322E54E091005B0E11 /* Secrets.swift */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
@@ -879,6 +880,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		42777C322E54E091005B0E11 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = Generated/Secrets.swift; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
@@ -1486,6 +1488,7 @@
 			children = (
 				32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				42777C322E54E091005B0E11 /* Secrets.swift */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -1959,6 +1962,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Cog" */;
 			buildPhases = (
+				421B41AA2E54B838007A2A49 /* Generate Swift secrets file */,
 				8384911C1807E9ED00E7332D /* Run version generator script */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -2472,6 +2476,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		421B41AA2E54B838007A2A49 /* Generate Swift secrets file */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-swift-secrets.sh",
+			);
+			name = "Generate Swift secrets file";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Generated/Secrets.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$SCRIPT_INPUT_FILE_0\n";
+			showEnvVarsInLog = 0;
+		};
 		8384911C1807E9ED00E7332D /* Run version generator script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2595,6 +2620,7 @@
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */,
 				172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */,
+				42777C332E54E091005B0E11 /* Secrets.swift in Sources */,
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
 				1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */,
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
