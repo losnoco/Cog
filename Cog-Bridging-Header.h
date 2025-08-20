@@ -3,3 +3,4 @@
 //
 
 #import <CogAudio/Status.h>
+#import "NSData+MD5.h"
