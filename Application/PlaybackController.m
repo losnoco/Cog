@@ -372,6 +372,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (IBAction)next:(id)sender {
+    // Update metadata for currently playing track to update its position,
+    // in case it needs to be scrobbled when skipped.
+    [self sendMetaData];
+
 	if([playlistController next] == NO)
 		return;
 
@@ -380,6 +384,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (IBAction)prev:(id)sender {
 	double pos = [audioPlayer amountPlayed];
+
+    // Update metadata for currently playing track to update its position,
+    // in case it needs to be scrobbled when skipped.
+    [self sendMetaData];
 
 	if(pos < 5.0) {
 		if([playlistController prev] == NO)
@@ -849,6 +857,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
 		[self->playlistController setCurrentEntry:pe];
 
+		// Update metadata for currently playing track to update its position for scrobbling.
+		[self sendMetaData];
+
 		if(pe && self->_eq) {
 			equalizerApplyGenre(self->_eq, [pe genre]);
 		}
@@ -1042,6 +1053,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[songInfo setObject:entry.length forKey:MPMediaItemPropertyPlaybackDuration];
 		[songInfo setObject:@(entry.index) forKey:MPMediaItemPropertyPersistentID];
 	}
+
+    if (entry) {
+        [[AudioScrobbler shared] updateNowPlaying:[entry audioScrobblerTrack]
+                                        isPlaying:playbackStatus == CogStatusPlaying];
+    }
 
 	switch(playbackStatus) {
 		case CogStatusPlaying:
