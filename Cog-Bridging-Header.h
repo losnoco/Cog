@@ -8,3 +8,4 @@
 #import "Preferences/PathSuggester.h"
 #import "Preferences/MIDIConfig.h"
 #import "Spotlight/SpotlightWindowController.h"
+#import "NSData+MD5.h"
