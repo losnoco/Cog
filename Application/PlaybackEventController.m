@@ -36,6 +36,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 
 - (void)initDefaults {
 	NSDictionary *defaultsDictionary = @{
+		@"enableAudioScrobbler": @YES,
 		@"notifications.enable": @YES,
 		@"notifications.itunes-style": @YES,
 		@"notifications.show-album-art": @YES
