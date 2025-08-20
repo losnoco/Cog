@@ -84,6 +84,8 @@
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
+		420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */; };
+		4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4218AC4F2E469BC30024810A /* AudioScrobbler.swift */; };
 		42777C332E54E091005B0E11 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42777C322E54E091005B0E11 /* Secrets.swift */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
@@ -913,6 +915,8 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMAPI.swift; sourceTree = "<group>"; };
+		4218AC4F2E469BC30024810A /* AudioScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioScrobbler.swift; sourceTree = "<group>"; };
 		42777C322E54E091005B0E11 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = Generated/Secrets.swift; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
@@ -1161,6 +1165,7 @@
 				830C37A227B95E6000E02BB0 /* Equalizer */,
 				17D1B0FE0F63252900694C57 /* InfoInspector */,
 				83B61E2529A8299A00CD0580 /* LyricsWindow */,
+				4218AC4E2E469BA50024810A /* Scrobbler */,
 				569C52C50D5F2BD500BDBDC9 /* Spotlight */,
 				17E0D5F60F520F42005B6FED /* Transformers */,
 				177EC0110B8BC2CF0000BC8C /* Utils */,
@@ -1593,6 +1598,15 @@
 				3DDFC2472344EC6B000F1453 /* Shared.xcconfig */,
 			);
 			path = "Xcode-config";
+			sourceTree = "<group>";
+		};
+		4218AC4E2E469BA50024810A /* Scrobbler */ = {
+			isa = PBXGroup;
+			children = (
+				420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */,
+				4218AC4F2E469BC30024810A /* AudioScrobbler.swift */,
+			);
+			path = Scrobbler;
 			sourceTree = "<group>";
 		};
 		566D32170D538550004466A5 /* Products */ = {
@@ -2719,6 +2733,7 @@
 				17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */,
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */,
+				420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */,
 				172A123C0F5912AE0078EF0C /* ShuffleTransformers.m in Sources */,
 				42777C332E54E091005B0E11 /* Secrets.swift in Sources */,
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
@@ -2735,6 +2750,7 @@
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
+				4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,
 				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,
