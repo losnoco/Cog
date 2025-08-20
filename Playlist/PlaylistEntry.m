@@ -1065,4 +1065,14 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	return 1.0f;
 }
 
+- (AudioScrobblerTrack *)audioScrobblerTrack {
+    AudioScrobblerTrack *track = [[AudioScrobblerTrack alloc] initWithTitle:self.title
+                                                                     artist:self.artist
+                                                                albumArtist:self.albumartist
+                                                                      album:self.album
+                                                                trackNumber:self.track
+                                                                     length:[self.length doubleValue] * 1000
+                                                                   position:self.currentPosition];
+    return track;
+}
 @end
