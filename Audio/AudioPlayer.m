@@ -15,7 +15,9 @@
 
 #import "Logging.h"
 
-@implementation AudioPlayer
+@implementation AudioPlayer {
+	BOOL stoppedRecently;
+}
 
 - (id)init {
 	self = [super init];
@@ -24,7 +26,8 @@
 		bufferChain = nil;
 		outputLaunched = NO;
 		endOfInputReached = NO;
-		
+		stoppedRecently = NO;
+
 		// Safety
 		pitch = 1.0;
 		tempo = 1.0;
@@ -145,10 +148,8 @@
 		if(time > 0.0) {
 			[self updatePosition:userInfo];
 		}
-	} else if(resumeInterval) {
+	} else if(resumeInterval || stoppedRecently) {
 		[output faderFadeIn];
-	} else {
-		[output fadeIn];
 	}
 }
 
@@ -172,6 +173,11 @@
 		[output close];
 	}
 	output = nil;
+	stoppedRecently = YES;
+
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+		self->stoppedRecently = NO;
+	});
 }
 
 - (void)pause {
