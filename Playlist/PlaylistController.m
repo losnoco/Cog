@@ -18,6 +18,7 @@
 #import "ToggleQueueTitleTransformer.h"
 
 #import "NSString+CogSort.h"
+#import "NSString+FinderCompare.h"
 
 #import "Logging.h"
 
@@ -697,7 +698,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 11:
 		case 12:
 		case 14:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"sampleRate" ascending:ascending selector:@selector(compare:)];
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:cellIdentifiers[index] ascending:ascending selector:@selector(finderCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 		case 15:
