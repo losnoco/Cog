@@ -242,4 +242,11 @@
 	[fadersLock unlock];
 }
 
+- (BOOL)fading {
+	[fadersLock lock];
+	BOOL fading = [faders count] > 0;
+	[fadersLock unlock];
+	return fading;
+}
+
 @end

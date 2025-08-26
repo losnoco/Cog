@@ -36,6 +36,8 @@
 
 - (void)appendFadeOut:(FadedBuffer *_Nonnull)buffer;
 
+- (BOOL)fading;
+
 @end
 
 #endif /* DSPFaderNode_h */
