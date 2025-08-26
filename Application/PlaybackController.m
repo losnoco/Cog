@@ -25,6 +25,14 @@
 
 extern BOOL kAppControllerShuttingDown;
 
+static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
+	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
+		block();
+	} else {
+		dispatch_async(queue, block);
+	}
+}
+
 @implementation NSObject (NxAdditions)
 
 #if 0
@@ -839,12 +847,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player didBeginStream:(id)userInfo {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 
-	// Delay the action until this function has returned to the audio thread
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-		if(pe) {
-			//[SentrySDK captureMessage:[NSString stringWithFormat:@"Updating UI with track: %@", pe.url]];
-		}
-
+	// Dispatch to main thread, unless this is the main thread
+	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
 		[self->playlistController setCurrentEntry:pe];
 
 		if(pe && self->_eq) {
@@ -945,8 +949,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(!pe) pe = [playlistController currentEntry];
 	[pe setMetadata:info];
 	[playlistView refreshTrack:pe];
-	// Delay the action until this function has returned to the audio thread
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+	// Dispatch async to main thread, unless this is the main thread
+	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
 		self->playlistController.currentEntry = pe;
 		[self sendMetaData];
 		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotificiation object:pe];
