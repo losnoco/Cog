@@ -706,7 +706,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			sortDescriptors = @[sortDescriptor];
 			break;
 		case 18:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"playCount" ascending:ascending selector:@selector(compare:)];
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"playCount" ascending:ascending selector:@selector(finderCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 		case 17:
