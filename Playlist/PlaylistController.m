@@ -682,13 +682,33 @@ static void *playlistControllerContext = &playlistControllerContext;
 		ascending = YES;
 	}
 
+	/*
+	 
+	 - status - compare
+	 1
+
+	 - length, year, samplerate, bitspersample - numeric
+	 6, 7, 14, 15
+
+	 - playcount vs "playCount" - numeric
+	 18
+
+	 - title, albumartist, artist, album, genre, path, filename, codec, composer - strings, finderCompare
+	 2, 3, 4, 5, 8, 10, 11, 12, 17
+
+	 - rating, bitrate, numeric with text decorators - compare
+	 13, 16
+	 
+	 - track - special sorting
+	 9
+
+	 */
 	switch(index) {
 		default:
 		case 0:
 			sortDescriptors = @[];
 			break;
 
-		case 1:
 		case 2:
 		case 3:
 		case 4:
@@ -697,32 +717,29 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 10:
 		case 11:
 		case 12:
-		case 14:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:cellIdentifiers[index] ascending:ascending selector:@selector(finderCompare:)];
-			sortDescriptors = @[sortDescriptor];
-			break;
-		case 15:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"bitsPerSample" ascending:ascending selector:@selector(compare:)];
-			sortDescriptors = @[sortDescriptor];
-			break;
-		case 18:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"playCount" ascending:ascending selector:@selector(finderCompare:)];
-			sortDescriptors = @[sortDescriptor];
-			break;
 		case 17:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(caseInsensitiveCompare:)];
-			sortDescriptors = @[sortDescriptor];
-			break;
-
-		case 13:
-		case 16:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compare:)];
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(finderCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 
 		case 6:
 		case 7:
+		case 14:
+		case 15:
 			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compareTrackNumbers:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
+
+			// field name differs from cell name, but still numeric
+		case 18:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"playCount" ascending:ascending selector:@selector(compareTrackNumbers:)];
+			sortDescriptors = @[sortDescriptor];
+			break;
+
+		case 1:
+		case 13:
+		case 16:
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 
@@ -731,10 +748,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 			sortDescriptors = @[
 				[[NSSortDescriptor alloc] initWithKey:@"albumartist"
 				                            ascending:ascending
-				                             selector:@selector(caseInsensitiveCompare:)],
+				                             selector:@selector(finderCompare:)],
 				[[NSSortDescriptor alloc] initWithKey:@"album"
 				                            ascending:ascending
-				                             selector:@selector(caseInsensitiveCompare:)],
+				                             selector:@selector(finderCompare:)],
 				[[NSSortDescriptor alloc] initWithKey:@"disc" // Yes, this, even though it's not actually a column
 				                            ascending:ascending
 				                             selector:@selector(compareTrackNumbers:)],
