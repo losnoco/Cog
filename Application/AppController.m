@@ -335,7 +335,7 @@ static BOOL consentLastEnabled = NO;
 		if(enabled != consentLastEnabled) {
 			if(enabled) {
 				[SentrySDK startWithConfigureOptions:^(SentryOptions *options) {
-					options.dsn = @"https://b5eda1c2390eb965a74dd735413b6392@cog-analytics.losno.co/3";
+					options.dsn = @"https://d70ca316b053af0573f4b48f742d4d8e@cog-analytics.losno.co/5";
 					options.debug = YES; // Enabled debug when first installing is always helpful
 
 					// Temporary until there's a better solution
