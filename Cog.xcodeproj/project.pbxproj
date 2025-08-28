@@ -2501,7 +2501,6 @@
 			);
 			inputPaths = (
 				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Run Sentry symbol upload";
 			outputFileListPaths = (
@@ -2510,7 +2509,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"x${SENTRY_URL}\" != \"x\" ]] && [[ \"x${SENTRY_PROJECT}\" != \"x\" ]] && [[ \"x${SENTRY_AUTH_TOKEN}\" != \"x\" ]]; then\n  if [[ \"${CONFIGURATION}\" = \"Release\" ]] || [[ \"${CONFIGURATION}\" = \"Adhoc\" ]]; then\n    echo \"Uploading dSYMs...\"\n    export PATH=$PATH:/usr/local/bin:/opt/homebrew/bin\n    sentry-cli --url \"${SENTRY_URL}\" debug-files upload -p \"${SENTRY_PROJECT}\" --auth-token \"${SENTRY_AUTH_TOKEN}\" --include-sources \"${DWARF_DSYM_FOLDER_PATH}\"\n  else\n    echo \"Skip dSYMs upload\"\n  fi\nelse\n  echo \"Sentry settings not configured\"\nfi\n\nexit 0\n";
+			shellScript = "# This script is responsible for uploading debug symbols and source context for Sentry.\nif [[ \"x${SENTRY_ORG}\" != \"x\" ]] && [[ \"x${SENTRY_PROJECT}\" != \"x\" ]] && [[ \"x${SENTRY_AUTH_TOKEN}\" != \"x\" ]]; then\n  if [[ \"${CONFIGURATION}\" = \"Release\" ]] || [[ \"${CONFIGURATION}\" = \"Adhoc\" ]]; then\n    if [[ \"$(uname -m)\" == arm64 ]]; then\n      export PATH=\"/opt/homebrew/bin:$PATH\"\n    fi\n\n    if which sentry-cli >/dev/null; then\n      ERROR=$(sentry-cli --auth-token \"$SENTRY_AUTH_TOKEN\" debug-files upload --org \"$SENTRY_ORG\" --project \"$SENTRY_PROJECT\" --include-sources \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\n      if [ ! $? -eq 0 ]; then\n        echo \"warning: sentry-cli - $ERROR\"\n      fi\n    else\n      echo \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\n    fi\n  else\n    echo \"Skipping symbol upload.\"\n  fi\nelse\n  echo \"Sentry not configured.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2923,6 +2922,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -2979,6 +2980,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
