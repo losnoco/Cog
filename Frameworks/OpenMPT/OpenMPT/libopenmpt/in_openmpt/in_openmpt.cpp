@@ -39,12 +39,6 @@ static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING
 #ifdef UNICODE
 #define UNICODE_INPUT_PLUGIN
 #endif
-#ifndef _MSC_VER
-#define _MSC_VER 1300
-#endif
-#include "winamp/Winamp/IN2.H"
-#include "winamp/Winamp/wa_ipc.h"
-
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -55,6 +49,17 @@ static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING
 
 #include <tchar.h>
 
+// Include Winamp headers last because they require _MSC_VER defined which
+// confuses other headers.
+// Also include headers included by Winamp headers first.
+#include <windows.h>
+#include <stddef.h>
+#ifndef _MSC_VER
+#define _MSC_VER 1300
+#endif
+#include "winamp/Winamp/IN2.H"
+#include "winamp/Winamp/wa_ipc.h"
+
 #define BPS 16
 
 #define WINAMP_DSP_HEADROOM_FACTOR 2
@@ -63,6 +68,12 @@ static const char * in_openmpt_string = "in_openmpt " OPENMPT_API_VERSION_STRING
 #define WM_OPENMPT_SEEK (WM_USER+3)
 
 #define SHORT_TITLE "in_openmpt"
+
+#if defined(__GNUC__) && !defined(__clang__)
+#if (__GNUC__ < 9)
+#define MPT_IN_OPENMPT_FSTREAM_NO_WCHAR
+#endif
+#endif
 
 static void apply_options();
 
@@ -252,7 +263,11 @@ static int play( const in_char * fn ) {
 		return -1;
 	}
 	try {
+#if defined(UNICODE_INPUT_PLUGIN) && defined(MPT_IN_OPENMPT_FSTREAM_NO_WCHAR)
+		std::ifstream s( StringEncode( StringFromWinamp( fn ), CP_ACP ).c_str(), std::ios::binary );
+#else
 		std::ifstream s( fn, std::ios::binary );
+#endif
 		std::map< std::string, std::string > ctls;
 		self->mod = new openmpt::module( s, std::clog, ctls );
 		self->cached_filename = fn;
@@ -333,7 +348,11 @@ static void setpan( int pan ) {
 static int infobox( const in_char * fn, HWND hWndParent ) {
 	if ( fn && fn[0] != '\0' && self->cached_filename != std::basic_string<TCHAR>(fn) ) {
 		try {
+#if defined(UNICODE_INPUT_PLUGIN) && defined(MPT_IN_OPENMPT_FSTREAM_NO_WCHAR)
+			std::ifstream s( StringEncode( StringFromWinamp( fn ), CP_ACP ).c_str(), std::ios::binary );
+#else
 			std::ifstream s( fn, std::ios::binary );
+#endif
 			openmpt::module mod( s );
 #if 1
 			libopenmpt::plugin::gui_show_file_info( hWndParent, TEXT(SHORT_TITLE), StringReplace( generate_infotext( fn, mod ), TEXT("\n"), TEXT("\r\n") ) );
@@ -367,7 +386,11 @@ static void getfileinfo( const in_char * filename, in_char * title, int * length
 		}
 	} else {
 		try {
+#if defined(UNICODE_INPUT_PLUGIN) && defined(MPT_IN_OPENMPT_FSTREAM_NO_WCHAR)
+			std::ifstream s( StringEncode( StringFromWinamp( filename ), CP_ACP ).c_str(), std::ios::binary );
+#else
 			std::ifstream s( filename, std::ios::binary );
+#endif
 			openmpt::module mod( s );
 			if ( length_in_ms ) {
 				*length_in_ms = static_cast<int>( mod.get_duration_seconds() * 1000.0 );

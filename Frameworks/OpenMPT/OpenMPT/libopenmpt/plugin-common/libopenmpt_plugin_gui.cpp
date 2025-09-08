@@ -366,14 +366,14 @@ protected:
 #if defined(MPT_WITH_MFC)
 
 
-void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::wstring title ) {
+void gui_edit_settings( libopenmpt_settings * s, HWND parent, std::basic_string<TCHAR> title ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 	CSettingsDialog dlg( s, title.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
 	dlg.DoModal();
 }
 
 
-void gui_show_file_info( HWND parent, std::wstring title, std::wstring info ) {
+void gui_show_file_info( HWND parent, std::basic_string<TCHAR> title, std::basic_string<TCHAR> info ) {
 	AFX_MANAGE_STATE( AfxGetStaticModuleState() );
 	CInfoDialog dlg( title.c_str(), info.c_str(), parent ? CWnd::FromHandle( parent ) : nullptr );
 	dlg.DoModal();

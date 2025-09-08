@@ -1229,6 +1229,7 @@ PlayBehaviourSet CSoundFile::GetSupportedPlaybackBehaviour(MODTYPE type)
 		playBehaviour.set(kITCarryAfterNoteOff);
 		playBehaviour.set(kITNoteCutWithPorta);
 		playBehaviour.set(kITVolColNoSlidePropagation);
+		playBehaviour.set(kITStoppedFilterEnvAtStart);
 		break;
 
 	case MOD_TYPE_XM:

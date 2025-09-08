@@ -397,7 +397,7 @@ void CVstPluginManager::EnumerateDirectXDMOs()
 						DWORD datatype = REG_SZ;
 						DWORD datasize = sizeof(name);
 
-						if(ERROR_SUCCESS == RegQueryValueEx(hksub, nullptr, 0, &datatype, (LPBYTE)name, &datasize))
+						if(ERROR_SUCCESS == RegQueryValueEx(hksub, nullptr, 0, &datatype, reinterpret_cast<LPBYTE>(name), &datasize))
 						{
 							auto &plug = pluginList.emplace_back(std::make_unique<VSTPluginLib>(DMOPlugin::Create, true, mpt::PathString::FromNative(mpt::GUIDToString(clsid)), mpt::PathString::FromNative(ParseMaybeNullTerminatedStringFromBufferWithSizeInBytes<mpt::winstring>(name, datasize))));
 							plug->pluginId1 = kDmoMagic;

@@ -655,6 +655,8 @@ void ReadData(std::istream& iStrm, CPattern& pat, const size_t)
 			mpt::IO::ReadIntLE<uint8>(iStrm, size);
 			iStrm.ignore(size);
 		}
+		if(!m.IsPcNote())
+			m.Clear();
 	}
 }
 

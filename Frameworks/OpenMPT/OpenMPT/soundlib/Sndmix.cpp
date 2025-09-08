@@ -1176,7 +1176,12 @@ int CSoundFile::ProcessPitchFilterEnvelope(ModChannel &chn, int32 &period) const
 		if(m_playBehaviour[kITEnvelopePositionHandling] && chn.PitchEnv.nEnvPosition == 0)
 		{
 			// If the envelope is disabled at the very same moment as it is triggered, we do not process anything.
-			return -1;
+			// However, Impulse Tracker still applies the filter settings as if the envelope was at its midway.
+			// Test case: S7B_StillAppliesFilter.it
+			if(m_playBehaviour[kITStoppedFilterEnvAtStart] && chn.PitchEnv.flags[ENV_FILTER])
+				return SetupChannelFilter(chn, !chn.dwFlags[CHN_FILTER], 0);
+			else
+				return -1;
 		}
 
 		const int envpos = chn.PitchEnv.nEnvPosition - (m_playBehaviour[kITEnvelopePositionHandling] ? 1 : 0);
