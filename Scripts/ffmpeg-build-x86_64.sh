@@ -22,7 +22,7 @@ ADPCM_CODECS=adpcm_4xm,adpcm_adx,adpcm_afx,adpcm_agm,adpcm_aica,adpcm_argo,adpcm
     --enable-nonfree --enable-libfdk-aac\
     --enable-pic --enable-gpl --disable-doc --disable-ffplay\
     --disable-ffprobe --disable-avdevice --disable-ffmpeg\
-    --disable-postproc --disable-avfilter\
+    --disable-avfilter\
     --disable-swscale --enable-network --disable-swscale-alpha --disable-vdpau\
     --disable-dxva2 --disable-everything --enable-hwaccels\
     --enable-swresample\

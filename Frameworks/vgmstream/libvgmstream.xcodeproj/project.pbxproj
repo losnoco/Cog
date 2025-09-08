@@ -717,10 +717,10 @@
 		83AA5D241F6E2F9C0020821C /* awc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D201F6E2F9B0020821C /* awc.c */; };
 		83AA5D251F6E2F9C0020821C /* hca_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AA5D211F6E2F9C0020821C /* hca_keys.h */; };
 		83AA5D271F6E2F9C0020821C /* stma.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D231F6E2F9C0020821C /* stma.c */; };
-		83AA7D17279EBD0400087AA4 /* libavcodec.61.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D13279EBCF900087AA4 /* libavcodec.61.dylib */; };
-		83AA7D18279EBD0900087AA4 /* libavformat.61.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D14279EBCF900087AA4 /* libavformat.61.dylib */; };
-		83AA7D19279EBD0B00087AA4 /* libavutil.59.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D16279EBCF900087AA4 /* libavutil.59.dylib */; };
-		83AA7D1A279EBD0D00087AA4 /* libswresample.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D15279EBCF900087AA4 /* libswresample.5.dylib */; };
+		83AA7D17279EBD0400087AA4 /* libavcodec.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D13279EBCF900087AA4 /* libavcodec.62.dylib */; };
+		83AA7D18279EBD0900087AA4 /* libavformat.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D14279EBCF900087AA4 /* libavformat.62.dylib */; };
+		83AA7D19279EBD0B00087AA4 /* libavutil.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D16279EBCF900087AA4 /* libavutil.60.dylib */; };
+		83AA7D1A279EBD0D00087AA4 /* libswresample.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D15279EBCF900087AA4 /* libswresample.6.dylib */; };
 		83AA7F7D2519C042004C5298 /* dsb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7F742519C041004C5298 /* dsb.c */; };
 		83AA7F7E2519C042004C5298 /* svag_kcet.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7F752519C041004C5298 /* svag_kcet.c */; };
 		83AA7F7F2519C042004C5298 /* bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7F762519C042004C5298 /* bsf.c */; };
@@ -1683,10 +1683,10 @@
 		83AA5D201F6E2F9B0020821C /* awc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = awc.c; sourceTree = "<group>"; };
 		83AA5D211F6E2F9C0020821C /* hca_keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hca_keys.h; sourceTree = "<group>"; };
 		83AA5D231F6E2F9C0020821C /* stma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stma.c; sourceTree = "<group>"; };
-		83AA7D13279EBCF900087AA4 /* libavcodec.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.61.dylib; path = ../../ThirdParty/ffmpeg/lib/libavcodec.61.dylib; sourceTree = "<group>"; };
-		83AA7D14279EBCF900087AA4 /* libavformat.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.61.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.61.dylib; sourceTree = "<group>"; };
-		83AA7D15279EBCF900087AA4 /* libswresample.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.5.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.5.dylib; sourceTree = "<group>"; };
-		83AA7D16279EBCF900087AA4 /* libavutil.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.59.dylib; path = ../../ThirdParty/ffmpeg/lib/libavutil.59.dylib; sourceTree = "<group>"; };
+		83AA7D13279EBCF900087AA4 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = ../../ThirdParty/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
+		83AA7D14279EBCF900087AA4 /* libavformat.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.62.dylib; sourceTree = "<group>"; };
+		83AA7D15279EBCF900087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
+		83AA7D16279EBCF900087AA4 /* libavutil.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.dylib; path = ../../ThirdParty/ffmpeg/lib/libavutil.60.dylib; sourceTree = "<group>"; };
 		83AA7F742519C041004C5298 /* dsb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsb.c; sourceTree = "<group>"; };
 		83AA7F752519C041004C5298 /* svag_kcet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = svag_kcet.c; sourceTree = "<group>"; };
 		83AA7F762519C042004C5298 /* bsf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bsf.c; sourceTree = "<group>"; };
@@ -1844,10 +1844,10 @@
 			files = (
 				836EF0DD27BB97C500BF35B2 /* libvorbisfile.3.dylib in Frameworks */,
 				836EF0DB27BB975900BF35B2 /* libvorbis.0.dylib in Frameworks */,
-				83AA7D1A279EBD0D00087AA4 /* libswresample.5.dylib in Frameworks */,
-				83AA7D19279EBD0B00087AA4 /* libavutil.59.dylib in Frameworks */,
-				83AA7D18279EBD0900087AA4 /* libavformat.61.dylib in Frameworks */,
-				83AA7D17279EBD0400087AA4 /* libavcodec.61.dylib in Frameworks */,
+				83AA7D1A279EBD0D00087AA4 /* libswresample.6.dylib in Frameworks */,
+				83AA7D19279EBD0B00087AA4 /* libavutil.60.dylib in Frameworks */,
+				83AA7D18279EBD0900087AA4 /* libavformat.62.dylib in Frameworks */,
+				83AA7D17279EBD0400087AA4 /* libavcodec.62.dylib in Frameworks */,
 				83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */,
 				83E22FC32772FD16000015EE /* AudioToolbox.framework in Frameworks */,
 				83E22FC12772FD06000015EE /* libbz2.tbd in Frameworks */,
@@ -2198,10 +2198,10 @@
 				836EF0DC27BB97BA00BF35B2 /* libvorbisfile.3.dylib */,
 				836EF0D027BB960A00BF35B2 /* libvorbis.0.dylib */,
 				83B72E342790452C006007A3 /* libfdk-aac.2.dylib */,
-				83AA7D13279EBCF900087AA4 /* libavcodec.61.dylib */,
-				83AA7D14279EBCF900087AA4 /* libavformat.61.dylib */,
-				83AA7D16279EBCF900087AA4 /* libavutil.59.dylib */,
-				83AA7D15279EBCF900087AA4 /* libswresample.5.dylib */,
+				83AA7D13279EBCF900087AA4 /* libavcodec.62.dylib */,
+				83AA7D14279EBCF900087AA4 /* libavformat.62.dylib */,
+				83AA7D16279EBCF900087AA4 /* libavutil.60.dylib */,
+				83AA7D15279EBCF900087AA4 /* libswresample.6.dylib */,
 				8315868C26F58AF900803A3A /* libspeex.a */,
 				83D731381A74968900CA1366 /* g719.xcodeproj */,
 				835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */,

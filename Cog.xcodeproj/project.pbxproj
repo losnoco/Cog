@@ -164,10 +164,10 @@
 		839E876E2D5DA0AC00A13526 /* RubberbandEngineTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */; };
-		83AA7D04279EBCA900087AA4 /* libavcodec.61.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.61.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83AA7D05279EBCAB00087AA4 /* libavformat.61.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D03279EBC8300087AA4 /* libavformat.61.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83AA7D06279EBCAD00087AA4 /* libavutil.59.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D02279EBC8200087AA4 /* libavutil.59.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		83AA7D07279EBCAF00087AA4 /* libswresample.5.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D01279EBC8200087AA4 /* libswresample.5.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D04279EBCA900087AA4 /* libavcodec.62.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D05279EBCAB00087AA4 /* libavformat.62.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D03279EBC8300087AA4 /* libavformat.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D06279EBCAD00087AA4 /* libavutil.60.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D02279EBC8200087AA4 /* libavutil.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83AA7D07279EBCAF00087AA4 /* libswresample.6.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B61E2429A8296500CD0580 /* LyricsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83B61E2229A8296500CD0580 /* LyricsWindow.xib */; };
 		83B61E2829A82A0200CD0580 /* LyricsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B61E2729A82A0200CD0580 /* LyricsWindowController.m */; };
@@ -727,11 +727,11 @@
 				83256B69286661FC0036D9C0 /* libmpg123.0.dylib in CopyFiles */,
 				836EF0C927BB91E900BF35B2 /* libvorbisfile.3.dylib in CopyFiles */,
 				836EF0C827BB91E600BF35B2 /* libogg.0.dylib in CopyFiles */,
-				83AA7D07279EBCAF00087AA4 /* libswresample.5.dylib in CopyFiles */,
-				83AA7D06279EBCAD00087AA4 /* libavutil.59.dylib in CopyFiles */,
+				83AA7D07279EBCAF00087AA4 /* libswresample.6.dylib in CopyFiles */,
+				83AA7D06279EBCAD00087AA4 /* libavutil.60.dylib in CopyFiles */,
 				838A33752D06A9CE00D0D770 /* librubberband.3.dylib in CopyFiles */,
-				83AA7D05279EBCAB00087AA4 /* libavformat.61.dylib in CopyFiles */,
-				83AA7D04279EBCA900087AA4 /* libavcodec.61.dylib in CopyFiles */,
+				83AA7D05279EBCAB00087AA4 /* libavformat.62.dylib in CopyFiles */,
+				83AA7D04279EBCA900087AA4 /* libavcodec.62.dylib in CopyFiles */,
 				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in CopyFiles */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in CopyFiles */,
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in CopyFiles */,
@@ -1004,10 +1004,10 @@
 		839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RubberbandEngineTransformer.m; path = Preferences/Preferences/RubberbandEngineTransformer.m; sourceTree = "<group>"; };
 		83A3B72F283AE6AA00CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ColorToValueTransformer.m; path = Preferences/Preferences/ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColorToValueTransformer.h; path = Preferences/Preferences/ColorToValueTransformer.h; sourceTree = "<group>"; };
-		83AA7D00279EBC8200087AA4 /* libavcodec.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.61.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.61.dylib; sourceTree = "<group>"; };
-		83AA7D01279EBC8200087AA4 /* libswresample.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.5.dylib; path = ThirdParty/ffmpeg/lib/libswresample.5.dylib; sourceTree = "<group>"; };
-		83AA7D02279EBC8200087AA4 /* libavutil.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.59.dylib; path = ThirdParty/ffmpeg/lib/libavutil.59.dylib; sourceTree = "<group>"; };
-		83AA7D03279EBC8300087AA4 /* libavformat.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.61.dylib; path = ThirdParty/ffmpeg/lib/libavformat.61.dylib; sourceTree = "<group>"; };
+		83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
+		83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
+		83AA7D02279EBC8200087AA4 /* libavutil.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.dylib; path = ThirdParty/ffmpeg/lib/libavutil.60.dylib; sourceTree = "<group>"; };
+		83AA7D03279EBC8300087AA4 /* libavformat.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.dylib; path = ThirdParty/ffmpeg/lib/libavformat.62.dylib; sourceTree = "<group>"; };
 		83AB9031237CEFD300A433D5 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
 		83B61E2329A8296500CD0580 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LyricsWindow.xib; sourceTree = "<group>"; };
@@ -1153,10 +1153,10 @@
 				836EF0C627BB91AB00BF35B2 /* libvorbisfile.3.dylib */,
 				836EF0C427BB919300BF35B2 /* libogg.0.dylib */,
 				83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */,
-				83AA7D00279EBC8200087AA4 /* libavcodec.61.dylib */,
-				83AA7D03279EBC8300087AA4 /* libavformat.61.dylib */,
-				83AA7D02279EBC8200087AA4 /* libavutil.59.dylib */,
-				83AA7D01279EBC8200087AA4 /* libswresample.5.dylib */,
+				83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */,
+				83AA7D03279EBC8300087AA4 /* libavformat.62.dylib */,
+				83AA7D02279EBC8200087AA4 /* libavutil.60.dylib */,
+				83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */,
 				83059634277F011100EBFAAE /* File_Extractor.xcodeproj */,
 				17BB5EA50B8A87850009ACB1 /* IOKit.framework */,
 				17BB5CF60B8A86350009ACB1 /* AudioUnit.framework */,
