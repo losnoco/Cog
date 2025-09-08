@@ -362,6 +362,7 @@
 				<string>9tav</string>
 				<string>a3c</string>
 				<string>aa3</string>
+				<string>aaf</string>
 				<string>aax</string>
 				<string>abc</string>
 				<string>abk</string>
@@ -420,6 +421,7 @@
 				<string>awd</string>
 				<string>awx</string>
 				<string>b1s</string>
+				<string>baa</string>
 				<string>baf</string>
 				<string>baka</string>
 				<string>bank</string>
@@ -456,6 +458,7 @@
 				<string>btsnd</string>
 				<string>bvg</string>
 				<string>bwav</string>
+				<string>bx</string>
 				<string>cads</string>
 				<string>caf</string>
 				<string>cat</string>
@@ -515,7 +518,6 @@
 				<string>exa</string>
 				<string>ezw</string>
 				<string>fag</string>
-				<string>fcb</string>
 				<string>fda</string>
 				<string>filp</string>
 				<string>fish</string>
@@ -712,6 +714,7 @@
 				<string>nfx</string>
 				<string>nub</string>
 				<string>nub2</string>
+				<string>nusnub</string>
 				<string>nus3audio</string>
 				<string>nus3bank</string>
 				<string>nwa</string>
@@ -822,6 +825,7 @@
 				<string>sdf</string>
 				<string>sdt</string>
 				<string>se</string>
+				<string>se3</string>
 				<string>seb</string>
 				<string>sed</string>
 				<string>seg</string>
@@ -860,6 +864,8 @@
 				<string>spm</string>
 				<string>sps</string>
 				<string>spsd</string>
+				<string>spsis14</string>
+				<string>spsis22</string>
 				<string>spw</string>
 				<string>srcd</string>
 				<string>sre</string>
@@ -905,6 +911,8 @@
 				<string>tra</string>
 				<string>trk</string>
 				<string>trs</string>
+				<string>tsdse3</string>
+				<string>tsdse4</string>
 				<string>tun</string>
 				<string>txth</string>
 				<string>txtp</string>
@@ -995,6 +1003,7 @@
 				<string>xau</string>
 				<string>xav</string>
 				<string>xb</string>
+				<string>xbw</string>
 				<string>xhd</string>
 				<string>xen</string>
 				<string>xma</string>
