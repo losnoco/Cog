@@ -9,7 +9,7 @@ info() {
 
 info "Installing build dependencies of FFmpeg with Homebrew"
 brew install --only-dependencies ffmpeg
-brew install yasm
+brew install nasm pkgconf
 
 info "Installing build dependencies for cross build with Homebrew"
 arch -x86_64 /usr/local/bin/brew install --only-dependencies ffmpeg

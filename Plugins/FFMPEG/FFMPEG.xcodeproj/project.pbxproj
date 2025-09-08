@@ -18,10 +18,10 @@
 		8352D49D1CDDB8C0009D16AA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49C1CDDB8C0009D16AA /* CoreMedia.framework */; };
 		8352D49F1CDDB8D7009D16AA /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8352D49E1CDDB8D7009D16AA /* CoreVideo.framework */; };
 		8356BCE927B37C6F0074E50C /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCE727B37C6F0074E50C /* NSDictionary+Merge.m */; };
-		83AA7D0C279EBCC600087AA4 /* libavcodec.61.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D08279EBCC600087AA4 /* libavcodec.61.dylib */; };
-		83AA7D0D279EBCC600087AA4 /* libavutil.59.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D09279EBCC600087AA4 /* libavutil.59.dylib */; };
-		83AA7D0E279EBCC600087AA4 /* libswresample.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0A279EBCC600087AA4 /* libswresample.5.dylib */; };
-		83AA7D0F279EBCC600087AA4 /* libavformat.61.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0B279EBCC600087AA4 /* libavformat.61.dylib */; };
+		83AA7D0C279EBCC600087AA4 /* libavcodec.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D08279EBCC600087AA4 /* libavcodec.62.dylib */; };
+		83AA7D0D279EBCC600087AA4 /* libavutil.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D09279EBCC600087AA4 /* libavutil.60.dylib */; };
+		83AA7D0E279EBCC600087AA4 /* libswresample.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0A279EBCC600087AA4 /* libswresample.6.dylib */; };
+		83AA7D0F279EBCC600087AA4 /* libavformat.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0B279EBCC600087AA4 /* libavformat.62.dylib */; };
 		83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E3827904557006007A3 /* libfdk-aac.2.dylib */; };
 		83CBC5AA2866F75B00F2753B /* FFMPEGContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */; };
 		83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC52772FD32000015EE /* libbz2.tbd */; };
@@ -63,10 +63,10 @@
 		8356BD1A27B3D06F0074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		83747C542862DD4D0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384913818081F6C00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
-		83AA7D08279EBCC600087AA4 /* libavcodec.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.61.dylib; path = ../../ThirdParty/ffmpeg/lib/libavcodec.61.dylib; sourceTree = "<group>"; };
-		83AA7D09279EBCC600087AA4 /* libavutil.59.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.59.dylib; path = ../../ThirdParty/ffmpeg/lib/libavutil.59.dylib; sourceTree = "<group>"; };
-		83AA7D0A279EBCC600087AA4 /* libswresample.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.5.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.5.dylib; sourceTree = "<group>"; };
-		83AA7D0B279EBCC600087AA4 /* libavformat.61.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.61.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.61.dylib; sourceTree = "<group>"; };
+		83AA7D08279EBCC600087AA4 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = ../../ThirdParty/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
+		83AA7D09279EBCC600087AA4 /* libavutil.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.dylib; path = ../../ThirdParty/ffmpeg/lib/libavutil.60.dylib; sourceTree = "<group>"; };
+		83AA7D0A279EBCC600087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
+		83AA7D0B279EBCC600087AA4 /* libavformat.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.62.dylib; sourceTree = "<group>"; };
 		83B72E3827904557006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "../../ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83CBC5A82866F75B00F2753B /* FFMPEGContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFMPEGContainer.h; sourceTree = "<group>"; };
 		83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFMPEGContainer.m; sourceTree = "<group>"; };
@@ -87,17 +87,17 @@
 			files = (
 				834D18FB2D7F948000F13B89 /* CogAudio.framework in Frameworks */,
 				83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */,
-				83AA7D0C279EBCC600087AA4 /* libavcodec.61.dylib in Frameworks */,
+				83AA7D0C279EBCC600087AA4 /* libavcodec.62.dylib in Frameworks */,
 				83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */,
-				83AA7D0E279EBCC600087AA4 /* libswresample.5.dylib in Frameworks */,
+				83AA7D0E279EBCC600087AA4 /* libswresample.6.dylib in Frameworks */,
 				83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */,
-				83AA7D0D279EBCC600087AA4 /* libavutil.59.dylib in Frameworks */,
+				83AA7D0D279EBCC600087AA4 /* libavutil.60.dylib in Frameworks */,
 				8352D4991CDDB06A009D16AA /* libz.tbd in Frameworks */,
 				8352D4971CDDB05E009D16AA /* Security.framework in Frameworks */,
 				8352D4911CDDB02A009D16AA /* VideoDecodeAcceleration.framework in Frameworks */,
 				8352D49F1CDDB8D7009D16AA /* CoreVideo.framework in Frameworks */,
 				8352D4931CDDB034009D16AA /* QuartzCore.framework in Frameworks */,
-				83AA7D0F279EBCC600087AA4 /* libavformat.61.dylib in Frameworks */,
+				83AA7D0F279EBCC600087AA4 /* libavformat.62.dylib in Frameworks */,
 				8352D49D1CDDB8C0009D16AA /* CoreMedia.framework in Frameworks */,
 				8352D49B1CDDB8B2009D16AA /* VideoToolbox.framework in Frameworks */,
 				8352D48F1CDDB023009D16AA /* CoreFoundation.framework in Frameworks */,
@@ -126,10 +126,10 @@
 			isa = PBXGroup;
 			children = (
 				83B72E3827904557006007A3 /* libfdk-aac.2.dylib */,
-				83AA7D08279EBCC600087AA4 /* libavcodec.61.dylib */,
-				83AA7D0B279EBCC600087AA4 /* libavformat.61.dylib */,
-				83AA7D09279EBCC600087AA4 /* libavutil.59.dylib */,
-				83AA7D0A279EBCC600087AA4 /* libswresample.5.dylib */,
+				83AA7D08279EBCC600087AA4 /* libavcodec.62.dylib */,
+				83AA7D0B279EBCC600087AA4 /* libavformat.62.dylib */,
+				83AA7D09279EBCC600087AA4 /* libavutil.60.dylib */,
+				83AA7D0A279EBCC600087AA4 /* libswresample.6.dylib */,
 				8352D4981CDDB06A009D16AA /* libz.tbd */,
 				8352D4941CDDB03E009D16AA /* libiconv.tbd */,
 				1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */,

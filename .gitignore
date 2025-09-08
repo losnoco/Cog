@@ -33,10 +33,10 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/fdk-aac/lib/libfdk-aac.dylib
 /ThirdParty/fdk-aac/lib/libfdk-aac.la
 /ThirdParty/fdk-aac/lib/pkgconfig/fdk-aac.pc
-/ThirdParty/ffmpeg/lib/libavcodec.61.dylib
-/ThirdParty/ffmpeg/lib/libavformat.61.dylib
-/ThirdParty/ffmpeg/lib/libavutil.59.dylib
-/ThirdParty/ffmpeg/lib/libswresample.5.dylib
+/ThirdParty/ffmpeg/lib/libavcodec.62.dylib
+/ThirdParty/ffmpeg/lib/libavformat.62.dylib
+/ThirdParty/ffmpeg/lib/libavutil.60.dylib
+/ThirdParty/ffmpeg/lib/libswresample.6.dylib
 /ThirdParty/flac/lib/libFLAC.14.dylib
 /ThirdParty/libid3tag/lib/libid3tag.a
 /ThirdParty/libmad/lib/libmad.a
