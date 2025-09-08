@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		022CF042734F913429163E82 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = BAACDA4AE2E792FCCA83208A /* layer3.c */; };
 		022FC83459953B260BA35674 /* synth_real.c in Sources */ = {isa = PBXBuildFile; fileRef = C3CD341CF5C67ECE6FA5BA5C /* synth_real.c */; };
+		0B2923227C4BC41432127162 /* dither.c in Sources */ = {isa = PBXBuildFile; fileRef = B13B0F2AD975C7DCC111556A /* dither.c */; };
 		0DDEA7A4A06C7196094515E4 /* optimize.c in Sources */ = {isa = PBXBuildFile; fileRef = 1B61528CDECD143E1D70B8CC /* optimize.c */; };
 		142B46E0854DE7D23B149520 /* layer2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9796B208BFD16ABAA76CF848 /* layer2.c */; };
 		21B328E68EDB3758906E2726 /* equalizer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F54AFAE5CB7A5E0D2D6A5EE /* equalizer.c */; };
@@ -54,6 +55,7 @@
 		A60D55A2C7D902D4048E2BE2 /* feature.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = feature.c; path = ../../../include/mpg123/src/libmpg123/feature.c; sourceTree = "<group>"; };
 		A7ABBCE59297E2D7DA7DAB25 /* compat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = compat.c; path = ../../../include/mpg123/src/compat/compat.c; sourceTree = "<group>"; };
 		AD3049FCD56B02AEBD06903C /* format.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../../include/mpg123/src/libmpg123/format.c; sourceTree = "<group>"; };
+		B13B0F2AD975C7DCC111556A /* dither.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = dither.c; path = ../../../include/mpg123/src/libmpg123/dither.c; sourceTree = "<group>"; };
 		BAACDA4AE2E792FCCA83208A /* layer3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = ../../../include/mpg123/src/libmpg123/layer3.c; sourceTree = "<group>"; };
 		C3752BE686E0ED98C5849226 /* icy2utf8.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = icy2utf8.c; path = ../../../include/mpg123/src/libmpg123/icy2utf8.c; sourceTree = "<group>"; };
 		C3CD341CF5C67ECE6FA5BA5C /* synth_real.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = synth_real.c; path = ../../../include/mpg123/src/libmpg123/synth_real.c; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				F4F6A4743D6788A682065AB4 /* dct64.c */,
+				B13B0F2AD975C7DCC111556A /* dither.c */,
 				0F54AFAE5CB7A5E0D2D6A5EE /* equalizer.c */,
 				A60D55A2C7D902D4048E2BE2 /* feature.c */,
 				AD3049FCD56B02AEBD06903C /* format.c */,
@@ -203,6 +206,7 @@
 				2F06D05D7C69C68FF288C69D /* compat.c in Sources */,
 				F155B58DD59CBDBF5989EBCD /* compat_str.c in Sources */,
 				D1E3070CCBA4C37E05A3C54C /* dct64.c in Sources */,
+				0B2923227C4BC41432127162 /* dither.c in Sources */,
 				21B328E68EDB3758906E2726 /* equalizer.c in Sources */,
 				6C03B21AB052578CF279905A /* feature.c in Sources */,
 				2CE230149E04D10653CB7E54 /* format.c in Sources */,

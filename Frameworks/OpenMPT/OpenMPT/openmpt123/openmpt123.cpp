@@ -343,6 +343,9 @@ public:
 	void write( const std::vector<std::int16_t*> buffers, std::size_t frames ) override {
 		impl->write( buffers, frames );
 	}
+	bool pause() override {
+		return impl->pause();
+	}
 	bool unpause() override {
 		return impl->unpause();
 	}

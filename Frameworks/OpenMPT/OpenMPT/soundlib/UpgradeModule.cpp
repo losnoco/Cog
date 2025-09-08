@@ -605,6 +605,7 @@ void CSoundFile::UpgradeModule()
 			{ kITCarryAfterNoteOff,           MPT_V("1.32.00.40") },
 			{ kITNoteCutWithPorta,            MPT_V("1.32.01.02") },
 			{ kITVolColNoSlidePropagation,    MPT_V("1.32.02.03") },
+			{ kITStoppedFilterEnvAtStart,     MPT_V("1.32.03.04") },
 		};
 
 		for(const auto &b : behaviours)

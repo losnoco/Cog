@@ -41,25 +41,48 @@
 #define MPT_WIN_8        MPT_WIN_MAKE_VERSION(0x06, 0x02, 0x00, 0x00)
 #define MPT_WIN_81       MPT_WIN_MAKE_VERSION(0x06, 0x03, 0x00, 0x00)
 
-#define MPT_WIN_10_PRE   MPT_WIN_MAKE_VERSION(0x06, 0x04, 0x00, 0x00)
-#define MPT_WIN_10       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x00) // NTDDI_WIN10      1507
-#define MPT_WIN_10_1511  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x01) // NTDDI_WIN10_TH2  1511
-#define MPT_WIN_10_1607  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x02) // NTDDI_WIN10_RS1  1607
-#define MPT_WIN_10_1703  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x03) // NTDDI_WIN10_RS2  1703
-#define MPT_WIN_10_1709  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x04) // NTDDI_WIN10_RS3  1709
-#define MPT_WIN_10_1803  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x05) // NTDDI_WIN10_RS4  1803
-#define MPT_WIN_10_1809  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x06) // NTDDI_WIN10_RS5  1809
-#define MPT_WIN_10_1903  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x07) // NTDDI_WIN10_19H1 1903/19H1
-#define MPT_WIN_10_1909  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) // NTDDI_WIN10_VB   1909/19H2
-#define MPT_WIN_10_2004  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x09) // NTDDI_WIN10_MN   2004/20H1
-#define MPT_WIN_10_20H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0a) // NTDDI_WIN10_FE   20H2
-#define MPT_WIN_10_21H1  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0b) // NTDDI_WIN10_CO   21H1
-#define MPT_WIN_10_21H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) // NTDDI_WIN10_NI   21H2
-#define MPT_WIN_10_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0d) // NTDDI_WIN10_CU   22H2
+// Now, this is some very elaborate serious clusterfuck with basically no documentation.
 
-#define MPT_WIN_11       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0e) // NTDDI_WIN11_ZN   21H2
-#define MPT_WIN_11_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0f) // NTDDI_WIN11_GA   22H2
-#define MPT_WIN_11_23H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) // NTDDI_WIN11_GE   23H2
+// https://blog.yuo.be/2025/02/12/what-do-all-the-recent-ntddi-version-values-mean/
+// https://learn.microsoft.com/en-gb/windows/win32/winprog/using-the-windows-headers#macros-for-conditional-declarations
+// https://en.wikipedia.org/wiki/Windows_10_version_history
+// https://en.wikipedia.org/wiki/Windows_11_version_history
+// https://www.windowslatest.com/2021/09/03/windows-11-build-22449-is-now-available-with-new-loading-animation/
+
+//      Release          NTDDI-version                                   NTDDI-constant  Release     Build.Sub  Codename      Semester     Semester Semester Marketing-Name    min-SDK-Version WDK_NTDDI_VERSION
+//                                                                                            .Version                                     Codename  Date
+
+#define MPT_WIN_10_PRE   MPT_WIN_MAKE_VERSION(0x06, 0x04, 0x00, 0x00) //                                                                                     Threshold            -            -
+#define MPT_WIN_10       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x00) // NTDDI_WIN10      Win10.1507 10240      Threshold                            1507    -                    10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1511  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x01) // NTDDI_WIN10_TH2  Win10.1511 10586      Threshold 2                          1511    November Update      10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1607  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x02) // NTDDI_WIN10_RS1  Win10.1607 14393      Redstone                             1607    Anniversary Update   10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1703  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x03) // NTDDI_WIN10_RS2  Win10.1703 15063      Redstone 2                           1703    Creators Update      10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1709  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x04) // NTDDI_WIN10_RS3  Win10.1709 16299      Redstone 3                           1709    Fall Creators Update 10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1803  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x05) // NTDDI_WIN10_RS4  Win10.1803 17134      Redstone 4                           1803    April 2018 Update    10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1809  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x06) // NTDDI_WIN10_RS5  Win10.1809 17763      Redstone 5                           1809    October 2018 Update  10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_1903  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x07) // NTDDI_WIN10_19H1 Win10.1903 18362      Titanium R1                Titanium  19H1    May 2019 Update      10.0.19041.0 NTDDI_WIN10_VB
+//      MPT_WIN_10_1909  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x07) //                  Win10.1909 18363      Titanium R2                Vanadium  19H2    November 2019 Update 10.0.19041.0 NTDDI_WIN10_VB
+#define MPT_WIN_10_2004  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) // NTDDI_WIN10_VB   Win10.2004 19041      Vibranium R1               Vibranium 20H1    May 2020 Update      10.0.19041.0 NTDDI_WIN10_VB
+//      MPT_WIN_10_20H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) //                  Win10.20H2 19042      Vibranium R2               Manganese 20H2    October 2020 Update  10.0.19041.0 NTDDI_WIN10_VB
+//      MPT_WIN_10_21H1  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) //                  Win10.21H1 19043      Vibranium R3               Iron      21H1    May 2021 Update      10.0.19041.0 NTDDI_WIN10_VB
+//      MPT_WIN_10_21H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) //                  Win10.21H2 19044      Vibranium R4               Cobalt    21H2    November 2021 Update 10.0.19041.0 NTDDI_WIN10_VB
+//      MPT_WIN_10_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x08) //                  Win10.22H2 19045      Vibranium R5               Nickel    22H2    2022 Update          10.0.19041.0 NTDDI_WIN10_VB
+
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x09) // NTDDI_WIN10_MN         20H2                                       Manganese 20H2                         10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0a) // NTDDI_WIN10_FE         21H1                                       Iron      21H1                         10.0.22621.? NTDDI_WIN10_NI
+#define MPT_WIN_11       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0b) // NTDDI_WIN10_CO   Win11.21H2 22000      Sun Valley    Cobalt       Cobalt    21H2    -                    10.0.22621.? NTDDI_WIN10_NI
+#define MPT_WIN_11_22H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) // NTDDI_WIN10_NI   Win11.22H2 22621      Sun Valley 2  Nickel R1    Nickel    22H2    2022 Update          10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.22H2 22621.675  Sun Valley 2  Nickel R1    Nickel    22H2    2022 Update Moment 1 10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.22H2 22621.1344 Sun Valley 2  Nickel R1    Nickel    22H2    2022 Update Moment 2 10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.22H2 22621.1778 Sun Valley 2  Nickel R1    Nickel    22H2    2022 Update Moment 3 10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.22H2 22621.2361 Sun Valley 2  Nickel R1    Nickel    22H2    2022 Update Moment 4 10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.22H2 22621.3235 Sun Valley 2  Nickel R1    Nickel    22H2    2022 Update Moment 5 10.0.22621.? NTDDI_WIN10_NI
+//      MPT_WIN_11_23H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.23H2 22631      Sun Valley 3  Nickel R2    Zinc      23H2    2023 Update          10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0c) //                  Win11.23H2 22631.3235 Sun Valley 3  Nickel R2    Zinc      23H2    2023 Update Moment 5 10.0.22621.? NTDDI_WIN10_NI
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0d) // NTDDI_WIN10_CU         23H1                                       Copper    23H1                         10.0.26100.? NTDDI_WIN11_GE
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0e) // NTDDI_WIN11_ZN         23H2                                       Zinc      23H2                         10.0.26100.? NTDDI_WIN11_GE
+//                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0f) // NTDDI_WIN11_GA         24H1                                       Gallium   24H1                         10.0.26100.? NTDDI_WIN11_GE
+#define MPT_WIN_11_24H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) // NTDDI_WIN11_GE   Win11.24H2 26100      Hudson Valley Germanium R1 Germanium 24H2    2024 Update          10.0.26100.? NTDDI_WIN11_GE
 
 // MPT_WIN_API_DESKTOP     : Windows 8/10 Desktop Application (Win32)
 // MPT_WIN_API_UNIVERSAL   : Windows 10 Store App / Universal App
@@ -225,32 +248,50 @@ static_assert(NTDDI_WIN10_RS5 == MPT_WIN_10_1809);
 #ifdef NTDDI_WIN10_19H1
 static_assert(NTDDI_WIN10_19H1 == MPT_WIN_10_1903);
 #endif
+//#ifdef NTDDI_WIN10_19H1
+//static_assert(NTDDI_WIN10_19H1 == MPT_WIN_10_1909);
+//#endif
 #ifdef NTDDI_WIN10_VB
-static_assert(NTDDI_WIN10_VB == MPT_WIN_10_1909);
+static_assert(NTDDI_WIN10_VB == MPT_WIN_10_2004);
 #endif
-#ifdef NTDDI_WIN10_MN
-static_assert(NTDDI_WIN10_MN == MPT_WIN_10_2004);
-#endif
-#ifdef NTDDI_WIN10_FE
-static_assert(NTDDI_WIN10_FE == MPT_WIN_10_20H2);
-#endif
+//#ifdef NTDDI_WIN10_VB
+//static_assert(NTDDI_WIN10_VB == MPT_WIN_10_20H2);
+//#endif
+//#ifdef NTDDI_WIN10_VB
+//static_assert(NTDDI_WIN10_VB == MPT_WIN_10_21H1);
+//#endif
+//#ifdef NTDDI_WIN10_VB
+//static_assert(NTDDI_WIN10_VB == MPT_WIN_10_21H2);
+//#endif
+//#ifdef NTDDI_WIN10_VB
+//static_assert(NTDDI_WIN10_VB == MPT_WIN_10_22H2);
+//#endif
+//#ifdef NTDDI_WIN10_MN
+//static_assert(NTDDI_WIN10_MN == ???);
+//#endif
+//#ifdef NTDDI_WIN10_FE
+//static_assert(NTDDI_WIN10_FE == ???);
+//#endif
 #ifdef NTDDI_WIN10_CO
-static_assert(NTDDI_WIN10_CO == MPT_WIN_10_21H1);
+static_assert(NTDDI_WIN10_CO == MPT_WIN_11);
 #endif
 #ifdef NTDDI_WIN10_NI
-static_assert(NTDDI_WIN10_NI == MPT_WIN_10_21H2);
+static_assert(NTDDI_WIN10_NI == MPT_WIN_11_22H2);
 #endif
-#ifdef NTDDI_WIN10_CU
-static_assert(NTDDI_WIN10_CU == MPT_WIN_10_22H2);
-#endif
-#ifdef NTDDI_WIN11_ZN
-static_assert(NTDDI_WIN11_ZN == MPT_WIN_11);
-#endif
-#ifdef NTDDI_WIN11_GA
-static_assert(NTDDI_WIN11_GA == MPT_WIN_11_22H2);
-#endif
+//#ifdef NTDDI_WIN10_NI
+//static_assert(NTDDI_WIN10_NI == MPT_WIN_11_23H2);
+//#endif
+//#ifdef NTDDI_WIN10_CU
+//static_assert(NTDDI_WIN10_CU == ???);
+//#endif
+//#ifdef NTDDI_WIN10_ZN
+//static_assert(NTDDI_WIN10_ZN == ???);
+//#endif
+//#ifdef NTDDI_WIN11_GA
+//static_assert(NTDDI_WIN11_GA == ???);
+//#endif
 #ifdef NTDDI_WIN11_GE
-static_assert(NTDDI_WIN11_GE == MPT_WIN_11_23H2);
+static_assert(NTDDI_WIN11_GE == MPT_WIN_11_24H2);
 #endif
 #endif
 #if defined(WINAPI_FAMILY)
@@ -320,6 +361,9 @@ static_assert(NTDDI_WIN11_GE == MPT_WIN_11_23H2);
 #else
 #define MPT_WIN_AT_LEAST(v) 0
 #define MPT_WIN_BEFORE(v)   1
+#endif
+#if (MPT_OS_WINDOWS_WINNT || MPT_OS_WINDOWS_WINRT) && defined(WDK_NTDDI_VERSION)
+static_assert(WDK_NTDDI_VERSION >= MPT_WIN_VERSION);
 #endif
 
 

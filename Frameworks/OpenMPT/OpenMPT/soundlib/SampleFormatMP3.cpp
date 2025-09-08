@@ -388,7 +388,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				return false;
 			}
-			if((channels != 1 && channels != 2) || (encoding & (MPG123_ENC_16 | MPG123_ENC_SIGNED)) != (MPG123_ENC_16 | MPG123_ENC_SIGNED))
+			if((channels != 1) && (channels != 2))
 			{
 				return false;
 			}
@@ -485,7 +485,7 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 			{
 				return false;
 			}
-			if((channels != 1 && channels != 2) || (encoding & (MPG123_ENC_16 | MPG123_ENC_SIGNED)) != (MPG123_ENC_16 | MPG123_ENC_SIGNED))
+			if((channels != 1) && (channels != 2))
 			{
 				return false;
 			}
@@ -553,6 +553,88 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	{
 		return false;
 	}
+#if (MPG123_API_VERSION >= 45)
+	if(mpg123_param(mh, MPG123_REMOVE_FLAGS, MPG123_FLOAT_FALLBACK, 0.0)) // allow float
+	{
+		return false;
+	}
+#endif
+#if (MPG123_API_VERSION >= 45)
+	if(mpg123_format_none(mh))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_UNSIGNED_8))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_8))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_16))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_24))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_32))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_32))
+	{
+		return false;
+	}
+	if(mpg123_format2(mh, 0, MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_64))
+	{
+		return false;
+	}
+#else
+	const long *rates = nullptr;
+	size_t num_rates = 0;
+	mpg123_rates(&rates, &num_rates);
+	if(rates && (num_rates > 0))
+	{
+		if(mpg123_format_none(mh))
+		{
+			return false;
+		}
+		for(std::size_t i = 0; i < num_rates; ++i)
+		{
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_UNSIGNED_8))
+			{
+				return false;
+			}
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_8))
+			{
+				return false;
+			}
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_16))
+			{
+				return false;
+			}
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_24))
+			{
+				return false;
+			}
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_SIGNED_32))
+			{
+				return false;
+			}
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_32))
+			{
+				return false;
+			}
+			if(mpg123_format(mh, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_64))
+			{
+				return false;
+			}
+		}
+	}
+#endif
 #if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
 	if(mpg123_reader64(mh, ComponentMPG123::FileReaderRead, ComponentMPG123::FileReaderSeek, 0))
 	{
@@ -586,8 +668,39 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	{
 		return false;
 	}
-	if((channels != 1 && channels != 2) || (encoding & (MPG123_ENC_16 | MPG123_ENC_SIGNED)) != (MPG123_ENC_16 | MPG123_ENC_SIGNED))
+	int samplesize = mpg123_encsize(encoding);
+	if((channels != 1) && (channels != 2))
 	{
+		return false;
+	}
+	if(encoding == 0)
+	{
+		MPT_ASSERT(false);
+		return false;
+	} else if(encoding == MPG123_ENC_UNSIGNED_8)
+	{
+		MPT_ASSERT(samplesize == sizeof(uint8));
+	} else if(encoding == MPG123_ENC_SIGNED_8)
+	{
+		MPT_ASSERT(samplesize == sizeof(int8));
+	} else if(encoding == MPG123_ENC_SIGNED_16)
+	{
+		MPT_ASSERT(samplesize == sizeof(int16));
+	} else if(encoding == MPG123_ENC_SIGNED_24)
+	{
+		MPT_ASSERT(samplesize == sizeof(int24));
+	} else if(encoding == MPG123_ENC_SIGNED_32)
+	{
+		MPT_ASSERT(samplesize == sizeof(int32));
+	} else if(encoding == MPG123_ENC_FLOAT_32)
+	{
+		MPT_ASSERT(samplesize == sizeof(somefloat32));
+	} else if(encoding == MPG123_ENC_FLOAT_64)
+	{
+		MPT_ASSERT(samplesize == sizeof(somefloat64));
+	} else
+	{
+		MPT_ASSERT(false);
 		return false;
 	}
 	mpg123_frameinfo frameinfo;
@@ -635,30 +748,69 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 	}
 
 	std::vector<std::byte> buf_bytes;
+	std::vector<uint8> buf_samples_u8;
+	std::vector<int8> buf_samples_s8;
+	std::vector<int16> buf_samples_s16;
+	std::vector<int24> buf_samples_s24;
+	std::vector<int32> buf_samples_s32;
+	std::vector<somefloat32> buf_samples_f32;
+	std::vector<somefloat64> buf_samples_f64;
 	std::vector<int16> buf_samples;
 	bool decode_error = false;
 	bool decode_done = false;
 	while(!decode_error && !decode_done)
 	{
 		buf_bytes.resize(mpg123_outblock(mh));
-		buf_samples.resize(buf_bytes.size() / sizeof(int16));
 #if (MPG123_API_VERSION >= 48) && MPT_USE_MPG123_PORTABLE_API
 		size_t buf_bytes_decoded = 0;
 #else
 		mpg123_size_t buf_bytes_decoded = 0;
 #endif
 		int mpg123_read_result = mpg123_read(mh, mpt::byte_cast<unsigned char*>(buf_bytes.data()), buf_bytes.size(), &buf_bytes_decoded);
-		std::memcpy(buf_samples.data(), buf_bytes.data(), buf_bytes_decoded);
-		mpt::append(data, buf_samples.data(), buf_samples.data() + buf_bytes_decoded / sizeof(int16));
-		if((data.size() / channels) > MAX_SAMPLE_LENGTH)
-		{
-			break;
-		}
 		if(mpg123_read_result == MPG123_OK)
 		{
 			// continue
 		} else if(mpg123_read_result == MPG123_NEW_FORMAT)
 		{
+			if(mpg123_getformat(mh, &rate, &channels, &encoding))
+			{
+				decode_error = true;
+			}
+			samplesize = mpg123_encsize(encoding);
+			if((channels != 1) && (channels != 2))
+			{
+				decode_error = true;
+			}
+			if(encoding == 0)
+			{
+				MPT_ASSERT(false);
+				decode_error = true;
+			} else if(encoding == MPG123_ENC_UNSIGNED_8)
+			{
+				MPT_ASSERT(samplesize == sizeof(uint8));
+			} else if(encoding == MPG123_ENC_SIGNED_8)
+			{
+				MPT_ASSERT(samplesize == sizeof(int8));
+			} else if(encoding == MPG123_ENC_SIGNED_16)
+			{
+				MPT_ASSERT(samplesize == sizeof(int16));
+			} else if(encoding == MPG123_ENC_SIGNED_24)
+			{
+				MPT_ASSERT(samplesize == sizeof(int24));
+			} else if(encoding == MPG123_ENC_SIGNED_32)
+			{
+				MPT_ASSERT(samplesize == sizeof(int32));
+			} else if(encoding == MPG123_ENC_FLOAT_32)
+			{
+				MPT_ASSERT(samplesize == sizeof(somefloat32));
+			} else if(encoding == MPG123_ENC_FLOAT_64)
+			{
+				MPT_ASSERT(samplesize == sizeof(somefloat64));
+			} else
+			{
+				MPT_ASSERT(false);
+				decode_error = true;
+			}
 			// continue
 		} else if(mpg123_read_result == MPG123_DONE)
 		{
@@ -666,6 +818,66 @@ bool CSoundFile::ReadMP3Sample(SAMPLEINDEX sample, FileReader &file, bool raw, b
 		} else
 		{
 			decode_error = true;
+		}
+		if(decode_error)
+		{
+			break;
+		}
+		const std::size_t num_frames = buf_bytes_decoded / (samplesize * channels);
+		buf_samples.resize(num_frames * channels);
+		if(encoding == 0)
+		{
+			MPT_ASSERT(false);
+		} else if(encoding == MPG123_ENC_UNSIGNED_8)
+		{
+			MPT_ASSERT(samplesize == sizeof(uint8));
+			buf_samples_u8.resize(num_frames * channels);
+			std::memcpy(buf_samples_u8.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<uint8>(buf_samples_u8.data(), channels, num_frames));
+		} else if(encoding == MPG123_ENC_SIGNED_8)
+		{
+			MPT_ASSERT(samplesize == sizeof(int8));
+			buf_samples_s8.resize(num_frames * channels);
+			std::memcpy(buf_samples_s8.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<int8>(buf_samples_s8.data(), channels, num_frames));
+		} else if(encoding == MPG123_ENC_SIGNED_16)
+		{
+			MPT_ASSERT(samplesize == sizeof(int16));
+			buf_samples_s16.resize(num_frames * channels);
+			std::memcpy(buf_samples_s16.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<int16>(buf_samples_s16.data(), channels, num_frames));
+		} else if(encoding == MPG123_ENC_SIGNED_24)
+		{
+			MPT_ASSERT(samplesize == sizeof(int24));
+			buf_samples_s24.resize(num_frames * channels);
+			std::memcpy(buf_samples_s24.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<int24>(buf_samples_s24.data(), channels, num_frames));
+		} else if(encoding == MPG123_ENC_SIGNED_32)
+		{
+			MPT_ASSERT(samplesize == sizeof(int32));
+			buf_samples_s32.resize(num_frames * channels);
+			std::memcpy(buf_samples_s32.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<int32>(buf_samples_s32.data(), channels, num_frames));
+		} else if(encoding == MPG123_ENC_FLOAT_32)
+		{
+			MPT_ASSERT(samplesize == sizeof(somefloat32));
+			buf_samples_f32.resize(num_frames * channels);
+			std::memcpy(buf_samples_f32.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<somefloat32>(buf_samples_f32.data(), channels, num_frames));
+		} else if(encoding == MPG123_ENC_FLOAT_64)
+		{
+			MPT_ASSERT(samplesize == sizeof(somefloat64));
+			buf_samples_f64.resize(num_frames * channels);
+			std::memcpy(buf_samples_f64.data(), buf_bytes.data(), num_frames * channels * samplesize);
+			CopyAudio(mpt::audio_span_interleaved<int16>(buf_samples.data(), channels, num_frames), mpt::audio_span_interleaved<somefloat64>(buf_samples_f64.data(), channels, num_frames));
+		} else
+		{
+			MPT_ASSERT(false);
+		}
+		mpt::append(data, buf_samples.data(), buf_samples.data() + (num_frames * channels));
+		if((data.size() / channels) > MAX_SAMPLE_LENGTH)
+		{
+			break;
 		}
 	}
 
