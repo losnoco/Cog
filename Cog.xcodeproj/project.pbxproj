@@ -151,6 +151,7 @@
 		838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33802D06CF4100D0D770 /* SpectrumViewCG.m */; };
 		838A33842D06CF4100D0D770 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33822D06CF4100D0D770 /* SpectrumWindowController.m */; };
 		838A33872D06CFCA00D0D770 /* SpeedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33862D06CFCA00D0D770 /* SpeedButton.m */; };
+		838DAE282E71816F005A8E1A /* MaybeSecureValueDataTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 838DAE272E71816F005A8E1A /* MaybeSecureValueDataTransformer.m */; };
 		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
 		838F851F256B4E8B00C3E614 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
@@ -978,6 +979,8 @@
 		838A33822D06CF4100D0D770 /* SpectrumWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumWindowController.m; path = Visualization/SpectrumWindowController.m; sourceTree = "<group>"; };
 		838A33852D06CFCA00D0D770 /* SpeedButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpeedButton.h; path = Window/SpeedButton.h; sourceTree = "<group>"; };
 		838A33862D06CFCA00D0D770 /* SpeedButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpeedButton.m; path = Window/SpeedButton.m; sourceTree = "<group>"; };
+		838DAE262E71816F005A8E1A /* MaybeSecureValueDataTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MaybeSecureValueDataTransformer.h; path = Transformers/MaybeSecureValueDataTransformer.h; sourceTree = "<group>"; };
+		838DAE272E71816F005A8E1A /* MaybeSecureValueDataTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MaybeSecureValueDataTransformer.m; path = Transformers/MaybeSecureValueDataTransformer.m; sourceTree = "<group>"; };
 		838EE79E29A8556000CD0580 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
 		838EE7A029A8556500CD0580 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LyricsWindow.strings; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -1416,6 +1419,8 @@
 		17E0D5F60F520F42005B6FED /* Transformers */ = {
 			isa = PBXGroup;
 			children = (
+				838DAE262E71816F005A8E1A /* MaybeSecureValueDataTransformer.h */,
+				838DAE272E71816F005A8E1A /* MaybeSecureValueDataTransformer.m */,
 				839E876C2D5DA0AC00A13526 /* RubberbandEngineTransformer.h */,
 				839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */,
 				83A3B733283AE6AA00CC6593 /* ColorToValueTransformer.h */,
@@ -2571,6 +2576,7 @@
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
 				0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */,
+				838DAE282E71816F005A8E1A /* MaybeSecureValueDataTransformer.m in Sources */,
 				83988F0E27BE0A5900A0E89A /* RedundantPlaylistDataStore.m in Sources */,
 				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,
 				179D03240E0CB2500064A77A /* FileTreeController.m in Sources */,

@@ -34,7 +34,7 @@
         <attribute name="errorMessage" optional="YES" attributeType="String"/>
         <attribute name="floatingPoint" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="index" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="metadataBlob" optional="YES" attributeType="Transformable"/>
+        <attribute name="metadataBlob" optional="YES" attributeType="Transformable" valueTransformerName="MaybeSecureValueDataTransformer"/>
         <attribute name="metadataLoaded" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="queued" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="queuePosition" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
