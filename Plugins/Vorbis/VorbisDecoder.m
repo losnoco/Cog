@@ -20,33 +20,14 @@
 
 @implementation VorbisDecoder
 
-static const int MAXCHANNELS = 8;
+//static const int MAXCHANNELS = 8;
+enum { MAXCHANNELS = 8 };
 static const int chmap[MAXCHANNELS][MAXCHANNELS] = {
-	{
-	0,
-	}, // mono
-	{
-	0,
-	1,
-	}, // l, r
-	{
-	0,
-	2,
-	1,
-	}, // l, c, r -> l, r, c
-	{
-	0,
-	1,
-	2,
-	3,
-	}, // l, r, bl, br
-	{
-	0,
-	2,
-	1,
-	3,
-	4,
-	}, // l, c, r, bl, br -> l, r, c, bl, br
+	{ 0, }, // mono
+	{ 0, 1, }, // l, r
+	{ 0, 2, 1, }, // l, c, r -> l, r, c
+	{ 0, 1, 2, 3, }, // l, r, bl, br
+	{ 0, 2, 1, 3, 4, }, // l, c, r, bl, br -> l, r, c, bl, br
 	{ 0, 2, 1, 5, 3, 4 }, // l, c, r, bl, br, lfe -> l, r, c, lfe, bl, br
 	{ 0, 2, 1, 6, 5, 3, 4 }, // l, c, r, sl, sr, bc, lfe -> l, r, c, lfe, bc, sl, sr
 	{ 0, 2, 1, 7, 5, 6, 3, 4 } // l, c, r, sl, sr, bl, br, lfe -> l, r, c, lfe, bl, br, sl, sr
