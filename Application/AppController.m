@@ -23,7 +23,7 @@
 #import "MiniModeMenuTitleTransformer.h"
 
 #import "ColorToValueTransformer.h"
-
+#import "MaybeSecureValueDataTransformer.h"
 #import "TotalTimeTransformer.h"
 
 #import "Shortcuts.h"
@@ -83,6 +83,10 @@ static AppController *kAppController = nil;
 	NSValueTransformer *rubberbandEngineHiddenTransformer = [[RubberbandEngineHiddenTransformer alloc] init];
 	[NSValueTransformer setValueTransformer:rubberbandEngineHiddenTransformer
 									forName:@"RubberbandEngineHiddenTransformer"];
+
+	NSValueTransformer *maybeSecureValueDataTransformer = [[MaybeSecureValueDataTransformer alloc] init];
+	[NSValueTransformer setValueTransformer:maybeSecureValueDataTransformer
+									forName:@"MaybeSecureValueDataTransformer"];
 }
 - (id)init {
 	self = [super init];
