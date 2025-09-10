@@ -24,7 +24,7 @@ struct Cached_Metadata {
 	}
 };
 
-static std::mutex Cache_Lock;
+static std::mutex *Cache_Lock = NULL;
 
 static std::map<std::string, Cached_Metadata> Cache_List;
 
@@ -39,6 +39,7 @@ static void cache_run();
 
 static void cache_init() {
 	Cache_Data_Store = [[RedundantPlaylistDataStore alloc] init];
+	Cache_Lock = new std::mutex;
 	Cache_Thread = new std::thread(cache_run);
 }
 
@@ -48,13 +49,16 @@ static void cache_deinit() {
 	while(!Cache_Stopped)
 		usleep(500);
 	delete Cache_Thread;
+	Cache_Thread = NULL;
+	delete Cache_Lock;
+	Cache_Lock = NULL;
 	Cache_Data_Store = nil;
 }
 
 static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
 	if(properties == nil) return;
 
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	std::string path = [[url absoluteString] UTF8String];
 	properties = [Cache_Data_Store coalesceEntryInfo:properties];
@@ -68,7 +72,7 @@ static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
 static void cache_insert_metadata(NSURL *url, NSDictionary *metadata) {
 	if(metadata == nil) return;
 
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	std::string path = [[url absoluteString] UTF8String];
 	metadata = [Cache_Data_Store coalesceEntryInfo:metadata];
@@ -80,7 +84,7 @@ static void cache_insert_metadata(NSURL *url, NSDictionary *metadata) {
 }
 
 static NSDictionary *cache_access_properties(NSURL *url) {
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	std::string path = [[url absoluteString] UTF8String];
 
@@ -95,7 +99,7 @@ static NSDictionary *cache_access_properties(NSURL *url) {
 }
 
 static NSDictionary *cache_access_metadata(NSURL *url) {
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	std::string path = [[url absoluteString] UTF8String];
 
@@ -118,7 +122,7 @@ static void cache_run() {
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 
 		@autoreleasepool {
-			std::lock_guard<std::mutex> lock(Cache_Lock);
+			std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 			size_t cacheListOriginalSize = Cache_List.size();
 
