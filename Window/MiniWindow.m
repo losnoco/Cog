@@ -28,8 +28,6 @@ extern void showSentryConsent(NSWindow *window);
 		[self setContentMaxSize:NSMakeSize(CGFLOAT_MAX, 1)];
 		[self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenAuxiliary];
 
-		hdcdLogo = [NSImage imageNamed:@"hdcdLogoTemplate"];
-
 		[self setFrameUsingName:@"Mini Window"];
 	}
 
@@ -38,8 +36,6 @@ extern void showSentryConsent(NSWindow *window);
 
 - (void)awakeFromNib {
 	[super awakeFromNib];
-
-	[self showHDCDLogo:NO];
 
 	[self registerForDraggedTypes:@[NSPasteboardTypeFileURL, iTunesDropType]];
 
@@ -93,17 +89,6 @@ extern void showSentryConsent(NSWindow *window);
 		default:
 			[super keyDown:event];
 			break;
-	}
-}
-
-- (void)showHDCDLogo:(BOOL)show {
-	for(NSToolbarItem *toolbarItem in [miniToolbar items]) {
-		if([[toolbarItem itemIdentifier] isEqualToString:@"hdcdMini"]) {
-			if(show)
-				[toolbarItem setImage:hdcdLogo];
-			else
-				[toolbarItem setImage:nil];
-		}
 	}
 }
 

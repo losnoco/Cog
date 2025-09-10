@@ -689,12 +689,6 @@
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "YwT-z9-2d2"; */
 "YwT-z9-2d2.title" = "Table View Cell";
 
-/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
-"ZH9-ZU-skw.label" = "HDCD Indicator";
-
-/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "ZH9-ZU-skw"; */
-"ZH9-ZU-skw.paletteLabel" = "HDCD Indicator";
-
 /* Class = "NSToolbarItem"; label = "Show Equalizer"; ObjectID = "ZOn-sB-FR3"; */
 "ZOn-sB-FR3.label" = "Show Equalizer";
 
@@ -745,12 +739,6 @@
 
 /* Class = "NSMenuItem"; title = "Show All Songs"; ObjectID = "pU1-ci-9uB"; */
 "pU1-ci-9uB.title" = "Show All Songs";
-
-/* Class = "NSToolbarItem"; label = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
-"qfu-F9-bOZ.label" = "HDCD Indicator";
-
-/* Class = "NSToolbarItem"; paletteLabel = "HDCD Indicator"; ObjectID = "qfu-F9-bOZ"; */
-"qfu-F9-bOZ.paletteLabel" = "HDCD Indicator";
 
 /* Class = "NSMenuItem"; title = "Move to Trash"; ObjectID = "qlT-UX-x72"; */
 "qlT-UX-x72.title" = "Move to Trash";

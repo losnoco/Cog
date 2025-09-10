@@ -256,8 +256,6 @@ static double reverseSpeedScale(double input, double min, double max) {
 	[audioPlayer stop];
 
 	[self sendMetaData];
-
-	[self removeHDCD:nil];
 }
 
 // called by double-clicking on table
@@ -858,8 +856,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		self->lastPosition = -10;
 
 		[self setPosition:0];
-
-		[self removeHDCD:nil];
 	});
 
 	if(pe) {
@@ -870,7 +866,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(NSNumber *)s userInfo:(id)userInfo {
 	int status = [s intValue];
 	if(status == CogStatusStopped || status == CogStatusPaused) {
-		[self removeHDCD:nil];
 		if(positionTimer) {
 			[positionTimer invalidate];
 			positionTimer = NULL;
@@ -930,13 +925,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
-- (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo {
-	MainWindow *mainWindow = (MainWindow *)appController.mainWindow;
-	[mainWindow showHDCDLogo:YES];
-	MiniWindow *miniWindow = (MiniWindow *)appController.miniWindow;
-	[miniWindow showHDCDLogo:YES];
-}
-
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo {
 	PlaylistEntry *pe = [playlistController currentEntry];
 	BOOL paused = playbackStatus == CogStatusPaused;
@@ -976,13 +964,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo {
 	PlaylistEntry *pe = (PlaylistEntry *)userInfo;
 	[pe setError:[status boolValue]];
-}
-
-- (void)removeHDCD:(id)sender {
-	MainWindow *mainWindow = (MainWindow *)appController.mainWindow;
-	[mainWindow showHDCDLogo:NO];
-	MiniWindow *miniWindow = (MiniWindow *)appController.miniWindow;
-	[miniWindow showHDCDLogo:NO];
 }
 
 - (void)playlistDidChange:(PlaylistController *)p {

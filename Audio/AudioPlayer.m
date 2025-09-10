@@ -639,7 +639,7 @@
 }
 
 - (void)sustainHDCD {
-	[self sendDelegateMethod:@selector(audioPlayer:sustainHDCD:) withObject:[bufferChain userInfo] waitUntilDone:NO];
+//	[self sendDelegateMethod:@selector(audioPlayer:sustainHDCD:) withObject:[bufferChain userInfo] waitUntilDone:NO];
 }
 
 - (void)setError:(BOOL)status {
