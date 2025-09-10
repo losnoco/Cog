@@ -44,32 +44,45 @@
 }
 
 - (MPRemoteCommandHandlerStatus)clickPlay {
-	[_appController clickPlay];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self->_appController clickPlay];
+	});
 	return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickPause {
-	[_appController clickPause];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self->_appController clickPause];
+	});
 	return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickStop {
-	[_appController clickStop];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self->_appController clickStop];
+	});
 	return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickNext {
-	[_appController clickNext];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self->_appController clickNext];
+	});
 	return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickPrev {
-	[_appController clickPrev];
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self->_appController clickPrev];
+	});
 	return MPRemoteCommandHandlerStatusSuccess;
 }
 
 - (MPRemoteCommandHandlerStatus)clickSeek:(MPChangePlaybackPositionCommandEvent *)event {
-	[_appController clickSeek:event.positionTime];
+	NSTimeInterval positionTime = event.positionTime;
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self->_appController clickSeek:positionTime];
+	});
 	return MPRemoteCommandHandlerStatusSuccess;
 }
 
