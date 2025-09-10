@@ -53,23 +53,8 @@ void showSentryConsent(NSWindow *window) {
 
 	[playlistView setNextResponder:self];
 
-	hdcdLogo = [NSImage imageNamed:@"hdcdLogoTemplate"];
-
-	[self showHDCDLogo:NO];
-	
 	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
 		showSentryConsent(self);
-	}
-}
-
-- (void)showHDCDLogo:(BOOL)show {
-	for(NSToolbarItem* toolbarItem in [mainToolbar items]) {
-		if([[toolbarItem itemIdentifier] isEqualToString:@"hdcdMain"]) {
-			if(show)
-				[toolbarItem setImage:hdcdLogo];
-			else
-				[toolbarItem setImage:nil];
-		}
 	}
 }
 

@@ -14,9 +14,6 @@
 	IBOutlet PlaybackController *playbackController;
 	IBOutlet PlaylistController *playlistController;
 	IBOutlet NSToolbar *miniToolbar;
-	NSImage *hdcdLogo;
 }
-
-- (void)showHDCDLogo:(BOOL)show;
 
 @end
