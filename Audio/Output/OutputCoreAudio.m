@@ -122,10 +122,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	stopped = YES;
 	BOOL ret = [outputController selectNextBuffer];
 	stopped = ret;
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(NSEC_PER_SEC * latency)), dispatch_get_main_queue(), ^{
-		[self->outputController endOfInputPlayed];
-		[self->outputController resetAmountPlayed];
-	});
+	if(!stopping) {
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(NSEC_PER_SEC * latency)), dispatch_get_main_queue(), ^{
+			if(!self->stopping) {
+				[self->outputController endOfInputPlayed];
+				[self->outputController resetAmountPlayed];
+			}
+		});
+	}
 	return ret;
 }
 
