@@ -868,13 +868,22 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				} while(!commandStop && compareVal > 0 && compareMax-- > 0);
 			} else {
 				[self fadeOut];
-				while(!faded && [faderNode fading]) {
-					usleep(10000);
+				BOOL faderNodeFading = [faderNode fading];
+				if(faderNodeFading) {
+					while(!faded && [faderNode fading]) {
+						usleep(10000);
+					}
+				} else {
+					while(!faded) {
+						usleep(10000);
+					}
 				}
-				[faderNode setEndOfStream:YES];
-				[faderNode setShouldContinue:NO];
-				while(!faded && ![bufferNode endOfStream]) {
-					usleep(10000);
+				if(faderNodeFading) {
+					[faderNode setEndOfStream:YES];
+					[faderNode setShouldContinue:NO];
+					while(!faded && ![bufferNode endOfStream]) {
+						usleep(10000);
+					}
 				}
 			}
 			[_au stopHardware];
