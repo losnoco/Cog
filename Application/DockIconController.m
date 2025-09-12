@@ -129,6 +129,8 @@ static NSString *getCustomIconName(NSString *baseName) {
 		lastProgressStatus = @(progressStatus);
 	}
 
+	BOOL errorStatus = [playbackController isError];
+
 	BOOL displayProgress = (progressStatus >= 0.0);
 
 	NSImage *badgeImage = nil;
@@ -149,17 +151,21 @@ static NSString *getCustomIconName(NSString *baseName) {
 	NSDockTile *dockTile = [NSApp dockTile];
 
 	if(drawIcon) {
-		switch(playbackStatus) {
-			case CogStatusPlaying:
-				badgeImage = useCustomDockIcons ? dockCustomPlay : [NSImage imageNamed:getBadgeName(@"Play", colorfulIcons)];
-				break;
-			case CogStatusPaused:
-				badgeImage = useCustomDockIcons ? dockCustomPause : [NSImage imageNamed:getBadgeName(@"Pause", colorfulIcons)];
-				break;
+		if(glassIcons && errorStatus) {
+			badgeImage = [NSImage imageNamed:@"Huh"];
+		} else {
+			switch(playbackStatus) {
+				case CogStatusPlaying:
+					badgeImage = useCustomDockIcons ? dockCustomPlay : [NSImage imageNamed:getBadgeName(@"Play", colorfulIcons)];
+					break;
+				case CogStatusPaused:
+					badgeImage = useCustomDockIcons ? dockCustomPause : [NSImage imageNamed:getBadgeName(@"Pause", colorfulIcons)];
+					break;
 
-			default:
-				badgeImage = useCustomDockIcons ? dockCustomStop : [NSImage imageNamed:getBadgeName(@"Stop", colorfulIcons)];
-				break;
+				default:
+					badgeImage = useCustomDockIcons ? dockCustomStop : [NSImage imageNamed:getBadgeName(@"Stop", colorfulIcons)];
+					break;
+			}
 		}
 
 		NSSize badgeSize = [badgeImage size];

@@ -1058,4 +1058,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[defaultCenter setNowPlayingInfo:songInfo];
 }
 
+- (BOOL)isError {
+	if(playlistController) {
+		PlaylistEntry *pe = [playlistController currentEntry];
+		if(pe && [pe error])
+			return YES;
+	}
+	return NO;
+}
+
 @end

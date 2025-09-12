@@ -132,4 +132,6 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (void)setSeekable:(BOOL)s;
 - (BOOL)seekable;
 
+- (BOOL)isError;
+
 @end
