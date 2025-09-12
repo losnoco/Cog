@@ -182,6 +182,10 @@
 		83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 178456C00F6320B5007E8021 /* SpotlightPanel.xib */; };
 		83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B1DA0F6330D400694C57 /* Feedback.xib */; };
 		83BCB8DE17FC971300760340 /* FFMPEG.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = B09E94350D747F7B0064F138 /* FFMPEG.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83CB1F5B2E74D83D001D6294 /* Stop.icon in Resources */ = {isa = PBXBuildFile; fileRef = 83CB1F5A2E74D83D001D6294 /* Stop.icon */; };
+		83CB1F5C2E74D83D001D6294 /* Pause.icon in Resources */ = {isa = PBXBuildFile; fileRef = 83CB1F582E74D83D001D6294 /* Pause.icon */; };
+		83CB1F5D2E74D83D001D6294 /* Huh.icon in Resources */ = {isa = PBXBuildFile; fileRef = 83CB1F572E74D83D001D6294 /* Huh.icon */; };
+		83CB1F5E2E74D83D001D6294 /* Play.icon in Resources */ = {isa = PBXBuildFile; fileRef = 83CB1F592E74D83D001D6294 /* Play.icon */; };
 		83CB565E2E064607003DD379 /* NSDictionary+Optional.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CB565D2E064607003DD379 /* NSDictionary+Optional.m */; };
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1037,6 +1041,10 @@
 		83BC5AD820E4D0D900631CD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SpotlightPanel.strings; sourceTree = "<group>"; };
 		83BC5ADA20E4D0E900631CD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Feedback.strings; sourceTree = "<group>"; };
 		83BC5ADC20E4D0EC00631CD4 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Feedback.strings; sourceTree = "<group>"; };
+		83CB1F572E74D83D001D6294 /* Huh.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Huh.icon; sourceTree = "<group>"; };
+		83CB1F582E74D83D001D6294 /* Pause.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Pause.icon; sourceTree = "<group>"; };
+		83CB1F592E74D83D001D6294 /* Play.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Play.icon; sourceTree = "<group>"; };
+		83CB1F5A2E74D83D001D6294 /* Stop.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Stop.icon; sourceTree = "<group>"; };
 		83CB565C2E064607003DD379 /* NSDictionary+Optional.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Optional.h"; sourceTree = "<group>"; };
 		83CB565D2E064607003DD379 /* NSDictionary+Optional.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Optional.m"; sourceTree = "<group>"; };
 		83D0380E24A40DF2004CF90F /* CogAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CogAssets.xcassets; sourceTree = "<group>"; };
@@ -1472,6 +1480,10 @@
 		29B97314FDCFA39411CA2CEA /* Cog */ = {
 			isa = PBXGroup;
 			children = (
+				83CB1F572E74D83D001D6294 /* Huh.icon */,
+				83CB1F582E74D83D001D6294 /* Pause.icon */,
+				83CB1F592E74D83D001D6294 /* Play.icon */,
+				83CB1F5A2E74D83D001D6294 /* Stop.icon */,
 				0A1B412E286F6301008A6A44 /* Localizable.stringsdict */,
 				83D0380E24A40DF2004CF90F /* CogAssets.xcassets */,
 				83859520234FEB35004E9946 /* Cog.entitlements */,
@@ -2448,6 +2460,10 @@
 				839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */,
 				171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */,
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
+				83CB1F5B2E74D83D001D6294 /* Stop.icon in Resources */,
+				83CB1F5C2E74D83D001D6294 /* Pause.icon in Resources */,
+				83CB1F5D2E74D83D001D6294 /* Huh.icon in Resources */,
+				83CB1F5E2E74D83D001D6294 /* Play.icon in Resources */,
 				839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */,
 				830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,
@@ -2924,8 +2940,9 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -2992,8 +3009,9 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
