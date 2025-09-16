@@ -1,0 +1,397 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8333B6751DCC49FF004C140D /* Syntrax_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EEAB171C96537A002761C5 /* Syntrax_c.framework */; };
+		8389FCC62E76DBB8004FAB82 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8389FCC52E76DBB8004FAB82 /* CogAudio.framework */; };
+		83EEAB0F1C965324002761C5 /* jxsDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB0E1C965324002761C5 /* jxsDecoder.m */; };
+		83EEAB1E1C965835002761C5 /* jxsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB1D1C965835002761C5 /* jxsContainer.m */; };
+		83EEAB211C965A4F002761C5 /* jxsMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB201C965A4F002761C5 /* jxsMetadataReader.m */; };
+		83EEAB231C965C32002761C5 /* Syntrax_c.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EEAB171C96537A002761C5 /* Syntrax_c.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		83EEAB161C96537A002761C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 832FF31B1C96511E0076D662;
+			remoteInfo = Syntrax_c;
+		};
+		83EEAB181C965384002761C5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 832FF31A1C96511E0076D662;
+			remoteInfo = Syntrax_c;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		83EEAB221C965C27002761C5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				83EEAB231C965C32002761C5 /* Syntrax_c.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		832FF2F81C96508E0076D662 /* Syntrax.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Syntrax.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		832FF2FB1C96508E0076D662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8389FCC52E76DBB8004FAB82 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83EEAB0D1C965324002761C5 /* jxsDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsDecoder.h; sourceTree = "<group>"; };
+		83EEAB0E1C965324002761C5 /* jxsDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsDecoder.m; sourceTree = "<group>"; };
+		83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax_c.xcodeproj; path = "../../Frameworks/Syntrax-c/Syntrax_c.xcodeproj"; sourceTree = "<group>"; };
+		83EEAB1A1C9653AA002761C5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
+		83EEAB1B1C9653C3002761C5 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83EEAB1C1C965835002761C5 /* jxsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsContainer.h; sourceTree = "<group>"; };
+		83EEAB1D1C965835002761C5 /* jxsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsContainer.m; sourceTree = "<group>"; };
+		83EEAB1F1C965A4F002761C5 /* jxsMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsMetadataReader.h; sourceTree = "<group>"; };
+		83EEAB201C965A4F002761C5 /* jxsMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsMetadataReader.m; sourceTree = "<group>"; };
+		83EEAB271C965D2E002761C5 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		832FF2F51C96508E0076D662 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8389FCC62E76DBB8004FAB82 /* CogAudio.framework in Frameworks */,
+				8333B6751DCC49FF004C140D /* Syntrax_c.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		832FF2EF1C96508E0076D662 = {
+			isa = PBXGroup;
+			children = (
+				832FF2FA1C96508E0076D662 /* Syntrax */,
+				832FF3101C9650E50076D662 /* Frameworks */,
+				832FF2F91C96508E0076D662 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		832FF2F91C96508E0076D662 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				832FF2F81C96508E0076D662 /* Syntrax.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		832FF2FA1C96508E0076D662 /* Syntrax */ = {
+			isa = PBXGroup;
+			children = (
+				83EEAB271C965D2E002761C5 /* Logging.h */,
+				83EEAB1B1C9653C3002761C5 /* PlaylistController.h */,
+				83EEAB1A1C9653AA002761C5 /* Plugin.h */,
+				83EEAB1C1C965835002761C5 /* jxsContainer.h */,
+				83EEAB1D1C965835002761C5 /* jxsContainer.m */,
+				83EEAB0D1C965324002761C5 /* jxsDecoder.h */,
+				83EEAB0E1C965324002761C5 /* jxsDecoder.m */,
+				83EEAB1F1C965A4F002761C5 /* jxsMetadataReader.h */,
+				83EEAB201C965A4F002761C5 /* jxsMetadataReader.m */,
+				832FF2FB1C96508E0076D662 /* Info.plist */,
+			);
+			path = Syntrax;
+			sourceTree = "<group>";
+		};
+		832FF3101C9650E50076D662 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8389FCC52E76DBB8004FAB82 /* CogAudio.framework */,
+				83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83EEAB131C965379002761C5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83EEAB171C96537A002761C5 /* Syntrax_c.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		832FF2F71C96508E0076D662 /* Syntrax */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 832FF2FE1C96508E0076D662 /* Build configuration list for PBXNativeTarget "Syntrax" */;
+			buildPhases = (
+				832FF2F41C96508E0076D662 /* Sources */,
+				832FF2F51C96508E0076D662 /* Frameworks */,
+				832FF2F61C96508E0076D662 /* Resources */,
+				83EEAB221C965C27002761C5 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				83EEAB191C965384002761C5 /* PBXTargetDependency */,
+			);
+			name = Syntrax;
+			productName = Syntrax;
+			productReference = 832FF2F81C96508E0076D662 /* Syntrax.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		832FF2F01C96508E0076D662 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					832FF2F71C96508E0076D662 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 832FF2F31C96508E0076D662 /* Build configuration list for PBXProject "Syntrax" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 832FF2EF1C96508E0076D662;
+			productRefGroup = 832FF2F91C96508E0076D662 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 83EEAB131C965379002761C5 /* Products */;
+					ProjectRef = 83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				832FF2F71C96508E0076D662 /* Syntrax */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		83EEAB171C96537A002761C5 /* Syntrax_c.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Syntrax_c.framework;
+			remoteRef = 83EEAB161C96537A002761C5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		832FF2F61C96508E0076D662 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		832FF2F41C96508E0076D662 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83EEAB0F1C965324002761C5 /* jxsDecoder.m in Sources */,
+				83EEAB211C965A4F002761C5 /* jxsMetadataReader.m in Sources */,
+				83EEAB1E1C965835002761C5 /* jxsContainer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83EEAB191C965384002761C5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Syntrax_c;
+			targetProxy = 83EEAB181C965384002761C5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		832FF2FC1C96508E0076D662 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+			};
+			name = Debug;
+		};
+		832FF2FD1C96508E0076D662 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+			};
+			name = Release;
+		};
+		832FF2FF1C96508E0076D662 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Syntrax/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.Syntrax;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		832FF3001C96508E0076D662 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Syntrax/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.Syntrax;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		832FF2F31C96508E0076D662 /* Build configuration list for PBXProject "Syntrax" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				832FF2FC1C96508E0076D662 /* Debug */,
+				832FF2FD1C96508E0076D662 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		832FF2FE1C96508E0076D662 /* Build configuration list for PBXNativeTarget "Syntrax" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				832FF2FF1C96508E0076D662 /* Debug */,
+				832FF3001C96508E0076D662 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 832FF2F01C96508E0076D662 /* Project object */;
+}

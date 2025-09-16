@@ -144,6 +144,7 @@
 		838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952D2E4609CF00A7CFD8 /* libdav1d.a */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
 		838770FA2D6F0996001455A0 /* FeedbackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 838770F42D6F0996001455A0 /* FeedbackController.m */; };
+		8389FCC42E76D51D004FAB82 /* Syntrax.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8389FCC32E76D4FB004FAB82 /* Syntrax.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		838A33742D06A9B100D0D770 /* librubberband.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; };
 		838A33752D06A9CE00D0D770 /* librubberband.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		838A337D2D06C14200D0D770 /* TempoSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A337C2D06C14200D0D770 /* TempoSlider.m */; };
@@ -527,6 +528,20 @@
 			remoteGlobalIDString = 8359FF1617FEF35C0060F3ED;
 			remoteInfo = ArchiveSource;
 		};
+		8389FCBF2E76D4FB004FAB82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 832FF2F71C96508E0076D662;
+			remoteInfo = Syntrax;
+		};
+		8389FCC22E76D4FB004FAB82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 832FF2F81C96508E0076D662;
+			remoteInfo = Syntrax;
+		};
 		83B066A0180D5669008E3612 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83B0669C180D5668008E3612 /* MIDI.xcodeproj */;
@@ -687,6 +702,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				8389FCC42E76D51D004FAB82 /* Syntrax.bundle in CopyFiles */,
 				83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */,
 				8327DBA9293CAD2400CD0580 /* Organya.bundle in CopyFiles */,
 				83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */,
@@ -972,6 +988,7 @@
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838770F32D6F0996001455A0 /* FeedbackController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedbackController.h; sourceTree = "<group>"; };
 		838770F42D6F0996001455A0 /* FeedbackController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedbackController.m; sourceTree = "<group>"; };
+		8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax.xcodeproj; path = /Users/chris/Source/Repos/cog/Plugins/Syntrax/Syntrax.xcodeproj; sourceTree = "<absolute>"; };
 		838A33732D06A9B100D0D770 /* librubberband.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librubberband.3.dylib; path = ThirdParty/rubberband/lib/librubberband.3.dylib; sourceTree = "<group>"; };
 		838A33792D06C14200D0D770 /* PitchSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PitchSlider.h; path = Window/PitchSlider.h; sourceTree = "<group>"; };
 		838A337A2D06C14200D0D770 /* PitchSlider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PitchSlider.m; path = Window/PitchSlider.m; sourceTree = "<group>"; };
@@ -1296,6 +1313,7 @@
 				17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */,
 				8314D63B1A354DFE00EEE8E6 /* sidplay.xcodeproj */,
 				83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */,
+				8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */,
 				17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */,
 				836F6B2518BDB80D0095E648 /* vgmstream.xcodeproj */,
 				17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */,
@@ -1803,6 +1821,14 @@
 			path = Feedback;
 			sourceTree = "<group>";
 		};
+		8389FCBD2E76D4FB004FAB82 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8389FCC32E76D4FB004FAB82 /* Syntrax.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		83B0669D180D5668008E3612 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1988,6 +2014,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8389FCC02E76D4FB004FAB82 /* PBXTargetDependency */,
 				83B73B642D8FD74000A57F08 /* PBXTargetDependency */,
 				8327DBA8293CAD0A00CD0580 /* PBXTargetDependency */,
 				83489C6A2782F76900BDCEA2 /* PBXTargetDependency */,
@@ -2176,6 +2203,10 @@
 					ProjectRef = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
 				},
 				{
+					ProductGroup = 8389FCBD2E76D4FB004FAB82 /* Products */;
+					ProjectRef = 8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */;
+				},
+				{
 					ProductGroup = 8303A30520E4E3D000951EF8 /* Products */;
 					ProjectRef = 17C808B00C3BD1C5005707C4 /* TagLib.xcodeproj */;
 				},
@@ -2352,6 +2383,13 @@
 			fileType = wrapper.cfbundle;
 			path = Hively.bundle;
 			remoteRef = 836FB5461820538800B3AD2D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8389FCC32E76D4FB004FAB82 /* Syntrax.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Syntrax.bundle;
+			remoteRef = 8389FCC22E76D4FB004FAB82 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83B066A1180D5669008E3612 /* MIDI.bundle */ = {
@@ -2754,6 +2792,11 @@
 			isa = PBXTargetDependency;
 			name = ArchiveSource;
 			targetProxy = 8375B36117FFEF010092A79F /* PBXContainerItemProxy */;
+		};
+		8389FCC02E76D4FB004FAB82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Syntrax;
+			targetProxy = 8389FCBF2E76D4FB004FAB82 /* PBXContainerItemProxy */;
 		};
 		83B06703180D5776008E3612 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
