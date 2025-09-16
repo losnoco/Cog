@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8333B6751DCC49FF004C140D /* Syntrax_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EEAB171C96537A002761C5 /* Syntrax_c.framework */; };
 		8389FCC62E76DBB8004FAB82 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8389FCC52E76DBB8004FAB82 /* CogAudio.framework */; };
+		83C4C0712E797B8D00CEFAF8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C4C0702E797B8D00CEFAF8 /* Cocoa.framework */; };
 		83EEAB0F1C965324002761C5 /* jxsDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB0E1C965324002761C5 /* jxsDecoder.m */; };
 		83EEAB1E1C965835002761C5 /* jxsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB1D1C965835002761C5 /* jxsContainer.m */; };
 		83EEAB211C965A4F002761C5 /* jxsMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 83EEAB201C965A4F002761C5 /* jxsMetadataReader.m */; };
@@ -48,7 +49,9 @@
 /* Begin PBXFileReference section */
 		832FF2F81C96508E0076D662 /* Syntrax.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Syntrax.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		832FF2FB1C96508E0076D662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		83747BFF2862DA420021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8389FCC52E76DBB8004FAB82 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83C4C0702E797B8D00CEFAF8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83EEAB0D1C965324002761C5 /* jxsDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsDecoder.h; sourceTree = "<group>"; };
 		83EEAB0E1C965324002761C5 /* jxsDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsDecoder.m; sourceTree = "<group>"; };
 		83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax_c.xcodeproj; path = "../../Frameworks/Syntrax-c/Syntrax_c.xcodeproj"; sourceTree = "<group>"; };
@@ -66,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83C4C0712E797B8D00CEFAF8 /* Cocoa.framework in Frameworks */,
 				8389FCC62E76DBB8004FAB82 /* CogAudio.framework in Frameworks */,
 				8333B6751DCC49FF004C140D /* Syntrax_c.framework in Frameworks */,
 			);
@@ -77,6 +81,7 @@
 		832FF2EF1C96508E0076D662 = {
 			isa = PBXGroup;
 			children = (
+				83747BFE2862DA420021245F /* Xcode-config */,
 				832FF2FA1C96508E0076D662 /* Syntrax */,
 				832FF3101C9650E50076D662 /* Frameworks */,
 				832FF2F91C96508E0076D662 /* Products */,
@@ -112,9 +117,19 @@
 			isa = PBXGroup;
 			children = (
 				8389FCC52E76DBB8004FAB82 /* CogAudio.framework */,
+				83C4C0702E797B8D00CEFAF8 /* Cocoa.framework */,
 				83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83747BFE2862DA420021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BFF2862DA420021245F /* Shared.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
 			sourceTree = "<group>";
 		};
 		83EEAB131C965379002761C5 /* Products */ = {
@@ -155,16 +170,15 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
-				ORGANIZATIONNAME = "Christopher Snowhill";
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					832FF2F71C96508E0076D662 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = 832FF2F31C96508E0076D662 /* Build configuration list for PBXProject "Syntrax" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -231,6 +245,7 @@
 /* Begin XCBuildConfiguration section */
 		832FF2FC1C96508E0076D662 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BFF2862DA420021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -287,6 +302,7 @@
 		};
 		832FF2FD1C96508E0076D662 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BFF2862DA420021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -337,16 +353,12 @@
 		832FF2FF1C96508E0076D662 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Syntrax/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.Syntrax;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -355,16 +367,12 @@
 		832FF3001C96508E0076D662 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Syntrax/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.Syntrax;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
