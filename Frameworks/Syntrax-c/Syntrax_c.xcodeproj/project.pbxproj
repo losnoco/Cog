@@ -26,6 +26,7 @@
 		8398BF3A2769D26D0048F38A /* ioutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioutil.h; sourceTree = "<group>"; };
 		8398BF3B2769D26D0048F38A /* jxs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jxs.h; sourceTree = "<group>"; };
 		8398BF3C2769D26D0048F38A /* jaytrax.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jaytrax.c; sourceTree = "<group>"; };
+		83747BCF2862D5A30021245F /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +43,7 @@
 		832FF3111C96511E0076D662 = {
 			isa = PBXGroup;
 			children = (
+				83747BCE2862D5A30021245F /* Xcode-config */,
 				832FF31D1C96511E0076D662 /* Syntrax-c */,
 				832FF31C1C96511E0076D662 /* Products */,
 			);
@@ -68,6 +70,15 @@
 				832FF3201C96511E0076D662 /* Info.plist */,
 			);
 			path = "Syntrax-c";
+			sourceTree = "<group>";
+		};
+		83747BCE2862D5A30021245F /* Xcode-config */ = {
+			isa = PBXGroup;
+			children = (
+				83747BCF2862D5A30021245F /* Shared.xcconfig */,
+			);
+			name = "Xcode-config";
+			path = "../../Xcode-config";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -113,16 +124,10 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 2600;
-				ORGANIZATIONNAME = "Christopher Snowhill";
-				TargetAttributes = {
-					832FF31A1C96511E0076D662 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Automatic;
-					};
-				};
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 832FF3151C96511E0076D662 /* Build configuration list for PBXProject "Syntrax_c" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -165,6 +170,7 @@
 /* Begin XCBuildConfiguration section */
 		832FF3211C96511E0076D662 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BCF2862D5A30021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -224,6 +230,7 @@
 		};
 		832FF3221C96511E0076D662 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83747BCF2862D5A30021245F /* Shared.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -278,20 +285,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "Syntrax-c/Info.plist";
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.Syntrax-c";
 				PRODUCT_NAME = Syntrax_c;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -303,10 +303,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
