@@ -101,7 +101,7 @@ void gensqrt_d(usf_state_t * state)
    gencheck_cop1_unusable(state);
    mov_eax_memoffs32(state, (unsigned int *)(&state->reg_cop1_double[state->dst->f.cf.fs]));
    fld_preg32_qword(state, EAX);
-   fsqrt(state);
+   fsqrt_(state);
    mov_eax_memoffs32(state, (unsigned int *)(&state->reg_cop1_double[state->dst->f.cf.fd]));
    fstp_preg32_qword(state, EAX);
 #endif

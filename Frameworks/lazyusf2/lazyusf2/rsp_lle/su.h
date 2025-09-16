@@ -72,7 +72,7 @@ static void set_PC(usf_state_t * state, int address)
 #define WES(address)    ((address) ^ ((ENDIAN) & 00))
 #define SR_B(s, i)      (*(byte *)(((byte *)(state->SR + s)) + BES(i)))
 #define SR_S(s, i)      (*(short *)(((byte *)(state->SR + s)) + HES(i)))
-#define SE(x, b)        (-((signed int)x & (1 << b)) | (x & ~(~0 << b)))
+#define SE(x, b)        (-((signed int)x & (1 << b)) | (x & ~(~0UL << b)))
 #define ZE(x, b)        (+(x & (1 << b)) | (x & ~(~0UL << b)))
 
 static void ULW(usf_state_t *, int rd, uint32_t addr);

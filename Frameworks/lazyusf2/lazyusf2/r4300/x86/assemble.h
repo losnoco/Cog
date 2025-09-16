@@ -849,7 +849,7 @@ static osal_inline void fmul_preg32_qword(usf_state_t * state, int reg32)
    put8(state, 0x08 + reg32);
 }
 
-static osal_inline void fsqrt(usf_state_t * state)
+static osal_inline void fsqrt_(usf_state_t * state)
 {
    put8(state, 0xD9);
    put8(state, 0xFA);

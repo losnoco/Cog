@@ -13,33 +13,33 @@
 \******************************************************************************/
 #include "vu.h"
 
-INLINE static void do_ne(usf_state_t * state, short* VD, short* VS, short* VT)
+static INLINE void do_ne(usf_state_t * state, short* VD, short* VS, short* VT)
 {
 
 #ifdef ARCH_MIN_ARM_NEON
-	
-	int16x8_t vs, vt,vaccl, ne;
-	int16x8_t zero = vdupq_n_s16(0);
-	uint16x8_t cond;
-	
-	vs = vld1q_s16((const int16_t*)VS);
-	vt = vld1q_s16((const int16_t*)VT);
-	ne = vld1q_s16((const int16_t*)state->ne);
 
-	cond = vceqq_s16(vs,vt);
-	cond = vmvnq_u16(cond); // this is needed if you need to do "not-equal"
-	cond = (uint16x8_t)vnegq_s16((int16x8_t)cond);
-	uint16x8_t comp = vorrq_u16(cond, (uint16x8_t)ne);
-	
-	vst1q_s16(state->clip, zero);
-	vst1q_s16(state->comp, (int16x8_t)comp);
+    int16x8_t vs, vt,vaccl, ne;
+    int16x8_t zero = vdupq_n_s16(0);
+    uint16x8_t cond;
 
-	vector_copy(VACC_L, VS);		
-	vector_copy(VD, VACC_L);
-	vst1q_s16(state->ne, zero);
-	vst1q_s16(state->co, zero);	
-	
-	return;
+    vs = vld1q_s16((const int16_t*)VS);
+    vt = vld1q_s16((const int16_t*)VT);
+    ne = vld1q_s16((const int16_t*)state->ne);
+
+    cond = vceqq_s16(vs,vt);
+    cond = vmvnq_u16(cond); // this is needed if you need to do "not-equal"
+    cond = (uint16x8_t)vnegq_s16((int16x8_t)cond);
+    uint16x8_t comp = vorrq_u16(cond, (uint16x8_t)ne);
+
+    vst1q_s16(state->clip, zero);
+    vst1q_s16(state->comp, (int16x8_t)comp);
+
+    vector_copy(VACC_L, VS);
+    vector_copy(VD, VACC_L);
+    vst1q_s16(state->ne, zero);
+    vst1q_s16(state->co, zero);	
+
+    return;
 #else
 
     register int i;
