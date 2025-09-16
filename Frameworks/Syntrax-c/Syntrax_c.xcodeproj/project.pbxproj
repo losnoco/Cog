@@ -1,0 +1,351 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8398BF3D2769D28A0048F38A /* jaytrax.c in Sources */ = {isa = PBXBuildFile; fileRef = 8398BF3C2769D26D0048F38A /* jaytrax.c */; };
+		8398BF3E2769D28D0048F38A /* jxs.c in Sources */ = {isa = PBXBuildFile; fileRef = 8398BF372769D26D0048F38A /* jxs.c */; };
+		8398BF3F2769D2950048F38A /* mixcore.c in Sources */ = {isa = PBXBuildFile; fileRef = 8398BF392769D26D0048F38A /* mixcore.c */; };
+		8398BF402769D2EE0048F38A /* mixcore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF362769D26D0048F38A /* mixcore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8398BF412769D2F50048F38A /* ioutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF3A2769D26D0048F38A /* ioutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8398BF422769D2F80048F38A /* jaytrax.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF382769D26D0048F38A /* jaytrax.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8398BF432769D2FD0048F38A /* jxs.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398BF3B2769D26D0048F38A /* jxs.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		832FF31B1C96511E0076D662 /* Syntrax_c.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Syntrax_c.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		832FF3201C96511E0076D662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8398BF362769D26D0048F38A /* mixcore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mixcore.h; sourceTree = "<group>"; };
+		8398BF372769D26D0048F38A /* jxs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jxs.c; sourceTree = "<group>"; };
+		8398BF382769D26D0048F38A /* jaytrax.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jaytrax.h; sourceTree = "<group>"; };
+		8398BF392769D26D0048F38A /* mixcore.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mixcore.c; sourceTree = "<group>"; };
+		8398BF3A2769D26D0048F38A /* ioutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioutil.h; sourceTree = "<group>"; };
+		8398BF3B2769D26D0048F38A /* jxs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jxs.h; sourceTree = "<group>"; };
+		8398BF3C2769D26D0048F38A /* jaytrax.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jaytrax.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		832FF3171C96511E0076D662 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		832FF3111C96511E0076D662 = {
+			isa = PBXGroup;
+			children = (
+				832FF31D1C96511E0076D662 /* Syntrax-c */,
+				832FF31C1C96511E0076D662 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		832FF31C1C96511E0076D662 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				832FF31B1C96511E0076D662 /* Syntrax_c.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		832FF31D1C96511E0076D662 /* Syntrax-c */ = {
+			isa = PBXGroup;
+			children = (
+				8398BF3A2769D26D0048F38A /* ioutil.h */,
+				8398BF3C2769D26D0048F38A /* jaytrax.c */,
+				8398BF382769D26D0048F38A /* jaytrax.h */,
+				8398BF372769D26D0048F38A /* jxs.c */,
+				8398BF3B2769D26D0048F38A /* jxs.h */,
+				8398BF392769D26D0048F38A /* mixcore.c */,
+				8398BF362769D26D0048F38A /* mixcore.h */,
+				832FF3201C96511E0076D662 /* Info.plist */,
+			);
+			path = "Syntrax-c";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		832FF3181C96511E0076D662 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8398BF412769D2F50048F38A /* ioutil.h in Headers */,
+				8398BF422769D2F80048F38A /* jaytrax.h in Headers */,
+				8398BF432769D2FD0048F38A /* jxs.h in Headers */,
+				8398BF402769D2EE0048F38A /* mixcore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		832FF31A1C96511E0076D662 /* Syntrax_c */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 832FF3231C96511E0076D662 /* Build configuration list for PBXNativeTarget "Syntrax_c" */;
+			buildPhases = (
+				832FF3161C96511E0076D662 /* Sources */,
+				832FF3171C96511E0076D662 /* Frameworks */,
+				832FF3181C96511E0076D662 /* Headers */,
+				832FF3191C96511E0076D662 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Syntrax_c;
+			productName = "Syntrax-c";
+			productReference = 832FF31B1C96511E0076D662 /* Syntrax_c.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		832FF3121C96511E0076D662 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				ORGANIZATIONNAME = "Christopher Snowhill";
+				TargetAttributes = {
+					832FF31A1C96511E0076D662 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 832FF3151C96511E0076D662 /* Build configuration list for PBXProject "Syntrax_c" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 832FF3111C96511E0076D662;
+			productRefGroup = 832FF31C1C96511E0076D662 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				832FF31A1C96511E0076D662 /* Syntrax_c */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		832FF3191C96511E0076D662 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		832FF3161C96511E0076D662 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8398BF3D2769D28A0048F38A /* jaytrax.c in Sources */,
+				8398BF3E2769D28D0048F38A /* jxs.c in Sources */,
+				8398BF3F2769D2950048F38A /* mixcore.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		832FF3211C96511E0076D662 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		832FF3221C96511E0076D662 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		832FF3241C96511E0076D662 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "Syntrax-c/Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.Syntrax-c";
+				PRODUCT_NAME = Syntrax_c;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		832FF3251C96511E0076D662 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "Syntrax-c/Info.plist";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.Syntrax-c";
+				PRODUCT_NAME = Syntrax_c;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		832FF3151C96511E0076D662 /* Build configuration list for PBXProject "Syntrax_c" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				832FF3211C96511E0076D662 /* Debug */,
+				832FF3221C96511E0076D662 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		832FF3231C96511E0076D662 /* Build configuration list for PBXNativeTarget "Syntrax_c" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				832FF3241C96511E0076D662 /* Debug */,
+				832FF3251C96511E0076D662 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 832FF3121C96511E0076D662 /* Project object */;
+}
