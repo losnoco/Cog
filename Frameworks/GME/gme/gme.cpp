@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-gme_type_t const* gme_type_list()
+gme_type_t const* gme_type_list(void)
 {
 	static gme_type_t const gme_type_list_ [] = {
 #ifdef GME_TYPE_LIST
