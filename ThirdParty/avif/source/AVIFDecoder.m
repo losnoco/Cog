@@ -12,7 +12,8 @@
 #import <avif/avif.h>
 
 // Convert 8/10/12bit AVIF image into RGBA8888
-static void ConvertAvifImagePlanarToRGB(avifImage *avif, uint8_t *outPixels) {
+static avifResult ConvertAvifImagePlanarToRGB(avifImage *avif, uint8_t *outPixels) {
+	avifResult ret = AVIF_RESULT_OK;
 	BOOL hasAlpha = avif->alphaPlane != NULL;
 	avifRGBImage avifRgb = {0};
 	avifRGBImageSetDefaults(&avifRgb, avif);
@@ -22,20 +23,25 @@ static void ConvertAvifImagePlanarToRGB(avifImage *avif, uint8_t *outPixels) {
 	avifRgb.pixels = malloc(avifRgb.rowBytes * avifRgb.height);
 	if(avifRgb.pixels) {
 		size_t components = hasAlpha ? 4 : 3;
-		avifImageYUVToRGB(avif, &avifRgb);
-		for(int j = 0; j < avifRgb.height; ++j) {
-			for(int i = 0; i < avifRgb.width; ++i) {
-				uint8_t *pixel = &outPixels[components * (i + (j * avifRgb.width))];
-				pixel[0] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 0];
-				pixel[1] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 1];
-				pixel[2] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 2];
-				if(hasAlpha) {
-					pixel[3] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 3];
+		ret = avifImageYUVToRGB(avif, &avifRgb);
+		if(ret == AVIF_RESULT_OK) {
+			for(int j = 0; j < avifRgb.height; ++j) {
+				for(int i = 0; i < avifRgb.width; ++i) {
+					uint8_t *pixel = &outPixels[components * (i + (j * avifRgb.width))];
+					pixel[0] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 0];
+					pixel[1] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 1];
+					pixel[2] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 2];
+					if(hasAlpha) {
+						pixel[3] = avifRgb.pixels[i * components + (j * avifRgb.rowBytes) + 3];
+					}
 				}
 			}
 		}
 		free(avifRgb.pixels);
+	} else {
+		ret = AVIF_RESULT_OUT_OF_MEMORY;
 	}
+	return ret;
 }
 
 static void FreeImageData(void *info, const void *data, size_t size) {
@@ -59,7 +65,12 @@ static void FreeImageData(void *info, const void *data, size_t size) {
 + (nullable CGImageRef)createAVIFImageWithData:(nonnull NSData *)data CF_RETURNS_RETAINED {
 	// Decode it
 	avifDecoder *decoder = avifDecoderCreate();
+	if(!decoder) return nil;
 	avifImage *avif = avifImageCreateEmpty();
+	if(!avif) {
+		avifDecoderDestroy(decoder);
+		return nil;
+	}
 	avifResult result = avifDecoderReadMemory(decoder, avif, [data bytes], [data length]);
 	if(result != AVIF_RESULT_OK) {
 		avifImageDestroy(avif);
@@ -82,8 +93,18 @@ static void FreeImageData(void *info, const void *data, size_t size) {
 		return nil;
 	}
 	// convert planar to RGB888/RGBA8888
-	ConvertAvifImagePlanarToRGB(avif, dest);
+	result = ConvertAvifImagePlanarToRGB(avif, dest);
 
+	// We don't need these any more
+	avifImageDestroy(avif);
+	avifDecoderDestroy(decoder);
+
+	if(result != AVIF_RESULT_OK) {
+		free(dest);
+		return nil;
+	}
+
+	// dest is swallowed up by this, and will be freed by FreeImageData
 	CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, dest, rowBytes * height, FreeImageData);
 	CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault;
 	bitmapInfo |= hasAlpha ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone;
@@ -93,8 +114,6 @@ static void FreeImageData(void *info, const void *data, size_t size) {
 
 	// clean up
 	CGDataProviderRelease(provider);
-	avifImageDestroy(avif);
-	avifDecoderDestroy(decoder);
 
 	return imageRef;
 }
