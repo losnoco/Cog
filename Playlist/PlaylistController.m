@@ -1467,7 +1467,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (NSArray *)shuffleAlbums {
 	NSArray *newList = [self arrangedObjects];
-	NSMutableArray *temp = [[NSMutableArray alloc] init];
+	NSMutableArray *temp;
 	NSSortDescriptor *sortDescriptorTrack = [[NSSortDescriptor alloc] initWithKey:@"track"
 	                                                                    ascending:YES];
 	NSSortDescriptor *sortDescriptorDisc = [[NSSortDescriptor alloc] initWithKey:@"disc"

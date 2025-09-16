@@ -152,8 +152,8 @@ static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config
 	if(channels > 2 || config != AudioConfigStereo) {
 		downmix_to_stereo(inBuffer, channels, config, tempBuffer, count);
 		inBuffer = tempBuffer;
-		channels = 2;
-		config = AudioConfigStereo;
+		// channels = 2;
+		// config = AudioConfigStereo;
 	}
 	cblas_scopy((int)count, inBuffer, 2, outBuffer, 1);
 	vDSP_vadd(outBuffer, 1, inBuffer + 1, 2, outBuffer, 1, count);

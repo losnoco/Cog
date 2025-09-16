@@ -52,7 +52,7 @@ void resize_bilinear_task(struct hle_t* hle)
     unsigned short pixel;
 
     src_addr += (src_offset >> 16) * (320 * 3);
-    x = y = 0;
+    /*x =*/ y = 0;
 
     for(i = 0; i < dst_height; i++)
     {

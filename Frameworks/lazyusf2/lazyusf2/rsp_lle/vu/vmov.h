@@ -16,6 +16,6 @@
 static void VMOV(usf_state_t * state, int vd, int de, int vt, int e)
 {
     SHUFFLE_VECTOR(VACC_L, state->VR[vt], e);
-    state->VR[vd][de &= 07] = VACC_L[e & 07];
+    state->VR[vd][de & 07] = VACC_L[e & 07];
     return;
 }

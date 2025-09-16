@@ -118,7 +118,7 @@ static int savestates_load_m64p(usf_state_t * state, unsigned char * ptr, unsign
         return 0;
 
     /* skip MD5 */
-    curr += 32;
+    //curr += 32;
 
     /* Read the rest of the savestate */
     savestateSize = 16788244;

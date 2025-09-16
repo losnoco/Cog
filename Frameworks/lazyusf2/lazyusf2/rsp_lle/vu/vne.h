@@ -32,7 +32,7 @@ INLINE static void do_ne(usf_state_t * state, short* VD, short* VS, short* VT)
 	uint16x8_t comp = vorrq_u16(cond, (uint16x8_t)ne);
 	
 	vst1q_s16(state->clip, zero);
-	vst1q_s16(state->comp, (int16x8_t)cond);
+	vst1q_s16(state->comp, (int16x8_t)comp);
 
 	vector_copy(VACC_L, VS);		
 	vector_copy(VD, VACC_L);

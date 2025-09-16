@@ -656,42 +656,49 @@ void Std_File_Reader::close()
 
 static const char* get_gzip_eof( const char path [], long* eof )
 {
-	FILE* file;
-	RETURN_ERR( blargg_fopen( &file, path ) );
-
+	FILE* file = NULL;
+	blargg_err_t ret = blargg_fopen( &file, path );
 	int const h_size = 4;
+
+	if ( ret ) goto _ERR;
+
 	unsigned char h [h_size];
-	
+
+	ret = blargg_err_file_io;
+
 	// read four bytes to ensure that we can seek to -4 later
 	if ( fread( h, 1, h_size, file ) != (size_t) h_size || h[0] != 0x1F || h[1] != 0x8B )
 	{
 		// Not gzipped
 		if ( ferror( file ) )
-			return blargg_err_file_io;
+			goto _ERR;
 		
 		if ( fseek( file, 0, SEEK_END ) )
-			return blargg_err_file_io;
+			goto _ERR;
 		
 		*eof = ftell( file );
 		if ( *eof < 0 )
-			return blargg_err_file_io;
+			goto _ERR;
 	}
 	else
 	{
 		// Gzipped; get uncompressed size from end
 		if ( fseek( file, -h_size, SEEK_END ) )
-			return blargg_err_file_io;
+			goto _ERR;
 		
 		if ( fread( h, 1, h_size, file ) != (size_t) h_size )
-			return blargg_err_file_io;
+			goto _ERR;
 		
 		*eof = get_le32( h );
 	}
-	
-	if ( fclose( file ) )
+
+	ret = blargg_ok;
+
+_ERR:
+	if ( file && fclose( file ) )
 		check( false );
-	
-	return blargg_ok;
+
+	return ret;
 }
 
 Gzip_File_Reader::Gzip_File_Reader()
