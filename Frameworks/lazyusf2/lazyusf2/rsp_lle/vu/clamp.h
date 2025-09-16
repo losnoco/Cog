@@ -106,10 +106,10 @@ static INLINE void SIGNED_CLAMP_ADD(usf_state_t * state, short* VD, short* VS, s
 
 static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, short* VT)
 {
-	int16x8_t dst, src, vco, dif, res, xmm/*,vd*/;
+	int16x8_t dst, src, vco, dif, res, xmm/*, vd*/;
 	
     src = vld1q_s16((const int16_t*)VS);
-	/*vd = vld1q_s16((const int16_t*)VD);*/
+    /*vd = vld1q_s16((const int16_t*)VD);*/
     dst = vld1q_s16((const int16_t*)VT);
     vco = vld1q_s16((const int16_t*)state->co);
 
@@ -119,16 +119,15 @@ static INLINE void SIGNED_CLAMP_SUB(usf_state_t * state, short* VD, short* VS, s
     dif = veorq_s16(dif, res);
     dif = vandq_s16(dif, dst);
     xmm = vsubq_s16(src, dst); 
-	src = vbicq_s16(dif, src); 
+    src = vbicq_s16(dif, src); 
     xmm = vandq_s16(xmm, src);
     xmm = vshrq_n_s16(xmm, 15);
 
-	xmm = vbicq_s16(vco, xmm);
+    xmm = vbicq_s16(vco, xmm);
     res = vqsubq_s16(res, xmm);
     vst1q_s16(VD, res);
 
-    return;
-	
+    return;	
 }
 
 static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
@@ -251,7 +250,7 @@ static INLINE void SIGNED_CLAMP_AM(usf_state_t * state, short* VD)
  * just one extra scalar x86 instruction for every RSP vector op-code when we
  * use SSE2 explicitly for this particular goal instead of letting GCC do it.
  */
-INLINE void vector_copy(short* VD, short* VS)
+static INLINE void vector_copy(short* VD, short* VS)
 {
     __m128i xmm;
 

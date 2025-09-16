@@ -1192,7 +1192,7 @@ static inline void fmul_preg64_qword(usf_state_t * state, int reg64)
    put8(state, 0x08 + reg64);
 }
 
-static inline void fsqrt(usf_state_t * state)
+static inline void fsqrt_(usf_state_t * state)
 {
    put8(state, 0xD9);
    put8(state, 0xFA);

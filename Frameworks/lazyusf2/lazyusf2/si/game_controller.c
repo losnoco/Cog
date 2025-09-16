@@ -33,7 +33,7 @@
 
 #include <string.h>
 
-#if 0
+#if 0 /* unused code */
 static uint8_t pak_data_crc(const uint8_t* data)
 {
     size_t i;

@@ -35,24 +35,24 @@ static void VSAR(usf_state_t * state, int vd, int vs, int vt, int e)
     {
         message(state, "VSAR\nInvalid mask.", 2);
 #if ARCH_MIN_ARM_NEON
-		int16x8_t zero = vdupq_n_s16(0);
-		vst1q_s16(VR[vd], zero);
+        int16x8_t zero = vdupq_n_s16(0);
+        vst1q_s16(VR[vd], zero);
 #else
         for (i = 0; i < N; i++)
             state->VR[vd][i] = 0x0000; /* override behavior (zilmar) */
 #endif
     }
     else
-	{
+    {
 #if ARCH_MIN_ARM_NEON
-		vector_copy(VR[vd], VACC[e]);
+        vector_copy(VR[vd], VACC[e]);
 #else
         for (i = 0; i < N; i++)
             state->VR[vd][i] = state->VACC[e][i];
 #endif
-	}
+    }
 	
-	for (i = 0; i < N; i++)
+    for (i = 0; i < N; i++)
         state->VACC[e][i] = oldval[i]; /* ... = VS */
     return;
 }
@@ -73,13 +73,13 @@ static void VSAW(usf_state_t * state, int vd, int vs, int vt, int e)
         message(state, "VSAW\nIllegal mask.", 2);
 
 #if ARCH_MIN_ARM_NEON
-		
-		int16x8_t zero = vdupq_n_s16(0);
-		vst1q_s16(state->VR[vd], zero);
-		
+
+        int16x8_t zero = vdupq_n_s16(0);
+        vst1q_s16(state->VR[vd], zero);
+
 #else
 
-		for (i = 0; i < N; i++)
+        for (i = 0; i < N; i++)
             state->VR[vd][i] = 0x0000; /* override behavior (zilmar) */
         return;
 
