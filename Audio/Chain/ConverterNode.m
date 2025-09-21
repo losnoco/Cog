@@ -40,7 +40,9 @@ void PrintStreamDesc(AudioStreamBasicDescription *inDesc) {
 	DLog(@"- - - - - - - - - - - - - - - - - - - -\n");
 }
 
-@implementation ConverterNode
+@implementation ConverterNode {
+	NSRecursiveLock *mutex;
+}
 
 static void *kConverterNodeContext = &kConverterNodeContext;
 
@@ -58,7 +60,6 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 		floatBufferSize = 0;
 
 		stopping = NO;
-		convertEntered = NO;
 		paused = NO;
 
 		resetProcessed = NO;
@@ -67,6 +68,8 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 
 		extrapolateBuffer = NULL;
 		extrapolateBufferSize = 0;
+
+		mutex = [[NSRecursiveLock alloc] init];
 
 #ifdef LOG_CHAINS
 		[self initLogFiles];
@@ -137,8 +140,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 				chunk = nil;
 			}
 			if(streamFormatChanged) {
+				[mutex lock];
 				[self cleanUp];
 				[self setupWithInputFormat:newInputFormat withInputConfig:newInputChannelConfig outputFormat:self->outputFormat isLossless:rememberedLossless];
+				[mutex unlock];
 			}
 		}
 	}
@@ -151,10 +156,10 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	if(stopping)
 		return 0;
 
-	convertEntered = YES;
+	[mutex lock];
 
 	if(stopping || [self shouldContinue] == NO) {
-		convertEntered = NO;
+		[mutex unlock];
 		return nil;
 	}
 
@@ -162,7 +167,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		streamTimestamp = 0.0;
 		streamTimeRatio = 1.0;
 		if(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
-			convertEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 	}
@@ -219,7 +224,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		}
 
 		if(!bytesReadFromInput) {
-			convertEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 
@@ -296,7 +301,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 		}
 
 		if(stopping) {
-			convertEntered = NO;
+			[mutex unlock];
 			return nil;
 		}
 
@@ -362,11 +367,11 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			resetProcessed = NO;
 		}
 		streamTimestamp += [chunk durationRatioed];
-		convertEntered = NO;
+		[mutex unlock];
 		return chunk;
 	}
 
-	convertEntered = NO;
+	[mutex unlock];
 	return nil;
 }
 
@@ -432,6 +437,8 @@ static float db_to_scale(float db) {
 
 - (BOOL)setupWithInputFormat:(AudioStreamBasicDescription)inf withInputConfig:(uint32_t)inputConfig outputFormat:(AudioStreamBasicDescription)outf isLossless:(BOOL)lossless {
 	// Make the converter
+	[mutex lock];
+
 	inputFormat = inf;
 	outputFormat = outf;
 
@@ -441,8 +448,10 @@ static float db_to_scale(float db) {
 
 	// These are the only sample formats we support translating
 	BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
-	if((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32)) || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64)))
+	if((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32)) || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64))) {
+		[mutex unlock];
 		return NO;
+	}
 
 	floatFormat = inputFormat;
 	floatFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked;
@@ -475,8 +484,10 @@ static float db_to_scale(float db) {
 		soxr_error_t error;
 
 		soxr = soxr_create(floatFormat.mSampleRate, outputFormat.mSampleRate, floatFormat.mChannelsPerFrame, &error, &io_spec, &q_spec, &runtime_spec);
-		if(error)
+		if(error) {
+			[mutex unlock];
 			return NO;
+		}
 
 		PRIME_LEN_ = MAX(floatFormat.mSampleRate / 20, 1024u);
 		PRIME_LEN_ = MIN(PRIME_LEN_, 16384u);
@@ -501,9 +512,10 @@ static float db_to_scale(float db) {
 
 	// Move this here so process call isn't running the resampler until it's allocated
 	stopping = NO;
-	convertEntered = NO;
 	streamFormatChanged = NO;
 	paused = NO;
+
+	[mutex unlock];
 
 	return YES;
 }
@@ -526,11 +538,10 @@ static float db_to_scale(float db) {
 - (void)inputFormatDidChange:(AudioStreamBasicDescription)format inputConfig:(uint32_t)inputConfig {
 	DLog(@"FORMAT CHANGED");
 	paused = YES;
-	while(convertEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	[self cleanUp];
 	[self setupWithInputFormat:format withInputConfig:inputConfig outputFormat:self->outputFormat isLossless:rememberedLossless];
+	[mutex unlock];
 }
 
 - (void)setRGInfo:(NSDictionary *)rgi {
@@ -541,9 +552,7 @@ static float db_to_scale(float db) {
 
 - (void)cleanUp {
 	stopping = YES;
-	while(convertEntered) {
-		usleep(500);
-	}
+	[mutex lock];
 	if(soxr) {
 		soxr_delete(soxr);
 		soxr = NULL;
@@ -565,6 +574,7 @@ static float db_to_scale(float db) {
 	}
 	inpOffset = 0;
 	inpSize = 0;
+	[mutex unlock];
 }
 
 - (double)secondsBuffered {
