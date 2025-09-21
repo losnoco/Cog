@@ -98,7 +98,7 @@
 	else if ([resampling isEqualToString:@"cubic"])
 		interp = ITP_CUBIC;
 	else if ([resampling isEqualToString:@"sinc"])
-		interp = ITP_CUBIC;
+		interp = ITP_SINC;
 
 	jaytrax_setInterpolation(synPlayer, interp);
 

@@ -15,6 +15,7 @@ enum INTERP_LIST {
 	ITP_LINEAR,
 	ITP_QUADRATIC,
 	ITP_CUBIC,
+	ITP_SINC,
 	//ITP_BLEP,
 	INTERP_COUNT
 };
@@ -212,7 +213,7 @@ typedef struct Interpolator Interpolator;
 struct Interpolator {
 	uint8_t id;
 	int16_t numTaps;
-	int32_t (*fItp) (int16_t* buf, int32_t pos, int32_t sizeMask);
+	int32_t (*fItp) (int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask);
 	char    name[32];
 };
 
