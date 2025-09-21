@@ -5,8 +5,13 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 #include "mixcore.h"
 #include "jaytrax.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265
+#endif
 
 // ITP_[number of taps]_[input sample width]_[fractional precision]_[readable name]
 #define ITP_T02_S16_I08_LINEAR(P, F) (P[0]+(((P[1]-P[0])*F) >> 8))
@@ -17,16 +22,16 @@
 //---------------------interpolators
 #define GET_PT(x) buf[((pos + ((x)<<8)) & sizeMask)>>8]
 
-static int32_t itpNone(int16_t* buf, int32_t pos, int32_t sizeMask) {
-	(void)buf;(void)pos;(void)sizeMask;
+static int32_t itpNone(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask) {
+	(void)buf;(void)pos;(void)incr;(void)sizeMask;
 	return 0;
 }
 
-static int32_t itpNearest(int16_t* buf, int32_t pos, int32_t sizeMask) {
+static int32_t itpNearest(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask) {
 	return GET_PT(0);
 }
 
-static int32_t itpLinear(int16_t* buf, int32_t pos, int32_t sizeMask) {
+static int32_t itpLinear(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask) {
 	int32_t p[2];
 	int32_t frac = pos & 0xFF;
 
@@ -36,7 +41,7 @@ static int32_t itpLinear(int16_t* buf, int32_t pos, int32_t sizeMask) {
 	return ITP_T02_S16_I08_LINEAR(p, frac);
 }
 
-static int32_t itpQuad(int16_t* buf, int32_t pos, int32_t sizeMask) {
+static int32_t itpQuad(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask) {
 	int32_t p[3];
 	int32_t frac = (pos & 0xFF)<<7;
 
@@ -47,7 +52,7 @@ static int32_t itpQuad(int16_t* buf, int32_t pos, int32_t sizeMask) {
 	return ITP_T03_S16_I15_QUADRA(p, frac);
 }
 
-static int32_t itpCubic(int16_t* buf, int32_t pos, int32_t sizeMask) {
+static int32_t itpCubic(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask) {
 	int32_t p[4];
 	int32_t frac = pos & 0xFF;
 
@@ -59,12 +64,56 @@ static int32_t itpCubic(int16_t* buf, int32_t pos, int32_t sizeMask) {
 	return ITP_T04_S16_I08_CUBIC(p, frac);
 }
 
+enum { radius = 2 };
+static inline double lanczos(double d) {
+	if(d == 0.) return 1.;
+	if(fabs(d) > radius) return 0.;
+	double dr = (d * M_PI) / radius;
+	return sin(d) * sin(dr) / (d * dr);
+}
+
+static int32_t itpSinc(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask) {
+	float p[8];
+	int32_t frac = pos & 0xFF;
+	double ffrac = frac / 256.0;
+	double fincr = incr / 256.0;
+	double scale = 1. / fincr > 1. ? 1. : 1. / fincr;
+	double density = 0.;
+	double sample = 0.;
+	double fpos = 3. + ffrac; // 3.5 is the center position
+
+	int min = -radius / scale + fpos - 0.5;
+	int max =  radius / scale + fpos + 0.5;
+
+	if(min < 0) min = 0;
+	if(max > 8) max = 8;
+
+	p[0] = GET_PT(0);
+	p[1] = GET_PT(1);
+	p[2] = GET_PT(2);
+	p[3] = GET_PT(3);
+	p[4] = GET_PT(4);
+	p[5] = GET_PT(5);
+	p[6] = GET_PT(6);
+	p[7] = GET_PT(7);
+
+	for(int m = min; m < max; ++m) {
+		double factor = lanczos( (m - fpos + 0.5) * scale );
+		density += factor;
+		sample += p[m] * factor;
+	}
+	if(density > 0.) sample /= density; // Normalize
+
+	return (int32_t) sample;
+}
+
 Interpolator interps[INTERP_COUNT] = {
 	{ITP_NONE,      0, &itpNone,    "None"},
 	{ITP_NEAREST,   1, &itpNearest, "Nearest"},
 	{ITP_LINEAR,    2, &itpLinear,  "Linear"},
 	{ITP_QUADRATIC, 3, &itpQuad,    "Quadratic"},
 	{ITP_CUBIC,     4, &itpCubic,   "Cubic"},
+	{ITP_SINC,      8, &itpSinc,    "Sinc"},
 	//{ITP_BLEP,     -1, &mixSynthNearest, &mixSampNearest, "BLEP"} //BLEP needs variable amount of taps
 };
 
@@ -103,7 +152,7 @@ void jaymix_mixCore(JT1Player* SELF, int32_t numSamples) {
 
 	for (ic = 0; ic < chanNr; ic++) {
 		JT1Voice* vc = &SELF->voices[ic];
-		int32_t (*fItp) (int16_t* buf, int pos, int sizeMask);
+		int32_t (*fItp) (int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMask);
 		int32_t loopLen = vc->endpoint - vc->looppoint;
 
 		doneSmp = 0;
@@ -155,7 +204,7 @@ void jaymix_mixCore(JT1Player* SELF, int32_t numSamples) {
 
 			while (doneSmp < numSamples) {
 				int32_t tapPtr_ = (tapPtr - tapOfs) & 31;
-				tempBuf[doneSmp++] = fItp(tapArr, (tapPtr_ << 8) + (vc->samplepos&0xFF), (32 << 8) - 1);
+				tempBuf[doneSmp++] = fItp(tapArr, (tapPtr_ << 8) + (vc->samplepos&0xFF), tapDir ? -vc->freqOffset : vc->freqOffset, (32 << 8) - 1);
 
 				int32_t newPos = vc->samplepos + vc->freqOffset;
 				int32_t samplesDone = (newPos >> 8) - (vc->samplepos >> 8);
@@ -226,16 +275,16 @@ void jaymix_mixCore(JT1Player* SELF, int32_t numSamples) {
 			//loop unroll optimization
 			nos = numSamples;
 			if (nos & 1) {
-				tempBuf[doneSmp++] = fItp(vc->wavePtr, vc->synthPos, vc->waveLength);
+				tempBuf[doneSmp++] = fItp(vc->wavePtr, vc->synthPos, vc->freqOffset, vc->waveLength);
 				vc->synthPos += vc->freqOffset;
 				vc->synthPos &= vc->waveLength;
 				nos--;
 			}
 			for(is = 0; is < nos; is += 2) {
-				tempBuf[doneSmp++] = fItp(vc->wavePtr, vc->synthPos, vc->waveLength);
+				tempBuf[doneSmp++] = fItp(vc->wavePtr, vc->synthPos, vc->freqOffset, vc->waveLength);
 				vc->synthPos += vc->freqOffset;
 				vc->synthPos &= vc->waveLength;
-				tempBuf[doneSmp++] = fItp(vc->wavePtr, vc->synthPos, vc->waveLength);
+				tempBuf[doneSmp++] = fItp(vc->wavePtr, vc->synthPos, vc->freqOffset, vc->waveLength);
 				vc->synthPos += vc->freqOffset;
 				vc->synthPos &= vc->waveLength;
 			}
