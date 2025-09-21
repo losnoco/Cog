@@ -28,7 +28,6 @@
 	double streamTimestamp, streamTimeRatio;
 
 	BOOL stopping;
-	BOOL convertEntered;
 	BOOL paused;
 
 	BOOL skipResampler;
