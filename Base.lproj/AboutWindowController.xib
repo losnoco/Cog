@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22113.1" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24127" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22113.1"/>
-        <plugIn identifier="com.apple.WebKit2IBPlugin" version="22113.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24127"/>
+        <plugIn identifier="com.apple.WebKit2IBPlugin" version="24127"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -22,35 +22,48 @@
         <window title="About Cog" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" appearanceType="darkAqua" animationBehavior="default" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" fullSizeContentView="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="669" height="402"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
+            <rect key="contentRect" x="196" y="240" width="489" height="402"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1049"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="669" height="402"/>
+                <rect key="frame" x="0.0" y="0.0" width="489" height="402"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <visualEffectView blendingMode="behindWindow" material="underWindowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="aIO-L9-zMj" customClass="DraggableVFXView" customModule="Cog" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="669" height="402"/>
+                    <visualEffectView wantsLayer="YES" blendingMode="behindWindow" material="underWindowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="aIO-L9-zMj" customClass="DraggableVFXView" customModule="Cog" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="489" height="402"/>
                         <subviews>
-                            <imageView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vd3-xP-mqK" customClass="DraggableImageView" customModule="Cog" customModuleProvider="target">
-                                <rect key="frame" x="-24" y="0.0" width="717" height="402"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="AboutCog" id="qq1-7L-Xab"/>
-                            </imageView>
                             <visualEffectView blendingMode="withinWindow" material="fullScreenUI" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="2nK-dq-1h6">
-                                <rect key="frame" x="387" y="84" width="262" height="230"/>
+                                <rect key="frame" x="176" y="86" width="293" height="218"/>
                                 <subviews>
-                                    <wkWebView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-Xy-wYl">
-                                        <rect key="frame" x="0.0" y="0.0" width="262" height="230"/>
-                                        <autoresizingMask key="autoresizingMask"/>
+                                    <wkWebView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LZw-Xy-wYl">
+                                        <rect key="frame" x="0.0" y="0.0" width="293" height="218"/>
                                         <wkWebViewConfiguration key="configuration" applicationNameForUserAgent="Cog">
                                             <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                             <wkPreferences key="preferences"/>
                                         </wkWebViewConfiguration>
                                     </wkWebView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstItem="LZw-Xy-wYl" firstAttribute="leading" secondItem="2nK-dq-1h6" secondAttribute="leading" id="WDd-19-ZEF"/>
+                                    <constraint firstAttribute="trailing" secondItem="LZw-Xy-wYl" secondAttribute="trailing" id="hqW-sz-9qt"/>
+                                    <constraint firstAttribute="bottom" secondItem="LZw-Xy-wYl" secondAttribute="bottom" id="k70-tT-qLG"/>
+                                    <constraint firstItem="LZw-Xy-wYl" firstAttribute="top" secondItem="2nK-dq-1h6" secondAttribute="top" id="sZ0-pa-L66"/>
+                                </constraints>
+                                <animations>
+                                    <caTransition key="subviews">
+                                        <mutableData key="keyedArchiveRepresentation">
+YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05T
+S2V5ZWRBcmNoaXZlctEICVRyb290gAGnCwwTFA0ZH1UkbnVsbNMNDg8QERJUdHlwZVYkY2xhc3NfEBJf
+X0NBQ29kaW5nQ29udGVudHOAAoAGgANUZmFkZdIVDhYYWk5TLm9iamVjdHOhF4AEgAXSGhscHVokY2xh
+c3NuYW1lWCRjbGFzc2VzV05TQXJyYXmiHB5YTlNPYmplY3TSGhsgIVxDQVRyYW5zaXRpb26jIiMeXENB
+VHJhbnNpdGlvbltDQUFuaW1hdGlvbgAIABEAGgAkACkAMgA3AEkATABRAFMAWwBhAGgAbQB0AIkAiwCN
+AI8AlACZAKQApgCoAKoArwC6AMMAywDOANcA3ADpAO0A+gAAAAAAAAIBAAAAAAAAACQAAAAAAAAAAAAA
+AAAAAAEGA
+</mutableData>
+                                    </caTransition>
+                                </animations>
                             </visualEffectView>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Lya-f1-R7S">
-                                <rect key="frame" x="385" y="351" width="266" height="31"/>
+                                <rect key="frame" x="174" y="339" width="297" height="31"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" title="Cog" usesSingleLineMode="YES" id="hzl-Rl-e01">
                                     <font key="font" textStyle="largeTitle" name=".SFNS-Regular"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -58,52 +71,66 @@
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7dE-CE-MBv">
-                                <rect key="frame" x="385" y="322" width="266" height="21"/>
+                                <rect key="frame" x="174" y="312" width="297" height="21"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" title="Version..." usesSingleLineMode="YES" id="Wjf-By-C1F">
                                     <font key="font" textStyle="title2" name=".SFNS-Regular"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ht5-N1-YXd">
-                                <rect key="frame" x="387" y="20" width="264" height="56"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="ht5-N1-YXd">
+                                <rect key="frame" x="18" y="20" width="447" height="58"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="58" id="49S-ip-3Nl"/>
+                                </constraints>
                                 <textFieldCell key="cell" selectable="YES" title="Copyright..." id="wLU-AJ-J0b">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <imageView translatesAutoresizingMaskIntoConstraints="NO" id="vd3-xP-mqK" customClass="DraggableImageView" customModule="Cog" customModuleProvider="target">
+                                <rect key="frame" x="20" y="234" width="136" height="136"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="136" id="D4x-BR-bOm"/>
+                                    <constraint firstAttribute="width" constant="136" id="cI6-cH-1Oe"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="PrerenderedLogo" id="qq1-7L-Xab"/>
+                            </imageView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="leading" secondItem="aIO-L9-zMj" secondAttribute="leading" constant="387" id="0dy-BM-sdM"/>
-                            <constraint firstAttribute="bottom" secondItem="2nK-dq-1h6" secondAttribute="bottom" constant="84" id="Ffv-wZ-Cof"/>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="top" secondItem="aIO-L9-zMj" secondAttribute="top" constant="88" id="H3P-wu-hjK"/>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="trailing" secondItem="Lya-f1-R7S" secondAttribute="trailing" id="MRi-8c-G4r"/>
-                            <constraint firstItem="7dE-CE-MBv" firstAttribute="top" secondItem="Lya-f1-R7S" secondAttribute="bottom" constant="8" symbolic="YES" id="VQP-7X-fVC"/>
-                            <constraint firstAttribute="trailing" secondItem="2nK-dq-1h6" secondAttribute="trailing" constant="20" symbolic="YES" id="gdk-KM-koO"/>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="top" secondItem="7dE-CE-MBv" secondAttribute="bottom" constant="8" symbolic="YES" id="iz2-Bu-fht"/>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="leading" secondItem="Lya-f1-R7S" secondAttribute="leading" id="k1m-83-vY5"/>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="leading" secondItem="7dE-CE-MBv" secondAttribute="leading" id="o1t-V1-cRl"/>
-                            <constraint firstItem="2nK-dq-1h6" firstAttribute="trailing" secondItem="7dE-CE-MBv" secondAttribute="trailing" id="paq-sD-7Qd"/>
+                            <constraint firstItem="Lya-f1-R7S" firstAttribute="leading" secondItem="vd3-xP-mqK" secondAttribute="trailing" constant="20" id="6mb-J5-H0c"/>
+                            <constraint firstAttribute="trailing" secondItem="ht5-N1-YXd" secondAttribute="trailing" constant="26" id="AVb-kk-cux"/>
+                            <constraint firstItem="vd3-xP-mqK" firstAttribute="top" secondItem="Lya-f1-R7S" secondAttribute="top" id="BWl-6H-KIC"/>
+                            <constraint firstItem="2nK-dq-1h6" firstAttribute="top" secondItem="7dE-CE-MBv" secondAttribute="bottom" constant="8" symbolic="YES" id="CIj-Xz-Xds"/>
+                            <constraint firstAttribute="bottom" secondItem="ht5-N1-YXd" secondAttribute="bottom" constant="20" symbolic="YES" id="F1t-6N-oO9"/>
+                            <constraint firstItem="7dE-CE-MBv" firstAttribute="leading" secondItem="2nK-dq-1h6" secondAttribute="leading" id="FBc-6z-OCk"/>
+                            <constraint firstAttribute="trailing" secondItem="Lya-f1-R7S" secondAttribute="trailing" constant="20" symbolic="YES" id="G3y-ds-k5s"/>
+                            <constraint firstItem="7dE-CE-MBv" firstAttribute="trailing" secondItem="2nK-dq-1h6" secondAttribute="trailing" id="Iin-J4-yfP"/>
+                            <constraint firstItem="Lya-f1-R7S" firstAttribute="trailing" secondItem="7dE-CE-MBv" secondAttribute="trailing" id="KPr-fs-rLj"/>
+                            <constraint firstItem="vd3-xP-mqK" firstAttribute="top" secondItem="aIO-L9-zMj" secondAttribute="top" constant="32" id="WPx-Br-2m4"/>
+                            <constraint firstItem="Lya-f1-R7S" firstAttribute="leading" secondItem="7dE-CE-MBv" secondAttribute="leading" id="oX8-eK-QtA"/>
+                            <constraint firstItem="vd3-xP-mqK" firstAttribute="leading" secondItem="ht5-N1-YXd" secondAttribute="leading" id="qcs-rO-KPz"/>
+                            <constraint firstItem="7dE-CE-MBv" firstAttribute="top" secondItem="Lya-f1-R7S" secondAttribute="bottom" constant="6" id="v6n-fb-6SX"/>
+                            <constraint firstItem="ht5-N1-YXd" firstAttribute="top" secondItem="2nK-dq-1h6" secondAttribute="bottom" constant="8" symbolic="YES" id="woy-MJ-8w6"/>
+                            <constraint firstItem="vd3-xP-mqK" firstAttribute="leading" secondItem="aIO-L9-zMj" secondAttribute="leading" constant="20" symbolic="YES" id="zbd-V6-0Cs"/>
                         </constraints>
                     </visualEffectView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="aIO-L9-zMj" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="Bob-HZ-hjD"/>
-                    <constraint firstAttribute="bottom" secondItem="aIO-L9-zMj" secondAttribute="bottom" id="H6Y-Aw-rKw"/>
-                    <constraint firstAttribute="trailing" secondItem="aIO-L9-zMj" secondAttribute="trailing" id="YNg-Cm-Dr0"/>
-                    <constraint firstAttribute="bottom" secondItem="aIO-L9-zMj" secondAttribute="bottom" id="gDu-u6-WBY"/>
-                    <constraint firstItem="aIO-L9-zMj" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="lpm-bh-BFJ"/>
+                    <constraint firstItem="aIO-L9-zMj" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="A69-2n-yyq"/>
+                    <constraint firstItem="aIO-L9-zMj" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="CVs-nF-XN4"/>
+                    <constraint firstAttribute="bottom" secondItem="aIO-L9-zMj" secondAttribute="bottom" id="CbK-hJ-rcl"/>
+                    <constraint firstAttribute="trailing" secondItem="aIO-L9-zMj" secondAttribute="trailing" id="Zwa-WN-MUe"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="234.5" y="181"/>
+            <point key="canvasLocation" x="144.5" y="181"/>
         </window>
     </objects>
     <resources>
-        <image name="AboutCog" width="2048" height="1152"/>
+        <image name="PrerenderedLogo" width="1024" height="1024"/>
     </resources>
 </document>
