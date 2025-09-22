@@ -34,8 +34,6 @@
 		8343791C17F96EA600584396 /* z80.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = z80.c; path = Core/z80.c; sourceTree = "<group>"; };
 		8343791D17F96EA600584396 /* z80.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = z80.h; path = Core/z80.h; sourceTree = "<group>"; };
 		83747B932862D5160021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		838EE8C229A8600A00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		83F0E6BC287CAB4200D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,8 +213,6 @@
 			children = (
 				834378EB17F96E2600584396 /* en */,
 				833F682E1CDBCAB100AFB9F0 /* es */,
-				83F0E6BC287CAB4200D84594 /* pl */,
-				838EE8C229A8600A00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

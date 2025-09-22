@@ -50,8 +50,6 @@
 		8360EF5817F92DB0005208A4 /* vfs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vfs.c; path = Core/vfs.c; sourceTree = "<group>"; };
 		8360EF5917F92DB0005208A4 /* vfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfs.h; path = Core/vfs.h; sourceTree = "<group>"; };
 		83747BA22862D5390021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		838EE8BF29A8600A00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		83F0E6B9287CAB4200D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,8 +245,6 @@
 			children = (
 				8360EF1D17F92C91005208A4 /* en */,
 				833F682B1CDBCAB000AFB9F0 /* es */,
-				83F0E6B9287CAB4200D84594 /* pl */,
-				838EE8BF29A8600A00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

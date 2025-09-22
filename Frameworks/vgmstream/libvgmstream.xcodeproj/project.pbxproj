@@ -1649,7 +1649,6 @@
 		838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		838EE8D229A8600D00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8396BE782935FC2F00CD0580 /* sscf_encrypted.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sscf_encrypted.c; sourceTree = "<group>"; };
 		8396BE792935FC2F00CD0580 /* sscf_encrypted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sscf_encrypted.h; sourceTree = "<group>"; };
 		8399335C2591E8C0001855AF /* ifs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ifs.c; sourceTree = "<group>"; };
@@ -1811,7 +1810,6 @@
 		83F0AA5C21E2028B004BBC04 /* smp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smp.c; sourceTree = "<group>"; };
 		83F0AA5D21E2028B004BBC04 /* vsv_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vsv_streamfile.h; sourceTree = "<group>"; };
 		83F0AA5E21E2028C004BBC04 /* vsv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vsv.c; sourceTree = "<group>"; };
-		83F0E6CC287CAB4400D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83F1EE2F245D4FC10076E182 /* imuse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = imuse.c; sourceTree = "<group>"; };
 		83F2CCE125A5B41600F46FA8 /* acx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = acx.c; sourceTree = "<group>"; };
 		83F5F8821908D0A400C8E65F /* fsb5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fsb5.c; sourceTree = "<group>"; };
@@ -3911,8 +3909,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				836F6B4618BDB8880095E648 /* en */,
-				83F0E6CC287CAB4400D84594 /* pl */,
-				838EE8D229A8600D00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

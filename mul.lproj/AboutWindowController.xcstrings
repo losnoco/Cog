@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "F0z-JX-Cv5.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"About Cog\"; ObjectID = \"F0z-JX-Cv5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acerca de Cog"
+          }
+        }
+      }
+    },
+    "hzl-Rl-e01.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Cog\"; ObjectID = \"hzl-Rl-e01\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog"
+          }
+        }
+      }
+    },
+    "Wjf-By-C1F.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Version...\"; ObjectID = \"Wjf-By-C1F\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Version..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versión..."
+          }
+        }
+      }
+    },
+    "wLU-AJ-J0b.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Copyright...\"; ObjectID = \"wLU-AJ-J0b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copyright..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Derechos de autor..."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

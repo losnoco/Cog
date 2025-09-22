@@ -1,0 +1,870 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0aZ-qR-VQB.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"63\"; ObjectID = \"0aZ-qR-VQB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "63"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "63"
+          }
+        }
+      }
+    },
+    "0yY-ZG-55W.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"80\"; ObjectID = \"0yY-ZG-55W\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "80"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "80"
+          }
+        }
+      }
+    },
+    "1dn-Vq-wWg.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"31.5\"; ObjectID = \"1dn-Vq-wWg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "31.5"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "31.5"
+          }
+        }
+      }
+    },
+    "3uY-U8-fJj.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"10\"; ObjectID = \"3uY-U8-fJj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "10"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10"
+          }
+        }
+      }
+    },
+    "7O0-sA-hE3.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"-12 dB\"; ObjectID = \"7O0-sA-hE3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "-12 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-12 dB"
+          }
+        }
+      }
+    },
+    "8bT-Kt-cyl.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"8\"; ObjectID = \"8bT-Kt-cyl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "8"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "8"
+          }
+        }
+      }
+    },
+    "9Xl-RA-0SW.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Equalizer\"; ObjectID = \"9Xl-RA-0SW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Equalizer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ecualizador"
+          }
+        }
+      }
+    },
+    "A7Y-xq-LdW.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"1.2\"; ObjectID = \"A7Y-xq-LdW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1.2"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1.2"
+          }
+        }
+      }
+    },
+    "aeV-tB-rvh.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Tracking genre tags\"; ObjectID = \"aeV-tB-rvh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tracking genre tags"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por género de pista"
+          }
+        }
+      }
+    },
+    "B9P-B7-9bf.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"100\"; ObjectID = \"B9P-B7-9bf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "100"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "100"
+          }
+        }
+      }
+    },
+    "bOS-GE-rwi.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Flatten EQ\"; ObjectID = \"bOS-GE-rwi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Flatten EQ"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplanar"
+          }
+        }
+      }
+    },
+    "bqX-Dk-bJ9.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"630\"; ObjectID = \"bqX-Dk-bJ9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "630"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "630"
+          }
+        }
+      }
+    },
+    "cO5-1C-qEl.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"25\"; ObjectID = \"cO5-1C-qEl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "25"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "25"
+          }
+        }
+      }
+    },
+    "cq3-MT-eo1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"0 dB\"; ObjectID = \"cq3-MT-eo1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "0 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 dB"
+          }
+        }
+      }
+    },
+    "e6h-zW-Op6.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"4\"; ObjectID = \"e6h-zW-Op6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "4"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "4"
+          }
+        }
+      }
+    },
+    "e71-GI-ntH.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"16\"; ObjectID = \"e71-GI-ntH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "16"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "16"
+          }
+        }
+      }
+    },
+    "eB6-XM-qUy.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"800\"; ObjectID = \"eB6-XM-qUy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "800"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "800"
+          }
+        }
+      }
+    },
+    "efh-nh-mDD.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"250\"; ObjectID = \"efh-nh-mDD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "250"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "250"
+          }
+        }
+      }
+    },
+    "ERP-9r-xp9.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"400\"; ObjectID = \"ERP-9r-xp9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "400"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "400"
+          }
+        }
+      }
+    },
+    "fJ3-i8-mw9.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"-20 dB\"; ObjectID = \"fJ3-i8-mw9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "-20 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-20 dB"
+          }
+        }
+      }
+    },
+    "fpg-RS-w2Y.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"6 dB\"; ObjectID = \"fpg-RS-w2Y\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "6 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 dB"
+          }
+        }
+      }
+    },
+    "g10-wn-Agu.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"315\"; ObjectID = \"g10-wn-Agu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "315"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "315"
+          }
+        }
+      }
+    },
+    "Id9-5k-q9Q.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Enabled\"; ObjectID = \"Id9-5k-q9Q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enabled"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activado"
+          }
+        }
+      }
+    },
+    "ihA-eC-L0F.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"40\"; ObjectID = \"ihA-eC-L0F\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "40"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "40"
+          }
+        }
+      }
+    },
+    "JVJ-LV-LDc.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"500\"; ObjectID = \"JVJ-LV-LDc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "500"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "500"
+          }
+        }
+      }
+    },
+    "kdf-iA-xrZ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"3.1\"; ObjectID = \"kdf-iA-xrZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3.1"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3.1"
+          }
+        }
+      }
+    },
+    "ke7-4o-FJG.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"5\"; ObjectID = \"ke7-4o-FJG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "5"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5"
+          }
+        }
+      }
+    },
+    "KP1-mo-Quy.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"20 dB\"; ObjectID = \"KP1-mo-Quy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "20 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 dB"
+          }
+        }
+      }
+    },
+    "LoH-XP-I4Y.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"20kHz\"; ObjectID = \"LoH-XP-I4Y\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "20kHz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20kHz"
+          }
+        }
+      }
+    },
+    "lwG-Tm-rr1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Note: You may use right-click to draw an equalizer shape\"; ObjectID = \"lwG-Tm-rr1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Note: You may use right-click to draw an equalizer shape"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota: Puedes utilizar el botón derecho del ratón para dibujar una forma de ecualizador"
+          }
+        }
+      }
+    },
+    "Nc6-vb-nIc.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"2.5\"; ObjectID = \"Nc6-vb-nIc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2.5"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2.5"
+          }
+        }
+      }
+    },
+    "neW-5g-R0i.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"6.3\"; ObjectID = \"neW-5g-R0i\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "6.3"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6.3"
+          }
+        }
+      }
+    },
+    "nqJ-h3-mQq.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"12 dB\"; ObjectID = \"nqJ-h3-mQq\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "12 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 dB"
+          }
+        }
+      }
+    },
+    "opU-zn-biU.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"125\"; ObjectID = \"opU-zn-biU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "125"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "125"
+          }
+        }
+      }
+    },
+    "pGw-Cf-6Nj.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"-3 dB\"; ObjectID = \"pGw-Cf-6Nj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "-3 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-3 dB"
+          }
+        }
+      }
+    },
+    "qj9-4A-tfF.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"1.6\"; ObjectID = \"qj9-4A-tfF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1.6"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1.6"
+          }
+        }
+      }
+    },
+    "rck-mI-bed.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Level Preamp\"; ObjectID = \"rck-mI-bed\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Level Preamp"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel preamp"
+          }
+        }
+      }
+    },
+    "SBw-cK-76N.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"3 dB\"; ObjectID = \"SBw-cK-76N\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 dB"
+          }
+        }
+      }
+    },
+    "TnM-7Z-BUu.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"160\"; ObjectID = \"TnM-7Z-BUu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "160"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "160"
+          }
+        }
+      }
+    },
+    "TYp-Ae-UMg.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"2\"; ObjectID = \"TYp-Ae-UMg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "2"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2"
+          }
+        }
+      }
+    },
+    "UEO-zv-YmO.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"12\"; ObjectID = \"UEO-zv-YmO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "12"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12"
+          }
+        }
+      }
+    },
+    "UOZ-JN-QIr.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"50\"; ObjectID = \"UOZ-JN-QIr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "50"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "50"
+          }
+        }
+      }
+    },
+    "wzI-tF-Y2S.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Preamp\"; ObjectID = \"wzI-tF-Y2S\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Preamp"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preamp"
+          }
+        }
+      }
+    },
+    "xM8-HB-8XL.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"1k\"; ObjectID = \"xM8-HB-8XL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1k"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1k"
+          }
+        }
+      }
+    },
+    "XmE-PI-PFN.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"20Hz\"; ObjectID = \"XmE-PI-PFN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "20Hz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20Hz"
+          }
+        }
+      }
+    },
+    "xsQ-DN-AcS.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Preset:\"; ObjectID = \"xsQ-DN-AcS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Preset:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preaj.:"
+          }
+        }
+      }
+    },
+    "Ze7-D0-V5z.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"200\"; ObjectID = \"Ze7-D0-V5z\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "200"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "200"
+          }
+        }
+      }
+    },
+    "Zlw-xU-QP7.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"-6 dB\"; ObjectID = \"Zlw-xU-QP7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "-6 dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-6 dB"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

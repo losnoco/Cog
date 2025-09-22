@@ -230,7 +230,6 @@
 		8370B70C17F615FE001A4D7A /* Spc_Sfm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Sfm.cpp; path = gme/Spc_Sfm.cpp; sourceTree = "<group>"; };
 		8370B70D17F615FE001A4D7A /* Spc_Sfm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Spc_Sfm.h; path = gme/Spc_Sfm.h; sourceTree = "<group>"; };
 		83747B7F2862D4DB0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		838EE8BD29A8600A00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83BDCDC42E41A269003FC007 /* 2413tone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 2413tone.h; sourceTree = "<group>"; };
 		83BDCDC52E41A269003FC007 /* emu2413.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = emu2413.h; sourceTree = "<group>"; };
 		83BDCDC62E41A269003FC007 /* emu2413.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = emu2413.c; sourceTree = "<group>"; };
@@ -242,7 +241,6 @@
 		83BDCDCC2E41A269003FC007 /* panning.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = panning.c; sourceTree = "<group>"; };
 		83BDCDCD2E41A269003FC007 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		83BDCDCE2E41A269003FC007 /* vrc7tone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vrc7tone.h; sourceTree = "<group>"; };
-		83F0E6B7287CAB4100D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83FC5D3B181B47FB00B917E5 /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dsp.cpp; sourceTree = "<group>"; };
 		83FC5D3C181B47FB00B917E5 /* dsp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dsp.hpp; sourceTree = "<group>"; };
 		83FC5D57181B47FB00B917E5 /* smp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smp.cpp; sourceTree = "<group>"; };
@@ -737,8 +735,6 @@
 			children = (
 				833F68361CDBCAB200AFB9F0 /* es */,
 				835C889022CC1884001B4B3F /* en */,
-				83F0E6B7287CAB4100D84594 /* pl */,
-				838EE8BD29A8600A00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
