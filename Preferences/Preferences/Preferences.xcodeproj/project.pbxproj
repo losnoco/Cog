@@ -409,19 +409,8 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				zh_CN,
-				es,
 				Base,
 				en,
-				ja,
-				fr,
-				el,
-				de,
-				sv,
-				he,
-				pl,
-				ru,
-				tr,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Preferences */;
 			projectDirPath = "";

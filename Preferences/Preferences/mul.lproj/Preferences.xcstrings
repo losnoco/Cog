@@ -35,7 +35,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "1lM-3b-70I.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 1\"; ObjectID = \"1lM-3b-70I\";",
@@ -47,7 +48,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "1y7-iZ-BhE.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Reset to defaults\"; ObjectID = \"1y7-iZ-BhE\";",
@@ -83,7 +85,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "2Jq-rQ-73W.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Seek backward:\"; ObjectID = \"2Jq-rQ-73W\";",
@@ -119,7 +122,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "4fv-X4-XK6.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 3\"; ObjectID = \"4fv-X4-XK6\";",
@@ -131,7 +135,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "4zC-Y9-iRt.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Formant:\"; ObjectID = \"4zC-Y9-iRt\";",
@@ -161,7 +166,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "7pe-37-TM4.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 3\"; ObjectID = \"7pe-37-TM4\";",
@@ -173,7 +179,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "7un-em-D8r.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"7un-em-D8r\";",
@@ -339,7 +346,7 @@
     },
     "207.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Automatically check for updates on startup\"; ObjectID = \"207\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -635,7 +642,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Bll-IJ-lje.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Spectrum bars\"; ObjectID = \"Bll-IJ-lje\";",
@@ -665,7 +673,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "bWQ-dT-X3w.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"bWQ-dT-X3w\";",
@@ -730,6 +739,12 @@
             "state" : "new",
             "value" : "Fade in/out:"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fundido:"
+          }
         }
       }
     },
@@ -761,7 +776,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "ds2-aw-ebU.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Limit volume control to 100%\"; ObjectID = \"ds2-aw-ebU\";",
@@ -791,7 +807,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "E9b-yj-br7.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 2\"; ObjectID = \"E9b-yj-br7\";",
@@ -803,7 +820,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "ECB-P0-pve.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Label\"; ObjectID = \"ECB-P0-pve\";",
@@ -851,7 +869,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "EQX-aL-uT0.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 3\"; ObjectID = \"EQX-aL-uT0\";",
@@ -899,7 +918,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "F0i-UK-6Nu.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Enable FreeSurround stereo to surround upmixing\"; ObjectID = \"F0i-UK-6Nu\";",
@@ -1037,7 +1057,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "GdX-5e-NeU.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Colorful dock icons\"; ObjectID = \"GdX-5e-NeU\";",
@@ -1067,7 +1088,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Gp4-rA-1UF.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Fade in/out:\"; ObjectID = \"Gp4-rA-1UF\";",
@@ -1151,7 +1173,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "IU9-uF-gU9.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Enable HDCD Peak and Low Level Range Extend\"; ObjectID = \"IU9-uF-gU9\";",
@@ -1253,7 +1276,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "KJz-qS-IcO.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Selected:\"; ObjectID = \"KJz-qS-IcO\";",
@@ -1319,7 +1343,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "lEg-E3-TBs.headerCell.title" : {
       "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Valid\"; ObjectID = \"lEg-E3-TBs\";",
@@ -1403,7 +1428,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "n5F-dq-NZh.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"MIDI Plugin:\"; ObjectID = \"n5F-dq-NZh\";",
@@ -1505,7 +1531,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "oWh-lD-mFH.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 1\"; ObjectID = \"oWh-lD-mFH\";",
@@ -1553,7 +1580,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "pmK-Yr-lk6.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 3\"; ObjectID = \"pmK-Yr-lk6\";",
@@ -1565,7 +1593,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "POG-ai-6D2.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"(will be preferred if possible)\"; ObjectID = \"POG-ai-6D2\";",
@@ -1595,7 +1624,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "qc8-jP-K6o.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Window Size:\"; ObjectID = \"qc8-jP-K6o\";",
@@ -1642,6 +1672,12 @@
             "state" : "new",
             "value" : "Stopped"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detenido"
+          }
         }
       }
     },
@@ -1655,7 +1691,8 @@
             "value" : "⏹️"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Rf1-UA-RIc.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 2\"; ObjectID = \"Rf1-UA-RIc\";",
@@ -1667,7 +1704,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "RGf-4D-3NW.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Show album art\"; ObjectID = \"RGf-4D-3NW\";",
@@ -1787,7 +1825,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "TUT-PI-q15.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 3\"; ObjectID = \"TUT-PI-q15\";",
@@ -1799,7 +1838,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "UdW-qd-A0x.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Default fade time:\"; ObjectID = \"UdW-qd-A0x\";",
@@ -1901,7 +1941,8 @@
             "value" : "Item 1"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "wK4-EF-8Wa.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Volume Level:\"; ObjectID = \"wK4-EF-8Wa\";",
@@ -2039,7 +2080,8 @@
             "value" : "Item 2"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "yeL-9c-lFq.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Select a SoundFont\"; ObjectID = \"yeL-9c-lFq\";",
@@ -2068,6 +2110,12 @@
             "state" : "new",
             "value" : "Paused"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausado"
+          }
         }
       }
     },
@@ -2081,7 +2129,8 @@
             "value" : "⏸️"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "YLi-QX-EgD.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Item 2\"; ObjectID = \"YLi-QX-EgD\";",
@@ -2128,6 +2177,12 @@
             "state" : "new",
             "value" : "Playing"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduciendo"
+          }
         }
       }
     },
@@ -2141,7 +2196,8 @@
             "value" : "▶️"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "zaI-0m-tQf.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"hh:mm:ss.ms\"; ObjectID = \"zaI-0m-tQf\";",
@@ -2171,7 +2227,8 @@
             "value" : "Item 3"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "zQ2-6O-3Og.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Send crash reports and usage data\"; ObjectID = \"zQ2-6O-3Og\";",

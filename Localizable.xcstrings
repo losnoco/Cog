@@ -1202,6 +1202,12 @@
             "state" : "translated",
             "value" : "Sentry crash collection"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colección de fallos de Sentry"
+          }
         }
       }
     },

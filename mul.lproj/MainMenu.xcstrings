@@ -173,7 +173,8 @@
             "value" : "⏰"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "5.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Bring All to Front\"; ObjectID = \"5\";",
@@ -896,7 +897,7 @@
     },
     "302.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Check for Updates...\"; ObjectID = \"302\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1279,7 +1280,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lista"
+            "value" : "Playlist"
           }
         }
       }
@@ -1297,7 +1298,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lista"
+            "value" : "Playlist"
           }
         }
       }
@@ -4012,7 +4013,8 @@
             "value" : "🎵"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "C2Q-qG-dwX.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"C2Q-qG-dwX\";",
@@ -4180,16 +4182,23 @@
             "value" : "1.0×"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "iRb-7e-iMC.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Recurring\"; ObjectID = \"iRb-7e-iMC\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Recurring"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Periódica"
           }
         }
       }
@@ -4378,7 +4387,8 @@
             "value" : "🔒"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "M6d-rj-lEz.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"M6d-rj-lEz\";",
@@ -4795,7 +4805,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Filtrar lista"
+            "value" : "Filtrar playlist"
           }
         }
       }
@@ -4809,6 +4819,12 @@
             "state" : "new",
             "value" : "Speed"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad"
+          }
         }
       }
     },
@@ -4820,6 +4836,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Speed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad"
           }
         }
       }
@@ -4988,12 +5010,18 @@
     },
     "wLp-NA-5u2.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"One time\"; ObjectID = \"wLp-NA-5u2\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "One time"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez"
           }
         }
       }
@@ -5038,7 +5066,8 @@
             "value" : "⚠️"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "y8c-n8-5Uh.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Always Stop After Current\"; ObjectID = \"y8c-n8-5Uh\";",

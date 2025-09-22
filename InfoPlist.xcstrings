@@ -11,7 +11,8 @@
             "value" : "Cog"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "CFBundleName" : {
       "comment" : "Localized versions of Info.plist keys",
