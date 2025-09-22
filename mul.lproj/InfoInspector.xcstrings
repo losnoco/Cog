@@ -1,0 +1,780 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "1.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Info Inspector\"; ObjectID = \"1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Info Inspector"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inspector de información"
+          }
+        }
+      }
+    },
+    "8e7-lp-K5l.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Encoding:\"; ObjectID = \"8e7-lp-K5l\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Encoding:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codificación:"
+          }
+        }
+      }
+    },
+    "10.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Artist:\"; ObjectID = \"10\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Artist:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artista:"
+          }
+        }
+      }
+    },
+    "12.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Album:\"; ObjectID = \"12\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Album:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Álbum:"
+          }
+        }
+      }
+    },
+    "14.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Track:\"; ObjectID = \"14\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Track:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pista:"
+          }
+        }
+      }
+    },
+    "16.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Length:\"; ObjectID = \"16\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Length:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración:"
+          }
+        }
+      }
+    },
+    "18.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Date:\"; ObjectID = \"18\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha:"
+          }
+        }
+      }
+    },
+    "20.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Genre:\"; ObjectID = \"20\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Genre:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Género:"
+          }
+        }
+      }
+    },
+    "22.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Sample Rate:\"; ObjectID = \"22\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sample Rate:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frec. de muestreo:"
+          }
+        }
+      }
+    },
+    "24.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Title:\"; ObjectID = \"24\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Título:"
+          }
+        }
+      }
+    },
+    "28.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Channels:\"; ObjectID = \"28\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Channels:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canales:"
+          }
+        }
+      }
+    },
+    "31.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Bits Per Sample:\"; ObjectID = \"31\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bits Per Sample:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bits por muestra:"
+          }
+        }
+      }
+    },
+    "32.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Bitrate:\"; ObjectID = \"32\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bitrate:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasa de bits:"
+          }
+        }
+      }
+    },
+    "34.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"34\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "36.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"36\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "38.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"38\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "40.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"40\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "42.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"42\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "44.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"44\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "46.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"46\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "50.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"50\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "52.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"52\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "54.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"54\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "56.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"56\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "85.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Filename:\"; ObjectID = \"85\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Filename:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del archivo:"
+          }
+        }
+      }
+    },
+    "87.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"87\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "AUa-jh-Azn.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"AUa-jh-Azn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        }
+      }
+    },
+    "B8w-o8-ZBw.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"B8w-o8-ZBw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "cbq-TT-CZX.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Codec:\"; ObjectID = \"cbq-TT-CZX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Codec:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códec:"
+          }
+        }
+      }
+    },
+    "Cu5-ia-Z5b.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Cuesheet:\"; ObjectID = \"Cu5-ia-Z5b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cuesheet:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuesheet:"
+          }
+        }
+      }
+    },
+    "fDr-Nh-3YI.title" : {
+      "comment" : "Class = \"NSTextFieldCell; title = \"Composer:\"; ObjectID = \"fDr-Nh-3YI\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Composer:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compositor:"
+          }
+        }
+      }
+    },
+    "fiv-eh-w3c.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Play Count:\"; ObjectID = \"fiv-eh-w3c\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Play Count:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recuento de repr.:"
+          }
+        }
+      }
+    },
+    "Ial-XI-91y.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"Ial-XI-91y\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "LFJ-QQ-gGr.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Album Artist:\"; ObjectID = \"LFJ-QQ-gGr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Album Artist:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artista del álbum:"
+          }
+        }
+      }
+    },
+    "PPV-dt-9Bp.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"PPV-dt-9Bp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        }
+      }
+    },
+    "qBi-M8-kEx.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"ReplayGain:\"; ObjectID = \"qBi-M8-kEx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ReplayGain:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ReplayGain:"
+          }
+        }
+      }
+    },
+    "QPg-Mb-Urn.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Codec:\"; ObjectID = \"QPg-Mb-Urn\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codec:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códec:"
+          }
+        }
+      }
+    },
+    "rAo-AP-lVa.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"rAo-AP-lVa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "Ule-N3-dKW.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Comment:\"; ObjectID = \"Ule-N3-dKW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comment:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comentarios:"
+          }
+        }
+      }
+    },
+    "UyE-Mc-e39.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"UyE-Mc-e39\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "v14-AG-B9D.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"v14-AG-B9D\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "vB6-9J-5qg.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Album Artist:\"; ObjectID = \"vB6-9J-5qg\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Album Artist:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artista del álbum:"
+          }
+        }
+      }
+    },
+    "Yby-OU-cqP.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"N/A\"; ObjectID = \"Yby-OU-cqP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
+        }
+      }
+    },
+    "z22-KP-d7B.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Composer:\"; ObjectID = \"z22-KP-d7B\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Composer:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

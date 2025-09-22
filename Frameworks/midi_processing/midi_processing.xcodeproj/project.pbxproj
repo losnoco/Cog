@@ -27,7 +27,6 @@
 /* Begin PBXFileReference section */
 		833F68441CDBCABF00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747BB62862D56A0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
-		838EE8CB29A8600C00CD0580 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83B066AC180D56B9008E3612 /* midi_processing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = midi_processing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B066B7180D56B9008E3612 /* midi_processing-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "midi_processing-Info.plist"; sourceTree = "<group>"; };
 		83B066B9180D56B9008E3612 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -45,7 +44,6 @@
 		83B066EE180D5724008E3612 /* midi_processor_syx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midi_processor_syx.cpp; sourceTree = "<group>"; };
 		83B066EF180D5724008E3612 /* midi_processor_xmi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midi_processor_xmi.cpp; sourceTree = "<group>"; };
 		83B066F0180D5724008E3612 /* midi_processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_processor.h; sourceTree = "<group>"; };
-		83F0E6C5287CAB4300D84594 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,8 +233,6 @@
 			children = (
 				83B066B9180D56B9008E3612 /* en */,
 				833F68441CDBCABF00AFB9F0 /* es */,
-				83F0E6C5287CAB4300D84594 /* pl */,
-				838EE8CB29A8600C00CD0580 /* tr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
