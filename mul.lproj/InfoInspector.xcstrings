@@ -478,6 +478,12 @@
             "state" : "new",
             "value" : "N/A"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
+          }
         }
       }
     },
@@ -615,6 +621,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "N/A"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "n/d"
           }
         }
       }
@@ -771,6 +783,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Composer:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compositor:"
           }
         }
       }

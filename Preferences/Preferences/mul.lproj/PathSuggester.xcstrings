@@ -293,6 +293,12 @@
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"w2T-DH-7x9\";",
       "extractionState" : "manual",
       "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "w2T-DH-7x9.title"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
@@ -311,7 +317,8 @@
             "value" : "Metin Hücresi"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "xFm-ed-yBb.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"xFm-ed-yBb\";",
@@ -335,7 +342,8 @@
             "value" : "Tablo Görünümü Hücresi"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     }
   },
   "version" : "1.1"
