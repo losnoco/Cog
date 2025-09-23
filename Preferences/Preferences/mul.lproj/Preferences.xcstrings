@@ -346,7 +346,7 @@
     },
     "207.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Automatically check for updates on startup\"; ObjectID = \"207\";",
-      "extractionState" : "stale",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
