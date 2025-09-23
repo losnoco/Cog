@@ -897,7 +897,7 @@
     },
     "302.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Check for Updates...\"; ObjectID = \"302\";",
-      "extractionState" : "stale",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4163,7 +4163,7 @@
     },
     "iRb-7e-iMC.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Recurring\"; ObjectID = \"iRb-7e-iMC\";",
-      "extractionState" : "stale",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4950,7 +4950,7 @@
     },
     "wLp-NA-5u2.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"One time\"; ObjectID = \"wLp-NA-5u2\";",
-      "extractionState" : "stale",
+      "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
