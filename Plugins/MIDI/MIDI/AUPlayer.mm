@@ -376,6 +376,16 @@ bool AUPlayer::startup() {
 
 	setFilterMode(mode, reverb_chorus_disabled);
 
+	// Warm up
+	float *temp = (float*) malloc(sizeof(float) * BLOCK_SIZE * 2);
+	if(temp) {
+		size_t count = (uSampleRate / BLOCK_SIZE) + 1;
+		for(size_t i = 0; i < count; ++i) {
+			render(temp, BLOCK_SIZE);
+		}
+		free(temp);
+	}
+
 	return true;
 }
 
