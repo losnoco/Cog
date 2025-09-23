@@ -895,24 +895,6 @@
         }
       }
     },
-    "302.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Check for Updates...\"; ObjectID = \"302\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Check for Updates..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar actualizaciones..."
-          }
-        }
-      }
-    },
     "303.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Send Feedback...\"; ObjectID = \"303\";",
       "extractionState" : "extracted_with_value",
@@ -4161,24 +4143,6 @@
       },
       "shouldTranslate" : false
     },
-    "iRb-7e-iMC.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Recurring\"; ObjectID = \"iRb-7e-iMC\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Recurring"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Periódica"
-          }
-        }
-      }
-    },
     "js2-sT-U4M.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"js2-sT-U4M\";",
       "extractionState" : "manual",
@@ -4944,24 +4908,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar ventana del analizador"
-          }
-        }
-      }
-    },
-    "wLp-NA-5u2.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"One time\"; ObjectID = \"wLp-NA-5u2\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "One time"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una vez"
           }
         }
       }

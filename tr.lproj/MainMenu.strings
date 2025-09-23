@@ -107,9 +107,6 @@
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "209"; */
 "209.headerCell.title" = "#";
 
-/* Class = "NSMenuItem"; title = "Check for Updates..."; ObjectID = "302"; */
-"302.title" = "Güncellemeleri kontrol et...";
-
 /* Class = "NSMenuItem"; title = "Send Feedback..."; ObjectID = "303"; */
 "303.title" = "Geri Bildirim yolla...";
 
@@ -725,9 +722,6 @@
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "gKK-cS-RP5"; */
 "gKK-cS-RP5.title" = "Tablo Görünümü Hücresi";
 
-/* Class = "NSMenuItem"; title = "Recurring"; ObjectID = "iRb-7e-iMC"; */
-"iRb-7e-iMC.title" = "Recurring";
-
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "js2-sT-U4M"; */
 "js2-sT-U4M.title" = "Tablo Görünümü Hücresi";
 
@@ -820,9 +814,6 @@
 
 /* Class = "NSToolbarItem"; paletteLabel = "Show Equalizer"; ObjectID = "vzT-Gb-aGW"; */
 "vzT-Gb-aGW.paletteLabel" = "Ekolayzırı Göster";
-
-/* Class = "NSMenuItem"; title = "One time"; ObjectID = "wLp-NA-5u2"; */
-"wLp-NA-5u2.title" = "One time";
 
 /* Class = "NSTextFieldCell"; title = "Table View Cell"; ObjectID = "wky-z8-Cj5"; */
 "wky-z8-Cj5.title" = "Tablo Görünümü Hücresi";

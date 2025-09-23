@@ -344,24 +344,6 @@
         }
       }
     },
-    "207.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Automatically check for updates on startup\"; ObjectID = \"207\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Automatically check for updates on startup"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar actualizaciones al abrir"
-          }
-        }
-      }
-    },
     "211.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Output Device: \"; ObjectID = \"211\";",
       "extractionState" : "extracted_with_value",
