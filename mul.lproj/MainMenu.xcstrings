@@ -1156,6 +1156,12 @@
             "state" : "new",
             "value" : "Donate"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donar"
+          }
         }
       }
     },
@@ -4044,7 +4050,8 @@
             "value" : "Ko-fi"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "Eds-my-DQr.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Properties\"; ObjectID = \"Eds-my-DQr\";",
@@ -4302,6 +4309,12 @@
             "state" : "new",
             "value" : "Donate"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donar"
+          }
         }
       }
     },
@@ -4526,7 +4539,8 @@
             "value" : "Patreon"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "nyW-nI-abw.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"LiberaPay\"; ObjectID = \"nyW-nI-abw\";",
@@ -4538,7 +4552,8 @@
             "value" : "LiberaPay"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "omb-wi-loX.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Stop after Selection\"; ObjectID = \"omb-wi-loX\";",
@@ -5054,7 +5069,8 @@
             "value" : "PayPal"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "XV7-Re-I9u.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"⚠️\"; ObjectID = \"XV7-Re-I9u\";",
