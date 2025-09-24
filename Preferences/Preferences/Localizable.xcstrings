@@ -360,6 +360,105 @@
         }
       }
     },
+    "NukedErrorBrokenSet" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM set you opened is broken, incomplete, or contains ROMs for multiple devices."
+          }
+        }
+      }
+    },
+    "NukedErrorDirCreateError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There was an error creating the ROM directory: %@"
+          }
+        }
+      }
+    },
+    "NukedErrorDirExistsError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory already exists and there was an error removing it: %@"
+          }
+        }
+      }
+    },
+    "NukedErrorFileExists" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory already exists and is somwhow a file and not a directory. It has been removed."
+          }
+        }
+      }
+    },
+    "NukedErrorFileExistsError" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory already exists and is somehow a file and not a directory. There was an error removing it: %@"
+          }
+        }
+      }
+    },
+    "NukedInfoDirExists" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory has been removed."
+          }
+        }
+      }
+    },
+    "NukedInfoSetInstalled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A ROM set has been installed for the following device: %@"
+          }
+        }
+      }
+    },
+    "NukedInfoTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuked SC-55"
+          }
+        }
+      }
+    },
+    "NukedOK" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "Output" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -1,136 +1,25 @@
+//
+//  SCPlayer.cpp
+//  MIDI
+//
+//  Created by Christopher Snowhill on 9/23/25.
+//
+
 #include "SCPlayer.h"
 
-#include <vector>
+#include <nuked_sc55/api.h>
 
-static uint16_t getwordle(uint8_t *pData) {
-	return (uint16_t)(pData[0] | (((uint16_t)pData[1]) << 8));
-}
+#import <Cocoa/Cocoa.h>
 
-static uint32_t getdwordle(uint8_t *pData) {
-	return pData[0] | (((uint32_t)pData[1]) << 8) | (((uint32_t)pData[2]) << 16) | (((uint32_t)pData[3]) << 24);
-}
-
-bool SCPlayer::LoadCore() {
-	bool rval = process_create(0);
-	if(rval) rval = process_create(1);
-	if(rval) rval = process_create(2);
-
-	return rval;
-}
-
-bool SCPlayer::process_create(uint32_t port) {
-	bTerminating[port] = false;
-
-	hChildStd_IN[port] = [[NSPipe alloc] init];
-	hChildStd_OUT[port] = [[NSPipe alloc] init];
-
-	NSURL *launcherUrl = [[NSBundle mainBundle] URLForResource:@"scpipe" withExtension:@""];
-	NSURL *coreUrl = [[NSBundle mainBundle] URLForResource:@"IIAM" withExtension:@"bin"];
-
-	hProcess[port] = [[NSTask alloc] init];
-	[hProcess[port] setExecutableURL:launcherUrl];
-	[hProcess[port] setArguments:@[[coreUrl path]]];
-	[hProcess[port] setStandardInput:hChildStd_IN[port]];
-	[hProcess[port] setStandardOutput:hChildStd_OUT[port]];
-
-	NSError *error = nil;
-	if(![hProcess[port] launchAndReturnError:&error] || error != nil) {
-		process_terminate(port);
-		return false;
-	}
-
-	uint32_t code = process_read_code(port);
-
-	if(code != 0) {
-		process_terminate(port);
-		return false;
-	}
-
-	return true;
-}
-
-void SCPlayer::process_terminate(uint32_t port) {
-	if(bTerminating[port]) return;
-
-	bTerminating[port] = true;
-
-	if(hProcess[port]) {
-		process_write_code(port, 0);
-		[hProcess[port] interrupt];
-		[hProcess[port] waitUntilExit];
-		[hProcess[port] terminate];
-		hProcess[port] = nil;
-	}
-	if(hChildStd_IN[port]) {
-		hChildStd_IN[port] = nil;
-	}
-	if(hChildStd_OUT[port]) {
-		hChildStd_OUT[port] = nil;
-	}
-
-	bTerminating[port] = false;
-}
-
-bool SCPlayer::process_running(uint32_t port) {
-	if(hProcess[port] && [hProcess[port] isRunning]) return true;
-	return false;
-}
-
-uint32_t SCPlayer::process_read_bytes_pass(uint32_t port, void *out, uint32_t size) {
-	NSError *error = nil;
-	NSData *data = [[hChildStd_OUT[port] fileHandleForReading] readDataUpToLength:size error:&error];
-	if(!data || error) return 0;
-	NSUInteger bytesDone = [data length];
-	memcpy(out, [data bytes], bytesDone);
-	return bytesDone;
-}
-
-void SCPlayer::process_read_bytes(uint32_t port, void *out, uint32_t size) {
-	if(process_running(port) && size) {
-		uint8_t *ptr = (uint8_t *)out;
-		uint32_t done = 0;
-		while(done < size) {
-			uint32_t delta = process_read_bytes_pass(port, ptr + done, size - done);
-			if(delta == 0) {
-				memset(out, 0xFF, size);
-				break;
-			}
-			done += delta;
-		}
-	} else
-		memset(out, 0xFF, size);
-}
-
-uint32_t SCPlayer::process_read_code(uint32_t port) {
-	uint32_t code;
-	process_read_bytes(port, &code, sizeof(code));
-	return code;
-}
-
-void SCPlayer::process_write_bytes(uint32_t port, const void *in, uint32_t size) {
-	if(process_running(port)) {
-		if(size == 0) return;
-		NSError *error = nil;
-		NSData *data = [NSData dataWithBytes:in length:size];
-		if(![[hChildStd_IN[port] fileHandleForWriting] writeData:data error:&error] || error) {
-			process_terminate(port);
-		}
-	}
-}
-
-void SCPlayer::process_write_code(uint32_t port, uint32_t code) {
-	process_write_bytes(port, &code, sizeof(code));
-}
+#import <Accelerate/Accelerate.h>
 
 SCPlayer::SCPlayer()
 : MIDIPlayer() {
-	initialized = false;
-	for(unsigned int i = 0; i < 3; ++i) {
-		bTerminating[i] = false;
-		hProcess[i] = nil;
-		hChildStd_IN[i] = nil;
-		hChildStd_OUT[i] = nil;
-	}
+	_player[0] = NULL;
+	_player[1] = NULL;
+	_player[2] = NULL;
+
+	_workerQueue = [[NSOperationQueue alloc] init];
 }
 
 SCPlayer::~SCPlayer() {
@@ -138,106 +27,135 @@ SCPlayer::~SCPlayer() {
 }
 
 void SCPlayer::send_event(uint32_t b) {
-	uint32_t port = (b >> 24) & 0xFF;
+	uint8_t event[3];
+	event[0] = static_cast<uint8_t>(b);
+	event[1] = static_cast<uint8_t>(b >> 8);
+	event[2] = static_cast<uint8_t>(b >> 16);
+	unsigned port = (b >> 24) & 0x7F;
 	if(port > 2) port = 0;
-	process_write_code(port, 2);
-	process_write_code(port, b & 0xFFFFFF);
-	if(process_read_code(port) != 0)
-		process_terminate(port);
+	const unsigned channel = (b & 0x0F) + port * 16;
+	const unsigned command = b & 0xF0;
+	const unsigned event_length = (command >= 0xF8 && command <= 0xFF) ? 1 : ((command == 0xC0 || command == 0xD0) ? 2 : 3);
+	sc55_write_uart(_player[port], event, event_length);
 }
 
-void SCPlayer::send_sysex(const uint8_t *event, size_t size, size_t port) {
-	process_write_code(port, 3);
-	process_write_code(port, (uint32_t)size);
-	process_write_bytes(port, event, size);
-	if(process_read_code(port) != 0)
-		process_terminate(port);
-	if(port == 0) {
-		send_sysex(event, size, 1);
-		send_sysex(event, size, 2);
-	}
-}
-
-void SCPlayer::send_event_time(uint32_t b, unsigned int time) {
-	uint32_t port = (b >> 24) & 0xFF;
-	if(port > 2) port = 0;
-	process_write_code(port, 6);
-	process_write_code(port, b & 0xFFFFFF);
-	process_write_code(port, time);
-	if(process_read_code(port) != 0)
-		process_terminate(port);
-}
-
-void SCPlayer::send_sysex_time(const uint8_t *event, size_t size, size_t port, unsigned int time) {
-	process_write_code(port, 7);
-	process_write_code(port, size);
-	process_write_code(port, time);
-	process_write_bytes(port, event, size);
-	if(process_read_code(port) != 0)
-		process_terminate(port);
-	if(port == 0) {
-		send_sysex_time(event, size, 1, time);
-		send_sysex_time(event, size, 2, time);
-	}
-}
-
-void SCPlayer::render_port(uint32_t port, float *out, uint32_t count) {
-	process_write_code(port, 4);
-	process_write_code(port, count);
-	if(process_read_code(port) != 0) {
-		process_terminate(port);
-		memset(out, 0, count * sizeof(float) * 2);
-		return;
-	}
-	process_read_bytes(port, out, count * sizeof(float) * 2);
+void SCPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
+	sc55_write_uart(_player[0], data, (uint32_t)size);
+	sc55_write_uart(_player[1], data, (uint32_t)size);
+	sc55_write_uart(_player[2], data, (uint32_t)size);
 }
 
 void SCPlayer::render(float *out, unsigned long count) {
-	memset(out, 0, count * sizeof(float) * 2);
-	while(count) {
-		unsigned long todo = count > 4096 ? 4096 : count;
-		float buffer[4096 * 2];
-		for(unsigned long i = 0; i < 3; ++i) {
-			render_port(i, buffer, todo);
+	bzero(out, sizeof(float) * count * 2);
+	while(count > 0) {
+		unsigned long countToDo = count;
+		if(countToDo > 512)
+			countToDo = 512;
 
-			for(unsigned long j = 0; j < todo; ++j) {
-				out[j * 2 + 0] += buffer[j * 2 + 0];
-				out[j * 2 + 1] += buffer[j * 2 + 1];
-			}
+		for(size_t i = 0; i < 3; ++i) {
+			NSOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+				sc55_render(_player[i], tempBuffer[i], countToDo);
+				vDSP_vflt16(tempBuffer[i], 1, ftempBuffer[i], 1, countToDo * 2);
+				float scale = 1ULL << 15;
+				vDSP_vsdiv(ftempBuffer[i], 1, &scale, ftempBuffer[i], 1, countToDo * 2);
+			}];
+			[_workerQueue addOperation:op];
 		}
-		out += todo * 2;
-		count -= todo;
+
+		[_workerQueue waitUntilAllOperationsAreFinished];
+
+		for(size_t i = 0; i < 3; ++i) {
+			vDSP_vadd(ftempBuffer[i], 1, out, 1, out, 1, countToDo * 2);
+		}
+
+		out += countToDo * 2;
+		count -= countToDo;
 	}
 }
 
 void SCPlayer::shutdown() {
-	for(int i = 0; i < 3; i++) {
-		process_terminate(i);
+	if(_player[2]) {
+		sc55_free(_player[2]);
+		_player[2] = NULL;
 	}
-	initialized = false;
+	if(_player[1]) {
+		sc55_free(_player[1]);
+		_player[1] = NULL;
+	}
+	if(_player[0]) {
+		sc55_free(_player[0]);
+		_player[0] = NULL;
+	}
+}
+
+static NSString *getRomName(NSString *baseName) {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+	basePath = [basePath stringByAppendingPathComponent:@"Roms"];
+	basePath = [basePath stringByAppendingPathComponent:@"Nuked-SC55"];
+	basePath = [basePath stringByAppendingPathComponent:baseName];
+	return basePath;
+}
+
+static int loadRom(void *context, const char *name, uint8_t *buffer, uint32_t *size) {
+	@autoreleasepool {
+		NSString *_name = [NSString stringWithUTF8String:name];
+		NSString *romName;
+		if([_name isEqualToString:@"back.data"]) {
+			NSBundle *bundle = [NSBundle bundleWithIdentifier:@"org.losnoco.nuked-sc55"];
+			romName = [bundle pathForResource:@"back" ofType:@"data"];
+		} else {
+			romName = getRomName(_name);
+		}
+		BOOL dir = NO;
+		NSFileManager *defaultManager = [NSFileManager defaultManager];
+		if(![defaultManager fileExistsAtPath:romName isDirectory:&dir]) {
+			return -1;
+		}
+		if(size) {
+			NSData *fileData = [defaultManager contentsAtPath:romName];
+			if(!fileData)
+				return -1;
+			if([fileData length] > *size) {
+				*size = (uint32_t) [fileData length];
+				return -1;
+			}
+			*size = (uint32_t) [fileData length];
+			if(buffer) {
+				memcpy(buffer, [fileData bytes], *size);
+			}
+		}
+		return 0;
+	}
 }
 
 bool SCPlayer::startup() {
-	if(initialized) return true;
+	if(_player[2]) return true;
 
-	if(!LoadCore())
-		return false;
-
-	for(int i = 0; i < 3; i++) {
-		process_write_code(i, 1);
-		process_write_code(i, sizeof(uint32_t));
-		process_write_code(i, uSampleRate);
-		if(process_read_code(i) != 0)
+	for(size_t i = 0; i < 3; ++i) {
+		_player[i] = sc55_init(i, GS_RESET, loadRom, NULL);
+		if(!_player[i]) {
 			return false;
+		}
+
+		NSOperation *op = [NSBlockOperation blockOperationWithBlock:^{
+			sc55_spin(_player[i], sc55_get_sample_rate(_player[i]) * 7);
+		}];
+		[_workerQueue addOperation:op];
 	}
 
-	initialized = true;
-
-	setFilterMode(mode, reverb_chorus_disabled);
+	[_workerQueue waitUntilAllOperationsAreFinished];
 
 	return true;
 }
 
-unsigned int SCPlayer::send_event_needs_time() {
-	return 0; // 4096; This doesn't work for some reason
+uint32_t SCPlayer::sampleRate() {
+	struct sc55_state *st = sc55_init(0, NONE, loadRom, NULL);
+	if(!st) return 0;
+
+	uint32_t r = sc55_get_sample_rate(st);
+
+	sc55_free(st);
+
+	return r;
 }

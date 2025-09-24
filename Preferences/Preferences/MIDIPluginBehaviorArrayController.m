@@ -68,8 +68,10 @@ static void enumCallback(void *context, OSType uSubType, OSType uManufacturer, c
 @implementation MIDIPluginBehaviorArrayController
 - (void)awakeFromNib {
 	[self removeObjects:[self arrangedObjects]];
-
+	
 	[self addObject:@{@"name": @"BASSMIDI", @"preference": @"BASSMIDI", @"configurable": @NO}];
+	
+	[self addObject:@{@"name": @"Nuked SC-55", @"preference": @"NukeSc55", @"configurable": @YES}];
 
 	[self addObject:@{@"name": @"DMX Generic", @"preference": @"DOOM0000", @"configurable": @NO}];
 	[self addObject:@{@"name": @"DMX Doom 1", @"preference": @"DOOM0001", @"configurable": @NO}];
