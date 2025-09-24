@@ -101,7 +101,7 @@ class system_exclusive_table
 
 public:
     unsigned add_entry( const uint8_t * p_data, std::size_t p_size, std::size_t p_port );
-    void get_entry( unsigned p_index, const uint8_t * & p_data, std::size_t & p_size, std::size_t & p_port );
+    void get_entry( unsigned p_index, const uint8_t * & p_data, std::size_t & p_size, std::size_t & p_port ) const;
 };
 
 struct midi_stream_event
@@ -242,9 +242,9 @@ private:
     void trim_tempo_map(unsigned long p_index, unsigned long base_timestamp);
 
 public:
-	typedef std::string(*split_callback)(uint8_t bank_msb, uint8_t bank_lsb, uint8_t instrument);
+    typedef std::string(*split_callback)(uint8_t bank_msb, uint8_t bank_lsb, uint8_t instrument);
 
-	void split_by_instrument_changes(split_callback cb = NULL);
+    void split_by_instrument_changes(split_callback cb = NULL);
 
     unsigned long get_subsong_count() const;
     unsigned long get_subsong( unsigned long p_index ) const;
@@ -254,6 +254,9 @@ public:
     unsigned get_format() const;
     unsigned get_track_count() const;
     unsigned get_channel_count(unsigned long subsong) const;
+
+    unsigned get_port_mask(unsigned long subsong) const;
+    static unsigned get_port_mask(const std::vector<midi_stream_event> & p_stream, const system_exclusive_table & p_sysex);
 
     unsigned long get_timestamp_loop_start(unsigned long subsong, bool ms = false) const;
     unsigned long get_timestamp_loop_end(unsigned long subsong, bool ms = false) const;

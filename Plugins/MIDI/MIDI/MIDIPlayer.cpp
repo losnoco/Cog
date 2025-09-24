@@ -40,6 +40,8 @@ bool MIDIPlayer::Load(const midi_container &midi_file, unsigned subsong, unsigne
 
 	midi_file.serialize_as_stream(subsong, mStream, mSysexMap, uStreamLoopStart, uStreamEnd, clean_flags);
 
+	port_mask = midi_container::get_port_mask(mStream, mSysexMap);
+
 	if(mStream.size()) {
 		uStreamPosition = 0;
 		uTimeCurrent = 0;
