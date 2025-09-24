@@ -351,6 +351,12 @@
             "state" : "translated",
             "value" : "The ROM set you opened is broken, incomplete, or contains ROMs for multiple devices."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El conjunto de ROMs que seleccionaste está incompleto, corrupto o contiene conjuntos de ROMs para múltiples dispositivos"
+          }
         }
       }
     },
@@ -361,6 +367,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "There was an error creating the ROM directory: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocurrió un error al crear el directorio de ROMs: %@"
           }
         }
       }
@@ -373,6 +385,12 @@
             "state" : "translated",
             "value" : "The ROM directory already exists and there was an error removing it: %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El directorio de ROMs ya existe, pero ocurrió un error al eliminarlo: %@"
+          }
         }
       }
     },
@@ -383,6 +401,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The ROM directory already exists and is somwhow a file and not a directory. It has been removed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre del directorio de ROMs ya existe, pero como archivo, no como directorio. Se ha eliminado."
           }
         }
       }
@@ -395,6 +419,12 @@
             "state" : "translated",
             "value" : "The ROM directory already exists and is somehow a file and not a directory. There was an error removing it: %@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre del directorio de ROMs ya existe, pero como archivo, no como directorio. Ocurrió un error al eliminarlo: %@"
+          }
         }
       }
     },
@@ -406,6 +436,12 @@
             "state" : "translated",
             "value" : "The ROM directory has been removed."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha eliminado el directorio de ROMs."
+          }
         }
       }
     },
@@ -416,6 +452,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A ROM set has been installed for the following device: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha instalado un conjunto de ROMs para el siguiente dispositivo: %@"
           }
         }
       }
@@ -429,7 +471,8 @@
             "value" : "Nuked SC-55"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "NukedOK" : {
       "extractionState" : "manual",
@@ -438,6 +481,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
           }
         }
       }
