@@ -372,7 +372,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El conjunto de ROMs que seleccionaste está incompleto, corrupto o contiene conjuntos de ROMs para múltiples dispositivos"
+            "value" : "El conjunto de ROMs que seleccionaste está incompleto, corrupto o contiene conjuntos de ROMs para múltiples dispositivos."
           }
         }
       }
