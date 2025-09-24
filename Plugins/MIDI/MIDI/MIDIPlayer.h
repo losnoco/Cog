@@ -68,6 +68,7 @@ class MIDIPlayer {
 	bool initialized;
 	filter_mode mode;
 	bool reverb_chorus_disabled;
+	unsigned port_mask;
 
 	void sysex_reset(size_t port, unsigned int time);
 

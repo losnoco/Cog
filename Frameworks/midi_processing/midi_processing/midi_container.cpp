@@ -199,7 +199,7 @@ unsigned system_exclusive_table::add_entry( const uint8_t * p_data, std::size_t 
     return ((unsigned)(m_entries.size() - 1));
 }
 
-void system_exclusive_table::get_entry( unsigned p_index, const uint8_t * & p_data, std::size_t & p_size, std::size_t & p_port )
+void system_exclusive_table::get_entry( unsigned p_index, const uint8_t * & p_data, std::size_t & p_size, std::size_t & p_port ) const
 {
     const system_exclusive_entry & entry = m_entries[ p_index ];
     p_data = &m_data[ entry.m_offset ];
@@ -1023,7 +1023,7 @@ void midi_container::get_meta_data( unsigned long subsong, midi_meta_data & p_ou
                 else if ( data_count >= 2 && event.m_data[ 0 ] == 0xFF )
                 {
                     data_count -= 2;
-					if ( !data_count ) continue;
+                    if ( !data_count ) continue;
                     switch ( event.m_data[ 1 ] )
                     {
                     case 6:
@@ -1208,37 +1208,37 @@ void midi_container::split_by_instrument_changes(split_callback cb)
                     if (output_track.get_count())
                         m_tracks.push_back( output_track );
                     output_track = program_change;
-					if (cb)
-					{
-						unsigned long timestamp = 0;
-						uint8_t bank_msb = 0, bank_lsb = 0, instrument = 0;
-						for (int i = 0, j = program_change.get_count(); i < j; ++i)
-						{
-							const midi_event & ev = program_change[i];
-							if (ev.m_type == midi_event::program_change)
-								instrument = ev.m_data[0];
-							else if (ev.m_data[0] == 0)
-								bank_msb = ev.m_data[1];
-							else
-								bank_lsb = ev.m_data[1];
-							if (ev.m_timestamp > timestamp)
-								timestamp = ev.m_timestamp;
-						}
+                    if (cb)
+                    {
+                        unsigned long timestamp = 0;
+                        uint8_t bank_msb = 0, bank_lsb = 0, instrument = 0;
+                        for (int i = 0, j = program_change.get_count(); i < j; ++i)
+                        {
+                            const midi_event & ev = program_change[i];
+                            if (ev.m_type == midi_event::program_change)
+                                instrument = ev.m_data[0];
+                            else if (ev.m_data[0] == 0)
+                                bank_msb = ev.m_data[1];
+                            else
+                                bank_lsb = ev.m_data[1];
+                            if (ev.m_timestamp > timestamp)
+                                timestamp = ev.m_timestamp;
+                        }
 
-						std::string name = cb(bank_msb, bank_lsb, instrument);
+                        std::string name = cb(bank_msb, bank_lsb, instrument);
 
-						std::vector<uint8_t> data;
+                        std::vector<uint8_t> data;
 
-						data.resize(name.length() + 2);
+                        data.resize(name.length() + 2);
 
-						data[0] = 0xFF;
-						data[1] = 0x03;
+                        data[0] = 0xFF;
+                        data[1] = 0x03;
 
-						std::copy(name.begin(), name.end(), data.begin() + 2);
+                        std::copy(name.begin(), name.end(), data.begin() + 2);
 
-						output_track.add_event(midi_event(timestamp, midi_event::extended, 0, &data[0], data.size()));
-					}
-					program_change = midi_track();
+                        output_track.add_event(midi_event(timestamp, midi_event::extended, 0, &data[0], data.size()));
+                    }
+                    program_change = midi_track();
                 }
                 output_track.add_event( event );
             }
@@ -1443,4 +1443,39 @@ void midi_container::scan_for_loops( bool p_xmi_loops, bool p_marker_loops, bool
             m_timestamp_loop_end[ i ] = ~0UL;
         }
     }
+}
+
+unsigned midi_container::get_port_mask(unsigned long subsong) const
+{
+    std::vector<midi_stream_event> stream;
+    system_exclusive_table system_exclusive;
+    unsigned long loop_start, loop_end;
+    unsigned clean_flags = clean_flag_emidi;
+
+    serialize_as_stream(subsong, stream, system_exclusive, loop_start, loop_end, clean_flags);
+
+    return get_port_mask(stream, system_exclusive);
+}
+
+unsigned midi_container::get_port_mask(const std::vector<midi_stream_event> & stream, const system_exclusive_table & system_exclusive)
+{
+    unsigned mask = 0;
+
+    for(auto it = stream.begin(); it != stream.end(); ++it)
+    {
+        uint32_t event = it->m_event;
+        size_t port;
+        if(!(event & 0x80000000)) {
+            port = (event & 0x7f000000) >> 24;
+        } else {
+            const uint8_t *data;
+            size_t size;
+            system_exclusive.get_entry(event & 0x7fffffff, data, size, port);
+        }
+        if(port > 2)
+            port = 0;
+        mask |= 1 << port;
+    }
+
+    return mask;
 }

@@ -33,16 +33,21 @@ void SCPlayer::send_event(uint32_t b) {
 	event[2] = static_cast<uint8_t>(b >> 16);
 	unsigned port = (b >> 24) & 0x7F;
 	if(port > 2) port = 0;
-	const unsigned channel = (b & 0x0F) + port * 16;
-	const unsigned command = b & 0xF0;
-	const unsigned event_length = (command >= 0xF8 && command <= 0xFF) ? 1 : ((command == 0xC0 || command == 0xD0) ? 2 : 3);
-	sc55_write_uart(_player[port], event, event_length);
+	if(_player[port]) {
+		const unsigned channel = (b & 0x0F) + port * 16;
+		const unsigned command = b & 0xF0;
+		const unsigned event_length = (command >= 0xF8 && command <= 0xFF) ? 1 : ((command == 0xC0 || command == 0xD0) ? 2 : 3);
+		sc55_write_uart(_player[port], event, event_length);
+	}
 }
 
 void SCPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
-	sc55_write_uart(_player[0], data, (uint32_t)size);
-	sc55_write_uart(_player[1], data, (uint32_t)size);
-	sc55_write_uart(_player[2], data, (uint32_t)size);
+	if(_player[0])
+		sc55_write_uart(_player[0], data, (uint32_t)size);
+	if(_player[1])
+		sc55_write_uart(_player[1], data, (uint32_t)size);
+	if(_player[2])
+		sc55_write_uart(_player[2], data, (uint32_t)size);
 }
 
 void SCPlayer::render(float *out, unsigned long count) {
@@ -53,6 +58,8 @@ void SCPlayer::render(float *out, unsigned long count) {
 			countToDo = 512;
 
 		for(size_t i = 0; i < 3; ++i) {
+			if(!_player[i]) continue;
+
 			NSOperation *op = [NSBlockOperation blockOperationWithBlock:^{
 				sc55_render(_player[i], tempBuffer[i], countToDo);
 				vDSP_vflt16(tempBuffer[i], 1, ftempBuffer[i], 1, countToDo * 2);
@@ -65,7 +72,8 @@ void SCPlayer::render(float *out, unsigned long count) {
 		[_workerQueue waitUntilAllOperationsAreFinished];
 
 		for(size_t i = 0; i < 3; ++i) {
-			vDSP_vadd(ftempBuffer[i], 1, out, 1, out, 1, countToDo * 2);
+			if(_player[i])
+				vDSP_vadd(ftempBuffer[i], 1, out, 1, out, 1, countToDo * 2);
 		}
 
 		out += countToDo * 2;
@@ -130,9 +138,11 @@ static int loadRom(void *context, const char *name, uint8_t *buffer, uint32_t *s
 }
 
 bool SCPlayer::startup() {
-	if(_player[2]) return true;
+	if(_player[0] || _player[1] || _player[2]) return true;
 
 	for(size_t i = 0; i < 3; ++i) {
+		if(!(port_mask & (1 << i))) continue;
+
 		_player[i] = sc55_init(i, GS_RESET, loadRom, NULL);
 		if(!_player[i]) {
 			return false;
