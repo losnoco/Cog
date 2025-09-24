@@ -934,7 +934,7 @@
                     </connections>
                 </popUpButton>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="49M-Dx-QSC" userLabel="Setup">
-                    <rect key="frame" x="555" y="174" width="70" height="32"/>
+                    <rect key="frame" x="559" y="173" width="65" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Setup" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Tdt-2E-FVm" userLabel="Setup">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
