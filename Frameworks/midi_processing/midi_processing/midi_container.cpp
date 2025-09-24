@@ -1023,6 +1023,7 @@ void midi_container::get_meta_data( unsigned long subsong, midi_meta_data & p_ou
                 else if ( data_count >= 2 && event.m_data[ 0 ] == 0xFF )
                 {
                     data_count -= 2;
+					if ( !data_count ) continue;
                     switch ( event.m_data[ 1 ] )
                     {
                     case 6:
