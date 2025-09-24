@@ -30,6 +30,9 @@
 		837C0D401C50954000CAE18F /* MIDIPluginBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 837C0D3F1C50954000CAE18F /* MIDIPluginBehaviorArrayController.m */; };
 		8384917718084D9F00E7332D /* appearance.png in Resources */ = {isa = PBXBuildFile; fileRef = 8384917518084D9F00E7332D /* appearance.png */; };
 		8391EA06286F9D3200A37593 /* PathSuggester.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83DAD9F0286EDBCD000FAA9A /* PathSuggester.xib */; };
+		83A0CBCB2E83807F007C429D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBAE25BE32500090B90D /* MASShortcut.framework */; };
+		83A0CBCF2E838095007C429D /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0CBCE2E838095007C429D /* File_Extractor.framework */; };
+		83A0CBD42E838B5E007C429D /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A0CBD32E838B5E007C429D /* SHA256Digest.m */; };
 		83A3B72C283AE04800CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */; };
 		83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AC57382861A54D009D6F50 /* PathSuggester.m */; };
 		83B06729180D85B8008E3612 /* MIDIPane.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.mm */; };
@@ -54,6 +57,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		83BE7EEE2E83998A0032CD4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8359FF3C17FEF39F0060F3ED;
+			remoteInfo = File_Extractor;
+		};
 		ED69CBAD25BE32500090B90D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ED69CBA725BE32500090B90D /* MASShortcut.xcodeproj */;
@@ -127,6 +137,10 @@
 		8384913618081ECB00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8384917518084D9F00E7332D /* appearance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = appearance.png; path = Icons/appearance.png; sourceTree = "<group>"; };
 		839E3B5728659B2700880EA2 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ../../Application/AppController.h; sourceTree = "<group>"; };
+		83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = /Users/chris/Source/Repos/cog/Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<absolute>"; };
+		83A0CBCE2E838095007C429D /* File_Extractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = File_Extractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		83A0CBD22E838B5E007C429D /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = /Users/chris/Source/Repos/cog/Utils/SHA256Digest.h; sourceTree = "<absolute>"; };
+		83A0CBD32E838B5E007C429D /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = /Users/chris/Source/Repos/cog/Utils/SHA256Digest.m; sourceTree = "<absolute>"; };
 		83A3B72A283AE04800CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83AC57372861A54D009D6F50 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSuggester.h; sourceTree = "<group>"; };
@@ -173,7 +187,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+				83A0CBCF2E838095007C429D /* File_Extractor.framework in Frameworks */,
 				8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */,
+				83A0CBCB2E83807F007C429D /* MASShortcut.framework in Frameworks */,
 				17C644330B8A791D00C53518 /* CoreAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,6 +206,7 @@
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				3DFAC48D235B6B8100A29416 /* Xcode-config */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				83A0CBCA2E83807F007C429D /* Frameworks */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -236,6 +253,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */,
 				ED69CBA725BE32500090B90D /* MASShortcut.xcodeproj */,
 				8E6C12390AACAEF200819171 /* Carbon.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
@@ -310,6 +328,8 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				83A0CBD22E838B5E007C429D /* SHA256Digest.h */,
+				83A0CBD32E838B5E007C429D /* SHA256Digest.m */,
 				ED69CF0B25BE75330090B90D /* Shortcuts.h */,
 				32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */,
 			);
@@ -323,6 +343,22 @@
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
+		83A0CBCA2E83807F007C429D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83A0CBCE2E838095007C429D /* File_Extractor.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		83BE7EEB2E83998A0032CD4C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83BE7EEF2E83998A0032CD4C /* File_Extractor.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		83F27E711810E41A00CEF538 /* Transformers */ = {
@@ -416,6 +452,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 83BE7EEB2E83998A0032CD4C /* Products */;
+					ProjectRef = 83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */;
+				},
+				{
 					ProductGroup = ED69CBA825BE32500090B90D /* Products */;
 					ProjectRef = ED69CBA725BE32500090B90D /* MASShortcut.xcodeproj */;
 				},
@@ -428,6 +468,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		83BE7EEF2E83998A0032CD4C /* File_Extractor.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = File_Extractor.framework;
+			remoteRef = 83BE7EEE2E83998A0032CD4C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		ED69CBAE25BE32500090B90D /* MASShortcut.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -496,6 +543,7 @@
 				83F27E741810E45D00CEF538 /* PathToFileTransformer.m in Sources */,
 				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
+				83A0CBD42E838B5E007C429D /* SHA256Digest.m in Sources */,
 				83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */,
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
 				832650FC2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m in Sources */,

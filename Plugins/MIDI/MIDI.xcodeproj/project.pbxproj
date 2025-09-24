@@ -30,6 +30,7 @@
 		83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F5E1CFA83F2001E7D2D /* opl3.cpp */; };
 		83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F601CFA83F2001E7D2D /* opl3class.cpp */; };
 		83A09F6F1CFA8D6B001E7D2D /* MSPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */; };
+		83A0CBC42E837AA5007C429D /* SCPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83A0CBC32E837AA5007C429D /* SCPlayer.mm */; };
 		83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0668A180D5668008E3612 /* Cocoa.framework */; };
 		83B06695180D5668008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B06693180D5668008E3612 /* InfoPlist.strings */; };
 		83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
@@ -37,6 +38,8 @@
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
+		83CB83682E82D83500CA63C6 /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CB835F2E82D78500CA63C6 /* nuked_sc55.framework */; };
+		83CB83692E82D83500CA63C6 /* nuked_sc55.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83CB835F2E82D78500CA63C6 /* nuked_sc55.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E83F7A2D9654470054365C /* Accelerate.framework */; };
 		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
 		83EA54232A6A6CF400CD0580 /* libbass_mpc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EA54212A6A6CE200CD0580 /* libbass_mpc.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -57,6 +60,13 @@
 			remoteGlobalIDString = 83B066AB180D56B9008E3612;
 			remoteInfo = midi_processing;
 		};
+		83CB835E2E82D78500CA63C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CB83382E82D78500CA63C6 /* nuked-sc55.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83CB82E22E82D70500CA63C6;
+			remoteInfo = "nuked-sc55";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -72,6 +82,7 @@
 				8356BCD227B353F90074E50C /* libbassmidi.dylib in CopyFiles */,
 				8356BCD327B353FB0074E50C /* libbassflac.dylib in CopyFiles */,
 				8356BCD427B354010074E50C /* libbassopus.dylib in CopyFiles */,
+				83CB83692E82D83500CA63C6 /* nuked_sc55.framework in CopyFiles */,
 				8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,6 +147,8 @@
 		83A09F6C1CFA89E7001E7D2D /* dmx_strife.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx_strife.h; sourceTree = "<group>"; };
 		83A09F6D1CFA8D6B001E7D2D /* MSPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSPlayer.h; sourceTree = "<group>"; };
 		83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MSPlayer.cpp; sourceTree = "<group>"; };
+		83A0CBC22E837AA5007C429D /* SCPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCPlayer.h; sourceTree = "<group>"; };
+		83A0CBC32E837AA5007C429D /* SCPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SCPlayer.mm; sourceTree = "<group>"; };
 		83B06687180D5668008E3612 /* MIDI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MIDI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B0668A180D5668008E3612 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83B0668D180D5668008E3612 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -155,6 +168,7 @@
 		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
 		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
 		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
+		83CB83382E82D78500CA63C6 /* nuked-sc55.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "nuked-sc55.xcodeproj"; path = "/Users/chris/Source/Repos/cog/Frameworks/nuked-sc55/nuked-sc55.xcodeproj"; sourceTree = "<absolute>"; };
 		83E83F7A2D9654470054365C /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
 		83E973461C4378880007F413 /* AUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayer.h; sourceTree = "<group>"; };
@@ -171,6 +185,7 @@
 				83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */,
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
+				83CB83682E82D83500CA63C6 /* nuked_sc55.framework in Frameworks */,
 				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
 				8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */,
 				8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */,
@@ -282,6 +297,7 @@
 		83B06689180D5668008E3612 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				83CB83382E82D78500CA63C6 /* nuked-sc55.xcodeproj */,
 				83E83F7A2D9654470054365C /* Accelerate.framework */,
 				834D190B2D7F954100F13B89 /* CogAudio.framework */,
 				83686AB01C5C783000671C7A /* CoreAudioKit.framework */,
@@ -317,6 +333,8 @@
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
 				831E2A7D27B4B2B2006F1C86 /* BASS */,
+				83A0CBC32E837AA5007C429D /* SCPlayer.mm */,
+				83A0CBC22E837AA5007C429D /* SCPlayer.h */,
 				8356BCC427B352620074E50C /* BMPlayer.cpp */,
 				8356BCC527B352620074E50C /* BMPlayer.h */,
 				83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */,
@@ -361,6 +379,14 @@
 			isa = PBXGroup;
 			children = (
 				83B066E0180D56BA008E3612 /* midi_processing.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83CB835B2E82D78500CA63C6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83CB835F2E82D78500CA63C6 /* nuked_sc55.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -417,6 +443,10 @@
 					ProductGroup = 83B066DB180D56B9008E3612 /* Products */;
 					ProjectRef = 83B066DA180D56B9008E3612 /* midi_processing.xcodeproj */;
 				},
+				{
+					ProductGroup = 83CB835B2E82D78500CA63C6 /* Products */;
+					ProjectRef = 83CB83382E82D78500CA63C6 /* nuked-sc55.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -431,6 +461,13 @@
 			fileType = wrapper.framework;
 			path = midi_processing.framework;
 			remoteRef = 83B066DF180D56BA008E3612 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83CB835F2E82D78500CA63C6 /* nuked_sc55.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = nuked_sc55.framework;
+			remoteRef = 83CB835E2E82D78500CA63C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -467,6 +504,7 @@
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 				834BE91B1DE407CB00A07DCD /* resampler.c in Sources */,
+				83A0CBC42E837AA5007C429D /* SCPlayer.mm in Sources */,
 				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

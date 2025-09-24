@@ -11,6 +11,7 @@
 #import "AUPlayer.h"
 #import "BMPlayer.h"
 #import "MSPlayer.h"
+#import "SCPlayer.h"
 
 #import "Logging.h"
 
@@ -102,6 +103,14 @@ static OSType getOSType(const char *in_) {
 		framesLength += 1000;
 		framesFade = 0;
 		isLooped = NO;
+	}
+
+	// This plugin overrides the sample rate, and this requires loading the ROM set
+	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
+	if([plugin isEqualToString:@"NukeSc55"]) {
+		sampleRate = SCPlayer::sampleRate();
+		if(!sampleRate)
+			return NO;
 	}
 
 	framesLength = (int)ceil(framesLength * sampleRate * 0.001);
@@ -229,6 +238,12 @@ static OSType getOSType(const char *in_) {
 				bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
 			player = bmplayer;
+		} else if([plugin isEqualToString:@"NukeSc55"]) {
+			scplayer = new SCPlayer;
+
+			scplayer->setSampleRate(sampleRate);
+
+			player = scplayer;
 		} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
 			MSPlayer *msplayer = new MSPlayer;
 			player = msplayer;
