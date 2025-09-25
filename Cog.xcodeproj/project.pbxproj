@@ -990,7 +990,7 @@
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
 		838770F32D6F0996001455A0 /* FeedbackController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedbackController.h; sourceTree = "<group>"; };
 		838770F42D6F0996001455A0 /* FeedbackController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedbackController.m; sourceTree = "<group>"; };
-		8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax.xcodeproj; path = /Users/chris/Source/Repos/cog/Plugins/Syntrax/Syntrax.xcodeproj; sourceTree = "<absolute>"; };
+		8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax.xcodeproj; path = Plugins/Syntrax/Syntrax.xcodeproj; sourceTree = "<group>"; };
 		838A33732D06A9B100D0D770 /* librubberband.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librubberband.3.dylib; path = ThirdParty/rubberband/lib/librubberband.3.dylib; sourceTree = "<group>"; };
 		838A33792D06C14200D0D770 /* PitchSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PitchSlider.h; path = Window/PitchSlider.h; sourceTree = "<group>"; };
 		838A337A2D06C14200D0D770 /* PitchSlider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PitchSlider.m; path = Window/PitchSlider.m; sourceTree = "<group>"; };
