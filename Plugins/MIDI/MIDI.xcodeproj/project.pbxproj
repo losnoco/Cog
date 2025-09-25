@@ -46,6 +46,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		832CCE542E84C236002303AC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CB83382E82D78500CA63C6 /* nuked-sc55.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83CB82E12E82D70500CA63C6;
+			remoteInfo = "nuked-sc55";
+		};
 		83B066DF180D56BA008E3612 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83B066DA180D56B9008E3612 /* midi_processing.xcodeproj */;
@@ -407,6 +414,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				832CCE552E84C236002303AC /* PBXTargetDependency */,
 				83B06700180D573D008E3612 /* PBXTargetDependency */,
 			);
 			name = MIDI;
@@ -512,6 +520,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		832CCE552E84C236002303AC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "nuked-sc55";
+			targetProxy = 832CCE542E84C236002303AC /* PBXContainerItemProxy */;
+		};
 		83B06700180D573D008E3612 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = midi_processing;
