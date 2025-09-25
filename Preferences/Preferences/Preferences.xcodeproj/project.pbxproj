@@ -57,7 +57,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		83BE7EEE2E83998A0032CD4C /* PBXContainerItemProxy */ = {
+		83DF18332E84D76E001B13CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */;
 			proxyType = 2;
@@ -137,10 +137,10 @@
 		8384913618081ECB00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8384917518084D9F00E7332D /* appearance.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = appearance.png; path = Icons/appearance.png; sourceTree = "<group>"; };
 		839E3B5728659B2700880EA2 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppController.h; path = ../../Application/AppController.h; sourceTree = "<group>"; };
-		83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = /Users/chris/Source/Repos/cog/Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<absolute>"; };
+		83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		83A0CBCE2E838095007C429D /* File_Extractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = File_Extractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		83A0CBD22E838B5E007C429D /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = /Users/chris/Source/Repos/cog/Utils/SHA256Digest.h; sourceTree = "<absolute>"; };
-		83A0CBD32E838B5E007C429D /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = /Users/chris/Source/Repos/cog/Utils/SHA256Digest.m; sourceTree = "<absolute>"; };
+		83A0CBD22E838B5E007C429D /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = ../../Utils/SHA256Digest.h; sourceTree = "<group>"; };
+		83A0CBD32E838B5E007C429D /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = ../../Utils/SHA256Digest.m; sourceTree = "<group>"; };
 		83A3B72A283AE04800CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83AC57372861A54D009D6F50 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSuggester.h; sourceTree = "<group>"; };
@@ -353,10 +353,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		83BE7EEB2E83998A0032CD4C /* Products */ = {
+		83DF18302E84D76E001B13CC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				83BE7EEF2E83998A0032CD4C /* File_Extractor.framework */,
+				83DF18342E84D76E001B13CC /* File_Extractor.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -452,7 +452,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 83BE7EEB2E83998A0032CD4C /* Products */;
+					ProductGroup = 83DF18302E84D76E001B13CC /* Products */;
 					ProjectRef = 83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */;
 				},
 				{
@@ -468,11 +468,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		83BE7EEF2E83998A0032CD4C /* File_Extractor.framework */ = {
+		83DF18342E84D76E001B13CC /* File_Extractor.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = File_Extractor.framework;
-			remoteRef = 83BE7EEE2E83998A0032CD4C /* PBXContainerItemProxy */;
+			remoteRef = 83DF18332E84D76E001B13CC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ED69CBAE25BE32500090B90D /* MASShortcut.framework */ = {

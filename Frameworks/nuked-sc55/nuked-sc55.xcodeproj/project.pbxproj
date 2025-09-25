@@ -3,32 +3,52 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		839EDEA62E84D4A6007B28A8 /* submcu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDEA42E84D4A6007B28A8 /* submcu.cpp */; };
+		839EDEA72E84D4A6007B28A8 /* mcu_interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDE9B2E84D4A6007B28A8 /* mcu_interrupt.cpp */; };
+		839EDEA82E84D4A6007B28A8 /* mcu_opcodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDE9D2E84D4A6007B28A8 /* mcu_opcodes.cpp */; };
+		839EDEA92E84D4A6007B28A8 /* lcd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDE962E84D4A6007B28A8 /* lcd.cpp */; };
+		839EDEAA2E84D4A6007B28A8 /* mcu_timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDE9F2E84D4A6007B28A8 /* mcu_timer.cpp */; };
+		839EDEAB2E84D4A6007B28A8 /* pcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDEA12E84D4A6007B28A8 /* pcm.cpp */; };
+		839EDEAC2E84D4A6007B28A8 /* mcu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839EDE992E84D4A6007B28A8 /* mcu.cpp */; };
+		839EDEAD2E84D4A6007B28A8 /* submcu.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDEA32E84D4A6007B28A8 /* submcu.h */; };
+		839EDEAE2E84D4A6007B28A8 /* pcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDEA02E84D4A6007B28A8 /* pcm.h */; };
+		839EDEAF2E84D4A6007B28A8 /* mcu_opcodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE9C2E84D4A6007B28A8 /* mcu_opcodes.h */; };
+		839EDEB02E84D4A6007B28A8 /* api.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE942E84D4A6007B28A8 /* api.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		839EDEB12E84D4A6007B28A8 /* lcd.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE952E84D4A6007B28A8 /* lcd.h */; };
+		839EDEB22E84D4A6007B28A8 /* state.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDEA22E84D4A6007B28A8 /* state.h */; };
+		839EDEB32E84D4A6007B28A8 /* lcd_font.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE972E84D4A6007B28A8 /* lcd_font.h */; };
+		839EDEB42E84D4A6007B28A8 /* mcu_interrupt.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE9A2E84D4A6007B28A8 /* mcu_interrupt.h */; };
+		839EDEB52E84D4A6007B28A8 /* mcu_timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE9E2E84D4A6007B28A8 /* mcu_timer.h */; };
+		839EDEB62E84D4A6007B28A8 /* mcu.h in Headers */ = {isa = PBXBuildFile; fileRef = 839EDE982E84D4A6007B28A8 /* mcu.h */; };
 		83A0CBD72E839420007C429D /* back.data in Resources */ = {isa = PBXBuildFile; fileRef = 83A0CBD52E839420007C429D /* back.data */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		839EDE942E84D4A6007B28A8 /* api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
+		839EDE952E84D4A6007B28A8 /* lcd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lcd.h; sourceTree = "<group>"; };
+		839EDE962E84D4A6007B28A8 /* lcd.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lcd.cpp; sourceTree = "<group>"; };
+		839EDE972E84D4A6007B28A8 /* lcd_font.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lcd_font.h; sourceTree = "<group>"; };
+		839EDE982E84D4A6007B28A8 /* mcu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mcu.h; sourceTree = "<group>"; };
+		839EDE992E84D4A6007B28A8 /* mcu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mcu.cpp; sourceTree = "<group>"; };
+		839EDE9A2E84D4A6007B28A8 /* mcu_interrupt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mcu_interrupt.h; sourceTree = "<group>"; };
+		839EDE9B2E84D4A6007B28A8 /* mcu_interrupt.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mcu_interrupt.cpp; sourceTree = "<group>"; };
+		839EDE9C2E84D4A6007B28A8 /* mcu_opcodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mcu_opcodes.h; sourceTree = "<group>"; };
+		839EDE9D2E84D4A6007B28A8 /* mcu_opcodes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mcu_opcodes.cpp; sourceTree = "<group>"; };
+		839EDE9E2E84D4A6007B28A8 /* mcu_timer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mcu_timer.h; sourceTree = "<group>"; };
+		839EDE9F2E84D4A6007B28A8 /* mcu_timer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mcu_timer.cpp; sourceTree = "<group>"; };
+		839EDEA02E84D4A6007B28A8 /* pcm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pcm.h; sourceTree = "<group>"; };
+		839EDEA12E84D4A6007B28A8 /* pcm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pcm.cpp; sourceTree = "<group>"; };
+		839EDEA22E84D4A6007B28A8 /* state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
+		839EDEA32E84D4A6007B28A8 /* submcu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = submcu.h; sourceTree = "<group>"; };
+		839EDEA42E84D4A6007B28A8 /* submcu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = submcu.cpp; sourceTree = "<group>"; };
 		83A0CBD52E839420007C429D /* back.data */ = {isa = PBXFileReference; lastKnownFileType = file; path = back.data; sourceTree = "<group>"; };
 		83CB82E22E82D70500CA63C6 /* nuked_sc55.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = nuked_sc55.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83CB83632E82D7FF00CA63C6 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		83CB83602E82D7AE00CA63C6 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				api.h,
-			);
-			target = 83CB82E12E82D70500CA63C6 /* nuked-sc55 */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		83CB82E42E82D70500CA63C6 /* nuked-sc55 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (83CB83602E82D7AE00CA63C6 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "nuked-sc55"; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		83CB82DF2E82D70500CA63C6 /* Frameworks */ = {
@@ -41,6 +61,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		839EDEA52E84D4A6007B28A8 /* nuked-sc55 */ = {
+			isa = PBXGroup;
+			children = (
+				839EDE942E84D4A6007B28A8 /* api.h */,
+				839EDE952E84D4A6007B28A8 /* lcd.h */,
+				839EDE962E84D4A6007B28A8 /* lcd.cpp */,
+				839EDE972E84D4A6007B28A8 /* lcd_font.h */,
+				839EDE982E84D4A6007B28A8 /* mcu.h */,
+				839EDE992E84D4A6007B28A8 /* mcu.cpp */,
+				839EDE9A2E84D4A6007B28A8 /* mcu_interrupt.h */,
+				839EDE9B2E84D4A6007B28A8 /* mcu_interrupt.cpp */,
+				839EDE9C2E84D4A6007B28A8 /* mcu_opcodes.h */,
+				839EDE9D2E84D4A6007B28A8 /* mcu_opcodes.cpp */,
+				839EDE9E2E84D4A6007B28A8 /* mcu_timer.h */,
+				839EDE9F2E84D4A6007B28A8 /* mcu_timer.cpp */,
+				839EDEA02E84D4A6007B28A8 /* pcm.h */,
+				839EDEA12E84D4A6007B28A8 /* pcm.cpp */,
+				839EDEA22E84D4A6007B28A8 /* state.h */,
+				839EDEA32E84D4A6007B28A8 /* submcu.h */,
+				839EDEA42E84D4A6007B28A8 /* submcu.cpp */,
+			);
+			path = "nuked-sc55";
+			sourceTree = "<group>";
+		};
 		83A0CBD62E839420007C429D /* data */ = {
 			isa = PBXGroup;
 			children = (
@@ -54,7 +98,7 @@
 			children = (
 				83A0CBD62E839420007C429D /* data */,
 				83CB83642E82D7FF00CA63C6 /* Xcode-config */,
-				83CB82E42E82D70500CA63C6 /* nuked-sc55 */,
+				839EDEA52E84D4A6007B28A8 /* nuked-sc55 */,
 				83CB82E32E82D70500CA63C6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -73,8 +117,8 @@
 				83CB83632E82D7FF00CA63C6 /* Shared.xcconfig */,
 			);
 			name = "Xcode-config";
-			path = "/Users/chris/Source/Repos/cog/Xcode-config";
-			sourceTree = "<absolute>";
+			path = "../../Xcode-config";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -83,6 +127,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839EDEB02E84D4A6007B28A8 /* api.h in Headers */,
+				839EDEAD2E84D4A6007B28A8 /* submcu.h in Headers */,
+				839EDEAE2E84D4A6007B28A8 /* pcm.h in Headers */,
+				839EDEAF2E84D4A6007B28A8 /* mcu_opcodes.h in Headers */,
+				839EDEB12E84D4A6007B28A8 /* lcd.h in Headers */,
+				839EDEB22E84D4A6007B28A8 /* state.h in Headers */,
+				839EDEB32E84D4A6007B28A8 /* lcd_font.h in Headers */,
+				839EDEB42E84D4A6007B28A8 /* mcu_interrupt.h in Headers */,
+				839EDEB52E84D4A6007B28A8 /* mcu_timer.h in Headers */,
+				839EDEB62E84D4A6007B28A8 /* mcu.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,9 +155,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				83CB82E42E82D70500CA63C6 /* nuked-sc55 */,
 			);
 			name = "nuked-sc55";
 			packageProductDependencies = (
@@ -161,6 +212,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				839EDEA62E84D4A6007B28A8 /* submcu.cpp in Sources */,
+				839EDEA72E84D4A6007B28A8 /* mcu_interrupt.cpp in Sources */,
+				839EDEA82E84D4A6007B28A8 /* mcu_opcodes.cpp in Sources */,
+				839EDEA92E84D4A6007B28A8 /* lcd.cpp in Sources */,
+				839EDEAA2E84D4A6007B28A8 /* mcu_timer.cpp in Sources */,
+				839EDEAB2E84D4A6007B28A8 /* pcm.cpp in Sources */,
+				839EDEAC2E84D4A6007B28A8 /* mcu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
