@@ -11,6 +11,9 @@
 		831E2A8C27B4B2B2006F1C86 /* sflist_rewrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */; };
 		831E2A9627B4B2FA006F1C86 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A9227B4B2FA006F1C86 /* json.c */; };
 		831E2A9727B4B2FA006F1C86 /* json-builder.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A9327B4B2FA006F1C86 /* json-builder.c */; };
+		832245A92E84E23300C944FD /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
+		832245AB2E84E25300C944FD /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8399020A2E84DB730060958E /* nuked_sc55.framework */; };
+		832245AC2E84E25300C944FD /* nuked_sc55.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8399020A2E84DB730060958E /* nuked_sc55.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834BE91B1DE407CB00A07DCD /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 834BE9191DE407CB00A07DCD /* resampler.c */; };
 		834D190C2D7F954100F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D190B2D7F954100F13B89 /* CogAudio.framework */; };
 		8356BCC627B352620074E50C /* BMPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCC427B352620074E50C /* BMPlayer.cpp */; };
@@ -24,7 +27,6 @@
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
-		8399020B2E84DB730060958E /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8399020A2E84DB730060958E /* nuked_sc55.framework */; };
 		839CA224180D902100553DBA /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F561CFA83F2001E7D2D /* i_oplmusic.cpp */; };
 		83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A09F5A1CFA83F2001E7D2D /* opl3midi.cpp */; };
@@ -34,7 +36,6 @@
 		83A0CBC42E837AA5007C429D /* SCPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83A0CBC32E837AA5007C429D /* SCPlayer.mm */; };
 		83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B0668A180D5668008E3612 /* Cocoa.framework */; };
 		83B06695180D5668008E3612 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83B06693180D5668008E3612 /* InfoPlist.strings */; };
-		83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B066E0180D56BA008E3612 /* midi_processing.framework */; };
 		83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B06708180D64DA008E3612 /* MIDIPlayer.cpp */; };
 		83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06721180D70FE008E3612 /* MIDIDecoder.mm */; };
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
@@ -88,6 +89,7 @@
 				8356BCD227B353F90074E50C /* libbassmidi.dylib in CopyFiles */,
 				8356BCD327B353FB0074E50C /* libbassflac.dylib in CopyFiles */,
 				8356BCD427B354010074E50C /* libbassopus.dylib in CopyFiles */,
+				832245AC2E84E25300C944FD /* nuked_sc55.framework in CopyFiles */,
 				8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,12 +188,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8399020B2E84DB730060958E /* nuked_sc55.framework in Frameworks */,
+				832245A92E84E23300C944FD /* midi_processing.framework in Frameworks */,
 				834D190C2D7F954100F13B89 /* CogAudio.framework in Frameworks */,
 				83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */,
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
+				832245AB2E84E25300C944FD /* nuked_sc55.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
-				83B06701180D5747008E3612 /* midi_processing.framework in Frameworks */,
 				8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */,
 				8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
