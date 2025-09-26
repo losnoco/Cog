@@ -1706,6 +1706,12 @@
                                     <action selector="showWindow:" target="Ix4-7A-ejK" id="wS9-M9-Dhe"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Nuked SC-55" id="f31-bq-Mgd">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showWindow:" target="Bno-cV-wwU" id="d3F-Ro-6Qp"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1854">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -2745,6 +2751,11 @@ Gw
         <customObject id="Ix4-7A-ejK" customClass="SpectrumWindowController">
             <connections>
                 <outlet property="playbackController" destination="705" id="jJw-Zl-5DT"/>
+            </connections>
+        </customObject>
+        <customObject id="Bno-cV-wwU" userLabel="SCVis Window Controller" customClass="SCVisWindowController">
+            <connections>
+                <outlet property="playbackController" destination="705" id="uJu-3E-24j"/>
             </connections>
         </customObject>
         <customObject id="Hd4-Wy-Rfl" customClass="AboutWindowController" customModule="Cog" customModuleProvider="target"/>
