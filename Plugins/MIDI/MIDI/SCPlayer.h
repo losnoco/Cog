@@ -17,6 +17,8 @@ class SCPlayer : public MIDIPlayer {
 	
 	static uint32_t sampleRate();
 
+	void setUrl(NSURL *url);
+
 	protected:
 	virtual void send_event(uint32_t b);
 	virtual void send_sysex(const uint8_t* event, size_t size, size_t port);
@@ -26,6 +28,15 @@ class SCPlayer : public MIDIPlayer {
 	virtual bool startup();
 
 	private:
+	static void _lcd_callback(void *context, int port, const void *state, size_t size, uint64_t timestamp);
+	void lcd_callback(int port, const void *state, size_t size, uint64_t timestamp);
+
+	uint8_t *last_lcd_state[3];
+
+	NSURL *_url;
+	uint64_t lcd_timestamp[3];
+	uint64_t lcd_last_timestamp[3];
+
 	struct sc55_state *_player[3];
 
 	NSOperationQueue *_workerQueue;

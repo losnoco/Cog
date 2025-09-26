@@ -241,6 +241,7 @@ static OSType getOSType(const char *in_) {
 		} else if([plugin isEqualToString:@"NukeSc55"]) {
 			scplayer = new SCPlayer;
 
+			scplayer->setUrl([source url]);
 			scplayer->setSampleRate(sampleRate);
 
 			player = scplayer;
