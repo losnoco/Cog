@@ -123,13 +123,10 @@ enum { _ChainCount = 3 };
 	uint32_t lcdWidth;
 	uint32_t lcdHeight;
 
-	uint64_t lastRenderedTimestamp;
-
 	void *lcdClearedState;
 
 	NSURL *currentTrack;
 	NSMutableArray *files;
-	NSMutableDictionary *fileEvents;
 
 	uint32_t lcdBackground[lcd_background_size];
 	uint32_t renderBuffer[lcd_buffer_size];
@@ -275,11 +272,8 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		paused = NO;
 		isListening = NO;
 
-		lastRenderedTimestamp = 0;
-
 		currentTrack = nil;
 		files = [NSMutableArray new];
-		fileEvents = [NSMutableDictionary new];
 
 		[self addObservers];
 
@@ -453,21 +447,20 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 - (void)removeTrack:(NSURL *)url {
 	@synchronized (self) {
-		assert([url isEqualTo:files[0]]);
+		assert([url isEqualTo:files[0][@"url"]]);
 		[files removeObjectAtIndex:0];
-		[fileEvents removeObjectForKey:url];
 	}
 }
 
 - (void)addTrack:(NSURL *)url {
-	[files addObject:url];
 	NSMutableArray *events = [NSMutableArray new];
-	fileEvents[url] = events;
+	NSMutableDictionary *file = [@{@"url": url, @"events": events} mutableCopy];
+	[files addObject:file];
 }
 
 - (NSArray *)getEventsForTimestamp:(uint64_t)timestamp {
 	@synchronized (self) {
-		NSMutableArray *events = fileEvents[currentTrack];
+		NSMutableArray *events = [files count] ? files[0][@"events"] : nil;
 		if(!events || ![events count]) return nil;
 
 		size_t i = 0;
@@ -483,26 +476,41 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		size_t count = [events count];
 		NSArray *ret = [events subarrayWithRange:NSMakeRange(0, i)];
 		if(i < count)
-			fileEvents[currentTrack] = [[events subarrayWithRange:NSMakeRange(i, count - i)] mutableCopy];
+			files[0][@"events"] = [[events subarrayWithRange:NSMakeRange(i, count - i)] mutableCopy];
 		else
-			fileEvents[currentTrack] = [NSMutableArray new];
+			files[0][@"events"] = [NSMutableArray new];
 
 		return ret;
 	}
+}
+
+- (NSMutableArray *)findEventsForUrl:(NSURL *)url withTimestamp:(uint64_t)timestamp {
+	for(NSDictionary *file in files) {
+		if([file[@"url"] isEqualTo:url]) {
+			NSMutableArray *events = file[@"events"];
+			if(![events count])
+				return events;
+			SCVisUpdate *event = [events count] ? [events lastObject] : nil;
+			if(event) {
+				if(timestamp >= event.timestamp) {
+					return events;
+				}
+			}
+		}
+	}
+	return nil;
 }
 
 - (void)postEvent:(NSNotification *)notification {
 	SCVisUpdate *update = notification.object;
 
 	@synchronized (self) {
-		if(!currentTrack) {
-			currentTrack = update.file;
-		}
-		if(!fileEvents[update.file]) {
+		NSMutableArray *events = [self findEventsForUrl:update.file withTimestamp:update.timestamp];
+		if(!events) {
 			[self addTrack:update.file];
+			events = [files lastObject][@"events"];
 		}
 
-		NSMutableArray *events = fileEvents[update.file];
 		[events addObject:update];
 	}
 }
@@ -614,6 +622,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	stopped = NO;
 	paused = NO;
 	[self updateVisListening];
+	[self nextTrack];
 }
 
 - (void)playbackDidPause:(NSNotification *)notification {
@@ -632,6 +641,10 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	stopped = YES;
 	paused = NO;
 	[self updateVisListening];
+	@synchronized (self) {
+		[files removeAllObjects];
+		currentTrack = nil;
+	}
 	[self repaint];
 	numDisplays = 1;
 	[self resizeDisplay];
@@ -765,6 +778,24 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	}
 }
 
+- (void)nextTrack {
+	@synchronized (self) {
+		if(currentTrack) {
+			[self removeTrack:currentTrack];
+			if([files count]) {
+				currentTrack = files[0][@"url"];
+			} else {
+				currentTrack = nil;
+			}
+			[self renderEmptyPanel:0];
+			[self renderEmptyPanel:1];
+			[self renderEmptyPanel:2];
+			numDisplays = 1;
+			[self resizeDisplay];
+		}
+	}
+}
+
 - (void) mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size {
 }
 
@@ -786,7 +817,12 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 	BOOL rendered[3] = {NO};
 
-	if(stopped) {
+	size_t count;
+	@synchronized (self) {
+		count = [files count];
+	}
+	
+	if(stopped || !count) {
 		[self renderEmptyPanel:0];
 		[self renderEmptyPanel:1];
 		[self renderEmptyPanel:2];
@@ -796,49 +832,32 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 	NSArray *events;
 
-	if(stopped) goto _END;
+	if(stopped || !count) goto _END;
 
-	BOOL maybeRemoveFile = NO;
+	if(!currentTrack) {
+		currentTrack = files[0][@"url"];
+	}
+
 	uint64_t currentTimestamp = 0;
+	uint64_t mslatency = 0;
 	@synchronized (self) {
-		if(currentTrack) {
-			NSArray *events = fileEvents[currentTrack];
+		if([files count]) {
+			NSArray *events = files[0][@"events"];
 			if(events && [events count]) {
 				SCVisUpdate *event = [events lastObject];
 				currentTimestamp = event.timestamp;
 				double latency = [visController getFullLatency];
-				uint64_t mslatency = floor(latency * 1000.0);
+				mslatency = floor(latency * 1000.0);
 				if(currentTimestamp > mslatency)
 					currentTimestamp -= mslatency;
 				else
 					currentTimestamp = 0;
-			} else {
-				maybeRemoveFile = YES;
 			}
 		}
 	}
-	if(currentTimestamp < lastRenderedTimestamp) {
-		maybeRemoveFile = YES;
-	}
-	lastRenderedTimestamp = currentTimestamp;
 
 	BOOL present[3] = {NO};
 	events = [self getEventsForTimestamp:currentTimestamp];
-	if(maybeRemoveFile && !events) {
-		@synchronized(self) {
-			if([files count] > 1 && currentTrack) {
-				[self removeTrack:currentTrack];
-				currentTrack = files[0];
-				[self renderEmptyPanel:0];
-				[self renderEmptyPanel:1];
-				[self renderEmptyPanel:2];
-				currentTimestamp = 0;
-				events = [self getEventsForTimestamp:currentTimestamp];
-				numDisplays = 1;
-				[self resizeDisplay];
-			}
-		}
-	}
 	for(SCVisUpdate *event in events) {
 		present[event.which] = YES;
 	}
