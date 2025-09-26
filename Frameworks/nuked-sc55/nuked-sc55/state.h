@@ -290,9 +290,6 @@ extern const char* rs_name[ROM_SET_COUNT];
 
 enum { uart_buffer_size = 8192 };
 
-enum { lcd_width_max = 1024 };
-enum { lcd_height_max = 1024 };
-
 struct frt_t {
     uint8_t tcr;
     uint8_t tcsr;
@@ -320,10 +317,49 @@ enum { NVRAM_SIZE = 0x8000 }; // JV880 only
 enum { CARDRAM_SIZE = 0x8000 }; // JV880 only
 enum { ROMSM_SIZE = 0x1000 };
 
+struct lcd_state_t {
+	uint32_t LCD_DL, LCD_N, LCD_F, LCD_D, LCD_C, LCD_B, LCD_ID, LCD_S;
+	uint32_t LCD_DD_RAM, LCD_AC, LCD_CG_RAM;
+	uint32_t LCD_RAM_MODE; //= 0;
+	uint8_t LCD_Data[80];
+	uint8_t LCD_CG[64];
+	
+	uint8_t lcd_enable; //= 1;
+
+	// static state carrying info
+	uint32_t lcd_width;
+	uint32_t lcd_height;
+
+	uint32_t lcd_col1;
+	uint32_t lcd_col2;
+	
+	uint8_t mcu_mk1;
+	uint8_t mcu_cm300;
+	uint8_t mcu_st;
+	uint8_t mcu_jv880;
+	uint8_t mcu_scb55;
+	uint8_t mcu_sc155;
+};
+
+struct lcd_t {
+	// These are initialized once on startup and are stable
+	int lcd_width;
+	int lcd_height;
+	uint32_t lcd_col1;
+	uint32_t lcd_col2;
+
+	// This mutates, and will be pushed to callback periodically as a raw data block
+	struct lcd_state_t state;
+
+	struct lcd_state_t lastState;
+};
+
 struct sc55_state {
     struct mcu_t mcu;
 
     struct submcu_t sm;
+
+	int port;
 
     int romset;
 
@@ -393,6 +429,11 @@ struct sc55_state {
 
     struct pcm_t pcm;
 
+	uint64_t sample_counter;
+	sc55_push_lcd lcdCallback;
+	void *lcdContext;
+	struct lcd_t lcd;
+
     uint8_t rom1[ROM1_SIZE];
     uint8_t rom2[ROM2_SIZE];
     uint8_t ram[RAM_SIZE];
@@ -410,25 +451,6 @@ struct sc55_state {
 
     uint8_t mcu_p0_data; //= 0x00;
     uint8_t mcu_p1_data; //= 0x00;
-
-    int lcd_width;
-    int lcd_height;
-    uint32_t lcd_col1;
-    uint32_t lcd_col2;
-
-    uint32_t LCD_DL, LCD_N, LCD_F, LCD_D, LCD_C, LCD_B, LCD_ID, LCD_S;
-    uint32_t LCD_DD_RAM, LCD_AC, LCD_CG_RAM;
-    uint32_t LCD_RAM_MODE; //= 0;
-    uint8_t LCD_Data[80];
-    uint8_t LCD_CG[64];
-
-    uint8_t lcd_enable; //= 1;
-    bool lcd_quit_requested; //= false;
-
-    uint32_t lcd_buffer[lcd_height_max][lcd_width_max];
-    uint32_t lcd_background[268][741];
-
-    uint32_t lcd_init; //= 0;
 
     uint32_t operand_type;
     uint16_t operand_ea;

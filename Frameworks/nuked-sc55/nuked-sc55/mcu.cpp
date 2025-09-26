@@ -934,6 +934,10 @@ void MCU_UpdateUART_TX(struct sc55_state *st)
 }
 
 static void MCU_Work(struct sc55_state *st) {
+	sc55_push_lcd lcdCallback = st->lcdCallback;
+	void *lcdContext = st->lcdContext;
+	const int port = st->port;
+
     while (st->sample_buffer_requested && st->sample_buffer_count < st->audio_buffer_size)
     {
         if (st->pcm.config_reg_3c & 0x40)
@@ -963,7 +967,21 @@ static void MCU_Work(struct sc55_state *st) {
         // if (mcu.cycles % 24000000 == 0)
         //     printf("seconds: %i\n", (int)(mcu.cycles / 24000000));
 
+		uint32_t samplesLast = st->sample_buffer_count;
         PCM_Update(st, st->mcu.cycles);
+		if (samplesLast != st->sample_buffer_count)
+		{
+			uint32_t samplesDone = st->sample_buffer_count - samplesLast;
+			st->sample_counter += samplesDone;
+		}
+
+		if (lcdCallback && memcmp(&st->lcd.state, &st->lcd.lastState, sizeof(st->lcd.state)) != 0)
+		{
+			st->lcd.lastState = st->lcd.state;
+
+			uint64_t lcdClock = (st->sample_counter * 1000 + st->sample_rate / 2) / st->sample_rate;
+			lcdCallback(lcdContext, port, &st->lcd.state, sizeof(st->lcd.state), lcdClock);
+		}
 
         TIMER_Clock(st, st->mcu.cycles);
 
@@ -1128,7 +1146,7 @@ void MCU_EncoderTrigger(struct sc55_state *st, int dir)
     MCU_GA_SetGAInt(st, dir == 0 ? 3 : 4, 1);
 }
 
-void MIDI_Reset(struct sc55_state *st, ResetType resetType)
+void MIDI_Reset(struct sc55_state *st, enum ResetType resetType)
 {
     const unsigned char gmReset[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7 };
     const unsigned char gsReset[] = { 0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7 };
@@ -1150,7 +1168,7 @@ void MIDI_Reset(struct sc55_state *st, ResetType resetType)
 
 }
 
-struct sc55_state * sc55_init(int port, ResetType resetType, sc55_read_rom readCallback, void *readContext)
+struct sc55_state * sc55_init(int port, enum ResetType resetType, sc55_read_rom readCallback, void *readContext)
 {
     struct sc55_state *st = (struct sc55_state *) calloc(1, sizeof(*st));
     if (!st)
@@ -1159,13 +1177,14 @@ struct sc55_state * sc55_init(int port, ResetType resetType, sc55_read_rom readC
     // static init
     st->sw_pos = 3;
     st->rom2_mask = ROM2_SIZE - 1;
-    st->lcd_width = 741;
-    st->lcd_height = 268;
-    st->lcd_col1 = 0x000000;
-    st->lcd_col2 = 0x0050c8;
+    st->lcd.lcd_width = 741;
+    st->lcd.lcd_height = 268;
+    st->lcd.lcd_col1 = 0x000000;
+    st->lcd.lcd_col2 = 0x0050c8;
 
-    st->lcd_enable = 1;
-    //st->lcd_quit_requested = false;
+    st->lcd.state.lcd_enable = 1;
+
+	st->port = port;
 
     const int pageSize = 512;
     const int pageNum = 8;
@@ -1233,10 +1252,10 @@ struct sc55_state * sc55_init(int port, ResetType resetType, sc55_read_rom readC
         case ROM_SET_JV880:
             st->mcu_jv880 = true;
             st->rom2_mask /= 2; // rom is half the size
-            st->lcd_width = 820;
-            st->lcd_height = 100;
-            st->lcd_col1 = 0x000000;
-            st->lcd_col2 = 0x78b500;
+            st->lcd.lcd_width = 820;
+            st->lcd.lcd_height = 100;
+            st->lcd.lcd_col1 = 0x000000;
+            st->lcd.lcd_col2 = 0x78b500;
             break;
         case ROM_SET_SCB55:
         case ROM_SET_RLP3237:
@@ -1244,11 +1263,11 @@ struct sc55_state * sc55_init(int port, ResetType resetType, sc55_read_rom readC
             break;
     }
 
-    if (LCD_SetBack(st, "back.data", readCallback, readContext) != 0)
+    /*if (LCD_SetBack(st, "back.data", readCallback, readContext) != 0)
     {
         free(st);
         return nullptr;
-    }
+    }*/
 
     memset(&st->mcu, 0, sizeof(mcu_t));
 
@@ -1426,7 +1445,7 @@ struct sc55_state * sc55_init(int port, ResetType resetType, sc55_read_rom readC
 void sc55_free(struct sc55_state *st)
 {
     MCU_CloseAudio(st);
-    LCD_UnInit(st);
+    //LCD_UnInit(st);
 
     free(st);
 }
@@ -1449,6 +1468,14 @@ static void sc55_read_samples(struct sc55_state *st, short *buffer, uint32_t cou
 
 void sc55_render(struct sc55_state *st, short *buffer, uint32_t count)
 {
+	sc55_render_with_lcd(st, buffer, count, NULL, NULL);
+}
+
+void sc55_render_with_lcd(struct sc55_state *st, short *buffer, uint32_t count, sc55_push_lcd lcdCallback, void *lcdContext)
+{
+	st->lcdCallback = lcdCallback;
+	st->lcdContext = lcdContext;
+
     uint32_t countDone = 0;
 
     while (countDone < count)
@@ -1460,7 +1487,7 @@ void sc55_render(struct sc55_state *st, short *buffer, uint32_t count)
             if (st->sample_buffer_count >= countToDo)
             {
                 sc55_read_samples(st, buffer, count);
-                return;
+				break;
             }
             else
             {
@@ -1480,6 +1507,10 @@ void sc55_render(struct sc55_state *st, short *buffer, uint32_t count)
             MCU_Work(st);
         }
     }
+
+	// Clear these
+	st->lcdCallback = NULL;
+	st->lcdContext = NULL;
 }
 
 void sc55_write_uart(struct sc55_state *st, const uint8_t *data, uint32_t count)
@@ -1497,6 +1528,9 @@ uint32_t sc55_get_sample_rate(struct sc55_state *st)
 
 void sc55_spin(struct sc55_state *st, uint32_t count)
 {
+	st->lcdCallback = NULL;
+	st->lcdContext = NULL;
+
 	while(count > 0)
 	{
 		uint32_t countToDo = st->audio_page_size;
@@ -1505,6 +1539,38 @@ void sc55_spin(struct sc55_state *st, uint32_t count)
 		st->sample_buffer_requested = countToDo;
 		MCU_Work(st);
 		st->sample_buffer_count = 0;
+		st->sample_counter = 0;
 		count -= countToDo;
 	}
+}
+
+uint32_t sc55_lcd_state_size()
+{
+	return sizeof(lcd_state_t);
+}
+
+void sc55_lcd_clear(void *lcdState, size_t stateSize, uint32_t width, uint32_t height)
+{
+	if (stateSize != sizeof(lcd_state_t)) return;
+
+	memset(lcdState, 0, stateSize);
+
+	struct lcd_state_t *st = (struct lcd_state_t *)lcdState;
+	st->lcd_width = width;
+	st->lcd_height = height;
+}
+
+void sc55_lcd_get_size(const struct sc55_state *st, uint32_t *width, uint32_t *height)
+{
+	if (width) *width = st->lcd.lcd_width;
+	if (height) *height = st->lcd.lcd_height;
+}
+
+void sc55_lcd_render_screen(const lcd_background_t lcd_background, lcd_buffer_t lcd_buffer, const void *lcdState, size_t stateSize)
+{
+	if (stateSize != sizeof(lcd_state_t)) return;
+
+	const struct lcd_state_t *state = (const struct lcd_state_t *)lcdState;
+
+	LCD_Update(state, lcd_background, lcd_buffer);
 }
