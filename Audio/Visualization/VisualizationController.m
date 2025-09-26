@@ -13,6 +13,7 @@
 @implementation VisualizationController {
 	double sampleRate;
 	double latency;
+	double fullLatency;
 	float *visAudio;
 	int visAudioCursor, visAudioSize;
 	uint64_t visSamplesPosted;
@@ -111,6 +112,20 @@ static VisualizationController *_sharedController = nil;
 		self->latency = latency;
 		ignoreLatency = NO;
 	}
+}
+
+- (double)getLatency {
+	if(!ignoreLatency) return latency;
+	else return 0.0;
+}
+
+- (void)postFullLatency:(double)latency {
+	self->fullLatency = latency;
+}
+
+- (double)getFullLatency {
+	if(!ignoreLatency) return fullLatency;
+	else return 0.0;
 }
 
 - (double)readSampleRate {
