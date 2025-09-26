@@ -4107,6 +4107,18 @@
         }
       }
     },
+    "f31-bq-Mgd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Nuked SC-55\"; ObjectID = \"f31-bq-Mgd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Nuked SC-55"
+          }
+        }
+      }
+    },
     "FMU-QZ-NdQ.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"FMU-QZ-NdQ\";",
       "extractionState" : "manual",

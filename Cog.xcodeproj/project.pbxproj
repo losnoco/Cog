@@ -123,6 +123,12 @@
 		835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 835FAC7527BCDF2A00BA8562 /* AVIFDecoder.m */; };
 		835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FAC7D27BCDF5B00BA8562 /* libavif.a */; };
 		8360EF6D17F92E56005208A4 /* HighlyComplete.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8360EF0517F92B24005208A4 /* HighlyComplete.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8366CB142E8550C6007DB8D2 /* SCView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8366CB132E8550C6007DB8D2 /* SCView.m */; };
+		8366CB1E2E8577CD007DB8D2 /* SCVisWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8366CB1D2E8577CD007DB8D2 /* SCVisWindowController.m */; };
+		8366CB212E857997007DB8D2 /* SCVisWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8366CB1F2E857997007DB8D2 /* SCVisWindow.xib */; };
+		8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8366CB2E2E85E2FB007DB8D2 /* Shaders.metal */; };
+		8366CB332E8693EC007DB8D2 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8366CB322E8693EC007DB8D2 /* MetalKit.framework */; };
+		8366CB352E869980007DB8D2 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8366CB342E869980007DB8D2 /* Metal.framework */; };
 		836D28A818086386005B7299 /* MiniModeMenuTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */; };
 		836DF617298F6F1700CD0580 /* libsoxr.0.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 836DF616298F6EC400CD0580 /* libsoxr.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		836DF61E298F7F6E00CD0580 /* Scenes.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 836DF61D298F7F6E00CD0580 /* Scenes.scnassets */; };
@@ -971,6 +977,17 @@
 		835FAC7527BCDF2A00BA8562 /* AVIFDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVIFDecoder.m; sourceTree = "<group>"; };
 		835FAC7D27BCDF5B00BA8562 /* libavif.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavif.a; path = ThirdParty/avif/lib/libavif.a; sourceTree = "<group>"; };
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
+		8366CB132E8550C6007DB8D2 /* SCView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SCView.m; path = Visualization/SCView.m; sourceTree = "<group>"; };
+		8366CB192E85510B007DB8D2 /* SCView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SCView.h; path = Visualization/SCView.h; sourceTree = "<group>"; };
+		8366CB1B2E855D95007DB8D2 /* SCVis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SCVis.h; path = Plugins/MIDI/MIDI/SCVis.h; sourceTree = "<group>"; };
+		8366CB1C2E8577A6007DB8D2 /* SCVisWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SCVisWindowController.h; path = Visualization/SCVisWindowController.h; sourceTree = "<group>"; };
+		8366CB1D2E8577CD007DB8D2 /* SCVisWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SCVisWindowController.m; path = Visualization/SCVisWindowController.m; sourceTree = "<group>"; };
+		8366CB202E857997007DB8D2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SCVisWindow.xib; sourceTree = "<group>"; };
+		8366CB262E8579A9007DB8D2 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SCVisWindow.xcstrings; sourceTree = "<group>"; };
+		8366CB2E2E85E2FB007DB8D2 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		8366CB302E85E345007DB8D2 /* metal_shader_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = metal_shader_types.h; sourceTree = "<group>"; };
+		8366CB322E8693EC007DB8D2 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		8366CB342E869980007DB8D2 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		836D28A618086386005B7299 /* MiniModeMenuTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniModeMenuTitleTransformer.h; path = Window/MiniModeMenuTitleTransformer.h; sourceTree = "<group>"; };
 		836D28A718086386005B7299 /* MiniModeMenuTitleTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniModeMenuTitleTransformer.m; path = Window/MiniModeMenuTitleTransformer.m; sourceTree = "<group>"; };
 		836DF616298F6EC400CD0580 /* libsoxr.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsoxr.0.dylib; path = ThirdParty/soxr/lib/libsoxr.0.dylib; sourceTree = "<group>"; };
@@ -1108,8 +1125,10 @@
 				8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */,
 				838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */,
 				838A33742D06A9B100D0D770 /* librubberband.3.dylib in Frameworks */,
+				8366CB332E8693EC007DB8D2 /* MetalKit.framework in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
+				8366CB352E869980007DB8D2 /* Metal.framework in Frameworks */,
 				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
 				83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
@@ -1547,6 +1566,7 @@
 				17D1B1DA0F6330D400694C57 /* Feedback.xib */,
 				83B61E2229A8296500CD0580 /* LyricsWindow.xib */,
 				836DF61D298F7F6E00CD0580 /* Scenes.scnassets */,
+				8366CB1F2E857997007DB8D2 /* SCVisWindow.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1554,6 +1574,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8366CB342E869980007DB8D2 /* Metal.framework */,
+				8366CB322E8693EC007DB8D2 /* MetalKit.framework */,
 				83922FB6286B1AA900A0B039 /* WebKit.framework */,
 				837DC92A285B05710005C58A /* CoreData.framework */,
 				8370D73E2775AE1300245CE0 /* libsqlite3.tbd */,
@@ -1670,6 +1692,7 @@
 		830C37EF27B9956C00E02BB0 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				8366CB2D2E85E2E5007DB8D2 /* RetroArch */,
 				830C37F027B9956C00E02BB0 /* deadbeef */,
 			);
 			name = ThirdParty;
@@ -1785,6 +1808,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8366CB2D2E85E2E5007DB8D2 /* RetroArch */ = {
+			isa = PBXGroup;
+			children = (
+				8366CB2E2E85E2FB007DB8D2 /* Shaders.metal */,
+				8366CB302E85E345007DB8D2 /* metal_shader_types.h */,
+			);
+			path = RetroArch;
+			sourceTree = "<group>";
+		};
 		836FB5431820538700B3AD2D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1805,6 +1837,11 @@
 				8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */,
 				838A33812D06CF4100D0D770 /* SpectrumWindowController.h */,
 				838A33822D06CF4100D0D770 /* SpectrumWindowController.m */,
+				8366CB192E85510B007DB8D2 /* SCView.h */,
+				8366CB132E8550C6007DB8D2 /* SCView.m */,
+				8366CB1C2E8577A6007DB8D2 /* SCVisWindowController.h */,
+				8366CB1D2E8577CD007DB8D2 /* SCVisWindowController.m */,
+				8366CB1B2E855D95007DB8D2 /* SCVis.h */,
 				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
 			);
 			name = Visualization;
@@ -2504,6 +2541,7 @@
 				171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */,
 				83CB1F5B2E74D83D001D6294 /* Stop.icon in Resources */,
 				83CB1F5C2E74D83D001D6294 /* Pause.icon in Resources */,
+				8366CB212E857997007DB8D2 /* SCVisWindow.xib in Resources */,
 				8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */,
 				83CB1F5D2E74D83D001D6294 /* Huh.icon in Resources */,
 				83CB1F5E2E74D83D001D6294 /* Play.icon in Resources */,
@@ -2585,6 +2623,7 @@
 			files = (
 				83A3B734283AE89000CC6593 /* ColorToValueTransformer.m in Sources */,
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				8366CB1E2E8577CD007DB8D2 /* SCVisWindowController.m in Sources */,
 				8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */,
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
@@ -2623,6 +2662,7 @@
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
+				8366CB142E8550C6007DB8D2 /* SCView.m in Sources */,
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
 				170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */,
@@ -2645,6 +2685,7 @@
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				8381A09227C5F72F00A1C530 /* SHA256Digest.m in Sources */,
+				8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
@@ -2917,6 +2958,15 @@
 				833125012E817A62005C8895 /* mul */,
 			);
 			name = Equalizer.xib;
+			sourceTree = "<group>";
+		};
+		8366CB1F2E857997007DB8D2 /* SCVisWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8366CB202E857997007DB8D2 /* Base */,
+				8366CB262E8579A9007DB8D2 /* mul */,
+			);
+			name = SCVisWindow.xib;
 			sourceTree = "<group>";
 		};
 		839614A0286ED97200D3EEDB /* AboutWindowController.xib */ = {
