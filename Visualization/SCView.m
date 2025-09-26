@@ -680,10 +680,10 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 + (const float *)defaultColor
 {
    static float dummy[16] = {
-	  1.0f, 0.0f, 1.0f, 1.0f,
-	  1.0f, 0.0f, 1.0f, 1.0f,
-	  1.0f, 0.0f, 1.0f, 1.0f,
-	  1.0f, 0.0f, 1.0f, 1.0f,
+	  1.0f, 1.0f, 1.0f, 1.0f,
+	  1.0f, 1.0f, 1.0f, 1.0f,
+	  1.0f, 1.0f, 1.0f, 1.0f,
+	  1.0f, 1.0f, 1.0f, 1.0f,
    };
    return &dummy[0];
 }
