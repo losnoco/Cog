@@ -118,6 +118,7 @@ enum { _ChainCount = 3 };
 	BOOL observersAdded;
 	BOOL isOccluded;
 
+	unsigned int numDisplays;
 	NSRect initFrame;
 	uint32_t lcdWidth;
 	uint32_t lcdHeight;
@@ -244,7 +245,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	lcdWidth = width;
 	lcdHeight = height;
 
-	NSRect frame = NSMakeRect(0, 0, width, height * 3);
+	NSRect frame = NSMakeRect(0, 0, width, height);
 
 	id<MTLDevice> dev = MTLCreateSystemDefaultDevice();
 
@@ -632,6 +633,8 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	paused = NO;
 	[self updateVisListening];
 	[self repaint];
+	numDisplays = 1;
+	[self resizeDisplay];
 }
 
 - (void)uploadTexture:(uint32_t)which {
@@ -744,6 +747,24 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	[rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:vertex_count];
 }
 
+- (void)resizeDisplay {
+	NSWindow *window = self.window;
+	if(window) {
+		NSRect contentRect = initFrame;
+		contentRect.size.height = lcdHeight * numDisplays;
+
+		NSRect frameRect = window.frame;
+		NSRect originalContentRect = [window contentRectForFrameRect:frameRect];
+		contentRect.origin = originalContentRect.origin;
+		NSRect windowFrame = [[self window] frameRectForContentRect:contentRect];
+		[window setFrame:windowFrame display:YES animate:YES];
+		[window setMinSize:windowFrame.size];
+		[window setMaxSize:windowFrame.size];
+
+		initFrame = contentRect;
+	}
+}
+
 - (void) mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size {
 }
 
@@ -813,6 +834,8 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 				[self renderEmptyPanel:2];
 				currentTimestamp = 0;
 				events = [self getEventsForTimestamp:currentTimestamp];
+				numDisplays = 1;
+				[self resizeDisplay];
 			}
 		}
 	}
@@ -826,6 +849,14 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		   rendered[1] == present[1] &&
 		   rendered[2] == present[2])
 			break;
+	}
+
+	if(rendered[2] && numDisplays < 3) {
+		numDisplays = 3;
+		[self resizeDisplay];
+	} else if(rendered[1] && numDisplays < 2) {
+		numDisplays = 2;
+		[self resizeDisplay];
 	}
 
 _END:
