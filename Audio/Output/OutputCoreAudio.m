@@ -799,10 +799,12 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)updateLatency:(double)secondsPlayed {
 	double visLatency = [outputController getVisLatency];
+	double fullLatency = [outputController getTotalLatency];
 	if(secondsPlayed > 0) {
 		[outputController setAmountPlayed:streamTimestamp];
 	}
 	[visController postLatency:visLatency];
+	[visController postFullLatency:fullLatency];
 }
 
 - (double)volume {
