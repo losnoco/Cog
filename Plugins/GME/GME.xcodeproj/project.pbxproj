@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17C8F33A0CBED3B0008D969D /* GME.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17C8F33A0CBED3B0008D969D /* GME.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17C8F3420CBED3BE008D969D /* GameContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33C0CBED3BE008D969D /* GameContainer.m */; };
 		17C8F3440CBED3BE008D969D /* GameDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F33E0CBED3BE008D969D /* GameDecoder.m */; };
 		17C8F3C30CBED649008D969D /* GME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F3370CBED393008D969D /* GME.framework */; };

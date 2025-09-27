@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		17C8F6950CBEE846008D969D /* DumbDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C8F68F0CBEE846008D969D /* DumbDecoder.m */; };
-		17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17C8F69F0CBEE85F008D969D /* Dumb.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17C8F7B90CBEF380008D969D /* Dumb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C8F69E0CBEE857008D969D /* Dumb.framework */; };
 		17DA363E0CC0600E0003F6B2 /* DumbMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA363C0CC0600E0003F6B2 /* DumbMetadataReader.m */; };
 		8335FF6717FF6FD9002D8DD2 /* DumbContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8335FF6617FF6FD9002D8DD2 /* DumbContainer.m */; };

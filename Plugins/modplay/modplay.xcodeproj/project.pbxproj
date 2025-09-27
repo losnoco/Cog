@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		835CBC7D18DA7A260087A03E /* modplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; };
-		835CBC8018DA7A3E0087A03E /* modplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		835CBC8018DA7A3E0087A03E /* modplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC7C18DA7A090087A03E /* modplay.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		835CBC8518DACAE90087A03E /* libunmo3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; };
 		835CBC8818DACC2D0087A03E /* libunmo3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835CBC8318DACAE90087A03E /* libunmo3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8360B3FC18DD018B0059272F /* unrealfmt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8360B3F718DD018B0059272F /* unrealfmt.cpp */; };

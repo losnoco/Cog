@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1703330D0B8FB64500327265 /* MusepackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1703330A0B8FB64500327265 /* MusepackDecoder.m */; };
 		17F564B40C3BDD970019975C /* mpcdec.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; };
-		17F564B70C3BDD990019975C /* mpcdec.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17F564B70C3BDD990019975C /* mpcdec.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F5625F0C3BD97C0019975C /* mpcdec.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
