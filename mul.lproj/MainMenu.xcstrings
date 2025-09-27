@@ -4067,6 +4067,12 @@
             "state" : "new",
             "value" : "Show Nuked SC-55"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar Nuked SC-55"
+          }
         }
       }
     },
