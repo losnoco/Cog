@@ -21,6 +21,8 @@
 
 #import "metal_shader_types.h"
 
+extern NSString *CogPlaybackDidPrebufferNotification;
+
 static void *kSCViewContext = &kSCViewContext;
 
 static NSString *CogSCVisUpdateNotification = @"CogSCVisUpdateNotification";
@@ -117,6 +119,8 @@ enum { _ChainCount = 3 };
 	BOOL isListening;
 	BOOL observersAdded;
 	BOOL isOccluded;
+
+	BOOL prebuffered;
 
 	unsigned int numDisplays;
 	NSRect initFrame;
@@ -538,6 +542,11 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 							object:nil];
 
 		[defaultCenter addObserver:self
+						  selector:@selector(playbackPrebuffered:)
+							  name:CogPlaybackDidPrebufferNotification
+							object:nil];
+
+		[defaultCenter addObserver:self
 						  selector:@selector(windowChangedOcclusionState:)
 							  name:NSWindowDidChangeOcclusionStateNotification
 							object:nil];
@@ -577,6 +586,10 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 							   object:nil];
 		[defaultCenter removeObserver:self
 								 name:CogPlaybackDidStopNotificiation
+							   object:nil];
+
+		[defaultCenter removeObserver:self
+								 name:CogPlaybackDidPrebufferNotification
 							   object:nil];
 
 		[defaultCenter removeObserver:self
@@ -638,6 +651,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (void)playbackDidStop:(NSNotification *)notification {
+	prebuffered = NO;
 	stopped = YES;
 	paused = NO;
 	[self updateVisListening];
@@ -648,6 +662,10 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	[self repaint];
 	numDisplays = 1;
 	[self resizeDisplay];
+}
+
+- (void)playbackPrebuffered:(NSNotification *)notification {
+	prebuffered = YES;
 }
 
 - (void)uploadTexture:(uint32_t)which {
@@ -822,7 +840,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		count = [files count];
 	}
 	
-	if(stopped || !count) {
+	if(!prebuffered || stopped || !count) {
 		[self renderEmptyPanel:0];
 		[self renderEmptyPanel:1];
 		[self renderEmptyPanel:2];
@@ -837,6 +855,8 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	if(!currentTrack) {
 		currentTrack = files[0][@"url"];
 	}
+
+	if(!prebuffered) goto _END;
 
 	uint64_t currentTimestamp = 0;
 	uint64_t mslatency = 0;
