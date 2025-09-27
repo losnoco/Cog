@@ -111,7 +111,6 @@ enum { _ChainCount = 3 };
 
 @implementation SCView {
 	VisualizationController *visController;
-	NSTimer *timer;
 
 	BOOL paused;
 	BOOL stopped;
@@ -271,7 +270,6 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		sc55_lcd_clear(lcdClearedState, size, width, height);
 
 		visController = [NSClassFromString(@"VisualizationController") sharedController];
-		timer = nil;
 		stopped = YES;
 		paused = NO;
 		isListening = NO;
@@ -609,22 +607,14 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (void)startTimer {
-	[self stopTimer];
-	timer = [NSTimer timerWithTimeInterval:1.0 / 60.0
-									target:self
-								  selector:@selector(timerRun:)
-								  userInfo:nil
-								   repeats:YES];
-	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+	self.preferredFramesPerSecond = 60.0;
+	self.enableSetNeedsDisplay = NO;
+	self.paused = NO;
 }
 
 - (void)stopTimer {
-	[timer invalidate];
-	timer = nil;
-}
-
-- (void)timerRun:(NSTimer *)timer {
-	[self repaint];
+	self.paused = YES;
+	self.enableSetNeedsDisplay = YES;
 }
 
 - (void)startPlayback {
