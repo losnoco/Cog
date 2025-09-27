@@ -318,40 +318,40 @@ enum { CARDRAM_SIZE = 0x8000 }; // JV880 only
 enum { ROMSM_SIZE = 0x1000 };
 
 struct lcd_state_t {
-	uint32_t LCD_DL, LCD_N, LCD_F, LCD_D, LCD_C, LCD_B, LCD_ID, LCD_S;
-	uint32_t LCD_DD_RAM, LCD_AC, LCD_CG_RAM;
-	uint32_t LCD_RAM_MODE; //= 0;
-	uint8_t LCD_Data[80];
-	uint8_t LCD_CG[64];
-	
-	uint8_t lcd_enable; //= 1;
+    uint32_t LCD_DL, LCD_N, LCD_F, LCD_D, LCD_C, LCD_B, LCD_ID, LCD_S;
+    uint32_t LCD_DD_RAM, LCD_AC, LCD_CG_RAM;
+    uint32_t LCD_RAM_MODE; //= 0;
+    uint8_t LCD_Data[80];
+    uint8_t LCD_CG[64];
 
-	// static state carrying info
-	uint32_t lcd_width;
-	uint32_t lcd_height;
+    uint8_t lcd_enable; //= 1;
 
-	uint32_t lcd_col1;
-	uint32_t lcd_col2;
-	
-	uint8_t mcu_mk1;
-	uint8_t mcu_cm300;
-	uint8_t mcu_st;
-	uint8_t mcu_jv880;
-	uint8_t mcu_scb55;
-	uint8_t mcu_sc155;
+    // static state carrying info
+    uint32_t lcd_width;
+    uint32_t lcd_height;
+
+    uint32_t lcd_col1;
+    uint32_t lcd_col2;
+
+    uint8_t mcu_mk1;
+    uint8_t mcu_cm300;
+    uint8_t mcu_st;
+    uint8_t mcu_jv880;
+    uint8_t mcu_scb55;
+    uint8_t mcu_sc155;
 };
 
 struct lcd_t {
-	// These are initialized once on startup and are stable
-	int lcd_width;
-	int lcd_height;
-	uint32_t lcd_col1;
-	uint32_t lcd_col2;
+    // These are initialized once on startup and are stable
+    int lcd_width;
+    int lcd_height;
+    uint32_t lcd_col1;
+    uint32_t lcd_col2;
 
-	// This mutates, and will be pushed to callback periodically as a raw data block
-	struct lcd_state_t state;
+    // This mutates, and will be pushed to callback periodically as a raw data block
+    struct lcd_state_t state;
 
-	struct lcd_state_t lastState;
+    struct lcd_state_t lastState;
 };
 
 struct sc55_state {
@@ -359,7 +359,7 @@ struct sc55_state {
 
     struct submcu_t sm;
 
-	int port;
+    int port;
 
     int romset;
 
@@ -429,10 +429,10 @@ struct sc55_state {
 
     struct pcm_t pcm;
 
-	uint64_t sample_counter;
-	sc55_push_lcd lcdCallback;
-	void *lcdContext;
-	struct lcd_t lcd;
+    uint64_t sample_counter;
+    sc55_push_lcd lcdCallback;
+    void *lcdContext;
+    struct lcd_t lcd;
 
     uint8_t rom1[ROM1_SIZE];
     uint8_t rom2[ROM2_SIZE];

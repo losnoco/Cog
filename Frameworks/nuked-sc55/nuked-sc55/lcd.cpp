@@ -50,47 +50,47 @@ void LCD_Enable(struct sc55_state *st, uint32_t enable)
     return st->lcd_quit_requested;
 }*/
 
-void LCD_Write(struct sc55_state *st, uint32_t address, uint8_t data)
+void LCD_Write(struct sc55_state *sc, uint32_t address, uint8_t data)
 {
-	struct lcd_state_t *state = &st->lcd.state;
+    struct lcd_state_t *st = &sc->lcd.state;
     if (address == 0)
     {
         if ((data & 0xe0) == 0x20)
         {
-            state->LCD_DL = (data & 0x10) != 0;
-			state->LCD_N = (data & 0x8) != 0;
-			state->LCD_F = (data & 0x4) != 0;
+            st->LCD_DL = (data & 0x10) != 0;
+            st->LCD_N = (data & 0x8) != 0;
+            st->LCD_F = (data & 0x4) != 0;
         }
         else if ((data & 0xf8) == 0x8)
         {
-            state->LCD_D = (data & 0x4) != 0;
-            state->LCD_C = (data & 0x2) != 0;
-            state->LCD_B = (data & 0x1) != 0;
+            st->LCD_D = (data & 0x4) != 0;
+            st->LCD_C = (data & 0x2) != 0;
+            st->LCD_B = (data & 0x1) != 0;
         }
         else if ((data & 0xff) == 0x01)
         {
-            state->LCD_DD_RAM = 0;
-            state->LCD_ID = 1;
-            memset(state->LCD_Data, 0x20, sizeof(state->LCD_Data));
+            st->LCD_DD_RAM = 0;
+            st->LCD_ID = 1;
+            memset(st->LCD_Data, 0x20, sizeof(st->LCD_Data));
         }
         else if ((data & 0xff) == 0x02)
         {
-            state->LCD_DD_RAM = 0;
+            st->LCD_DD_RAM = 0;
         }
         else if ((data & 0xfc) == 0x04)
         {
-            state->LCD_ID = (data & 0x2) != 0;
-            state->LCD_S = (data & 0x1) != 0;
+            st->LCD_ID = (data & 0x2) != 0;
+            st->LCD_S = (data & 0x1) != 0;
         }
         else if ((data & 0xc0) == 0x40)
         {
-            state->LCD_CG_RAM = (data & 0x3f);
-            state->LCD_RAM_MODE = 0;
+            st->LCD_CG_RAM = (data & 0x3f);
+            st->LCD_RAM_MODE = 0;
         }
         else if ((data & 0x80) == 0x80)
         {
-            state->LCD_DD_RAM = (data & 0x7f);
-            state->LCD_RAM_MODE = 1;
+            st->LCD_DD_RAM = (data & 0x7f);
+            st->LCD_RAM_MODE = 1;
         }
         /*else
         {
@@ -99,48 +99,48 @@ void LCD_Write(struct sc55_state *st, uint32_t address, uint8_t data)
     }
     else
     {
-        if (!state->LCD_RAM_MODE)
+        if (!st->LCD_RAM_MODE)
         {
-            state->LCD_CG[state->LCD_CG_RAM] = data & 0x1f;
-            if (state->LCD_ID)
+            st->LCD_CG[st->LCD_CG_RAM] = data & 0x1f;
+            if (st->LCD_ID)
             {
-                state->LCD_CG_RAM++;
+                st->LCD_CG_RAM++;
             }
             else
             {
-                state->LCD_CG_RAM--;
+                st->LCD_CG_RAM--;
             }
-            state->LCD_CG_RAM &= 0x3f;
+            st->LCD_CG_RAM &= 0x3f;
         }
         else
         {
-            if (state->LCD_N)
+            if (st->LCD_N)
             {
-                if (state->LCD_DD_RAM & 0x40)
+                if (st->LCD_DD_RAM & 0x40)
                 {
-                    if ((state->LCD_DD_RAM & 0x3f) < 40)
-                        state->LCD_Data[(state->LCD_DD_RAM & 0x3f) + 40] = data;
+                    if ((st->LCD_DD_RAM & 0x3f) < 40)
+                        st->LCD_Data[(st->LCD_DD_RAM & 0x3f) + 40] = data;
                 }
                 else
                 {
-                    if ((state->LCD_DD_RAM & 0x3f) < 40)
-                        state->LCD_Data[state->LCD_DD_RAM & 0x3f] = data;
+                    if ((st->LCD_DD_RAM & 0x3f) < 40)
+                        st->LCD_Data[st->LCD_DD_RAM & 0x3f] = data;
                 }
             }
             else
             {
-                if (state->LCD_DD_RAM < 80)
-                    state->LCD_Data[state->LCD_DD_RAM] = data;
+                if (st->LCD_DD_RAM < 80)
+                    st->LCD_Data[st->LCD_DD_RAM] = data;
             }
-            if (state->LCD_ID)
+            if (st->LCD_ID)
             {
-                state->LCD_DD_RAM++;
+                st->LCD_DD_RAM++;
             }
             else
             {
-                state->LCD_DD_RAM--;
+                st->LCD_DD_RAM--;
             }
-            state->LCD_DD_RAM &= 0x7f;
+            st->LCD_DD_RAM &= 0x7f;
         }
     }
     //printf("%i %.2x ", address, data);
@@ -198,29 +198,29 @@ const int button_map_jv880[][2] =
 #if 0
 int LCD_SetBack(struct sc55_state *st, const char *name, sc55_read_rom readCallback, void *readContext)
 {
-	struct lcd_t *state = &st->lcd;
+    struct lcd_t *state = &st->lcd;
     uint32_t size = sizeof(state->lcd_background);
     return readCallback(readContext, name, (uint8_t *)state->lcd_background, &size);
 }
 #endif
 
-void LCD_Init(struct sc55_state *st)
+void LCD_Init(struct sc55_state *sc)
 {
-	struct lcd_t *lcd = &st->lcd;
-	struct lcd_state_t *state = &lcd->state;
+    struct lcd_t *lcd = &sc->lcd;
+    struct lcd_state_t *st = &lcd->state;
 
-	state->lcd_width = lcd->lcd_width;
-	state->lcd_height = lcd->lcd_height;
+    st->lcd_width = lcd->lcd_width;
+    st->lcd_height = lcd->lcd_height;
 
-	state->lcd_col1 = lcd->lcd_col1;
-	state->lcd_col2 = lcd->lcd_col2;
-	
-	state->mcu_mk1 = (uint8_t) st->mcu_mk1;
-	state->mcu_cm300 = (uint8_t) st->mcu_cm300;
-	state->mcu_st = (uint8_t) st->mcu_st;
-	state->mcu_jv880 = (uint8_t) st->mcu_jv880;
-	state->mcu_scb55 = (uint8_t) st->mcu_scb55;
-	state->mcu_sc155 = (uint8_t) st->mcu_sc155;
+    st->lcd_col1 = lcd->lcd_col1;
+    st->lcd_col2 = lcd->lcd_col2;
+
+    st->mcu_mk1 = (uint8_t) sc->mcu_mk1;
+    st->mcu_cm300 = (uint8_t) sc->mcu_cm300;
+    st->mcu_st = (uint8_t) sc->mcu_st;
+    st->mcu_jv880 = (uint8_t) sc->mcu_jv880;
+    st->mcu_scb55 = (uint8_t) sc->mcu_scb55;
+    st->mcu_sc155 = (uint8_t) sc->mcu_sc155;
 }
 
 /*
@@ -231,8 +231,8 @@ void LCD_UnInit(struct sc55_state *st)
 
 void LCD_FontRenderStandard(const struct lcd_state_t *st, lcd_buffer_t lcd_buffer, int32_t x, int32_t y, uint8_t ch, bool overlay = false)
 {
-	const uint32_t lcd_col1 = st->lcd_col1;
-	const uint32_t lcd_col2 = st->lcd_col2;
+    const uint32_t lcd_col1 = st->lcd_col1;
+    const uint32_t lcd_col2 = st->lcd_col2;
 
     const uint8_t* f;
     if (ch >= 16)
@@ -270,8 +270,8 @@ void LCD_FontRenderStandard(const struct lcd_state_t *st, lcd_buffer_t lcd_buffe
 
 void LCD_FontRenderLevel(const struct lcd_state_t *st, lcd_buffer_t lcd_buffer, int32_t x, int32_t y, uint8_t ch, uint8_t width = 5)
 {
-	const uint32_t lcd_col1 = st->lcd_col1;
-	const uint32_t lcd_col2 = st->lcd_col2;
+    const uint32_t lcd_col1 = st->lcd_col1;
+    const uint32_t lcd_col2 = st->lcd_col2;
 
     const uint8_t* f;
     if (ch >= 16)
@@ -344,8 +344,8 @@ static const int LR_xy[2][2] = {
 
 void LCD_FontRenderLR(const struct lcd_state_t *st, lcd_buffer_t lcd_buffer, uint8_t ch)
 {
-	const uint32_t lcd_col1 = st->lcd_col1;
-	const uint32_t lcd_col2 = st->lcd_col2;
+    const uint32_t lcd_col1 = st->lcd_col1;
+    const uint32_t lcd_col2 = st->lcd_col2;
 
     const uint8_t* f;
     if (ch >= 16)
@@ -376,8 +376,8 @@ void LCD_FontRenderLR(const struct lcd_state_t *st, lcd_buffer_t lcd_buffer, uin
 
 void LCD_Update(const struct lcd_state_t *st, const lcd_background_t lcd_background, lcd_buffer_t lcd_buffer)
 {
-	const uint32_t lcd_width = st->lcd_width;
-	const uint32_t lcd_height = st->lcd_height;
+    const uint32_t lcd_width = st->lcd_width;
+    const uint32_t lcd_height = st->lcd_height;
 
     if (!st->mcu_cm300 && !st->mcu_st && !st->mcu_scb55)
     {
