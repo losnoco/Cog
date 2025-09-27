@@ -618,6 +618,9 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (void)startPlayback {
+	// playback already started, and we missed the notice
+	prebuffered = YES;
+
 	[self playbackDidBegin:nil];
 }
 
