@@ -397,13 +397,13 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm width:lcdWidth height:lcdHeight mipmapped:NO];
 	mtlTexture[0].texture = [self.device newTextureWithDescriptor:textureDescriptor];
 	if(!mtlTexture[0].texture)
-		return nil;
+		return NO;
 	mtlTexture[1].texture = [self.device newTextureWithDescriptor:textureDescriptor];
 	if(!mtlTexture[1].texture)
-		return nil;
+		return NO;
 	mtlTexture[2].texture = [self.device newTextureWithDescriptor:textureDescriptor];
 	if(!mtlTexture[2].texture)
-		return nil;
+		return NO;
 
 	MTLSamplerDescriptor *sd = [MTLSamplerDescriptor new];
 	sd.label = @"nearest";
