@@ -1544,7 +1544,7 @@ void sc55_spin(struct sc55_state *st, uint32_t count)
     }
 }
 
-uint32_t sc55_lcd_state_size()
+uint32_t sc55_lcd_state_size(void)
 {
     return sizeof(lcd_state_t);
 }
