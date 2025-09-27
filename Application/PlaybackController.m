@@ -114,6 +114,8 @@ NSString *CogPlaybackDidPauseNotificiation = @"CogPlaybackDidPauseNotificiation"
 NSString *CogPlaybackDidResumeNotificiation = @"CogPlaybackDidResumeNotificiation";
 NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
+NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
+
 @synthesize playbackStatus;
 
 @synthesize progressOverall;
