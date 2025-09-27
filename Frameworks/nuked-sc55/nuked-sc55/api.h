@@ -48,7 +48,7 @@ void sc55_write_uart(struct sc55_state *st, const uint8_t *data, uint32_t count)
 // LCD renderer
 
 // Disable and erase
-uint32_t sc55_lcd_state_size();
+uint32_t sc55_lcd_state_size(void);
 void sc55_lcd_clear(void *lcdState, size_t stateSize, uint32_t width, uint32_t height);
 
 // Get screen size, static for a given model
