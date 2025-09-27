@@ -23,6 +23,8 @@
 #import <NSFileHandle+CreateFile.h>
 #endif
 
+static NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
+
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
@@ -214,6 +216,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				resetting = YES;
 				[self resume];
 				resetting = NO;
+			}
+
+			if(prebufferReached && !prebufferSignaled) {
+				prebufferSignaled = YES;
+				[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPrebufferNotification object:nil];
 			}
 
 			if([outputController shouldContinue] == NO) {
@@ -657,7 +664,13 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					size_t _frameCount = 0;
 
 					if(chunk && [chunk frameCount]) {
-						_self->streamTimestamp = [chunk streamTimestamp];
+						_self->prebufferReached = YES;
+
+						double streamTimestamp = [chunk streamTimestamp];
+						if(_self->streamTimestamp > streamTimestamp) {
+							_self->prebufferSignaled = NO;
+						}
+						_self->streamTimestamp = streamTimestamp;
 
 						_frameCount = [chunk frameCount];
 						NSData *sampleData = [chunk removeSamples:_frameCount];
@@ -926,6 +939,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[visController reset];
 			visController = nil;
 		}
+		prebufferReached = NO;
+		prebufferSignaled = NO;
 		stopCompleted = YES;
 	}
 }

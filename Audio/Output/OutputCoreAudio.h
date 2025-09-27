@@ -64,6 +64,9 @@ using std::atomic_long;
 	float fadeStep;
 	float fadeTarget;
 
+	BOOL prebufferReached;
+	BOOL prebufferSignaled;
+
 	BOOL eqEnabled;
 	BOOL eqInitialized;
 
