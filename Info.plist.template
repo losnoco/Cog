@@ -2011,6 +2011,24 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>jxs</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>song.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>Syntrax File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>flac</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
