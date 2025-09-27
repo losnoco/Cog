@@ -11,7 +11,7 @@
 		836FB5311820538700B3AD2D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836FB5301820538700B3AD2D /* Cocoa.framework */; };
 		836FB53B1820538700B3AD2D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 836FB5391820538700B3AD2D /* InfoPlist.strings */; };
 		836FB5971820554E00B3AD2D /* HivelyPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 836FB58A182053D800B3AD2D /* HivelyPlayer.framework */; };
-		836FB5991820556100B3AD2D /* HivelyPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB58A182053D800B3AD2D /* HivelyPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		836FB5991820556100B3AD2D /* HivelyPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB58A182053D800B3AD2D /* HivelyPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836FB5A01820556F00B3AD2D /* HVLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59B1820556F00B3AD2D /* HVLDecoder.m */; };
 		836FB5A11820556F00B3AD2D /* HVLMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59D1820556F00B3AD2D /* HVLMetadataReader.m */; };
 		836FB5A21820556F00B3AD2D /* HVLContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 836FB59F1820556F00B3AD2D /* HVLContainer.m */; };

@@ -9,21 +9,21 @@
 /* Begin PBXBuildFile section */
 		8333B6741DCC4999004C140D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8333B6731DCC4999004C140D /* libz.tbd */; };
 		8343785F17F93DAB00584396 /* psflib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; };
-		8343786017F93DBB00584396 /* psflib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8343786017F93DBB00584396 /* psflib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343785017F93CB600584396 /* psflib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834378D217F9676600584396 /* HighlyTheoretical.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; };
-		834378D317F9677300584396 /* HighlyTheoretical.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		834378D317F9677300584396 /* HighlyTheoretical.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 834378A217F9658F00584396 /* HighlyTheoretical.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; };
-		8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834379A817F9818400584396 /* HCDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834379A717F9818400584396 /* HCDecoder.mm */; };
 		834D19032D7F94C800F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19022D7F94C800F13B89 /* CogAudio.framework */; };
 		8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EEE717F92AC8005208A4 /* Cocoa.framework */; };
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
 		8384904A180764B500E7332D /* SSEQPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; };
-		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		8384904B180764C200E7332D /* SSEQPlayer.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83848FEC1807624000E7332D /* SSEQPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; };
 		83CA2E4D1D7BE41300F2EA53 /* mGBA.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83CA24241D7BC47E00F2EA53 /* mGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83DE0CBC180B02CC00269051 /* vio2sf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; };
-		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83DE0CBD180B02D800269051 /* vio2sf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DE0C3A180A9BD500269051 /* vio2sf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83E2F4D123566BC5006F7A41 /* lazyusf2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E2F4CE23566B0C006F7A41 /* lazyusf2.framework */; };
 		83E2F4D223566BD5006F7A41 /* lazyusf2.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83E2F4CE23566B0C006F7A41 /* lazyusf2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83FC32C51BF5AEFB00962B36 /* HighlyExperimental.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FC325E1BF5AB9000962B36 /* HighlyExperimental.framework */; };

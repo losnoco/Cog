@@ -16,7 +16,7 @@
 		83A0F4731816CE5E00119DB4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0F4721816CE5E00119DB4 /* Cocoa.framework */; };
 		83A0F47D1816CE5E00119DB4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83A0F47B1816CE5E00119DB4 /* InfoPlist.strings */; };
 		83A0F4D91816D03C00119DB4 /* playptmod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; };
-		83A0F4DB1816D04E00119DB4 /* playptmod.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		83A0F4DB1816D04E00119DB4 /* playptmod.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83A0F4CC1816CEAE00119DB4 /* playptmod.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83A0F4DE1816D09000119DB4 /* ptmodDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A0F4DD1816D09000119DB4 /* ptmodDecoder.m */; };
 /* End PBXBuildFile section */
 

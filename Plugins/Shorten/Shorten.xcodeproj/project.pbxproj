@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1745C4300B90C1DC00A6768C /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1745C42C0B90C1DC00A6768C /* ShortenDecoder.mm */; };
 		17F564EE0C3BDE010019975C /* Shorten.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; };
-		17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17F564EF0C3BDE030019975C /* Shorten.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F563E50C3BDBF10019975C /* Shorten.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
