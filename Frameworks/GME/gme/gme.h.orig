@@ -236,7 +236,7 @@ BLARGG_EXPORT gme_type_t gme_type( Music_Emu const* );
 
 /* Pointer to array of all music types, with NULL entry at end. Allows a player linked
 to this library to support new music types without having to be updated. */
-BLARGG_EXPORT gme_type_t const* gme_type_list( void );
+BLARGG_EXPORT gme_type_t const* gme_type_list(void);
 
 /* Name of game system for this music file type */
 BLARGG_EXPORT const char* gme_type_system( gme_type_t );

@@ -198,15 +198,13 @@ static void get_spc_xid6( byte const* begin, long size, track_info_t* out )
 	check( in == end );
 }
 
-static void get_spc_info( Spc_Emu::header_t const& h, byte const* xid6, long xid6_size,
-		track_info_t* out )
+static long decode_length( Spc_Emu::header_t const& h, byte const* tag, int size )
 {
 	// decode length (can be in text or binary format, sometimes ambiguous ugh)
 	long len_secs = 0;
-	int i;
-	for ( i = 0; i < 3; i++ )
+	for ( int i = 0; i < size; i++ )
 	{
-		unsigned n = h.len_secs [i] - '0';
+		unsigned n = tag [i] - '0';
 		if ( n > 9 )
 		{
 			// ignore single-digit text lengths
@@ -218,30 +216,19 @@ static void get_spc_info( Spc_Emu::header_t const& h, byte const* xid6, long xid
 		len_secs *= 10;
 		len_secs += n;
 	}
+	return len_secs;
+}
+
+static void get_spc_info( Spc_Emu::header_t const& h, byte const* xid6, long xid6_size,
+		track_info_t* out )
+{
+	long len_secs = decode_length( h, h.len_secs, 3 );
 	if ( !len_secs || len_secs > 0x1FFF )
 		len_secs = get_le16( h.len_secs );
 	if ( len_secs < 0x1FFF )
 		out->length = len_secs * 1000;
 
-	long fade_msec = 0;
-	for ( i = 0; i < 4; i++ )
-	{
-		unsigned n = h.fade_msec [i] - '0';
-		if ( n > 9 )
-		{
-			if ( i == 1 && (h.author [0] || !h.author [1]) )
-				fade_msec = -1;
-			break;
-		}
-		fade_msec *= 10;
-		fade_msec += n;
-	}
-	if ( i == 4 && unsigned( h.author [0] - '0' ) <= 9 )
-		fade_msec = fade_msec * 10 + h.author [0] - '0';
-	if ( fade_msec < 0 || fade_msec > 0x7FFF )
-		fade_msec = get_le32( h.fade_msec );
-	if ( fade_msec < 0x7FFF )
-		out->fade_length = fade_msec;
+	out->fade_length = decode_length( h, h.fade_msec, 4 );
 
 	int offset = (h.author [0] < ' ' || unsigned (h.author [0] - '0') <= 9);
 	Gme_File::copy_field_( out->author, &h.author [offset], sizeof h.author - offset );
