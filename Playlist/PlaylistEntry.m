@@ -956,11 +956,3 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 @end
-
-NSURL *_getPlaylistEntryURL(id object) {
-	if([object isKindOfClass:[PlaylistEntry class]]) {
-		PlaylistEntry *pe = object;
-		return pe.url;
-	}
-	return nil;
-}

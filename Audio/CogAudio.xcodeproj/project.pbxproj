@@ -817,7 +817,6 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
-				OTHER_LDFLAGS = "-Wl,-U,__getPlaylistEntryURL";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
@@ -856,7 +855,6 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
-				OTHER_LDFLAGS = "-Wl,-U,__getPlaylistEntryURL";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
