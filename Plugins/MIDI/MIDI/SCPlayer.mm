@@ -90,6 +90,10 @@ void SCPlayer::lcd_callback(int port, const void *state, size_t size, uint64_t t
 	memcpy(last_lcd_state[port], state, size);
 }
 
+void SCPlayer::flushOnSeek() {
+	[midiController flushEvents];
+}
+
 void SCPlayer::render(float *out, unsigned long count) {
 	bzero(out, sizeof(float) * count * 2);
 	while(count > 0) {

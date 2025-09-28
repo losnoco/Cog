@@ -402,6 +402,9 @@ static OSType getOSType(const char *in_) {
 
 	try {
 		player->Seek(frame);
+		if(scplayer) {
+			scplayer->flushOnSeek();
+		}
 	} catch (std::exception &e) {
 		ALog(@"Exception caught while seeking in MIDI file: %s", e.what());
 		framesRead = 0;
