@@ -25,7 +25,7 @@
 
 static void * kDSPHRTFNodeContext = &kDSPHRTFNodeContext;
 
-static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDigResetHeadTracking";
+static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDidResetHeadTracking";
 
 #ifdef MOTION_MANAGER
 static simd_float4x4 convertMatrix(CMRotationMatrix r) {
