@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)postEvent:(MIDIEvent *)event;
 
+- (void)flushEvents;
+
 - (NSArray<MIDIEvent *> *)eventsForTimestamp:(uint64_t)timestamp;
 
 @end

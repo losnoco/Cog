@@ -21,6 +21,8 @@ class SCPlayer : public MIDIPlayer {
 
 	void setUrl(NSURL *url);
 
+	void flushOnSeek();
+
 	protected:
 	virtual void send_event(uint32_t b);
 	virtual void send_sysex(const uint8_t* event, size_t size, size_t port);

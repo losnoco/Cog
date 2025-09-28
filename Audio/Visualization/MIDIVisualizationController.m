@@ -221,6 +221,14 @@ static void *kSCViewContext = &kSCViewContext;
 	return currentTimestamp;
 }
 
+- (void)flushEvents {
+	prebuffered = NO;
+	@synchronized (self) {
+		[files removeAllObjects];
+		currentTrack = nil;
+	}
+}
+
 - (NSArray<MIDIEvent *> *)eventsForTimestamp:(uint64_t)timestamp {
 	if(!prebuffered || !currentTrack) return nil;
 
@@ -275,6 +283,10 @@ static void *kSCViewContext = &kSCViewContext;
 		}
 
 		[events addObject:event];
+
+		if(prebuffered && !currentTrack) {
+			currentTrack = event.url;
+		}
 	}
 }
 
