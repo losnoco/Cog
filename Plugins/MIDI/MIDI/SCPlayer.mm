@@ -13,8 +13,6 @@
 
 #import <Accelerate/Accelerate.h>
 
-#import "SCVis.h"
-
 SCPlayer::SCPlayer()
 : MIDIPlayer() {
 	_player[0] = NULL;
@@ -35,6 +33,8 @@ SCPlayer::SCPlayer()
 	last_lcd_state[2] = new uint8_t[size];
 	
 	_workerQueue = [[NSOperationQueue alloc] init];
+
+	midiController = [NSClassFromString(@"VisualizationController") sharedMIDIController];
 }
 
 SCPlayer::~SCPlayer() {
@@ -77,16 +77,16 @@ void SCPlayer::_lcd_callback(void *context, int port, const void *state, size_t 
 
 void SCPlayer::lcd_callback(int port, const void *state, size_t size, uint64_t timestamp) {
 	assert(port >= 0 && port <= 2);
-	
+
 	if(timestamp - lcd_last_timestamp[port] >= 5) {
 		uint64_t lastTimestamp = lcd_last_timestamp[port];
 		lcd_last_timestamp[port] = timestamp;
 		@autoreleasepool {
-			SCVisUpdate *update = [[SCVisUpdate alloc] initWithFile:_url whichScreen:port state:last_lcd_state[port] stateSize:size timestamp:lastTimestamp];
-			[SCVisUpdate post:update];
+			SCVisEvent *update = [[SCVisEvent alloc] initWithUrl:_url whichPort:port state:last_lcd_state[port] stateSize:size timestamp:lastTimestamp];
+			[midiController postEvent:update];
 		}
 	}
-	
+
 	memcpy(last_lcd_state[port], state, size);
 }
 

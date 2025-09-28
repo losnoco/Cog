@@ -667,7 +667,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 						_self->prebufferReached = YES;
 
 						double streamTimestamp = [chunk streamTimestamp];
-						if(_self->streamTimestamp > streamTimestamp) {
+						if(!streamTimestamp || _self->streamTimestamp > streamTimestamp) {
 							_self->prebufferSignaled = NO;
 						}
 						_self->streamTimestamp = streamTimestamp;
@@ -748,6 +748,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		fadeStep = 0.0f;
 		fading = NO;
 		faded = NO;
+
+		streamTimestamp = 0.0;
+		prebufferReached = NO;
+		prebufferSignaled = NO;
 
 		AudioComponentDescription desc;
 		NSError *err;

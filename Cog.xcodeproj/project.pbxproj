@@ -160,6 +160,7 @@
 		838A33842D06CF4100D0D770 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33822D06CF4100D0D770 /* SpectrumWindowController.m */; };
 		838A33872D06CFCA00D0D770 /* SpeedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33862D06CFCA00D0D770 /* SpeedButton.m */; };
 		838DAE282E71816F005A8E1A /* MaybeSecureValueDataTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 838DAE272E71816F005A8E1A /* MaybeSecureValueDataTransformer.m */; };
+		839080562E88F5DE00D5D683 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 839080512E88F5DE00D5D683 /* Cocoa.framework */; };
 		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
 		839614A2286ED97200D3EEDB /* AboutWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614A0286ED97200D3EEDB /* AboutWindowController.xib */; };
 		839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */; };
@@ -199,7 +200,6 @@
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 83F9FFEE2D6EB75B00026576 /* Sentry */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
-		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
 		8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752C09F31D5A0080F1EE /* DNDArrayController.m */; };
 		8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752E09F31D5A0080F1EE /* PlaylistController.m */; };
@@ -783,7 +783,6 @@
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
 		0A9CEA0A286152DF00E47168 /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DraggableView.swift; path = Window/DraggableView.swift; sourceTree = "<group>"; };
-		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170B55920D6E5E7B006B9E92 /* StatusImageTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusImageTransformer.h; sourceTree = "<group>"; };
 		170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StatusImageTransformer.m; sourceTree = "<group>"; };
 		171B57D90C091F2B00F6AFAF /* flac.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = flac.icns; sourceTree = "<group>"; };
@@ -976,7 +975,6 @@
 		8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyComplete.xcodeproj; path = Plugins/HighlyComplete/HighlyComplete.xcodeproj; sourceTree = "<group>"; };
 		8366CB132E8550C6007DB8D2 /* SCView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SCView.m; path = Visualization/SCView.m; sourceTree = "<group>"; };
 		8366CB192E85510B007DB8D2 /* SCView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SCView.h; path = Visualization/SCView.h; sourceTree = "<group>"; };
-		8366CB1B2E855D95007DB8D2 /* SCVis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SCVis.h; path = Plugins/MIDI/MIDI/SCVis.h; sourceTree = "<group>"; };
 		8366CB1C2E8577A6007DB8D2 /* SCVisWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SCVisWindowController.h; path = Visualization/SCVisWindowController.h; sourceTree = "<group>"; };
 		8366CB1D2E8577CD007DB8D2 /* SCVisWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SCVisWindowController.m; path = Visualization/SCVisWindowController.m; sourceTree = "<group>"; };
 		8366CB202E857997007DB8D2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SCVisWindow.xib; sourceTree = "<group>"; };
@@ -1004,7 +1002,6 @@
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
 		8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumViewSK.m; path = Visualization/SpectrumViewSK.m; sourceTree = "<group>"; };
 		8377C66227B8CF6300E8BC0F /* SpectrumViewSK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumViewSK.h; path = Visualization/SpectrumViewSK.h; sourceTree = "<group>"; };
-		8377C66427B8CF7A00E8BC0F /* VisualizationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisualizationController.h; path = Audio/Visualization/VisualizationController.h; sourceTree = "<group>"; };
 		8377C6B727B900F000E8BC0F /* SpectrumItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumItem.h; path = Visualization/SpectrumItem.h; sourceTree = "<group>"; };
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
 		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1033,6 +1030,7 @@
 		838DAE262E71816F005A8E1A /* MaybeSecureValueDataTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MaybeSecureValueDataTransformer.h; path = Transformers/MaybeSecureValueDataTransformer.h; sourceTree = "<group>"; };
 		838DAE272E71816F005A8E1A /* MaybeSecureValueDataTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MaybeSecureValueDataTransformer.m; path = Transformers/MaybeSecureValueDataTransformer.m; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
+		839080512E88F5DE00D5D683 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		839614A1286ED97200D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AboutWindowController.xib; sourceTree = "<group>"; };
 		839614AC286EDA5C00D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpectrumWindow.xib; sourceTree = "<group>"; };
@@ -1112,7 +1110,6 @@
 				8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */,
 				ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */,
 				8355D6B8180613FB00D05687 /* Security.framework in Frameworks */,
-				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */,
 				17BB5CED0B8A86010009ACB1 /* AudioToolbox.framework in Frameworks */,
 				835FAC7F27BCDF5B00BA8562 /* libavif.a in Frameworks */,
@@ -1123,6 +1120,7 @@
 				838A33742D06A9B100D0D770 /* librubberband.3.dylib in Frameworks */,
 				8366CB332E8693EC007DB8D2 /* MetalKit.framework in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
+				839080562E88F5DE00D5D683 /* Cocoa.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				8366CB352E869980007DB8D2 /* Metal.framework in Frameworks */,
 				83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */,
@@ -1172,7 +1170,6 @@
 				83DFCD982E8532C1009E3DF1 /* nuked-sc55.xcodeproj */,
 				ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
-				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -1568,6 +1565,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				839080512E88F5DE00D5D683 /* Cocoa.framework */,
 				8366CB342E869980007DB8D2 /* Metal.framework */,
 				8366CB322E8693EC007DB8D2 /* MetalKit.framework */,
 				83922FB6286B1AA900A0B039 /* WebKit.framework */,
@@ -1835,8 +1833,6 @@
 				8366CB132E8550C6007DB8D2 /* SCView.m */,
 				8366CB1C2E8577A6007DB8D2 /* SCVisWindowController.h */,
 				8366CB1D2E8577CD007DB8D2 /* SCVisWindowController.m */,
-				8366CB1B2E855D95007DB8D2 /* SCVis.h */,
-				8377C66427B8CF7A00E8BC0F /* VisualizationController.h */,
 			);
 			name = Visualization;
 			sourceTree = "<group>";

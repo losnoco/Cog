@@ -80,6 +80,9 @@
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		838A33722D06A97D00D0D770 /* librubberband.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 838A33712D06A97D00D0D770 /* librubberband.3.dylib */; };
 		839065F32853338700636FBB /* dsd2float.h in Headers */ = {isa = PBXBuildFile; fileRef = 839065F22853338700636FBB /* dsd2float.h */; };
+		83907FBD2E88CB9600D5D683 /* MIDIVisualizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */; };
+		83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83907FCF2E88E31C00D5D683 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83907FCE2E88E31C00D5D683 /* Cocoa.framework */; };
 		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
@@ -117,7 +120,6 @@
 		83F9FFF82D6EC43900026576 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */; };
 		83FFED512D5B08BC0044CCAF /* DSPNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FFED502D5B08BC0044CCAF /* DSPNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83FFED532D5B09320044CCAF /* DSPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83FFED522D5B09320044CCAF /* DSPNode.m */; };
-		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
 		8EC1225F0B993BD500C5B3AD /* ConverterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC1225D0B993BD500C5B3AD /* ConverterNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -143,7 +145,6 @@
 		07DB5F3D0ED353A900C2E3EF /* AudioMetadataWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMetadataWriter.m; sourceTree = "<group>"; };
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		17A2D3C30B8D1D37000778C4 /* AudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDecoder.h; sourceTree = "<group>"; };
 		17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioDecoder.m; sourceTree = "<group>"; };
 		17ADB13A0B97926D00257CA2 /* AudioSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AudioSource.h; sourceTree = "<group>"; };
@@ -218,6 +219,9 @@
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		838A33712D06A97D00D0D770 /* librubberband.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librubberband.3.dylib; path = ../ThirdParty/rubberband/lib/librubberband.3.dylib; sourceTree = SOURCE_ROOT; };
 		839065F22853338700636FBB /* dsd2float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsd2float.h; sourceTree = "<group>"; };
+		83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDIVisualizationController.m; sourceTree = "<group>"; };
+		83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIDIVisualizationController.h; sourceTree = "<group>"; };
+		83907FCE2E88E31C00D5D683 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../Utils/NSDictionary+Merge.h"; sourceTree = SOURCE_ROOT; };
@@ -275,11 +279,11 @@
 				8328995A27CB51C900D7F028 /* Security.framework in Frameworks */,
 				83725A9127AA16D50003F694 /* AVFoundation.framework in Frameworks */,
 				83F9FFF82D6EC43900026576 /* libsoxr.0.dylib in Frameworks */,
-				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */,
 				83725A9027AA16C90003F694 /* Accelerate.framework in Frameworks */,
 				17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */,
 				17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */,
+				83907FCF2E88E31C00D5D683 /* Cocoa.framework in Frameworks */,
 				17D21DAF0B8BE76800D1EBDE /* CoreAudio.framework in Frameworks */,
 				17D21DB00B8BE76800D1EBDE /* CoreAudioKit.framework in Frameworks */,
 				838A33722D06A97D00D0D770 /* librubberband.3.dylib in Frameworks */,
@@ -303,20 +307,10 @@
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
-				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				83907FD02E88E37500D5D683 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
-				83725A8F27AA16C90003F694 /* Frameworks */,
 			);
 			name = CogAudio;
-			sourceTree = "<group>";
-		};
-		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
-				1058C7B2FEA5585E11CA2CBB /* Other Frameworks */,
-			);
-			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
 		};
 		089C1665FE841158C02AAC07 /* Resources */ = {
@@ -361,31 +355,6 @@
 				17D21CDC0B8BE5B400D1EBDE /* Utils */,
 			);
 			name = Classes;
-			sourceTree = "<group>";
-		};
-		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
-			);
-			name = "Linked Frameworks";
-			sourceTree = "<group>";
-		};
-		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				838A33712D06A97D00D0D770 /* librubberband.3.dylib */,
-				83725A7B27AA0D8A0003F694 /* Accelerate.framework */,
-				17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */,
-				17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */,
-				83725A7C27AA0D8E0003F694 /* AVFoundation.framework */,
-				17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */,
-				17D21DAC0B8BE76800D1EBDE /* CoreAudioKit.framework */,
-				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
-				D2F7E79907B2D74100F64583 /* CoreData.framework */,
-				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		17D21C750B8BE4BA00D1EBDE /* Chain */ = {
@@ -520,15 +489,6 @@
 			path = License;
 			sourceTree = "<group>";
 		};
-		83725A8F27AA16C90003F694 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				8350416C28646149006B32CC /* CoreMedia.framework */,
-				8328995927CB51C900D7F028 /* Security.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		8377C64A27B8C51500E8BC0F /* deadbeef */ = {
 			isa = PBXGroup;
 			children = (
@@ -543,8 +503,30 @@
 			children = (
 				833442402D6EFA6700C51D38 /* VisualizationController.h */,
 				833442412D6EFA6700C51D38 /* VisualizationController.m */,
+				83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */,
+				83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */,
 			);
 			path = Visualization;
+			sourceTree = "<group>";
+		};
+		83907FD02E88E37500D5D683 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				838A33712D06A97D00D0D770 /* librubberband.3.dylib */,
+				83725A7B27AA0D8A0003F694 /* Accelerate.framework */,
+				17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */,
+				17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */,
+				83725A7C27AA0D8E0003F694 /* AVFoundation.framework */,
+				17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */,
+				17D21DAC0B8BE76800D1EBDE /* CoreAudioKit.framework */,
+				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
+				D2F7E79907B2D74100F64583 /* CoreData.framework */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+				8350416C28646149006B32CC /* CoreMedia.framework */,
+				8328995927CB51C900D7F028 /* Security.framework */,
+				83907FCE2E88E31C00D5D683 /* Cocoa.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		839E56E02879450300DFB5F4 /* hrtf */ = {
@@ -622,6 +604,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */,
 				833442422D6EFA6700C51D38 /* VisualizationController.h in Headers */,
 				83CFA54A2E535B9B008BC289 /* SimpleBuffer.h in Headers */,
 				833738F02D5EA5B700278628 /* Downmix.h in Headers */,
@@ -766,6 +749,7 @@
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				834FD4ED27AF91220063BC83 /* AudioChunk.m in Sources */,
+				83907FBD2E88CB9600D5D683 /* MIDIVisualizationController.m in Sources */,
 				833738EF2D5EA5B700278628 /* Downmix.m in Sources */,
 				17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */,
 				839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */,
@@ -833,7 +817,7 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-Wl,-U,__getPlaylistEntryURL";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
@@ -872,7 +856,7 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-Wl,-U,__getPlaylistEntryURL";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;

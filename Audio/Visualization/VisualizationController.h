@@ -7,12 +7,16 @@
 
 #import <Foundation/Foundation.h>
 
+#import <CogAudio/MIDIVisualizationController.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VisualizationController : NSObject {
 }
 
 + (VisualizationController *)sharedController;
+
++ (MIDIVisualizationController *)sharedMIDIController;
 
 - (void)postLatency:(double)latency;
 - (double)getLatency;

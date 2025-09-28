@@ -7,6 +7,8 @@
 
 #import <CogAudio/CogSemaphore.h>
 
+#import <CogAudio/VisualizationController.h>
+
 class SCPlayer : public MIDIPlayer {
 	public:
 	// zero variables
@@ -43,6 +45,8 @@ class SCPlayer : public MIDIPlayer {
 
 	short tempBuffer[3][512 * 2];
 	float ftempBuffer[3][512 * 2];
+
+	MIDIVisualizationController *midiController;
 };
 
 #endif

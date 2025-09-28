@@ -17,15 +17,9 @@
 
 #import <nuked_sc55/api.h>
 
-#import "SCVis.h"
-
 #import "metal_shader_types.h"
 
-extern NSString *CogPlaybackDidPrebufferNotification;
-
 static void *kSCViewContext = &kSCViewContext;
-
-static NSString *CogSCVisUpdateNotification = @"CogSCVisUpdateNotification";
 
 extern NSString *CogPlaybackDidBeginNotificiation;
 extern NSString *CogPlaybackDidPauseNotificiation;
@@ -110,7 +104,7 @@ typedef struct
 enum { _ChainCount = 3 };
 
 @implementation SCView {
-	VisualizationController *visController;
+	MIDIVisualizationController *midiController;
 
 	BOOL paused;
 	BOOL stopped;
@@ -119,17 +113,12 @@ enum { _ChainCount = 3 };
 	BOOL observersAdded;
 	BOOL isOccluded;
 
-	BOOL prebuffered;
-
 	unsigned int numDisplays;
 	NSRect initFrame;
 	uint32_t lcdWidth;
 	uint32_t lcdHeight;
 
 	void *lcdClearedState;
-
-	NSURL *currentTrack;
-	NSMutableArray *files;
 
 	uint32_t lcdBackground[lcd_background_size];
 	uint32_t renderBuffer[lcd_buffer_size];
@@ -269,13 +258,10 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 			return nil;
 		sc55_lcd_clear(lcdClearedState, size, width, height);
 
-		visController = [NSClassFromString(@"VisualizationController") sharedController];
+		midiController = [NSClassFromString(@"VisualizationController") sharedMIDIController];
 		stopped = YES;
 		paused = NO;
 		isListening = NO;
-
-		currentTrack = nil;
-		files = [NSMutableArray new];
 
 		[self addObservers];
 
@@ -447,76 +433,6 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	}
 }
 
-- (void)removeTrack:(NSURL *)url {
-	@synchronized (self) {
-		assert([url isEqualTo:files[0][@"url"]]);
-		[files removeObjectAtIndex:0];
-	}
-}
-
-- (void)addTrack:(NSURL *)url {
-	NSMutableArray *events = [NSMutableArray new];
-	NSMutableDictionary *file = [@{@"url": url, @"events": events} mutableCopy];
-	[files addObject:file];
-}
-
-- (NSArray *)getEventsForTimestamp:(uint64_t)timestamp {
-	@synchronized (self) {
-		NSMutableArray *events = [files count] ? files[0][@"events"] : nil;
-		if(!events || ![events count]) return nil;
-
-		size_t i = 0;
-		for(SCVisUpdate *event in events) {
-			if(event.timestamp > timestamp)
-				break;
-			++i;
-		}
-
-		if(!i)
-			return nil;
-
-		size_t count = [events count];
-		NSArray *ret = [events subarrayWithRange:NSMakeRange(0, i)];
-		if(i < count)
-			files[0][@"events"] = [[events subarrayWithRange:NSMakeRange(i, count - i)] mutableCopy];
-		else
-			files[0][@"events"] = [NSMutableArray new];
-
-		return ret;
-	}
-}
-
-- (NSMutableArray *)findEventsForUrl:(NSURL *)url withTimestamp:(uint64_t)timestamp {
-	for(NSDictionary *file in files) {
-		if([file[@"url"] isEqualTo:url]) {
-			NSMutableArray *events = file[@"events"];
-			if(![events count])
-				return events;
-			SCVisUpdate *event = [events count] ? [events lastObject] : nil;
-			if(event) {
-				if(timestamp >= event.timestamp) {
-					return events;
-				}
-			}
-		}
-	}
-	return nil;
-}
-
-- (void)postEvent:(NSNotification *)notification {
-	SCVisUpdate *update = notification.object;
-
-	@synchronized (self) {
-		NSMutableArray *events = [self findEventsForUrl:update.file withTimestamp:update.timestamp];
-		if(!events) {
-			[self addTrack:update.file];
-			events = [files lastObject][@"events"];
-		}
-
-		[events addObject:update];
-	}
-}
-
 - (void)addObservers {
 	if(!observersAdded) {
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSCViewContext];
@@ -540,18 +456,8 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 							object:nil];
 
 		[defaultCenter addObserver:self
-						  selector:@selector(playbackPrebuffered:)
-							  name:CogPlaybackDidPrebufferNotification
-							object:nil];
-
-		[defaultCenter addObserver:self
 						  selector:@selector(windowChangedOcclusionState:)
 							  name:NSWindowDidChangeOcclusionStateNotification
-							object:nil];
-
-		[defaultCenter addObserver:self
-						  selector:@selector(postEvent:)
-							  name:CogSCVisUpdateNotification
 							object:nil];
 
 		observersAdded = YES;
@@ -571,9 +477,6 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter removeObserver:self
-								 name:NSSystemColorsDidChangeNotification
-							   object:nil];
-		[defaultCenter removeObserver:self
 								 name:CogPlaybackDidBeginNotificiation
 							   object:nil];
 		[defaultCenter removeObserver:self
@@ -587,15 +490,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 							   object:nil];
 
 		[defaultCenter removeObserver:self
-								 name:CogPlaybackDidPrebufferNotification
-							   object:nil];
-
-		[defaultCenter removeObserver:self
 								 name:NSWindowDidChangeOcclusionStateNotification
-							   object:nil];
-
-		[defaultCenter removeObserver:self
-								 name:CogSCVisUpdateNotification
 							   object:nil];
 
 		observersAdded = NO;
@@ -618,9 +513,6 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (void)startPlayback {
-	// playback already started, and we missed the notice
-	prebuffered = YES;
-
 	[self playbackDidBegin:nil];
 }
 
@@ -628,7 +520,6 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	stopped = NO;
 	paused = NO;
 	[self updateVisListening];
-	[self nextTrack];
 }
 
 - (void)playbackDidPause:(NSNotification *)notification {
@@ -644,21 +535,12 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (void)playbackDidStop:(NSNotification *)notification {
-	prebuffered = NO;
 	stopped = YES;
 	paused = NO;
 	[self updateVisListening];
-	@synchronized (self) {
-		[files removeAllObjects];
-		currentTrack = nil;
-	}
 	[self repaint];
 	numDisplays = 1;
 	[self resizeDisplay];
-}
-
-- (void)playbackPrebuffered:(NSNotification *)notification {
-	prebuffered = YES;
 }
 
 - (void)uploadTexture:(uint32_t)which {
@@ -676,7 +558,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	[self uploadTexture:which];
 }
 
-- (void)renderAndDrawPanel:(SCVisUpdate *)event {
+- (void)renderAndDrawPanel:(SCVisEvent *)event {
 	sc55_lcd_render_screen(lcdBackground, renderBuffer, [event.state bytes], [event.state length]);
 	[self uploadTexture:event.which];
 	[self drawPanel:event.which];
@@ -789,24 +671,6 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	}
 }
 
-- (void)nextTrack {
-	@synchronized (self) {
-		if(currentTrack) {
-			[self removeTrack:currentTrack];
-			if([files count]) {
-				currentTrack = files[0][@"url"];
-			} else {
-				currentTrack = nil;
-			}
-			[self renderEmptyPanel:0];
-			[self renderEmptyPanel:1];
-			[self renderEmptyPanel:2];
-			numDisplays = 1;
-			[self resizeDisplay];
-		}
-	}
-}
-
 - (void) mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size {
 }
 
@@ -828,12 +692,9 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 	BOOL rendered[3] = {NO};
 
-	size_t count;
-	@synchronized (self) {
-		count = [files count];
-	}
+	NSURL *currentTrack = [midiController currentTrack];
 	
-	if(!prebuffered || stopped || !count) {
+	if(stopped || !currentTrack) {
 		[self renderEmptyPanel:0];
 		[self renderEmptyPanel:1];
 		[self renderEmptyPanel:2];
@@ -843,39 +704,20 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 	NSArray *events;
 
-	if(stopped || !count) goto _END;
+	if(stopped || !currentTrack) goto _END;
 
-	if(!currentTrack) {
-		currentTrack = files[0][@"url"];
-	}
-
-	if(!prebuffered) goto _END;
-
-	uint64_t currentTimestamp = 0;
-	uint64_t mslatency = 0;
-	@synchronized (self) {
-		if([files count]) {
-			NSArray *events = files[0][@"events"];
-			if(events && [events count]) {
-				SCVisUpdate *event = [events lastObject];
-				currentTimestamp = event.timestamp;
-				double latency = [visController getFullLatency];
-				mslatency = floor(latency * 1000.0);
-				if(currentTimestamp > mslatency)
-					currentTimestamp -= mslatency;
-				else
-					currentTimestamp = 0;
-			}
-		}
-	}
+	uint64_t currentTimestamp = [midiController currentTimestamp];
 
 	BOOL present[3] = {NO};
-	events = [self getEventsForTimestamp:currentTimestamp];
-	for(SCVisUpdate *event in events) {
+	events = [midiController eventsForTimestamp:currentTimestamp];
+	for(MIDIEvent *event in events) {
+		if(![event isKindOfClass:[SCVisEvent class]]) continue;
 		present[event.which] = YES;
 	}
-	for(SCVisUpdate *event in [events reverseObjectEnumerator]) {
-		[self renderAndDrawPanel:event];
+	for(MIDIEvent *event in [events reverseObjectEnumerator]) {
+		if(![event isKindOfClass:[SCVisEvent class]]) continue;
+		SCVisEvent *visEvent = (SCVisEvent *)event;
+		[self renderAndDrawPanel:visEvent];
 		rendered[event.which] = YES;
 		if(rendered[0] == present[0] &&
 		   rendered[1] == present[1] &&
