@@ -21,7 +21,6 @@
 		8356BCD327B353FB0074E50C /* libbassflac.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCB27B353E30074E50C /* libbassflac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8356BCD427B354010074E50C /* libbassopus.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCC27B353E30074E50C /* libbassopus.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCD27B353E30074E50C /* libbasswv.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8366CB122E8549B4007DB8D2 /* SCVis.m in Sources */ = {isa = PBXBuildFile; fileRef = 8366CB112E8549B4007DB8D2 /* SCVis.m */; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
@@ -129,8 +128,6 @@
 		8356BCCC27B353E30074E50C /* libbassopus.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbassopus.dylib; path = ../../ThirdParty/BASS/libbassopus.dylib; sourceTree = "<group>"; };
 		8356BCCD27B353E30074E50C /* libbasswv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbasswv.dylib; path = ../../ThirdParty/BASS/libbasswv.dylib; sourceTree = "<group>"; };
 		835F91BA1EE211820003E186 /* dmxopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmxopl.h; sourceTree = "<group>"; };
-		8366CB102E85497B007DB8D2 /* SCVis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCVis.h; sourceTree = "<group>"; };
-		8366CB112E8549B4007DB8D2 /* SCVis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCVis.m; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -341,8 +338,6 @@
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
 				831E2A7D27B4B2B2006F1C86 /* BASS */,
-				8366CB112E8549B4007DB8D2 /* SCVis.m */,
-				8366CB102E85497B007DB8D2 /* SCVis.h */,
 				83A0CBC32E837AA5007C429D /* SCPlayer.mm */,
 				83A0CBC22E837AA5007C429D /* SCPlayer.h */,
 				8356BCC427B352620074E50C /* BMPlayer.cpp */,
@@ -514,7 +509,6 @@
 				831E2A9727B4B2FA006F1C86 /* json-builder.c in Sources */,
 				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
-				8366CB122E8549B4007DB8D2 /* SCVis.m in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 				834BE91B1DE407CB00A07DCD /* resampler.c in Sources */,
 				83A0CBC42E837AA5007C429D /* SCPlayer.mm in Sources */,

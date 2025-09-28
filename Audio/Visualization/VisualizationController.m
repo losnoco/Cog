@@ -5,12 +5,15 @@
 //  Created by Christopher Snowhill on 2/12/22.
 //
 
-#import "VisualizationController.h"
+#import <CogAudio/VisualizationController.h>
+
 #import <Accelerate/Accelerate.h>
 
 #import "fft.h"
 
 @implementation VisualizationController {
+	MIDIVisualizationController *midiController;
+
 	double sampleRate;
 	double latency;
 	double fullLatency;
@@ -21,20 +24,28 @@
 	double sinePhase;
 }
 
-static VisualizationController *_sharedController = nil;
-
 + (VisualizationController *)sharedController {
-	@synchronized(self) {
-		if(!_sharedController) {
-			_sharedController = [[VisualizationController alloc] init];
-		}
-	}
+	static VisualizationController *_sharedController = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		_sharedController = [[VisualizationController alloc] init];
+	});
 	return _sharedController;
+}
+
++ (MIDIVisualizationController *)sharedMIDIController {
+	return [[VisualizationController sharedController] midiController];
+}
+
+- (MIDIVisualizationController *)midiController {
+	return midiController;
 }
 
 - (id)init {
 	self = [super init];
 	if(self) {
+		midiController = [[MIDIVisualizationController alloc] initWithController:self];
+
 		visAudio = NULL;
 		visAudioSize = 0;
 		latency = 0;
