@@ -8,7 +8,7 @@
 
 #import "OutputPane.h"
 
-static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDigResetHeadTracking";
+static NSString *CogPlaybackDidResetHeadTracking = @"CogPlaybackDidResetHeadTracking";
 
 @implementation OutputPane
 
