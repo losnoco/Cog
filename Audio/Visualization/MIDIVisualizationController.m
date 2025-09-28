@@ -11,15 +11,19 @@
 
 #import <CogAudio/MIDIVisualizationController.h>
 
-// PlaylistEntry hack
-extern NSURL *_getPlaylistEntryURL(id object);
-
 static NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
 
 static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 static NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 static void *kSCViewContext = &kSCViewContext;
+
+static NSURL *getPlaylistEntryURL(id object) {
+	if(object && [object respondsToSelector:@selector(url)]) {
+		return [object url];
+	}
+	return nil;
+}
 
 @interface MIDIFileEventContainer : NSObject
 	@property (nonatomic) NSURL *url;
@@ -146,7 +150,9 @@ static void *kSCViewContext = &kSCViewContext;
 }
 
 - (void)playbackDidBegin:(NSNotification *)notification {
-	NSURL *url = _getPlaylistEntryURL(notification.object);
+	NSURL *url = getPlaylistEntryURL(notification.object);
+	if(!url) return;
+
 	@synchronized (self) {
 		while([files count]) {
 			MIDIFileEventContainer *file = files[0];
