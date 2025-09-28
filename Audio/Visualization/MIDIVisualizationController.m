@@ -85,12 +85,18 @@ static void *kSCViewContext = &kSCViewContext;
 						++i;
 					}
 					if(i < count)
-						files[idx].events = [[events subarrayWithRange:NSMakeRange(i, count - i)] mutableCopy];
+						file.events = [[events subarrayWithRange:NSMakeRange(i, count - i)] mutableCopy];
 					else if(idx > 0)
-						files[idx].events = [NSMutableArray new];
+						file.events = [NSMutableArray new];
 					else {
 						[files removeObjectAtIndex:0];
 						--fileCount;
+						if(currentTrack && [currentTrack isEqualTo:file.url]) {
+							if(fileCount)
+								currentTrack = files[0].url;
+							else
+								currentTrack = nil;
+						}
 						continue;
 					}
 				}
@@ -140,18 +146,21 @@ static void *kSCViewContext = &kSCViewContext;
 }
 
 - (void)playbackDidBegin:(NSNotification *)notification {
+	NSURL *url = _getPlaylistEntryURL(notification.object);
 	@synchronized (self) {
-		if(currentTrack) {
-			[self removeTrack:currentTrack];
-			NSURL *url = _getPlaylistEntryURL(notification.object);
-			if([files count]) {
-				MIDIFileEventContainer *file = files[0];
-				if([file.url isEqualTo:url])
-					currentTrack = files[0].url;
-				else
-					currentTrack = nil;
-			} else {
+		while([files count]) {
+			MIDIFileEventContainer *file = files[0];
+			if(currentTrack && [file.url isEqualTo:currentTrack]) {
 				currentTrack = nil;
+				[self removeTrack:file.url];
+				continue;
+			} else if([file.url isEqualTo:url]) {
+				currentTrack = file.url;
+				break;
+			} else {
+				// track(s) buffered, but current track doesn't match them
+				currentTrack = nil;
+				break;
 			}
 		}
 	}
