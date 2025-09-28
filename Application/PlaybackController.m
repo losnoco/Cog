@@ -943,7 +943,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
 		self->playlistController.currentEntry = pe;
 		[self sendMetaData];
-		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotificiation object:pe];
+		if(pe) {
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotificiation object:pe];
+		}
 	});
 }
 
