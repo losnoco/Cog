@@ -643,7 +643,8 @@ static SQLiteStore *g_sharedStore = nil;
 								int64_t referenceCount = sqlite3_column_int64(st, select_art_all_out_referencecount);
 								const void *artBytes = sqlite3_column_blob(st, select_art_all_out_value);
 								size_t artLength = sqlite3_column_bytes(st, select_art_all_out_value);
-								NSData *hash = [SHA256Digest digestBytes:artBytes length:artLength];
+								Class shaClass = NSClassFromString(@"SHA256Digest");
+								NSData *hash = [shaClass digestBytes:artBytes length:artLength];
 								if(sqlite3_reset(sta) ||
 								   sqlite3_bind_int64(sta, add_art_renamed_in_id, artId) ||
 								   sqlite3_bind_int64(sta, add_art_renamed_in_referencecount, referenceCount) ||
@@ -938,7 +939,8 @@ static SQLiteStore *g_sharedStore = nil;
 		return art;
 	}
 
-	NSData *digest = [SHA256Digest digestData:art];
+	Class shaClass = NSClassFromString(@"SHA256Digest");
+	NSData *digest = [shaClass digestData:art];
 
 	sqlite3_stmt *st = stmt[stmt_select_art];
 

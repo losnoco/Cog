@@ -146,7 +146,6 @@
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
 		837DC92B285B05710005C58A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837DC92A285B05710005C58A /* CoreData.framework */; };
 		837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */; };
-		8381A09227C5F72F00A1C530 /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8381A09127C5F72F00A1C530 /* SHA256Digest.m */; };
 		8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952E2E4609CF00A7CFD8 /* libyuv.a */; };
 		838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952D2E4609CF00A7CFD8 /* libdav1d.a */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
@@ -1009,7 +1008,6 @@
 		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		837DC930285B3F790005C58A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		8381A09027C5F72F00A1C530 /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA256Digest.h; sourceTree = "<group>"; };
-		8381A09127C5F72F00A1C530 /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SHA256Digest.m; sourceTree = "<group>"; };
 		8383952D2E4609CF00A7CFD8 /* libdav1d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdav1d.a; path = ThirdParty/avif/lib/libdav1d.a; sourceTree = "<group>"; };
 		8383952E2E4609CF00A7CFD8 /* libyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyuv.a; path = ThirdParty/avif/lib/libyuv.a; sourceTree = "<group>"; };
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
@@ -1272,7 +1270,6 @@
 				832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */,
 				83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */,
 				8381A09027C5F72F00A1C530 /* SHA256Digest.h */,
-				8381A09127C5F72F00A1C530 /* SHA256Digest.m */,
 				178456100F631E31007E8021 /* SideViewController.h */,
 				178456110F631E31007E8021 /* SideViewController.m */,
 				8370D739277419D200245CE0 /* SQLiteStore.h */,
@@ -2676,7 +2673,6 @@
 				179D03260E0CB2500064A77A /* PathNode.m in Sources */,
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
-				8381A09227C5F72F00A1C530 /* SHA256Digest.m in Sources */,
 				8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
 				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,

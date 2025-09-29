@@ -246,7 +246,8 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 				if(!err) {
 					uint64_t size = fex_size(fex);
 					NSData *itemData = [NSData dataWithBytes:data length:size];
-					NSString *hash = [SHA256Digest digestDataAsString:itemData];
+					Class shaClass = NSClassFromString(@"SHA256Digest");
+					NSString *hash = [shaClass digestDataAsString:itemData];
 					NSDictionary *foundItem = romSets[hash];
 					if(foundItem) {
 						if(currentDevice) {
