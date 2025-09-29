@@ -379,7 +379,8 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 - (void)setAlbumArtInternal:(NSData *)albumArtInternal {
 	if(!albumArtInternal || [albumArtInternal length] == 0) return;
 
-	NSString *imageCacheTag = [SHA256Digest digestDataAsString:albumArtInternal];
+	Class shaClass = NSClassFromString(@"SHA256Digest"); // CogAudio
+	NSString *imageCacheTag = [shaClass digestDataAsString:albumArtInternal];
 
 	self.artHash = imageCacheTag;
 

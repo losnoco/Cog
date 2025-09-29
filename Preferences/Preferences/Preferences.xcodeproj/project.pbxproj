@@ -32,7 +32,6 @@
 		8391EA06286F9D3200A37593 /* PathSuggester.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83DAD9F0286EDBCD000FAA9A /* PathSuggester.xib */; };
 		83A0CBCB2E83807F007C429D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBAE25BE32500090B90D /* MASShortcut.framework */; };
 		83A0CBCF2E838095007C429D /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0CBCE2E838095007C429D /* File_Extractor.framework */; };
-		83A0CBD42E838B5E007C429D /* SHA256Digest.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A0CBD32E838B5E007C429D /* SHA256Digest.m */; };
 		83A3B72C283AE04800CC6593 /* ColorToValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */; };
 		83AC573A2861A54D009D6F50 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AC57382861A54D009D6F50 /* PathSuggester.m */; };
 		83B06729180D85B8008E3612 /* MIDIPane.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83B06728180D85B8008E3612 /* MIDIPane.mm */; };
@@ -140,7 +139,6 @@
 		83A0CBC52E838063007C429D /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		83A0CBCE2E838095007C429D /* File_Extractor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = File_Extractor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83A0CBD22E838B5E007C429D /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SHA256Digest.h; path = ../../Utils/SHA256Digest.h; sourceTree = "<group>"; };
-		83A0CBD32E838B5E007C429D /* SHA256Digest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SHA256Digest.m; path = ../../Utils/SHA256Digest.m; sourceTree = "<group>"; };
 		83A3B72A283AE04800CC6593 /* ColorToValueTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorToValueTransformer.h; sourceTree = "<group>"; };
 		83A3B72B283AE04800CC6593 /* ColorToValueTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorToValueTransformer.m; sourceTree = "<group>"; };
 		83AC57372861A54D009D6F50 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathSuggester.h; sourceTree = "<group>"; };
@@ -329,7 +327,6 @@
 			isa = PBXGroup;
 			children = (
 				83A0CBD22E838B5E007C429D /* SHA256Digest.h */,
-				83A0CBD32E838B5E007C429D /* SHA256Digest.m */,
 				ED69CF0B25BE75330090B90D /* Shortcuts.h */,
 				32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */,
 			);
@@ -543,7 +540,6 @@
 				83F27E741810E45D00CEF538 /* PathToFileTransformer.m in Sources */,
 				8E07AA890AAC8EA200A4B32F /* GeneralPreferencePane.m in Sources */,
 				8E07AA8A0AAC8EA200A4B32F /* GeneralPreferencesPlugin.m in Sources */,
-				83A0CBD42E838B5E007C429D /* SHA256Digest.m in Sources */,
 				83EF495F17FBC96A00642E3C /* VolumeBehaviorArrayController.m in Sources */,
 				17C643380B8A77CC00C53518 /* OutputsArrayController.m in Sources */,
 				832650FC2D5B4A2100CC7D8F /* RubberbandEngineTransformer.m in Sources */,
