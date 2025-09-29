@@ -166,7 +166,6 @@
 		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
 		839614A2286ED97200D3EEDB /* AboutWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614A0286ED97200D3EEDB /* AboutWindowController.xib */; };
 		839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */; };
-		83988F0E27BE0A5900A0E89A /* RedundantPlaylistDataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
@@ -1039,7 +1038,6 @@
 		839614A1286ED97200D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AboutWindowController.xib; sourceTree = "<group>"; };
 		839614AC286EDA5C00D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpectrumWindow.xib; sourceTree = "<group>"; };
 		83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
-		83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RedundantPlaylistDataStore.m; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NumberHertzToStringTransformer.swift; path = Transformers/NumberHertzToStringTransformer.swift; sourceTree = "<group>"; };
@@ -1273,7 +1271,6 @@
 				832CFC532851AA37002AC26F /* NSView+Visibility.h */,
 				832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */,
 				83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */,
-				83988F0D27BE0A5900A0E89A /* RedundantPlaylistDataStore.m */,
 				8381A09027C5F72F00A1C530 /* SHA256Digest.h */,
 				8381A09127C5F72F00A1C530 /* SHA256Digest.m */,
 				178456100F631E31007E8021 /* SideViewController.h */,
@@ -2673,7 +2670,6 @@
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
 				0A9CEA0B286152DF00E47168 /* DraggableView.swift in Sources */,
 				838DAE282E71816F005A8E1A /* MaybeSecureValueDataTransformer.m in Sources */,
-				83988F0E27BE0A5900A0E89A /* RedundantPlaylistDataStore.m in Sources */,
 				179D03230E0CB2500064A77A /* FileTreeDataSource.m in Sources */,
 				179D03240E0CB2500064A77A /* FileTreeController.m in Sources */,
 				8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */,
