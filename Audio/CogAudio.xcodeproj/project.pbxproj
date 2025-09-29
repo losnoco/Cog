@@ -810,8 +810,7 @@
 					../ThirdParty/rubberband/include,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				INSTALL_PATH = "@rpath";
 				LIBRARY_SEARCH_PATHS = (
 					../ThirdParty/soxr/lib,
 					../ThirdParty/rubberband/lib,
@@ -848,8 +847,7 @@
 					../ThirdParty/rubberband/include,
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				INSTALL_PATH = "@rpath";
 				LIBRARY_SEARCH_PATHS = (
 					../ThirdParty/soxr/lib,
 					../ThirdParty/rubberband/lib,

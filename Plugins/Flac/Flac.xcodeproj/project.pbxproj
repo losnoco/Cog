@@ -254,7 +254,6 @@
 				GCC_PREFIX_HEADER = Flac_Prefix.pch;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/flac/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/flac/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.flac;
 				PRODUCT_NAME = Flac;
@@ -280,7 +279,6 @@
 				GCC_PREFIX_HEADER = Flac_Prefix.pch;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/flac/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/flac/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.flac;
 				PRODUCT_NAME = Flac;

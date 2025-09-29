@@ -766,7 +766,7 @@
 					"BLARGG_LITTLE_ENDIAN=1",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.gme;
 				PRODUCT_NAME = GME;
@@ -800,7 +800,7 @@
 					"BLARGG_LITTLE_ENDIAN=1",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.gme;
 				PRODUCT_NAME = GME;

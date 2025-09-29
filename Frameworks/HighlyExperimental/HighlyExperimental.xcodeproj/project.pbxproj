@@ -382,7 +382,7 @@
 					HAVE_STDINT_H,
 				);
 				INFOPLIST_FILE = "HighlyExperimental/HighlyExperimental-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlyexperimental;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -407,7 +407,7 @@
 					EMU_COMPILE,
 				);
 				INFOPLIST_FILE = "HighlyExperimental/HighlyExperimental-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.highlyexperimental;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

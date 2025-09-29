@@ -288,7 +288,6 @@
 				GCC_PREFIX_HEADER = libvgmPlayer_Prefix.pch;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/libvgm/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/libvgm/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.libvgmPlayer;
 				PRODUCT_NAME = libvgmPlayer;
@@ -310,7 +309,6 @@
 				GCC_PREFIX_HEADER = libvgmPlayer_Prefix.pch;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/libvgm/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/libvgm/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.libvgmPlayer;
 				PRODUCT_NAME = libvgmPlayer;

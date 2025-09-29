@@ -230,7 +230,6 @@
 				GCC_PREFIX_HEADER = WavPack_Prefix.pch;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/WavPack/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/WavPack/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.wavpack;
 				PRODUCT_NAME = WavPack;
@@ -258,7 +257,6 @@
 				GCC_PREFIX_HEADER = WavPack_Prefix.pch;
 				HEADER_SEARCH_PATHS = ../../ThirdParty/WavPack/include;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LIBRARY_SEARCH_PATHS = ../../ThirdParty/WavPack/lib;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.wavpack;
 				PRODUCT_NAME = WavPack;

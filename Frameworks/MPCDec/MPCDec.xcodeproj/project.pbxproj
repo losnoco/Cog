@@ -328,7 +328,7 @@
 				GCC_PREFIX_HEADER = "";
 				HEADER_SEARCH_PATHS = Files/include/;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.mpcdec;
 				PRODUCT_NAME = mpcdec;
 				SDKROOT = macosx;
@@ -352,7 +352,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.mpcdec;
 				PRODUCT_NAME = mpcdec;
 				SDKROOT = macosx;

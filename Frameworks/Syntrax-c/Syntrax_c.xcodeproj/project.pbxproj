@@ -19,6 +19,7 @@
 /* Begin PBXFileReference section */
 		832FF31B1C96511E0076D662 /* Syntrax_c.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Syntrax_c.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		832FF3201C96511E0076D662 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		83747BCF2862D5A30021245F /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8398BF362769D26D0048F38A /* mixcore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mixcore.h; sourceTree = "<group>"; };
 		8398BF372769D26D0048F38A /* jxs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jxs.c; sourceTree = "<group>"; };
 		8398BF382769D26D0048F38A /* jaytrax.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jaytrax.h; sourceTree = "<group>"; };
@@ -26,7 +27,6 @@
 		8398BF3A2769D26D0048F38A /* ioutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ioutil.h; sourceTree = "<group>"; };
 		8398BF3B2769D26D0048F38A /* jxs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jxs.h; sourceTree = "<group>"; };
 		8398BF3C2769D26D0048F38A /* jaytrax.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jaytrax.c; sourceTree = "<group>"; };
-		83747BCF2862D5A30021245F /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -291,7 +291,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "Syntrax-c/Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.Syntrax-c";
 				PRODUCT_NAME = Syntrax_c;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -309,12 +309,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "Syntrax-c/Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.Syntrax-c";
 				PRODUCT_NAME = Syntrax_c;
 				PROVISIONING_PROFILE_SPECIFIER = "";

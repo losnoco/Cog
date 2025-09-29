@@ -267,7 +267,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -294,7 +294,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.lib.shorten;
 				PRODUCT_NAME = Shorten;

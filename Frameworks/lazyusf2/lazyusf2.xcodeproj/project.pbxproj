@@ -1196,7 +1196,7 @@
 				);
 				GCC_WARN_PEDANTIC = YES;
 				INFOPLIST_FILE = "lazyusf2/lazyusf2-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.lazyusf2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1223,7 +1223,7 @@
 				);
 				GCC_WARN_PEDANTIC = YES;
 				INFOPLIST_FILE = "lazyusf2/lazyusf2-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.lazyusf2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
