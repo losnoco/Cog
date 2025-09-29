@@ -6,13 +6,15 @@ Built on an M4 Mac mini, using CMake from Homebrew, with the following
 options:
 
 ```
-cmake .. -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" \
+cmake -B build.x86 -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_LIBAUDIO=NO -DBUILD_PLAYER=NO -DBUILD_VGM2WAV=NO
+cmake -B build.arm -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_LIBAUDIO=NO -DBUILD_PLAYER=NO -DBUILD_VGM2WAV=NO
 ```
 
 And the debug overlays were made with the above, except for:
 ```
--DCMAKE_BUILD_TYPE=Debug
+-B build.d.{x86,arm} -DCMAKE_BUILD_TYPE=Debug
 ```
 
-As of this edit, commit: 7cad78367fa35c3f7b3ae16a296d31063cd3a7e4
+As of this edit, commit: e9f2b023e8918b56be0d2e634b3f5aab2a589ffe
