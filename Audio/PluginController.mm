@@ -38,7 +38,8 @@ static std::thread *Cache_Thread = NULL;
 static void cache_run();
 
 static void cache_init() {
-	Cache_Data_Store = [[RedundantPlaylistDataStore alloc] init];
+	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore"); // CogAudio
+	Cache_Data_Store = [[dataStoreClass alloc] init];
 	Cache_Lock = new std::mutex;
 	Cache_Thread = new std::thread(cache_run);
 }
