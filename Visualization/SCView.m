@@ -89,7 +89,7 @@ typedef struct
 @property (nonatomic, readwrite) BufferNode *next;
 @end
 
-@interface BufferChain : NSObject
+@interface MtlBufferChain : NSObject
 - (instancetype)initWithDevice:(id<MTLDevice>)device blockLen:(NSUInteger)blockLen;
 - (bool)allocRange:(BufferRange *)range length:(NSUInteger)length;
 - (void)commitRanges;
@@ -144,7 +144,7 @@ enum { _ChainCount = 3 };
 	Uniforms uniforms;
 
 	NSUInteger _currentChain;
-	BufferChain *_chain[_ChainCount];
+	MtlBufferChain *_chain[_ChainCount];
 }
 
 @synthesize isListening;
@@ -378,7 +378,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	for(size_t i = 0; i < 3; ++i)
 		mtlTexture[i] = [Texture new];
 	for(size_t i = 0; i < _ChainCount; ++i)
-		_chain[i] = [[BufferChain alloc] initWithDevice:self.device blockLen:65536];
+		_chain[i] = [[MtlBufferChain alloc] initWithDevice:self.device blockLen:65536];
 
 	MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatRGBA8Unorm width:lcdWidth height:lcdHeight mipmapped:NO];
 	mtlTexture[0].texture = [self.device newTextureWithDescriptor:textureDescriptor];
@@ -770,7 +770,7 @@ _END:
 
 @end
 
-@implementation BufferChain
+@implementation MtlBufferChain
 {
    id<MTLDevice> _device;
    NSUInteger _blockLen;
