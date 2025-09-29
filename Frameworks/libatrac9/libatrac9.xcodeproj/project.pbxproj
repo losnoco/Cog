@@ -386,12 +386,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "libatrac9-Info.plist";
-				INSTALL_PATH = "@loader_path/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
+				INSTALL_PATH = "@rpath";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_BUNDLE_IDENTIFIER = co.losno.libatrac9;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -410,12 +405,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "libatrac9-Info.plist";
-				INSTALL_PATH = "@loader_path/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
+				INSTALL_PATH = "@rpath";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				PRODUCT_BUNDLE_IDENTIFIER = co.losno.libatrac9;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";

@@ -213,7 +213,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoreAudio_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.coreaudio;
 				PRODUCT_NAME = CoreAudio;
 				SDKROOT = macosx;
@@ -232,7 +231,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoreAudio_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.coreaudio;
 				PRODUCT_NAME = CoreAudio;
 				SDKROOT = macosx;

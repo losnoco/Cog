@@ -125,8 +125,8 @@
 				8359009A17FEFDA80060F3ED /* ArchiveContainer.h */,
 				8359009B17FEFDA80060F3ED /* ArchiveContainer.m */,
 				8359009717FEF6490060F3ED /* ArchiveSource.h */,
-				8359FF1917FEF35C0060F3ED /* Frameworks */,
 				8359009817FEF6490060F3ED /* ArchiveSource.m */,
+				8359FF1917FEF35C0060F3ED /* Frameworks */,
 				8359FF2117FEF35C0060F3ED /* Supporting Files */,
 			);
 			path = ArchiveSource;
@@ -391,7 +391,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArchiveSource/ArchiveSource-Prefix.pch";
 				INFOPLIST_FILE = "ArchiveSource/ArchiveSource-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.archivesource;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -408,7 +407,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ArchiveSource/ArchiveSource-Prefix.pch";
 				INFOPLIST_FILE = "ArchiveSource/ArchiveSource-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.archivesource;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

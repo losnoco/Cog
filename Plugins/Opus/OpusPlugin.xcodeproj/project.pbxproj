@@ -360,7 +360,6 @@
 					../../ThirdParty/flac/include,
 				);
 				INFOPLIST_FILE = "Opus/OpusPlugin-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/opusfile/lib,
 					../../ThirdParty/flac/lib,
@@ -388,7 +387,6 @@
 					../../ThirdParty/flac/include,
 				);
 				INFOPLIST_FILE = "Opus/OpusPlugin-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/opusfile/lib,
 					../../ThirdParty/flac/lib,

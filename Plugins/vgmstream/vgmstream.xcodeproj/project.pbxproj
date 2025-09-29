@@ -454,7 +454,7 @@
 					../../Frameworks/Ogg/include,
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.vgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -478,7 +478,7 @@
 					../../Frameworks/Ogg/include,
 				);
 				INFOPLIST_FILE = "vgmstream/vgmstream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.vgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

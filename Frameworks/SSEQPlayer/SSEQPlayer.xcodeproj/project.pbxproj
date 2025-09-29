@@ -442,7 +442,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "SSEQPlayer/SSEQPlayer-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.sseqplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -461,7 +461,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "SSEQPlayer/SSEQPlayer-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.sseqplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

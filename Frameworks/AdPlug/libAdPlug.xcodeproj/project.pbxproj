@@ -828,12 +828,7 @@
 					"$(SRCROOT)/../libbinio/libbinio",
 				);
 				INFOPLIST_FILE = AdPlug/Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libAdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -855,12 +850,7 @@
 					"$(SRCROOT)/../libbinio/libbinio",
 				);
 				INFOPLIST_FILE = AdPlug/Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.libAdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

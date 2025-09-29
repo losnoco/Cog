@@ -1357,7 +1357,7 @@
 					"$(SRCROOT)/mGBA/mgba/include",
 				);
 				INFOPLIST_FILE = mGBA/Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1394,7 +1394,7 @@
 					"$(SRCROOT)/mGBA/mgba/include",
 				);
 				INFOPLIST_FILE = mGBA/Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

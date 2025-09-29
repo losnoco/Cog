@@ -375,7 +375,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = OpenMPT/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -391,7 +391,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = OpenMPT/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.OpenMPT;
 				PRODUCT_NAME = "$(TARGET_NAME)";

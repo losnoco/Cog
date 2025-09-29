@@ -328,7 +328,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "psflib/psflib-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.psflib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -349,7 +349,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				INFOPLIST_FILE = "psflib/psflib-Info.plist";
-				INSTALL_PATH = "@loader_path/../Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.psflib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

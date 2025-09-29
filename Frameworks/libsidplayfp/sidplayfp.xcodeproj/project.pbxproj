@@ -1416,7 +1416,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/generated/src/config.h";
 				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.sidplayfp;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1449,7 +1449,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/generated/src/config.h";
 				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.sidplayfp;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

@@ -225,7 +225,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = M3u_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OBJROOT = ../../build;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.m3u;
 				PRODUCT_NAME = M3u;
@@ -246,7 +245,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = M3u_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				OBJROOT = ../../build;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.m3u;
 				PRODUCT_NAME = M3u;

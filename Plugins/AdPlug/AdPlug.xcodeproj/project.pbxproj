@@ -385,7 +385,6 @@
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio",
 				);
 				INFOPLIST_FILE = AdPlug/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.AdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -404,7 +403,6 @@
 					"$(SRCROOT)/../../Frameworks/libbinio/libbinio",
 				);
 				INFOPLIST_FILE = AdPlug/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.AdPlug;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -88,46 +88,8 @@
 		831BA6211EAC61A500CF89B0 /* pasx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6171EAC61A500CF89B0 /* pasx.c */; };
 		832389501D2246C300482226 /* hca.c in Sources */ = {isa = PBXBuildFile; fileRef = 8323894F1D2246C300482226 /* hca.c */; };
 		83256BC8286662840036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256BC7286662610036D9C0 /* libmpg123.0.dylib */; };
-		83256CBF28666C620036D9C0 /* l12tabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9728666C620036D9C0 /* l12tabs.h */; };
-		83256CC028666C620036D9C0 /* synth_8bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9828666C620036D9C0 /* synth_8bit.h */; };
-		83256CC128666C620036D9C0 /* index.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9928666C620036D9C0 /* index.h */; };
-		83256CC228666C620036D9C0 /* synth_ntom.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9A28666C620036D9C0 /* synth_ntom.h */; };
-		83256CC328666C620036D9C0 /* reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9B28666C620036D9C0 /* reader.h */; };
-		83256CC428666C620036D9C0 /* debug.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9C28666C620036D9C0 /* debug.h */; };
 		83256CC528666C620036D9C0 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9D28666C620036D9C0 /* mpg123.h */; };
-		83256CC628666C620036D9C0 /* dither.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9E28666C620036D9C0 /* dither.h */; };
-		83256CC728666C620036D9C0 /* optimize.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9F28666C620036D9C0 /* optimize.h */; };
-		83256CC828666C620036D9C0 /* getbits.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA028666C620036D9C0 /* getbits.h */; };
-		83256CC928666C620036D9C0 /* synth.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA128666C620036D9C0 /* synth.h */; };
-		83256CCA28666C620036D9C0 /* synths.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA228666C620036D9C0 /* synths.h */; };
-		83256CCB28666C620036D9C0 /* mangle.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA328666C620036D9C0 /* mangle.h */; };
-		83256CCC28666C620036D9C0 /* init_layer12.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA428666C620036D9C0 /* init_layer12.h */; };
-		83256CCD28666C620036D9C0 /* frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA528666C620036D9C0 /* frame.h */; };
-		83256CCE28666C620036D9C0 /* parse.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA628666C620036D9C0 /* parse.h */; };
-		83256CCF28666C620036D9C0 /* synth_sse3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA728666C620036D9C0 /* synth_sse3d.h */; };
-		83256CD028666C620036D9C0 /* l3bandgain.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA828666C620036D9C0 /* l3bandgain.h */; };
-		83256CD128666C620036D9C0 /* mpg123lib_intern.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CA928666C620036D9C0 /* mpg123lib_intern.h */; };
-		83256CD228666C620036D9C0 /* init_layer3.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAA28666C620036D9C0 /* init_layer3.h */; };
-		83256CD328666C620036D9C0 /* getcpuflags.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAB28666C620036D9C0 /* getcpuflags.h */; };
-		83256CD428666C620036D9C0 /* icy.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAC28666C620036D9C0 /* icy.h */; };
 		83256CD528666C620036D9C0 /* fmt123.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAD28666C620036D9C0 /* fmt123.h */; };
-		83256CD628666C620036D9C0 /* newhuffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAE28666C620036D9C0 /* newhuffman.h */; };
-		83256CD728666C620036D9C0 /* synth_mono.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAF28666C620036D9C0 /* synth_mono.h */; };
-		83256CD828666C620036D9C0 /* gapless.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB028666C620036D9C0 /* gapless.h */; };
-		83256CD928666C620036D9C0 /* costabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB128666C620036D9C0 /* costabs.h */; };
-		83256CDA28666C620036D9C0 /* l2tables.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB228666C620036D9C0 /* l2tables.h */; };
-		83256CDB28666C620036D9C0 /* swap_bytes_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB328666C620036D9C0 /* swap_bytes_impl.h */; };
-		83256CDC28666C620036D9C0 /* icy2utf8.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB428666C620036D9C0 /* icy2utf8.h */; };
-		83256CDD28666C620036D9C0 /* l3tabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB528666C620036D9C0 /* l3tabs.h */; };
-		83256CDE28666C620036D9C0 /* dither_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB628666C620036D9C0 /* dither_impl.h */; };
-		83256CDF28666C620036D9C0 /* mpeghead.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB728666C620036D9C0 /* mpeghead.h */; };
-		83256CE028666C620036D9C0 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB828666C620036D9C0 /* huffman.h */; };
-		83256CE128666C620036D9C0 /* sample.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CB928666C620036D9C0 /* sample.h */; };
-		83256CE228666C620036D9C0 /* init_costabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CBA28666C620036D9C0 /* init_costabs.h */; };
-		83256CE328666C620036D9C0 /* decode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CBB28666C620036D9C0 /* decode.h */; };
-		83256CE428666C620036D9C0 /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CBC28666C620036D9C0 /* abi_align.h */; };
-		83256CE528666C620036D9C0 /* true.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CBD28666C620036D9C0 /* true.h */; };
-		83256CE628666C620036D9C0 /* id3.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CBE28666C620036D9C0 /* id3.h */; };
 		83269DD22399F5DE00F49FE3 /* nus3bank_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83269DD02399F5DD00F49FE3 /* nus3bank_streamfile.h */; };
 		83269DD32399F5DE00F49FE3 /* ivag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83269DD12399F5DE00F49FE3 /* ivag.c */; };
 		83299FD01E7660C7003A3242 /* bik.c in Sources */ = {isa = PBXBuildFile; fileRef = 83299FCE1E7660C7003A3242 /* bik.c */; };
@@ -1060,46 +1022,8 @@
 		831BA6171EAC61A500CF89B0 /* pasx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pasx.c; sourceTree = "<group>"; };
 		8323894F1D2246C300482226 /* hca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hca.c; sourceTree = "<group>"; };
 		83256BC7286662610036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmpg123.0.dylib; sourceTree = "<group>"; };
-		83256C9728666C620036D9C0 /* l12tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l12tabs.h; sourceTree = "<group>"; };
-		83256C9828666C620036D9C0 /* synth_8bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_8bit.h; sourceTree = "<group>"; };
-		83256C9928666C620036D9C0 /* index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index.h; sourceTree = "<group>"; };
-		83256C9A28666C620036D9C0 /* synth_ntom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_ntom.h; sourceTree = "<group>"; };
-		83256C9B28666C620036D9C0 /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
-		83256C9C28666C620036D9C0 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		83256C9D28666C620036D9C0 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpg123.h; sourceTree = "<group>"; };
-		83256C9E28666C620036D9C0 /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither.h; sourceTree = "<group>"; };
-		83256C9F28666C620036D9C0 /* optimize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optimize.h; sourceTree = "<group>"; };
-		83256CA028666C620036D9C0 /* getbits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getbits.h; sourceTree = "<group>"; };
-		83256CA128666C620036D9C0 /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth.h; sourceTree = "<group>"; };
-		83256CA228666C620036D9C0 /* synths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synths.h; sourceTree = "<group>"; };
-		83256CA328666C620036D9C0 /* mangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mangle.h; sourceTree = "<group>"; };
-		83256CA428666C620036D9C0 /* init_layer12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init_layer12.h; sourceTree = "<group>"; };
-		83256CA528666C620036D9C0 /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = frame.h; sourceTree = "<group>"; };
-		83256CA628666C620036D9C0 /* parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
-		83256CA728666C620036D9C0 /* synth_sse3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_sse3d.h; sourceTree = "<group>"; };
-		83256CA828666C620036D9C0 /* l3bandgain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l3bandgain.h; sourceTree = "<group>"; };
-		83256CA928666C620036D9C0 /* mpg123lib_intern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpg123lib_intern.h; sourceTree = "<group>"; };
-		83256CAA28666C620036D9C0 /* init_layer3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init_layer3.h; sourceTree = "<group>"; };
-		83256CAB28666C620036D9C0 /* getcpuflags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = getcpuflags.h; sourceTree = "<group>"; };
-		83256CAC28666C620036D9C0 /* icy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icy.h; sourceTree = "<group>"; };
 		83256CAD28666C620036D9C0 /* fmt123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmt123.h; sourceTree = "<group>"; };
-		83256CAE28666C620036D9C0 /* newhuffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = newhuffman.h; sourceTree = "<group>"; };
-		83256CAF28666C620036D9C0 /* synth_mono.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = synth_mono.h; sourceTree = "<group>"; };
-		83256CB028666C620036D9C0 /* gapless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gapless.h; sourceTree = "<group>"; };
-		83256CB128666C620036D9C0 /* costabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = costabs.h; sourceTree = "<group>"; };
-		83256CB228666C620036D9C0 /* l2tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l2tables.h; sourceTree = "<group>"; };
-		83256CB328666C620036D9C0 /* swap_bytes_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = swap_bytes_impl.h; sourceTree = "<group>"; };
-		83256CB428666C620036D9C0 /* icy2utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = icy2utf8.h; sourceTree = "<group>"; };
-		83256CB528666C620036D9C0 /* l3tabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = l3tabs.h; sourceTree = "<group>"; };
-		83256CB628666C620036D9C0 /* dither_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither_impl.h; sourceTree = "<group>"; };
-		83256CB728666C620036D9C0 /* mpeghead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeghead.h; sourceTree = "<group>"; };
-		83256CB828666C620036D9C0 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = huffman.h; sourceTree = "<group>"; };
-		83256CB928666C620036D9C0 /* sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sample.h; sourceTree = "<group>"; };
-		83256CBA28666C620036D9C0 /* init_costabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = init_costabs.h; sourceTree = "<group>"; };
-		83256CBB28666C620036D9C0 /* decode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decode.h; sourceTree = "<group>"; };
-		83256CBC28666C620036D9C0 /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abi_align.h; sourceTree = "<group>"; };
-		83256CBD28666C620036D9C0 /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = true.h; sourceTree = "<group>"; };
-		83256CBE28666C620036D9C0 /* id3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = id3.h; sourceTree = "<group>"; };
 		83269DD02399F5DD00F49FE3 /* nus3bank_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nus3bank_streamfile.h; sourceTree = "<group>"; };
 		83269DD12399F5DE00F49FE3 /* ivag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ivag.c; sourceTree = "<group>"; };
 		83299FCE1E7660C7003A3242 /* bik.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bik.c; sourceTree = "<group>"; };
@@ -1916,46 +1840,8 @@
 		83256C9628666C620036D9C0 /* mpg123 */ = {
 			isa = PBXGroup;
 			children = (
-				83256C9728666C620036D9C0 /* l12tabs.h */,
-				83256C9828666C620036D9C0 /* synth_8bit.h */,
-				83256C9928666C620036D9C0 /* index.h */,
-				83256C9A28666C620036D9C0 /* synth_ntom.h */,
-				83256C9B28666C620036D9C0 /* reader.h */,
-				83256C9C28666C620036D9C0 /* debug.h */,
 				83256C9D28666C620036D9C0 /* mpg123.h */,
-				83256C9E28666C620036D9C0 /* dither.h */,
-				83256C9F28666C620036D9C0 /* optimize.h */,
-				83256CA028666C620036D9C0 /* getbits.h */,
-				83256CA128666C620036D9C0 /* synth.h */,
-				83256CA228666C620036D9C0 /* synths.h */,
-				83256CA328666C620036D9C0 /* mangle.h */,
-				83256CA428666C620036D9C0 /* init_layer12.h */,
-				83256CA528666C620036D9C0 /* frame.h */,
-				83256CA628666C620036D9C0 /* parse.h */,
-				83256CA728666C620036D9C0 /* synth_sse3d.h */,
-				83256CA828666C620036D9C0 /* l3bandgain.h */,
-				83256CA928666C620036D9C0 /* mpg123lib_intern.h */,
-				83256CAA28666C620036D9C0 /* init_layer3.h */,
-				83256CAB28666C620036D9C0 /* getcpuflags.h */,
-				83256CAC28666C620036D9C0 /* icy.h */,
 				83256CAD28666C620036D9C0 /* fmt123.h */,
-				83256CAE28666C620036D9C0 /* newhuffman.h */,
-				83256CAF28666C620036D9C0 /* synth_mono.h */,
-				83256CB028666C620036D9C0 /* gapless.h */,
-				83256CB128666C620036D9C0 /* costabs.h */,
-				83256CB228666C620036D9C0 /* l2tables.h */,
-				83256CB328666C620036D9C0 /* swap_bytes_impl.h */,
-				83256CB428666C620036D9C0 /* icy2utf8.h */,
-				83256CB528666C620036D9C0 /* l3tabs.h */,
-				83256CB628666C620036D9C0 /* dither_impl.h */,
-				83256CB728666C620036D9C0 /* mpeghead.h */,
-				83256CB828666C620036D9C0 /* huffman.h */,
-				83256CB928666C620036D9C0 /* sample.h */,
-				83256CBA28666C620036D9C0 /* init_costabs.h */,
-				83256CBB28666C620036D9C0 /* decode.h */,
-				83256CBC28666C620036D9C0 /* abi_align.h */,
-				83256CBD28666C620036D9C0 /* true.h */,
-				83256CBE28666C620036D9C0 /* id3.h */,
 			);
 			path = mpg123;
 			sourceTree = "<group>";
@@ -2953,8 +2839,6 @@
 				83CBF5372D46309100AA2D75 /* ka1a_dec_data.h in Headers */,
 				833E82CF2A2856B200CD0580 /* reader_get_nibbles.h in Headers */,
 				833E82D12A2856B200CD0580 /* reader_put.h in Headers */,
-				83256CC328666C620036D9C0 /* reader.h in Headers */,
-				83256CCA28666C620036D9C0 /* synths.h in Headers */,
 				833E82D82A28572100CD0580 /* api.h in Headers */,
 				833E82D62A2856E500CD0580 /* vgmstream_types.h in Headers */,
 				834F7ED92C70A786003AC386 /* sbuf.h in Headers */,
@@ -2963,12 +2847,8 @@
 				833E82D02A2856B200CD0580 /* reader_get.h in Headers */,
 				834F7DF12C7093EA003AC386 /* relic_lib.h in Headers */,
 				8346D97A25BF838C00D1A8B0 /* idtech_streamfile.h in Headers */,
-				83256CE228666C620036D9C0 /* init_costabs.h in Headers */,
 				83C7282222BC893D00678B4A /* mta2_streamfile.h in Headers */,
-				83256CC628666C620036D9C0 /* dither.h in Headers */,
 				83AA7F802519C042004C5298 /* sab_streamfile.h in Headers */,
-				83256CE028666C620036D9C0 /* huffman.h in Headers */,
-				83256CC928666C620036D9C0 /* synth.h in Headers */,
 				834F7E982C70A45C003AC386 /* txtp.h in Headers */,
 				836F46B8282087A6005B9B87 /* cri_utf.h in Headers */,
 				83A21F87201D8981000F04B9 /* fsb_keys.h in Headers */,
@@ -2978,8 +2858,6 @@
 				834F7DC92C7093EA003AC386 /* g7221_data.h in Headers */,
 				834FE0EC215C79ED000A5D3D /* kma9_streamfile.h in Headers */,
 				83AF2CCC26226BA500538240 /* encrypted_bgm_streamfile.h in Headers */,
-				83256CCE28666C620036D9C0 /* parse.h in Headers */,
-				83256CD328666C620036D9C0 /* getcpuflags.h in Headers */,
 				8349A90F1FE6258200E26435 /* aix_streamfile.h in Headers */,
 				83B46FD52707FB9A00847FC9 /* endianness.h in Headers */,
 				834F7D092C7085EB003AC386 /* str_wav_streamfile.h in Headers */,
@@ -2987,27 +2865,20 @@
 				83B73C4F2D8FF1CB00A57F08 /* io_callback_sf.h in Headers */,
 				83B73C502D8FF1CB00A57F08 /* io_callback.h in Headers */,
 				834F7DF82C7093EA003AC386 /* tac_ops.h in Headers */,
-				83256CC128666C620036D9C0 /* index.h in Headers */,
 				834FE0ED215C79ED000A5D3D /* fsb_interleave_streamfile.h in Headers */,
 				836DF622298F83F400CD0580 /* cri_keys.h in Headers */,
 				8351F32E2212B57000A606E4 /* ubi_bao_streamfile.h in Headers */,
 				833E82F22A28587D00CD0580 /* paths.h in Headers */,
 				8349A9111FE6258200E26435 /* bar_streamfile.h in Headers */,
 				834F7D182C708701003AC386 /* awc_decryption_streamfile.h in Headers */,
-				83256CE128666C620036D9C0 /* sample.h in Headers */,
 				83C0C7612AA436370056AFD8 /* layout_utils.h in Headers */,
 				83D2007A248DDB770048BD24 /* fsb_encrypted_streamfile.h in Headers */,
-				83256CE628666C620036D9C0 /* id3.h in Headers */,
 				832BF82C21E0514B006F50F1 /* hca_keys_awb.h in Headers */,
 				83FD43E92E6EA75600D8BF46 /* seek_table.h in Headers */,
 				839933602591E8C1001855AF /* ubi_sb_garbage_streamfile.h in Headers */,
-				83256CDE28666C620036D9C0 /* dither_impl.h in Headers */,
 				8306B0E020984590000302D4 /* ppst_streamfile.h in Headers */,
 				834F7ED42C70A786003AC386 /* mixing.h in Headers */,
-				83256CC228666C620036D9C0 /* synth_ntom.h in Headers */,
 				834F7DAE2C7093EA003AC386 /* circus_vq_data.h in Headers */,
-				83256CCD28666C620036D9C0 /* frame.h in Headers */,
-				83256CD628666C620036D9C0 /* newhuffman.h in Headers */,
 				835C883722CC17BE001B4B3F /* ogg_vorbis_streamfile.h in Headers */,
 				837CEAFE23487F2C00E62A4A /* jstm_streamfile.h in Headers */,
 				834F7DB02C7093EA003AC386 /* circus_vq_lib.h in Headers */,
@@ -3024,28 +2895,21 @@
 				835B9B922730BF2D00F87EE3 /* hca_bf.h in Headers */,
 				836DF623298F83F400CD0580 /* bitstream_msb.h in Headers */,
 				834F7DB52C7093EA003AC386 /* coding.h in Headers */,
-				83256CDD28666C620036D9C0 /* l3tabs.h in Headers */,
 				8373342723F60CDC00DE14DC /* lrmd_streamfile.h in Headers */,
 				83C7281122BC893D00678B4A /* 9tav_streamfile.h in Headers */,
-				83256CD928666C620036D9C0 /* costabs.h in Headers */,
 				8359214C2E87ABE9006732D6 /* binka_data.h in Headers */,
 				8359214D2E87ABE9006732D6 /* binka_transform.h in Headers */,
 				8359214E2E87ABE9006732D6 /* binka_dec.h in Headers */,
 				83C7280F22BC893D00678B4A /* xwb_xsb.h in Headers */,
 				8315868B26F586F900803A3A /* m2_psb.h in Headers */,
-				83256CD428666C620036D9C0 /* icy.h in Headers */,
-				83256CDC28666C620036D9C0 /* icy2utf8.h in Headers */,
 				834F7D2F2C708D32003AC386 /* rage_aud_streamfile.h in Headers */,
 				834F7ECA2C70A786003AC386 /* decode.h in Headers */,
 				832FC36F278FAE3E0056A860 /* encrypted_mc161_streamfile.h in Headers */,
-				83256CD228666C620036D9C0 /* init_layer3.h in Headers */,
-				83256CD128666C620036D9C0 /* mpg123lib_intern.h in Headers */,
 				83C7281622BC893D00678B4A /* xwma_konami_streamfile.h in Headers */,
 				834F7D1D2C708719003AC386 /* cipher_xxtea.h in Headers */,
 				83B73C312D8FEF7A00A57F08 /* ubi_mpeg_helpers.h in Headers */,
 				83B73C322D8FEF7A00A57F08 /* minimp3.h in Headers */,
 				833E82C82A28566700CD0580 /* channel_mappings.h in Headers */,
-				83256CC028666C620036D9C0 /* synth_8bit.h in Headers */,
 				834F7DCB2C7093EA003AC386 /* g7221_lib.h in Headers */,
 				833E82F32A28587D00CD0580 /* reader_sf.h in Headers */,
 				837CEADB23487E8300E62A4A /* bgw_streamfile.h in Headers */,
@@ -3057,8 +2921,6 @@
 				8373342623F60CDC00DE14DC /* deblock_streamfile.h in Headers */,
 				83C7281522BC893D00678B4A /* txth_streamfile.h in Headers */,
 				8306B0DE20984590000302D4 /* awc_xma_streamfile.h in Headers */,
-				83256CE528666C620036D9C0 /* true.h in Headers */,
-				83256CDB28666C620036D9C0 /* swap_bytes_impl.h in Headers */,
 				834F7DE72C7093EA003AC386 /* nwa_lib.h in Headers */,
 				8373342D23F60CDC00DE14DC /* bnsf_keys.h in Headers */,
 				834FE103215C79ED000A5D3D /* ea_schl_streamfile.h in Headers */,
@@ -3085,7 +2947,6 @@
 				834F7DF72C7093EA003AC386 /* tac_data.h in Headers */,
 				834F7DFA2C7093EA003AC386 /* tac_lib.h in Headers */,
 				83A8BAE625667AA8000F5F3F /* lp_ap_lep_streamfile.h in Headers */,
-				83256CE428666C620036D9C0 /* abi_align.h in Headers */,
 				834F7ED02C70A786003AC386 /* mixer.h in Headers */,
 				8306B0D820984590000302D4 /* ea_eaac_streamfile.h in Headers */,
 				837CEB0523487F2C00E62A4A /* sqex_streamfile.h in Headers */,
@@ -3096,29 +2957,20 @@
 				83D2007B248DDB770048BD24 /* mups_streamfile.h in Headers */,
 				83BDCD932E418A8F003FC007 /* awb_aac_encryption_streamfile.h in Headers */,
 				834F7E912C70A1AB003AC386 /* vgmstream_init.h in Headers */,
-				83256CCC28666C620036D9C0 /* init_layer12.h in Headers */,
 				83AFABBD23795202002F3947 /* ea_eaac_opus_streamfile.h in Headers */,
 				834F7DB72C7093EA003AC386 /* compresswave_lib.h in Headers */,
 				836DF628298F864100CD0580 /* ahx_keys.h in Headers */,
 				834F7E7C2C709E66003AC386 /* ongakukan_adp_lib.h in Headers */,
 				834F7DC82C7093EA003AC386 /* g7221_aes.h in Headers */,
-				83256CBF28666C620036D9C0 /* l12tabs.h in Headers */,
 				834F7E3C2C709C7B003AC386 /* api_helpers.h in Headers */,
-				83256CCF28666C620036D9C0 /* synth_sse3d.h in Headers */,
 				834F7E1F2C709AE0003AC386 /* api_streamfile.h in Headers */,
 				834F7E112C709933003AC386 /* zlib_vgmstream.h in Headers */,
 				83256CD528666C620036D9C0 /* fmt123.h in Headers */,
 				83031EDA243C510500C3F3E0 /* mul_streamfile.h in Headers */,
-				83256CDF28666C620036D9C0 /* mpeghead.h in Headers */,
-				83256CD028666C620036D9C0 /* l3bandgain.h in Headers */,
 				83C7281822BC893D00678B4A /* sfh_streamfile.h in Headers */,
-				83256CD828666C620036D9C0 /* gapless.h in Headers */,
 				834FE0EF215C79ED000A5D3D /* xvag_streamfile.h in Headers */,
-				83256CC428666C620036D9C0 /* debug.h in Headers */,
 				834F7E032C7093EA003AC386 /* vorbis_custom_decoder.h in Headers */,
 				834845782D27F2E9000E4928 /* decode_state.h in Headers */,
-				83256CCB28666C620036D9C0 /* mangle.h in Headers */,
-				83256CD728666C620036D9C0 /* synth_mono.h in Headers */,
 				834F7DCE2C7093EA003AC386 /* clhca.h in Headers */,
 				8349A91B1FE6258200E26435 /* adx_keys.h in Headers */,
 				836F6F4D18BDC2190095E648 /* layout.h in Headers */,
@@ -3126,13 +2978,9 @@
 				83AA5D251F6E2F9C0020821C /* hca_keys.h in Headers */,
 				838A6FF12DCF0850009CBEE7 /* audiopkg_streamfile.h in Headers */,
 				834F7E832C709F5B003AC386 /* apa3_streamfile.h in Headers */,
-				83256CDA28666C620036D9C0 /* l2tables.h in Headers */,
-				83256CC828666C620036D9C0 /* getbits.h in Headers */,
 				83B73C2C2D8FED0500A57F08 /* vorbis_codebooks_wwise.h in Headers */,
 				83B73C2D2D8FED0500A57F08 /* vorbis_codebooks_fsb.h in Headers */,
-				83256CC728666C620036D9C0 /* optimize.h in Headers */,
 				83031ED3243C50DF00C3F3E0 /* fsb5_streamfile.h in Headers */,
-				83256CE328666C620036D9C0 /* decode.h in Headers */,
 				83B73C542D8FF1E300A57F08 /* vorbis_codebooks.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4019,7 +3867,6 @@
 					../../ThirdParty/ffmpeg/include,
 					vgmstream/ext_includes,
 				);
-				INSTALL_PATH = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
@@ -4106,7 +3953,6 @@
 					../../ThirdParty/ffmpeg/include,
 					vgmstream/ext_includes,
 				);
-				INSTALL_PATH = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					../../ThirdParty/ffmpeg/lib,
 					../../ThirdParty/speex,
@@ -4132,6 +3978,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "vgmstream/libvgmstream-Info.plist";
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.libvgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -4148,6 +3996,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "vgmstream/libvgmstream-Info.plist";
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.libvgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
