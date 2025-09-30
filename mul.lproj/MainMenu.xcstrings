@@ -554,19 +554,19 @@
       }
     },
     "129.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Preferences…\"; ObjectID = \"129\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Settings…\"; ObjectID = \"129\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Preferences…"
+            "value" : "Settings…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preferencias…"
+            "value" : "Configuración..."
           }
         }
       }

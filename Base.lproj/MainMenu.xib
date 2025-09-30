@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24127" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24128" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24127"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24128"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -1516,7 +1516,7 @@
                 <menuItem title="Cog" id="56">
                     <menu key="submenu" title="Cog" systemMenu="apple" id="57">
                         <items>
-                            <menuItem title="About Cog" id="58">
+                            <menuItem title="About Cog" secondaryImage="info.circle" catalog="system" id="58">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showWindow:" target="Hd4-Wy-Rfl" id="xfd-8T-SL4"/>
@@ -1525,14 +1525,14 @@
                             <menuItem isSeparatorItem="YES" id="1100">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Privacy Policy..." id="nb7-FW-egH">
+                            <menuItem title="Privacy Policy..." secondaryImage="hand.raised" catalog="system" id="nb7-FW-egH">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="privacyPolicy:" target="226" id="c3c-kH-5sf"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="0ig-xg-gkg"/>
-                            <menuItem title="Send Feedback..." id="303">
+                            <menuItem title="Send Feedback..." secondaryImage="exclamationmark.bubble" catalog="system" id="303">
                                 <connections>
                                     <action selector="feedback:" target="226" id="GSH-G5-qM1"/>
                                 </connections>
@@ -1540,7 +1540,7 @@
                             <menuItem isSeparatorItem="YES" id="196">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Preferences…" keyEquivalent="," id="129">
+                            <menuItem title="Settings…" secondaryImage="gear" catalog="system" keyEquivalent="," id="129">
                                 <connections>
                                     <action selector="showPreferences:" target="1217" id="2437"/>
                                 </connections>
@@ -1584,12 +1584,12 @@
                 <menuItem title="File" id="83">
                     <menu key="submenu" title="File" id="81">
                         <items>
-                            <menuItem title="Add File..." keyEquivalent="o" id="72">
+                            <menuItem title="Add File..." secondaryImage="plus.square" catalog="system" keyEquivalent="o" id="72">
                                 <connections>
                                     <action selector="openFiles:" target="226" id="1405"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Add URL..." keyEquivalent="O" id="1403">
+                            <menuItem title="Add URL..." secondaryImage="globe" catalog="system" keyEquivalent="O" id="1403">
                                 <connections>
                                     <action selector="openURL:" target="226" id="1440"/>
                                 </connections>
@@ -1597,7 +1597,7 @@
                             <menuItem isSeparatorItem="YES" id="79">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Save As..." keyEquivalent="s" id="75">
+                            <menuItem title="Save As..." secondaryImage="square.and.arrow.down" catalog="system" keyEquivalent="s" id="75">
                                 <connections>
                                     <action selector="savePlaylist:" target="226" id="360"/>
                                 </connections>
@@ -1657,12 +1657,12 @@
                                     <action selector="selectAll:" target="-1" id="179"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Select Currently Playing" keyEquivalent="l" id="1823">
+                            <menuItem title="Select Currently Playing" secondaryImage="play.square.fill" catalog="system" keyEquivalent="l" id="1823">
                                 <connections>
                                     <action selector="scrollToCurrentEntry:" target="207" id="1888"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Selection Follows Playback" id="Q7K-Eu-1Vf">
+                            <menuItem title="Selection Follows Playback" secondaryImage="filemenu.and.selection" catalog="system" id="Q7K-Eu-1Vf">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <binding destination="1689" name="value" keyPath="values.selectionFollowsPlayback" id="pml-0X-qIh"/>
@@ -1674,39 +1674,39 @@
                 <menuItem title="View" id="1848">
                     <menu key="submenu" title="View" id="1849">
                         <items>
-                            <menuItem title="Show Info Inspector" keyEquivalent="i" id="2453">
+                            <menuItem title="Show Info Inspector" secondaryImage="info" catalog="system" keyEquivalent="i" id="2453">
                                 <connections>
                                     <action selector="toggleWindow:" target="2422" id="2454"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Lyrics" keyEquivalent="L" id="Tkb-7M-OiA">
+                            <menuItem title="Show Lyrics" secondaryImage="quote.bubble" catalog="system" keyEquivalent="L" id="Tkb-7M-OiA">
                                 <connections>
                                     <action selector="toggleWindow:" target="3y4-Q0-Kkl" id="0kv-17-aS6"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Spotlight Panel" keyEquivalent="F" id="1853">
+                            <menuItem title="Show Spotlight Panel" secondaryImage="magnifyingglass" catalog="system" keyEquivalent="F" id="1853">
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
                                 <connections>
                                     <action selector="toggleWindow:" target="1675" id="1880"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show File Tree" keyEquivalent="d" id="2417">
+                            <menuItem title="Show File Tree" secondaryImage="folder" catalog="system" keyEquivalent="d" id="2417">
                                 <connections>
                                     <action selector="toggleSideView:" target="2172" id="2419"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Equalizer" keyEquivalent="e" id="nBU-pH-J3I">
+                            <menuItem title="Show Equalizer" secondaryImage="slider.vertical.3" catalog="system" keyEquivalent="e" id="nBU-pH-J3I">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="showWindow:" target="dJ9-b3-BFu" id="l8q-wn-w0b"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Spectrum Window" keyEquivalent="V" id="wl2-Vo-pul">
+                            <menuItem title="Show Spectrum Window" secondaryImage="chart.bar" catalog="system" keyEquivalent="V" id="wl2-Vo-pul">
                                 <connections>
                                     <action selector="showWindow:" target="Ix4-7A-ejK" id="wS9-M9-Dhe"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Nuked SC-55" id="f31-bq-Mgd">
+                            <menuItem title="Show Nuked SC-55" secondaryImage="pianokeys" catalog="system" id="f31-bq-Mgd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showWindow:" target="Bno-cV-wwU" id="d3F-Ro-6Qp"/>
@@ -1715,7 +1715,7 @@
                             <menuItem isSeparatorItem="YES" id="1854">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Toggle File Tree Orientation" id="2160">
+                            <menuItem title="Toggle File Tree Orientation" secondaryImage="arrow.trianglehead.clockwise.rotate.90" catalog="system" id="2160">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleVertical:" target="2172" id="2176"/>
@@ -1736,12 +1736,12 @@
                             <menuItem isSeparatorItem="YES" id="1857">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Increase Font Size" keyEquivalent="+" id="1858">
+                            <menuItem title="Increase Font Size" secondaryImage="textformat.size.larger" catalog="system" keyEquivalent="+" id="1858">
                                 <connections>
                                     <action selector="increaseFontSize:" target="226" id="1871"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Decrease Font Size" keyEquivalent="-" id="1859">
+                            <menuItem title="Decrease Font Size" secondaryImage="textformat.size.smaller" catalog="system" keyEquivalent="-" id="1859">
                                 <connections>
                                     <action selector="decreaseFontSize:" target="226" id="1872"/>
                                 </connections>
@@ -1761,12 +1761,12 @@
                 <menuItem title="Control" id="418">
                     <menu key="submenu" title="Control" id="419">
                         <items>
-                            <menuItem title="Play/Pause" keyEquivalent="p" id="420">
+                            <menuItem title="Play/Pause" secondaryImage="play.fill" catalog="system" keyEquivalent="p" id="420">
                                 <connections>
                                     <action selector="playPauseResume:" target="705" id="1667"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Stop" keyEquivalent="." id="1362">
+                            <menuItem title="Stop" secondaryImage="stop.fill" catalog="system" keyEquivalent="." id="1362">
                                 <connections>
                                     <action selector="stop:" target="705" id="1363"/>
                                     <binding destination="1897" name="enabled" keyPath="content" id="2099">
@@ -1784,7 +1784,7 @@
                             <menuItem isSeparatorItem="YES" id="426">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Seek Forward" keyEquivalent="" id="1685">
+                            <menuItem title="Seek Forward" secondaryImage="forward.fill" catalog="system" keyEquivalent="" id="1685">
                                 <attributedString key="attributedTitle"/>
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
@@ -1801,7 +1801,7 @@
                                     </binding>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Seek Backward" keyEquivalent="" id="1683">
+                            <menuItem title="Seek Backward" secondaryImage="backward.fill" catalog="system" keyEquivalent="" id="1683">
                                 <attributedString key="attributedTitle"/>
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
                                 <connections>
@@ -1821,12 +1821,12 @@
                             <menuItem isSeparatorItem="YES" id="1860">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Next Song" keyEquivalent="" id="422">
+                            <menuItem title="Next Song" secondaryImage="forward.end.fill" catalog="system" keyEquivalent="" id="422">
                                 <connections>
                                     <action selector="next:" target="705" id="724"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Previous Song" keyEquivalent="" id="423">
+                            <menuItem title="Previous Song" secondaryImage="backward.end.fill" catalog="system" keyEquivalent="" id="423">
                                 <connections>
                                     <action selector="prev:" target="705" id="723"/>
                                 </connections>
@@ -1834,14 +1834,14 @@
                             <menuItem isSeparatorItem="YES" id="1861">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Next Album" keyEquivalent="" id="1701">
+                            <menuItem title="Next Album" secondaryImage="square.stack.fill" catalog="system" keyEquivalent="" id="1701">
                                 <attributedString key="attributedTitle"/>
                                 <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                 <connections>
                                     <action selector="skipToNextAlbum:" target="705" id="1702"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Previous Album" keyEquivalent="" id="1699">
+                            <menuItem title="Previous Album" secondaryImage="square.stack" catalog="system" keyEquivalent="" id="1699">
                                 <attributedString key="attributedTitle"/>
                                 <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                 <connections>
@@ -1851,12 +1851,12 @@
                             <menuItem isSeparatorItem="YES" id="424">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Volume Up" keyEquivalent="" id="1136">
+                            <menuItem title="Volume Up" secondaryImage="speaker.plus" catalog="system" keyEquivalent="" id="1136">
                                 <connections>
                                     <action selector="volumeUp:" target="705" id="1719"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Volume Down" keyEquivalent="" id="1137">
+                            <menuItem title="Volume Down" secondaryImage="speaker.minus" catalog="system" keyEquivalent="" id="1137">
                                 <connections>
                                     <action selector="volumeDown:" target="705" id="1720"/>
                                 </connections>
@@ -1897,7 +1897,7 @@
                 <menuItem title="Playlist" id="881">
                     <menu key="submenu" title="Playlist" id="882">
                         <items>
-                            <menuItem title="Remove All" id="1402">
+                            <menuItem title="Remove All" secondaryImage="clear" catalog="system" id="1402">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 CA
 </string>
@@ -1913,7 +1913,7 @@ CA
                             <menuItem isSeparatorItem="YES" id="1116">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Remove" id="1408">
+                            <menuItem title="Remove" secondaryImage="minus" catalog="system" id="1408">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 CA
 </string>
@@ -1931,7 +1931,7 @@ CA
                                     </binding>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Reload Info" id="kq8-9v-zC0">
+                            <menuItem title="Reload Info" secondaryImage="info.square" catalog="system" id="kq8-9v-zC0">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="reloadTags:" target="218" id="xRt-Us-Ucg"/>
@@ -1945,7 +1945,7 @@ CA
                                     </binding>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show in Finder" keyEquivalent="R" id="1135">
+                            <menuItem title="Show in Finder" secondaryImage="finder" catalog="system" keyEquivalent="R" id="1135">
                                 <connections>
                                     <action selector="showEntryInFinder:" target="218" id="1346"/>
                                     <binding destination="218" name="enabled" keyPath="selection" id="75f-eT-NIO">
@@ -1959,7 +1959,7 @@ CA
                                     </binding>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Move to Trash" id="mhx-dQ-Kwx">
+                            <menuItem title="Move to Trash" secondaryImage="trash" catalog="system" id="mhx-dQ-Kwx">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="trash:" target="218" id="yed-1d-jqe"/>
@@ -1977,20 +1977,20 @@ CA
                             <menuItem isSeparatorItem="YES" id="1863">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Remove Duplicate Items" id="2qB-Bq-t2u" userLabel="Menu Item - Remove Duplicate Items">
+                            <menuItem title="Remove Duplicate Items" secondaryImage="duplicateItemsTemplate" id="2qB-Bq-t2u" userLabel="Menu Item - Remove Duplicate Items">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="removeDuplicates:" target="218" id="bS3-zS-wcJ"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Remove Dead Items" id="Ajn-k4-afd" userLabel="Menu Item - Remove Dead Items">
+                            <menuItem title="Remove Dead Items" secondaryImage="deadItemsTemplate" id="Ajn-k4-afd" userLabel="Menu Item - Remove Dead Items">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="removeDeadItems:" target="218" id="vGZ-l5-tlE"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="dfu-5S-1BE"/>
-                            <menuItem title="Add to Queue" id="1864">
+                            <menuItem title="Add to Queue" secondaryImage="text.line.first.and.arrowtriangle.forward" catalog="system" id="1864">
                                 <connections>
                                     <binding destination="2020" name="enabled" keyPath="selection" id="WVK-qy-AxU">
                                         <dictionary key="options">
@@ -2019,12 +2019,12 @@ CA
                             <menuItem isSeparatorItem="YES" id="1866">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Search for Songs by Artist" id="1867">
+                            <menuItem title="Search for Songs by Artist" secondaryImage="music.microphone" catalog="system" id="1867">
                                 <connections>
                                     <action selector="searchByArtist:" target="218" id="1877"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Search for Songs from Album" id="1868">
+                            <menuItem title="Search for Songs from Album" secondaryImage="square.stack.fill" catalog="system" id="1868">
                                 <connections>
                                     <action selector="searchByAlbum:" target="218" id="1878"/>
                                 </connections>
@@ -2035,7 +2035,7 @@ CA
                             <menuItem title="Repeat" id="1740">
                                 <menu key="submenu" title="Repeat" id="1741">
                                     <items>
-                                        <menuItem title="All" state="on" keyEquivalent="r" id="1742">
+                                        <menuItem title="All" state="on" secondaryImage="repeatModeAllTemplate" keyEquivalent="r" id="1742">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1760">
@@ -2045,7 +2045,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Album" id="1892">
+                                        <menuItem title="Album" secondaryImage="repeatModeAlbumTemplate" id="1892">
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="2412">
                                                     <dictionary key="options">
@@ -2054,7 +2054,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="One" id="1746">
+                                        <menuItem title="One" secondaryImage="repeatModeOneTemplate" id="1746">
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1763">
                                                     <dictionary key="options">
@@ -2063,7 +2063,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="None" id="1749">
+                                        <menuItem title="None" secondaryImage="repeatModeOffTemplate" id="1749">
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1767">
                                                     <dictionary key="options">
@@ -2075,7 +2075,7 @@ CA
                                         <menuItem isSeparatorItem="YES" id="2471">
                                             <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                         </menuItem>
-                                        <menuItem title="Toggle" keyEquivalent="r" id="2472">
+                                        <menuItem title="Toggle" secondaryImage="repeat" catalog="system" keyEquivalent="r" id="2472">
                                             <connections>
                                                 <action selector="toggleRepeat:" target="218" id="2474"/>
                                             </connections>
@@ -2087,7 +2087,7 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Shuffle" id="2439">
                                     <items>
-                                        <menuItem title="All" keyEquivalent="s" id="2443">
+                                        <menuItem title="All" secondaryImage="shuffleOnTemplate" keyEquivalent="s" id="2443">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="shuffle" id="2445">
@@ -2097,7 +2097,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Albums" id="2442">
+                                        <menuItem title="Albums" secondaryImage="shuffleAlbumTemplate" id="2442">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="shuffle" id="2448">
@@ -2107,7 +2107,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Off" id="2440">
+                                        <menuItem title="Off" secondaryImage="shuffleOffTemplate" id="2440">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="shuffle" id="2451">
@@ -2118,7 +2118,7 @@ CA
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="2475"/>
-                                        <menuItem title="Toggle" keyEquivalent="S" id="2476">
+                                        <menuItem title="Toggle" secondaryImage="shuffle" catalog="system" keyEquivalent="S" id="2476">
                                             <connections>
                                                 <action selector="toggleShuffle:" target="218" id="2478"/>
                                             </connections>
@@ -2135,7 +2135,7 @@ CA
                             <menuItem isSeparatorItem="YES" id="1079">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Filter Playlist" keyEquivalent="f" id="UAk-Gc-lT4">
+                            <menuItem title="Filter Playlist" secondaryImage="line.3.horizontal.decrease" catalog="system" keyEquivalent="f" id="UAk-Gc-lT4">
                                 <connections>
                                     <action selector="selectText:" target="1531" id="T6e-Sw-Axi"/>
                                 </connections>
@@ -2173,7 +2173,7 @@ Gw
                             <menuItem isSeparatorItem="YES" id="2496">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Toggle Mini Mode" keyEquivalent="M" id="2493">
+                            <menuItem title="Toggle Mini Mode" secondaryImage="pip.swap" catalog="system" keyEquivalent="M" id="2493">
                                 <connections>
                                     <action selector="toggleMiniMode:" target="226" id="2516"/>
                                     <binding destination="226" name="title" keyPath="miniMode" id="2519">
@@ -2183,7 +2183,7 @@ Gw
                                     </binding>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Mini Player On Top" keyEquivalent="T" id="lXN-EZ-xg0" userLabel="Show Mini Player On Top">
+                            <menuItem title="Show Mini Player On Top" secondaryImage="macwindow.stack" catalog="system" keyEquivalent="T" id="lXN-EZ-xg0" userLabel="Show Mini Player On Top">
                                 <connections>
                                     <binding destination="226" name="value" keyPath="floatingMiniWindow" id="6rr-FP-Fw2"/>
                                     <binding destination="226" name="enabled" keyPath="miniMode" id="ftj-Rc-nqc"/>
@@ -2768,10 +2768,25 @@ Gw
         </customObject>
     </objects>
     <resources>
+        <image name="arrow.trianglehead.2.counterclockwise.rotate.90" catalog="system" width="16" height="15"/>
+        <image name="arrow.trianglehead.clockwise.rotate.90" catalog="system" width="16" height="15"/>
+        <image name="backward.end.fill" catalog="system" width="15" height="12"/>
+        <image name="backward.fill" catalog="system" width="20" height="12"/>
+        <image name="chart.bar" catalog="system" width="20" height="14"/>
+        <image name="clear" catalog="system" width="15" height="14"/>
         <image name="deadItemsTemplate" width="20" height="20"/>
         <image name="deskclock" catalog="system" width="15" height="16"/>
         <image name="duplicateItemsTemplate" width="20" height="20"/>
         <image name="equalizerTemplate" width="20" height="20"/>
+        <image name="exclamationmark.bubble" catalog="system" width="17" height="16"/>
+        <image name="filemenu.and.selection" catalog="system" width="18" height="14"/>
+        <image name="finder" catalog="system" width="16" height="15"/>
+        <image name="folder" catalog="system" width="18" height="14"/>
+        <image name="forward.end.fill" catalog="system" width="15" height="12"/>
+        <image name="forward.fill" catalog="system" width="20" height="12"/>
+        <image name="gear" catalog="system" width="17" height="16"/>
+        <image name="globe" catalog="system" width="15" height="15"/>
+        <image name="hand.raised" catalog="system" width="16" height="16"/>
         <image name="imageCell:1801:image" width="17" height="17">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05T
@@ -2924,17 +2939,49 @@ biFzIYIhhiGNIZUhoiGnIakhqyGwIbghuyHAIcgAAAAAAAACAQAAAAAAAABFAAAAAAAAAAAAAAAAAAAh
 yw
 </mutableData>
         </image>
+        <image name="info" catalog="system" width="10" height="15"/>
+        <image name="info.circle" catalog="system" width="15" height="15"/>
+        <image name="info.square" catalog="system" width="15" height="14"/>
         <image name="infoTemplate" width="16" height="16"/>
+        <image name="line.3.horizontal.decrease" catalog="system" width="16" height="10"/>
+        <image name="macwindow.stack" catalog="system" width="17" height="18"/>
+        <image name="magnifyingglass" catalog="system" width="16" height="15"/>
         <image name="miniModeOffTemplate" width="16" height="16"/>
         <image name="miniModeOnTemplate" width="16" height="16"/>
+        <image name="minus" catalog="system" width="14" height="4"/>
+        <image name="music.microphone" catalog="system" width="16" height="16"/>
         <image name="navigatorTemplate" width="16" height="16"/>
         <image name="nextTemplate" width="20" height="19"/>
+        <image name="pianokeys" catalog="system" width="18" height="14"/>
+        <image name="pip.swap" catalog="system" width="20" height="16"/>
+        <image name="play.fill" catalog="system" width="12" height="13"/>
+        <image name="play.square.fill" catalog="system" width="15" height="14"/>
         <image name="playTemplate" width="16" height="16"/>
+        <image name="plus.square" catalog="system" width="15" height="14"/>
         <image name="previousTemplate" width="20" height="19"/>
+        <image name="quote.bubble" catalog="system" width="17" height="16"/>
         <image name="randomizeTemplate" width="20" height="20"/>
+        <image name="repeat" catalog="system" width="17" height="14"/>
+        <image name="repeatModeAlbumTemplate" width="20" height="19"/>
+        <image name="repeatModeAllTemplate" width="20" height="19"/>
         <image name="repeatModeOffTemplate" width="20" height="19"/>
+        <image name="repeatModeOneTemplate" width="20" height="19"/>
+        <image name="shuffle" catalog="system" width="18" height="14"/>
+        <image name="shuffleAlbumTemplate" width="20" height="19"/>
         <image name="shuffleOffTemplate" width="20" height="19"/>
+        <image name="shuffleOnTemplate" width="20" height="19"/>
+        <image name="slider.vertical.3" catalog="system" width="15" height="14"/>
+        <image name="speaker.minus" catalog="system" width="19" height="14"/>
+        <image name="speaker.plus" catalog="system" width="19" height="14"/>
+        <image name="square.and.arrow.down" catalog="system" width="15" height="17"/>
+        <image name="square.stack" catalog="system" width="15" height="18"/>
+        <image name="square.stack.fill" catalog="system" width="15" height="18"/>
+        <image name="stop.fill" catalog="system" width="14" height="13"/>
         <image name="stopTemplate" width="16" height="16"/>
+        <image name="text.line.first.and.arrowtriangle.forward" catalog="system" width="19" height="15"/>
+        <image name="textformat.size.larger" catalog="system" width="11" height="12"/>
+        <image name="textformat.size.smaller" catalog="system" width="9" height="9"/>
+        <image name="trash" catalog="system" width="15" height="17"/>
         <image name="volume3Template" width="17" height="16"/>
     </resources>
 </document>
