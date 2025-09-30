@@ -225,7 +225,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
-	[self addObservers];
 
 	isSetup = YES;
 }
@@ -306,6 +305,11 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 - (void)repaint {
 	if(!isSetup) return;
+
+	// Need the window to exist first before we can register for visibility
+	if(!observersAdded) {
+		[self addObservers];
+	}
 
 	[self updateVisListening];
 
