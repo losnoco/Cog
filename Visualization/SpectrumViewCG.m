@@ -111,8 +111,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
-	[self addObservers];
-
 	isSetup = YES;
 }
 
@@ -386,6 +384,11 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	[super drawRect:dirtyRect];
 
 	if(!isSetup) return;
+
+	// Need to delay this to add the window visibility observer
+	if(!observersAdded) {
+		[self addObservers];
+	}
 
 	[self updateVisListening];
 
