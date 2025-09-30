@@ -28,7 +28,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 @implementation SpectrumViewSK {
 	VisualizationController *visController;
-	NSTimer *timer;
 	BOOL paused;
 	BOOL stopped;
 	BOOL isSetup;
@@ -37,6 +36,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	BOOL cameraControlEnabled;
 	BOOL observersAdded;
 	BOOL isOccluded;
+
+	NSTimeInterval lastTime;
 
 	NSColor *backgroundColor;
 	ddb_analyzer_t _analyzer;
@@ -184,7 +185,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 - (void)setup {
 	visController = [NSClassFromString(@"VisualizationController") sharedController];
-	timer = nil;
 	stopped = YES;
 	paused = NO;
 	isListening = NO;
@@ -225,6 +225,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
+	self.delegate = self;
 
 	isSetup = YES;
 }
@@ -303,7 +304,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	}
 }
 
-- (void)repaint {
+- (void)renderer:(id<SCNSceneRenderer>) renderer
+	 updateAtTime:(NSTimeInterval) time {
 	if(!isSetup) return;
 
 	// Need the window to exist first before we can register for visibility
@@ -317,6 +319,13 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		[self drawBaseBands];
 		return;
 	}
+
+	if(lastTime >= 0) {
+		visLatencyOffset += time - lastTime;
+	} else {
+		visLatencyOffset = 0.0;
+	}
+	lastTime = time;
 
 	UInt64 samplesPosted = [self->visController samplesPosted];
 	if (samplesPosted != visSamplesLastPosted) {
@@ -334,26 +343,19 @@ extern NSString *CogPlaybackDidStopNotificiation;
 }
 
 - (void)startTimer {
-	[self stopTimer];
-	timer = [NSTimer timerWithTimeInterval:1.0 / 60.0
-	                                target:self
-	                              selector:@selector(timerRun:)
-	                              userInfo:nil
-	                               repeats:YES];
-	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+	lastTime = -1;
+	self.preferredFramesPerSecond = 60;
+	self.rendersContinuously = YES;
 }
 
 - (void)stopTimer {
-	[timer invalidate];
-	timer = nil;
-}
-
-- (void)timerRun:(NSTimer *)timer {
-	[self repaint];
-	visLatencyOffset -= 1.0 / 60.0;
+	lastTime = -1;
+	self.preferredFramesPerSecond = 1;
+	self.rendersContinuously = NO;
 }
 
 - (void)startPlayback {
+	lastTime = -1;
 	[self playbackDidBegin:nil];
 }
 
@@ -380,7 +382,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	paused = NO;
 	bandsReset = NO;
 	[self updateVisListening];
-	[self repaint];
+	self.needsDisplay = YES;
+	lastTime = -1;
 }
 
 - (void)drawBaseBands {
@@ -457,7 +460,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 	_analyzer.mode_did_change = 1;
 
-	[self repaint];
+	self.needsDisplay = YES;
 }
 
 @end
