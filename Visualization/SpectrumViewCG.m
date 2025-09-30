@@ -20,7 +20,7 @@ extern NSString *CogPlaybackDidPauseNotificiation;
 extern NSString *CogPlaybackDidResumeNotificiation;
 extern NSString *CogPlaybackDidStopNotificiation;
 
-@interface SpectrumViewCG () {
+@implementation SpectrumViewCG {
 	VisualizationController *visController;
 	NSTimer *timer;
 	float saLowerBound;
@@ -47,9 +47,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	UInt64 visSamplesLastPosted;
 	double visLatencyOffset;
 }
-@end
-
-@implementation SpectrumViewCG
 
 @synthesize isListening;
 

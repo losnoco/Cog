@@ -26,7 +26,7 @@ extern NSString *CogPlaybackDidPauseNotificiation;
 extern NSString *CogPlaybackDidResumeNotificiation;
 extern NSString *CogPlaybackDidStopNotificiation;
 
-@interface SpectrumViewSK () {
+@implementation SpectrumViewSK {
 	VisualizationController *visController;
 	NSTimer *timer;
 	BOOL paused;
@@ -52,9 +52,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	UInt64 visSamplesLastPosted;
 	double visLatencyOffset;
 }
-@end
-
-@implementation SpectrumViewSK
 
 + (SpectrumViewSK *_Nullable)createGuardWithFrame:(NSRect)frame {
 	if (![NSUserDefaults.standardUserDefaults boolForKey:@"spectrumSceneKit"])
