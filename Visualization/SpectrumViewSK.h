@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SpectrumViewSK : SCNView
+@interface SpectrumViewSK : SCNView<SCNSceneRendererDelegate>
 @property(nonatomic) BOOL isListening;
 @property(nonatomic) BOOL isWorking;
 
