@@ -14,6 +14,8 @@
 #import <tag/attachedpictureframe.h>
 #import <tag/id3v2tag.h>
 #import <tag/mpegfile.h>
+#import <tag/asftag.h>
+#import <tag/asffile.h>
 #import <tag/tag.h>
 #import <tag/vorbisfile.h>
 #import <tag/xiphcomment.h>
@@ -187,6 +189,21 @@
 								image = [NSData dataWithBytes:picture.data() length:picture.size()];
 							}
 						}
+					}
+				}
+			}
+
+			// Another hack!
+			TagLib::ASF::File *af = dynamic_cast<TagLib::ASF::File *>(f.file());
+			if(af) {
+				TagLib::ASF::Tag *tag = af->tag();
+				if(tag) {
+					const TagLib::List<TagLib::VariantMap> &props = tag->complexProperties("picture");
+					if(!props.isEmpty()) {
+						const TagLib::VariantMap &picture = props.front();
+						TagLib::ByteVector data = picture["data"].toByteVector();
+
+						image = [NSData dataWithBytes:data.data() length:data.size()];
 					}
 				}
 			}
