@@ -223,7 +223,9 @@
 		cblas_scopy(4096, visAudioTemp, 1, outPCM, 1);
 	}
 	if(outFFT) {
-		fft_calculate(visAudioTemp, outFFT, 2048);
+		@synchronized (self) {
+			fft_calculate(visAudioTemp, outFFT, 2048);
+		}
 	}
 
 	free(visAudioTemp);
