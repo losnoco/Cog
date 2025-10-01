@@ -170,7 +170,7 @@
 				outPCM[i * 2 + 1] = sin(sineStep + stepSize);
 			}
 			if(outFFT) {
-				outFFT[i] = sinePoint * -40.0 - 40.0;
+				outFFT[i] = sinePoint * 40.0 - 40.0;
 			}
 			sineStep = fmod(sineStep + stepSize * 2, M_PI * 2.0);
 		}
