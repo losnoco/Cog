@@ -176,11 +176,17 @@
 			if(mf) {
 				TagLib::ID3v2::Tag *tag = mf->ID3v2Tag();
 				if(tag) {
-					TagLib::ID3v2::FrameList pictures = mf->ID3v2Tag()->frameListMap()["APIC"];
-					if(!pictures.isEmpty()) {
-						TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
+					const TagLib::ID3v2::FrameListMap &frameListMap = mf->ID3v2Tag()->frameListMap();
+					if(frameListMap.contains("APIC")) {
+						const TagLib::ID3v2::FrameList &pictures = frameListMap["APIC"];
+						if(!pictures.isEmpty()) {
+							const TagLib::ID3v2::AttachedPictureFrame *pic = dynamic_cast<const TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
+							if(pic) {
+								const TagLib::ByteVector picture = pic->picture();
 
-						image = [NSData dataWithBytes:pic->picture().data() length:pic->picture().size()];
+								image = [NSData dataWithBytes:picture.data() length:picture.size()];
+							}
+						}
 					}
 				}
 			}
