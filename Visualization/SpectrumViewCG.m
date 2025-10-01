@@ -220,6 +220,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 - (void)startTimer {
 	[self stopTimer];
+	visLatencyOffset = 0.0;
 	timer = [NSTimer timerWithTimeInterval:1.0 / 60.0
 	                                target:self
 	                              selector:@selector(timerRun:)
