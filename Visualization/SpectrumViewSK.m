@@ -313,7 +313,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		[self addObservers];
 	}
 
-	[self updateVisListening];
+	[self performSelectorOnMainThread:@selector(updateVisListening) withObject:nil waitUntilDone:NO];
 
 	if(stopped) {
 		[self drawBaseBands];
