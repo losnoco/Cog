@@ -34,15 +34,14 @@
 struct SpectrumData
 {
 	unsigned long length;
+
+	vDSP_DFT_Setup _dftSetup;
+	DSPSplitComplex _dftBuffer;
+	Float32 *_window;
+
+	// variable size
 	Float32 data[0];
 };
-
-static int _fft_size = 0;
-static vDSP_DFT_Setup _dftSetup = NULL;
-static DSPSplitComplex _dftBuffer = {0};
-static Float32 *_window = NULL;
-
-static struct SpectrumData *_rawSpectrum = NULL;
 
 // Apparently _mm_malloc is Intel-only on newer macOS targets, so use supported posix_memalign
 // malloc() is allegedly aligned on macOS, but I don't know for sure
@@ -57,36 +56,39 @@ static void *_memalign_calloc(size_t count, size_t size, size_t align) {
 }
 
 static void
-_init_buffers(int fft_size) {
-	if(fft_size != _fft_size) {
-		fft_free();
+_init_buffers(void **st, int fft_size) {
+	if(!st) return;
+	struct SpectrumData *spec = (struct SpectrumData *) *st;
+	if(!*st || fft_size != spec->length) {
+		fft_free(st);
 
-		_dftSetup = vDSP_DFT_zrop_CreateSetup(NULL, fft_size * 2, vDSP_DFT_FORWARD);
-		if(!_dftSetup) return;
+		*st = calloc(1, sizeof(*spec) + sizeof(Float32) * fft_size);
+		if(!*st) return;
+		spec = (struct SpectrumData *) *st;
 
-		_dftBuffer.realp = _memalign_calloc(fft_size, sizeof(Float32), 16);
-		_dftBuffer.imagp = _memalign_calloc(fft_size, sizeof(Float32), 16);
-		if(!_dftBuffer.realp || !_dftBuffer.imagp) return;
+		spec->_dftSetup = vDSP_DFT_zrop_CreateSetup(NULL, fft_size * 2, vDSP_DFT_FORWARD);
+		if(!spec->_dftSetup) return;
 
-		_window = _memalign_calloc(fft_size * 2, sizeof(Float32), 16);
-		if(!_window) return;
-		vDSP_blkman_window(_window, fft_size * 2, 0);
+		spec->_dftBuffer.realp = _memalign_calloc(fft_size, sizeof(Float32), 16);
+		spec->_dftBuffer.imagp = _memalign_calloc(fft_size, sizeof(Float32), 16);
+		if(!spec->_dftBuffer.realp || !spec->_dftBuffer.imagp) return;
+
+		spec->_window = _memalign_calloc(fft_size * 2, sizeof(Float32), 16);
+		if(!spec->_window) return;
+		vDSP_blkman_window(spec->_window, fft_size * 2, 0);
 
 		Float32 normFactor = 2.0f / (fft_size * 2);
-		vDSP_vsmul(_window, 1, &normFactor, _window, 1, fft_size * 2);
+		vDSP_vsmul(spec->_window, 1, &normFactor, spec->_window, 1, fft_size * 2);
 
-		_rawSpectrum = (struct SpectrumData *) _memalign_calloc(sizeof(struct SpectrumData) + sizeof(Float32) * fft_size, 1, 16);
-		if(!_rawSpectrum) return;
-		_rawSpectrum->length = fft_size;
-
-		_fft_size = fft_size;
+		spec->length = fft_size;
 	}
 }
 
-void fft_calculate(const float *data, float *freq, int fft_size) {
-	if(!freq || !fft_size) return;
-	_init_buffers(fft_size);
-	if(!_fft_size || !data) {
+void fft_calculate(void **st, const float *data, float *freq, int fft_size) {
+	if(!st || !freq || !fft_size) return;
+	_init_buffers(st, fft_size);
+	struct SpectrumData *spec = (struct SpectrumData *) *st;
+	if(!spec || !spec->length || !data) {
 		// Decibels
 		float kZeroLevel = -128.0;
 		vDSP_vfill(&kZeroLevel, freq, 1, fft_size);
@@ -94,22 +96,22 @@ void fft_calculate(const float *data, float *freq, int fft_size) {
 	}
 
 	// Split the waveform
-	DSPSplitComplex dest = { _dftBuffer.realp, _dftBuffer.imagp };
+	DSPSplitComplex dest = { spec->_dftBuffer.realp, spec->_dftBuffer.imagp };
 	vDSP_ctoz((const DSPComplex*)data, 2, &dest, 1, fft_size);
 
 	// Apply the window function
-	vDSP_vmul(_dftBuffer.realp, 1, _window, 2, _dftBuffer.realp, 1, fft_size);
-	vDSP_vmul(_dftBuffer.imagp, 1, _window + 1, 2, _dftBuffer.imagp, 1, fft_size);
+	vDSP_vmul(spec->_dftBuffer.realp, 1, spec->_window, 2, spec->_dftBuffer.realp, 1, fft_size);
+	vDSP_vmul(spec->_dftBuffer.imagp, 1, spec->_window + 1, 2, spec->_dftBuffer.imagp, 1, fft_size);
 
 	// DFT
-	vDSP_DFT_Execute(_dftSetup, _dftBuffer.realp, _dftBuffer.imagp, _dftBuffer.realp, _dftBuffer.imagp);
+	vDSP_DFT_Execute(spec->_dftSetup, spec->_dftBuffer.realp, spec->_dftBuffer.imagp, spec->_dftBuffer.realp, spec->_dftBuffer.imagp);
 
 	// Zero out the Nyquist value
-	_dftBuffer.imagp[0] = 0.0;
+	spec->_dftBuffer.imagp[0] = 0.0;
 
 	// Calculate power spectrum
-	Float32 *rawSpectrum = _rawSpectrum->data;
-	vDSP_zvmags(&_dftBuffer, 1, rawSpectrum, 1, fft_size);
+	Float32 *rawSpectrum = spec->data;
+	vDSP_zvmags(&spec->_dftBuffer, 1, rawSpectrum, 1, fft_size);
 
 	// Add -128dB offset to avoid log(0)
 	float kZeroOffset = 1.5849e-13;
@@ -122,18 +124,17 @@ void fft_calculate(const float *data, float *freq, int fft_size) {
 	cblas_scopy(fft_size, rawSpectrum, 1, freq, 1);
 }
 
-void __attribute__((destructor)) fft_free(void) {
-	free(_dftBuffer.realp);
-	free(_dftBuffer.imagp);
-	free(_window);
-	free(_rawSpectrum);
-	if(_dftSetup != NULL) {
-		vDSP_DFT_DestroySetup(_dftSetup);
+void fft_free(void **st) {
+	if(!st || !*st) return;
+
+	struct SpectrumData *spec = (struct SpectrumData *) *st;
+	free(spec->_dftBuffer.realp);
+	free(spec->_dftBuffer.imagp);
+	free(spec->_window);
+	if(spec->_dftSetup != NULL) {
+		vDSP_DFT_DestroySetup(spec->_dftSetup);
 	}
-	_dftBuffer.realp = NULL;
-	_dftBuffer.imagp = NULL;
-	_window = NULL;
-	_rawSpectrum = NULL;
-	_dftSetup = NULL;
-	_fft_size = 0;
+	free(spec);
+
+	*st = NULL;
 }

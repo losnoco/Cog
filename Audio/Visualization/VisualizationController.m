@@ -63,7 +63,6 @@
 }
 
 - (void)dealloc {
-	fft_free();
 	[sineTimer invalidate];
 	sineTimer = nil;
 }
@@ -177,23 +176,22 @@
 	}
 }
 
-- (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT latencyOffset:(double)latency {
-	if(!outPCM && !outFFT) return;
+- (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT visFFTState:(void * _Nullable * _Nullable)st latencyOffset:(double)latency {
+	if(!outPCM && !outFFT && !st) return;
 
 	if(ignoreLatency || !visAudio || !visAudioSize) {
 		[self generateSineWave:outPCM visFFT:outFFT];
 		return;
 	}
 
-	void *visAudioTemp = calloc(sizeof(float), 4096);
-	if(!visAudioTemp) {
+	if(outFFT && (!outPCM || !st)) {
 		[self generateSineWave:outPCM visFFT:outFFT];
 		return;
 	}
 
+	int samplesRead = 0;
 	@synchronized(self) {
 		if(!sampleRate) {
-			free(visAudioTemp);
 			[self generateSineWave:outPCM visFFT:outFFT];
 			return;
 		}
@@ -201,7 +199,6 @@
 		if(latencySamples < 4096) latencySamples = 4096;
 		int readCursor = visAudioCursor - latencySamples;
 		int samples = 4096;
-		int samplesRead = 0;
 		if(latencySamples + samples > visAudioSize) {
 			samples = (int)(visAudioSize - latencySamples);
 		}
@@ -212,23 +209,24 @@
 		while(samples > 0) {
 			int samplesToRead = (int)(visAudioSize - readCursor);
 			if(samplesToRead > samples) samplesToRead = samples;
-			cblas_scopy(samplesToRead, visAudio + readCursor, 1, visAudioTemp + samplesRead, 1);
+			cblas_scopy(samplesToRead, visAudio + readCursor, 1, outPCM + samplesRead, 1);
 			samplesRead += samplesToRead;
 			readCursor += samplesToRead;
 			samples -= samplesToRead;
 			if(readCursor >= visAudioSize) readCursor -= visAudioSize;
 		}
 	}
-	if(outPCM) {
-		cblas_scopy(4096, visAudioTemp, 1, outPCM, 1);
-	}
-	if(outFFT) {
-		@synchronized (self) {
-			fft_calculate(visAudioTemp, outFFT, 2048);
-		}
-	}
 
-	free(visAudioTemp);
+	if(samplesRead < 4096)
+		bzero(outPCM + samplesRead, sizeof(float) * (4096 - samplesRead));
+
+	if(outFFT) {
+		fft_calculate(st, outPCM, outFFT, 2048);
+	}
+}
+
+- (void)freeFFTState:(void *_Nullable *_Nullable)state {
+	fft_free(state);
 }
 
 @end
