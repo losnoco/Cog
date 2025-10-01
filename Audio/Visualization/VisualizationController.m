@@ -150,7 +150,7 @@
 
 - (double)readSampleRate {
 	@synchronized(self) {
-		return sampleRate;
+		return sampleRate ?: 44100.0;
 	}
 }
 
