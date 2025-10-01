@@ -180,6 +180,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	ddb_analyzer_dealloc(&_analyzer);
 	ddb_analyzer_draw_data_dealloc(&_draw_data);
 
+	[self stopTimer];
+
 	[self removeObservers];
 
 	[visController freeFFTState:&visFFTState];
