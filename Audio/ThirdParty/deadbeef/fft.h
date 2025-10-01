@@ -29,9 +29,9 @@ extern "C" {
 }
 #endif
 
-void fft_calculate(const float *data, float *freq, int fft_size);
+void fft_calculate(void **state, const float *data, float *freq, int fft_size);
 
-void fft_free(void);
+void fft_free(void **state);
 
 #ifdef __cplusplus
 }

@@ -30,9 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)postSampleRate:(double)sampleRate;
 - (void)postVisPCM:(const float *)inPCM amount:(int)amount;
 - (double)readSampleRate;
-- (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT latencyOffset:(double)latency;
+- (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT visFFTState:(void *_Nullable *_Nullable)state latencyOffset:(double)latency;
 
 - (void)reset;
+
+- (void)freeFFTState:(void *_Nullable *_Nullable)state;
 
 @end
 
