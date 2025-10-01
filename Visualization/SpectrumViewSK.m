@@ -427,7 +427,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 			const int barEnd = (barBase + maxBars) <= _draw_data.bar_count ? (barBase + maxBars) : _draw_data.bar_count;
 			{
 				const int stride = sizeof(ddb_analyzer_draw_bar_t) / sizeof(Float32);
-				const int barCount = barEnd - barBase + 1;
+				const int barCount = barEnd - barBase;
 				vDSP_maxv(&bar[barBase].bar_height, stride, &maxValue, barCount);
 				vDSP_maxv(&bar[barBase].peak_ypos, stride, &maxMax, barCount);
 			}
