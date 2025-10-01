@@ -967,7 +967,7 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="0D05748D-3258-44F5-9D1C-CBF211C15E2D" label="Search" paletteLabel="Search" sizingBehavior="auto" id="1533" customClass="NSSearchToolbarItem">
                         <nil key="toolTip"/>
-                        <searchField key="view" wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" id="1531">
+                        <searchField key="view" wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" id="1531" customClass="CogSearchField">
                             <rect key="frame" x="0.0" y="14" width="79" height="24"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="All" bezelStyle="round" recentsAutosaveName="CogFilter" id="1532">
@@ -1013,6 +1013,9 @@
                                     </binding>
                                 </connections>
                             </searchFieldCell>
+                            <connections>
+                                <outlet property="mainWindow" destination="21" id="7CI-q9-VzO"/>
+                            </connections>
                         </searchField>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="2CDD90B4-2355-4E8A-AE42-A6C872DF700A" label="Position" paletteLabel="Position" visibilityPriority="10" sizingBehavior="auto" id="1551" customClass="PositionSliderToolbarItem" customModule="Cog" customModuleProvider="target">

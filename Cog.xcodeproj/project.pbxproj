@@ -195,6 +195,7 @@
 		83CB1F5E2E74D83D001D6294 /* Play.icon in Resources */ = {isa = PBXBuildFile; fileRef = 83CB1F592E74D83D001D6294 /* Play.icon */; };
 		83CB565E2E064607003DD379 /* NSDictionary+Optional.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CB565D2E064607003DD379 /* NSDictionary+Optional.m */; };
 		83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83D0380E24A40DF2004CF90F /* CogAssets.xcassets */; };
+		83D4097D2E8CB335003CBCAE /* CogSearchField.m in Sources */ = {isa = PBXBuildFile; fileRef = 83D4097C2E8CB335003CBCAE /* CogSearchField.m */; };
 		83DFCDA12E8532E5009E3DF1 /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DFCDA02E8532C1009E3DF1 /* nuked_sc55.framework */; };
 		83DFCDA22E8532E5009E3DF1 /* nuked_sc55.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 83DFCDA02E8532C1009E3DF1 /* nuked_sc55.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1073,6 +1074,8 @@
 		83CB565D2E064607003DD379 /* NSDictionary+Optional.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Optional.m"; sourceTree = "<group>"; };
 		83D0380E24A40DF2004CF90F /* CogAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = CogAssets.xcassets; sourceTree = "<group>"; };
 		83D3C5FC201C674D005564CB /* AdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AdPlug.xcodeproj; path = Plugins/AdPlug/AdPlug.xcodeproj; sourceTree = "<group>"; };
+		83D4097B2E8CB335003CBCAE /* CogSearchField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CogSearchField.h; path = Window/CogSearchField.h; sourceTree = "<group>"; };
+		83D4097C2E8CB335003CBCAE /* CogSearchField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CogSearchField.m; path = Window/CogSearchField.m; sourceTree = "<group>"; };
 		83DFCD982E8532C1009E3DF1 /* nuked-sc55.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "nuked-sc55.xcodeproj"; path = "Frameworks/nuked-sc55/nuked-sc55.xcodeproj"; sourceTree = "<group>"; };
 		83E5EFAC1FFEF78100659F0F /* OpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpenMPT.xcodeproj; path = Plugins/OpenMPT/OpenMPT.xcodeproj; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
@@ -1447,6 +1450,8 @@
 				17E0D6190F520F9F005B6FED /* VolumeButton.m */,
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
+				83D4097B2E8CB335003CBCAE /* CogSearchField.h */,
+				83D4097C2E8CB335003CBCAE /* CogSearchField.m */,
 			);
 			name = Window;
 			sourceTree = "<group>";
@@ -2662,6 +2667,7 @@
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
 				834B05EA2859C006000B7DC0 /* TotalTimeTransformer.m in Sources */,
 				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
+				83D4097D2E8CB335003CBCAE /* CogSearchField.m in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,
 				179D03220E0CB2500064A77A /* FileNode.m in Sources */,
