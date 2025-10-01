@@ -1265,6 +1265,7 @@
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
                 <outlet property="mainToolbar" destination="1523" id="J2X-YK-xV0"/>
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
+                <outlet property="searchField" destination="1531" id="Lh4-Bw-6Ex"/>
             </connections>
             <point key="canvasLocation" x="270.5" y="131"/>
         </window>
@@ -2140,7 +2141,7 @@ CA
                             </menuItem>
                             <menuItem title="Filter Playlist" secondaryImage="line.3.horizontal.decrease" catalog="system" keyEquivalent="f" id="UAk-Gc-lT4">
                                 <connections>
-                                    <action selector="selectText:" target="1531" id="T6e-Sw-Axi"/>
+                                    <action selector="openSearch:" target="21" id="205-gO-gvP"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Show All Songs" id="pU1-ci-9uB">

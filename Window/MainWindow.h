@@ -11,6 +11,9 @@
 @interface MainWindow : NSWindow {
 	IBOutlet NSView *playlistView;
 	IBOutlet NSToolbar *mainToolbar;
+	IBOutlet NSSearchField *searchField;
 }
+
+- (IBAction)openSearch:(id)sender;
 
 @end
