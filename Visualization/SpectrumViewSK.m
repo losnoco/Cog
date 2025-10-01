@@ -327,7 +327,11 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	}
 
 	if(lastTime >= 0) {
-		visLatencyOffset -= time - lastTime;
+		NSTimeInterval delta = time - lastTime;
+		if(delta < 1.0)
+			visLatencyOffset -= delta;
+		else
+			visLatencyOffset = 0.0; // delay in rendering
 	} else {
 		visLatencyOffset = 0.0;
 	}
@@ -372,12 +376,14 @@ extern NSString *CogPlaybackDidStopNotificiation;
 }
 
 - (void)playbackDidPause:(NSNotification *)notification {
+	lastTime = -1;
 	stopped = NO;
 	paused = YES;
 	[self updateVisListening];
 }
 
 - (void)playbackDidResume:(NSNotification *)notification {
+	lastTime = -1;
 	stopped = NO;
 	paused = NO;
 	[self updateVisListening];
