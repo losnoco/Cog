@@ -321,7 +321,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	}
 
 	if(lastTime >= 0) {
-		visLatencyOffset += time - lastTime;
+		visLatencyOffset -= time - lastTime;
 	} else {
 		visLatencyOffset = 0.0;
 	}
