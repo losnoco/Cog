@@ -13,6 +13,7 @@
 
 @implementation VisualizationController {
 	MIDIVisualizationController *midiController;
+	NSTimer *sineTimer;
 
 	double sampleRate;
 	double latency;
@@ -51,12 +52,20 @@
 		latency = 0;
 		ignoreLatency = YES;
 		sinePhase = 0.0;
+
+		sineTimer = [NSTimer timerWithTimeInterval:1.0 / 60.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+			double sinePhase = self->sinePhase;
+			self->sinePhase = fmod(sinePhase + (M_PI / 90.0), M_PI * 2.0);
+		}];
+		[[NSRunLoop mainRunLoop] addTimer:sineTimer forMode:NSRunLoopCommonModes];
 	}
 	return self;
 }
 
 - (void)dealloc {
 	fft_free();
+	[sineTimer invalidate];
+	sineTimer = nil;
 }
 
 - (void)reset {
@@ -151,7 +160,6 @@
 
 - (void)generateSineWave:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT {
 	double sinePhase = self->sinePhase;
-	self->sinePhase = fmod(sinePhase + (M_PI / 90.0), M_PI * 2.0);
 	if(outPCM || outFFT) {
 		const double stepSize = M_PI * 2.0 * 5.0 / 4096.0;
 		double sineStep = sinePhase;
