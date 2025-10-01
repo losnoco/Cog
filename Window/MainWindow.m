@@ -58,4 +58,24 @@ void showSentryConsent(NSWindow *window) {
 	}
 }
 
+- (void)focusSearch:(id)sender {
+	[self makeFirstResponder:searchField];
+	NSRange range = NSMakeRange(0, searchField.stringValue.length);
+	NSText *editor = searchField.currentEditor;
+	if(editor) {
+		editor.selectedRange = range;
+	}
+}
+
+- (IBAction)openSearch:(id)sender {
+	[self focusSearch:sender];
+	// hack
+	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.125
+													  target:self
+													selector:@selector(focusSearch:)
+													userInfo:nil
+													 repeats:NO];
+	[[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+}
+
 @end
