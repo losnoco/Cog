@@ -192,7 +192,7 @@
 
 	[sandboxBroker endFolderAccess:sbHandle];
 
-	return dict;
+	return [NSDictionary dictionaryWithDictionary:dict];
 }
 
 + (NSArray *)fileTypes {
