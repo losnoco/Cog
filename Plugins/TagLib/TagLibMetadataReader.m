@@ -167,49 +167,21 @@
 				
 				if(!unsyncedlyrics.isEmpty())
 					[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
-			}
 
-			// Try to load the image.
-			NSData *image = nil;
+				// Try to load the image.
+				NSData *image = nil;
 
-			// Try to load the image.
-			// WARNING: HACK
-			TagLib::MPEG::File *mf = dynamic_cast<TagLib::MPEG::File *>(f.file());
-			if(mf) {
-				TagLib::ID3v2::Tag *tag = mf->ID3v2Tag();
-				if(tag) {
-					const TagLib::ID3v2::FrameListMap &frameListMap = mf->ID3v2Tag()->frameListMap();
-					if(frameListMap.contains("APIC")) {
-						const TagLib::ID3v2::FrameList &pictures = frameListMap["APIC"];
-						if(!pictures.isEmpty()) {
-							const TagLib::ID3v2::AttachedPictureFrame *pic = dynamic_cast<const TagLib::ID3v2::AttachedPictureFrame *>(pictures.front());
-							if(pic) {
-								const TagLib::ByteVector picture = pic->picture();
-
-								image = [NSData dataWithBytes:picture.data() length:picture.size()];
-							}
-						}
-					}
-				}
-			}
-
-			// Another hack!
-			TagLib::ASF::File *af = dynamic_cast<TagLib::ASF::File *>(f.file());
-			if(af) {
-				TagLib::ASF::Tag *tag = af->tag();
-				if(tag) {
-					const TagLib::List<TagLib::VariantMap> &props = tag->complexProperties("picture");
+				TagLib::StringList properties = tag->complexPropertyKeys();
+				if(properties.contains("PICTURE")) {
+					const TagLib::List<TagLib::VariantMap> &props = tag->complexProperties("PICTURE");
 					if(!props.isEmpty()) {
 						const TagLib::VariantMap &picture = props.front();
 						TagLib::ByteVector data = picture["data"].toByteVector();
 
 						image = [NSData dataWithBytes:data.data() length:data.size()];
+						[dict setObject:image forKey:@"albumArt"];
 					}
 				}
-			}
-
-			if(nil != image) {
-				[dict setObject:image forKey:@"albumArt"];
 			}
 		}
 	} catch (std::exception &e) {
