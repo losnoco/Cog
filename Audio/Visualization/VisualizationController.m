@@ -29,13 +29,13 @@
 	static VisualizationController *_sharedController = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_sharedController = [[VisualizationController alloc] init];
+		_sharedController = [[self alloc] init];
 	});
 	return _sharedController;
 }
 
 + (MIDIVisualizationController *)sharedMIDIController {
-	return [[VisualizationController sharedController] midiController];
+	return [[self sharedController] midiController];
 }
 
 - (MIDIVisualizationController *)midiController {

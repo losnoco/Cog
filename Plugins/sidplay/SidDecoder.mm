@@ -50,13 +50,10 @@ static const char *extListStr[] = { ".str", NULL };
 @implementation sid_file_container
 + (sid_file_container *)instance {
 	static sid_file_container *instance;
-
-	@synchronized(self) {
-		if(!instance) {
-			instance = [[self alloc] init];
-		}
-	}
-
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		instance = [[self alloc] init];
+	});
 	return instance;
 }
 - (sid_file_container *)init {

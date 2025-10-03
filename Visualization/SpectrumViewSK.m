@@ -73,7 +73,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		}
 	} while(0);
 
-	return [[SpectrumViewSK alloc] initWithFrame:frame];
+	return [[self alloc] initWithFrame:frame];
 }
 
 @synthesize isListening;

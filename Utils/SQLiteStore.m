@@ -530,9 +530,10 @@ NSURL *_Nonnull urlForPath(NSString *_Nullable path);
 static SQLiteStore *g_sharedStore = nil;
 
 + (SQLiteStore *)sharedStore {
-	if(!g_sharedStore) {
-		g_sharedStore = [[SQLiteStore alloc] init];
-	}
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		g_sharedStore = [[self alloc] init];
+	});
 
 	return g_sharedStore;
 }
