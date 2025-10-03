@@ -1384,6 +1384,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 			free(emulatorCore);
 		} else if(type == 0x22) {
 			struct mCore *core = (struct mCore *)emulatorCore;
+			mCoreConfigDeinit(&core->config);
 			core->deinit(core);
 		} else if(type == 0x24) {
 			NDS_state *state = (NDS_state *)emulatorCore;

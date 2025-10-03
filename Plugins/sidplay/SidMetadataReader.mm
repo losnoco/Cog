@@ -52,12 +52,18 @@
 	NSString *titletag = @"title";
 	NSString *artist = @"";
 
+	SidTune *tune = NULL;
+
 	try {
-		SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+		tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+
+		free(data);
+		data = NULL;
 
 		if(!tune->getStatus()) {
 			delete tune;
-			return 0;
+			tune = NULL;
+			return @{};
 		}
 
 		const SidTuneInfo *info = tune->getInfo();
@@ -68,8 +74,11 @@
 		artist = count >= 2 ? [guess_encoding_of_string(info->infoString(1)) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] : @"";
 
 		delete tune;
+		tune = NULL;
 	} catch (std::exception &e) {
 		ALog(@"Exception caught while reading SID tags: %s", e.what());
+		delete tune;
+		if(data) free(data);
 		return @{};
 	}
 

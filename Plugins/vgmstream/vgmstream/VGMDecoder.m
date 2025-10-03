@@ -267,6 +267,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	if(!sf)
 		return NO;
 	stream = libvgmstream_create(sf, track_num, &vcfg);
+	libstreamfile_close(sf);
 	if(!stream)
 		return NO;
 
@@ -359,7 +360,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 - (void)close {
-	libvgmstream_close_stream(stream);
+	libvgmstream_free(stream);
 	stream = NULL;
 }
 

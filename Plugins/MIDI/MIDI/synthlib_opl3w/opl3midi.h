@@ -122,6 +122,8 @@ class OPL3MIDI : public midisynth {
 	void opl_midipitchbend(opl_channel *channel, byte parm1, byte parm2);
 
 	public:
+	virtual ~OPL3MIDI();
+
 	const char *midi_synth_name(void);
 	unsigned int midi_bank_count(void);
 	const char *midi_bank_name(unsigned int bank);

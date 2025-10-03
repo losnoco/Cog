@@ -575,6 +575,7 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	if(lastDecodedFrame) {
+		av_frame_unref(lastDecodedFrame);
 		av_freep(&lastDecodedFrame);
 	}
 

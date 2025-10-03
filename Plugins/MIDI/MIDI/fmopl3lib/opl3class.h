@@ -29,6 +29,8 @@ class opl3class : public fm_chip {
 	void fm_generate_one(signed short *buffer);
 
 	public:
+	virtual ~opl3class();
+
 	int fm_init(unsigned int rate);
 	void fm_writereg(unsigned short reg, unsigned char data);
 	void fm_generate(signed short *buffer, unsigned int length);

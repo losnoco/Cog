@@ -54,13 +54,18 @@
 	[source read:data amount:size];
 
 	unsigned int subsongs = 0;
+	SidTune *tune = NULL;
 
 	try {
-		SidTune *tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+		tune = new SidTune((const uint_least8_t *)data, (uint_least32_t)size);
+
+		free(data);
+		data = NULL;
 
 		if(!tune->getStatus()) {
 			delete tune;
-			return 0;
+			tune = NULL;
+			return @[];
 		}
 
 		const SidTuneInfo *info = tune->getInfo();
@@ -68,8 +73,11 @@
 		subsongs = info->songs();
 
 		delete tune;
+		tune = NULL;
 	} catch (std::exception &e) {
 		ALog(@"Exception caught processing SID file for song count: %s", e.what());
+		delete tune;
+		if(data) free(data);
 		return @[];
 	}
 

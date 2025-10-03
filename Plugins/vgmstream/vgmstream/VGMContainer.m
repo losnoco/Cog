@@ -54,6 +54,7 @@
 
 	libvgmstream_t* infostream = libvgmstream_create(sf, 0, &vcfg);
 	if(!infostream) {
+		libstreamfile_close(sf);
 		return @[];
 	}
 
@@ -78,17 +79,20 @@
 	for(i = 2; i <= subsongs; ++i) {
 		libvgmstream_close_stream(infostream);
 
-		infostream = libvgmstream_create(sf, i, &vcfg);
+		int ret = libvgmstream_open_stream(infostream, sf, i);
 
-		if(!infostream)
+		if(ret != 0) {
+			libvgmstream_free(infostream);
+			libstreamfile_close(sf);
 			return @[];
+		}
 
 		trackurl = [NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]];
 		[sharedMyCache stuffURL:trackurl stream:infostream];
 		[tracks addObject:trackurl];
 	}
 
-	libvgmstream_close_stream(infostream);
+	libvgmstream_free(infostream);
 	libstreamfile_close(sf);
 
 	return tracks;
