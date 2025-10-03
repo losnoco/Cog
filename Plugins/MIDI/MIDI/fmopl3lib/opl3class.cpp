@@ -36,6 +36,10 @@ int opl3class::fm_init(unsigned int rate) {
 	return 1;
 }
 
+opl3class::~opl3class() {
+	resampler_destroy(resampler);
+}
+
 void opl3class::fm_writereg(unsigned short reg, unsigned char data) {
 	command[endpos % 8192][0] = reg;
 	command[endpos % 8192][1] = data;

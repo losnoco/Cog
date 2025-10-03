@@ -945,6 +945,10 @@ void free_ffmpeg(void* priv_data) {
         av_freep(&(data->header_block));
     }
 
+	if (data->sbuf) {
+		free(data->sbuf);
+	}
+
     close_streamfile(data->sf);
     free(data);
 }

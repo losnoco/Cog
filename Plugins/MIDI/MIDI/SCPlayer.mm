@@ -39,6 +39,9 @@ SCPlayer::SCPlayer()
 
 SCPlayer::~SCPlayer() {
 	shutdown();
+	delete[] last_lcd_state[0];
+	delete[] last_lcd_state[1];
+	delete[] last_lcd_state[2];
 }
 
 void SCPlayer::setUrl(NSURL *url) {

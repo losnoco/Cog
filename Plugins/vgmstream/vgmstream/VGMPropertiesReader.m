@@ -59,7 +59,7 @@
 
 		[sharedMyCache stuffURL:url stream:stream];
 
-		libvgmstream_close_stream(stream);
+		libvgmstream_free(stream);
 
 		properties = [sharedMyCache getPropertiesForURL:url];
 	}

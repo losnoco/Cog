@@ -965,6 +965,8 @@ class DoomOPL : public midisynth {
 	void InitChannel(opl_channel_data_t *channel);
 
 	public:
+	virtual ~DoomOPL();
+
 	const char *midi_synth_name(void);
 	unsigned int midi_bank_count(void);
 	const char *midi_bank_name(unsigned int bank);

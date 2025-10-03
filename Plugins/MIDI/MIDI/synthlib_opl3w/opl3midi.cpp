@@ -439,6 +439,10 @@ int OPL3MIDI::midi_init(unsigned int rate, unsigned int bank, unsigned int extp)
 	return 1;
 }
 
+OPL3MIDI::~OPL3MIDI() {
+	delete opl_chip;
+}
+
 void OPL3MIDI::midi_write(unsigned int data) {
 	byte event_type = data & 0xf0;
 	byte channel = data & 0x0f;

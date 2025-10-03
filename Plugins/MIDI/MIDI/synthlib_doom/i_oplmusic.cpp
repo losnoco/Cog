@@ -931,6 +931,10 @@ int DoomOPL::midi_init(unsigned int rate, unsigned int bank, unsigned int extp) 
 	return 1;
 }
 
+DoomOPL::~DoomOPL() {
+	delete opl;
+}
+
 void DoomOPL::midi_generate(signed short *buffer, unsigned int length) {
 	opl->fm_generate(buffer, length);
 }
