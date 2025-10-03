@@ -78,7 +78,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 			[center setDelegate:self];
 		}
 
-		queue = [[NSOperationQueue alloc] init];
+		queue = [NSOperationQueue new];
 		[queue setMaxConcurrentOperationCount:1];
 
 		[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
@@ -166,7 +166,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 					[UNUserNotificationCenter currentNotificationCenter];
 
 					UNMutableNotificationContent *content =
-					[[UNMutableNotificationContent alloc] init];
+					[UNMutableNotificationContent new];
 
 					content.title = @"Now Playing";
 
@@ -243,7 +243,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 					         }];
 				}
 			} else {
-				NSUserNotification *notif = [[NSUserNotification alloc] init];
+				NSUserNotification *notif = [NSUserNotification new];
 				notif.title = [pe title];
 
 				NSString *subtitle;

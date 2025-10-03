@@ -32,7 +32,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
 	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
-		array = [[NSMutableArray alloc] init];
+		array = [NSMutableArray new];
 		[dict setObject:array forKey:realKey];
 	}
 	[array addObject:value];
@@ -75,7 +75,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		midi_meta_data_item item;
 		bool remap_display_name = !metadata.get_item("title", item);
 
-		NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *dict = [NSMutableDictionary new];
 
 		for(size_t i = 0; i < metadata.get_count(); ++i) {
 			@autoreleasepool {
@@ -100,7 +100,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		return dict;
 	} catch (std::exception &e) {
 		ALog(@"Exception caught while reading MIDI metadata: %s", e.what());
-		return [NSDictionary dictionary];
+		return @{};
 	}
 }
 

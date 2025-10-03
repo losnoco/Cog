@@ -32,7 +32,7 @@ SCPlayer::SCPlayer()
 	last_lcd_state[1] = new uint8_t[size];
 	last_lcd_state[2] = new uint8_t[size];
 	
-	_workerQueue = [[NSOperationQueue alloc] init];
+	_workerQueue = [NSOperationQueue new];
 
 	midiController = [NSClassFromString(@"VisualizationController") sharedMIDIController];
 }

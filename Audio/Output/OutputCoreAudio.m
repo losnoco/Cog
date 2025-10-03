@@ -39,7 +39,7 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	if(stopping == YES || [outputController shouldContinue] == NO) {
 		// Chain is dead, fill out the serial number pointer forever with silence
 		stopping = YES;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	AudioStreamBasicDescription format;
@@ -54,7 +54,7 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	}
 
 	if(streamFormatChanged) {
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	return [outputController readChunk:amountToRead];
@@ -64,8 +64,8 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 	self = [super init];
 	if(self) {
 		buffer = [[ChunkList alloc] initWithMaximumDuration:2.0f * (fadeTimeMS / 1000.0f)];
-		writeSemaphore = [[Semaphore alloc] init];
-		readSemaphore = [[Semaphore alloc] init];
+		writeSemaphore = [Semaphore new];
+		readSemaphore = [Semaphore new];
 
 		outputController = c;
 		volume = 1.0;
@@ -73,7 +73,7 @@ static void *kOutputCoreAudioContext = &kOutputCoreAudioContext;
 
 		secondsHdcdSustained = 0;
 
-		outputLock = [[NSLock alloc] init];
+		outputLock = [NSLock new];
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];

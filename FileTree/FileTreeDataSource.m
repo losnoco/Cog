@@ -198,7 +198,7 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(id)item {
-	NSPasteboardItem *paste = [[NSPasteboardItem alloc] init];
+	NSPasteboardItem *paste = [NSPasteboardItem new];
 	[paste setData:[[item URL] dataRepresentation] forType:NSPasteboardTypeFileURL];
 	return paste;
 }

@@ -19,7 +19,7 @@ static void *kInfoWindowControllerContext = &kInfoWindowControllerContext;
 @synthesize valueToDisplay;
 
 + (void)initialize {
-	NSValueTransformer *missingAlbumArtTransformer = [[MissingAlbumArtTransformer alloc] init];
+	NSValueTransformer *missingAlbumArtTransformer = [MissingAlbumArtTransformer new];
 	[NSValueTransformer setValueTransformer:missingAlbumArtTransformer
 	                                forName:@"MissingAlbumArtTransformer"];
 }

@@ -8,7 +8,7 @@ static NSString *TrackingSliderValueObservationContext = @"TrackingSliderValueOb
 - (id)initWithFrame:(NSRect)frameRect {
 	self = [super initWithFrame:frameRect];
 	if(self) {
-		bindingInfo = [[NSMutableDictionary alloc] init];
+		bindingInfo = [NSMutableDictionary new];
 	}
 
 	return self;
@@ -17,7 +17,7 @@ static NSString *TrackingSliderValueObservationContext = @"TrackingSliderValueOb
 - (id)initWithCoder:(NSCoder *)decoder {
 	self = [super initWithCoder:decoder];
 	if(self) {
-		bindingInfo = [[NSMutableDictionary alloc] init];
+		bindingInfo = [NSMutableDictionary new];
 	}
 
 	return self;

@@ -72,8 +72,8 @@
 
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 
-	NSMutableArray *items = [[NSMutableArray alloc] init];
-	NSMutableArray *itemPaths = [[NSMutableArray alloc] init];
+	NSMutableArray *items = [NSMutableArray new];
+	NSMutableArray *itemPaths = [NSMutableArray new];
 
 	NSArray *originalArray = [results valueForKey:@"url"];
 	NSMutableArray *array = [originalArray mutableCopy];
@@ -117,7 +117,7 @@
 			NSURL *subUrl = [NSURL fileURLWithPathComponents:[pathComponents subarrayWithRange:NSMakeRange(0, i)]];
 			if(![itemPaths containsObject:subUrl]) {
 				[itemPaths addObject:subUrl];
-				PathItem *item = [[PathItem alloc] init];
+				PathItem *item = [PathItem new];
 				item.path = [subUrl path];
 				item.enabled = NO;
 				[items addObject:item];

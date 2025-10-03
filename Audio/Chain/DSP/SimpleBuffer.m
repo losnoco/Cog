@@ -17,7 +17,7 @@
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 	}
 	return self;
 }

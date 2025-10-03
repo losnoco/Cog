@@ -98,7 +98,7 @@
 }
 
 - (void)parseString:(NSString *)contents withFilename:(NSString *)filename {
-	NSMutableArray *entries = [[NSMutableArray alloc] init];
+	NSMutableArray *entries = [NSMutableArray new];
 
 	NSString *track = nil;
 	NSString *path = nil;

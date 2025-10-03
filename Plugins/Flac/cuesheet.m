@@ -606,7 +606,7 @@ void grabbag__cuesheet_emit(NSString **out, const FLAC__StreamMetadata *cuesheet
 	FLAC__ASSERT(0 != cuesheet);
 	FLAC__ASSERT(cuesheet->type == FLAC__METADATA_TYPE_CUESHEET);
 
-	NSMutableArray *stringList = [[NSMutableArray alloc] init];
+	NSMutableArray *stringList = [NSMutableArray new];
 
 	cs = &cuesheet->data.cue_sheet;
 

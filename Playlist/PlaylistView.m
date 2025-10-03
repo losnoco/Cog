@@ -60,8 +60,8 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	
 	NSArray *savedColumns = [[NSUserDefaults standardUserDefaults] arrayForKey:playlistSavedColumnsID];
 
-	NSMutableArray *defaultColumnList = [[NSMutableArray alloc] init];
-	NSMutableArray *savedColumnList = [[NSMutableArray alloc] init];
+	NSMutableArray *defaultColumnList = [NSMutableArray new];
+	NSMutableArray *savedColumnList = [NSMutableArray new];
 	
 	for(id column in defaultColumns) {
 		NSString *columnID = [column objectForKey:@"id"];
@@ -72,7 +72,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		[savedColumnList addObject:columnID];
 	}
 
-	NSMutableArray *updatedColumns = [[NSMutableArray alloc] init];
+	NSMutableArray *updatedColumns = [NSMutableArray new];
 
 	for(id column in savedColumns) {
 		if([defaultColumnList containsObject:[column objectForKey:@"id"]]) {
@@ -89,7 +89,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	[[NSUserDefaults standardUserDefaults] setObject:updatedColumns forKey:playlistSavedColumnsID];
 
 	NSArray<NSTableColumn *> *columns = [[self tableColumns] copy];
-	NSMutableArray *columnsList = [[NSMutableArray alloc] init];
+	NSMutableArray *columnsList = [NSMutableArray new];
 
 	for(NSTableColumn *column in columns) {
 		[columnsList addObject:[column identifier]];
@@ -191,7 +191,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 - (void)syncColumnState {
 	NSArray<NSTableColumn *> *columns = [self tableColumns];
-	NSMutableArray *savedColumns = [[NSMutableArray alloc] init];
+	NSMutableArray *savedColumns = [NSMutableArray new];
 
 	for(NSTableColumn *col in columns) {
 		[savedColumns addObject:@{@"id": [col identifier], @"width": @([col width]), @"hidden": @([col isHidden])}];
@@ -477,7 +477,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
 
 		// Convert the iTunes URLs to URLs....MWAHAHAH!
-		NSMutableArray *urls = [[NSMutableArray alloc] init];
+		NSMutableArray *urls = [NSMutableArray new];
 
 		for(NSDictionary *trackInfo in [tracks allValues]) {
 			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];

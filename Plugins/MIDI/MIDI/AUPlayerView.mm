@@ -119,8 +119,8 @@ int AUPluginUI::create_cocoa_view() {
 				return -1;
 			}
 			// make a factory
-			id factory = [[factoryClass alloc] init];
-			if(factory == NULL) {
+			id factory = [factoryClass new];
+			if(factory == nil) {
 				return -1;
 			}
 

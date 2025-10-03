@@ -52,13 +52,13 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	if(self) {
 		[self initDefaults];
 
-		containerQueue = [[NSOperationQueue alloc] init];
+		containerQueue = [NSOperationQueue new];
 		[containerQueue setMaxConcurrentOperationCount:8];
 
-		queue = [[NSOperationQueue alloc] init];
+		queue = [NSOperationQueue new];
 		[queue setMaxConcurrentOperationCount:8];
 
-		queuedURLs = [[NSMutableDictionary alloc] init];
+		queuedURLs = [NSMutableDictionary new];
 	}
 
 	return self;
@@ -198,9 +198,9 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 
 	NSArray *filterList = @[@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"lengthText", @"positionText", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt"];
 
-	NSMutableDictionary *albumArtSet = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *albumArtSet = [NSMutableDictionary new];
 
-	NSMutableArray *topLevel = [[NSMutableArray alloc] init];
+	NSMutableArray *topLevel = [NSMutableArray new];
 
 	for(PlaylistEntry *pe in [playlistController arrangedObjects]) {
 		BOOL error = [pe error];
@@ -225,7 +225,7 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 		[topLevel addObject:dict];
 	}
 
-	NSMutableArray *queueList = [[NSMutableArray alloc] init];
+	NSMutableArray *queueList = [NSMutableArray new];
 
 	for(PlaylistEntry *pe in [playlistController queueList]) {
 		[queueList addObject:@(pe.index)];
@@ -353,12 +353,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
 	__block NSMutableSet *uniqueURLs = [NSMutableSet set];
 
-	__block NSMutableDictionary *expandedURLs = [[NSMutableDictionary alloc] init];
-	__block NSMutableDictionary *loadedURLs = [[NSMutableDictionary alloc] init];
-	__block NSMutableArray *fileURLs = [[NSMutableArray alloc] init];
-	NSMutableArray *validURLs = [[NSMutableArray alloc] init];
-	NSMutableArray *folderURLs = [[NSMutableArray alloc] init];
-	NSMutableArray *dependencyURLs = [[NSMutableArray alloc] init];
+	__block NSMutableDictionary *expandedURLs = [NSMutableDictionary new];
+	__block NSMutableDictionary *loadedURLs = [NSMutableDictionary new];
+	__block NSMutableArray *fileURLs = [NSMutableArray new];
+	NSMutableArray *validURLs = [NSMutableArray new];
+	NSMutableArray *folderURLs = [NSMutableArray new];
+	NSMutableArray *dependencyURLs = [NSMutableArray new];
 	__block NSDictionary *xmlData = nil;
 
 	BOOL addOtherFilesInFolder = [[NSUserDefaults standardUserDefaults] boolForKey:@"addOtherFilesInFolders"];
@@ -454,7 +454,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	if([expandedURLs count]) {
 		__block id<SentrySpan> containerTask = [mainTask startChildWithOperation:@"Process paths for containers"];
 
-		__block NSLock *lock = [[NSLock alloc] init];
+		__block NSLock *lock = [NSLock new];
 		
 		__block NSArray *acceptableContainerTypes = [self acceptableContainerTypes];
 		
@@ -463,7 +463,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		// Container vs non-container url
 		[expandedURLs enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-			NSBlockOperation *op = [[NSBlockOperation alloc] init];
+			NSBlockOperation *op = [NSBlockOperation new];
 			
 			[op addExecutionBlock:^{
 				id<SentrySpan> pathTask = nil;
@@ -807,14 +807,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 - (void)loadInfoForEntries:(NSArray *)entries {
-	NSMutableDictionary *queueThisJob = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *queueThisJob = [NSMutableDictionary new];
 	for(PlaylistEntry *pe in entries) {
 		if(!pe || !pe.urlString || ![pe.urlString length] || pe.deLeted || pe.metadataLoaded) continue;
 
 		NSString *path = pe.urlString;
 		NSMutableArray *entrySet = [queueThisJob objectForKey:path];
 		if(!entrySet) {
-			entrySet = [[NSMutableArray alloc] init];
+			entrySet = [NSMutableArray new];
 			[entrySet addObject:pe];
 			[queueThisJob setObject:entrySet forKey:path];
 		} else {
@@ -857,7 +857,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		[queuedURLs addEntriesFromDictionary:queueThisJob];
 	}
 
-	NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *update_indexes = [NSMutableIndexSet new];
 
 	__block double progress = 0.0;
 
@@ -874,24 +874,24 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		progress = 0.0;
 	}
 
-	NSLock *outLock = [[NSLock alloc] init];
-	NSMutableArray *outArray = [[NSMutableArray alloc] init];
+	NSLock *outLock = [NSLock new];
+	NSMutableArray *outArray = [NSMutableArray new];
 	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore"); // CogAudio
-	RedundantPlaylistDataStore *dataStore = [[dataStoreClass alloc] init];
+	RedundantPlaylistDataStore *dataStore = [dataStoreClass new];
 
 	__block NSLock *weakLock = outLock;
 	__block NSMutableArray *weakArray = outArray;
 	__block RedundantPlaylistDataStore *weakDataStore = dataStore;
 
-	__block NSMutableDictionary *uniquePathsEntries = [[NSMutableDictionary alloc] init];
+	__block NSMutableDictionary *uniquePathsEntries = [NSMutableDictionary new];
 
 	__block id<SentrySpan> mainTask = [SentrySDK startTransactionWithName:@"Loading tags" operation:@"Main tag operation"];
 
 	{
-		__block NSLock *blockLock = [[NSLock alloc] init];
+		__block NSLock *blockLock = [NSLock new];
 		__block NSMutableArray *blockInputs = [[queueThisJob allKeys] mutableCopy];
 		for(size_t i = 0, j = [blockInputs count]; i < j; ++i) {
-			NSBlockOperation *op = [[NSBlockOperation alloc] init];
+			NSBlockOperation *op = [NSBlockOperation new];
 			[op addExecutionBlock:^{
 				@autoreleasepool {
 					[blockLock lock];
@@ -923,7 +923,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 						}
 						[weakArray addObject:key];
 						[weakArray addObject:entryInfo];
-						[uniquePathsEntries setObject:[[NSMutableArray alloc] init] forKey:key];
+						[uniquePathsEntries setObject:[NSMutableArray new] forKey:key];
 						progress += progressstep;
 						[self setProgressJobStatus:progress];
 						[weakLock unlock];
@@ -1037,9 +1037,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 // To be called on main thread only
 - (void)syncLoadInfoForEntries:(NSArray *)entries {
-	NSMutableIndexSet *update_indexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *update_indexes = [NSMutableIndexSet new];
 	long i, j;
-	NSMutableIndexSet *load_info_indexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *load_info_indexes = [NSMutableIndexSet new];
 
 	i = 0;
 	j = 0;
@@ -1116,7 +1116,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 }
 
 - (NSArray *)addURL:(NSURL *)url {
-	if(!url) return [NSArray array];
+	if(!url) return @[];
 	return [self insertURLs:@[url] atIndex:(int)[[playlistController content] count] sort:NO];
 }
 
@@ -1157,7 +1157,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 		NSMutableArray *resultsCopy = [results mutableCopy];
 
-		NSMutableIndexSet *pruneSet = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *pruneSet = [NSMutableIndexSet new];
 		NSUInteger index = 0;
 		for(PlaylistEntry *pe in resultsCopy) {
 			if(pe.deLeted || !pe.urlString || ![pe.urlString length]) {
@@ -1223,7 +1223,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 	count = [store queueGetCount];
 
 	if(count) {
-		NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 		[playlistController emptyQueueListUnsynced];
 

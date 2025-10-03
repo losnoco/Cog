@@ -38,9 +38,9 @@
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
-		mutex = [[NSRecursiveLock alloc] init];
-		fadersLock = [[NSLock alloc] init];
-		faders = [[NSMutableArray alloc] init];
+		mutex = [NSRecursiveLock new];
+		fadersLock = [NSLock new];
+		faders = [NSMutableArray new];
 		fadeLevel = 1.0;
 	}
 	return self;
@@ -157,7 +157,7 @@
 	size_t count = [faders count];
 	[fadersLock unlock];
 	if(!frameCount && count && formatSet) {
-		chunk = [[AudioChunk alloc] init];
+		chunk = [AudioChunk new];
 		[chunk setFormat:outputFormat];
 		[chunk setChannelConfig:outputChannelConfig];
 		bzero(inBuffer, 512 * outputFormat.mBytesPerPacket);

@@ -68,7 +68,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	[[RepeatModeTransformer alloc] initWithMode:RepeatModeRepeatAll];
 	[NSValueTransformer setValueTransformer:repeatAllTransformer forName:@"RepeatAllTransformer"];
 
-	NSValueTransformer *repeatModeImageTransformer = [[RepeatModeImageTransformer alloc] init];
+	NSValueTransformer *repeatModeImageTransformer = [RepeatModeImageTransformer new];
 	[NSValueTransformer setValueTransformer:repeatModeImageTransformer
 	                                forName:@"RepeatModeImageTransformer"];
 
@@ -85,15 +85,15 @@ static void *playlistControllerContext = &playlistControllerContext;
 	[[ShuffleModeTransformer alloc] initWithMode:ShuffleAll];
 	[NSValueTransformer setValueTransformer:shuffleAllTransformer forName:@"ShuffleAllTransformer"];
 
-	NSValueTransformer *shuffleImageTransformer = [[ShuffleImageTransformer alloc] init];
+	NSValueTransformer *shuffleImageTransformer = [ShuffleImageTransformer new];
 	[NSValueTransformer setValueTransformer:shuffleImageTransformer
 	                                forName:@"ShuffleImageTransformer"];
 
-	NSValueTransformer *statusImageTransformer = [[StatusImageTransformer alloc] init];
+	NSValueTransformer *statusImageTransformer = [StatusImageTransformer new];
 	[NSValueTransformer setValueTransformer:statusImageTransformer
 	                                forName:@"StatusImageTransformer"];
 
-	NSValueTransformer *toggleQueueTitleTransformer = [[ToggleQueueTitleTransformer alloc] init];
+	NSValueTransformer *toggleQueueTitleTransformer = [ToggleQueueTitleTransformer new];
 	[NSValueTransformer setValueTransformer:toggleQueueTitleTransformer
 	                                forName:@"ToggleQueueTitleTransformer"];
 }
@@ -108,10 +108,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 	self = [super initWithCoder:decoder];
 	if(!self) return nil;
 
-	shuffleList = [[NSMutableArray alloc] init];
-	queueList = [[NSMutableArray alloc] init];
+	shuffleList = [NSMutableArray new];
+	queueList = [NSMutableArray new];
 
-	undoManager = [[NSUndoManager alloc] init];
+	undoManager = [NSUndoManager new];
 
 	[undoManager setLevelsOfUndo:UNDO_STACK_LIMIT];
 
@@ -129,7 +129,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	self.persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
 
-	_persistentArtStorage = [[NSMutableDictionary alloc] init];
+	_persistentArtStorage = [NSMutableDictionary new];
 	kArtworkDictionary = self.persistentArtStorage;
 
 	return self;
@@ -799,7 +799,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSPasteboardItem *item = (NSPasteboardItem *)[super tableView:tableView
 	                                       pasteboardWriterForRow:row];
 	if(!item) {
-		item = [[NSPasteboardItem alloc] init];
+		item = [NSPasteboardItem new];
 	}
 
 	PlaylistEntry *song = [[self arrangedObjects] objectAtIndex:row];
@@ -826,7 +826,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSPasteboard *pboard = [info draggingPasteboard];
 	NSString *bestType = [pboard availableTypeFromArray:supportedTypes];
 
-	NSMutableArray *acceptedURLs = [[NSMutableArray alloc] init];
+	NSMutableArray *acceptedURLs = [NSMutableArray new];
 
 	// Get files from an file drawer drop
 	if([bestType isEqualToString:CogUrlsPboardType]) {
@@ -868,7 +868,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		NSDictionary *tracks = [iTunesDict valueForKey:@"Tracks"];
 
 		// Convert the iTunes URLs to URLs....MWAHAHAH!
-		NSMutableArray *urls = [[NSMutableArray alloc] init];
+		NSMutableArray *urls = [NSMutableArray new];
 
 		for(NSDictionary *trackInfo in [tracks allValues]) {
 			[urls addObject:[NSURL URLWithString:[trackInfo valueForKey:@"Location"]]];
@@ -899,7 +899,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSIndexSet *)disarrangeIndexes:(NSIndexSet *)indexes {
-	NSMutableIndexSet *disarrangedIndexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *disarrangedIndexes = [NSMutableIndexSet new];
 
 	[indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *_Nonnull stop) {
 		NSUInteger arrCount = [[self arrangedObjects] count];
@@ -915,7 +915,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (NSArray *)disarrangeObjects:(NSArray *)objects {
-	NSMutableArray *disarrangedObjects = [[NSMutableArray alloc] init];
+	NSMutableArray *disarrangedObjects = [NSMutableArray new];
 
 	for(PlaylistEntry *pe in [self content]) {
 		if([objects containsObject:pe]) [disarrangedObjects addObject:pe];
@@ -927,7 +927,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 - (NSIndexSet *)rearrangeIndexes:(NSIndexSet *)indexes {
 	if([[self content] count] <= [indexes lastIndex]) return indexes;
 
-	NSMutableIndexSet *rearrangedIndexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *rearrangedIndexes = [NSMutableIndexSet new];
 
 	[indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *_Nonnull stop) {
 		[rearrangedIndexes addIndex:[[self arrangedObjects] indexOfObject:[[self content] objectAtIndex:idx]]];
@@ -965,7 +965,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSUInteger count = [[self arrangedObjects] count];
 	if(index > count) {
 		// Ah, oops, bodge fix
-		__block NSMutableIndexSet *replacementIndexes = [[NSMutableIndexSet alloc] init];
+		__block NSMutableIndexSet *replacementIndexes = [NSMutableIndexSet new];
 		[indexes enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
 			[replacementIndexes addIndexesInRange:NSMakeRange(range.location - index + count, range.length)];
 		}];
@@ -1046,7 +1046,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	DLog(@"Removing indexes: %@", indexes);
 	DLog(@"Current index: %lli", currentEntry.index);
 
-	NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *unarrangedIndexes = [NSMutableIndexSet new];
 	for(PlaylistEntry *pe in objects) {
 		[unarrangedIndexes addIndex:[pe index]];
 		pe.deLeted = YES;
@@ -1099,7 +1099,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	DLog(@"Trashing indexes: %@", indexes);
 	DLog(@"Current index: %lli", currentEntry.index);
 
-	NSMutableIndexSet *unarrangedIndexes = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *unarrangedIndexes = [NSMutableIndexSet new];
 	for(PlaylistEntry *pe in objects) {
 		[unarrangedIndexes addIndex:[pe index]];
 		pe.deLeted = YES;
@@ -1237,8 +1237,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (IBAction)removeDuplicates:(id)sender {
-	NSMutableArray *originals = [[NSMutableArray alloc] init];
-	NSMutableArray *duplicates = [[NSMutableArray alloc] init];
+	NSMutableArray *originals = [NSMutableArray new];
+	NSMutableArray *duplicates = [NSMutableArray new];
 
 	for(PlaylistEntry *pe in [self content]) {
 		if([originals containsObject:pe.url])
@@ -1249,7 +1249,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	if([duplicates count] > 0) {
 		NSArray *arrangedContent = [self arrangedObjects];
-		NSMutableIndexSet *duplicatesIndex = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *duplicatesIndex = [NSMutableIndexSet new];
 		for(PlaylistEntry *pe in duplicates) {
 			[duplicatesIndex addIndex:[arrangedContent indexOfObject:pe]];
 		}
@@ -1258,7 +1258,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (IBAction)removeDeadItems:(id)sender {
-	NSMutableArray *deadItems = [[NSMutableArray alloc] init];
+	NSMutableArray *deadItems = [NSMutableArray new];
 
 	for(PlaylistEntry *pe in [self content]) {
 		NSURL *url = pe.url;
@@ -1269,7 +1269,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	if([deadItems count] > 0) {
 		NSArray *arrangedContent = [self arrangedObjects];
-		NSMutableIndexSet *deadItemsIndex = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *deadItemsIndex = [NSMutableIndexSet new];
 		for(PlaylistEntry *pe in deadItems) {
 			[deadItemsIndex addIndex:[arrangedContent indexOfObject:pe]];
 		}
@@ -1475,7 +1475,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSArray *albums = [newList valueForKey:@"album"];
 	albums = [[NSSet setWithArray:albums] allObjects];
 	NSArray *tempList = [Shuffle shuffleList:albums];
-	temp = [[NSMutableArray alloc] init];
+	temp = [NSMutableArray new];
 	BOOL blankAdded = NO;
 	for(NSString *album in tempList) {
 		NSString *theAlbum = album;
@@ -1656,7 +1656,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[self commitPersistentStore];
 
-	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 	if(currentEntry != nil && !currentEntry.deLeted && currentEntry.index < NSNotFound) [refreshSet addIndex:currentEntry.index];
 	if(pe != nil && !pe.deLeted && pe.index < NSNotFound) [refreshSet addIndex:pe.index];
@@ -1749,7 +1749,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)emptyQueueListUnsynced {
-	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 	for(PlaylistEntry *queueItem in queueList) {
 		queueItem.queued = NO;
@@ -1767,7 +1767,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (IBAction)toggleQueued:(id)sender {
-	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
 		if(queueItem.queued) {
@@ -1805,7 +1805,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (IBAction)removeFromQueue:(id)sender {
-	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
 		queueItem.queued = NO;
@@ -1833,7 +1833,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (IBAction)addToQueue:(id)sender {
-	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 	for(PlaylistEntry *queueItem in [self selectedObjects]) {
 		queueItem.queued = YES;
@@ -1870,7 +1870,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (IBAction)stopAfterSelection:(id)sender {
-	NSMutableIndexSet *refreshSet = [[NSMutableIndexSet alloc] init];
+	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
 	for(PlaylistEntry *pe in [self selectedObjects]) {
 		pe.stopAfter = !pe.stopAfter;
@@ -2043,7 +2043,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 - (IBAction)resetPlaycounts:(id)sender {
 	NSArray *selectedobjects = [self selectedObjects];
 	if([selectedobjects count]) {
-		NSMutableIndexSet *refreshRows = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *refreshRows = [NSMutableIndexSet new];
 
 		for(PlaylistEntry *pe in selectedobjects) {
 			[self resetPlayCountForTrack:pe];
@@ -2067,7 +2067,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 		[self commitPersistentStore];
 
-		NSMutableIndexSet *refreshRows = [[NSMutableIndexSet alloc] init];
+		NSMutableIndexSet *refreshRows = [NSMutableIndexSet new];
 
 		for(PlaylistEntry *pe in selectedobjects) {
 			if(pe.index >= 0 && pe.index < NSNotFound) {

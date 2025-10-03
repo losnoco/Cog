@@ -115,7 +115,7 @@ static void unregisterMotionListener(void) {
 
 + (void)initialize {
 #ifdef MOTION_MANAGER
-	motionManagerLock = [[NSLock alloc] init];
+	motionManagerLock = [NSLock new];
 
 	if(@available(macOS 14, *)) {
 		CMAuthorizationStatus status = [CMHeadphoneMotionManager authorizationStatus];
@@ -130,7 +130,7 @@ static void unregisterMotionListener(void) {
 			ALog(@"Headphone motion status not determined; will prompt for access");
 		}
 
-		motionManager = [[CMHeadphoneMotionManager alloc] init];
+		motionManager = [CMHeadphoneMotionManager new];
 	}
 #endif
 }
@@ -144,7 +144,7 @@ static void unregisterMotionListener(void) {
 
 		rotationMatrix = matrix_identity_float4x4;
 
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -418,7 +418,7 @@ static void unregisterMotionListener(void) {
 
 	[hrtf process:(const float *)[sampleData bytes] sampleCount:(int)frameCount toBuffer:&outBuffer[0]];
 
-	AudioChunk *outputChunk = [[AudioChunk alloc] init];
+	AudioChunk *outputChunk = [AudioChunk new];
 	[outputChunk setFormat:outputFormat];
 	if(outputChannelConfig) {
 		[outputChunk setChannelConfig:outputChannelConfig];

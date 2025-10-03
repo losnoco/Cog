@@ -242,7 +242,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 }
 
 + (NSArray *)fileTypeAssociations {
-	NSMutableArray *ret = [[NSMutableArray alloc] init];
+	NSMutableArray *ret = [NSMutableArray new];
 	[ret addObject:@"Game Music Emu Files"];
 	[ret addObject:@"vg.icns"];
 	[ret addObjectsFromArray:[self fileTypes]];

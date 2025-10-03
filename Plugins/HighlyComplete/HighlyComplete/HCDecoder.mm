@@ -62,14 +62,14 @@
 	static psf_file_container *instance;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		instance = [[self alloc] init];
+		instance = [self new];
 	});
 	return instance;
 }
 - (psf_file_container *)init {
 	if((self = [super init])) {
-		lock = [[NSLock alloc] init];
-		list = [[NSMutableDictionary alloc] init];
+		lock = [NSLock new];
+		list = [NSMutableDictionary new];
 	}
 	return self;
 }
@@ -222,7 +222,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
 	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
-		array = [[NSMutableArray alloc] init];
+		array = [NSMutableArray new];
 		[dict setObject:array forKey:realKey];
 	}
 	if([array count]) {
@@ -1616,7 +1616,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 }
 
 + (NSArray *)fileTypeAssociations {
-	NSMutableArray *ret = [[NSMutableArray alloc] init];
+	NSMutableArray *ret = [NSMutableArray new];
 	[ret addObject:@"PSF Format Files"];
 	[ret addObject:@"vg.icns"];
 	[ret addObjectsFromArray:[self fileTypes]];

@@ -39,7 +39,7 @@ static void cache_run();
 
 static void cache_init() {
 	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore"); // CogAudio
-	Cache_Data_Store = [[dataStoreClass alloc] init];
+	Cache_Data_Store = [dataStoreClass new];
 	Cache_Lock = new std::mutex;
 	Cache_Thread = new std::thread(cache_run);
 }
@@ -165,7 +165,7 @@ static void cache_run() {
 	static PluginController *sharedPluginController = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		sharedPluginController = [[self alloc] init];
+		sharedPluginController = [self new];
 	});
 	return sharedPluginController;
 }
@@ -173,16 +173,16 @@ static void cache_run() {
 - (id)init {
 	self = [super init];
 	if(self) {
-		self.sources = [[NSMutableDictionary alloc] init];
-		self.containers = [[NSMutableDictionary alloc] init];
+		self.sources = [NSMutableDictionary new];
+		self.containers = [NSMutableDictionary new];
 
-		self.metadataReaders = [[NSMutableDictionary alloc] init];
+		self.metadataReaders = [NSMutableDictionary new];
 
-		self.propertiesReadersByExtension = [[NSMutableDictionary alloc] init];
-		self.propertiesReadersByMimeType = [[NSMutableDictionary alloc] init];
+		self.propertiesReadersByExtension = [NSMutableDictionary new];
+		self.propertiesReadersByMimeType = [NSMutableDictionary new];
 
-		self.decodersByExtension = [[NSMutableDictionary alloc] init];
-		self.decodersByMimeType = [[NSMutableDictionary alloc] init];
+		self.decodersByExtension = [NSMutableDictionary new];
+		self.decodersByMimeType = [NSMutableDictionary new];
 
 		[self setup];
 
@@ -272,7 +272,7 @@ static void cache_run() {
 			NSString *ext = [fileType lowercaseString];
 			NSMutableArray *containerSet;
 			if(![containers objectForKey:ext]) {
-				containerSet = [[NSMutableArray alloc] init];
+				containerSet = [NSMutableArray new];
 				[containers setObject:containerSet forKey:ext];
 			} else
 				containerSet = [containers objectForKey:ext];
@@ -288,7 +288,7 @@ static void cache_run() {
 			NSString *ext = [fileType lowercaseString];
 			NSMutableArray *decoders;
 			if(![decodersByExtension objectForKey:ext]) {
-				decoders = [[NSMutableArray alloc] init];
+				decoders = [NSMutableArray new];
 				[decodersByExtension setObject:decoders forKey:ext];
 			} else
 				decoders = [decodersByExtension objectForKey:ext];
@@ -301,7 +301,7 @@ static void cache_run() {
 			NSString *mimetype = [mimeType lowercaseString];
 			NSMutableArray *decoders;
 			if(![decodersByMimeType objectForKey:mimetype]) {
-				decoders = [[NSMutableArray alloc] init];
+				decoders = [NSMutableArray new];
 				[decodersByMimeType setObject:decoders forKey:mimetype];
 			} else
 				decoders = [decodersByMimeType objectForKey:mimetype];
@@ -317,7 +317,7 @@ static void cache_run() {
 			NSString *ext = [fileType lowercaseString];
 			NSMutableArray *readers;
 			if(![metadataReaders objectForKey:ext]) {
-				readers = [[NSMutableArray alloc] init];
+				readers = [NSMutableArray new];
 				[metadataReaders setObject:readers forKey:ext];
 			} else
 				readers = [metadataReaders objectForKey:ext];
@@ -333,7 +333,7 @@ static void cache_run() {
 			NSString *ext = [fileType lowercaseString];
 			NSMutableArray *readers;
 			if(![propertiesReadersByExtension objectForKey:ext]) {
-				readers = [[NSMutableArray alloc] init];
+				readers = [NSMutableArray new];
 				[propertiesReadersByExtension setObject:readers forKey:ext];
 			} else
 				readers = [propertiesReadersByExtension objectForKey:ext];
@@ -346,7 +346,7 @@ static void cache_run() {
 			NSString *mimetype = [mimeType lowercaseString];
 			NSMutableArray *readers;
 			if(![propertiesReadersByMimeType objectForKey:mimetype]) {
-				readers = [[NSMutableArray alloc] init];
+				readers = [NSMutableArray new];
 				[propertiesReadersByMimeType setObject:readers forKey:mimetype];
 			} else
 				readers = [propertiesReadersByMimeType objectForKey:mimetype];
@@ -487,7 +487,7 @@ static NSString *xmlEscapeString(NSString * string) {
 \t<false/>\n\
 </dict>\n\
 </plist>\n";
-    NSMutableArray * decodersRegistered = [[NSMutableArray alloc] init];
+    NSMutableArray * decodersRegistered = [NSMutableArray new];
     
     NSArray * allKeys = [self.decodersByExtension allKeys];
     for (NSString * ext in allKeys) {
@@ -499,7 +499,7 @@ static NSString *xmlEscapeString(NSString * string) {
         }
     }
 
-    NSMutableArray * stringList = [[NSMutableArray alloc] init];
+    NSMutableArray * stringList = [NSMutableArray new];
 
     [stringList addObject:plistHeader];
 
@@ -511,7 +511,7 @@ static NSString *xmlEscapeString(NSString * string) {
         @[@"7Z Archive of VGM Files", @"vg.icns", @"vgm7z"]
     ];
 
-    NSMutableArray * assocTypes = [[NSMutableArray alloc] init];
+    NSMutableArray * assocTypes = [NSMutableArray new];
 
     [assocTypes addObjectsFromArray:staticTypes];
     
@@ -571,7 +571,7 @@ static NSString *xmlEscapeString(NSString * string) {
 
 	Class source = NSClassFromString([sources objectForKey:scheme]);
 
-	return [[source alloc] init];
+	return [source new];
 }
 
 - (NSArray *)urlsForContainerURL:(NSURL *)url {
@@ -656,7 +656,7 @@ static NSString *xmlEscapeString(NSString * string) {
 
 	Class decoder = NSClassFromString(classString);
 
-	return [[decoder alloc] init];
+	return [decoder new];
 }
 
 + (BOOL)isCoverFile:(NSString *)fileName {
@@ -719,7 +719,7 @@ static NSString *xmlEscapeString(NSString * string) {
 	} while(0);
 
 	if(cacheData == nil) {
-		cacheData = [NSDictionary dictionary];
+		cacheData = @{};
 	}
 
 	if(cacheData) {

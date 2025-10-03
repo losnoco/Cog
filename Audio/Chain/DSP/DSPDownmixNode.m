@@ -33,7 +33,7 @@
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 	}
 	return self;
 }
@@ -187,7 +187,7 @@
 
 	[downmix process:[sampleData bytes] frameCount:frameCount output:&outBuffer[0]];
 
-	AudioChunk *outputChunk = [[AudioChunk alloc] init];
+	AudioChunk *outputChunk = [AudioChunk new];
 	[outputChunk setFormat:outputFormat];
 	if(outputChannelConfig) {
 		[outputChunk setChannelConfig:outputChannelConfig];

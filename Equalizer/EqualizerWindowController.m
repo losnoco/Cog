@@ -154,8 +154,8 @@ static void loadPresets(void) {
 			   strncmp(equalizer_presets->u.object.values[1].name, "presets", equalizer_presets->u.object.values[1].name_length) == 0 &&
 			   equalizer_presets->u.object.values[1].value->type == json_array) {
 				// Got the array of presets
-				NSMutableArray *array = [[NSMutableArray alloc] init];
-				NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+				NSMutableArray *array = [NSMutableArray new];
+				NSMutableDictionary *dict = [NSMutableDictionary new];
 
 				size_t count = equalizer_presets->u.object.values[1].value->u.array.length;
 				json_value **values = equalizer_presets->u.object.values[1].value->u.array.values;
@@ -166,12 +166,12 @@ static void loadPresets(void) {
 
 				for(size_t i = 0; i < count; ++i) {
 					if(values[i]->type == json_object) {
-						NSMutableArray<NSString *> *extraGenres = [[NSMutableArray alloc] init];
+						NSMutableArray<NSString *> *extraGenres = [NSMutableArray new];
 						size_t object_items = values[i]->u.object.length;
 						json_object_entry *object_entry = values[i]->u.object.values;
 						size_t requiredItemsPresent = 0;
 						if(object_items >= cog_object_minimum) {
-							NSMutableDictionary *equalizerItem = [[NSMutableDictionary alloc] init];
+							NSMutableDictionary *equalizerItem = [NSMutableDictionary new];
 							for(size_t j = 0; j < object_items; ++j) {
 								NSString *key = [NSString stringWithUTF8String:object_entry[j].name];
 								NSInteger index = [cog_equalizer_items indexOfObject:key];

@@ -42,7 +42,7 @@
 	if(value == nil) return @"";
 
 	if([value isKindOfClass:[NSNumber class]]) {
-		NSDateComponentsFormatter *formatter = [[NSDateComponentsFormatter alloc] init];
+		NSDateComponentsFormatter *formatter = [NSDateComponentsFormatter new];
 		[formatter setAllowedUnits:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond];
 		double secondsValue = [value doubleValue];
 		double fractionValue = fmod(secondsValue, 1.0);

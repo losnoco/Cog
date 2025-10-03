@@ -33,7 +33,7 @@
 		return @[url];
 	}
 
-	NSMutableArray *tracks = [[NSMutableArray alloc] init];
+	NSMutableArray *tracks = [NSMutableArray new];
 
 	id audioSourceClass = NSClassFromString(@"AudioSource");
 	id<CogSource> source = [audioSourceClass audioSourceForURL:url];

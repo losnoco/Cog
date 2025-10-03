@@ -18,8 +18,8 @@
 	self = [super init];
 
 	if(self) {
-		stringStore = [[NSMutableArray alloc] init];
-		artStore = [[NSMutableDictionary alloc] init];
+		stringStore = [NSMutableArray new];
+		artStore = [NSMutableDictionary new];
 	}
 
 	return self;
@@ -54,7 +54,7 @@
 - (NSArray *)coalesceArray:(NSArray *)input {
 	if(input == nil) return input;
 
-	NSMutableArray *array = [[NSMutableArray alloc] init];
+	NSMutableArray *array = [NSMutableArray new];
 	for(NSString *string in input) {
 		[array addObject:[self coalesceString:string]];
 	}

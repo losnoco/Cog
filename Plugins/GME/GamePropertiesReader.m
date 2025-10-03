@@ -24,9 +24,9 @@
 }
 
 + (NSDictionary *)propertiesForSource:(id<CogSource>)source {
-	GameDecoder *decoder = [[GameDecoder alloc] init];
+	GameDecoder *decoder = [GameDecoder new];
 
-	NSDictionary *properties = [NSDictionary dictionary];
+	NSDictionary *properties = @{};
 
 	if([decoder open:source]) {
 		properties = [decoder properties];

@@ -65,7 +65,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		lastPitch = pitch;
 		lastTempo = tempo;
 
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -531,7 +531,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	AudioChunk *outputChunk = nil;
 	if(samplesBuffered > 0) {
-		outputChunk = [[AudioChunk alloc] init];
+		outputChunk = [AudioChunk new];
 		[outputChunk setFormat:inputFormat];
 		if(inputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];

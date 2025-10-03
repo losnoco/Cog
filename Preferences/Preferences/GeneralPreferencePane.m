@@ -28,11 +28,11 @@
 		icon = [[NSImage alloc] initWithContentsOfFile:file];
 	}
 
-	return [[GeneralPreferencePane alloc] initWithView:view title:title icon:icon];
+	return [[self alloc] initWithView:view title:title icon:icon];
 }
 
 - (instancetype)initWithView:(NSView *)contentView title:(NSString *)title icon:(NSImage *)image {
-	self = [[[self class] alloc] init];
+	self = [super init];
 	if(self) {
 		view = contentView;
 		_title = title;

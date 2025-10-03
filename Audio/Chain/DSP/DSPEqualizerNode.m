@@ -95,7 +95,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 		OutputNode *outputNode = c;
 		audioPlayer = [outputNode controller];
 
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -388,7 +388,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 	if(frameCount) {
 		scale_by_volume(&outBuffer[0], frameCount * channels, equalizerPreamp);
 
-		outputChunk = [[AudioChunk alloc] init];
+		outputChunk = [AudioChunk new];
 		[outputChunk setFormat:inputFormat];
 		if(outputChannelConfig) {
 			[outputChunk setChannelConfig:inputChannelConfig];

@@ -22,7 +22,7 @@
 - (void)updatePath {
 	NSArray *urls = [AudioContainer urlsForContainerURL:url];
 
-	NSMutableArray *paths = [[NSMutableArray alloc] init];
+	NSMutableArray *paths = [NSMutableArray new];
 	for(NSURL *u in urls) {
 		ContainedNode *node = [[ContainedNode alloc] initWithDataSource:dataSource url:u];
 		DLog(@"Node: %@", u);

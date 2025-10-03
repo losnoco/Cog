@@ -57,7 +57,7 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 
 	// Make sure to invoke on a background queue
 	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invocation];
-	NSOperationQueue *backgroundQueue = [[NSOperationQueue alloc] init];
+	NSOperationQueue *backgroundQueue = [NSOperationQueue new];
 	[backgroundQueue addOperation:operation];
 }
 #endif
@@ -136,7 +136,7 @@ NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotific
 		progressOverall = nil;
 		progressJob = nil;
 
-		audioPlayer = [[AudioPlayer alloc] init];
+		audioPlayer = [AudioPlayer new];
 		[audioPlayer setDelegate:self];
 		[self setPlaybackStatus:CogStatusStopped];
 	}
@@ -574,7 +574,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		return;
 	fading = YES;
 
-	FadeTimerData *data = [[FadeTimerData alloc] init];
+	FadeTimerData *data = [FadeTimerData new];
 	data.originalVolume = [audioPlayer volume];
 	NSTimer *fadeTimer;
 
@@ -1010,7 +1010,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	MPNowPlayingInfoCenter *defaultCenter = [MPNowPlayingInfoCenter defaultCenter];
 
 	PlaylistEntry *entry = [playlistController currentEntry];
-	NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *songInfo = [NSMutableDictionary new];
 
 	if(entry) {
 		if(entry.title && [entry.title length])

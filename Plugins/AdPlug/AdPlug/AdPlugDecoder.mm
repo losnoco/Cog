@@ -206,7 +206,7 @@ static CAdPlugDatabase *g_database = NULL;
 }
 
 + (NSArray *)fileTypeAssociations {
-	NSMutableArray *ret = [[NSMutableArray alloc] init];
+	NSMutableArray *ret = [NSMutableArray new];
 	[ret addObject:@"AdPlug Files"];
 	[ret addObject:@"vg.icns"];
 	[ret addObjectsFromArray:[self fileTypes]];

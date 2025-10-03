@@ -30,16 +30,16 @@ static NSPredicate *musicOnlyPredicate = nil;
 	                                  @"kMDItemContentTypeTree==\'public.audio\'"];
 
 	// Register value transformers
-	NSValueTransformer *pausingQueryTransformer = [[PausingQueryTransformer alloc] init];
+	NSValueTransformer *pausingQueryTransformer = [PausingQueryTransformer new];
 	[NSValueTransformer setValueTransformer:pausingQueryTransformer forName:@"PausingQueryTransformer"];
 
-	NSValueTransformer *authorToArtistTransformer = [[AuthorToArtistTransformer alloc] init];
+	NSValueTransformer *authorToArtistTransformer = [AuthorToArtistTransformer new];
 	[NSValueTransformer setValueTransformer:authorToArtistTransformer forName:@"AuthorToArtistTransformer"];
 
-	NSValueTransformer *pathToURLTransformer = [[PathToURLTransformer alloc] init];
+	NSValueTransformer *pathToURLTransformer = [PathToURLTransformer new];
 	[NSValueTransformer setValueTransformer:pathToURLTransformer forName:@"PathToURLTransformer"];
 
-	NSValueTransformer *stringToSearchScopeTransformer = [[StringToSearchScopeTransformer alloc] init];
+	NSValueTransformer *stringToSearchScopeTransformer = [StringToSearchScopeTransformer new];
 	[NSValueTransformer setValueTransformer:stringToSearchScopeTransformer forName:@"StringToSearchScopeTransformer"];
 }
 
@@ -55,7 +55,7 @@ static NSPredicate *musicOnlyPredicate = nil;
 
 - (id)init {
 	if(self = [super initWithWindowNibName:@"SpotlightPanel"]) {
-		self.query = [[NSMetadataQuery alloc] init];
+		self.query = [NSMetadataQuery new];
 		[self.query setDelegate:self];
 		self.query.sortDescriptors = @[
 			[[NSSortDescriptor alloc] initWithKey:@"kMDItemAuthors"
