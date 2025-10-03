@@ -25,8 +25,8 @@
 #import <HighlyQuixotic/qsound.h>
 
 #import <mgba-util/vfs.h>
-#import <mgba/core/blip_buf.h>
 #import <mgba/core/core.h>
+#import <mgba-util/audio-buffer.h>
 #import <mgba/core/log.h>
 
 #import <SSEQPlayer/Player.h>
@@ -577,16 +577,7 @@ static int gsf_loader(void *context, const uint8_t *exe, size_t exe_size,
 struct gsf_running_state {
 	struct mAVStream stream;
 	void *rom;
-	int16_t samples[2048 * 2];
-	int buffered;
 };
-
-static void _gsf_postAudioBuffer(struct mAVStream *stream, blip_t *left, blip_t *right) {
-	struct gsf_running_state *state = (struct gsf_running_state *)stream;
-	blip_read_samples(left, state->samples, 2048, true);
-	blip_read_samples(right, state->samples + 1, 2048, true);
-	state->buffered = 2048;
-}
 
 void GSFLogger(struct mLogger *logger, int category, enum mLogLevel level, const char *format, va_list args) {
 	(void)logger;
@@ -971,7 +962,6 @@ static int usf_info(void *context, const char *name, const char *value) {
 		}
 
 		rstate->rom = state.data;
-		rstate->stream.postAudioBuffer = _gsf_postAudioBuffer;
 
 		core->init(core);
 		core->setAVStream(core, &rstate->stream);
@@ -979,14 +969,11 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		core->setAudioBufferSize(core, 2048);
 
-		blip_set_rates(core->getAudioChannel(core, 0), core->frequency(core), 44100);
-		blip_set_rates(core->getAudioChannel(core, 1), core->frequency(core), 44100);
-
 		struct mCoreOptions opts = {
 			.useBios = false,
 			.skipBios = true,
 			.volume = 0x100,
-			.sampleRate = 44100,
+			.sampleRate = 32768,
 		};
 
 		mCoreConfigLoadDefaults(&core->config, &opts);
@@ -1200,7 +1187,12 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 	if(type == 2)
 		sampleRate = 48000;
-	else if(type == 0x41)
+	else if(type == 0x22) {
+		if(![self initializeDecoder])
+			return NO;
+		struct mCore *core = (struct mCore *)emulatorCore;
+		sampleRate = core->audioSampleRate(core);
+	} else if(type == 0x41)
 		sampleRate = 24038;
 
 	tagLengthMs = info.tag_length_ms;
@@ -1266,32 +1258,27 @@ static int usf_info(void *context, const char *name, const char *value) {
 		}
 	} else if(type == 0x22) {
 		struct mCore *core = (struct mCore *)emulatorCore;
-		struct gsf_running_state *rstate = (struct gsf_running_state *)emulatorExtra;
 
-		unsigned long frames_to_render = frames;
+		size_t howmany = frames;
 
 		do {
-			unsigned long frames_rendered = rstate->buffered;
-
-			if(frames_rendered >= frames_to_render) {
-				memcpy(buf, rstate->samples, frames_to_render * 4);
-				frames_rendered -= frames_to_render;
-				memcpy(rstate->samples, rstate->samples + frames_to_render * 2, frames_rendered * 4);
-				frames_to_render = 0;
-			} else {
-				memcpy(buf, rstate->samples, frames_rendered * 4);
-				buf = ((uint8_t *)buf) + frames_rendered * 4;
+			size_t frames_to_render = howmany;
+			if(frames_to_render > 2048)
+				frames_to_render = 2048;
+			struct mAudioBuffer *buffer = core->getAudioBuffer(core);
+			size_t frames_rendered = mAudioBufferRead(buffer, (int16_t *)buf, frames_to_render);
+			if(frames_rendered) {
+				buf = (void *)(((int16_t *)buf) + frames_rendered * 2);
 				frames_to_render -= frames_rendered;
-				frames_rendered = 0;
+				howmany -= frames_rendered;
 			}
 
-			rstate->buffered = (int)frames_rendered;
-
-			if(frames_to_render) {
-				while(!rstate->buffered)
+			if(howmany) {
+				while(!mAudioBufferAvailable(buffer)) {
 					core->runFrame(core);
+				}
 			}
-		} while(frames_to_render);
+		} while(howmany);
 	} else if(type == 0x24) {
 		NDS_state *state = (NDS_state *)emulatorCore;
 		state_render(state, (s16 *)buf, frames);
@@ -1403,31 +1390,29 @@ static int usf_info(void *context, const char *name, const char *value) {
 		emulatorCore = nil;
 	}
 
-	if(type == 2 && emulatorExtra) {
-		psf2fs_delete(emulatorExtra);
-		emulatorExtra = nil;
-	} else if(type == 0x22 && emulatorExtra) {
-		struct gsf_running_state *rstate = (struct gsf_running_state *)emulatorExtra;
-		free(rstate->rom);
-		free(rstate);
-		emulatorExtra = nil;
-	} else if(type == 0x24 && emulatorExtra) {
-		free(emulatorExtra);
-		emulatorExtra = nil;
-	} else if(type == 0x25 && emulatorExtra) {
-		try {
-			struct ncsf_loader_state *state = (struct ncsf_loader_state *)emulatorExtra;
-			delete state;
-		} catch (std::exception &e) {
-			ALog(@"Exception caught deleting NCSF state: %s", e.what());
+	if(emulatorExtra) {
+		if(type == 2) {
+			psf2fs_delete(emulatorExtra);
+		} else if(type == 0x22) {
+			struct gsf_running_state *rstate = (struct gsf_running_state *)emulatorExtra;
+			free(rstate->rom);
+			free(rstate);
+		} else if(type == 0x24) {
+			free(emulatorExtra);
+		} else if(type == 0x25) {
+			try {
+				struct ncsf_loader_state *state = (struct ncsf_loader_state *)emulatorExtra;
+				delete state;
+			} catch (std::exception &e) {
+				ALog(@"Exception caught deleting NCSF state: %s", e.what());
+			}
+		} else if(type == 0x41) {
+			struct qsf_loader_state *state = (struct qsf_loader_state *)emulatorExtra;
+			free(state->key);
+			free(state->z80_rom);
+			free(state->sample_rom);
+			free(state);
 		}
-		emulatorExtra = nil;
-	} else if(type == 0x41 && emulatorExtra) {
-		struct qsf_loader_state *state = (struct qsf_loader_state *)emulatorExtra;
-		free(state->key);
-		free(state->z80_rom);
-		free(state->sample_rom);
-		free(state);
 		emulatorExtra = nil;
 	}
 }
@@ -1490,25 +1475,26 @@ static int usf_info(void *context, const char *name, const char *value) {
 		} while(framesRead < frame);
 	} else if(type == 0x22) {
 		struct mCore *core = (struct mCore *)emulatorCore;
-		struct gsf_running_state *rstate = (struct gsf_running_state *)emulatorExtra;
 
-		long frames_to_run = frame - framesRead;
+		size_t howmany = frame - framesRead;
+
+		struct mAudioBuffer *buffer = core->getAudioBuffer(core);
+
+		int16_t temp[2048 * 2];
 
 		do {
-			if(frames_to_run >= rstate->buffered) {
-				frames_to_run -= rstate->buffered;
-				rstate->buffered = 0;
-			} else {
-				rstate->buffered -= frames_to_run;
-				memcpy(rstate->samples, rstate->samples + frames_to_run * 4, rstate->buffered * 4);
-				frames_to_run = 0;
-			}
+			size_t frames_to_run = howmany;
+			if(frames_to_run > 2048)
+				frames_to_run = 2048;
 
-			if(frames_to_run) {
-				while(!rstate->buffered)
+			size_t removed = mAudioBufferRead(buffer, temp, frames_to_run);
+			howmany -= removed;
+
+			if(howmany) {
+				while(!mAudioBufferAvailable(buffer))
 					core->runFrame(core);
 			}
-		} while(frames_to_run);
+		} while(howmany);
 
 		framesRead = frame;
 	} else if(type == 0x24) {
