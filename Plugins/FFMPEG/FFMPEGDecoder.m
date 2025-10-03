@@ -216,7 +216,7 @@ static uint8_t reverse_bits[0x100];
 	attachedPicIndex = -1;
 	AVCodecParameters *codecPar;
 
-	NSMutableArray *pictures = [[NSMutableArray alloc] init];
+	NSMutableArray *pictures = [NSMutableArray new];
 
 	for(i = 0; i < formatCtx->nb_streams; i++) {
 		stream = formatCtx->streams[i];
@@ -552,8 +552,8 @@ static uint8_t reverse_bits[0x100];
 
 	seekedToStart = !seekable;
 
-	id3Metadata = [[NSDictionary alloc] init];
-	metaDict = [NSDictionary dictionary];
+	id3Metadata = @{};
+	metaDict = @{};
 	albumArt = [NSData data];
 	metadataUpdated = NO;
 	[self updateMetadata];
@@ -609,14 +609,14 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
 	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
-		array = [[NSMutableArray alloc] init];
+		array = [NSMutableArray new];
 		[dict setObject:array forKey:realKey];
 	}
 	[array addObject:value];
 }
 
 - (void)updateMetadata {
-	NSMutableDictionary *_metaDict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *_metaDict = [NSMutableDictionary new];
 	const AVDictionaryEntry *tag = NULL;
 	for(size_t i = 0; i < 4; ++i) {
 		AVDictionary *metadata;
@@ -699,7 +699,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 				} else if(!strcasecmp(tag->key, "iTunNORM")) {
 					NSString *tagString = guess_encoding_of_string(tag->value);
 					NSArray *tag = [tagString componentsSeparatedByString:@" "];
-					NSMutableArray *wantedTag = [[NSMutableArray alloc] init];
+					NSMutableArray *wantedTag = [NSMutableArray new];
 					for(size_t i = 0; i < [tag count]; ++i) {
 						NSString *tagValue = tag[i];
 						if([tagValue length] == 8) {

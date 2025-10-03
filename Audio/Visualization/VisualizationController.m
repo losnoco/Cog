@@ -29,7 +29,7 @@
 	static VisualizationController *_sharedController = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		_sharedController = [[self alloc] init];
+		_sharedController = [self new];
 	});
 	return _sharedController;
 }

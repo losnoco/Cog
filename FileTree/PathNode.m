@@ -75,8 +75,8 @@ NSURL *resolveAliases(NSURL *url) {
 }
 
 - (void)processPaths:(NSArray *)contents {
-	NSMutableArray *newSubpathsDirs = [[NSMutableArray alloc] init];
-	NSMutableArray *newSubpaths = [[NSMutableArray alloc] init];
+	NSMutableArray *newSubpathsDirs = [NSMutableArray new];
+	NSMutableArray *newSubpaths = [NSMutableArray new];
 
 	for(NSString *s in contents) {
 		if([s characterAtIndex:0] == '.') {
@@ -137,7 +137,7 @@ NSURL *resolveAliases(NSURL *url) {
 - (void)setSubpaths:(NSArray *)s {
 	subpaths = s;
 
-	subpathsLookup = [[NSMutableDictionary alloc] init];
+	subpathsLookup = [NSMutableDictionary new];
 	for(PathNode *node in s) {
 		[subpathsLookup setObject:node forKey:node.lastPathComponent];
 	}

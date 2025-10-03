@@ -21,7 +21,7 @@ void showSentryConsent(NSWindow *window) {
 	if(!askedConsent) {
 		[window orderFront:window];
 
-		NSAlert *alert = [[NSAlert alloc] init];
+		NSAlert *alert = [NSAlert new];
 		[alert setMessageText:NSLocalizedString(@"SentryConsentTitle", @"")];
 		[alert setInformativeText:NSLocalizedString(@"SentryConsentText", @"")];
 		[alert addButtonWithTitle:NSLocalizedString(@"ConsentYes",@"")];

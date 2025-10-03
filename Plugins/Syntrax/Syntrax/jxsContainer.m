@@ -77,7 +77,7 @@
 
 	jxsfile_freeSong(synSong);
 
-	NSMutableArray *tracks = [[NSMutableArray alloc] init];
+	NSMutableArray *tracks = [NSMutableArray new];
 
 	if ( subsongs ) {
 		for (i = 0; i < subsongs; i++) {

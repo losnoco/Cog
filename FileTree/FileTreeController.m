@@ -19,7 +19,7 @@
 - (void)doAddToPlaylist:(id)sender origin:(URLOrigin)origin {
 	NSUInteger index;
 	NSIndexSet *selectedIndexes = [outlineView selectedRowIndexes];
-	NSMutableArray *urls = [[NSMutableArray alloc] init];
+	NSMutableArray *urls = [NSMutableArray new];
 
 	for(index = [selectedIndexes firstIndex];
 	    index != NSNotFound; index = [selectedIndexes indexGreaterThanIndex:index]) {

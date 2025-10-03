@@ -46,7 +46,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
 		enableFSurround = [defaults boolForKey:@"enableFSurround"];
 
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -262,7 +262,7 @@ static void * kDSPFSurroundNodeContext = &kDSPFSurroundNodeContext;
 
 	AudioChunk *outputChunk = nil;
 	if(samplesRendered) {
-		outputChunk = [[AudioChunk alloc] init];
+		outputChunk = [AudioChunk new];
 		[outputChunk setFormat:outputFormat];
 		if(outputChannelConfig) {
 			[outputChunk setChannelConfig:outputChannelConfig];

@@ -134,7 +134,7 @@ static impulseSetCache *_sharedController = nil;
 + (impulseSetCache *)sharedController {
 	@synchronized(self) {
 		if(!_sharedController) {
-			_sharedController = [[impulseSetCache alloc] init];
+			_sharedController = [impulseSetCache new];
 		}
 	}
 	return _sharedController;

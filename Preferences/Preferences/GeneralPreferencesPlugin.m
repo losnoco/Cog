@@ -15,29 +15,29 @@
 @implementation GeneralPreferencesPlugin
 
 + (void)initialize {
-	NSValueTransformer *pathToFileTransformer = [[PathToFileTransformer alloc] init];
+	NSValueTransformer *pathToFileTransformer = [PathToFileTransformer new];
 	[NSValueTransformer setValueTransformer:pathToFileTransformer
 	                                forName:@"PathToFileTransformer"];
 
-	NSValueTransformer *colorToValueTransformer = [[ColorToValueTransformer alloc] init];
+	NSValueTransformer *colorToValueTransformer = [ColorToValueTransformer new];
 	[NSValueTransformer setValueTransformer:colorToValueTransformer
 	                                forName:@"ColorToValueTransformer"];
 
-	NSValueTransformer *timeIntervalToStringTransformer = [[TimeIntervalToStringTransformer alloc] init];
+	NSValueTransformer *timeIntervalToStringTransformer = [TimeIntervalToStringTransformer new];
 	[NSValueTransformer setValueTransformer:timeIntervalToStringTransformer
 	                                forName:@"TimeIntervalToStringTransformer"];
 
-	NSValueTransformer *rubberbandEngineR3Transformer = [[RubberbandEngineR3Transformer alloc] init];
+	NSValueTransformer *rubberbandEngineR3Transformer = [RubberbandEngineR3Transformer new];
 	[NSValueTransformer setValueTransformer:rubberbandEngineR3Transformer
 									forName:@"RubberbandEngineR3Transformer"];
 
-	NSValueTransformer *rubberbandEngineEnabledTransformer = [[RubberbandEngineEnabledTransformer alloc] init];
+	NSValueTransformer *rubberbandEngineEnabledTransformer = [RubberbandEngineEnabledTransformer new];
 	[NSValueTransformer setValueTransformer:rubberbandEngineEnabledTransformer
 									forName:@"RubberbandEngineEnabledTransformer"];
 }
 
 + (NSArray *)preferencePanes {
-	GeneralPreferencesPlugin *plugin = [[GeneralPreferencesPlugin alloc] init];
+	GeneralPreferencesPlugin *plugin = [GeneralPreferencesPlugin new];
 	[[NSBundle bundleWithIdentifier:@"org.cogx.cog.preferences"] loadNibNamed:@"Preferences"
 	                                                                    owner:plugin
 	                                                          topLevelObjects:nil];

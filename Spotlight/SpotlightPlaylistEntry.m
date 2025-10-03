@@ -43,7 +43,7 @@ extern NSPersistentContainer *kPersistentContainer;
 
 		entry.deLeted = YES;
 
-		NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *dict = [NSMutableDictionary new];
 
 		// loop through the keys we want to extract
 		for(NSString *mdKey in importKeys) {

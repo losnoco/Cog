@@ -15,7 +15,7 @@
 	self = [super init];
 
 	if(self) {
-		chunkData = [[NSMutableData alloc] init];
+		chunkData = [NSMutableData new];
 		formatAssigned = NO;
 		lossless = NO;
 		hdcd = NO;
@@ -31,7 +31,7 @@
 	self = [super init];
 
 	if(self) {
-		chunkData = [[NSMutableData alloc] init];
+		chunkData = [NSMutableData new];
 		[self setFormat:propertiesToASBD(properties)];
 		lossless = [[properties objectForKey:@"encoding"] isEqualToString:@"lossless"];
 		hdcd = NO;
@@ -44,7 +44,7 @@
 }
 
 - (AudioChunk *)copy {
-	AudioChunk *outputChunk = [[AudioChunk alloc] init];
+	AudioChunk *outputChunk = [AudioChunk new];
 	[outputChunk setFormat:format];
 	[outputChunk setChannelConfig:channelConfig];
 	if(hdcd) [outputChunk setHDCD];

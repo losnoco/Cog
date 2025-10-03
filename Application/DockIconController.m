@@ -180,7 +180,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 
 		[newDockImage unlockFocus];
 
-		imageView = [[NSImageView alloc] init];
+		imageView = [NSImageView new];
 		[imageView setImage:newDockImage];
 		[dockTile setContentView:imageView];
 
@@ -199,7 +199,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 
 	if(displayProgress) {
 		if(!imageView) {
-			imageView = [[NSImageView alloc] init];
+			imageView = [NSImageView new];
 			[imageView setImage:[NSApp applicationIconImage]];
 			[dockTile setContentView:imageView];
 		}

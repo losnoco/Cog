@@ -223,7 +223,7 @@
 
 			return ret;
 		} else {
-			return [[AudioChunk alloc] init];
+			return [AudioChunk new];
 		}
 	}
 }

@@ -24,9 +24,9 @@
 }
 
 + (NSDictionary *)propertiesForSource:(id<CogSource>)source {
-	libvgmDecoder *decoder = [[libvgmDecoder alloc] init];
+	libvgmDecoder *decoder = [libvgmDecoder new];
 
-	NSDictionary *properties = [NSDictionary dictionary];
+	NSDictionary *properties = @{};
 
 	if([decoder open:source]) {
 		properties = [decoder properties];

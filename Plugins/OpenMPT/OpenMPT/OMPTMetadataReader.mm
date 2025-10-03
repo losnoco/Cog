@@ -31,7 +31,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
 	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
-		array = [[NSMutableArray alloc] init];
+		array = [NSMutableArray new];
 		[dict setObject:array forKey:realKey];
 	}
 	[array addObject:value];
@@ -65,7 +65,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		std::map<std::string, std::string> ctls;
 		openmpt::module *mod = new openmpt::module(data, std::clog, ctls);
 
-		NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *dict = [NSMutableDictionary new];
 
 		std::vector<std::string> keys = mod->get_metadata_keys();
 

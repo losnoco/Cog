@@ -87,7 +87,7 @@ static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
 - (BOOL)open:(id<CogSource>)source {
 	for(NSString *classString in theDecoders) {
 		Class decoder = NSClassFromString(classString);
-		theDecoder = [[decoder alloc] init];
+		theDecoder = [decoder new];
 		[self registerObservers];
 		if([theDecoder open:source])
 			return YES;

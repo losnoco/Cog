@@ -19,7 +19,7 @@
 @implementation TagLibID3v2Reader
 
 + (NSDictionary *)metadataForTag:(NSData *)tagBlock {
-	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *dict = [NSMutableDictionary new];
 
 	//	if ( !*TagLib::ascii_encoding ) {
 	//		NSStringEncoding enc = [NSString defaultCStringEncoding];
@@ -172,7 +172,7 @@
 		}
 	} catch (std::exception &e) {
 		ALog(@"Exception caught processing ID3v2 tag with TagLib: %s", e.what());
-		return [NSDictionary dictionary];
+		return @{};
 	}
 
 	return [NSDictionary dictionaryWithDictionary:dict];

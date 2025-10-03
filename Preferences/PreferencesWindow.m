@@ -33,8 +33,8 @@
 	                          backing:NSBackingStoreBuffered
 	                            defer:NO];
 	if(self) {
-		preferencePaneOrder = [[NSMutableArray alloc] init];
-		preferencePanes = [[NSMutableDictionary alloc] init];
+		preferencePaneOrder = [NSMutableArray new];
+		preferencePanes = [NSMutableDictionary new];
 
 		for(id<PreferencePane> pane in panes) {
 			[preferencePaneOrder addObject:[pane title]];
@@ -102,7 +102,7 @@
 }
 
 - (void)createToolbar {
-	toolbarItems = [[NSMutableDictionary alloc] init];
+	toolbarItems = [NSMutableDictionary new];
 	for(NSString *name in preferencePaneOrder) {
 		id<PreferencePane> pane = preferencePanes[name];
 

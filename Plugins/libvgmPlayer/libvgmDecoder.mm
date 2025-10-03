@@ -328,7 +328,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 }
 
 + (NSArray*)fileTypeAssociations {
-	NSMutableArray* ret = [[NSMutableArray alloc] init];
+	NSMutableArray* ret = [NSMutableArray new];
 	[ret addObject:@"libvgm Files"];
 	[ret addObject:@"vg.icns"];
 	[ret addObjectsFromArray:[self fileTypes]];

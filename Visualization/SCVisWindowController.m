@@ -37,7 +37,7 @@ static void *kSCVisWindowContext = &kSCVisWindowContext;
 
 - (void)startRunning {
 	if(!self.sc55View) {
-		self.sc55View = [[SCView alloc] init];
+		self.sc55View = [SCView new];
 		if(self.sc55View) {
 			NSWindow *window = self.window;
 			NSRect contentRect = self.sc55View.bounds;

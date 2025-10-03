@@ -20,7 +20,7 @@ static double reverseSpeedScale(double input, double min, double max) {
 }
 
 - (void)awakeFromNib {
-	popover = [[NSPopover alloc] init];
+	popover = [NSPopover new];
 	popover.behavior = NSPopoverBehaviorTransient;
 	[popover setContentSize:_popView.bounds.size];
 }
@@ -29,7 +29,7 @@ static double reverseSpeedScale(double input, double min, double max) {
 	[popover close];
 
 	popover.contentViewController = nil;
-	viewController = [[NSViewController alloc] init];
+	viewController = [NSViewController new];
 	viewController.view = _popView;
 	popover.contentViewController = viewController;
 

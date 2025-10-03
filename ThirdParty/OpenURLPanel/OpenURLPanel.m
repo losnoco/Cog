@@ -7,7 +7,7 @@
  "QTKit Programming Guide" documentation.
  
  
- Copyright:	 ï¿½ Copyright 2004, 2005 Apple Computer, Inc.
+ Copyright:	 © Copyright 2004, 2005 Apple Computer, Inc.
  All rights reserved.
  
  Disclaimer: IMPORTANT:	This Apple software is supplied to you by
@@ -19,7 +19,7 @@
  
  In consideration of your agreement to abide by the following terms, and
  subject to these terms, Apple grants you a personal, non-exclusive
- license, under Appleï¿½s copyrights in this original Apple software (the
+ license, under AppleÕs copyrights in this original Apple software (the
  "Apple Software"), to use, reproduce, modify and redistribute the Apple
  Software, with or without modifications, in source and/or binary forms;
  provided that if you redistribute the Apple Software in its entirety and
@@ -68,7 +68,7 @@ static OpenURLPanel *openURLPanel = nil;
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		openURLPanel = [[self alloc] init];
+		openURLPanel = [self new];
 	});
     
     return openURLPanel;
@@ -204,7 +204,7 @@ typedef id (*myIMP)(id, SEL, ...);
         }
         else
         {
-            NSAlert *alert = [[NSAlert alloc] init];
+            NSAlert *alert = [NSAlert new];
             alert.messageText = NSLocalizedString(@"InvalidURLShort", @"");
             alert.informativeText = NSLocalizedString(@"InvalidURLLong", @"");
             if (mIsSheet)

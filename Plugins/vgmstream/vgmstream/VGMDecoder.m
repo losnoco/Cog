@@ -40,14 +40,14 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	static VGMInfoCache *sharedMyCache = nil;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		sharedMyCache = [[self alloc] init];
+		sharedMyCache = [self new];
 	});
 	return sharedMyCache;
 }
 
 - (id)init {
 	if(self = [super init]) {
-		storage = [[NSMutableDictionary alloc] init];
+		storage = [NSMutableDictionary new];
 	}
 	return self;
 }
@@ -369,7 +369,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 + (NSArray *)fileTypes {
-	NSMutableArray *array = [[NSMutableArray alloc] init];
+	NSMutableArray *array = [NSMutableArray new];
 
 	int count;
 	const char **formats = libvgmstream_get_extensions(&count);
@@ -390,7 +390,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 }
 
 + (NSArray *)fileTypeAssociations {
-	NSMutableArray *ret = [[NSMutableArray alloc] init];
+	NSMutableArray *ret = [NSMutableArray new];
 	[ret addObject:@"VGMStream Files"];
 	[ret addObject:@"vg.icns"];
 	[ret addObjectsFromArray:[self fileTypes]];

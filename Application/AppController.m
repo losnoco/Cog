@@ -51,40 +51,40 @@ static AppController *kAppController = nil;
 
 + (void)initialize {
 	// Register transformers
-	NSValueTransformer *stringToURLTransformer = [[StringToURLTransformer alloc] init];
+	NSValueTransformer *stringToURLTransformer = [StringToURLTransformer new];
 	[NSValueTransformer setValueTransformer:stringToURLTransformer
 	                                forName:@"StringToURLTransformer"];
 
 	NSValueTransformer *fontSizetoLineHeightTransformer =
-	[[FontSizetoLineHeightTransformer alloc] init];
+	[FontSizetoLineHeightTransformer new];
 	[NSValueTransformer setValueTransformer:fontSizetoLineHeightTransformer
 	                                forName:@"FontSizetoLineHeightTransformer"];
 
-	NSValueTransformer *miniModeMenuTitleTransformer = [[MiniModeMenuTitleTransformer alloc] init];
+	NSValueTransformer *miniModeMenuTitleTransformer = [MiniModeMenuTitleTransformer new];
 	[NSValueTransformer setValueTransformer:miniModeMenuTitleTransformer
 	                                forName:@"MiniModeMenuTitleTransformer"];
 
-	NSValueTransformer *colorToValueTransformer = [[ColorToValueTransformer alloc] init];
+	NSValueTransformer *colorToValueTransformer = [ColorToValueTransformer new];
 	[NSValueTransformer setValueTransformer:colorToValueTransformer
 	                                forName:@"ColorToValueTransformer"];
 
-	NSValueTransformer *totalTimeTransformer = [[TotalTimeTransformer alloc] init];
+	NSValueTransformer *totalTimeTransformer = [TotalTimeTransformer new];
 	[NSValueTransformer setValueTransformer:totalTimeTransformer
 	                                forName:@"TotalTimeTransformer"];
 	
-	NSValueTransformer *numberHertzToStringTransformer = [[NumberHertzToStringTransformer alloc] init];
+	NSValueTransformer *numberHertzToStringTransformer = [NumberHertzToStringTransformer new];
 	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
 									forName:@"NumberHertzToStringTransformer"];
 
-	NSValueTransformer *rubberbandEngineEnabledTransformer = [[RubberbandEngineEnabledTransformer alloc] init];
+	NSValueTransformer *rubberbandEngineEnabledTransformer = [RubberbandEngineEnabledTransformer new];
 	[NSValueTransformer setValueTransformer:rubberbandEngineEnabledTransformer
 									forName:@"RubberbandEngineEnabledTransformer"];
 
-	NSValueTransformer *rubberbandEngineHiddenTransformer = [[RubberbandEngineHiddenTransformer alloc] init];
+	NSValueTransformer *rubberbandEngineHiddenTransformer = [RubberbandEngineHiddenTransformer new];
 	[NSValueTransformer setValueTransformer:rubberbandEngineHiddenTransformer
 									forName:@"RubberbandEngineHiddenTransformer"];
 
-	NSValueTransformer *maybeSecureValueDataTransformer = [[MaybeSecureValueDataTransformer alloc] init];
+	NSValueTransformer *maybeSecureValueDataTransformer = [MaybeSecureValueDataTransformer new];
 	[NSValueTransformer setValueTransformer:maybeSecureValueDataTransformer
 									forName:@"MaybeSecureValueDataTransformer"];
 }
@@ -93,7 +93,7 @@ static AppController *kAppController = nil;
 	if(self) {
 		[self initDefaults];
 
-		queue = [[NSOperationQueue alloc] init];
+		queue = [NSOperationQueue new];
 
 		kAppController = self;
 	}
@@ -298,7 +298,7 @@ static BOOL consentLastEnabled = NO;
 	if(expandedNodesArray) {
 		expandedNodes = [[NSMutableSet alloc] initWithArray:expandedNodesArray];
 	} else {
-		expandedNodes = [[NSMutableSet alloc] init];
+		expandedNodes = [NSMutableSet new];
 	}
 
 	DLog(@"Nodes to expand: %@", [expandedNodes description]);
@@ -361,7 +361,7 @@ static BOOL consentLastEnabled = NO;
 					// And now to set up user feedback prompting
 					options.onCrashedLastRun = ^void(SentryEvent * _Nonnull event) {
 						// capture user feedback
-						FeedbackController *fbcon = [[FeedbackController alloc] init];
+						FeedbackController *fbcon = [FeedbackController new];
 						[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
 						if([fbcon waitForCompletion]) {
 							SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];

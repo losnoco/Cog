@@ -46,7 +46,7 @@
 - (void)setSubpaths:(id)s {
 	subpaths = s;
 
-	subpathsLookup = [[NSMutableDictionary alloc] init];
+	subpathsLookup = [NSMutableDictionary new];
 	for(PathNode *node in s) {
 		[subpathsLookup setObject:node forKey:node.lastPathComponent];
 	}

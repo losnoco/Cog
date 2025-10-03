@@ -560,7 +560,7 @@ static void http_stream_reset(HTTPSource *fp) {
 - (BOOL)open:(NSURL *)url {
 	URL = url;
 
-	mutex = [[NSLock alloc] init];
+	mutex = [NSLock new];
 
 	need_abort = NO;
 

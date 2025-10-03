@@ -87,7 +87,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 + (id)sharedSandboxBroker {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		kSharedSandboxBroker = [[self alloc] init];
+		kSharedSandboxBroker = [self new];
 	});
 	return kSharedSandboxBroker;
 }
@@ -118,7 +118,7 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 - (id)init {
 	self = [super init];
 	if(self) {
-		storage = [[NSMutableArray alloc] init];
+		storage = [NSMutableArray new];
 	}
 
 	return self;
@@ -347,7 +347,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 			static BOOL warnedYet = NO;
 
 			if(!warnedYet) {
-				NSAlert *alert = [[NSAlert alloc] init];
+				NSAlert *alert = [NSAlert new];
 				[alert setMessageText:NSLocalizedString(@"GrantPathTitle", @"Title of file dialog for granting folder access")];
 				[alert setInformativeText:NSLocalizedString(@"GrantPathMessage", @"Message to new users regarding file permissions")];
 				[alert addButtonWithTitle:NSLocalizedString(@"GrantPathOK", @"OK button text")];

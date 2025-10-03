@@ -30,16 +30,16 @@ static void *kPitchSliderContext = &kPitchSliderContext;
 
 - (void)awakeFromNib {
 	wasInsideSnapRange = NO;
-	textView = [[NSText alloc] init];
+	textView = [NSText new];
 	[textView setFrame:NSMakeRect(0, 0, 50, 20)];
 	textView.drawsBackground = NO;
 	textView.editable = NO;
 	textView.alignment = NSTextAlignmentCenter;
 
-	NSViewController *viewController = [[NSViewController alloc] init];
+	NSViewController *viewController = [NSViewController new];
 	viewController.view = textView;
 
-	popover = [[NSPopover alloc] init];
+	popover = [NSPopover new];
 	popover.contentViewController = viewController;
 	// Don't hide the popover automatically.
 	popover.behavior = NSPopoverBehaviorTransient;

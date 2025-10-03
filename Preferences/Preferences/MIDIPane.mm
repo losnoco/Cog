@@ -135,7 +135,7 @@ static OSType getOSType(const char *in_) {
 	NSError *error = nil;
 	[[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
 
-	NSAlert *alert = [[NSAlert alloc] init];
+	NSAlert *alert = [NSAlert new];
 	[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
 	if(error) {
 		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedPrefString(dir ? @"NukedErrorDirExistsError" : @"NukedErrorFileExistsError"), error]];
@@ -208,7 +208,7 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 	NSError *error = nil;
 	[defaultManager createDirectoryAtPath:romPath withIntermediateDirectories:YES attributes:nil error:&error];
 	if(error) {
-		NSAlert *alert = [[NSAlert alloc] init];
+		NSAlert *alert = [NSAlert new];
 		[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
 		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedPrefString(@"NukedErrorDirCreateError"), error]];
 		[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];
@@ -238,7 +238,7 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 			NSString *currentDevice = nil;
 			NSDictionary *devices = [self nukedDevices];
 			NSDictionary *romSets = [self nukedRomsets];
-			NSMutableDictionary *foundSets = [[NSMutableDictionary alloc] init];
+			NSMutableDictionary *foundSets = [NSMutableDictionary new];
 
 			while(!fex_done(fex)) {
 				const void *data = NULL;
@@ -267,7 +267,7 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 			   [devices[currentDevice][@"count"] integerValue] != [foundSets count]) {
 				fex_close(fex);
 
-				NSAlert *alert = [[NSAlert alloc] init];
+				NSAlert *alert = [NSAlert new];
 				[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
 				[alert setInformativeText:NSLocalizedPrefString(@"NukedErrorBrokenSet")];
 				[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];
@@ -286,7 +286,7 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 				[defaultManager createFileAtPath:itemPath contents:obj[@"data"] attributes:nil];
 			}];
 
-			NSAlert *alert = [[NSAlert alloc] init];
+			NSAlert *alert = [NSAlert new];
 			[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
 			[alert setInformativeText:[NSString stringWithFormat:NSLocalizedPrefString(@"NukedInfoSetInstalled"), currentDevice]];
 			[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];

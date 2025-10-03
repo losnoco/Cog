@@ -30,7 +30,7 @@ static uint64_t _Node_serial;
 + (void)initialize {
 	@synchronized (_Node_lock) {
 		if(!_Node_lock) {
-			_Node_lock = [[NSLock alloc] init];
+			_Node_lock = [NSLock new];
 			_Node_serial = 0;
 		}
 	}
@@ -57,10 +57,10 @@ static uint64_t _Node_serial;
 	self = [super init];
 	if(self) {
 		buffer = [[ChunkList alloc] initWithMaximumDuration:10.0];
-		writeSemaphore = [[Semaphore alloc] init];
-		readSemaphore = [[Semaphore alloc] init];
+		writeSemaphore = [Semaphore new];
+		readSemaphore = [Semaphore new];
 
-		accessLock = [[NSLock alloc] init];
+		accessLock = [NSLock new];
 
 		initialBufferFilled = NO;
 
@@ -124,7 +124,7 @@ static uint64_t _Node_serial;
 
 	[accessLock lock];
 
-	AudioChunk *chunk = [[AudioChunk alloc] init];
+	AudioChunk *chunk = [AudioChunk new];
 	[chunk setFormat:nodeFormat];
 	if(nodeChannelConfig) {
 		[chunk setChannelConfig:nodeChannelConfig];
@@ -327,7 +327,7 @@ static uint64_t _Node_serial;
 	inRead = YES;
 	if(!shouldContinue || [self paused]) {
 		inRead = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	[accessLock lock];
@@ -346,13 +346,13 @@ static uint64_t _Node_serial;
 	if(!shouldContinue || [self paused]) {
 		[accessLock unlock];
 		inRead = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
 		[accessLock unlock];
 		inRead = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	if(!resetBarrier && [previousNode shouldReset] == YES) {
@@ -396,7 +396,7 @@ static uint64_t _Node_serial;
 	inRead = YES;
 	if(!shouldContinue || [self paused]) {
 		inRead = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	[accessLock lock];
@@ -415,13 +415,13 @@ static uint64_t _Node_serial;
 	if(!shouldContinue || [self paused]) {
 		[accessLock unlock];
 		inRead = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
 		[accessLock unlock];
 		inRead = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	if(!resetBarrier && [previousNode shouldReset] == YES) {
@@ -465,7 +465,7 @@ static uint64_t _Node_serial;
 	inMerge = YES;
 	if(!shouldContinue || [self paused]) {
 		inMerge = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	[accessLock lock];
@@ -473,7 +473,7 @@ static uint64_t _Node_serial;
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
 		[accessLock unlock];
 		inMerge = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	AudioChunk *ret;
@@ -522,7 +522,7 @@ static uint64_t _Node_serial;
 	inMerge = YES;
 	if(!shouldContinue || [self paused]) {
 		inMerge = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	[accessLock lock];
@@ -530,7 +530,7 @@ static uint64_t _Node_serial;
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
 		[accessLock unlock];
 		inMerge = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	AudioChunk *ret;

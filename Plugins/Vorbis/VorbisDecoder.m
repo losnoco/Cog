@@ -85,8 +85,8 @@ long sourceTell(void *datasource) {
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
-	metaDict = [NSDictionary dictionary];
-	icyMetaDict = [NSDictionary dictionary];
+	metaDict = @{};
+	icyMetaDict = @{};
 	albumArt = [NSData data];
 
 	[self updateMetadata];
@@ -101,7 +101,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
 	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
-		array = [[NSMutableArray alloc] init];
+		array = [NSMutableArray new];
 		[dict setObject:array forKey:realKey];
 	}
 	[array addObject:value];
@@ -109,7 +109,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 - (void)updateMetadata {
 	vorbis_comment *tags = ov_comment(&vorbisRef, -1);
-	NSMutableDictionary *_metaDict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *_metaDict = [NSMutableDictionary new];
 	NSData *_albumArt = albumArt;
 
 	if(tags) {
@@ -161,7 +161,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 - (void)updateIcyMetadata {
 	if([source seekable]) return;
 
-	NSMutableDictionary *_icyMetaDict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *_icyMetaDict = [NSMutableDictionary new];
 
 	Class sourceClass = [source class];
 	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {

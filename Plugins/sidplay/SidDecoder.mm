@@ -52,14 +52,14 @@ static const char *extListStr[] = { ".str", NULL };
 	static sid_file_container *instance;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		instance = [[self alloc] init];
+		instance = [self new];
 	});
 	return instance;
 }
 - (sid_file_container *)init {
 	if((self = [super init])) {
-		lock = [[NSLock alloc] init];
-		list = [[NSMutableDictionary alloc] init];
+		lock = [NSLock new];
+		list = [NSMutableDictionary new];
 	}
 	return self;
 }
@@ -73,7 +73,7 @@ static const char *extListStr[] = { ".str", NULL };
 	}
 	[lock unlock];
 
-	obj = [[sid_file_object alloc] init];
+	obj = [sid_file_object new];
 
 	obj.refCount = 1;
 

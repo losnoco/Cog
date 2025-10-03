@@ -20,7 +20,7 @@ NSString *iTunesDropType = @"com.apple.tv.metadata";
 
 - (id<NSPasteboardWriting>)tableView:(NSTableView *)tableView
               pasteboardWriterForRow:(NSInteger)row {
-	NSPasteboardItem *item = [[NSPasteboardItem alloc] init];
+	NSPasteboardItem *item = [NSPasteboardItem new];
 	[item setString:[@(row) stringValue] forType:CogDNDIndexType];
 
 	return item;

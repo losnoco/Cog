@@ -20,7 +20,7 @@
 // Convert from font size to height in playlist view
 - (id)transformedValue:(id)value {
 	NSFont *font = [NSFont systemFontOfSize:[(NSNumber *)value floatValue]];
-	NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+	NSLayoutManager *layoutManager = [NSLayoutManager new];
 	float fRowSize = [layoutManager defaultLineHeightForFont:font];
 	return @(fRowSize);
 }

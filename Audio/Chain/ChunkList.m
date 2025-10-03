@@ -376,7 +376,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	self = [super init];
 
 	if(self) {
-		chunkList = [[NSMutableArray alloc] init];
+		chunkList = [NSMutableArray new];
 		listDuration = 0.0;
 		listDurationRatioed = 0.0;
 		maxDuration = duration;
@@ -503,14 +503,14 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (AudioChunk *)removeSamples:(size_t)maxFrameCount {
 	if(stopping) {
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	@synchronized(chunkList) {
 		inRemover = YES;
 		if(![chunkList count]) {
 			inRemover = NO;
-			return [[AudioChunk alloc] init];
+			return [AudioChunk new];
 		}
 		AudioChunk *chunk = [chunkList objectAtIndex:0];
 		if([chunk frameCount] <= maxFrameCount) {
@@ -522,7 +522,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		}
 		double streamTimestamp = [chunk streamTimestamp];
 		NSData *removedData = [chunk removeSamples:maxFrameCount];
-		AudioChunk *ret = [[AudioChunk alloc] init];
+		AudioChunk *ret = [AudioChunk new];
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
@@ -542,14 +542,14 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (AudioChunk *)removeSamplesAsFloat32:(size_t)maxFrameCount {
 	if(stopping) {
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	@synchronized (chunkList) {
 		inRemover = YES;
 		if(![chunkList count]) {
 			inRemover = NO;
-			return [[AudioChunk alloc] init];
+			return [AudioChunk new];
 		}
 		AudioChunk *chunk = [chunkList objectAtIndex:0];
 #if !DSD_DECIMATE
@@ -567,7 +567,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		}
 		double streamTimestamp = [chunk streamTimestamp];
 		NSData *removedData = [chunk removeSamples:maxFrameCount];
-		AudioChunk *ret = [[AudioChunk alloc] init];
+		AudioChunk *ret = [AudioChunk new];
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
@@ -587,7 +587,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block {
 	if(stopping) {
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	inMerger = YES;
@@ -607,12 +607,12 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 	if(blocked) {
 		inMerger = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	AudioChunk *chunk;
 	size_t totalFrameCount = 0;
-	AudioChunk *outputChunk = [[AudioChunk alloc] init];
+	AudioChunk *outputChunk = [AudioChunk new];
 
 	[outputChunk setStreamTimestamp:streamTimestamp];
 	[outputChunk setStreamTimeRatio:streamTimeRatio];
@@ -664,7 +664,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 	if(!totalFrameCount) {
 		inMerger = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 
 	inMerger = NO;
@@ -677,7 +677,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 }
 
 - (AudioChunk *)convertChunk:(AudioChunk *)inChunk {
-	if(stopping) return [[AudioChunk alloc] init];
+	if(stopping) return [AudioChunk new];
 
 	inConverter = YES;
 
@@ -701,7 +701,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
 		if((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32)) || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64))) {
 			inConverter = NO;
-			return [[AudioChunk alloc] init];
+			return [AudioChunk new];
 		}
 
 		// These are really placeholders, as we're doing everything internally now
@@ -752,7 +752,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	
 	if(!samplesRead) {
 		inConverter = NO;
-		return [[AudioChunk alloc] init];
+		return [AudioChunk new];
 	}
 	
 	BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
@@ -938,7 +938,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 #endif
 	}
 
-	AudioChunk *outChunk = [[AudioChunk alloc] init];
+	AudioChunk *outChunk = [AudioChunk new];
 	[outChunk setFormat:floatFormat];
 	[outChunk setChannelConfig:inputChannelConfig];
 	[outChunk setLossless:inputLossless];

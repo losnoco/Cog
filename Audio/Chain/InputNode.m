@@ -27,7 +27,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 - (id)initWithController:(id)c previous:(id)p {
 	self = [super initWithController:c previous:p];
 	if(self) {
-		exitAtTheEndOfTheStream = [[Semaphore alloc] init];
+		exitAtTheEndOfTheStream = [Semaphore new];
 		threadExited = NO;
 	}
 

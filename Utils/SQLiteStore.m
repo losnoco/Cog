@@ -532,7 +532,7 @@ static SQLiteStore *g_sharedStore = nil;
 + (SQLiteStore *)sharedStore {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		g_sharedStore = [[self alloc] init];
+		g_sharedStore = [self new];
 	});
 
 	return g_sharedStore;
@@ -730,9 +730,9 @@ static SQLiteStore *g_sharedStore = nil;
 #undef PREPARE
 			size_t count = [self playlistGetCount];
 
-			databaseMirror = [[NSMutableArray alloc] init];
-			artTable = [[NSMutableDictionary alloc] init];
-			stringTable = [[NSMutableDictionary alloc] init];
+			databaseMirror = [NSMutableArray new];
+			artTable = [NSMutableDictionary new];
+			stringTable = [NSMutableDictionary new];
 
 			for(size_t i = 0; i < count; ++i) {
 				PlaylistEntry *pe = [self playlistGetItem:i];
@@ -1695,7 +1695,7 @@ static SQLiteStore *g_sharedStore = nil;
 		return;
 	}
 
-	NSMutableArray *tracksCopy = [[NSMutableArray alloc] init];
+	NSMutableArray *tracksCopy = [NSMutableArray new];
 	for(PlaylistEntry *pe in tracks) {
 		[tracksCopy addObject:pe];
 	}
@@ -1790,7 +1790,7 @@ static SQLiteStore *g_sharedStore = nil;
 		return;
 	}
 
-	NSMutableArray *items = [[NSMutableArray alloc] init];
+	NSMutableArray *items = [NSMutableArray new];
 
 	for(int64_t i = index, j = index + count; i < j; ++i) {
 		[items addObject:@(i)];

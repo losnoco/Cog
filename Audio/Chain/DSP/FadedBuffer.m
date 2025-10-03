@@ -51,10 +51,10 @@ BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels, size_
 		self->buffer = buffer;
 		self->DSPs = DSPs;
 
-		writeSemaphore = [[Semaphore alloc] init];
-		readSemaphore = [[Semaphore alloc] init];
+		writeSemaphore = [Semaphore new];
+		readSemaphore = [Semaphore new];
 
-		accessLock = [[NSLock alloc] init];
+		accessLock = [NSLock new];
 
 		initialBufferFilled = NO;
 

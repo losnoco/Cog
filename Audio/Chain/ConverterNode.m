@@ -69,7 +69,7 @@ static void *kConverterNodeContext = &kConverterNodeContext;
 		extrapolateBuffer = NULL;
 		extrapolateBufferSize = 0;
 
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 
 #ifdef LOG_CHAINS
 		[self initLogFiles];
@@ -352,7 +352,7 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 	}
 
 	if(ioNumberPackets) {
-		AudioChunk *chunk = [[AudioChunk alloc] init];
+		AudioChunk *chunk = [AudioChunk new];
 		[chunk setFormat:nodeFormat];
 		if(nodeChannelConfig) {
 			[chunk setChannelConfig:nodeChannelConfig];

@@ -32,9 +32,9 @@
 		pitch = 1.0;
 		tempo = 1.0;
 
-		chainQueue = [[NSMutableArray alloc] init];
+		chainQueue = [NSMutableArray new];
 
-		semaphore = [[Semaphore alloc] init];
+		semaphore = [Semaphore new];
 
 		atomic_init(&resettingNow, false);
 		atomic_init(&refCount, 0);

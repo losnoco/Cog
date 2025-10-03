@@ -28,7 +28,7 @@
 	                                                                       errorHandler:^BOOL(NSURL *url, NSError *error) {
 		                                                                       return NO;
 	                                                                       }];
-	NSMutableArray *fullPaths = [[NSMutableArray alloc] init];
+	NSMutableArray *fullPaths = [NSMutableArray new];
 
 	for(NSURL *theUrl in enumerator) {
 		[fullPaths addObject:[theUrl path]];

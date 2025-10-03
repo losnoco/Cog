@@ -28,7 +28,7 @@
 
 + (NSDictionary *)metadataForURL:(NSURL *)url {
 	if(![url isFileURL]) {
-		return [NSDictionary dictionary];
+		return @{};
 	}
 
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
@@ -36,7 +36,7 @@
 
 	const void *sbHandle = [sandboxBroker beginFolderAccess:url];
 
-	NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *dict = [NSMutableDictionary new];
 
 	//	if ( !*TagLib::ascii_encoding ) {
 	//		NSStringEncoding enc = [NSString defaultCStringEncoding];
@@ -187,7 +187,7 @@
 	} catch (std::exception &e) {
 		ALog(@"Exception caught reading file with TagLib: %s", e.what());
 		[sandboxBroker endFolderAccess:sbHandle];
-		return [NSDictionary dictionary];
+		return @{};
 	}
 
 	[sandboxBroker endFolderAccess:sbHandle];
@@ -196,7 +196,7 @@
 }
 
 + (NSArray *)fileTypes {
-	NSMutableArray *extlist = [[NSMutableArray alloc] init];
+	NSMutableArray *extlist = [NSMutableArray new];
 	TagLib::StringList exts = TagLib::FileRef::defaultFileExtensions();
 	for(const auto &ext : exts) {
 		[extlist addObject:[NSString stringWithUTF8String:ext.toCString(true)]];

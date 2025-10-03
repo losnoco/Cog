@@ -228,7 +228,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	}
 
 	if(hasCurrentPosition || hasLength) {
-		SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+		SecondsFormatter *secondsFormatter = [SecondsFormatter new];
 		[elements addObject:@" ("];
 		if(hasCurrentPosition) {
 			[elements addObject:[secondsFormatter stringForObjectValue:@(self.currentPosition)]];
@@ -297,7 +297,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @dynamic gainInfo;
 - (NSString *)gainInfo {
-	NSMutableArray *gainItems = [[NSMutableArray alloc] init];
+	NSMutableArray *gainItems = [NSMutableArray new];
 	if(self.replayGainAlbumGain) {
 		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainAlbumGain]];
 	}
@@ -318,21 +318,21 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @dynamic positionText;
 - (NSString *)positionText {
-	SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+	SecondsFormatter *secondsFormatter = [SecondsFormatter new];
 	NSString *time = [secondsFormatter stringForObjectValue:@(self.currentPosition)];
 	return time;
 }
 
 @dynamic lengthText;
 - (NSString *)lengthText {
-	SecondsFormatter *secondsFormatter = [[SecondsFormatter alloc] init];
+	SecondsFormatter *secondsFormatter = [SecondsFormatter new];
 	NSString *time = [secondsFormatter stringForObjectValue:self.length];
 	return time;
 }
 
 @dynamic lengthInfo;
 - (NSString *)lengthInfo {
-	SecondsFractionFormatter * secondsFormatter = [[SecondsFractionFormatter alloc] init];
+	SecondsFractionFormatter * secondsFormatter = [SecondsFractionFormatter new];
 	NSString *time = [secondsFormatter stringForObjectValue:self.length];
 	return time;
 }
@@ -530,7 +530,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		if(originalDict) {
 			metaDict = [originalDict mutableCopy];
 		} else {
-			metaDict = [[NSMutableDictionary alloc] init];
+			metaDict = [NSMutableDictionary new];
 		}
 		self.volume = 1;
 		for(NSString *key in metadata) {
@@ -685,7 +685,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 - (NSString *)playCountInfo {
 	PlayCount *pc = self.playCountItem;
 	if(pc) {
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		NSDateFormatter *dateFormatter = [NSDateFormatter new];
 		dateFormatter.dateStyle = NSDateFormatterMediumStyle;
 		dateFormatter.timeStyle = NSDateFormatterShortStyle;
 
@@ -946,7 +946,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		if(values) {
 			valuesCopy = [values mutableCopy];
 		} else {
-			valuesCopy = [[NSMutableArray alloc] init];
+			valuesCopy = [NSMutableArray new];
 		}
 		[valuesCopy addObject:value];
 		values = [NSArray arrayWithArray:valuesCopy];

@@ -15,7 +15,7 @@
 	self = [super init];
 	if(self) {
 		_plugins = plugins;
-		_preferencePanes = [[NSMutableArray alloc] init];
+		_preferencePanes = [NSMutableArray new];
 	}
 
 	return self;

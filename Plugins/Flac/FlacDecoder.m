@@ -186,7 +186,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	NSString *realKey = [tag stringByReplacingOccurrencesOfString:@"." withString:@"․"];
 	NSMutableArray *array = [dict valueForKey:realKey];
 	if(!array) {
-		array = [[NSMutableArray alloc] init];
+		array = [NSMutableArray new];
 		[dict setObject:array forKey:realKey];
 	}
 	[array addObject:value];
@@ -239,7 +239,7 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 	}
 
 	if(metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
-		NSMutableDictionary *_metaDict = [[NSMutableDictionary alloc] init];
+		NSMutableDictionary *_metaDict = [NSMutableDictionary new];
 		NSString *_cuesheet = flacDecoder->cuesheet;
 		const FLAC__StreamMetadata_VorbisComment *vorbis_comment = &metadata->data.vorbis_comment;
 		for(int i = 0; i < vorbis_comment->num_comments; ++i) {
@@ -311,14 +311,14 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		isOggFlac = YES;
 	}
 
-	metaDict = [NSDictionary dictionary];
-	icyMetaDict = [NSDictionary dictionary];
+	metaDict = @{};
+	icyMetaDict = @{};
 	albumArt = [NSData data];
 	cuesheetFound = NO;
 	cuesheet = @"";
 
 	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore");
-	dataStore = [[dataStoreClass alloc] init];
+	dataStore = [dataStoreClass new];
 
 	decoder = FLAC__stream_decoder_new();
 	if(decoder == NULL)
@@ -419,7 +419,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		Class sourceClass = [source class];
 		if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
 			HTTPSource *httpSource = (HTTPSource *)source;
-			NSMutableDictionary *_icyMetaDict = [[NSMutableDictionary alloc] init];
+			NSMutableDictionary *_icyMetaDict = [NSMutableDictionary new];
 			if([httpSource hasMetadata]) {
 				NSDictionary *metadata = [httpSource metadata];
 				NSString *_genre = [metadata valueForKey:@"genre"];

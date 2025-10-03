@@ -79,7 +79,7 @@ AUPluginUI::~AUPluginUI() {
 	if(opened) {
 		NSMutableDictionary *midiPluginSettings = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"midiPluginSettings"] mutableCopy];
 		if(!midiPluginSettings) {
-			midiPluginSettings = [[NSMutableDictionary alloc] init];
+			midiPluginSettings = [NSMutableDictionary new];
 		}
 		CFDictionaryRef outClassInfo = nil;
 		UInt32 objectSize = sizeof(outClassInfo);
@@ -182,7 +182,7 @@ int AUPluginUI::create_cocoa_view() {
 				return -1;
 			}
 			// make a factory
-			id factory = [[factoryClass alloc] init];
+			id factory = [factoryClass new];
 			if(factory == NULL) {
 				return -1;
 			}

@@ -54,10 +54,10 @@
 	if(self) {
 		buffer = [[ChunkList alloc] initWithMaximumDuration:latency];
 
-		writeSemaphore = [[Semaphore alloc] init];
-		readSemaphore = [[Semaphore alloc] init];
+		writeSemaphore = [Semaphore new];
+		readSemaphore = [Semaphore new];
 
-		accessLock = [[NSLock alloc] init];
+		accessLock = [NSLock new];
 
 		initialBufferFilled = NO;
 
@@ -79,7 +79,7 @@
 
 		[self setPreviousNode:p];
 
-		mutex = [[NSRecursiveLock alloc] init];
+		mutex = [NSRecursiveLock new];
 
 #ifdef LOG_CHAINS
 		[self initLogFiles];
