@@ -161,15 +161,12 @@ static void cache_run() {
 
 @synthesize configured;
 
-static PluginController *sharedPluginController = nil;
-
 + (id<CogPluginController>)sharedPluginController {
-	@synchronized(self) {
-		if(sharedPluginController == nil) {
-			sharedPluginController = [[self alloc] init];
-		}
-	}
-
+	static PluginController *sharedPluginController = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		sharedPluginController = [[self alloc] init];
+	});
 	return sharedPluginController;
 }
 

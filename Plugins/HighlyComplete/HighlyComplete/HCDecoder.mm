@@ -60,13 +60,10 @@
 @implementation psf_file_container
 + (psf_file_container *)instance {
 	static psf_file_container *instance;
-
-	@synchronized(self) {
-		if(!instance) {
-			instance = [[self alloc] init];
-		}
-	}
-
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		instance = [[self alloc] init];
+	});
 	return instance;
 }
 - (psf_file_container *)init {
