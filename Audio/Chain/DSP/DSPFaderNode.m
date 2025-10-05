@@ -80,8 +80,11 @@
 - (void)setOutputFormat:(AudioStreamBasicDescription)format withChannelConfig:(uint32_t)config {
 	if(memcmp(&outputFormat, &format, sizeof(outputFormat)) != 0 ||
 	   outputChannelConfig != config) {
-		if(fadeStep && !formatSet) {
-			fadeStep *= 1.0 / format.mSampleRate;
+		if(fadeStep) {
+			if(formatSet) {
+				fadeStep *= outputFormat.mSampleRate;
+			}
+			fadeStep /= format.mSampleRate;
 		}
         outputFormat = format;
         outputChannelConfig = config;
@@ -143,8 +146,12 @@
 
 	AudioStreamBasicDescription format;
 	uint32_t channelConfig;
-	if(!formatSet && [self peekFormat:&format channelConfig:&channelConfig]) {
-		[self setOutputFormat:format withChannelConfig:channelConfig];
+	if([self peekFormat:&format channelConfig:&channelConfig]) {
+		if(!formatSet ||
+		   memcmp(&format, &outputFormat, sizeof(format)) != 0 ||
+		   channelConfig != outputChannelConfig) {
+			[self setOutputFormat:format withChannelConfig:channelConfig];
+		}
 	}
 		
 	BOOL inputRead = YES;
