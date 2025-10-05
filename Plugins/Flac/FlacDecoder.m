@@ -266,6 +266,8 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 					} else if([name isEqualToString:@"unsynced lyrics"] ||
 							  [name isEqualToString:@"lyrics"]) {
 						setDictionary(_metaDict, @"unsyncedlyrics", value);
+					} else if([name isEqualToString:@"comments:itunnorm"]) {
+						setDictionary(_metaDict, @"soundcheck", value);
 					} else {
 						setDictionary(_metaDict, name, value);
 					}

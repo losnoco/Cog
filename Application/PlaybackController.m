@@ -305,6 +305,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[dictionary setObject:@(pe.replayGainTrackGain) forKey:@"replayGainTrackGain"];
 	if(pe.replayGainTrackPeak != 0)
 		[dictionary setObject:@(pe.replayGainTrackPeak) forKey:@"replayGainTrackPeak"];
+	if(pe.soundcheck && pe.soundcheck.length != 0)
+		[dictionary setObject:@(pe.soundcheckVolume) forKey:@"soundcheck"];
 	if(pe.volume != 1)
 		[dictionary setObject:@(pe.volume) forKey:@"volume"];
 	return dictionary;

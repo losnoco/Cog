@@ -134,6 +134,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 					} else if([tagName isEqualToString:@"unsynced lyrics"] ||
 							  [tagName isEqualToString:@"lyrics"]) {
 						setDictionary(_metaDict, @"unsyncedlyrics", guess_encoding_of_string(value));
+					} else if([tagName isEqualToString:@"comments:itunnorm"]) {
+						setDictionary(_metaDict, @"soundcheck", guess_encoding_of_string(value));
 					} else {
 						setDictionary(_metaDict, tagName, guess_encoding_of_string(value));
 					}

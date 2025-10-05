@@ -30,6 +30,8 @@
 + (NSSet *_Nonnull)keyPathsForValuesAffectingCuesheetPresent;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingGainCorrection;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingUnsigned;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingSoundcheckDisplay;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingSoundcheckVolume;
 
 @property(nonatomic, readonly) NSString *_Nonnull display;
 @property(nonatomic, retain, readonly) NSNumber *_Nonnull length;
@@ -91,6 +93,9 @@
 @property(nonatomic) NSString *_Nullable unsyncedlyrics;
 
 @property(nonatomic) NSString *_Nullable comment;
+
+@property(nonatomic, readonly) NSString *_Nullable soundcheckDisplay;
+@property(nonatomic, readonly) float soundcheckVolume;
 
 - (NSString *_Nullable)readAllValuesAsString:(NSString *_Nonnull)tagName;
 - (void)setValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nullable)value;

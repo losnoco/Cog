@@ -110,15 +110,23 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 }
 
 + (NSSet *)keyPathsForValuesAffectingGainCorrection {
-	return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"volume", nil];
+	return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"soundcheck", @"volume", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingGainInfo {
-	return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"volume", nil];
+	return [NSSet setWithObjects:@"replayGainAlbumGain", @"replayGainAlbumPeak", @"replayGainTrackGain", @"replayGainTrackPeak", @"soundcheck", @"volume", nil];
 }
 
 + (NSSet *)keyPathsForValuesAffectingUnsigned {
 	return [NSSet setWithObject:@"unSigned"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingSoundcheckDisplay {
+	return [NSSet setWithObject:@"soundcheck"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingSoundcheckVolume {
+	return [NSSet setWithObject:@"soundcheck"];
 }
 
 - (NSString *)description {
@@ -288,6 +296,8 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 			return NSLocalizedStringFromTableInBundle(@"GainTrackGainPeak", nil, [NSBundle bundleForClass:[self class]], @"");
 		else
 			return NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle bundleForClass:[self class]], @"");
+	} else if(self.soundcheck && self.soundcheck.length) {
+		return NSLocalizedStringFromTableInBundle(@"GainSoundcheck", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else if(self.volume && self.volume != 1.0) {
 		return NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else {
@@ -309,6 +319,11 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	}
 	if(self.replayGainTrackPeak) {
 		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainTrackPeak", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainTrackPeak]];
+	}
+	if(self.soundcheck && self.soundcheck.length) {
+		NSString *scdisplay = self.soundcheckDisplay;
+		if(scdisplay && scdisplay.length)
+			[gainItems addObject:[NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTableInBundle(@"GainSoundcheck", nil, [NSBundle bundleForClass:[self class]], @""), scdisplay]];
 	}
 	if(self.volume && self.volume != 1) {
 		[gainItems addObject:[NSString stringWithFormat:@"%@: %.2f%C", NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle bundleForClass:[self class]], @""), self.volume, (unichar)0x00D7]];
@@ -597,6 +612,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 				self.replayGainTrackGain = [firstValue floatValue];
 			} else if([lowerKey isEqualToString:@"replaygain_track_peak"]) {
 				self.replayGainTrackPeak = [firstValue floatValue];
+			} else if([lowerKey isEqualToString:@"soundcheck"]) {
+				self.soundcheck = firstValue;
 			} else if([lowerKey isEqualToString:@"volume"]) {
 				self.volume = [firstValue floatValue];
 			} else if([lowerKey isEqualToString:@"albumart"]) {
@@ -954,6 +971,49 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
 	}
+}
+
++ (float)calculateSoundcheck:(NSString *)input {
+	NSArray *tag = [input componentsSeparatedByString:@" "];
+	NSMutableArray *wantedTag = [NSMutableArray new];
+	for(size_t i = 0; i < [tag count]; ++i) {
+		NSString *tagValue = tag[i];
+		if([tagValue length] == 8) {
+			[wantedTag addObject:tagValue];
+		}
+	}
+	if([wantedTag count] >= 10) {
+		NSScanner *scanner1 = [NSScanner scannerWithString:wantedTag[0]];
+		NSScanner *scanner2 = [NSScanner scannerWithString:wantedTag[1]];
+		unsigned int hexvalue1 = 0, hexvalue2 = 0;
+		[scanner1 scanHexInt:&hexvalue1];
+		[scanner2 scanHexInt:&hexvalue2];
+		float volume1 = -log10((double)(hexvalue1) / 1000) * 10;
+		float volume2 = -log10((double)(hexvalue2) / 1000) * 10;
+		float volumeToUse = MIN(volume1, volume2);
+		return volumeToUse;
+	}
+	return 1.0f;
+}
+
+@dynamic soundcheckDisplay;
+- (NSString *_Nullable)soundcheckDisplay {
+	NSString *val = self.soundcheck;
+	if(val && val.length) {
+		float ret = [self.class calculateSoundcheck:val];
+		return [NSString stringWithFormat:@"%.6f dB", ret];
+	}
+	return nil;
+}
+
+@dynamic soundcheckVolume;
+- (float)soundcheckVolume {
+	NSString *val = self.soundcheck;
+	if(val && val.length) {
+		float ret = [self.class calculateSoundcheck:val];
+		return pow(10.0, ret / 20.0);
+	}
+	return 1.0f;
 }
 
 @end

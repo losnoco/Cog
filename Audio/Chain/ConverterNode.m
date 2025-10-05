@@ -403,7 +403,8 @@ static float db_to_scale(float db) {
 	NSString *scaling = [[NSUserDefaults standardUserDefaults] stringForKey:@"volumeScaling"];
 	BOOL useAlbum = [scaling hasPrefix:@"albumGain"];
 	BOOL useTrack = useAlbum || [scaling hasPrefix:@"trackGain"];
-	BOOL useVolume = useAlbum || useTrack || [scaling isEqualToString:@"volumeScale"];
+	BOOL useSoundcheck = useAlbum || useTrack || [scaling isEqualToString:@"soundcheck"];
+	BOOL useVolume = useAlbum || useTrack || useSoundcheck || [scaling isEqualToString:@"volumeScale"];
 	BOOL usePeak = [scaling hasSuffix:@"WithPeak"];
 	float scale = 1.0;
 	float peak = 0.0;
@@ -411,6 +412,11 @@ static float db_to_scale(float db) {
 		id pVolumeScale = [rgInfo objectForKey:@"volume"];
 		if(pVolumeScale != nil)
 			scale = [pVolumeScale floatValue];
+	}
+	if(useSoundcheck) {
+		id pSoundcheck = [rgInfo objectForKey:@"soundcheck"];
+		if(pSoundcheck != nil)
+			scale = [pSoundcheck floatValue];
 	}
 	if(useTrack) {
 		id trackGain = [rgInfo objectForKey:@"replayGainTrackGain"];

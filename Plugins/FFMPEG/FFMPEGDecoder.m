@@ -697,27 +697,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 						tagName = @"replaygain_track_peak";
 					setDictionary(_metaDict, tagName, guess_encoding_of_string(tag->value));
 				} else if(!strcasecmp(tag->key, "iTunNORM")) {
-					NSString *tagString = guess_encoding_of_string(tag->value);
-					NSArray *tag = [tagString componentsSeparatedByString:@" "];
-					NSMutableArray *wantedTag = [NSMutableArray new];
-					for(size_t i = 0; i < [tag count]; ++i) {
-						NSString *tagValue = tag[i];
-						if([tagValue length] == 8) {
-							[wantedTag addObject:tagValue];
-						}
-					}
-					if([wantedTag count] >= 10) {
-						NSScanner *scanner1 = [NSScanner scannerWithString:wantedTag[0]];
-						NSScanner *scanner2 = [NSScanner scannerWithString:wantedTag[1]];
-						unsigned int hexvalue1 = 0, hexvalue2 = 0;
-						[scanner1 scanHexInt:&hexvalue1];
-						[scanner2 scanHexInt:&hexvalue2];
-						float volume1 = -log10((double)(hexvalue1) / 1000) * 10;
-						float volume2 = -log10((double)(hexvalue2) / 1000) * 10;
-						float volumeToUse = MIN(volume1, volume2);
-						NSNumber *_volumeScale = @(pow(10, volumeToUse / 20));
-						setDictionary(_metaDict, @"volume", [_volumeScale stringValue]);
-					}
+					setDictionary(_metaDict, @"soundcheck", guess_encoding_of_string(tag->value));
 				} else {
 					setDictionary(_metaDict, guess_encoding_of_string(tag->key), guess_encoding_of_string(tag->value));
 				}

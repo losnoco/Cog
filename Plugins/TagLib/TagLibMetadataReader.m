@@ -67,23 +67,7 @@
 		
 		soundcheck = tag->soundcheck();
 		if(!soundcheck.isEmpty()) {
-			TagLib::StringList tag = soundcheck.split(" ");
-			TagLib::StringList wantedTag;
-			for(int i = 0, count = tag.size(); i < count; i++) {
-				if(tag[i].length() == 8)
-					wantedTag.append(tag[i]);
-			}
-			
-			if(wantedTag.size() >= 10) {
-				bool ok1, ok2;
-				float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(&ok1, 16)) / 1000) * 10;
-				float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(&ok2, 16)) / 1000) * 10;
-				if(ok1 && ok2) {
-					float volumeToUse = MIN(volume1, volume2);
-					float volumeScale = pow(10, volumeToUse / 20);
-					[dict setObject:@(volumeScale) forKey:@"volume"];
-				}
-			}
+			[dict setObject:[NSString stringWithUTF8String:soundcheck.toCString(true)] forKey:@"soundcheck"];
 		}
 		
 		if(!artist.isEmpty())
