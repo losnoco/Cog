@@ -693,7 +693,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 						renderedSamples += inputTodo;
 					}
 
-					if(_self->stopping || _self->resetting || _self->faded || !chunk || !_frameCount) {
+					if((_self->stopping && !_self->fadingstop) || _self->resetting || _self->faded || !chunk || !_frameCount) {
 						break;
 					}
 				}
@@ -748,6 +748,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		fadeStep = 0.0f;
 		fading = NO;
 		faded = NO;
+		fadingstop = YES;
 
 		streamTimestamp = 0.0;
 		prebufferReached = NO;
@@ -950,6 +951,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)dealloc {
+	fadingstop = NO;
 	[self stop];
 	// In case stop called on another thread first
 	while(!stopCompleted) {
