@@ -11,14 +11,7 @@
 #import <tag/fileref.h>
 #import <tag/flacfile.h>
 #import <tag/mpcproperties.h>
-#import <tag/attachedpictureframe.h>
-#import <tag/id3v2tag.h>
-#import <tag/mpegfile.h>
-#import <tag/asftag.h>
-#import <tag/asffile.h>
 #import <tag/tag.h>
-#import <tag/vorbisfile.h>
-#import <tag/xiphcomment.h>
 
 #import "Logging.h"
 
