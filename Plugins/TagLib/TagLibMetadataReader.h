@@ -10,7 +10,13 @@
 
 #import "Plugin.h"
 
+namespace TagLib {
+class Tag;
+}
+
 @interface TagLibMetadataReader : NSObject <CogMetadataReader> {
 }
+
++ (NSDictionary *)readMetadataFromTag:(const TagLib::Tag *)tag;
 
 @end
