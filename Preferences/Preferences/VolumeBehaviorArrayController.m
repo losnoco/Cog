@@ -20,6 +20,8 @@
 
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"ReplayGain Track Gain", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"trackGain"}];
 
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"SoundCheck", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"soundcheck"}];
+
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"Volume scale tag only", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"volumeScale"}];
 
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"No volume scaling", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"none"}];

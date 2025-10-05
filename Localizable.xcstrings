@@ -561,6 +561,23 @@
         }
       }
     },
+    "GainSoundcheck" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoundCheck"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste de volumen"
+          }
+        }
+      }
+    },
     "GainTrackGain" : {
       "localizations" : {
         "en" : {

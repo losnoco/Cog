@@ -755,6 +755,23 @@
         }
       }
     },
+    "SoundCheck" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoundCheck"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste de volumen"
+          }
+        }
+      }
+    },
     "Stable" : {
       "extractionState" : "manual",
       "localizations" : {
