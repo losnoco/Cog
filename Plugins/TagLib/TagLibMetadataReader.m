@@ -19,6 +19,122 @@
 
 @implementation TagLibMetadataReader
 
++ (NSDictionary *)readMetadataFromTag:(const TagLib::Tag *)tag {
+	NSMutableDictionary *dict = [NSMutableDictionary new];
+
+	try {
+		TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
+		int year, track, disc;
+		TagLib::Tag::ReplayGain rg;
+		TagLib::String cuesheet;
+		TagLib::String soundcheck;
+		
+		artist = tag->artist();
+		albumartist = tag->albumartist();
+		composer = tag->composer();
+		title = tag->title();
+		
+		album = tag->album();
+		genre = tag->genre();
+		comment = tag->comment();
+		cuesheet = tag->cuesheet();
+		
+		unsyncedlyrics = tag->unsyncedlyrics();
+		
+		year = tag->year();
+		if(year)
+			[dict setObject:@(year) forKey:@"year"];
+		
+		track = tag->track();
+		if(track)
+			[dict setObject:@(track) forKey:@"track"];
+		
+		disc = tag->disc();
+		if(disc)
+			[dict setObject:@(disc) forKey:@"disc"];
+		
+		rg = tag->replaygain();
+		if(!rg.isEmpty()) {
+			if(rg.albumGainSet())
+				[dict setObject:@(rg.albumGain()) forKey:@"replaygain_album_gain"];
+			if(rg.albumPeakSet())
+				[dict setObject:@(rg.albumPeak()) forKey:@"replaygain_album_peak"];
+			if(rg.trackGainSet())
+				[dict setObject:@(rg.trackGain()) forKey:@"replaygain_track_gain"];
+			if(rg.trackPeakSet())
+				[dict setObject:@(rg.trackPeak()) forKey:@"replaygain_track_peak"];
+		}
+		
+		soundcheck = tag->soundcheck();
+		if(!soundcheck.isEmpty()) {
+			TagLib::StringList tag = soundcheck.split(" ");
+			TagLib::StringList wantedTag;
+			for(int i = 0, count = tag.size(); i < count; i++) {
+				if(tag[i].length() == 8)
+					wantedTag.append(tag[i]);
+			}
+			
+			if(wantedTag.size() >= 10) {
+				bool ok1, ok2;
+				float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(&ok1, 16)) / 1000) * 10;
+				float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(&ok2, 16)) / 1000) * 10;
+				if(ok1 && ok2) {
+					float volumeToUse = MIN(volume1, volume2);
+					float volumeScale = pow(10, volumeToUse / 20);
+					[dict setObject:@(volumeScale) forKey:@"volume"];
+				}
+			}
+		}
+		
+		if(!artist.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
+		
+		if(!albumartist.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
+		
+		if(!composer.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:composer.toCString(true)] forKey:@"composer"];
+		
+		if(!album.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
+		
+		if(!title.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
+		
+		if(!genre.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
+		
+		if(!cuesheet.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
+		
+		if(!comment.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
+		
+		if(!unsyncedlyrics.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
+		
+		// Try to load the image.
+		NSData *image = nil;
+		
+		TagLib::StringList properties = tag->complexPropertyKeys();
+		if(properties.contains("PICTURE")) {
+			const TagLib::List<TagLib::VariantMap> &props = tag->complexProperties("PICTURE");
+			if(!props.isEmpty()) {
+				const TagLib::VariantMap &picture = props.front();
+				TagLib::ByteVector data = picture["data"].toByteVector();
+				
+				image = [NSData dataWithBytes:data.data() length:data.size()];
+				[dict setObject:image forKey:@"albumArt"];
+			}
+		}
+	} catch (std::exception &e) {
+		ALog(@"Exception caught reading properties from TagLib: %s", e.what());
+		return @{};
+	}
+
+	return [NSDictionary dictionaryWithDictionary:dict];
+}
+
 + (NSDictionary *)metadataForURL:(NSURL *)url {
 	if(![url isFileURL]) {
 		return @{};
@@ -29,7 +145,7 @@
 
 	const void *sbHandle = [sandboxBroker beginFolderAccess:url];
 
-	NSMutableDictionary *dict = [NSMutableDictionary new];
+	NSDictionary *dict = @{};
 
 	//	if ( !*TagLib::ascii_encoding ) {
 	//		NSStringEncoding enc = [NSString defaultCStringEncoding];
@@ -71,110 +187,7 @@
 			const TagLib::Tag *tag = f.tag();
 
 			if(tag) {
-				TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
-				int year, track, disc;
-				TagLib::Tag::ReplayGain rg;
-				TagLib::String cuesheet;
-				TagLib::String soundcheck;
-
-				artist = tag->artist();
-				albumartist = tag->albumartist();
-				composer = tag->composer();
-				title = tag->title();
-
-				album = tag->album();
-				genre = tag->genre();
-				comment = tag->comment();
-				cuesheet = tag->cuesheet();
-				
-				unsyncedlyrics = tag->unsyncedlyrics();
-
-				year = tag->year();
-				if(year)
-					[dict setObject:@(year) forKey:@"year"];
-
-				track = tag->track();
-				if(track)
-					[dict setObject:@(track) forKey:@"track"];
-
-				disc = tag->disc();
-				if(disc)
-					[dict setObject:@(disc) forKey:@"disc"];
-
-				rg = tag->replaygain();
-				if(!rg.isEmpty()) {
-					if(rg.albumGainSet())
-						[dict setObject:@(rg.albumGain()) forKey:@"replaygain_album_gain"];
-					if(rg.albumPeakSet())
-						[dict setObject:@(rg.albumPeak()) forKey:@"replaygain_album_peak"];
-					if(rg.trackGainSet())
-						[dict setObject:@(rg.trackGain()) forKey:@"replaygain_track_gain"];
-					if(rg.trackPeakSet())
-						[dict setObject:@(rg.trackPeak()) forKey:@"replaygain_track_peak"];
-				}
-
-				soundcheck = tag->soundcheck();
-				if(!soundcheck.isEmpty()) {
-					TagLib::StringList tag = soundcheck.split(" ");
-					TagLib::StringList wantedTag;
-					for(int i = 0, count = tag.size(); i < count; i++) {
-						if(tag[i].length() == 8)
-							wantedTag.append(tag[i]);
-					}
-
-					if(wantedTag.size() >= 10) {
-						bool ok1, ok2;
-						float volume1 = -log10((double)((uint32_t)wantedTag[0].toInt(&ok1, 16)) / 1000) * 10;
-						float volume2 = -log10((double)((uint32_t)wantedTag[1].toInt(&ok2, 16)) / 1000) * 10;
-						if(ok1 && ok2) {
-							float volumeToUse = MIN(volume1, volume2);
-							float volumeScale = pow(10, volumeToUse / 20);
-							[dict setObject:@(volumeScale) forKey:@"volume"];
-						}
-					}
-				}
-
-				if(!artist.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
-
-				if(!albumartist.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
-
-				if(!composer.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:composer.toCString(true)] forKey:@"composer"];
-
-				if(!album.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
-
-				if(!title.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
-
-				if(!genre.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
-
-				if(!cuesheet.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
-
-				if(!comment.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
-				
-				if(!unsyncedlyrics.isEmpty())
-					[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
-
-				// Try to load the image.
-				NSData *image = nil;
-
-				TagLib::StringList properties = tag->complexPropertyKeys();
-				if(properties.contains("PICTURE")) {
-					const TagLib::List<TagLib::VariantMap> &props = tag->complexProperties("PICTURE");
-					if(!props.isEmpty()) {
-						const TagLib::VariantMap &picture = props.front();
-						TagLib::ByteVector data = picture["data"].toByteVector();
-
-						image = [NSData dataWithBytes:data.data() length:data.size()];
-						[dict setObject:image forKey:@"albumArt"];
-					}
-				}
+				dict = [self readMetadataFromTag:tag];
 			}
 		}
 	} catch (std::exception &e) {
@@ -185,7 +198,7 @@
 
 	[sandboxBroker endFolderAccess:sbHandle];
 
-	return [NSDictionary dictionaryWithDictionary:dict];
+	return dict;
 }
 
 + (NSArray *)fileTypes {
