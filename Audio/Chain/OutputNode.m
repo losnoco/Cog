@@ -324,6 +324,7 @@
 	output = nil;
 	if(DSPsLaunched) {
 		NSArray *DSPs = [self DSPs];
+		DSPsLaunched = NO;
 		for(Node *node in DSPs) {
 			[node setShouldContinue:NO];
 		}
@@ -332,7 +333,6 @@
 		fsurroundNode = nil;
 		rubberbandNode = nil;
 		previousInput = nil;
-		DSPsLaunched = NO;
 	}
 }
 
