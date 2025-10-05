@@ -59,7 +59,7 @@ using std::atomic_long;
 	BOOL resetting;
 
 	BOOL cutOffInput;
-	BOOL fading, faded;
+	BOOL fading, faded, fadingstop;
 	float fadeLevel;
 	float fadeStep;
 	float fadeTarget;
