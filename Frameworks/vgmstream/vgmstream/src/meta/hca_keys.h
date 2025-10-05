@@ -1583,6 +1583,13 @@ static const hcakey_info hcakey_list[] = {
 
     // Ride Kamens (iOS/Android)
     {20000608},                 // 0000000001312F60
+
+    // The Touhou Empires - Demo (PC)
+    {946783},                   // 00000000000E725F
+
+    // Pac-Man World 2 Re-Pac (PC)
+    {5646981318476813},         // 00140FE64B8A840D
+
 };
 
 #endif

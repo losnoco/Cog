@@ -101,6 +101,7 @@ static const char* extension_list[] = {
     "b1s", //txth/reserved [7 Wonders of the Ancient World (PS2)]
     "baa",
     "baf",
+    "bao",
     "baka",
     "bank",
     "bar",
@@ -115,7 +116,6 @@ static const char* extension_list[] = {
     "bigrp",
     "bik",
     "bika", //fake extension for .bik (to be removed)
-    "bik2",
     "binka",
     //"bin", //common
     "bk2",

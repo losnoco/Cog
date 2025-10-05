@@ -634,6 +634,8 @@
 		837CEB0423487F2C00E62A4A /* jstm.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEAEF23487F2C00E62A4A /* jstm.c */; };
 		837CEB0523487F2C00E62A4A /* sqex_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 837CEAF023487F2C00E62A4A /* sqex_streamfile.h */; };
 		837CEB072348809400E62A4A /* seb.c in Sources */ = {isa = PBXBuildFile; fileRef = 837CEB062348809400E62A4A /* seb.c */; };
+		837D72672E9245D400C62C52 /* ubi_bao_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 837D72662E9245D400C62C52 /* ubi_bao_config.c */; };
+		837D72682E9245D400C62C52 /* ubi_bao_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 837D72652E9245D400C62C52 /* ubi_bao_config.h */; };
 		838395322E460D9500A7CFD8 /* df_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 838395312E460D9500A7CFD8 /* df_decoder.c */; };
 		838395342E460DCE00A7CFD8 /* cf_df.c in Sources */ = {isa = PBXBuildFile; fileRef = 838395332E460DCE00A7CFD8 /* cf_df.c */; };
 		8383A62C281203C60062E49E /* s3v.c in Sources */ = {isa = PBXBuildFile; fileRef = 8383A62B281203C50062E49E /* s3v.c */; };
@@ -1569,6 +1571,8 @@
 		837CEAEF23487F2C00E62A4A /* jstm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jstm.c; sourceTree = "<group>"; };
 		837CEAF023487F2C00E62A4A /* sqex_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqex_streamfile.h; sourceTree = "<group>"; };
 		837CEB062348809400E62A4A /* seb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seb.c; sourceTree = "<group>"; };
+		837D72652E9245D400C62C52 /* ubi_bao_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ubi_bao_config.h; sourceTree = "<group>"; };
+		837D72662E9245D400C62C52 /* ubi_bao_config.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ubi_bao_config.c; sourceTree = "<group>"; };
 		838395312E460D9500A7CFD8 /* df_decoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = df_decoder.c; sourceTree = "<group>"; };
 		838395332E460DCE00A7CFD8 /* cf_df.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cf_df.c; sourceTree = "<group>"; };
 		8383A62B281203C50062E49E /* s3v.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = s3v.c; sourceTree = "<group>"; };
@@ -2636,6 +2640,8 @@
 				834F7E942C70A45B003AC386 /* txtp_process.c */,
 				83F82CB52CD34747003A1072 /* ubi_apm.c */,
 				8306B0D420984590000302D4 /* ubi_bao.c */,
+				837D72652E9245D400C62C52 /* ubi_bao_config.h */,
+				837D72662E9245D400C62C52 /* ubi_bao_config.c */,
 				8351F32B2212B57000A606E4 /* ubi_bao_streamfile.h */,
 				836F6EFC18BDC2190095E648 /* ubi_ckd.c */,
 				832FC36B278FA4CB0056A860 /* ubi_ckd_cwav.c */,
@@ -2888,6 +2894,7 @@
 				833E82F42A28587D00CD0580 /* companion_files.h in Headers */,
 				834F7E3D2C709C7B003AC386 /* api_decode.h in Headers */,
 				834F7DDE2C7093EA003AC386 /* mpeg_decoder.h in Headers */,
+				837D72682E9245D400C62C52 /* ubi_bao_config.h in Headers */,
 				83031EDB243C510500C3F3E0 /* xnb_lz4mg.h in Headers */,
 				836F705418BDC2190095E648 /* streamfile.h in Headers */,
 				83BB84072DF2D1C2002077FC /* ivb_streamfile.h in Headers */,
@@ -3436,6 +3443,7 @@
 				837CEAD823487E8300E62A4A /* bmp_konami.c in Sources */,
 				834F7DDC2C7093EA003AC386 /* mpeg_custom_utils.c in Sources */,
 				834F7E922C70A1AB003AC386 /* vgmstream_init.c in Sources */,
+				837D72672E9245D400C62C52 /* ubi_bao_config.c in Sources */,
 				83B73C332D8FEF7A00A57F08 /* ubi_mpeg_helpers.c in Sources */,
 				836F700118BDC2190095E648 /* ps2_tec.c in Sources */,
 				832BF82121E0514B006F50F1 /* zsnd.c in Sources */,
