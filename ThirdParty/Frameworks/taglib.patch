@@ -1,6 +1,6 @@
-diff -ur taglib-2.0.2.orig/taglib/ape/apetag.cpp taglib-2.0.2/taglib/ape/apetag.cpp
---- taglib-2.0.2.orig/taglib/ape/apetag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/ape/apetag.cpp	2025-02-17 02:18:36
+diff --color=auto -urN taglib-2.1.1.orig/taglib/ape/apetag.cpp taglib-2.1.1/taglib/ape/apetag.cpp
+--- taglib-2.1.1.orig/taglib/ape/apetag.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/ape/apetag.cpp	2025-10-05 17:24:55
 @@ -73,6 +73,9 @@
  
    Footer footer;
@@ -213,9 +213,9 @@ diff -ur taglib-2.0.2.orig/taglib/ape/apetag.cpp taglib-2.0.2/taglib/ape/apetag.
 +  else
 +    rg.clearTrackPeak();
  }
-diff -ur taglib-2.0.2.orig/taglib/ape/apetag.h taglib-2.0.2/taglib/ape/apetag.h
---- taglib-2.0.2.orig/taglib/ape/apetag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/ape/apetag.h	2025-02-17 01:22:05
+diff --color=auto -urN taglib-2.1.1.orig/taglib/ape/apetag.h taglib-2.1.1/taglib/ape/apetag.h
+--- taglib-2.1.1.orig/taglib/ape/apetag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/ape/apetag.h	2025-10-05 17:24:55
 @@ -56,6 +56,8 @@
      class TAGLIB_EXPORT Tag : public TagLib::Tag
      {
@@ -260,9 +260,9 @@ diff -ur taglib-2.0.2.orig/taglib/ape/apetag.h taglib-2.0.2/taglib/ape/apetag.h
  
        /*!
         * Implements the unified tag dictionary interface -- export function.
-diff -ur taglib-2.0.2.orig/taglib/asf/asftag.cpp taglib-2.0.2/taglib/asf/asftag.cpp
---- taglib-2.0.2.orig/taglib/asf/asftag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/asf/asftag.cpp	2025-02-17 01:37:32
+diff --color=auto -urN taglib-2.1.1.orig/taglib/asf/asftag.cpp taglib-2.1.1/taglib/asf/asftag.cpp
+--- taglib-2.1.1.orig/taglib/asf/asftag.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/asf/asftag.cpp	2025-10-05 17:24:55
 @@ -50,10 +50,13 @@
  {
  public:
@@ -498,9 +498,9 @@ diff -ur taglib-2.0.2.orig/taglib/asf/asftag.cpp taglib-2.0.2/taglib/asf/asftag.
      }
      else {
        ignoredProps.insert(prop, attributes);
-diff -ur taglib-2.0.2.orig/taglib/asf/asftag.h taglib-2.0.2/taglib/asf/asftag.h
---- taglib-2.0.2.orig/taglib/asf/asftag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/asf/asftag.h	2025-02-17 01:35:57
+diff --color=auto -urN taglib-2.1.1.orig/taglib/asf/asftag.h taglib-2.1.1/taglib/asf/asftag.h
+--- taglib-2.1.1.orig/taglib/asf/asftag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/asf/asftag.h	2025-10-05 17:24:55
 @@ -46,6 +46,7 @@
        friend class File;
  
@@ -636,9 +636,9 @@ diff -ur taglib-2.0.2.orig/taglib/asf/asftag.h taglib-2.0.2/taglib/asf/asftag.h
         * Returns \c true if the tag does not contain any data.  This should be
         * reimplemented in subclasses that provide more than the basic tagging
         * abilities in this class.
-diff -ur taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.cpp taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.cpp
---- taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.cpp	2025-02-17 01:58:54
+diff --color=auto -urN taglib-2.1.1.orig/taglib/dsdiff/dsdiffdiintag.cpp taglib-2.1.1/taglib/dsdiff/dsdiffdiintag.cpp
+--- taglib-2.1.1.orig/taglib/dsdiff/dsdiffdiintag.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/dsdiff/dsdiffdiintag.cpp	2025-10-05 17:24:55
 @@ -53,16 +53,31 @@
    return d->title;
  }
@@ -755,9 +755,9 @@ diff -ur taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.cpp taglib-2.0.2/taglib/d
  }
  
  PropertyMap DSDIFF::DIIN::Tag::properties() const
-diff -ur taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.h taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.h
---- taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/dsdiff/dsdiffdiintag.h	2025-02-17 01:53:14
+diff --color=auto -urN taglib-2.1.1.orig/taglib/dsdiff/dsdiffdiintag.h taglib-2.1.1/taglib/dsdiff/dsdiffdiintag.h
+--- taglib-2.1.1.orig/taglib/dsdiff/dsdiffdiintag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/dsdiff/dsdiffdiintag.h	2025-10-05 17:24:55
 @@ -42,6 +42,7 @@
        class TAGLIB_EXPORT Tag : public TagLib::Tag
        {
@@ -887,9 +887,9 @@ diff -ur taglib-2.0.2.orig/taglib/dsdiff/dsdiffdiintag.h taglib-2.0.2/taglib/dsd
  
          /*!
           * Implements the unified property interface -- export function.
-diff -ur taglib-2.0.2.orig/taglib/mod/modtag.cpp taglib-2.0.2/taglib/mod/modtag.cpp
---- taglib-2.0.2.orig/taglib/mod/modtag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mod/modtag.cpp	2025-02-17 01:39:36
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mod/modtag.cpp taglib-2.1.1/taglib/mod/modtag.cpp
+--- taglib-2.1.1.orig/taglib/mod/modtag.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/mod/modtag.cpp	2025-10-05 17:24:55
 @@ -53,16 +53,31 @@
    return d->title;
  }
@@ -999,9 +999,9 @@ diff -ur taglib-2.0.2.orig/taglib/mod/modtag.cpp taglib-2.0.2/taglib/mod/modtag.
  {
  }
  
-diff -ur taglib-2.0.2.orig/taglib/mod/modtag.h taglib-2.0.2/taglib/mod/modtag.h
---- taglib-2.0.2.orig/taglib/mod/modtag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mod/modtag.h	2025-02-17 01:24:04
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mod/modtag.h taglib-2.1.1/taglib/mod/modtag.h
+--- taglib-2.1.1.orig/taglib/mod/modtag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/mod/modtag.h	2025-10-05 17:24:55
 @@ -48,6 +48,8 @@
      class TAGLIB_EXPORT Tag : public TagLib::Tag
      {
@@ -1125,9 +1125,9 @@ diff -ur taglib-2.0.2.orig/taglib/mod/modtag.h taglib-2.0.2/taglib/mod/modtag.h
         * Sets the tracker name to \a trackerName.  If \a trackerName is
         * an empty string then this value will be cleared.
         *
-diff -ur taglib-2.0.2.orig/taglib/mp4/mp4tag.cpp taglib-2.0.2/taglib/mp4/mp4tag.cpp
---- taglib-2.0.2.orig/taglib/mp4/mp4tag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mp4/mp4tag.cpp	2025-02-17 01:39:07
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mp4/mp4tag.cpp taglib-2.1.1/taglib/mp4/mp4tag.cpp
+--- taglib-2.1.1.orig/taglib/mp4/mp4tag.cpp	2025-04-13 22:43:13
++++ taglib-2.1.1/taglib/mp4/mp4tag.cpp	2025-10-05 17:24:55
 @@ -78,6 +78,34 @@
        addItem(name, itm);
      }
@@ -1335,9 +1335,9 @@ diff -ur taglib-2.0.2.orig/taglib/mp4/mp4tag.cpp taglib-2.0.2/taglib/mp4/mp4tag.
  }
  
  bool MP4::Tag::isEmpty() const
-diff -ur taglib-2.0.2.orig/taglib/mp4/mp4tag.h taglib-2.0.2/taglib/mp4/mp4tag.h
---- taglib-2.0.2.orig/taglib/mp4/mp4tag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mp4/mp4tag.h	2025-02-17 01:37:52
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mp4/mp4tag.h taglib-2.1.1/taglib/mp4/mp4tag.h
+--- taglib-2.1.1.orig/taglib/mp4/mp4tag.h	2025-04-13 22:43:13
++++ taglib-2.1.1/taglib/mp4/mp4tag.h	2025-10-05 17:24:55
 @@ -43,6 +43,7 @@
      class TAGLIB_EXPORT Tag: public TagLib::Tag
      {
@@ -1381,9 +1381,9 @@ diff -ur taglib-2.0.2.orig/taglib/mp4/mp4tag.h taglib-2.0.2/taglib/mp4/mp4tag.h
  
          bool isEmpty() const override;
  
-diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.cpp taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.cpp
---- taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.cpp	2025-02-17 01:28:50
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mpeg/id3v1/id3v1tag.cpp taglib-2.1.1/taglib/mpeg/id3v1/id3v1tag.cpp
+--- taglib-2.1.1.orig/taglib/mpeg/id3v1/id3v1tag.cpp	2025-06-29 07:20:19
++++ taglib-2.1.1/taglib/mpeg/id3v1/id3v1tag.cpp	2025-10-05 17:24:55
 @@ -124,16 +124,31 @@
    return d->title;
  }
@@ -1473,7 +1473,7 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.cpp taglib-2.0.2/taglib/mp
 @@ -187,6 +234,22 @@
  void ID3v1::Tag::setTrack(unsigned int i)
  {
-   d->track = i < 256 ? i : 0;
+   d->track = static_cast<unsigned char>(i < 256 ? i : 0);
 +}
 +
 +void ID3v1::Tag::setDisc(unsigned int)
@@ -1493,9 +1493,9 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.cpp taglib-2.0.2/taglib/mp
  }
  
  unsigned int ID3v1::Tag::genreNumber() const
-diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.h taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.h
---- taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mpeg/id3v1/id3v1tag.h	2025-02-17 01:25:21
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mpeg/id3v1/id3v1tag.h taglib-2.1.1/taglib/mpeg/id3v1/id3v1tag.h
+--- taglib-2.1.1.orig/taglib/mpeg/id3v1/id3v1tag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/mpeg/id3v1/id3v1tag.h	2025-10-05 17:24:55
 @@ -114,6 +114,7 @@
      class TAGLIB_EXPORT Tag : public TagLib::Tag
      {
@@ -1539,10 +1539,10 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v1/id3v1tag.h taglib-2.0.2/taglib/mpeg
  
        /*!
         * Returns the genre in number.
-diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.cpp
---- taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.cpp	2025-02-17 01:31:54
-@@ -125,6 +125,13 @@
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.1.1/taglib/mpeg/id3v2/id3v2tag.cpp
+--- taglib-2.1.1.orig/taglib/mpeg/id3v2/id3v2tag.cpp	2025-05-24 06:02:11
++++ taglib-2.1.1/taglib/mpeg/id3v2/id3v2tag.cpp	2025-10-05 17:24:55
+@@ -147,6 +147,13 @@
    return String();
  }
  
@@ -1556,7 +1556,7 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mp
  String ID3v2::Tag::artist() const
  {
    if(!d->frameListMap["TPE1"].isEmpty())
-@@ -132,6 +139,13 @@
+@@ -154,6 +161,13 @@
    return String();
  }
  
@@ -1570,7 +1570,7 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mp
  String ID3v2::Tag::album() const
  {
    if(!d->frameListMap["TALB"].isEmpty())
-@@ -139,6 +153,13 @@
+@@ -161,6 +175,13 @@
    return String();
  }
  
@@ -1584,7 +1584,7 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mp
  String ID3v2::Tag::comment() const
  {
    const FrameList &comments = d->frameListMap["COMM"];
-@@ -209,21 +230,90 @@
+@@ -231,21 +252,90 @@
    return 0;
  }
  
@@ -1675,7 +1675,7 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mp
  void ID3v2::Tag::setComment(const String &s)
  {
    if(s.isEmpty()) {
-@@ -293,6 +383,120 @@
+@@ -315,6 +405,120 @@
    setTextFrame("TRCK", String::number(i));
  }
  
@@ -1796,7 +1796,7 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mp
  bool ID3v2::Tag::isEmpty() const
  {
    return d->frameList.isEmpty();
-@@ -871,6 +1075,34 @@
+@@ -899,6 +1103,34 @@
    }
  
    d->factory->rebuildAggregateFrames(this);
@@ -1831,9 +1831,9 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.cpp taglib-2.0.2/taglib/mp
  }
  
  void ID3v2::Tag::setTextFrame(const ByteVector &id, const String &value)
-diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.h taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.h
---- taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/mpeg/id3v2/id3v2tag.h	2025-02-17 01:25:52
+diff --color=auto -urN taglib-2.1.1.orig/taglib/mpeg/id3v2/id3v2tag.h taglib-2.1.1/taglib/mpeg/id3v2/id3v2tag.h
+--- taglib-2.1.1.orig/taglib/mpeg/id3v2/id3v2tag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/mpeg/id3v2/id3v2tag.h	2025-10-05 17:24:55
 @@ -133,6 +133,7 @@
      class TAGLIB_EXPORT Tag : public TagLib::Tag
      {
@@ -1877,9 +1877,9 @@ diff -ur taglib-2.0.2.orig/taglib/mpeg/id3v2/id3v2tag.h taglib-2.0.2/taglib/mpeg
  
        bool isEmpty() const override;
  
-diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xiphcomment.cpp
---- taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/ogg/xiphcomment.cpp	2025-02-17 01:32:38
+diff --color=auto -urN taglib-2.1.1.orig/taglib/ogg/xiphcomment.cpp taglib-2.1.1/taglib/ogg/xiphcomment.cpp
+--- taglib-2.1.1.orig/taglib/ogg/xiphcomment.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/ogg/xiphcomment.cpp	2025-10-05 17:24:55
 @@ -43,6 +43,8 @@
    FieldListMap fieldListMap;
    String vendorID;
@@ -1949,7 +1949,7 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xi
  String Ogg::XiphComment::comment() const
  {
    StringList val = d->fieldListMap.value("DESCRIPTION");
-@@ -123,24 +166,88 @@
+@@ -123,24 +166,89 @@
    val = d->fieldListMap.value("TRACKNUM");
    if(!val.isEmpty())
      return val.front().toInt();
@@ -1986,7 +1986,8 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xi
 +
 +String Ogg::XiphComment::soundcheck() const
 +{
-+  return String();
++  StringList val = d->fieldListMap.value("COMMENTS:ITUNNORM");
++  return val.isEmpty() ? String() : val.front();
 +}
 +
  void Ogg::XiphComment::setTitle(const String &s)
@@ -2038,7 +2039,7 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xi
  void Ogg::XiphComment::setComment(const String &s)
  {
    if(d->commentField.isEmpty()) {
-@@ -169,6 +276,7 @@
+@@ -169,6 +277,7 @@
  
  void Ogg::XiphComment::setTrack(unsigned int i)
  {
@@ -2046,7 +2047,7 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xi
    removeFields("TRACKNUM");
    if(i == 0)
      removeFields("TRACKNUMBER");
-@@ -176,6 +284,50 @@
+@@ -176,6 +285,50 @@
      addField("TRACKNUMBER", String::number(i));
  }
  
@@ -2097,7 +2098,7 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xi
  bool Ogg::XiphComment::isEmpty() const
  {
    return std::all_of(d->fieldListMap.cbegin(), d->fieldListMap.cend(),
-@@ -519,4 +671,25 @@
+@@ -519,4 +672,25 @@
        addField(key, String(entry.mid(sep + 1), String::UTF8), false);
      }
    }
@@ -2123,9 +2124,9 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.cpp taglib-2.0.2/taglib/ogg/xi
 +  else
 +    rg.setTrackPeak(val.front().toFloat());
  }
-diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.h taglib-2.0.2/taglib/ogg/xiphcomment.h
---- taglib-2.0.2.orig/taglib/ogg/xiphcomment.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/ogg/xiphcomment.h	2025-02-17 01:26:37
+diff --color=auto -urN taglib-2.1.1.orig/taglib/ogg/xiphcomment.h taglib-2.1.1/taglib/ogg/xiphcomment.h
+--- taglib-2.1.1.orig/taglib/ogg/xiphcomment.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/ogg/xiphcomment.h	2025-10-05 17:24:55
 @@ -70,6 +70,7 @@
      class TAGLIB_EXPORT XiphComment : public TagLib::Tag
      {
@@ -2169,9 +2170,9 @@ diff -ur taglib-2.0.2.orig/taglib/ogg/xiphcomment.h taglib-2.0.2/taglib/ogg/xiph
  
        bool isEmpty() const override;
  
-diff -ur taglib-2.0.2.orig/taglib/riff/wav/infotag.cpp taglib-2.0.2/taglib/riff/wav/infotag.cpp
---- taglib-2.0.2.orig/taglib/riff/wav/infotag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/riff/wav/infotag.cpp	2025-02-17 01:35:07
+diff --color=auto -urN taglib-2.1.1.orig/taglib/riff/wav/infotag.cpp taglib-2.1.1/taglib/riff/wav/infotag.cpp
+--- taglib-2.1.1.orig/taglib/riff/wav/infotag.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/riff/wav/infotag.cpp	2025-10-05 17:24:55
 @@ -90,16 +90,31 @@
    return fieldText("INAM");
  }
@@ -2282,9 +2283,9 @@ diff -ur taglib-2.0.2.orig/taglib/riff/wav/infotag.cpp taglib-2.0.2/taglib/riff/
  }
  
  bool RIFF::Info::Tag::isEmpty() const
-diff -ur taglib-2.0.2.orig/taglib/riff/wav/infotag.h taglib-2.0.2/taglib/riff/wav/infotag.h
---- taglib-2.0.2.orig/taglib/riff/wav/infotag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/riff/wav/infotag.h	2025-02-17 01:34:48
+diff --color=auto -urN taglib-2.1.1.orig/taglib/riff/wav/infotag.h taglib-2.1.1/taglib/riff/wav/infotag.h
+--- taglib-2.1.1.orig/taglib/riff/wav/infotag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/riff/wav/infotag.h	2025-10-05 17:24:55
 @@ -95,6 +95,7 @@
      class TAGLIB_EXPORT Tag : public TagLib::Tag
      {
@@ -2328,9 +2329,248 @@ diff -ur taglib-2.0.2.orig/taglib/riff/wav/infotag.h taglib-2.0.2/taglib/riff/wa
  
        bool isEmpty() const override;
  
-diff -ur taglib-2.0.2.orig/taglib/tag.cpp taglib-2.0.2/taglib/tag.cpp
---- taglib-2.0.2.orig/taglib/tag.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/tag.cpp	2025-02-17 04:15:31
+diff --color=auto -urN taglib-2.1.1.orig/taglib/shorten/shortentag.cpp taglib-2.1.1/taglib/shorten/shortentag.cpp
+--- taglib-2.1.1.orig/taglib/shorten/shortentag.cpp	2025-05-24 06:02:11
++++ taglib-2.1.1/taglib/shorten/shortentag.cpp	2025-10-05 17:44:47
+@@ -45,16 +45,31 @@
+   return String();
+ }
+ 
++String Shorten::Tag::albumartist() const
++{
++  return String();
++}
++
+ String Shorten::Tag::artist() const
+ {
+   return String();
+ }
+ 
++String Shorten::Tag::composer() const
++{
++  return String();
++}
++
+ String Shorten::Tag::album() const
+ {
+   return String();
+ }
+ 
++String Shorten::Tag::unsyncedlyrics() const
++{
++  return String();
++}
++
+ String Shorten::Tag::comment() const
+ {
+   return String();
+@@ -75,18 +90,50 @@
+   return 0;
+ }
+ 
++unsigned int Shorten::Tag::disc() const
++{
++  return 0;
++}
++
++String Shorten::Tag::cuesheet() const
++{
++  return String();
++}
++
++TagLib::Tag::ReplayGain Shorten::Tag::replaygain() const
++{
++  return TagLib::Tag::ReplayGain();
++}
++
++String Shorten::Tag::soundcheck() const
++{
++  return String();
++}
++
+ void Shorten::Tag::setTitle(const String &)
+ {
+ }
+ 
++void Shorten::Tag::setAlbumArtist(const String &)
++{
++}
++
+ void Shorten::Tag::setArtist(const String &)
+ {
+ }
+ 
++void Shorten::Tag::setComposer(const String &)
++{
++}
++
+ void Shorten::Tag::setAlbum(const String &)
+ {
+ }
+ 
++void Shorten::Tag::setUnsyncedLyrics(const String &)
++{
++}
++
+ void Shorten::Tag::setComment(const String &)
+ {
+ }
+@@ -100,6 +147,22 @@
+ }
+ 
+ void Shorten::Tag::setTrack(unsigned int)
++{
++}
++
++void Shorten::Tag::setDisc(unsigned int)
++{
++}
++
++void Shorten::Tag::setCuesheet(const String &)
++{
++}
++
++void Shorten::Tag::setReplaygain(TagLib::Tag::ReplayGain)
++{
++}
++
++void Shorten::Tag::setSoundcheck(const String &)
+ {
+ }
+ 
+diff --color=auto -urN taglib-2.1.1.orig/taglib/shorten/shortentag.h taglib-2.1.1/taglib/shorten/shortentag.h
+--- taglib-2.1.1.orig/taglib/shorten/shortentag.h	2025-05-24 06:02:11
++++ taglib-2.1.1/taglib/shorten/shortentag.h	2025-10-05 17:38:33
+@@ -41,6 +41,8 @@
+     class TAGLIB_EXPORT Tag : public TagLib::Tag
+     {
+     public:
++      using TagLib::Tag::ReplayGain;
++
+       Tag();
+       ~Tag() override;
+ 
+@@ -55,16 +57,31 @@
+       /*!
+        * Not supported by Shorten files.  Therefore always returns an empty string.
+        */
++      String albumartist() const override;
++
++      /*!
++       * Not supported by Shorten files.  Therefore always returns an empty string.
++       */
+       String artist() const override;
+ 
+       /*!
+        * Not supported by Shorten files.  Therefore always returns an empty string.
+        */
++      String composer() const override;
++
++      /*!
++       * Not supported by Shorten files.  Therefore always returns an empty string.
++       */
+       String album() const override;
+ 
+       /*!
+        * Not supported by Shorten files.  Therefore always returns an empty string.
+        */
++      String unsyncedlyrics() const override;
++
++      /*!
++       * Not supported by Shorten files.  Therefore always returns an empty string.
++       */
+       String comment() const override;
+ 
+       /*!
+@@ -83,6 +100,26 @@
+       unsigned int track() const override;
+ 
+       /*!
++       * Not supported by Shorten files.  Therefore always returns 0.
++       */
++      unsigned int disc() const override;
++
++      /*!
++       * Not supported by Shorten files.  Therefore always returns an empty string.
++       */
++      String cuesheet() const override;
++
++      /*!
++       * Not supported by Shorten files.  Therefore always returns an empty string.
++       */
++      ReplayGain replaygain() const override;
++
++      /*!
++       * Not supported by Shorten files.  Therefore always returns an empty string.
++       */
++      String soundcheck() const override;
++
++      /*!
+        * Not supported by Shorten files and therefore ignored.
+        */
+       void setTitle(const String &title) override;
+@@ -90,16 +127,31 @@
+       /*!
+        * Not supported by Shorten files and therefore ignored.
+        */
++      void setAlbumArtist(const String &albumartist) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
+       void setArtist(const String &artist) override;
+ 
+       /*!
+        * Not supported by Shorten files and therefore ignored.
+        */
++      void setComposer(const String &composer) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
+       void setAlbum(const String &album) override;
+ 
+       /*!
+        * Not supported by Shorten files and therefore ignored.
+        */
++      void setUnsyncedLyrics(const String &unsyncedlyrics) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
+       void setComment(const String &comment) override;
+ 
+       /*!
+@@ -116,6 +168,26 @@
+        * Not supported by Shorten files and therefore ignored.
+        */
+       void setTrack(unsigned int track) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
++      void setDisc(unsigned int disc) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
++      void setCuesheet(const String &cuesheet) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
++      void setReplaygain(ReplayGain replaygain) override;
++
++      /*!
++       * Not supported by Shorten files and therefore ignored.
++       */
++      void setSoundcheck(const String &soundcheck) override;
+ 
+       /*!
+        * Implements the unified property interface -- export function.
+diff --color=auto -urN taglib-2.1.1.orig/taglib/tag.cpp taglib-2.1.1/taglib/tag.cpp
+--- taglib-2.1.1.orig/taglib/tag.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/tag.cpp	2025-10-05 17:24:55
 @@ -25,6 +25,7 @@
  
  #include "tag.h"
@@ -2723,9 +2963,9 @@ diff -ur taglib-2.0.2.orig/taglib/tag.cpp taglib-2.0.2/taglib/tag.cpp
 +  trackpeak = 0;
 +  trackpeakSet = false;
  }
-diff -ur taglib-2.0.2.orig/taglib/tag.h taglib-2.0.2/taglib/tag.h
---- taglib-2.0.2.orig/taglib/tag.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/tag.h	2025-02-17 04:14:03
+diff --color=auto -urN taglib-2.1.1.orig/taglib/tag.h taglib-2.1.1/taglib/tag.h
+--- taglib-2.1.1.orig/taglib/tag.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/tag.h	2025-10-05 17:24:55
 @@ -48,7 +48,51 @@
    class TAGLIB_EXPORT Tag
    {
@@ -2936,9 +3176,9 @@ diff -ur taglib-2.0.2.orig/taglib/tag.h taglib-2.0.2/taglib/tag.h
  
    private:
      class TagPrivate;
-diff -ur taglib-2.0.2.orig/taglib/tagunion.cpp taglib-2.0.2/taglib/tagunion.cpp
---- taglib-2.0.2.orig/taglib/tagunion.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/tagunion.cpp	2025-02-17 01:12:48
+diff --color=auto -urN taglib-2.1.1.orig/taglib/tagunion.cpp taglib-2.1.1/taglib/tagunion.cpp
+--- taglib-2.1.1.orig/taglib/tagunion.cpp	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/tagunion.cpp	2025-10-05 17:24:55
 @@ -164,16 +164,31 @@
    stringUnion(title);
  }
@@ -3061,9 +3301,9 @@ diff -ur taglib-2.0.2.orig/taglib/tagunion.cpp taglib-2.0.2/taglib/tagunion.cpp
  }
  
  bool TagUnion::isEmpty() const
-diff -ur taglib-2.0.2.orig/taglib/tagunion.h taglib-2.0.2/taglib/tagunion.h
---- taglib-2.0.2.orig/taglib/tagunion.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/tagunion.h	2025-02-17 01:12:11
+diff --color=auto -urN taglib-2.1.1.orig/taglib/tagunion.h taglib-2.1.1/taglib/tagunion.h
+--- taglib-2.1.1.orig/taglib/tagunion.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/tagunion.h	2025-10-05 17:24:55
 @@ -67,20 +67,34 @@
      bool setComplexProperties(const String &key, const List<VariantMap> &value) override;
  
@@ -3099,10 +3339,10 @@ diff -ur taglib-2.0.2.orig/taglib/tagunion.h taglib-2.0.2/taglib/tagunion.h
      bool isEmpty() const override;
  
      template <class T> T *access(int index, bool create)
-diff -ur taglib-2.0.2.orig/taglib/toolkit/tstring.cpp taglib-2.0.2/taglib/toolkit/tstring.cpp
---- taglib-2.0.2.orig/taglib/toolkit/tstring.cpp	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/toolkit/tstring.cpp	2025-02-17 02:38:54
-@@ -475,12 +475,12 @@
+diff --color=auto -urN taglib-2.1.1.orig/taglib/toolkit/tstring.cpp taglib-2.1.1/taglib/toolkit/tstring.cpp
+--- taglib-2.1.1.orig/taglib/toolkit/tstring.cpp	2025-05-24 06:02:11
++++ taglib-2.1.1/taglib/toolkit/tstring.cpp	2025-10-05 17:24:55
+@@ -479,12 +479,12 @@
    }
  }
  
@@ -3117,7 +3357,7 @@ diff -ur taglib-2.0.2.orig/taglib/toolkit/tstring.cpp taglib-2.0.2/taglib/toolki
  
    // Has wcstol() consumed the entire string and not overflowed?
    if(ok) {
-@@ -489,6 +489,21 @@
+@@ -493,6 +493,21 @@
    }
  
    return static_cast<int>(value);
@@ -3139,9 +3379,9 @@ diff -ur taglib-2.0.2.orig/taglib/toolkit/tstring.cpp taglib-2.0.2/taglib/toolki
  }
  
  String String::stripWhiteSpace() const
-diff -ur taglib-2.0.2.orig/taglib/toolkit/tstring.h taglib-2.0.2/taglib/toolkit/tstring.h
---- taglib-2.0.2.orig/taglib/toolkit/tstring.h	2024-08-23 21:40:41
-+++ taglib-2.0.2/taglib/toolkit/tstring.h	2025-02-17 02:38:42
+diff --color=auto -urN taglib-2.1.1.orig/taglib/toolkit/tstring.h taglib-2.1.1/taglib/toolkit/tstring.h
+--- taglib-2.1.1.orig/taglib/toolkit/tstring.h	2025-02-11 21:34:24
++++ taglib-2.1.1/taglib/toolkit/tstring.h	2025-10-05 17:24:55
 @@ -357,7 +357,16 @@
       * \c true and returns the integer. Otherwise it sets \a *ok to \c false
       * and the result is undefined.
