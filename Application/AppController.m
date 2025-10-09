@@ -419,10 +419,34 @@ static BOOL consentLastEnabled = NO;
 		}
 
 		if(entry.albumArt) {
+			// currently 16x16
+			//NSSize frameSize = [NSImage imageNamed:@"infoTemplate"].size;
+			//const CGFloat sizeX = frameSize.width;
+			//const CGFloat sizeY = frameSize.height;
+			const CGFloat sizeX = 16.0;
+			const CGFloat sizeY = 16.0;
+
+			NSImage *newButtonImage = [[NSImage alloc] initWithSize:NSMakeSize(sizeX, sizeY)];
+			NSSize artSize = entry.albumArt.size;
+			CGFloat maxDim = MAX(artSize.width, artSize.height);
+			CGFloat ratioX = artSize.width / maxDim;
+			CGFloat ratioY = artSize.height / maxDim;
+			CGFloat posX = (maxDim - artSize.width) / 2.0;
+			CGFloat posY = (maxDim - artSize.height) / 2.0;
+			posX = posX * sizeX / maxDim;
+			posY = posY * sizeY / maxDim;
+
+			[newButtonImage lockFocus];
+			[entry.albumArt drawInRect:NSMakeRect(posX, posY, sizeX * ratioX, sizeY * ratioY)
+							  fromRect:NSMakeRect(0, 0, artSize.width, artSize.height)
+							 operation:NSCompositingOperationSourceOver
+							  fraction:1.0];
+			[newButtonImage unlockFocus];
+
 			self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
-			self.infoButton.image = playlistController.currentEntry.albumArt;
+			self.infoButton.image = newButtonImage;
 			self.infoButtonMini.imageScaling = NSImageScaleProportionallyUpOrDown;
-			self.infoButtonMini.image = playlistController.currentEntry.albumArt;
+			self.infoButtonMini.image = newButtonImage;
 		} else {
 			self.infoButton.imageScaling = NSImageScaleNone;
 			self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
