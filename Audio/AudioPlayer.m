@@ -432,12 +432,27 @@
 		lastChain = [chainQueue lastObject];
 		if(lastChain == nil) {
 			lastChain = bufferChain;
+			if(lastChain == nil) {
+				/* Perhaps this should be the default anyway, since the chain that just
+				 * finished is explicitly calling us */
+				lastChain = sender;
+			}
 		}
 	}
 
 	BOOL pathsEqual = NO;
 
-	if([nextStream isFileURL] && [[lastChain streamURL] isFileURL]) {
+	if(!lastChain || ![lastChain isKindOfClass:[BufferChain class]] ||
+	   ![lastChain streamURL] ||
+	   !nextStream || ![nextStream isKindOfClass:[NSURL class]]) {
+		DLog(@"Previous chain or next stream references broken, or invalid classes");
+		if(!nextStream || ![nextStream isKindOfClass:[NSURL class]]) {
+			// Terminate playback
+			nextStream = nil;
+			atomic_fetch_sub(&refCount, 1);
+			return YES;
+		}
+	} else if([nextStream isFileURL] && [[lastChain streamURL] isFileURL]) {
 		NSString *unixPathNext = [nextStream path];
 		NSString *unixPathPrev = [[lastChain streamURL] path];
 
