@@ -699,7 +699,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 				} else if(!strcasecmp(tag->key, "iTunNORM")) {
 					setDictionary(_metaDict, @"soundcheck", guess_encoding_of_string(tag->value));
 				} else {
-					setDictionary(_metaDict, guess_encoding_of_string(tag->key), guess_encoding_of_string(tag->value));
+					setDictionary(_metaDict, [guess_encoding_of_string(tag->key) lowercaseString], guess_encoding_of_string(tag->value));
 				}
 			}
 		}
