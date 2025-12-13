@@ -82,8 +82,11 @@
 		if(!album.isEmpty())
 			[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
 		
-		if(!title.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
+		if(!title.isEmpty()) {
+			// XXX workaround for colliding with chapterized inputs' readers
+			if(album.isEmpty() || title != album)
+				[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
+		}
 		
 		if(!genre.isEmpty())
 			[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
