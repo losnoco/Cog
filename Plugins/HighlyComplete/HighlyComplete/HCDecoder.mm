@@ -980,6 +980,8 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		emulatorCore = (uint8_t *)core;
 		emulatorExtra = rstate;
+
+		sampleRate = 65536; // XXX
 	} else if(type == 0x24) {
 		struct twosf_loader_state state;
 		memset(&state, 0, sizeof(state));
@@ -1126,6 +1128,12 @@ static int usf_info(void *context, const char *name, const char *value) {
 	if(![self fillBuffer])
 		return NO;
 
+	if(type == 0x22) {
+		// XXX needs to emulate a bit before this becomes correct
+		struct mCore *core = (struct mCore *)emulatorCore;
+		sampleRate = core->audioSampleRate(core);
+	}
+
 	silence_test_buffer.remove_leading_silence();
 
 	return YES;
@@ -1187,8 +1195,9 @@ static int usf_info(void *context, const char *name, const char *value) {
 	else if(type == 0x22) {
 		if(![self initializeDecoder])
 			return NO;
+		/* Move these into the above
 		struct mCore *core = (struct mCore *)emulatorCore;
-		sampleRate = core->audioSampleRate(core);
+		sampleRate = core->audioSampleRate(core); */
 	} else if(type == 0x41)
 		sampleRate = 24038;
 
