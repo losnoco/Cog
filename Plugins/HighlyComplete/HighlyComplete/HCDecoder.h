@@ -33,6 +33,7 @@
 	long framesLength;
 
 	BOOL usfRemoveSilence;
+	long silenceSeconds; // depends on the format
 }
 
 @end

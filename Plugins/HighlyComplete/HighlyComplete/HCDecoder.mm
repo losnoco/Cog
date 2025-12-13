@@ -835,7 +835,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 }
 
 - (BOOL)initializeDecoder {
-	unsigned int silence_seconds = 5;
+	silenceSeconds = 5;
 
 	usfRemoveSilence = NO;
 
@@ -856,7 +856,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 		if(state.refresh)
 			psx_set_refresh(emulatorCore, state.refresh);
 
-		silence_seconds = 30;
+		silenceSeconds = 30;
 	} else if(type == 2) {
 		emulatorExtra = psf2fs_create();
 
@@ -876,7 +876,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		psx_set_readfile(emulatorCore, virtual_readfile, emulatorExtra);
 
-		silence_seconds = 30;
+		silenceSeconds = 30;
 	} else if(type == 0x11 || type == 0x12) {
 		struct sdsf_loader_state state;
 		memset(&state, 0, sizeof(state));
@@ -924,7 +924,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 		usfRemoveSilence = YES;
 
-		silence_seconds = 10;
+		silenceSeconds = 10;
 	} else if(type == 0x22) {
 		struct gsf_loader_state state;
 		memset(&state, 0, sizeof(state));
@@ -1121,7 +1121,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 
 	framesRead = 0;
 
-	silence_test_buffer.resize(sampleRate * silence_seconds * 2);
+	silence_test_buffer.resize(sampleRate * silenceSeconds * 2);
 
 	if(![self fillBuffer])
 		return NO;
@@ -1221,7 +1221,10 @@ static int usf_info(void *context, const char *name, const char *value) {
 }
 
 - (BOOL)fillBuffer {
-	long frames_left = totalFrames - framesRead - silence_test_buffer.data_available() / 2;
+	long _totalFrames = totalFrames;
+	if(!_totalFrames) // likely GSF early init
+		_totalFrames = silenceSeconds * sampleRate;
+	long frames_left = _totalFrames - framesRead - silence_test_buffer.data_available() / 2;
 	long free_space = silence_test_buffer.free_space() / 2;
 	if(IsRepeatOneSet())
 		frames_left = free_space;
