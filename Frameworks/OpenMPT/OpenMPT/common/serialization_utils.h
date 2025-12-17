@@ -174,7 +174,7 @@ inline void Binarywrite(std::ostream& oStrm, const double& data)
 template <class T>
 inline void WriteItem(std::ostream& oStrm, const T& data)
 {
-	static_assert(std::is_trivial<T>::value == true, "");
+	static_assert(std::is_trivially_default_constructible<T>::value && std::is_trivially_copyable<T>::value, "");
 	Binarywrite(oStrm, data);
 }
 
@@ -237,7 +237,7 @@ inline void Binaryread<double>(std::istream& iStrm, double& data, const std::siz
 template <class T>
 inline void ReadItem(std::istream& iStrm, T& data, const std::size_t nSize)
 {
-	static_assert(std::is_trivial<T>::value == true, "");
+	static_assert(std::is_trivially_default_constructible<T>::value && std::is_trivially_copyable<T>::value, "");
 	if (nSize == sizeof(T) || nSize == invalidDatasize)
 		Binaryread(iStrm, data);
 	else

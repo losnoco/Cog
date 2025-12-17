@@ -62,14 +62,7 @@ How to compile
 
  -  In order to build OpenMPT for Windows XP, the Visual Studio 2017 XP 
     targeting toolset as well as the Windows 8.1 SDK need to be installed. The
-    SDK is optionally included with Visual Studio 2017, but must be separately
-    installed with later Visual Studio versions.
-
-    The Windows 8.1 SDK is available from
-    <https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/> or
-    directly from
-    <https://download.microsoft.com/download/B/0/C/B0C80BA3-8AD6-4958-810B-6882485230B5/standalonesdk/sdksetup.exe>
-    .
+    SDK is optionally included with Visual Studio 2017.
 
  -  Microsoft Foundation Classes (MFC) are required to build OpenMPT.
 

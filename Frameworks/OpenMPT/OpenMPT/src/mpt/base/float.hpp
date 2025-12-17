@@ -33,7 +33,7 @@ MPT_CONSTEVAL single_float operator""_fs(long double lit) noexcept {
 } // namespace float_literals
 
 // fp double
-using double_float = float;
+using double_float = double;
 namespace float_literals {
 MPT_CONSTEVAL double_float operator""_fd(long double lit) noexcept {
 	return static_cast<double_float>(lit);

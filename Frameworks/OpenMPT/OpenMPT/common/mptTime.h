@@ -12,6 +12,11 @@
 
 #include "openmpt/all/BuildSettings.hpp"
 
+#if defined(MODPLUG_TRACKER)
+#include "../misc/mptOS.h"
+#include <stdexcept>
+#endif
+
 #if MPT_CXX_AT_LEAST(20) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO) && !defined(MPT_LIBCXX_QUIRK_NO_CHRONO_DATE)
 #include <chrono>
 #include <exception>
@@ -274,6 +279,13 @@ inline mpt::Date::Unix UnixFromLocal(Local local)
 #if !defined(MPT_LIBCXX_QUIRK_CHRONO_DATE_NO_ZONED_TIME)
 	try
 	{
+#if defined(MODPLUG_TRACKER)
+		if(mpt::OS::Windows::IsWine())
+		{
+			// <https://bugs.openmpt.org/view.php?id=1933>
+			throw std::runtime_error("zoned_time is blacklisted on Wine");
+		}
+#endif
 		std::chrono::time_point<std::chrono::local_t, std::chrono::seconds> local_tp =
 			std::chrono::local_days {
 				std::chrono::year{ local.year } /
@@ -300,6 +312,13 @@ inline mpt::Date::Local UnixAsLocal(Unix tp)
 #if !defined(MPT_LIBCXX_QUIRK_CHRONO_DATE_NO_ZONED_TIME)
 	try
 	{
+#if defined(MODPLUG_TRACKER)
+		if(mpt::OS::Windows::IsWine())
+		{
+			// <https://bugs.openmpt.org/view.php?id=1933>
+			throw std::runtime_error("zoned_time is blacklisted on Wine");
+		}
+#endif
 		std::chrono::zoned_time local_tp{ std::chrono::current_zone(), tp };
 		std::chrono::local_days dp = std::chrono::floor<std::chrono::days>(local_tp.get_local_time());
 		std::chrono::year_month_day ymd{dp};

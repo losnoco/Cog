@@ -5660,6 +5660,11 @@ void CSoundFile::SendMIDINote(CHANNELINDEX chn, uint16 note, uint16 volume, IMix
 				channel.nLeftVU = channel.nRightVU = 0xFF;
 		}
 	}
+#else // NO_PLUGINS
+	MPT_UNUSED(chn);
+	MPT_UNUSED(note);
+	MPT_UNUSED(volume);
+	MPT_UNUSED(plugin);
 #endif // NO_PLUGINS
 }
 

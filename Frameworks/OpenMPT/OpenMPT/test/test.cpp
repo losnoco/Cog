@@ -111,7 +111,24 @@
 #include <zlib.h>
 #elif defined(MPT_WITH_MINIZ)
 #define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
+#if MPT_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4505) // unreferenced function with internal linkage has been removed
+#elif MPT_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#elif MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#endif
 #include <miniz/miniz.h>
+#if MPT_COMPILER_MSVC
+//#pragma warning(pop)
+#elif MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#elif MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif
 #endif
 
 #define MPT_TEST_HAS_FILESYSTEM 1

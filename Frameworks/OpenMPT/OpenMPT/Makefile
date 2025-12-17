@@ -2094,6 +2094,7 @@ bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION).makefile.tar: b
 	svn export ./.clang-format                    bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/.clang-format
 	svn export ./bin                              bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/bin
 	svn export ./build/download_externals.sh      bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/download_externals.sh
+	svn export ./build/download_externals.txt     bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/download_externals.txt
 	svn export ./build/android_ndk                bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/android_ndk
 	svn export ./build/djgpp                      bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/djgpp
 	svn export ./build/make                       bin/$(FLAVOUR_DIR)dist-tar/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/make
@@ -2201,6 +2202,7 @@ bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION).msvc.zip: bin/$
 	svn export ./build/vs2022win10uwp             bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2022win10uwp             --native-eol CRLF
 	svn export ./build/vs2022win10clang           bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/vs2022win10clang           --native-eol CRLF
 	svn export ./build/download_externals.cmd     bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/download_externals.cmd     --native-eol CRLF
+	svn export ./build/download_externals.txt     bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/build/download_externals.txt     --native-eol CRLF
 	svn export ./common                           bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/common                           --native-eol CRLF
 	svn export ./doc/contributing.md              bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/doc/contributing.md              --native-eol CRLF
 	svn export ./doc/libopenmpt_styleguide.md     bin/$(FLAVOUR_DIR)dist-zip/libopenmpt-$(DIST_LIBOPENMPT_VERSION)/doc/libopenmpt_styleguide.md     --native-eol CRLF

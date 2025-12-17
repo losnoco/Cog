@@ -122,6 +122,7 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 			return true;
 		}
 
+		const auto startPos = file.GetPosition();
 		FileReader chunk = file.ReadChunk(iffHead.chunksize);
 		if(!chunk.IsValid())
 		{
@@ -147,7 +148,14 @@ bool CSoundFile::ReadPT36(FileReader &file, ModLoadingFlags loadFlags)
 			break;
 
 		case PT36IffChunk::idPTDT:
-			ok = ReadMOD(chunk, loadFlags);
+			// Some (all?) PT36 files with samples larger than 64k report incorrect chunk sizes (off by 65536 for each large sample).
+			// In those broken files, the PTDT chunk is the last chunk in the file anway,
+			// so we just pass the entire chunk plus the maximum possible extra size to the MOD loader.
+			// Example: megadream5 by Thunder
+			{
+				FileReader moduleChunk = file.GetChunkAt(startPos, iffHead.chunksize + 65536 * 31);
+				ok = ReadMOD(moduleChunk, loadFlags);
+			}
 			break;
 		}
 	} while(file.ReadStruct(iffHead));

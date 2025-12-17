@@ -57,7 +57,7 @@ float logGain(float x, int32 shiftL, int32 shiftR)
 } // namespace DMO
 
 #else
-MPT_MSVC_WORKAROUND_LNK4221(Distortion)
+MPT_MSVC_WORKAROUND_LNK4221(DMOUtils)
 
 #endif // !NO_PLUGINS
 
