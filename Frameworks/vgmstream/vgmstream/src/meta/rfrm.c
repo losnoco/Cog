@@ -1,7 +1,7 @@
 #include "meta.h"
 #include "../coding/coding.h"
 
-/* RFTM - Retro Studios format [Metroid Prime Remastered] */
+/* RFTM - Retro Studios format [Metroid Prime Remastered, Metroid Prime 4] */
 static VGMSTREAM* init_vgmstream_rfrm_mpr(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
     off_t fmta_offset = 0, data_offset = 0, ras3_offset = 0, header_offset, start_offset;
@@ -19,7 +19,8 @@ static VGMSTREAM* init_vgmstream_rfrm_mpr(STREAMFILE* sf) {
     if (!check_extensions(sf, "csmp"))
         goto fail;
 
-    if (read_32bitLE(0x18,sf) != 0x1F) /* assumed, also at 0x1c */
+    uint32_t version = read_32bitLE(0x18,sf);
+    if (version != 0x1F && version != 0x2E) /* assumed, also at 0x1c */
         goto fail;
 
 
@@ -30,12 +31,15 @@ static VGMSTREAM* init_vgmstream_rfrm_mpr(STREAMFILE* sf) {
 
         while (chunk_offset < file_size) {
             uint32_t chunk_type = read_32bitBE(chunk_offset + 0x00,sf);
-            size_t chunk_size   = read_32bitLE(chunk_offset + 0x08,sf);
+            size_t chunk_size   = read_32bitLE(chunk_offset + 0x04,sf);
 
             switch(chunk_type) {
+                case 0x4C41424C: /* "LABL" */
+                    chunk_offset += 0x18 + chunk_size;
+                    break;
                 case 0x464D5441: /* "FMTA" */
                     fmta_offset = chunk_offset + 0x18;
-                    chunk_offset += 5 + 0x18 + chunk_size;
+                    chunk_offset += 0x18 + chunk_size;
                     break;
                 case 0x44415441: /* "DATA" */
                     data_offset = chunk_offset + 0x18;
@@ -45,13 +49,15 @@ static VGMSTREAM* init_vgmstream_rfrm_mpr(STREAMFILE* sf) {
                     break;
                 case 0x52415333: /* "RAS3" */
                     ras3_offset = chunk_offset + 0x18;
-                    chunk_offset += 60;
+                    chunk_offset += 0x18 + chunk_size;
                     break;
                 case 0x43524D53: /* CRMS */
-                    chunk_offset += 9 + 0x18 + chunk_size + read_32bitLE(chunk_offset + 0x18 + chunk_size + 5, sf);
+                    chunk_offset += 0x18 + chunk_size;
                     break;
                 default:
-                    goto fail;
+                    /* skip unknown chunk ... this may or may not work */
+                    chunk_offset += 0x18 + chunk_size;
+                    break;
             }
         }
 
@@ -59,11 +65,15 @@ static VGMSTREAM* init_vgmstream_rfrm_mpr(STREAMFILE* sf) {
             goto fail;
     }
 
-
+    unsigned int channel_layout = 0;
     /* parse FMTA / DATA (fully interleaved standard DSPs) */
-    channels = read_8bit(fmta_offset + 0x00, sf);
+    if (version == 0x1F) {
+        channels = read_8bit(fmta_offset + 0x00, sf);
+    } else {
+        channels = read_8bit(fmta_offset + 0x02, sf);
+        channel_layout = read_16bitLE(fmta_offset, sf);
+    }
     if (channels == 0) goto fail; /* div by zero */
-    /* FMTA 0x08: channel mapping */
 
     header_offset = data_offset;
     start_offset = header_offset + 0x80 * channels;
@@ -115,6 +125,10 @@ static VGMSTREAM* init_vgmstream_rfrm_mpr(STREAMFILE* sf) {
     dsp_read_coefs(vgmstream, sf, header_offset + 0x1C, 0x80, 0);
     dsp_read_hist (vgmstream, sf, header_offset + 0x40, 0x80, 0);
 
+    if (channel_layout) {
+        vgmstream->channel_layout = channel_layout;
+    }
+
     if (!vgmstream_open_stream(vgmstream, sf, start_offset))
         goto fail;
     return vgmstream;
@@ -156,6 +170,9 @@ VGMSTREAM* init_vgmstream_rfrm(STREAMFILE* sf) {
         big_endian = 0;
     }
     else if (version == 0x1F000000) { /* Metroid Prime Remastered */
+        return init_vgmstream_rfrm_mpr(sf);
+    }
+    else if (version == 0x2E000000) { /* Metroid Prime 4: Beyond */
         return init_vgmstream_rfrm_mpr(sf);
     }
     else {

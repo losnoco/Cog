@@ -372,6 +372,7 @@
 				<string>ad</string>
 				<string>adc</string>
 				<string>adm</string>
+				<string>adm2</string>
 				<string>adp</string>
 				<string>adpcm</string>
 				<string>adpcmx</string>
@@ -423,6 +424,7 @@
 				<string>b1s</string>
 				<string>baa</string>
 				<string>baf</string>
+				<string>bao</string>
 				<string>baka</string>
 				<string>bank</string>
 				<string>bar</string>
@@ -437,7 +439,6 @@
 				<string>bigrp</string>
 				<string>bik</string>
 				<string>bika</string>
-				<string>bik2</string>
 				<string>binka</string>
 				<string>bk2</string>
 				<string>bkh</string>
@@ -831,6 +832,7 @@
 				<string>seg</string>
 				<string>sem</string>
 				<string>sf0</string>
+				<string>sfa</string>
 				<string>sfl</string>
 				<string>sfs</string>
 				<string>sfx</string>
@@ -861,6 +863,7 @@
 				<string>spc</string>
 				<string>sph</string>
 				<string>spt</string>
+				<string>spk</string>
 				<string>spm</string>
 				<string>sps</string>
 				<string>spsd</string>
