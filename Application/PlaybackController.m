@@ -1022,15 +1022,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		if(entry.album && [entry.album length])
 			[songInfo setObject:entry.album forKey:MPMediaItemPropertyAlbumTitle];
 		if(entry.albumArt) {
-			// can't do && with @available
-			if(@available(macOS 10.13.2, *)) {
-				CGSize artworkSize = CGSizeMake(500, 500);
-				MPMediaItemArtwork *mpArtwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:artworkSize
-				                                                                requestHandler:^NSImage *_Nonnull(CGSize size) {
-					                                                                return entry.albumArt;
-				                                                                }];
-				[songInfo setObject:mpArtwork forKey:MPMediaItemPropertyArtwork];
-			}
+			CGSize artworkSize = CGSizeMake(500, 500);
+			MPMediaItemArtwork *mpArtwork = [[MPMediaItemArtwork alloc]
+											 initWithBoundsSize:artworkSize
+											 requestHandler:^NSImage *_Nonnull(CGSize size) {
+				return entry.albumArt;
+			}];
+			[songInfo setObject:mpArtwork forKey:MPMediaItemPropertyArtwork];
 		}
 		// I don't know what NPIC does with these since they aren't exposed in UI, but if we have them, use it.
 		// There's a bunch of other metadata, but PlaylistEntry can't represent a lot of it.
