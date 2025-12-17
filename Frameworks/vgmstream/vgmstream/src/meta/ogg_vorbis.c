@@ -173,8 +173,9 @@ static int _init_vgmstream_ogg_vorbis_tests(STREAMFILE* sf, ogg_vorbis_io_config
          * .bin/lbin: Devil May Cry 3: Special Edition (PC)
          * .oga: Aqua Panic! (PC), Heroes of Annihilated Empires (PC)-pre-demuxed movie audio 
          * .ogs: Exodus from the Earth (PC)
-         * .ogv: Tenshi no Hane wo Fumanaide (PC) */
-        if (check_extensions(sf,"ogg,logg,adx,rof,acm,sod,msa,bin,lbin,oga,ogs,ogv"))
+         * .ogv: Tenshi no Hane wo Fumanaide (PC)
+         * .snd: Raillore no Ryakudatsusha (Android) */
+        if (check_extensions(sf,"ogg,logg,adx,rof,acm,sod,msa,bin,lbin,oga,ogs,ogv,snd"))
             return true;
         /* ignore others to allow stuff like .sngw */
     }
@@ -316,7 +317,7 @@ static int _init_vgmstream_ogg_vorbis_tests(STREAMFILE* sf, ogg_vorbis_io_config
             uint32_t key = i;
             for (int round = 0; round < 8; round++) {
                 uint32_t tmp1 = (key >> 1);
-                uint32_t tmp2 = -(key & 1) & 0xEDB88324;
+                uint32_t tmp2 = (key & 1) ? 0xEDB88324 : 0; //original (UB-ish): -(key & 1) & 0xEDB88324;
                 key = tmp1 ^ tmp2;
             }
             if (key == 0)

@@ -2,6 +2,7 @@
 #include "coding/coding.h"
 #include "layout/layout.h"
 #include "base/plugins.h"
+#include "base/info.h"
 
 
 /* Defines the list of accepted extensions. vgmstream doesn't use it internally so it's here
@@ -47,6 +48,7 @@ static const char* extension_list[] = {
     "ad", //txth/reserved [Xenosaga Freaks (PS2)]
     "adc", //txth/reserved [Tomb Raider The Last Revelation (DC), Tomb Raider Chronicles (DC)]
     "adm",
+    "adm2", //txth/reserved [Onmyou Taisenki: Byakko Enbu (PS2)]
     "adp",
     "adpcm",
     "adpcmx",
@@ -539,6 +541,7 @@ static const char* extension_list[] = {
     "seg",
     "sem", //txth/reserved [Oretachi Game Center Zoku: Sonic Wings (PS2)]
     "sf0",
+    "sfa",
     "sfl",
     "sfs",
     "sfx",
@@ -569,6 +572,7 @@ static const char* extension_list[] = {
     "spc",
     "sph",
     "spt",
+    "spk",
     "spm",
     "sps",
     "spsd",
@@ -1512,6 +1516,7 @@ static const meta_info meta_info_list[] = {
         {meta_JAUDIO,               "Nintendo JAudio header"},
         {meta_BCF1,                 "RAD BCF1 header"},
         {meta_UEBA,                 "Epic Games UEBA header"},
+        {meta_WD,                   "Square WD header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
