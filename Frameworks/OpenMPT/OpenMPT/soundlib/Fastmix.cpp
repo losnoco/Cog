@@ -343,6 +343,8 @@ std::pair<mixsample_t *, mixsample_t *> CSoundFile::GetChannelOffsets(const ModC
 			pOfsL = &mixState.nVolDecayL;
 		}
 	}
+#else  // NO_PLUGINS
+	MPT_UNUSED(channel);
 #endif  // NO_PLUGINS
 	return std::make_pair(pOfsL, pOfsR);
 }

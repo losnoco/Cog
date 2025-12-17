@@ -14,12 +14,30 @@
 #include "stdafx.h"
 #include "Loaders.h"
 
+#include "mpt/base/detect.hpp"
 #include "mpt/io/base.hpp"
 
 #if defined(MPT_WITH_ZLIB)
 #include <zlib.h>
 #elif defined(MPT_WITH_MINIZ)
+#if MPT_COMPILER_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4505) // unreferenced function with internal linkage has been removed
+#elif MPT_COMPILER_GCC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#elif MPT_COMPILER_CLANG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#endif
 #include <miniz/miniz.h>
+#if MPT_COMPILER_MSVC
+//#pragma warning(pop)
+#elif MPT_COMPILER_GCC
+#pragma GCC diagnostic pop
+#elif MPT_COMPILER_CLANG
+#pragma clang diagnostic pop
+#endif
 #endif
 
 

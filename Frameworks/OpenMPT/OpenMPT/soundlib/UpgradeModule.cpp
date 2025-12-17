@@ -352,6 +352,7 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
+#ifndef NO_PLUGINS
 	bool hasAnyPlugins = false;
 	if(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_XM))
 	{
@@ -365,7 +366,6 @@ void CSoundFile::UpgradeModule()
 		}
 	}
 
-#ifndef NO_PLUGINS
 	if(m_dwLastSavedWithVersion < MPT_V("1.22.07.01") && hasAnyPlugins)
 	{
 		// Convert ANSI plugin path names to UTF-8 (irrelevant in probably 99% of all cases anyway, I think I've never seen a VST plugin with a non-ASCII file name)
