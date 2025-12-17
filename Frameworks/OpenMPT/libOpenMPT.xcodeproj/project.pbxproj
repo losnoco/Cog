@@ -2609,7 +2609,7 @@
 					OpenMPT/src,
 					OpenMPT/build/svn_version,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
@@ -2684,7 +2684,7 @@
 					OpenMPT/src,
 					OpenMPT/build/svn_version,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
