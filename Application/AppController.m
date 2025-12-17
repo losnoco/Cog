@@ -342,21 +342,13 @@ static BOOL consentLastEnabled = NO;
 					options.dsn = @"https://d70ca316b053af0573f4b48f742d4d8e@cog-analytics.losno.co/5";
 					options.debug = YES; // Enabled debug when first installing is always helpful
 
-					// Temporary until there's a better solution
-					options.enableAppHangTracking = NO;
-
-					// Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-					// We recommend adjusting this value in production.
-					options.tracesSampleRate = @1.0;
+					// Enable logging
+					options.enableLogs = YES;
 
 					options.configureProfiling = ^(SentryProfileOptions * _Nonnull profiling) {
 						profiling.sessionSampleRate = 1.f;
 						profiling.lifecycle = SentryProfileLifecycleTrace;
 					};
-
-					// Adds IP for users.
-					// For more information, visit: https://docs.sentry.io/platforms/apple/data-management/data-collected/
-					options.sendDefaultPii = YES;
 
 					// And now to set up user feedback prompting
 					options.onCrashedLastRun = ^void(SentryEvent * _Nonnull event) {
