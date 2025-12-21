@@ -366,6 +366,9 @@ static BOOL consentLastEnabled = NO;
 					options.dsn = @"https://d70ca316b053af0573f4b48f742d4d8e@cog-analytics.losno.co/5";
 					options.debug = YES; // Enabled debug when first installing is always helpful
 
+					// Disable hang detection, lots of false positives still
+					options.enableAppHangTracking = NO;
+
 					// Enable logging
 					options.enableLogs = YES;
 
