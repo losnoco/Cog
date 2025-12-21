@@ -564,11 +564,6 @@ static uint8_t reverse_bits[0x100];
 		prebufferedChunk = [self readAudio];
 	}
 
-	if(metadataUpdated) {
-		[self willChangeValueForKey:@"metadata"];
-		[self didChangeValueForKey:@"metadata"];
-	}
-
 	return YES;
 }
 
