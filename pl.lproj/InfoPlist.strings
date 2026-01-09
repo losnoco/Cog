@@ -11,7 +11,7 @@ CFBundleName = "Cog";
 /* Privacy - Contacts Usage Description */
 "NSContactsUsageDescription" = "Cog has no use for your contacts information. Why are you trying to open your contacts with an audio player?";
 
-"NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2025";
+"NSHumanReadableCopyright" = "© Vincent Spader, 2005-2011\n© mamburu, 2012-2013\n© Christopher Snowhill, 2013-2026";
 
 /* Privacy - Location Usage Description */
 "NSLocationUsageDescription" = "Cog has no use for your location information. Something is obviously wrong with the application.";
