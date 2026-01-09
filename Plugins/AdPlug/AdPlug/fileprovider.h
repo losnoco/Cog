@@ -3,7 +3,7 @@
 //  AdPlug
 //
 //  Created by Christopher Snowhill on 1/27/18.
-//  Copyright © 2018-2025 Christopher Snowhill. All rights reserved.
+//  Copyright © 2018-2026 Christopher Snowhill. All rights reserved.
 //
 
 #ifndef fileprovider_h
