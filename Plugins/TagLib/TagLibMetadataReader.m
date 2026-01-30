@@ -82,11 +82,8 @@
 		if(!album.isEmpty())
 			[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
 		
-		if(!title.isEmpty()) {
-			// XXX workaround for colliding with chapterized inputs' readers
-			if(album.isEmpty() || title != album)
-				[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
-		}
+		if(!title.isEmpty())
+			[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
 		
 		if(!genre.isEmpty())
 			[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
@@ -189,10 +186,14 @@
 }
 
 + (NSArray *)fileTypes {
+	NSArray *skiplist = @[@"mp4", @"m4a"];
 	NSMutableArray *extlist = [NSMutableArray new];
 	TagLib::StringList exts = TagLib::FileRef::defaultFileExtensions();
 	for(const auto &ext : exts) {
-		[extlist addObject:[NSString stringWithUTF8String:ext.toCString(true)]];
+		NSString *_ext = [NSString stringWithUTF8String:ext.toCString(true)];
+		if([skiplist containsObject:_ext])
+			continue;
+		[extlist addObject:_ext];
 	}
 	return [NSArray arrayWithArray:extlist];
 }
