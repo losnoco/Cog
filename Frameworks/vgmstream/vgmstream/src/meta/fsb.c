@@ -2,6 +2,7 @@
 #include "../coding/coding.h"
 #include "../layout/layout.h"
 #include "fsb_interleave_streamfile.h"
+#include "fsb_fev.h"
 
 
 typedef enum { NONE, MPEG, XBOX_IMA, FSB_IMA, PSX, XMA1, XMA2, DSP, CELT, PCM8, PCM8U, PCM16LE, PCM16BE, SILENCE } fsb_codec_t;
@@ -42,6 +43,7 @@ typedef struct {
 } fsb_header_t;
 
 static bool parse_fsb(fsb_header_t* fsb, STREAMFILE* sf);
+static void get_name(char* buf, size_t buf_size, fsb_header_t* fsb, STREAMFILE* sf_fsb);
 static layered_layout_data* build_layered_fsb_celt(STREAMFILE* sf, fsb_header_t* fsb, bool is_new_lib);
 
 /* FSB1~4 - from games using FMOD audio middleware */
@@ -51,7 +53,7 @@ VGMSTREAM* init_vgmstream_fsb(STREAMFILE* sf) {
 
 
     /* checks */
-    uint32_t id = read_u32be(0x00,sf);
+    uint32_t id = read_u32be(0x00, sf);
     if (id < get_id32be("FSB1") || id > get_id32be("FSB4"))
         return NULL;
 
@@ -78,8 +80,7 @@ VGMSTREAM* init_vgmstream_fsb(STREAMFILE* sf) {
     vgmstream->num_streams = fsb.total_subsongs;
     vgmstream->stream_size = fsb.stream_size;
     vgmstream->meta_type = fsb.meta_type;
-    if (fsb.name_offset)
-        read_string(vgmstream->stream_name, fsb.name_size + 1, fsb.name_offset, sf);
+    get_name(vgmstream->stream_name, STREAM_NAME_SIZE, &fsb, sf);
 
     switch(fsb.codec) {
 
@@ -213,7 +214,6 @@ VGMSTREAM* init_vgmstream_fsb(STREAMFILE* sf) {
             break;
 
         default:
-            VGM_LOG("3\n");
             goto fail;
     }
 
@@ -544,6 +544,12 @@ static bool parse_fsb(fsb_header_t* fsb, STREAMFILE* sf) {
                     fsb->loop_start     = 0;
                     fsb->loop_end       = 0;
 
+                    /* DSP extra data (coefs, init ps/hist etc.) [Manhunt 2 (Wii)] */
+                    if (fsb->mode & FSOUND_GCADPCM) {
+                        fsb->extradata_offset = header_offset + stream_header_size;
+                        stream_header_size += 0x2e * fsb->channels;
+                    }
+
                     /* XMA basic headers have extra data [Forza Motorsport 3 (X360)] */
                     if (fsb->mode & FSOUND_XMA) {
                         // 0x08: flags? (0x00=none?, 0x20=standard)
@@ -669,4 +675,33 @@ static bool parse_fsb(fsb_header_t* fsb, STREAMFILE* sf) {
     return true;
 fail:
     return false;
+}
+
+static void get_name(char* buf, size_t buf_size, fsb_header_t* fsb, STREAMFILE* sf_fsb) {
+    STREAMFILE* sf_fev = NULL;
+    fev_header_t fev = {0};
+    bool fev_parsed = false;
+
+    sf_fev = open_fev_filename_pair(sf_fsb);
+    if (sf_fev) {
+        get_streamfile_basename(sf_fsb, fev.fsb_wavebank_name, STREAM_NAME_SIZE);
+
+        fev.target_subsong = sf_fsb->stream_index;
+        if (fev.target_subsong == 0) fev.target_subsong = 1;
+        fev.target_subsong--;
+        // usually FEV1, but RIFF FEV also seen rarely used with FSB4 (around 2011)
+        // [Marvel Super Hero Squad: Comic Combat (X360), Green Lantern: Rise of the Manhunters (PS3)]
+        fev_parsed = parse_fev(&fev, sf_fev);
+        if (!fev_parsed)
+            vgm_logi("FSB: Failed to parse FEV data\n");
+    }
+
+    // prioritise FEV stream names, usually the same as the FSB name just not truncated
+    // (benefits games where base names are all identical [Split/Second (PS3/X360/PC)])
+    if (fev_parsed && fev.stream_name[0])
+        snprintf(buf, buf_size, "%s", fev.stream_name);
+    else if (fsb->name_offset)
+        read_string(buf, fsb->name_size + 1, fsb->name_offset, sf_fsb);
+
+    close_streamfile(sf_fev);
 }

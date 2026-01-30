@@ -55,7 +55,7 @@
  * - vgmstream's features are mostly stable, but this API may be tweaked from time to time
  */
 #define LIBVGMSTREAM_API_VERSION_MAJOR 0x01    // breaking API/ABI changes
-#define LIBVGMSTREAM_API_VERSION_MINOR 0x00    // compatible API/ABI changes
+#define LIBVGMSTREAM_API_VERSION_MINOR 0x01    // compatible API/ABI changes
 #define LIBVGMSTREAM_API_VERSION_PATCH 0x00    // fixes
 
 /* Current API version, for dynamic checks. returns hex value: 0xMMmmpppp = MM-major, mm-minor, pppp-patch
@@ -65,6 +65,7 @@ LIBVGMSTREAM_API uint32_t libvgmstream_get_version(void);
 
 /* CHANGELOG:
  * - 1.0.0: initial version
+ * - 1.1.0: add libstreamfile_close helper as part of the API
  */
 
 
@@ -90,9 +91,10 @@ typedef struct {
     /* extra info (may be 0 if not known or not relevant) */
     uint32_t channel_layout;                // standard WAVE bitflags, 0 if unset or non-standard
 
-    int subsong_index;                      // 0 = none, N = loaded subsong N (1=first)
+    int subsong_index;                      // 0 = none, N = loaded subsong N where 1=first
     int subsong_count;                      // 0 = format has no concept of subsongs, N = has N subsongs
                                             // ** 1 = format has subsongs, and only 1 for current file
+                                            // ** subsongs are separate streams with different config
 
     int input_channels;                     // original file's channels before downmixing (if any)
     //int interleave;                       // when file is interleaved
@@ -109,7 +111,8 @@ typedef struct {
                                             // ** true + undefined loops means the file loops in a way not representable by loop points
     //bool rough_samples;                   // signal cases where loop points or sample count can't exactly reflect actual behavior
 
-    bool play_forever;                      // if file loops forever based on current config (meaning _play never stops)
+    bool play_forever;                      // if file loops forever based on current config (meaning libvgmstream_render/fill never stops)
+
     int64_t play_samples;                   // totals after all calculations (after applying loop/fade/etc config)
                                             // ** may not be 100% accurate in some cases (check decoder's 'done' flag to stop)
                                             // ** if play_forever is set this is still provided for reference based on non-forever config
@@ -224,7 +227,7 @@ LIBVGMSTREAM_API int libvgmstream_render(libvgmstream_t* lib);
 /* Same as _play, but fills some external buffer (also updates lib->decoder->* values)
  * - returns < 0 on error
  * - buf must be at least as big as channels * sample_size * buf_samples
- * - note that may return less than requested samples (such as near EOF)
+ * - note that may return less than requested samples at EOF (will blank rest of buf)
  * - needs copying around from internal bufs so may be slightly slower; mainly for cases when you have buf constraints
  */
 LIBVGMSTREAM_API int libvgmstream_fill(libvgmstream_t* lib, void* buf, int buf_samples);
