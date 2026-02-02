@@ -275,6 +275,8 @@ void MetadataCallback(const FLAC__StreamDecoder *decoder, const FLAC__StreamMeta
 			}
 		}
 
+		flacDecoder->hasVorbisComment = YES;
+
 		if(![_metaDict isEqualToDictionary:flacDecoder->metaDict] ||
 		   ![_cuesheet isEqualToString:flacDecoder->cuesheet]) {
 			flacDecoder->metaDict = _metaDict;
@@ -417,7 +419,7 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 		blockBufferFrames = 0;
 	}
 
-	if(![source seekable]) {
+	if(![source seekable] && !hasVorbisComment) {
 		Class sourceClass = [source class];
 		if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
 			HTTPSource *httpSource = (HTTPSource *)source;
