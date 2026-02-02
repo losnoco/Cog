@@ -33,6 +33,19 @@
 + (NSSet *_Nonnull)keyPathsForValuesAffectingSoundcheckDisplay;
 + (NSSet *_Nonnull)keyPathsForValuesAffectingSoundcheckVolume;
 
++ (NSSet *_Nonnull)keyPathsForValuesAffectingAlbum;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingAlbumartist;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingArtist;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingComposer;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingRawTitle;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingGenre;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingDisc;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingTrack;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingYear;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingDate;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingUnsyncedlyrics;
++ (NSSet *_Nonnull)keyPathsForValuesAffectingComment;
+
 @property(nonatomic, readonly) NSString *_Nonnull display;
 @property(nonatomic, retain, readonly) NSNumber *_Nonnull length;
 @property(nonatomic, readonly) NSString *_Nonnull path;

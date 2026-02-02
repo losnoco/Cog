@@ -129,6 +129,55 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	return [NSSet setWithObject:@"soundcheck"];
 }
 
+// These are all needed to invalidate all the named fields which map to key-value pairs
++ (NSSet *)keyPathsForValuesAffectingAlbum {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingAlbumartist {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingArtist {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingComposer {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingRawTitle {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingGenre {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingDisc {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingTrack {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingYear {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingDate {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingUnsyncedlyrics {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingComment {
+	return [NSSet setWithObject:@"metadataBlob"];
+}
+
 - (NSString *)description {
 	return [NSString stringWithFormat:@"PlaylistEntry %lli:(%@)", self.index, self.url];
 }
