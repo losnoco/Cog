@@ -538,8 +538,9 @@ static BOOL consentLastEnabled = NO;
 
 	NSManagedObjectContext *moc = playlistController.persistentContainer.viewContext;
 
+	// How the heck are people getting this in their playlists
 	for(PlaylistEntry *pe in playlistController.arrangedObjects) {
-		if(pe.deLeted) {
+		if(pe.deLeted || !pe.urlString || [pe.urlString isEqualToString:@""] || !pe.url) {
 			[moc deleteObject:pe];
 			continue;
 		}
