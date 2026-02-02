@@ -38,6 +38,7 @@
 	BOOL hasStreamInfo;
 	BOOL streamOpened;
 	BOOL abortFlag;
+	BOOL hasVorbisComment;
 
 	NSDictionary *metaDict;
 	NSDictionary *icyMetaDict;
