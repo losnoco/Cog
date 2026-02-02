@@ -14,4 +14,10 @@ class PositionSliderToolbarItem: NSToolbarItem {
         }
         set {}
     }
+	override var maxSize: NSSize{
+		get {
+			return NSSize(width: 1024, height: 28)
+		}
+		set {}
+	}
 }
