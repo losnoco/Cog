@@ -1450,6 +1450,8 @@
 				<string>mini2sf</string>
 				<string>usf</string>
 				<string>miniusf</string>
+				<string>snsf</string>
+				<string>minisnsf</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>vg.icns</string>

@@ -37,6 +37,9 @@
 
 #import <lazyusf2/usf.h>
 
+#import <snes9x/snes9x.h>
+#import <snes9x/linear_resampler.h>
+
 #include <zlib.h>
 
 #include <dlfcn.h>
@@ -834,6 +837,101 @@ static int usf_info(void *context, const char *name, const char *value) {
 	return 0;
 }
 
+struct s9x_loaderwork {
+	std::vector<uint8_t> rom, sram;
+	bool first;
+	unsigned base;
+};
+
+class s9x_BUFFER {
+public:
+	struct S9xState st;
+	std::vector<uint8_t> buf;
+	unsigned fil, cur, len;
+	s9x_BUFFER() : buf(), fil(0), cur(0), len(0) { }
+	bool Init() {
+		if (!this->buf.empty())
+			this->buf.clear();
+		this->len = 2 * 2 * 48000 / 5;
+		this->buf.resize(len, 0);
+		this->fil = this->cur = 0;
+		return true;
+	}
+	void Fill() {
+		S9xSyncSound(&st);
+		S9xMainLoop(&st);
+		this->Mix();
+	}
+	void Mix() {
+		unsigned bytes = (S9xGetSampleCount(&st) << 1) & ~3;
+		unsigned bleft = (this->len - this->fil) & ~3;
+		if (!bytes)
+			return;
+		if (bytes > bleft)
+			bytes = bleft;
+		std::fill_n(&this->buf[this->fil], bytes, 0);
+		S9xMixSamples(&st, &this->buf[this->fil], bytes >> 1);
+		this->fil += bytes;
+	}
+};
+
+static int MapSNSFSection(s9x_loaderwork *loaderwork,
+						  const uint8_t *section, size_t section_size) {
+	if (section_size < 8) return -1;
+
+	auto &data = loaderwork->rom;
+
+	uint32_t offset = get_le32(&section[0]), size = get_le32(&section[4]), finalSize = size + offset;
+
+	if (size > section_size - 8) return -1;
+
+	if (!loaderwork->first) {
+		loaderwork->first = true;
+		loaderwork->base = offset;
+	}
+	else
+		offset += loaderwork->base;
+	offset &= 0x1FFFFFFF;
+	if (data.empty())
+		data.resize(finalSize, 0);
+	else if (data.size() < size + offset)
+		data.resize(offset + finalSize);
+	std::copy_n(&section[8], size, &data[offset]);
+
+	return 0;
+}
+
+static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
+					const uint8_t *reserved, size_t reserved_size) {
+	s9x_loaderwork *loaderwork = (s9x_loaderwork *)context;
+
+	if (reserved_size) {
+		size_t reservedPosition = 0;
+		while (reservedPosition + 8 < reserved_size) {
+			uint32_t type = get_le32(&reserved[reservedPosition]), size = get_le32(&reserved[reservedPosition + 4]);
+			if (!type) {
+				if (loaderwork->sram.empty())
+					loaderwork->sram.resize(0x20000, 0xFF);
+				if (reservedPosition + 8 + size > reserved_size)
+					return -1;
+				uint32_t offset = get_le32(&reserved[reservedPosition + 8]);
+				if (size > 4 && loaderwork->sram.size() > offset)
+				{
+					auto len = loaderwork->sram.size() - offset;
+					if (size - 4 < len) len=size - 4;
+					std::copy_n(&reserved[reservedPosition + 12], len, &loaderwork->sram[offset]);
+				}
+			}
+			reservedPosition += size + 8;
+		}
+	}
+
+	if (exe_size)
+		return MapSNSFSection(loaderwork, exe, exe_size);
+
+	return 0;
+}
+
 - (BOOL)initializeDecoder {
 	silenceSeconds = 5;
 
@@ -982,6 +1080,50 @@ static int usf_info(void *context, const char *name, const char *value) {
 		emulatorExtra = rstate;
 
 		sampleRate = 65536; // XXX
+	} else if(type == 0x23) {
+		s9x_loaderwork loaderwork;
+
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x23, MapSNSF, &loaderwork, 0, 0, 0) <= 0)
+			return NO;
+
+		if(loaderwork.rom.empty())
+			return NO;
+
+		s9x_BUFFER *buffer = new s9x_BUFFER;
+
+		S9xState *st = &buffer->st;
+
+		st->Settings.SoundSync = true;
+		st->Settings.Mute = false;
+		st->Settings.SoundPlaybackRate = 32000;
+		st->Settings.SixteenBitSound = true;
+		st->Settings.Stereo = true;
+
+		if(!st->Memory.Init(st))
+			return NO;
+
+		S9xInitAPU(st);
+		S9xInitSound<LinearResampler>(st, 10, 0); // we're doing 1:1 anyway
+
+		if (!buffer->Init()) {
+			S9xReset(st);
+			st->Memory.Deinit();
+			S9xDeinitAPU(st);
+			delete buffer;
+			return NO;
+		}
+
+		if (!st->Memory.LoadROMSNSF(&loaderwork.rom[0], (int32_t) loaderwork.rom.size(), !loaderwork.sram.empty() ? &loaderwork.sram[0] : nullptr, (int32_t) loaderwork.sram.size())) {
+			S9xReset(st);
+			st->Memory.Deinit();
+			S9xDeinitAPU(st);
+			delete buffer;
+			return NO;
+		}
+
+		S9xSetSoundMute(st, false);
+
+		emulatorCore = (uint8_t *) buffer;
 	} else if(type == 0x24) {
 		struct twosf_loader_state state;
 		memset(&state, 0, sizeof(state));
@@ -1176,6 +1318,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 		case 0x12:
 		case 0x21:
 		case 0x22:
+		case 0x23:
 		case 0x24:
 		case 0x25:
 		case 0x41:
@@ -1198,7 +1341,9 @@ static int usf_info(void *context, const char *name, const char *value) {
 		/* Move these into the above
 		struct mCore *core = (struct mCore *)emulatorCore;
 		sampleRate = core->audioSampleRate(core); */
-	} else if(type == 0x41)
+	} else if(type == 0x23)
+		sampleRate = 32000;
+	else if(type == 0x41)
 		sampleRate = 24038;
 
 	tagLengthMs = info.tag_length_ms;
@@ -1288,6 +1433,37 @@ static int usf_info(void *context, const char *name, const char *value) {
 				}
 			}
 		} while(howmany);
+	} else if(type == 0x23) {
+		s9x_BUFFER *buffer = (s9x_BUFFER *)emulatorCore;
+		unsigned bytes = frames << 2;
+		unsigned offset = 0;
+		unsigned giveup = 60 * 30;
+		while (bytes) {
+			unsigned remain = buffer->fil - buffer->cur;
+			while (!remain) {
+				buffer->cur = buffer->fil = 0;
+				buffer->Fill();
+
+				remain = buffer->fil - buffer->cur;
+				if(!remain) {
+					if(giveup)
+						--giveup;
+					else
+						break;
+				}
+			}
+			if(!remain)
+				break;
+			unsigned len = remain;
+			if (len > bytes)
+				len = bytes;
+			if(buf)
+				std::copy_n(&buffer->buf[buffer->cur], len, &((uint8_t *)buf)[offset]);
+			bytes -= len;
+			offset += len;
+			buffer->cur += len;
+		}
+		frames = offset >> 2;
 	} else if(type == 0x24) {
 		NDS_state *state = (NDS_state *)emulatorCore;
 		state_render(state, (s16 *)buf, frames);
@@ -1382,6 +1558,13 @@ static int usf_info(void *context, const char *name, const char *value) {
 			struct mCore *core = (struct mCore *)emulatorCore;
 			mCoreConfigDeinit(&core->config);
 			core->deinit(core);
+		} else if(type == 0x23) {
+			s9x_BUFFER *buffer = (s9x_BUFFER *)emulatorCore;
+			S9xState *st = &buffer->st;
+			S9xReset(st);
+			st->Memory.Deinit();
+			S9xDeinitAPU(st);
+			delete buffer;
 		} else if(type == 0x24) {
 			NDS_state *state = (NDS_state *)emulatorCore;
 			state_deinit(state);
@@ -1506,6 +1689,39 @@ static int usf_info(void *context, const char *name, const char *value) {
 		} while(howmany);
 
 		framesRead = frame;
+	} else if(type == 0x23) {
+		s9x_BUFFER *buffer = (s9x_BUFFER *)emulatorCore;
+		size_t howmany = (frame - framesRead) << 2;
+		while(howmany) {
+			unsigned remain = buffer->fil - buffer->cur;
+			unsigned giveup = 60 * 30;
+			while(!remain) {
+				buffer->cur = buffer->fil = 0;
+				buffer->Fill();
+
+				remain = buffer->fil - buffer->cur;
+				if(!remain) {
+					if(giveup)
+						--giveup;
+					else
+						break;
+				}
+			}
+			if(!remain)
+				break;
+			if(remain >= howmany) {
+				remain -= howmany;
+				buffer->cur += remain;
+				howmany = 0;
+			} else {
+				buffer->cur += remain;
+				howmany -= remain;
+			}
+		}
+		if(howmany) {
+			frame -= howmany >> 2;
+		}
+		framesRead = frame;
 	} else if(type == 0x24) {
 		NDS_state *state = (NDS_state *)emulatorCore;
 		s16 temp[2048];
@@ -1578,6 +1794,9 @@ static int usf_info(void *context, const char *name, const char *value) {
 		case 0x22:
 			codec = @"GSF";
 			break;
+		case 0x23:
+			codec = @"SNSF";
+			break;
 		case 0x24:
 			codec = @"2SF";
 			break;
@@ -1616,7 +1835,7 @@ static int usf_info(void *context, const char *name, const char *value) {
 }
 
 + (NSArray *)fileTypes {
-	return @[@"psf", @"minipsf", @"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", @"usf", @"miniusf"];
+	return @[@"psf", @"minipsf", @"psf2", @"minipsf2", @"ssf", @"minissf", @"dsf", @"minidsf", @"qsf", @"miniqsf", @"gsf", @"minigsf", @"ncsf", @"minincsf", @"2sf", @"mini2sf", @"usf", @"miniusf", @"snsf", @"minisnsf"];
 }
 
 + (NSArray *)mimeTypes {
