@@ -6,10 +6,6 @@
 	objectVersion = 70;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		8343EBFE2F3783CD0068AB0B /* Shared.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8343EBFB2F3783CD0068AB0B /* Shared.xcconfig */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		8343EAB42F3759FF0068AB0B /* snes9x.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = snes9x.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8343EBFB2F3783CD0068AB0B /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
@@ -157,7 +153,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8343EBFE2F3783CD0068AB0B /* Shared.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
