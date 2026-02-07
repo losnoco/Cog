@@ -147,6 +147,7 @@
 		833E82FA2A28595A00CD0580 /* bitstream_lsb.h in Headers */ = {isa = PBXBuildFile; fileRef = 833E82F92A28595A00CD0580 /* bitstream_lsb.h */; };
 		8342469420C4D23000926E48 /* h4m.c in Sources */ = {isa = PBXBuildFile; fileRef = 8342469020C4D22F00926E48 /* h4m.c */; };
 		8342469620C4D23D00926E48 /* blocked_h4m.c in Sources */ = {isa = PBXBuildFile; fileRef = 8342469520C4D23D00926E48 /* blocked_h4m.c */; };
+		8343EC012F3785580068AB0B /* gcsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 8343EC002F3785580068AB0B /* gcsp.c */; };
 		834478E82EF2B6000065BCCC /* ubi_bao_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 834478E62EF2B6000065BCCC /* ubi_bao_parser.h */; };
 		834478E92EF2B6000065BCCC /* ubi_bao_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 834478E72EF2B6000065BCCC /* ubi_bao_parser.c */; };
 		834478EB2EF2B61A0065BCCC /* reader_helper.h in Headers */ = {isa = PBXBuildFile; fileRef = 834478EA2EF2B61A0065BCCC /* reader_helper.h */; };
@@ -1094,6 +1095,7 @@
 		833E82F92A28595A00CD0580 /* bitstream_lsb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitstream_lsb.h; sourceTree = "<group>"; };
 		8342469020C4D22F00926E48 /* h4m.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = h4m.c; sourceTree = "<group>"; };
 		8342469520C4D23D00926E48 /* blocked_h4m.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_h4m.c; sourceTree = "<group>"; };
+		8343EC002F3785580068AB0B /* gcsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gcsp.c; sourceTree = "<group>"; };
 		834478E62EF2B6000065BCCC /* ubi_bao_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ubi_bao_parser.h; sourceTree = "<group>"; };
 		834478E72EF2B6000065BCCC /* ubi_bao_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ubi_bao_parser.c; sourceTree = "<group>"; };
 		834478EA2EF2B61A0065BCCC /* reader_helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reader_helper.h; sourceTree = "<group>"; };
@@ -2404,6 +2406,7 @@
 				834D3A6D19F47C98001C54F6 /* g1l.c */,
 				836F6E9C18BDC2180095E648 /* gbts.c */,
 				836F6E4D18BDC2180095E648 /* gca.c */,
+				8343EC002F3785580068AB0B /* gcsp.c */,
 				836F6E4E18BDC2180095E648 /* gcsw.c */,
 				83AF2CC526226BA400538240 /* gcub.c */,
 				836F6E4F18BDC2180095E648 /* genh.c */,
@@ -3574,6 +3577,7 @@
 				834F7DD32C7093EA003AC386 /* ima_decoder.c in Sources */,
 				834F7E0B2C7093EA003AC386 /* wady_decoder.c in Sources */,
 				83709E061ECBC1A4005C03D3 /* mpc3.c in Sources */,
+				8343EC012F3785580068AB0B /* gcsp.c in Sources */,
 				831BA61F1EAC61A500CF89B0 /* cxs.c in Sources */,
 				83CBF5432D46339200AA2D75 /* skex.c in Sources */,
 				834F7E182C709A1D003AC386 /* ea_schl_standard.c in Sources */,
