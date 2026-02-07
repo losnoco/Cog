@@ -678,7 +678,7 @@ void CMemory::InitROM()
 
 // memory map
 
-uint32_t CMemory::map_mirror(uint32_t size, uint32_t pos)
+ssize_t CMemory::map_mirror(uint32_t size, uint32_t pos)
 {
 	// from bsnes
 	if (!size)
