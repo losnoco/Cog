@@ -15,6 +15,8 @@
 		8343792917F96F1D00584396 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; };
 		8343792A17F96F2600584396 /* HighlyQuixotic.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343791217F96E2700584396 /* HighlyQuixotic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834379A817F9818400584396 /* HCDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 834379A717F9818400584396 /* HCDecoder.mm */; };
+		8343EB992F37820B0068AB0B /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8343EB982F3781E20068AB0B /* snes9x.framework */; };
+		8343EB9A2F3782150068AB0B /* snes9x.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8343EB982F3781E20068AB0B /* snes9x.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D19032D7F94C800F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19022D7F94C800F13B89 /* CogAudio.framework */; };
 		8360EEE817F92AC8005208A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8360EEE717F92AC8005208A4 /* Cocoa.framework */; };
 		8360EEF217F92AC8005208A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8360EEF017F92AC8005208A4 /* InfoPlist.strings */; };
@@ -79,6 +81,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8343793517F97BDB00584396;
 			remoteInfo = HighlyAdvanced;
+		};
+		8343EB942F3781E20068AB0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8343EB912F3781E20068AB0B /* snes9x.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8343EAB32F3759FF0068AB0B;
+			remoteInfo = snes9x;
+		};
+		8343EB972F3781E20068AB0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8343EB912F3781E20068AB0B /* snes9x.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8343EAB42F3759FF0068AB0B;
+			remoteInfo = snes9x;
 		};
 		83848FEB1807624000E7332D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -168,6 +184,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8343EB9A2F3782150068AB0B /* snes9x.framework in CopyFiles */,
 				83E2F4D223566BD5006F7A41 /* lazyusf2.framework in CopyFiles */,
 				83CA2E4D1D7BE41300F2EA53 /* mGBA.framework in CopyFiles */,
 				83FC32C61BF5AF0600962B36 /* HighlyExperimental.framework in CopyFiles */,
@@ -191,6 +208,7 @@
 		8343790C17F96E2600584396 /* HighlyQuixotic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyQuixotic.xcodeproj; path = ../../Frameworks/HighlyQuixotic/HighlyQuixotic.xcodeproj; sourceTree = "<group>"; };
 		8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyAdvanced.xcodeproj; path = ../../Frameworks/HighlyAdvanced/HighlyAdvanced.xcodeproj; sourceTree = "<group>"; };
 		834379A717F9818400584396 /* HCDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HCDecoder.mm; sourceTree = "<group>"; };
+		8343EB912F3781E20068AB0B /* snes9x.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = snes9x.xcodeproj; path = ../../Frameworks/snes9x/snes9x.xcodeproj; sourceTree = "<group>"; };
 		834A42B6287AF99600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		834D19022D7F94C800F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8360EEE417F92AC8005208A4 /* HighlyComplete.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HighlyComplete.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -216,6 +234,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8343EB992F37820B0068AB0B /* snes9x.framework in Frameworks */,
 				834D19032D7F94C800F13B89 /* CogAudio.framework in Frameworks */,
 				83E2F4D123566BC5006F7A41 /* lazyusf2.framework in Frameworks */,
 				83CA2E3D1D7BCF9B00F2EA53 /* mGBA.framework in Frameworks */,
@@ -265,6 +284,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		8343EB922F3781E20068AB0B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8343EB982F3781E20068AB0B /* snes9x.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		8360EEDB17F92AC8005208A4 = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +316,7 @@
 				834D19022D7F94C800F13B89 /* CogAudio.framework */,
 				8360EEE717F92AC8005208A4 /* Cocoa.framework */,
 				8333B6731DCC4999004C140D /* libz.tbd */,
+				8343EB912F3781E20068AB0B /* snes9x.xcodeproj */,
 				83E2F4C923566B0C006F7A41 /* lazyusf2.xcodeproj */,
 				83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */,
 				83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */,
@@ -403,6 +431,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8343EB952F3781E20068AB0B /* PBXTargetDependency */,
 				83E2F4D023566BB7006F7A41 /* PBXTargetDependency */,
 				83CA2E3F1D7BCFB000F2EA53 /* PBXTargetDependency */,
 				83FC32C21BF5AEF300962B36 /* PBXTargetDependency */,
@@ -471,6 +500,10 @@
 					ProjectRef = 8343784A17F93CB500584396 /* psflib.xcodeproj */;
 				},
 				{
+					ProductGroup = 8343EB922F3781E20068AB0B /* Products */;
+					ProjectRef = 8343EB912F3781E20068AB0B /* snes9x.xcodeproj */;
+				},
+				{
 					ProductGroup = 83848FE71807623F00E7332D /* Products */;
 					ProjectRef = 83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */;
 				},
@@ -513,6 +546,13 @@
 			fileType = wrapper.framework;
 			path = HighlyAdvanced.framework;
 			remoteRef = 8343796817F97BDB00584396 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8343EB982F3781E20068AB0B /* snes9x.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = snes9x.framework;
+			remoteRef = 8343EB972F3781E20068AB0B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83848FEC1807624000E7332D /* SSEQPlayer.framework */ = {
@@ -589,6 +629,11 @@
 			isa = PBXTargetDependency;
 			name = HighlyQuixotic;
 			targetProxy = 8343792717F96F1900584396 /* PBXContainerItemProxy */;
+		};
+		8343EB952F3781E20068AB0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = snes9x;
+			targetProxy = 8343EB942F3781E20068AB0B /* PBXContainerItemProxy */;
 		};
 		83849049180764AC00E7332D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
