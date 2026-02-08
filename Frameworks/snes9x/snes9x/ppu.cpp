@@ -1,204 +1,103 @@
-/***********************************************************************************
+/*****************************************************************************\
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
-
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
-
-  (c) Copyright 2002 - 2004  Matthew Kendora
-
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-
-  (c) Copyright 2002 - 2011  zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
-
-  (c) Copyright 2009 - 2011  BearOso,
-                             OV2
-
-
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
-
-  C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
-
-  C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
-
-  DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
-
-  DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
-
-  OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
-
-  SPC7110 and RTC C++ emulator code used in 1.39-1.51
-  (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
-
-  SPC7110 and RTC C++ emulator code used in 1.52+
-  (c) Copyright 2009         byuu,
-                             neviksti
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
-
-  S-RTC C emulator code
-  (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
-
-  Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
-
-  Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
-
-  Sound emulator code used in 1.5-1.51
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
-
-  Sound emulator code used in 1.52+
-  (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
-
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  NTSC filter
-  (c) Copyright 2006 - 2007  Shay Green
-
-  GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
-  (c) Copyright 2009 - 2011  OV2
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2011  zones
-
-
-  Specific ports contains the works of other authors. See headers in
-  individual files.
-
-
-  Snes9x homepage: http://www.snes9x.com/
-
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
-
-  This software is provided 'as-is', without any express or implied
-  warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
-
-  Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
-
-  The copyright holders request that bug fixes and improvements to the code
-  should be forwarded to them so everyone can benefit from the modifications
-  in future versions.
-
-  Super NES and Super Nintendo Entertainment System are trademarks of
-  Nintendo Co., Limited and its subsidiary companies.
- ***********************************************************************************/
+                This file is licensed under the Snes9x License.
+   For further information, consult the LICENSE file in the root directory.
+\*****************************************************************************/
 
 #include <algorithm>
-#include "snes9x.h"
+#include <snes9x/snes9x.h>
 #include "sdd1.h"
 
-void S9xUpdateHVTimerPosition(struct S9xState *st)
+#include <snes9x/snes.hpp>
+#include <snes9x/smp.hpp>
+#include <snes9x/sdsp.hpp>
+
+static int CyclesUntilNext(struct S9xState *st, int hc, int vc)
+{
+	int32_t total = 0;
+	int vpos = st->CPU.V_Counter;
+	
+	if (vc - vpos > 0)
+	{
+		// It's still in this frame */
+		// Add number of lines
+		total += (vc - vpos) * st->Timings.H_Max_Master;
+		// If line 240 is in there and we're odd, subtract a dot
+		if (vpos <= 240 && vc > 240 && st->Timings.InterlaceField && !st->IPPU.Interlace)
+			total -= ONE_DOT_CYCLE;
+	}
+	else
+	{
+		if (vc == vpos && hc > st->CPU.Cycles)
+			return hc;
+		
+		total += (st->Timings.V_Max - vpos) * st->Timings.H_Max_Master;
+		if (vpos <= 240 && st->Timings.InterlaceField && !st->IPPU.Interlace)
+			total -= ONE_DOT_CYCLE;
+		
+		total += vc * st->Timings.H_Max_Master;
+		if (vc > 240 && !st->Timings.InterlaceField && !st->IPPU.Interlace)
+			total -= ONE_DOT_CYCLE;
+	}
+	
+	total += hc;
+
+	return total;
+}
+
+void S9xUpdateIRQPositions(struct S9xState *st, bool initial)
 {
 	st->PPU.HTimerPosition = st->PPU.IRQHBeamPos * ONE_DOT_CYCLE + st->Timings.IRQTriggerCycles;
-	if (st->Timings.H_Max == st->Timings.H_Max_Master) // 1364
-	{
-		if (st->PPU.IRQHBeamPos > 322)
-			st->PPU.HTimerPosition += ONE_DOT_CYCLE / 2;
-		if (st->PPU.IRQHBeamPos > 326)
-			st->PPU.HTimerPosition += ONE_DOT_CYCLE / 2;
-	}
-
+	st->PPU.HTimerPosition -= st->PPU.IRQHBeamPos ? 0 : ONE_DOT_CYCLE;
+	st->PPU.HTimerPosition += st->PPU.IRQHBeamPos > 322 ? (ONE_DOT_CYCLE / 2) : 0;
+	st->PPU.HTimerPosition += st->PPU.IRQHBeamPos > 326 ? (ONE_DOT_CYCLE / 2) : 0;
+	
 	st->PPU.VTimerPosition = st->PPU.IRQVBeamPos;
-
-	if (st->PPU.HTimerPosition >= st->Timings.H_Max && st->PPU.IRQHBeamPos < 340)
+	
+	if (st->PPU.VTimerEnabled && st->PPU.VTimerPosition >= st->Timings.V_Max + (st->IPPU.Interlace ? 1 : 0))
+		st->Timings.NextIRQTimer = 0x0fffffff;
+	else if (!st->PPU.HTimerEnabled && !st->PPU.VTimerEnabled)
+		st->Timings.NextIRQTimer = 0x0fffffff;
+	else if (st->PPU.HTimerEnabled && !st->PPU.VTimerEnabled)
 	{
-		st->PPU.HTimerPosition -= st->Timings.H_Max;
-		++st->PPU.VTimerPosition;
-		// FIXME
-		if (st->PPU.VTimerPosition >= st->Timings.V_Max)
-			st->PPU.VTimerPosition = 0;
+		int v_pos = st->CPU.V_Counter;
+
+		st->Timings.NextIRQTimer = st->PPU.HTimerPosition;
+		if (st->CPU.Cycles > st->Timings.NextIRQTimer - st->Timings.IRQTriggerCycles)
+		{
+			st->Timings.NextIRQTimer += st->Timings.H_Max;
+			++v_pos;
+		}
+
+		// Check for short dot scanline
+		if (v_pos == 240 && st->Timings.InterlaceField && !st->IPPU.Interlace)
+		{
+			st->Timings.NextIRQTimer -= st->PPU.IRQHBeamPos <= 322 ? ONE_DOT_CYCLE / 2 : 0;
+			st->Timings.NextIRQTimer -= st->PPU.IRQHBeamPos <= 326 ? ONE_DOT_CYCLE / 2 : 0;
+		}
+	}
+	else if (!st->PPU.HTimerEnabled && st->PPU.VTimerEnabled)
+	{
+		if (st->CPU.V_Counter == st->PPU.VTimerPosition && initial)
+			st->Timings.NextIRQTimer = st->CPU.Cycles + st->Timings.IRQTriggerCycles - ONE_DOT_CYCLE;
+		else
+			st->Timings.NextIRQTimer = CyclesUntilNext(st, st->Timings.IRQTriggerCycles - ONE_DOT_CYCLE, st->PPU.VTimerPosition);
+	}
+	else
+	{
+		st->Timings.NextIRQTimer = CyclesUntilNext(st, st->PPU.HTimerPosition, st->PPU.VTimerPosition);
+
+		// Check for short dot scanline
+		int field = st->Timings.InterlaceField;
+
+		if (st->PPU.VTimerPosition < st->CPU.V_Counter || (st->PPU.VTimerPosition == st->CPU.V_Counter && st->Timings.NextIRQTimer > st->Timings.H_Max))
+			field = !field;
+
+		if (st->PPU.VTimerPosition == 240 && field && !st->IPPU.Interlace)
+		{
+			st->Timings.NextIRQTimer -= st->PPU.IRQHBeamPos <= 322 ? ONE_DOT_CYCLE / 2 : 0;
+			st->Timings.NextIRQTimer -= st->PPU.IRQHBeamPos <= 326 ? ONE_DOT_CYCLE / 2 : 0;
+		}
 	}
 }
 
@@ -247,7 +146,7 @@ void S9xSetPPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 
 			case 0x2102: // OAMADDL
 				st->PPU.OAMAddr = ((st->Memory.FillRAM[0x2103] & 1) << 8) | Byte;
-				st->PPU.OAMFlip = 2;
+				st->PPU.OAMFlip = 0;
 				st->PPU.SavedOAMAddr = st->PPU.OAMAddr;
 				if (st->PPU.OAMPriorityRotation && st->PPU.FirstSprite != (st->PPU.OAMAddr >> 1))
 					st->PPU.FirstSprite = (st->PPU.OAMAddr & 0xfe) >> 1;
@@ -276,7 +175,7 @@ void S9xSetPPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 
 			case 0x2105: // BGMODE
 				if (Byte != st->Memory.FillRAM[0x2105])
-					st->IPPU.Interlace = !!(st->Memory.FillRAM[0x2133] & 1);
+					st->IPPU.Interlace = 0;
 
 				break;
 
@@ -321,15 +220,7 @@ void S9xSetPPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 				st->PPU.VMA.Address &= 0xff00;
 				st->PPU.VMA.Address |= Byte;
 
-				if (st->PPU.VMA.FullGraphicCount)
-				{
-					uint32_t addr = st->PPU.VMA.Address;
-					uint32_t rem = addr & st->PPU.VMA.Mask1;
-					uint32_t address = (addr & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3);
-					st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(address << 1) & 0xffff]);
-				}
-				else
-					st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(st->PPU.VMA.Address << 1) & 0xffff]);
+				S9xUpdateVRAMReadBuffer(st);
 
 				break;
 
@@ -337,15 +228,7 @@ void S9xSetPPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 				st->PPU.VMA.Address &= 0x00ff;
 				st->PPU.VMA.Address |= Byte << 8;
 
-				if (st->PPU.VMA.FullGraphicCount)
-				{
-					uint32_t addr = st->PPU.VMA.Address;
-					uint32_t rem = addr & st->PPU.VMA.Mask1;
-					uint32_t address = (addr & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3);
-					st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(address << 1) & 0xffff]);
-				}
-				else
-					st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(st->PPU.VMA.Address << 1) & 0xffff]);
+				S9xUpdateVRAMReadBuffer(st);
 
 				break;
 
@@ -494,7 +377,7 @@ uint8_t S9xGetPPU(struct S9xState *st, uint16_t Address)
 				return (st->PPU.OpenBus1 = st->Memory.FillRAM[Address]);
 
 			case 0x2137: // SLHV
-				return st->OpenBus;
+				return st->PPU.OpenBus1;
 
 			case 0x2138: // OAMDATAREAD
 				if (st->PPU.OAMAddr & 0x100)
@@ -526,36 +409,20 @@ uint8_t S9xGetPPU(struct S9xState *st, uint16_t Address)
 				return (st->PPU.OpenBus1 = byte);
 
 			case 0x2139: // VMDATALREAD
-				byte = st->IPPU.VRAMReadBuffer & 0xff;
+				byte = st->PPU.VRAMReadBuffer & 0xff;
 				if (!st->PPU.VMA.High)
 				{
-					if (st->PPU.VMA.FullGraphicCount)
-					{
-						uint32_t addr = st->PPU.VMA.Address;
-						uint32_t rem = addr & st->PPU.VMA.Mask1;
-						uint32_t address = (addr & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3);
-						st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(address << 1) & 0xffff]);
-					}
-					else
-						st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(st->PPU.VMA.Address << 1) & 0xffff]);
+					S9xUpdateVRAMReadBuffer(st);
 
 					st->PPU.VMA.Address += st->PPU.VMA.Increment;
 				}
 				return (st->PPU.OpenBus1 = byte);
 
 			case 0x213a: // VMDATAHREAD
-				byte = (st->IPPU.VRAMReadBuffer >> 8) & 0xff;
+				byte = (st->PPU.VRAMReadBuffer >> 8) & 0xff;
 				if (st->PPU.VMA.High)
 				{
-					if (st->PPU.VMA.FullGraphicCount)
-					{
-						uint32_t addr = st->PPU.VMA.Address;
-						uint32_t rem = addr & st->PPU.VMA.Mask1;
-						uint32_t address = (addr & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3);
-						st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(address << 1) & 0xffff]);
-					}
-					else
-						st->IPPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(st->PPU.VMA.Address << 1) & 0xffff]);
+					S9xUpdateVRAMReadBuffer(st);
 
 					st->PPU.VMA.Address += st->PPU.VMA.Increment;
 				}
@@ -724,23 +591,24 @@ void S9xSetCPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 		switch (Address)
 		{
 			case 0x4200: // NMITIMEN
+				if (Byte == st->Memory.FillRAM[0x4200])
+					break;
+
 				st->PPU.VTimerEnabled = !!(Byte & 0x20);
 				st->PPU.HTimerEnabled = !!(Byte & 0x10);
 
-				if (st->CPU.IRQLine && !st->PPU.HTimerEnabled && st->PPU.VTimerEnabled)
-					st->CPU.IRQTransition = true;
-
-				if (!st->PPU.HTimerEnabled && !st->PPU.VTimerEnabled)
+				if (!(Byte & 0x10) && !(Byte & 0x20))
 					st->CPU.IRQLine = st->CPU.IRQTransition = false;
+
+				if ((Byte & 0x30) != (st->Memory.FillRAM[0x4200] & 0x30))
+					// Only allow instantaneous IRQ if turning it completely on or off
+					S9xUpdateIRQPositions(st, !(Byte & 0x30) || !(st->Memory.FillRAM[0x4200] & 0x30));
 
 				// NMI can trigger immediately during VBlank as long as NMI_read ($4210) wasn't cleard.
 				if ((Byte & 0x80) && !(st->Memory.FillRAM[0x4200] & 0x80) && st->CPU.V_Counter >= st->PPU.ScreenHeight + FIRST_VISIBLE_LINE && (st->Memory.FillRAM[0x4210] & 0x80))
-				{
 					// FIXME: triggered at HC+=6, checked just before the final CPU cycle,
 					// then, when to call S9xOpcode_NMI()?
-					st->CPU.NMILine = true;
-					st->Timings.NMITriggerPos = st->CPU.Cycles + 12;
-				}
+					st->Timings.IRQFlagChanging |= IRQ_TRIGGER_NMI;
 
 				break;
 
@@ -774,28 +642,28 @@ void S9xSetCPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 				pos = st->PPU.IRQHBeamPos;
 				st->PPU.IRQHBeamPos = (st->PPU.IRQHBeamPos & 0xff00) | Byte;
 				if (st->PPU.IRQHBeamPos != pos)
-					S9xUpdateHVTimerPosition(st);
+					S9xUpdateIRQPositions(st, false);
 				break;
 
 			case 0x4208: // HTIMEH
 				pos = st->PPU.IRQHBeamPos;
 				st->PPU.IRQHBeamPos = (st->PPU.IRQHBeamPos & 0xff) | ((Byte & 1) << 8);
 				if (st->PPU.IRQHBeamPos != pos)
-					S9xUpdateHVTimerPosition(st);
+					S9xUpdateIRQPositions(st, false);
 				break;
 
 			case 0x4209: // VTIMEL
 				pos = st->PPU.IRQVBeamPos;
 				st->PPU.IRQVBeamPos = (st->PPU.IRQVBeamPos & 0xff00) | Byte;
 				if (st->PPU.IRQVBeamPos != pos)
-					S9xUpdateHVTimerPosition(st);
+					S9xUpdateIRQPositions(st, true);
 				break;
 
 			case 0x420a: // VTIMEH
 				pos = st->PPU.IRQVBeamPos;
 				st->PPU.IRQVBeamPos = (st->PPU.IRQVBeamPos & 0xff) | ((Byte & 1) << 8);
 				if (st->PPU.IRQVBeamPos != pos)
-					S9xUpdateHVTimerPosition(st);
+					S9xUpdateIRQPositions(st, true);
 				break;
 
 			case 0x420b: // MDMAEN
@@ -832,8 +700,11 @@ void S9xSetCPU(struct S9xState *st, uint8_t Byte, uint16_t Address)
 
 			case 0x420d: // MEMSEL
 				if ((Byte & 1) != (st->Memory.FillRAM[0x420d] & 1))
+				{
 					st->CPU.FastROMSpeed = Byte & 1 ? ONE_CYCLE : SLOW_ONE_CYCLE;
-
+					// we might currently be in FastROMSpeed region, S9xSetPCBase will update CPU.MemSpeed
+					S9xSetPCBase(st, st->Registers.PC.xPBPC);
+				}
 				break;
 
 			case 0x4210: // RDNMI
@@ -1016,7 +887,7 @@ void S9xSoftResetPPU(struct S9xState *st)
 
 	st->PPU.OpenBus1 = st->PPU.OpenBus2 = 0;
 
-	st->IPPU.VRAMReadBuffer = 0; // XXX: FIXME: anything better?
+	st->PPU.VRAMReadBuffer = 0; // XXX: FIXME: anything better?
 	st->IPPU.Interlace = false;
 
 	for (int c = 0; c < 0x8000; c += 0x100)
@@ -1028,6 +899,20 @@ void S9xSoftResetPPU(struct S9xState *st)
 	std::fill_n(&st->Memory.FillRAM[0x1000], 0x1000, 0);
 
 	st->Memory.FillRAM[0x4201] = st->Memory.FillRAM[0x4213] = 0xff;
+	st->Memory.FillRAM[0x2126] = st->Memory.FillRAM[0x2128] = 1;
+}
+
+void S9xUpdateVRAMReadBuffer(struct S9xState *st)
+{
+	if (st->PPU.VMA.FullGraphicCount)
+	{
+		uint32_t addr = st->PPU.VMA.Address;
+		uint32_t rem = addr & st->PPU.VMA.Mask1;
+		uint32_t address = (addr & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3);
+		st->PPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(address << 1) & 0xffff]);
+	}
+	else
+		st->PPU.VRAMReadBuffer = READ_WORD(&st->Memory.VRAM[(st->PPU.VMA.Address << 1) & 0xffff]);
 }
 
 void REGISTER_2104(struct S9xState *st, uint8_t Byt)
@@ -1075,7 +960,16 @@ void REGISTER_2104(struct S9xState *st, uint8_t Byt)
 }
 
 // This code is correct, however due to Snes9x's inaccurate timings, some games might be broken by this chage. :(
-bool CHECK_INBLANK(struct S9xState *st) { return st->Settings.BlockInvalidVRAMAccess && !st->PPU.ForcedBlanking && st->CPU.V_Counter < st->PPU.ScreenHeight + FIRST_VISIBLE_LINE; }
+inline bool CHECK_INBLANK(struct S9xState *st)
+{
+	if (st->Settings.BlockInvalidVRAMAccess && !st->PPU.ForcedBlanking && st->CPU.V_Counter < st->PPU.ScreenHeight + FIRST_VISIBLE_LINE)
+	{
+		st->PPU.VMA.Address += !st->PPU.VMA.High ? st->PPU.VMA.Increment : 0;
+		return true;
+	}
+	else
+		return false;
+}
 
 void REGISTER_2118(struct S9xState *st, uint8_t Byt)
 {
@@ -1092,6 +986,33 @@ void REGISTER_2118(struct S9xState *st, uint8_t Byt)
 	}
 	else
 		st->Memory.VRAM[address = (st->PPU.VMA.Address << 1) & 0xffff] = Byt;
+
+	if (!st->PPU.VMA.High)
+		st->PPU.VMA.Address += st->PPU.VMA.Increment;
+}
+
+void REGISTER_2118_tile(struct S9xState *st, uint8_t Byt)
+{
+	if (CHECK_INBLANK(st))
+		return;
+
+	uint32_t rem = st->PPU.VMA.Address & st->PPU.VMA.Mask1;
+	uint32_t address = (((st->PPU.VMA.Address & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) & 0xffff;
+
+	st->Memory.VRAM[address] = Byt;
+
+	if (!st->PPU.VMA.High)
+		st->PPU.VMA.Address += st->PPU.VMA.Increment;
+}
+
+void REGISTER_2118_linear(struct S9xState *st, uint8_t Byt)
+{
+	if (CHECK_INBLANK(st))
+		return;
+
+	uint32_t address;
+
+	st->Memory.VRAM[address = (st->PPU.VMA.Address << 1) & 0xffff] = Byt;
 
 	if (!st->PPU.VMA.High)
 		st->PPU.VMA.Address += st->PPU.VMA.Increment;
@@ -1117,20 +1038,6 @@ void REGISTER_2119(struct S9xState *st, uint8_t Byt)
 		st->PPU.VMA.Address += st->PPU.VMA.Increment;
 }
 
-void REGISTER_2118_tile(struct S9xState *st, uint8_t Byt)
-{
-	if (CHECK_INBLANK(st))
-		return;
-
-	uint32_t rem = st->PPU.VMA.Address & st->PPU.VMA.Mask1;
-	uint32_t address = (((st->PPU.VMA.Address & ~st->PPU.VMA.Mask1) + (rem >> st->PPU.VMA.Shift) + ((rem & (st->PPU.VMA.FullGraphicCount - 1)) << 3)) << 1) & 0xffff;
-
-	st->Memory.VRAM[address] = Byt;
-
-	if (!st->PPU.VMA.High)
-		st->PPU.VMA.Address += st->PPU.VMA.Increment;
-}
-
 void REGISTER_2119_tile(struct S9xState *st, uint8_t Byt)
 {
 	if (CHECK_INBLANK(st))
@@ -1142,19 +1049,6 @@ void REGISTER_2119_tile(struct S9xState *st, uint8_t Byt)
 	st->Memory.VRAM[address] = Byt;
 
 	if (st->PPU.VMA.High)
-		st->PPU.VMA.Address += st->PPU.VMA.Increment;
-}
-
-void REGISTER_2118_linear(struct S9xState *st, uint8_t Byt)
-{
-	if (CHECK_INBLANK(st))
-		return;
-
-	uint32_t address;
-
-	st->Memory.VRAM[address = (st->PPU.VMA.Address << 1) & 0xffff] = Byt;
-
-	if (!st->PPU.VMA.High)
 		st->PPU.VMA.Address += st->PPU.VMA.Increment;
 }
 

@@ -38,7 +38,9 @@
 #import <lazyusf2/usf.h>
 
 #import <snes9x/snes9x.h>
-#import <snes9x/linear_resampler.h>
+#import <snes9x/snes.hpp>
+#import <snes9x/smp.hpp>
+#import <snes9x/sdsp.hpp>
 
 #include <zlib.h>
 
@@ -1096,14 +1098,13 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		st->Settings.SoundSync = true;
 		st->Settings.Mute = false;
 		st->Settings.SoundPlaybackRate = 32000;
-		st->Settings.SixteenBitSound = true;
-		st->Settings.Stereo = true;
+		st->Settings.InterpolationMethod = 2; // Gaussian
 
 		if(!st->Memory.Init(st))
 			return NO;
 
 		S9xInitAPU(st);
-		S9xInitSound<LinearResampler>(st, 10, 0); // we're doing 1:1 anyway
+		S9xInitSound(st, 10);
 
 		if (!buffer->Init()) {
 			S9xReset(st);

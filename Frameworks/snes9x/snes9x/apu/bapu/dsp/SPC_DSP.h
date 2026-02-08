@@ -3,7 +3,9 @@
 // snes_spc 0.9.0
 #pragma once
 
-#include <snes9x/blargg_commonSNSF.h>
+#include <snes9x/blargg_common.h>
+#include <snes9x/resampler.h>
+#include <snes9x/snes9x.h>
 
 class SPC_DSP
 {
@@ -11,12 +13,14 @@ public:
 	// Setup
 
 	// Initializes DSP and has it use the 64K RAM provided
-	void init(uint8_t *ram_64k);
+	void init(SSettings *Settings, uint8_t *ram_64k);
 
 	// Sets destination for output samples. If out is NULL or out_size is 0,
 	// doesn't generate any.
 	typedef short sample_t;
 	void set_output(sample_t *out, int out_size);
+
+	void set_output(Resampler *resampler);
 
 	// Number of samples written to output since it was last set, always
 	// a multiple of 2. Undefined if more samples were generated than
@@ -56,8 +60,6 @@ public:
 	// Snes9x Accessor
 
 	int stereo_switch;
-	bool rom_enabled; // mirror
-	uint8_t *rom, *hi_ram; // mirror
 
 	void set_stereo_switch(int);
 	uint8_t reg_value(int, int);
@@ -130,6 +132,10 @@ public:
 private:
 	enum { brr_block_size = 9 };
 
+	Resampler *resampler;
+
+	SSettings *Settings;
+
 	struct state_t
 	{
 		uint8_t regs[register_count];
@@ -187,10 +193,13 @@ private:
 		// non-emulation state
 		uint8_t *ram; // 64K shared RAM between DSP and SMP
 		int mute_mask;
+
 		sample_t *out;
 		sample_t *out_end;
 		sample_t *out_begin;
 		sample_t extra[extra_size];
+
+		uint8_t separate_echo_buffer[0x10000];
 	};
 	state_t m;
 
@@ -225,7 +234,7 @@ private:
 	void voice_V9_V6_V3(voice_t *const);
 
 	// Current echo buffer pointer for left/right channel
-	uint8_t *ECHO_PTR(int ch) { return &this->m.ram[this->m.t_echo_ptr + ch * 2]; }
+	uint8_t *ECHO_PTR(int ch);
 	// Sample in echo history buffer, where 0 is the oldest
 	int *ECHO_FIR(size_t i) { return this->m.echo_hist_pos[i]; }
 	// Calculate FIR point for left/right channel
@@ -247,7 +256,7 @@ private:
 	void soft_reset_common();
 };
 
-inline int SPC_DSP::sample_count() const { return this->m.out - this->m.out_begin; }
+inline int SPC_DSP::sample_count() const { return static_cast<int>(this->m.out - this->m.out_begin); }
 
 inline int SPC_DSP::read(int addr) const
 {

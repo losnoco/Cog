@@ -9,8 +9,7 @@
 #include <cassert>
 #include <climits>
 
-#include <snes9x/blargg_configSNSF.h>
-
+#include <snes9x/blargg_config.h>
 
 // BLARGG_COMPILER_HAS_BOOL: If 0, provides bool support for old compiler. If 1,
 // compiler is assumed to support bool. If undefined, availability is determined.

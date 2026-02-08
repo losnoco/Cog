@@ -1,188 +1,21 @@
-/***********************************************************************************
+/*****************************************************************************\
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
-
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
-
-  (c) Copyright 2002 - 2004  Matthew Kendora
-
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-
-  (c) Copyright 2002 - 2011  zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
-
-  (c) Copyright 2009 - 2011  BearOso,
-                             OV2
-
-
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
-
-  C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
-
-  C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
-
-  DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
-
-  DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
-
-  OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
-
-  SPC7110 and RTC C++ emulator code used in 1.39-1.51
-  (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
-
-  SPC7110 and RTC C++ emulator code used in 1.52+
-  (c) Copyright 2009         byuu,
-                             neviksti
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
-
-  S-RTC C emulator code
-  (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
-
-  Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
-
-  Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
-
-  Sound emulator code used in 1.5-1.51
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
-
-  Sound emulator code used in 1.52+
-  (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
-
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  NTSC filter
-  (c) Copyright 2006 - 2007  Shay Green
-
-  GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
-  (c) Copyright 2009 - 2011  OV2
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2011  zones
-
-
-  Specific ports contains the works of other authors. See headers in
-  individual files.
-
-
-  Snes9x homepage: http://www.snes9x.com/
-
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
-
-  This software is provided 'as-is', without any express or implied
-  warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
-
-  Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
-
-  The copyright holders request that bug fixes and improvements to the code
-  should be forwarded to them so everyone can benefit from the modifications
-  in future versions.
-
-  Super NES and Super Nintendo Entertainment System are trademarks of
-  Nintendo Co., Limited and its subsidiary companies.
- ***********************************************************************************/
+                This file is licensed under the Snes9x License.
+   For further information, consult the LICENSE file in the root directory.
+\*****************************************************************************/
 
 #include <vector>
 #include <algorithm>
 #include <string>
 #include <numeric>
 #include <cassert>
-#include "snes9x.h"
-#include "apu/apu.h"
+#include <snes9x/snes9x.h>
+#include <snes9x/apu.h>
 #include "sdd1.h"
+
+#include <snes9x/snes.hpp>
+#include <snes9x/smp.hpp>
+#include <snes9x/sdsp.hpp>
 
 // deinterleave
 
@@ -361,13 +194,20 @@ int CMemory::ScoreLoROM(bool skip_header, int32_t romoff)
 	return score;
 }
 
+int CMemory::First512BytesCountZeroes() const
+{
+	const uint8_t *buf = ROM;
+	int zeroCount = 0;
+	for (int i = 0; i < 512; ++i)
+		if (buf[i] == 0)
+			++zeroCount;
+	return zeroCount;
+}
+
 bool CMemory::LoadROMSNSF(const uint8_t *lrombuf, int32_t lromsize, const uint8_t *srambuf, int32_t sramsize)
 {
-	int retry_count = 0;
-
 	std::fill_n(&this->ROM[0], static_cast<int>(MAX_ROM_SIZE), 0);
 
-again:
 	this->CalculatedSize = 0;
 	this->ExtendedFormat = NOPE;
 
@@ -381,8 +221,22 @@ again:
 
 	int hi_score = this->ScoreHiROM(false);
 	int lo_score = this->ScoreLoROM(false);
+	int score_nonheadered = std::max(hi_score, lo_score);
+	int score_headered = std::max(this->ScoreHiROM(true), this->ScoreLoROM(true));
 
-	if (((hi_score > lo_score && this->ScoreHiROM(true) > hi_score) || (hi_score <= lo_score && this->ScoreLoROM(true) > lo_score)))
+	bool size_is_likely_headered = !((totalFileSize - 512) & 0xFFFF);
+	if (size_is_likely_headered)
+		score_headered += 2;
+	else
+		score_headered -= 2;
+	if (this->First512BytesCountZeroes() >= 0x1E0)
+		score_headered += 2;
+	else
+		score_headered -= 2;
+
+	bool headered_score_highest = score_headered > score_nonheadered;
+
+	if (headered_score_highest)
 	{
 		std::copy_n(&this->ROM[512], totalFileSize - 512, &this->ROM[0]);
 		totalFileSize -= 512;
@@ -391,9 +245,11 @@ again:
 		lo_score = this->ScoreLoROM(false);
 	}
 
-	this->CalculatedSize = (totalFileSize / 0x2000) * 0x2000;
+	this->CalculatedSize = ((totalFileSize + 0x1fff) / 0x2000) * 0x2000;
 
 	if (this->CalculatedSize > 0x400000 &&
+		this->ROM[0x7fd5] + (this->ROM[0x7fd6] << 8) != 0x3423 && // exclude SA-1
+		this->ROM[0x7fd5] + (this->ROM[0x7fd6] << 8) != 0x3523 &&
 		this->ROM[0x7fd5] + (this->ROM[0x7fd6] << 8) != 0x4332 && // exclude S-DD1
 		this->ROM[0x7fd5] + (this->ROM[0x7fd6] << 8) != 0x4532 &&
 		this->ROM[0xffd5] + (this->ROM[0xffd6] << 8) != 0xF93a && // exclude SPC7110
@@ -499,11 +355,10 @@ again:
 		hi_score = this->ScoreHiROM(false);
 		lo_score = this->ScoreLoROM(false);
 
-		if (((this->HiROM && (lo_score >= hi_score || hi_score < 0)) || (this->LoROM && (hi_score > lo_score || lo_score < 0))) && !retry_count)
+		if ((this->HiROM && (lo_score >= hi_score || hi_score < 0)) || (this->LoROM && (hi_score > lo_score || lo_score < 0)))
 		{
 			st->Settings.ForceNotInterleaved = true;
-			++retry_count;
-			goto again;
+			return false;
 		}
 	}
 
@@ -520,11 +375,8 @@ again:
 
 	memset(&st->SNESGameFixes, 0, sizeof(st->SNESGameFixes));
 
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],&(this->RealROM[0]),this->CalculatedSize);
 	this->InitROM();
 
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],&(this->RealROM[0]),this->CalculatedSize);
-    //printf("val: %d\n",this->RealROM[65532]);
 	S9xReset(st);
 
 	return true;
@@ -542,7 +394,7 @@ char *CMemory::Safe(const char *s)
 		return nullptr;
 	}
 
-	int len = strlen(s);
+	int len = static_cast<int>(strlen(s));
 	if (!safe || len + 1 > safe_len)
 	{
 		safe_len = len + 1;
@@ -664,7 +516,6 @@ void CMemory::InitROM()
 	   and the NMI handler, time enough for an instruction or two. */
 	// Wild Guns, Mighty Morphin Power Rangers - The Fighting Edition
 	st->Timings.NMIDMADelay = 24;
-	st->Timings.IRQPendCount = 0;
 
 	//// Hack games
 
@@ -768,7 +619,7 @@ void CMemory::map_index(uint32_t bank_s, uint32_t bank_e, uint32_t addr_s, uint3
 		for (uint32_t i = addr_s; i <= addr_e; i += 0x1000)
 		{
 			uint32_t p = (c << 4) | (i >> 12);
-			this->Map[p] = reinterpret_cast<uint8_t *>(index);
+			this->Map[p] = reinterpret_cast<uint8_t *>(static_cast<intptr_t>(index));
 			this->BlockIsROM[p] = false;
 			this->BlockIsRAM[p] = isRAM;
 		}
@@ -794,8 +645,13 @@ void CMemory::map_WRAM()
 
 void CMemory::map_LoROMSRAM()
 {
-	this->map_index(0x70, 0x7f, 0x0000, 0x7fff, MAP_LOROM_SRAM, MAP_TYPE_RAM);
-	this->map_index(0xf0, 0xff, 0x0000, 0x7fff, MAP_LOROM_SRAM, MAP_TYPE_RAM);
+	if (!this->SRAMSize)
+		return;
+
+	uint32_t hi = this->SRAMSize > 5 ? 0x7fff : 0xffff;
+
+	this->map_index(0x70, 0x7d, 0x0000, hi, MAP_LOROM_SRAM, MAP_TYPE_RAM);
+	this->map_index(0xf0, 0xff, 0x0000, hi, MAP_LOROM_SRAM, MAP_TYPE_RAM);
 }
 
 void CMemory::map_HiROMSRAM()
@@ -824,25 +680,17 @@ void CMemory::Map_Initialize()
 
 void CMemory::Map_LoROMMap()
 {
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
 	this->map_System();
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
+
 	this->map_lorom(0x00, 0x3f, 0x8000, 0xffff, this->CalculatedSize);
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
 	this->map_lorom(0x40, 0x7f, 0x0000, 0xffff, this->CalculatedSize);
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
 	this->map_lorom(0x80, 0xbf, 0x8000, 0xffff, this->CalculatedSize);
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
 	this->map_lorom(0xc0, 0xff, 0x0000, 0xffff, this->CalculatedSize);
 
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
-    
 	this->map_LoROMSRAM();
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
 	this->map_WRAM();
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
+
 	this->map_WriteProtectROM();
-    //printf("1Mem MAP: %08X rom %08X size %d\n",this->Map[15],this->ROM,this->CalculatedSize);
 }
 
 void CMemory::Map_NoMAD1LoROMMap()
@@ -868,7 +716,7 @@ void CMemory::Map_JumboLoROMMap()
 	this->map_System();
 
 	this->map_lorom_offset(0x00, 0x3f, 0x8000, 0xffff, this->CalculatedSize - 0x400000, 0x400000);
-	this->map_lorom_offset(0x40, 0x7f, 0x0000, 0xffff, this->CalculatedSize - 0x400000, 0x400000);
+	this->map_lorom_offset(0x40, 0x7f, 0x0000, 0xffff, this->CalculatedSize - 0x600000, 0x600000);
 	this->map_lorom_offset(0x80, 0xbf, 0x8000, 0xffff, 0x400000, 0);
 	this->map_lorom_offset(0xc0, 0xff, 0x0000, 0xffff, 0x400000, 0x200000);
 
@@ -920,10 +768,11 @@ void CMemory::Map_SDD1LoROMMap()
 	this->map_lorom(0x00, 0x3f, 0x8000, 0xffff, this->CalculatedSize);
 	this->map_lorom(0x80, 0xbf, 0x8000, 0xffff, this->CalculatedSize);
 
-	this->map_hirom_offset(0x40, 0x7f, 0x0000, 0xffff, this->CalculatedSize, 0);
+	this->map_hirom_offset(0x60, 0x7f, 0x0000, 0xffff, this->CalculatedSize, 0);
 	this->map_hirom_offset(0xc0, 0xff, 0x0000, 0xffff, this->CalculatedSize, 0); // will be overwritten dynamically
 
 	this->map_index(0x70, 0x7f, 0x0000, 0x7fff, MAP_LOROM_SRAM, MAP_TYPE_RAM);
+	this->map_index(0xa0, 0xbf, 0x6000, 0x7fff, MAP_LOROM_SRAM, MAP_TYPE_RAM);
 
 	this->map_WRAM();
 
@@ -984,66 +833,22 @@ void CMemory::ApplyROMFixes()
 	//// APU timing hacks :(
 
 	st->Timings.APUSpeedup = 0;
-	st->Timings.APUAllowTimeOverflow = false;
 
 	if (!st->Settings.DisableGameSpecificHacks)
 	{
-		if (this->match_id("AVCJ")) // Rendering Ranger R2
-			st->Timings.APUSpeedup = 4;
-
-		if (this->match_na("GAIA GENSOUKI 1 JPN") || // Gaia Gensouki
-			this->match_id("JG  ") || // Illusion of Gaia
-			this->match_id("CQ  ") || // Stunt Race FX
-			this->match_na("SOULBLADER - 1") || // Soul Blader
-			this->match_na("SOULBLAZER - 1 USA") || // Soul Blazer
-			this->match_na("SLAP STICK 1 JPN") || // Slap Stick
-			this->match_id("E9 ") || // Robotrek
-			this->match_nn("ACTRAISER") || // Actraiser
-			this->match_nn("ActRaiser-2") || // Actraiser 2
-			this->match_id("AQT") || // Tenchi Souzou, Terranigma
-			this->match_id("ATV") || // Tales of Phantasia
-			this->match_id("ARF") || // Star Ocean
-			this->match_id("APR") || // Zen-Nippon Pro Wrestling 2 - 3-4 Budoukan
-			this->match_id("A4B") || // Super Bomberman 4
-			this->match_id("Y7 ") || // U.F.O. Kamen Yakisoban - Present Ban
-			this->match_id("Y9 ") || // U.F.O. Kamen Yakisoban - Shihan Ban
-			this->match_id("APB") || // Super Bomberman - Panic Bomber W
-			this->match_na("DARK KINGDOM") || // Dark Kingdom
-			this->match_na("ZAN3 SFC") || // Zan III Spirits
-			this->match_na("HIOUDEN") || // Hiouden - Mamono-tachi Tono Chikai
-			this->match_na("\xC3\xDD\xBC\xC9\xB3\xC0") || // Tenshi no Uta
-			this->match_na("FORTUNE QUEST") || // Fortune Quest - Dice wo Korogase
-			this->match_na("FISHING TO BASSING") || // Shimono Masaki no Fishing To Bassing
-			this->match_na("OHMONO BLACKBASS") || // Oomono Black Bass Fishing - Jinzouko Hen
-			this->match_na("MASTERS") || // Harukanaru Augusta 2 - Masters
-			this->match_na("SFC \xB6\xD2\xDD\xD7\xB2\xC0\xDE\xB0") || // Kamen Rider
-			this->match_na("ZENKI TENCHIMEIDOU") || // Kishin Douji Zenki - Tenchi Meidou
-			this->match_nn("TokyoDome '95Battle 7") || // Shin Nippon Pro Wrestling Kounin '95 - Tokyo Dome Battle 7
-			this->match_nn("SWORD WORLD SFC") || // Sword World SFC/2
-			this->match_nn("LETs PACHINKO(") || // BS Lets Pachinko Nante Gindama 1/2/3/4
-			this->match_nn("THE FISHING MASTER") || // Mark Davis The Fishing Master
-			this->match_nn("Parlor") || // Parlor mini/2/3/4/5/6/7, Parlor Parlor!/2/3/4/5
-			this->match_na("HEIWA Parlor!Mini8") || // Parlor mini 8
-			this->match_nn("SANKYO Fever! \xCC\xA8\xB0\xCA\xDE\xB0!")) // SANKYO Fever! Fever!
-			st->Timings.APUSpeedup = 1;
-
-		if (this->match_na("EARTHWORM JIM 2") || // Earthworm Jim 2
-			this->match_na("NBA Hangtime") || // NBA Hang Time
-			this->match_na("MSPACMAN") || // Ms Pacman
-			this->match_na("THE MASK") || // The Mask
-			this->match_na("PRIMAL RAGE") || // Primal Rage
-			this->match_na("DOOM TROOPERS")) // Doom Troopers
-			st->Timings.APUAllowTimeOverflow = true;
+		//if (this->match_id("AVCJ")) // Rendering Ranger R2
+		//	Timings.APUSpeedup = 2;
+		if (this->match_na("CIRCUIT USA"))
+			st->Timings.APUSpeedup = 3;
 	}
 
 	S9xAPUTimingSetSpeedup(st, st->Timings.APUSpeedup);
-	S9xAPUAllowTimeOverflow(st, st->Timings.APUAllowTimeOverflow);
 
 	//// Other timing hacks :(
 
 	st->Timings.HDMAStart = SNES_HDMA_START_HC + st->Settings.HDMATimingHack - 100;
 	st->Timings.HBlankStart = SNES_HBLANK_START_HC + st->Timings.HDMAStart - SNES_HDMA_START_HC;
-	st->Timings.IRQTriggerCycles = 10;
+	st->Timings.IRQTriggerCycles = 14;
 
 	if (!st->Settings.DisableGameSpecificHacks)
 	{
@@ -1051,17 +856,10 @@ void CMemory::ApplyROMFixes()
 		// Some games need really severe delay timing...
 		if (this->match_na("BATTLE GRANDPRIX")) // Battle Grandprix
 			st->Timings.DMACPUSync = 20;
-
-		// An infinite loop reads $4212 and waits V-blank end, whereas VIRQ is set V=0.
-		// If Snes9x succeeds to escape from the loop before jumping into the IRQ handler, the game goes further.
-		// If Snes9x jumps into the IRQ handler before escaping from the loop,
-		// Snes9x cannot escape from the loop permanently because the RTI is in the next V-blank.
-		if (this->match_na("Aero the AcroBat 2"))
-			st->Timings.IRQPendCount = 2;
-
-		// XXX: What's happening?
-		if (this->match_na("X-MEN")) // Spider-Man and the X-Men
-			st->Settings.BlockInvalidVRAMAccess = false;
+		else if (match_na("KORYU NO MIMI ENG")) // Koryu no Mimi translation by rpgone)
+			// An infinite loop reads $4210 and checks NMI flag. This only works if LDA instruction executes before the NMI triggers,
+			// which doesn't work very well with s9x's default DMA timing.
+			st->Timings.DMACPUSync = 20;
 
 		//// SRAM initial value
 
