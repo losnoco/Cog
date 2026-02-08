@@ -1,183 +1,16 @@
-/***********************************************************************************
+/*****************************************************************************\
   Snes9x - Portable Super Nintendo Entertainment System (TM) emulator.
+                This file is licensed under the Snes9x License.
+   For further information, consult the LICENSE file in the root directory.
+\*****************************************************************************/
 
-  (c) Copyright 1996 - 2002  Gary Henderson (gary.henderson@ntlworld.com),
-                             Jerremy Koot (jkoot@snes9x.com)
+#include <snes9x/snes9x.h>
 
-  (c) Copyright 2002 - 2004  Matthew Kendora
+#include <snes9x/snes.hpp>
+#include <snes9x/smp.hpp>
+#include <snes9x/sdsp.hpp>
 
-  (c) Copyright 2002 - 2005  Peter Bortas (peter@bortas.org)
-
-  (c) Copyright 2004 - 2005  Joel Yliluoma (http://iki.fi/bisqwit/)
-
-  (c) Copyright 2001 - 2006  John Weidman (jweidman@slip.net)
-
-  (c) Copyright 2002 - 2006  funkyass (funkyass@spam.shaw.ca),
-                             Kris Bleakley (codeviolation@hotmail.com)
-
-  (c) Copyright 2002 - 2010  Brad Jorsch (anomie@users.sourceforge.net),
-                             Nach (n-a-c-h@users.sourceforge.net),
-
-  (c) Copyright 2002 - 2011  zones (kasumitokoduck@yahoo.com)
-
-  (c) Copyright 2006 - 2007  nitsuja
-
-  (c) Copyright 2009 - 2011  BearOso,
-                             OV2
-
-
-  BS-X C emulator code
-  (c) Copyright 2005 - 2006  Dreamer Nom,
-                             zones
-
-  C4 x86 assembler and some C emulation code
-  (c) Copyright 2000 - 2003  _Demo_ (_demo_@zsnes.com),
-                             Nach,
-                             zsKnight (zsknight@zsnes.com)
-
-  C4 C++ code
-  (c) Copyright 2003 - 2006  Brad Jorsch,
-                             Nach
-
-  DSP-1 emulator code
-  (c) Copyright 1998 - 2006  _Demo_,
-                             Andreas Naive (andreasnaive@gmail.com),
-                             Gary Henderson,
-                             Ivar (ivar@snes9x.com),
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora,
-                             Nach,
-                             neviksti (neviksti@hotmail.com)
-
-  DSP-2 emulator code
-  (c) Copyright 2003         John Weidman,
-                             Kris Bleakley,
-                             Lord Nightmare (lord_nightmare@users.sourceforge.net),
-                             Matthew Kendora,
-                             neviksti
-
-  DSP-3 emulator code
-  (c) Copyright 2003 - 2006  John Weidman,
-                             Kris Bleakley,
-                             Lancer,
-                             z80 gaiden
-
-  DSP-4 emulator code
-  (c) Copyright 2004 - 2006  Dreamer Nom,
-                             John Weidman,
-                             Kris Bleakley,
-                             Nach,
-                             z80 gaiden
-
-  OBC1 emulator code
-  (c) Copyright 2001 - 2004  zsKnight,
-                             pagefault (pagefault@zsnes.com),
-                             Kris Bleakley
-                             Ported from x86 assembler to C by sanmaiwashi
-
-  SPC7110 and RTC C++ emulator code used in 1.39-1.51
-  (c) Copyright 2002         Matthew Kendora with research by
-                             zsKnight,
-                             John Weidman,
-                             Dark Force
-
-  SPC7110 and RTC C++ emulator code used in 1.52+
-  (c) Copyright 2009         byuu,
-                             neviksti
-
-  S-DD1 C emulator code
-  (c) Copyright 2003         Brad Jorsch with research by
-                             Andreas Naive,
-                             John Weidman
-
-  S-RTC C emulator code
-  (c) Copyright 2001 - 2006  byuu,
-                             John Weidman
-
-  ST010 C++ emulator code
-  (c) Copyright 2003         Feather,
-                             John Weidman,
-                             Kris Bleakley,
-                             Matthew Kendora
-
-  Super FX x86 assembler emulator code
-  (c) Copyright 1998 - 2003  _Demo_,
-                             pagefault,
-                             zsKnight
-
-  Super FX C emulator code
-  (c) Copyright 1997 - 1999  Ivar,
-                             Gary Henderson,
-                             John Weidman
-
-  Sound emulator code used in 1.5-1.51
-  (c) Copyright 1998 - 2003  Brad Martin
-  (c) Copyright 1998 - 2006  Charles Bilyue'
-
-  Sound emulator code used in 1.52+
-  (c) Copyright 2004 - 2007  Shay Green (gblargg@gmail.com)
-
-  SH assembler code partly based on x86 assembler code
-  (c) Copyright 2002 - 2004  Marcus Comstedt (marcus@mc.pp.se)
-
-  2xSaI filter
-  (c) Copyright 1999 - 2001  Derek Liauw Kie Fa
-
-  HQ2x, HQ3x, HQ4x filters
-  (c) Copyright 2003         Maxim Stepin (maxim@hiend3d.com)
-
-  NTSC filter
-  (c) Copyright 2006 - 2007  Shay Green
-
-  GTK+ GUI code
-  (c) Copyright 2004 - 2011  BearOso
-
-  Win32 GUI code
-  (c) Copyright 2003 - 2006  blip,
-                             funkyass,
-                             Matthew Kendora,
-                             Nach,
-                             nitsuja
-  (c) Copyright 2009 - 2011  OV2
-
-  Mac OS GUI code
-  (c) Copyright 1998 - 2001  John Stiles
-  (c) Copyright 2001 - 2011  zones
-
-
-  Specific ports contains the works of other authors. See headers in
-  individual files.
-
-
-  Snes9x homepage: http://www.snes9x.com/
-
-  Permission to use, copy, modify and/or distribute Snes9x in both binary
-  and source form, for non-commercial purposes, is hereby granted without
-  fee, providing that this license information and copyright notice appear
-  with all copies and any derived work.
-
-  This software is provided 'as-is', without any express or implied
-  warranty. In no event shall the authors be held liable for any damages
-  arising from the use of this software or it's derivatives.
-
-  Snes9x is freeware for PERSONAL USE only. Commercial users should
-  seek permission of the copyright holders first. Commercial use includes,
-  but is not limited to, charging money for Snes9x or software derived from
-  Snes9x, including Snes9x or derivatives in commercial game bundles, and/or
-  using Snes9x as a promotion for your commercial product.
-
-  The copyright holders request that bug fixes and improvements to the code
-  should be forwarded to them so everyone can benefit from the modifications
-  in future versions.
-
-  Super NES and Super Nintendo Entertainment System are trademarks of
-  Nintendo Co., Limited and its subsidiary companies.
- ***********************************************************************************/
-
-#include "snes9x.h"
-
-static inline void ADD_CYCLES(struct S9xState *st, int32_t n) { st->CPU.PrevCycles = st->CPU.Cycles; st->CPU.Cycles += n; S9xCheckInterrupts(st); }
+static inline void ADD_CYCLES(struct S9xState *st, int32_t n) { st->CPU.Cycles += n; }
 
 // globals.cpp
 extern const int HDMA_ModeByteCounts[8];
@@ -360,7 +193,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 							if (!UPDATE_COUNTERS())
 								return false;
 							--count;
-
+						// Fall through
 						case 1:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -397,7 +230,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 1;
 								break;
 							}
-
+						// Fall through
 						case 1:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2100 + d->BAddress);
@@ -408,7 +241,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 2;
 								break;
 							}
-
+						// Fall through
 						case 2:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -419,7 +252,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 3;
 								break;
 							}
-
+						// Fall through
 						case 3:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -449,7 +282,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 1;
 								break;
 							}
-
+						// Fall through
 						case 1:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -460,7 +293,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 2;
 								break;
 							}
-
+						// Fall through
 						case 2:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2102 + d->BAddress);
@@ -471,7 +304,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 3;
 								break;
 							}
-
+						// Fall through
 						case 3:
 							Work = S9xGetByte(st, (d->ABank << 16) + p);
 							S9xSetPPU(st, Work, 0x2103 + d->BAddress);
@@ -613,10 +446,10 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 									if (!UPDATE_COUNTERS())
 										return false;
 									--count;
-
+								// Fall through
 								case 1:
-									Work = *(base + p);
-									REGISTER_2119_linear(st, Work);
+									st->OpenBus = *(base + p);
+									REGISTER_2119_linear(st, st->OpenBus);
 									if (!UPDATE_COUNTERS())
 										return false;
 									--count;
@@ -646,7 +479,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 									if (!UPDATE_COUNTERS())
 										return false;
 									--count;
-
+								// Fall through
 								case 1:
 									Work = *(base + p);
 									REGISTER_2119_tile(st, Work);
@@ -681,7 +514,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								if (!UPDATE_COUNTERS())
 									return false;
 								--count;
-
+							// Fall through
 							case 1:
 								Work = *(base + p);
 								S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -719,7 +552,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 1;
 								break;
 							}
-
+						// Fall through
 						case 1:
 							Work = *(base + p);
 							S9xSetPPU(st, Work, 0x2100 + d->BAddress);
@@ -730,7 +563,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 2;
 								break;
 							}
-
+						// Fall through
 						case 2:
 							Work = *(base + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -741,7 +574,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 3;
 								break;
 							}
-
+						// Fall through
 						case 3:
 							Work = *(base + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -771,7 +604,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 1;
 								break;
 							}
-
+						// Fall through
 						case 1:
 							Work = *(base + p);
 							S9xSetPPU(st, Work, 0x2101 + d->BAddress);
@@ -782,7 +615,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 2;
 								break;
 							}
-
+						// Fall through
 						case 2:
 							Work = *(base + p);
 							S9xSetPPU(st, Work, 0x2102 + d->BAddress);
@@ -793,7 +626,7 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 								b = 3;
 								break;
 							}
-
+						// Fall through
 						case 3:
 							Work = *(base + p);
 							S9xSetPPU(st, Work, 0x2103 + d->BAddress);
@@ -1061,12 +894,8 @@ bool S9xDoDMA(struct S9xState *st, uint8_t Channel)
 		}
 	}
 
-	if (st->CPU.NMILine && (st->Timings.NMITriggerPos != 0xffff))
-	{
+	if (st->CPU.NMIPending && st->Timings.NMITriggerPos != 0xffff)
 		st->Timings.NMITriggerPos = st->CPU.Cycles + st->Timings.NMIDMADelay;
-		if (st->Timings.NMITriggerPos >= st->Timings.H_Max)
-			st->Timings.NMITriggerPos -= st->Timings.H_Max;
-	}
 
 	st->CPU.InDMA = st->CPU.InDMAorHDMA = st->CPU.InWRAMDMAorHDMA = false;
 	st->CPU.CurrentDMAorHDMAChannel = -1;
@@ -1171,9 +1000,10 @@ void S9xStartHDMA(struct S9xState *st)
 
 uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 {
-	SDMA *p = &st->DMA[0];
+	SDMA *p;
 
-	int d = 0;
+	int d;
+	uint8_t mask;
 
 	st->CPU.InHDMA = st->CPU.InDMAorHDMA = true;
 	st->CPU.HDMARanInDMA = st->CPU.InDMA ? byte : 0;
@@ -1183,13 +1013,13 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 	// XXX: Not quite right...
 	ADD_CYCLES(st, st->Timings.DMACPUSync);
 
-	for (uint8_t mask = 1; mask; mask <<= 1, ++p, ++d)
+	for (mask = 1, p = &st->DMA[0], d = 0; mask; mask <<= 1, ++p, ++d)
 	{
 		if (byte & mask)
 		{
 			st->CPU.InWRAMDMAorHDMA = false;
 			st->CPU.CurrentDMAorHDMAChannel = d;
-
+			
 			uint32_t ShiftedIBank;
 			uint16_t IAddr;
 			if (p->HDMAIndirectAddressing)
@@ -1202,10 +1032,10 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 				ShiftedIBank = p->ABank << 16;
 				IAddr = p->Address;
 			}
-
+			
 			if (!st->HDMAMemPointers[d])
 				st->HDMAMemPointers[d] = S9xGetMemPointer(st, ShiftedIBank + IAddr);
-
+			
 			if (p->DoTransfer)
 			{
 				// XXX: Hack for Uniracers, because we don't understand
@@ -1218,27 +1048,27 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 						st->PPU.OAMFlip = 0;
 					}
 				}
-
+				
 				if (!p->ReverseTransfer)
 				{
 					if ((IAddr & MEMMAP_MASK) + HDMA_ModeByteCounts[p->TransferMode] >= MEMMAP_BLOCK_SIZE)
 					{
 						// HDMA REALLY-SLOW PATH
 						st->HDMAMemPointers[d] = nullptr;
-
+						
 						auto DOBYTE = [&](uint16_t Addr, uint16_t RegOff)
 						{
 							st->CPU.InWRAMDMAorHDMA = ShiftedIBank == 0x7e0000 || ShiftedIBank == 0x7f0000 || (!(ShiftedIBank & 0x400000) && Addr < 0x2000);
 							S9xSetPPU(st, S9xGetByte(st, ShiftedIBank + Addr), 0x2100 + p->BAddress + RegOff);
 						};
-
+						
 						switch (p->TransferMode)
 						{
 							case 0:
 								DOBYTE(IAddr, 0);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
 								break;
-
+								
 							case 5:
 								DOBYTE(IAddr, 0);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1249,14 +1079,14 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 								DOBYTE(IAddr + 3, 1);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
 								break;
-
+								
 							case 1:
 								DOBYTE(IAddr, 0);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
 								DOBYTE(IAddr + 1, 1);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
 								break;
-
+								
 							case 2:
 							case 6:
 								DOBYTE(IAddr, 0);
@@ -1264,7 +1094,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 								DOBYTE(IAddr + 1, 0);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
 								break;
-
+								
 							case 3:
 							case 7:
 								DOBYTE(IAddr, 0);
@@ -1276,7 +1106,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 								DOBYTE(IAddr + 3, 1);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
 								break;
-
+								
 							case 4:
 								DOBYTE(IAddr, 0);
 								ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1291,19 +1121,19 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 					else
 					{
 						st->CPU.InWRAMDMAorHDMA = ShiftedIBank == 0x7e0000 || ShiftedIBank == 0x7f0000 || (!(ShiftedIBank & 0x400000) && IAddr < 0x2000);
-
+						
 						if (!st->HDMAMemPointers[d])
 						{
 							// HDMA SLOW PATH
 							uint32_t Addr = ShiftedIBank + IAddr;
-
+							
 							switch (p->TransferMode)
 							{
 								case 0:
 									S9xSetPPU(st, S9xGetByte(st, Addr), 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									break;
-
+									
 								case 5:
 									S9xSetPPU(st, S9xGetByte(st, Addr), 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1317,7 +1147,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 									S9xSetPPU(st, S9xGetByte(st, Addr + 1), 0x2101 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									break;
-
+									
 								case 2:
 								case 6:
 									S9xSetPPU(st, S9xGetByte(st, Addr), 0x2100 + p->BAddress);
@@ -1325,7 +1155,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 									S9xSetPPU(st, S9xGetByte(st, Addr + 1), 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									break;
-
+									
 								case 3:
 								case 7:
 									S9xSetPPU(st, S9xGetByte(st, Addr), 0x2100 + p->BAddress);
@@ -1337,7 +1167,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 									S9xSetPPU(st, S9xGetByte(st, Addr + 3), 0x2101 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									break;
-
+									
 								case 4:
 									S9xSetPPU(st, S9xGetByte(st, Addr), 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1358,7 +1188,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 									S9xSetPPU(st, *st->HDMAMemPointers[d]++, 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									break;
-
+									
 								case 5:
 									S9xSetPPU(st, *st->HDMAMemPointers[d], 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1369,11 +1199,14 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 								case 1:
 									S9xSetPPU(st, *st->HDMAMemPointers[d], 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
-									S9xSetPPU(st, *(st->HDMAMemPointers[d] + 1), 0x2101 + p->BAddress);
+									// XXX: All HDMA should read to MDR first. This one just
+									// happens to fix Speedy Gonzales.
+									st->OpenBus = *(st->HDMAMemPointers[d] + 1);
+									S9xSetPPU(st, st->OpenBus, 0x2101 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									st->HDMAMemPointers[d] += 2;
 									break;
-
+									
 								case 2:
 								case 6:
 									S9xSetPPU(st, *st->HDMAMemPointers[d], 0x2100 + p->BAddress);
@@ -1382,7 +1215,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									st->HDMAMemPointers[d] += 2;
 									break;
-
+									
 								case 3:
 								case 7:
 									S9xSetPPU(st, *st->HDMAMemPointers[d], 0x2100 + p->BAddress);
@@ -1395,7 +1228,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
 									st->HDMAMemPointers[d] += 4;
 									break;
-
+									
 								case 4:
 									S9xSetPPU(st, *st->HDMAMemPointers[d], 0x2100 + p->BAddress);
 									ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1416,20 +1249,20 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 					// anomie says: Since this is apparently never used
 					// (otherwise we would have noticed before now), let's not bother with faster paths.
 					st->HDMAMemPointers[d] = nullptr;
-
+					
 					auto DOBYTE = [&](uint16_t Addr, uint16_t RegOff)
 					{
 						st->CPU.InWRAMDMAorHDMA = ShiftedIBank == 0x7e0000 || ShiftedIBank == 0x7f0000 || (!(ShiftedIBank & 0x400000) && Addr < 0x2000);
 						S9xSetByte(st, S9xGetPPU(st, 0x2100 + p->BAddress + RegOff), ShiftedIBank + Addr);
 					};
-
+					
 					switch (p->TransferMode)
 					{
 						case 0:
 							DOBYTE(IAddr, 0);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 							break;
-
+							
 						case 5:
 							DOBYTE(IAddr, 0);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1440,14 +1273,14 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 							DOBYTE(IAddr + 3, 1);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 							break;
-
+							
 						case 1:
 							DOBYTE(IAddr, 0);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 							DOBYTE(IAddr + 1, 1);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 							break;
-
+							
 						case 2:
 						case 6:
 							DOBYTE(IAddr, 0);
@@ -1455,7 +1288,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 							DOBYTE(IAddr + 1, 0);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 							break;
-
+							
 						case 3:
 						case 7:
 							DOBYTE(IAddr, 0);
@@ -1467,7 +1300,7 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 							DOBYTE(IAddr + 3, 1);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 							break;
-
+							
 						case 4:
 							DOBYTE(IAddr, 0);
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
@@ -1479,7 +1312,16 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 							ADD_CYCLES(st, SLOW_ONE_CYCLE);
 					}
 				}
+			}
+		}
+	}
 
+	for (mask = 1, p = &st->DMA[0], d = 0; mask; mask <<= 1, ++p, ++d)
+	{
+		if (byte & mask)
+		{
+			if (p->DoTransfer)
+			{
 				if (p->HDMAIndirectAddressing)
 					p->DMACount_Or_HDMAIndirectAddress += HDMA_ModeByteCounts[p->TransferMode];
 				else
@@ -1495,7 +1337,6 @@ uint8_t S9xDoHDMA(struct S9xState *st, uint8_t byte)
 					byte &= ~mask;
 					st->PPU.HDMAEnded |= mask;
 					p->DoTransfer = false;
-					continue;
 				}
 			}
 			else
