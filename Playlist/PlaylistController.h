@@ -163,4 +163,6 @@ typedef NS_ENUM(NSInteger, URLOrigin) {
 
 - (BOOL)pathSuggesterEmpty;
 
+- (IBAction)saveSelectionAsPlaylist:(id _Nullable)sender;
+
 @end

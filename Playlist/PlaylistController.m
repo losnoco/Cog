@@ -2099,4 +2099,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	return rval;
 }
 
+- (IBAction)saveSelectionAsPlaylist:(id)sender {
+	[appController savePlaylistFromSelection:sender];
+}
+
 @end

@@ -1,6 +1,24 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "0wz-bh-aMp.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Save Selection As Playlist…”; ObjectID = “0wz-bh-aMp“;",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Selection As Playlist…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar selección como playlist..."
+          }
+        }
+      }
+    },
     "1g1-Th-emL.headerCell.title" : {
       "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Play Count\"; ObjectID = \"1g1-Th-emL\";",
       "extractionState" : "extracted_with_value",
@@ -4875,6 +4893,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Velocidad"
+          }
+        }
+      }
+    },
+    "UKB-ta-5qX.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Save Selection As...\"; ObjectID = \"UKB-ta-5qX\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Selection As…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar selección como..."
           }
         }
       }
