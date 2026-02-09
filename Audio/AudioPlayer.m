@@ -182,6 +182,7 @@
 
 - (void)pause {
 	[output fadeOut];
+	[output timeOut];
 
 	[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
 }
