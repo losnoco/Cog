@@ -72,22 +72,22 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
 }
 
-- (BOOL)save:(NSString *)filename {
+- (BOOL)save:(NSString *)filename onlySelection:(BOOL)selection {
 	NSString *ext = [filename pathExtension];
 	if([ext isEqualToString:@"pls"]) {
-		return [self save:filename asType:kPlaylistPls];
+		return [self save:filename asType:kPlaylistPls onlySelection:selection];
 	} else {
-		return [self save:filename asType:kPlaylistM3u];
+		return [self save:filename asType:kPlaylistM3u onlySelection:selection];
 	}
 }
 
-- (BOOL)save:(NSString *)filename asType:(PlaylistType)type {
+- (BOOL)save:(NSString *)filename asType:(PlaylistType)type onlySelection:(BOOL)selection {
 	if(type == kPlaylistM3u) {
-		return [self saveM3u:filename];
+		return [self saveM3u:filename onlySelection:selection];
 	} else if(type == kPlaylistPls) {
-		return [self savePls:filename];
+		return [self savePls:filename onlySelection:selection];
 	} else if(type == kPlaylistXml) {
-		return [self saveXml:filename];
+		return [self saveXml:filename onlySelection:selection];
 	}
 
 	return NO;
@@ -113,7 +113,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	}
 }
 
-- (BOOL)saveM3u:(NSString *)filename {
+- (BOOL)saveM3u:(NSString *)filename onlySelection:(BOOL)selection {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if(!fileHandle) {
 		ALog(@"Error saving m3u!");
@@ -122,7 +122,9 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	[fileHandle truncateFileAtOffset:0];
 	[fileHandle writeData:[@"#\n" dataUsingEncoding:NSUTF8StringEncoding]];
 
-	for(PlaylistEntry *pe in [playlistController arrangedObjects]) {
+	NSArray *playlist = selection ? [playlistController selectedObjects] : [playlistController arrangedObjects];
+	
+	for(PlaylistEntry *pe in playlist) {
 		NSString *path = [self relativePathFrom:filename toURL:pe.url];
 		[fileHandle writeData:[[path stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
 	}
@@ -132,7 +134,7 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	return YES;
 }
 
-- (BOOL)savePls:(NSString *)filename {
+- (BOOL)savePls:(NSString *)filename onlySelection:(BOOL)selection {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if(!fileHandle) {
 		return NO;
@@ -141,8 +143,10 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 	[fileHandle writeData:[[NSString stringWithFormat:@"[playlist]\nnumberOfEntries=%lu\n\n", (unsigned long)[[playlistController content] count]] dataUsingEncoding:NSUTF8StringEncoding]];
 
+	NSArray *playlist = selection ? [playlistController selectedObjects] : [playlistController arrangedObjects];
+	
 	int i = 1;
-	for(PlaylistEntry *pe in [playlistController arrangedObjects]) {
+	for(PlaylistEntry *pe in playlist) {
 		NSString *path = [self relativePathFrom:filename toURL:pe.url];
 		NSString *entry = [NSString stringWithFormat:@"File%i=%@\n", i, path];
 
@@ -189,7 +193,7 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 	return dict;
 }
 
-- (BOOL)saveXml:(NSString *)filename {
+- (BOOL)saveXml:(NSString *)filename onlySelection:(BOOL)selection {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:filename createFile:YES];
 	if(!fileHandle) {
 		return NO;
@@ -202,7 +206,9 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 
 	NSMutableArray *topLevel = [NSMutableArray new];
 
-	for(PlaylistEntry *pe in [playlistController arrangedObjects]) {
+	NSArray *playlist = selection ? [playlistController selectedObjects] : [playlistController arrangedObjects];
+	
+	for(PlaylistEntry *pe in playlist) {
 		BOOL error = [pe error];
 
 		NSMutableDictionary *dict = dictionaryWithPropertiesOfObject(pe, filterList);

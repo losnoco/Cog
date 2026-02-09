@@ -1606,6 +1606,12 @@
                                     <action selector="savePlaylist:" target="226" id="360"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Save Selection As..." image="square.and.arrow.down" catalog="system" id="UKB-ta-5qX">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="saveSelectionAsPlaylist:" target="207" id="Lkj-Ki-Xub"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1149">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -2460,6 +2466,13 @@ Gw
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="2047"/>
+                <menuItem title="Save Selection As Playlist..." id="0wz-bh-aMp">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="saveSelectionAsPlaylist:" target="207" id="Ee0-TR-q9Y"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="9Qd-7v-kCG"/>
                 <menuItem title="Search for Artist" id="2045">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

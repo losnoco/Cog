@@ -124,7 +124,7 @@ static AppController *kAppController = nil;
 	          }];
 }
 
-- (IBAction)savePlaylist:(id)sender {
+- (void)savePlaylistBase:(BOOL)selection {
 	NSSavePanel *p;
 
 	p = [NSSavePanel savePanel];
@@ -137,11 +137,19 @@ static AppController *kAppController = nil;
 	[p beginSheetModalForWindow:mainWindow
 	          completionHandler:^(NSInteger result) {
 		          if(result == NSModalResponseOK) {
-			          [self->playlistLoader save:[[p URL] path]];
+			          [self->playlistLoader save:[[p URL] path] onlySelection:selection];
 		          } else {
 			          [p close];
 		          }
 	          }];
+}
+
+- (IBAction)savePlaylist:(id)sender {
+	[self savePlaylistBase:NO];
+}
+
+- (IBAction)savePlaylistFromSelection:(id)sender {
+	[self savePlaylistBase:YES];
 }
 
 - (IBAction)openURL:(id)sender {

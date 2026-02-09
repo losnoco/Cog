@@ -350,6 +350,10 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	  byExtendingSelection:NO];
 }
 
+- (IBAction)saveSelectionAsPlaylist:(id)sender {
+	[playlistController saveSelectionAsPlaylist:sender];
+}
+
 - (IBAction)undo:(id)sender {
 	[[playlistController undoManager] undo];
 }
@@ -528,6 +532,10 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	if(action == @selector(scrollToCurrentEntry:) &&
 	   (([playbackController playbackStatus] == CogStatusStopped) ||
 	    ([playbackController playbackStatus] == CogStatusStopping)))
+		return NO;
+
+	if(action == @selector(saveSelectionAsPlaylist:) &&
+		![[playlistController selectedObjects] count])
 		return NO;
 
 	return [super validateUserInterfaceItem:anItem];
