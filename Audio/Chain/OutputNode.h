@@ -54,6 +54,8 @@
 - (void)fadeIn;
 - (void)faderFadeIn;
 
+- (void)timeOut;
+
 - (AudioChunk *)readChunk:(size_t)amount;
 
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig;

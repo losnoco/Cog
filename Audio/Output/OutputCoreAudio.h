@@ -110,6 +110,8 @@ using std::atomic_long;
 
 	SimpleBuffer *bufferNode;
 
+	NSTimer *idleTimer;
+
 #ifdef OUTPUT_LOG
 	NSFileHandle *_logFile;
 #endif
@@ -129,6 +131,8 @@ using std::atomic_long;
 - (void)fadeOutBackground;
 - (void)fadeIn;
 - (void)faderFadeIn;
+
+- (void)timeOut;
 
 - (double)latency;
 

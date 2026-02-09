@@ -115,6 +115,10 @@
 	[output faderFadeIn];
 }
 
+- (void)timeOut {
+	[output timeOut];
+}
+
 - (void)incrementAmountPlayed:(double)seconds {
 	amountPlayed += seconds;
 	amountPlayedInterval += seconds;

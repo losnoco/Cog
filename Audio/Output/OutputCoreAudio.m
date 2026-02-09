@@ -852,6 +852,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 	@synchronized(self) {
 		stopInvoked = YES;
+		[self stopIdle];
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
 			observersapplied = NO;
@@ -966,6 +967,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)resume {
+	[self stopIdle];
 	NSError *err;
 	[_au startHardwareAndReturnError:&err];
 	paused = NO;
@@ -1032,6 +1034,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)fadeIn {
+	[self stopIdle];
 	if(fading || faded) {
 		fadeLevel = 0.0f;
 		fadeTarget = 1.0f;
@@ -1044,9 +1047,26 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)faderFadeIn {
+	[self stopIdle];
 	[faderNode fadeIn];
 	[faderNode setPreviousNode:downmixNode];
 	prebufferSignaled = NO;
+}
+
+- (void)timeOut {
+	idleTimer = [NSTimer timerWithTimeInterval:10.0
+									   repeats:NO
+										 block:^(NSTimer * _Nonnull timer) {
+		[self pause];
+	}];
+	[[NSRunLoop currentRunLoop] addTimer:idleTimer forMode:NSRunLoopCommonModes];
+}
+
+- (void)stopIdle {
+	if(idleTimer) {
+		[idleTimer invalidate];
+		idleTimer = nil;
+	}
 }
 
 @end
