@@ -49,9 +49,7 @@ AUPluginUI::AUPluginUI(NSString *_name, AudioUnit &_au)
 
 		[cocoa_window setParentObject:this];
 
-		[cocoa_window setAutodisplay:YES];
 		[cocoa_window setTitle:@"AU Plug-in"];
-		[cocoa_window setOneShot:YES];
 
 		[cocoa_window setContentView:au_view];
 
