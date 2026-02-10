@@ -840,6 +840,7 @@ struct s9x_loaderwork {
 	std::vector<uint8_t> rom, sram;
 	bool first;
 	unsigned base;
+	s9x_loaderwork() : first(false) { }
 };
 
 class s9x_BUFFER {
@@ -894,7 +895,7 @@ static int MapSNSFSection(s9x_loaderwork *loaderwork,
 	if (data.empty())
 		data.resize(finalSize, 0);
 	else if (data.size() < size + offset)
-		data.resize(offset + finalSize);
+		data.resize(size + offset);
 	std::copy_n(&section[8], size, &data[offset]);
 
 	return 0;
