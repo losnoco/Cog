@@ -7,10 +7,6 @@
 #include <snes9x/snes9x.h>
 #include "cpuops.h"
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 void S9xUnpackStatus(struct S9xState *st)
 {
 	st->ICPU._Zero = !(st->Registers.P.B.l & Zero);

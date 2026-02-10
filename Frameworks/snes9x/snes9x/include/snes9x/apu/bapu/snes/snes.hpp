@@ -1,6 +1,6 @@
 #pragma once
 
-#include <snes9x/snes9x.h>
+#include <cstdint>
 
 namespace SNES
 {

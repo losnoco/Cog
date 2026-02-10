@@ -1,6 +1,5 @@
 #pragma once
 
-#include <snes9x/snes.hpp>
 #include <snes9x/SPC_DSP.h>
 
 struct S9xState;

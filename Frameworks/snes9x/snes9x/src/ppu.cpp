@@ -8,10 +8,6 @@
 #include <snes9x/snes9x.h>
 #include "sdd1.h"
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 static int CyclesUntilNext(struct S9xState *st, int hc, int vc)
 {
 	int32_t total = 0;

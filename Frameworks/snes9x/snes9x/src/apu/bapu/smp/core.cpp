@@ -1,3 +1,4 @@
+#include <snes9x/snes.hpp>
 #include <snes9x/smp.hpp>
 #include <snes9x/sdsp.hpp>
 

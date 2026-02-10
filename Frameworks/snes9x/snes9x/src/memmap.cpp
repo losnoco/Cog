@@ -13,10 +13,6 @@
 #include <snes9x/apu.h>
 #include "sdd1.h"
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 // deinterleave
 
 static void S9xDeinterleaveType1(int size, uint8_t *base)

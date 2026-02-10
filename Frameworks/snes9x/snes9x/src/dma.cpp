@@ -6,10 +6,6 @@
 
 #include <snes9x/snes9x.h>
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 static inline void ADD_CYCLES(struct S9xState *st, int32_t n) { st->CPU.Cycles += n; }
 
 // globals.cpp

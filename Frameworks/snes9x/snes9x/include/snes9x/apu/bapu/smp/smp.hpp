@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <snes9x/snes.hpp>
 
 struct S9xSPC;
 

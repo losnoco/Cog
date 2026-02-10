@@ -12,32 +12,32 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8343EB1D2F375EE40068AB0B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		8396DAFC2F3B21FB003072ED /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
-				65c816.h,
-				apu/apu.h,
-				apu/bapu/dsp/blargg_common.h,
-				apu/bapu/dsp/blargg_config.h,
-				apu/bapu/dsp/sdsp.hpp,
-				apu/bapu/dsp/SPC_DSP.h,
-				apu/bapu/smp/smp.hpp,
-				apu/bapu/snes/snes.hpp,
-				apu/resampler.h,
-				cpuexec.h,
-				dma.h,
-				getset.h,
-				memmap.h,
-				port.h,
-				ppu.h,
-				snes9x.h,
+				include/snes9x/65c816.h,
+				include/snes9x/apu/apu.h,
+				include/snes9x/apu/bapu/dsp/blargg_common.h,
+				include/snes9x/apu/bapu/dsp/blargg_config.h,
+				include/snes9x/apu/bapu/dsp/sdsp.hpp,
+				include/snes9x/apu/bapu/dsp/SPC_DSP.h,
+				include/snes9x/apu/bapu/smp/smp.hpp,
+				include/snes9x/apu/bapu/snes/snes.hpp,
+				include/snes9x/apu/resampler.h,
+				include/snes9x/cpuexec.h,
+				include/snes9x/dma.h,
+				include/snes9x/getset.h,
+				include/snes9x/memmap.h,
+				include/snes9x/port.h,
+				include/snes9x/ppu.h,
+				include/snes9x/snes9x.h,
 			);
 			target = 8343EAB32F3759FF0068AB0B /* snes9x */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8343EAB62F3759FF0068AB0B /* snes9x */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8343EB1D2F375EE40068AB0B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = snes9x; sourceTree = "<group>"; };
+		8343EAB62F3759FF0068AB0B /* snes9x */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8396DAFC2F3B21FB003072ED /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = snes9x; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

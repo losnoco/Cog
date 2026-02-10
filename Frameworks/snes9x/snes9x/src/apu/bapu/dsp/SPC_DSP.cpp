@@ -2,12 +2,7 @@
 
 #include <algorithm>
 #include <cstring>
-#include <snes9x/SPC_DSP.h>
 #include <snes9x/snes9x.h>
-
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
 
 #include "blargg_endian.h"
 

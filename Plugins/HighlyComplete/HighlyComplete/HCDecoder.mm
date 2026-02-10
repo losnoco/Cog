@@ -38,9 +38,6 @@
 #import <lazyusf2/usf.h>
 
 #import <snes9x/snes9x.h>
-#import <snes9x/snes.hpp>
-#import <snes9x/smp.hpp>
-#import <snes9x/sdsp.hpp>
 
 #include <zlib.h>
 
