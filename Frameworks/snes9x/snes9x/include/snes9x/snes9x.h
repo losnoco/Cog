@@ -212,3 +212,7 @@ struct S9xState
     Model = &M1SNES;
   }
 };
+
+#import <snes9x/snes.hpp>
+#import <snes9x/smp.hpp>
+#import <snes9x/sdsp.hpp>

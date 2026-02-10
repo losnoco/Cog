@@ -8,10 +8,6 @@
 #include "memmap.h"
 #include "dma.h"
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 const int HDMA_ModeByteCounts[] =
 {
 	1, 2, 2, 4, 4, 4, 2, 4

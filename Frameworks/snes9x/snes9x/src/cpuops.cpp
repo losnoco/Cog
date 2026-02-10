@@ -6,10 +6,6 @@
 
 #include <snes9x/snes9x.h>
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 static inline void AddCycles(struct S9xState *st, int32_t n) { st->CPU.Cycles += n; while (st->CPU.Cycles >= st->CPU.NextEvent) S9xDoHEventProcessing(st); }
 
 #include "cpuaddr.h"

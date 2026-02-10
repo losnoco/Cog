@@ -1,13 +1,5 @@
 #include <snes9x/snes9x.h>
 
-#include <snes9x/snes.hpp>
-#include <snes9x/sdsp.hpp>
-
-#include "../snes/snes.hpp"
-#include "sdsp.hpp"
-#include "SPC_DSP.h"
-#include "../smp/smp.hpp"
-
 namespace SNES
 {
 	void DSP::power(struct S9xState *st)

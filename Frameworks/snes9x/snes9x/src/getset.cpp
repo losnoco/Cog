@@ -6,10 +6,6 @@
 
 #include <snes9x/snes9x.h>
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 void addCyclesInMemoryAccess(struct S9xState *st, int32_t speed)
 {
 	if (!st->CPU.InDMAorHDMA)

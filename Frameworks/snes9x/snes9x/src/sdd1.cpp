@@ -7,10 +7,6 @@
 #include <algorithm>
 #include "snes9x.h"
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 void S9xSetSDD1MemoryMap(struct S9xState *st, uint32_t bank, uint32_t value)
 {
 	bank = 0xc00 + bank * 0x100;

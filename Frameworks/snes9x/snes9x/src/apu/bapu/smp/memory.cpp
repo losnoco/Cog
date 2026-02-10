@@ -1,7 +1,4 @@
-#include "../../../snes9x.h"
-
-#include "smp.hpp"
-#include "../dsp/sdsp.hpp"
+#include <snes9x/snes9x.h>
 
 namespace SNES
 {

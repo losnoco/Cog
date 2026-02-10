@@ -3,7 +3,7 @@
 // snes_spc 0.9.0
 #pragma once
 
-#include "blargg_common.h"
+#include <snes9x/blargg_common.h>
 
 // BLARGG_CPU_CISC: Defined if CPU has very few general-purpose registers (< 16)
 #if defined(_M_IX86) || defined(_M_IA64) || defined(__i486__) || defined(__x86_64__) || defined(__ia64__) || defined(__i386__)

@@ -7,10 +7,6 @@
 #include <algorithm>
 #include <snes9x/snes9x.h>
 
-#include <snes9x/snes.hpp>
-#include <snes9x/smp.hpp>
-#include <snes9x/sdsp.hpp>
-
 void SetCarry(struct S9xState *st) { st->ICPU._Carry = 1; }
 void ClearCarry(struct S9xState *st) { st->ICPU._Carry = 0; }
 void SetIRQ(struct S9xState *st) { st->Registers.P.B.l |= IRQ; }
