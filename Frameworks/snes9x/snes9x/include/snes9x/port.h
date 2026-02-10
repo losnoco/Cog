@@ -37,7 +37,7 @@
 # define strcasecmp stricmp
 #endif
 
-#if defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || defined(__x86_64__) || defined(__alpha__) || defined(__MIPSEL__) || defined(_M_IX86) || defined(_M_X64) || (defined(__BYTE_ORDER__) && __BYTE_ORDER == __ORDER_LITTLE_ENDIAN__)
+#if defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || defined(__x86_64__) || defined(__alpha__) || defined(__MIPSEL__) || defined(_M_IX86) || defined(_M_X64) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 # define LSB_FIRST
 # define FAST_LSB_WORD_ACCESS
 #else
@@ -51,10 +51,6 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
-
-# define LSB_FIRST
-# define FAST_LSB_WORD_ACCESS
-
 
 #ifdef FAST_LSB_WORD_ACCESS
 inline uint16_t READ_WORD(const uint8_t *s) { return *reinterpret_cast<const uint16_t *>(s); }
