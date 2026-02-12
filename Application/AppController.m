@@ -239,9 +239,14 @@ static BOOL consentLastEnabled = NO;
 	NSString *oldFilename = @"Default.m3u";
 	NSString *newFilename = @"Default.xml";
 
-	BOOL dataStorePresent = [playlistLoader addDataStore];
+	BOOL resetPlaylistOnQuit = [[NSUserDefaults standardUserDefaults] boolForKey:@"resetPlaylistOnQuit"];
+	BOOL dataStorePresent = NO;
 
-	if(!dataStorePresent) {
+	if (!resetPlaylistOnQuit) {
+		dataStorePresent = [playlistLoader addDataStore];
+	}
+
+	if(!dataStorePresent && !resetPlaylistOnQuit) {
 		if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]]) {
 			[playlistLoader addDatabase];
 		} else if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:newFilename]]) {
@@ -546,19 +551,35 @@ static BOOL consentLastEnabled = NO;
 
 	NSManagedObjectContext *moc = playlistController.persistentContainer.viewContext;
 
-	// How the heck are people getting this in their playlists
-	for(PlaylistEntry *pe in playlistController.arrangedObjects) {
-		if(pe.deLeted || !pe.urlString || [pe.urlString isEqualToString:@""] || !pe.url) {
-			[moc deleteObject:pe];
-			continue;
-		}
-		if([artLeftovers objectForKey:pe.artHash]) {
-			[artLeftovers removeObjectForKey:pe.artHash];
-		}
-	}
+	BOOL resetPlaylistOnQuit = [[NSUserDefaults standardUserDefaults] boolForKey:@"resetPlaylistOnQuit"];
 
-	for(NSString *key in artLeftovers) {
-		[moc deleteObject:[artLeftovers objectForKey:key]];
+	if (resetPlaylistOnQuit) {
+		NSArray *entities = @[@"PlaylistEntry", @"AlbumArtwork"];
+		for (NSString *entityName in entities) {
+			NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
+			NSError *error = nil;
+			NSArray *results = [moc executeFetchRequest:request error:&error];
+			if (results) {
+				for (NSManagedObject *obj in results) {
+					[moc deleteObject:obj];
+				}
+			}
+		}
+	} else {
+		// How the heck are people getting this in their playlists
+		for(PlaylistEntry *pe in playlistController.arrangedObjects) {
+			if(pe.deLeted || !pe.urlString || [pe.urlString isEqualToString:@""] || !pe.url) {
+				[moc deleteObject:pe];
+				continue;
+			}
+			if([artLeftovers objectForKey:pe.artHash]) {
+				[artLeftovers removeObjectForKey:pe.artHash];
+			}
+		}
+
+		for(NSString *key in artLeftovers) {
+			[moc deleteObject:[artLeftovers objectForKey:key]];
+		}
 	}
 
 	[playlistController commitPersistentStore];
@@ -719,6 +740,8 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
 
 	[userDefaultsValuesDict setObject:@(NO) forKey:@"resumePlaybackOnStartup"];
+
+	[userDefaultsValuesDict setObject:@(NO) forKey:@"resetPlaylistOnQuit"];
 
 	[userDefaultsValuesDict setObject:@(NO) forKey:@"quitOnNaturalStop"];
 

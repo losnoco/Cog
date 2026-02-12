@@ -1877,6 +1877,24 @@
         }
       }
     },
+    "v6a-1b-2c4.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Reset playlist on quit\"; ObjectID = \"v6a-1b-2c4\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset playlist on quit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaciar playlist al salir"
+          }
+        }
+      }
+    },
     "V8o-Xy-HUW.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"OtherViews\"; ObjectID = \"V8o-Xy-HUW\";",
       "extractionState" : "manual",
