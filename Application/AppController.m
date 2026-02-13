@@ -274,6 +274,7 @@ static BOOL consentLastEnabled = NO;
 	int lastStatus = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"lastPlaybackStatus"];
 
 	if(lastStatus != CogStatusStopped) {
+		BOOL resumePlaybackOnStartup = [[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"];
 		NSPredicate *hasUrlPredicate = [NSPredicate predicateWithFormat:@"urlString != nil && urlString != %@", @""];
 		NSPredicate *deletedPredicate = [NSPredicate predicateWithFormat:@"deLeted == NO || deLeted == nil"];
 		NSPredicate *currentPredicate = [NSPredicate predicateWithFormat:@"current == YES"];
@@ -290,12 +291,20 @@ static BOOL consentLastEnabled = NO;
 			PlaylistEntry *pe = results[0];
 			// Select this track
 			[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] byExtendingSelection:NO];
-			if([[NSUserDefaults standardUserDefaults] boolForKey:@"resumePlaybackOnStartup"]) {
+			if(resumePlaybackOnStartup) {
 				// And play it
 				[playbackController playEntryAtIndex:pe.index startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
+			} else {
+				// Startup resume is disabled, so clear stale "currently playing" markers from the last run.
+				for(PlaylistEntry *entry in results) {
+					entry.current = NO;
+					entry.stopAfter = NO;
+				}
+				[playlistController commitPersistentStore];
+				[playlistView reloadData];
 			}
 			// Bug fix
-			if([results count] > 1) {
+			if(resumePlaybackOnStartup && [results count] > 1) {
 				for(size_t i = 1; i < [results count]; ++i) {
 					PlaylistEntry *pe = results[i];
 					[pe setCurrent:NO];
