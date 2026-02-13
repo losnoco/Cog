@@ -1041,7 +1041,6 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	readNextPacket = YES; // so we immediately read next packet
 	bytesConsumedFromDecodedFrame = INT_MAX; // so we immediately begin decoding next frame
 	framesRead = frame;
-	if(rawDSD) framesRead *= 8;
 	seekFrame = frame + skipSamples;
 	endOfStream = NO;
 	endOfAudio = NO;
