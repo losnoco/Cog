@@ -182,7 +182,9 @@
 - (BOOL)reconnectInput {
 	Node *finalNode = nil;
 	if(rubberbandNode) {
-		finalNode = [[controller bufferChain] finalNode];
+		if(controller && [controller bufferChain]) {
+			finalNode = [[controller bufferChain] finalNode];
+		}
 		if(finalNode) {
 			[rubberbandNode setPreviousNode:finalNode];
 		}
@@ -194,7 +196,9 @@
 - (void)reconnectInputAndReplumb {
 	Node *finalNode = nil;
 	if(DSPsLaunched) {
-		finalNode = [[controller bufferChain] finalNode];
+		if(controller && [controller bufferChain]) {
+			finalNode = [[controller bufferChain] finalNode];
+		}
 		if(finalNode) {
 			[rubberbandNode setPreviousNode:finalNode];
 		}
