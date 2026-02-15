@@ -81,6 +81,8 @@ using std::atomic_long;
 	BOOL observersapplied;
 	BOOL outputdevicechanged;
 
+	BOOL suspendOutputOnPause;
+
 	float volume;
 	float eqPreamp;
 

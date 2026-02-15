@@ -676,6 +676,24 @@
         }
       }
     },
+    "C02-rn-Opu.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = “Suspend output on pause”; ObjectID = \"C02-rn-Opu\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suspend output on pause"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suspender salida al pausar\n"
+          }
+        }
+      }
+    },
     "cOb-hQ-7K8.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Use iTunes style\"; ObjectID = \"cOb-hQ-7K8\";",
       "extractionState" : "extracted_with_value",
