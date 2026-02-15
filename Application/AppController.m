@@ -774,6 +774,8 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@NO forKey:@"alwaysStopAfterCurrent"];
 	[userDefaultsValuesDict setObject:@NO forKey:@"selectionFollowsPlayback"];
 
+	[userDefaultsValuesDict setObject:@YES forKey:@"suspendOutputOnPause"];
+
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];

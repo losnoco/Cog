@@ -349,11 +349,11 @@
             </connections>
         </customObject>
         <customView id="58" userLabel="OutputView">
-            <rect key="frame" x="0.0" y="0.0" width="640" height="225"/>
+            <rect key="frame" x="0.0" y="0.0" width="640" height="250"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DhK-tx-xFv">
-                    <rect key="frame" x="18" y="188" width="602" height="18"/>
+                    <rect key="frame" x="18" y="213" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Limit volume control to 100%" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="ds2-aw-ebU">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -364,7 +364,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7K3-EO-1eu">
-                    <rect key="frame" x="18" y="162" width="602" height="18"/>
+                    <rect key="frame" x="18" y="187" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Reduce DSD volume level by 6 dB" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Phw-hj-6tI">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -375,7 +375,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SIK-tH-5VQ">
-                    <rect key="frame" x="18" y="136" width="602" height="18"/>
+                    <rect key="frame" x="18" y="161" width="602" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Enable FreeSurround stereo to surround upmixing" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="F0i-UK-6Nu">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -386,7 +386,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rG5-80-FId">
-                    <rect key="frame" x="18" y="108" width="200" height="18"/>
+                    <rect key="frame" x="18" y="133" width="200" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Enable HRTF filter" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NGx-0c-WVR">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -397,7 +397,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mz3-1e-AVD" userLabel="Head Tracking">
-                    <rect key="frame" x="224" y="108" width="184" height="18"/>
+                    <rect key="frame" x="224" y="133" width="184" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Head Tracking" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Lpr-85-geO" userLabel="Head Tracking">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -408,7 +408,7 @@
                     </connections>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BBu-91-qdU" userLabel="Recenter button">
-                    <rect key="frame" x="450" y="100" width="89" height="32"/>
+                    <rect key="frame" x="450" y="125" width="89" height="32"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="push" title="Recenter" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aQP-kn-fMB">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -419,7 +419,7 @@
                     </buttonCell>
                 </button>
                 <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gp7-Ol-WjT" userLabel="Enable HDCD Peak and Low Level Range Extend">
-                    <rect key="frame" x="18" y="83" width="364" height="18"/>
+                    <rect key="frame" x="18" y="108" width="364" height="18"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <buttonCell key="cell" type="check" title="Enable HDCD Peak and Low Level Range Extend" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="IU9-uF-gU9" userLabel="Enable HDCD Peak and Low Level Range Extend">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -429,8 +429,19 @@
                         <binding destination="52" name="value" keyPath="values.enableHDCD" id="bCr-eK-F3i"/>
                     </connections>
                 </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6P0-Lc-qno" userLabel="Suspend output on pause">
+                    <rect key="frame" x="18" y="83" width="602" height="16"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Suspend output on pause" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="C02-rn-Opu" userLabel="Suspend output on pause">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <connections>
+                            <binding destination="52" name="value" keyPath="values.suspendOutputOnPause" id="iQu-ij-eHX"/>
+                        </connections>
+                    </buttonCell>
+                </button>
                 <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="65">
-                    <rect key="frame" x="6" y="53" width="134" height="17"/>
+                    <rect key="frame" x="6" y="54" width="134" height="17"/>
                     <autoresizingMask key="autoresizingMask"/>
                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="Output Device: " id="211">
                         <font key="font" metaFont="system"/>
@@ -490,7 +501,7 @@
                     </connections>
                 </popUpButton>
             </subviews>
-            <point key="canvasLocation" x="-151" y="349.5"/>
+            <point key="canvasLocation" x="-151" y="383"/>
         </customView>
         <customObject id="i5B-ga-Atm" userLabel="MIDIPane" customClass="MIDIPane">
             <connections>

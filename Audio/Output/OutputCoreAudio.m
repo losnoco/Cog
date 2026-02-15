@@ -117,6 +117,15 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		NSDictionary *device = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"outputDevice"];
 
 		[self setOutputDeviceWithDeviceDict:device];
+	} else if([keyPath isEqualToString:@"values.suspendOutputOnPause"]) {
+		suspendOutputOnPause = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"suspendOutputOnPause"];
+		[self stopIdle];
+		if(fading || faded) {
+			if(suspendOutputOnPause)
+				[self timeOut];
+			else
+				[self resume];
+		}
 	}
 }
 
@@ -781,6 +790,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[self setOutputDeviceWithDeviceDict:nil];
 		}
 
+		suspendOutputOnPause = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"suspendOutputOnPause"];
+
 		[self audioOutputBlock];
 
 		[_au allocateRenderResourcesAndReturnError:&err];
@@ -808,6 +819,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[bufferNode launchThread];
 
 		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.outputDevice" options:0 context:kOutputCoreAudioContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.suspendOutputOnPause" options:0 context:kOutputCoreAudioContext];
 
 		observersapplied = YES;
 		
@@ -855,6 +867,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		[self stopIdle];
 		if(observersapplied) {
 			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.outputDevice" context:kOutputCoreAudioContext];
+			[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.suspendOutputOnPause" context:kOutputCoreAudioContext];
 			observersapplied = NO;
 		}
 		stopping = YES;
@@ -1054,6 +1067,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)timeOut {
+	if(!suspendOutputOnPause)
+		return;
+
 	idleTimer = [NSTimer timerWithTimeInterval:10.0
 									   repeats:NO
 										 block:^(NSTimer * _Nonnull timer) {
