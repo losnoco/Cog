@@ -707,7 +707,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suspender salida al pausar\n"
+            "value" : "Suspender salida al pausar"
           }
         }
       }
