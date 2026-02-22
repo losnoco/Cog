@@ -1,6 +1,5 @@
 /*
-	Copyright (C) 2006 yopyop
-	Copyright (C) 2006-2012 DeSmuME team
+	Copyright (C) 2009-2013 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,6 +17,4 @@
 
 #pragma once
 
-#include "armcpu.h"
-
-extern uint32_t (*ARM_swi_tab[2][32])(armcpu_t *);
+const char *EMU_DESMUME_NAME_AND_VERSION();

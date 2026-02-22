@@ -1,6 +1,5 @@
 /*
-	Copyright (C) 2006 yopyop
-	Copyright (C) 2006-2012 DeSmuME team
+	Copyright (C) 2010-2011 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,8 +15,13 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "vio2sf.h"
 
-#include "armcpu.h"
+extern SLOT1INTERFACE slot1Retail;
 
-extern uint32_t (*ARM_swi_tab[2][32])(armcpu_t *);
+//SLOT1INTERFACE slot1_device = slot1Retail; // default for frontends that dont even configure this
+
+void init_slot1(vio2sf_state *st)
+{
+	st->slot1_device = slot1Retail;
+}

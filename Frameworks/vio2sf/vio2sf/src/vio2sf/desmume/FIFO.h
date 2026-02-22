@@ -1,51 +1,39 @@
-/*  Copyright (C) 2006 yopyop
-    yopyop156@ifrance.com
-    yopyop156.ifrance.com
+/*
+	Copyright 2006 yopyop
+	Copyright 2007 shash
+	Copyright 2007-2011 DeSmuME team
 
-	Copyright (C) 2007 shash
+	This file is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 2 of the License, or
+	(at your option) any later version.
 
-    This file is part of DeSmuME
+	This file is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    DeSmuME is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    DeSmuME is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DeSmuME; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	You should have received a copy of the GNU General Public License
+	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FIFO_H
-#define FIFO_H
+#pragma once
 
-#include "types.h"
+#include <vio2sf/types.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+struct vio2sf_state;
 
-typedef struct
+//=================================================== IPC FIFO
+struct IPC_FIFO
 {
-       u32 data[0x8000];
-       u32 begin;
-       u32 end;
-       BOOL full;
-       BOOL empty;
-       BOOL error;
-} FIFO;
+	uint32_t buf[16];
 
-void FIFOInit(FIFO * fifo);
-void FIFOAdd(FIFO * fifo, u32 v);
-u32 FIFOValue(FIFO * fifo);
+	uint8_t head;
+	uint8_t tail;
+	uint8_t size;
+};
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+extern void IPC_FIFOinit(vio2sf_state *st, uint8_t proc);
+extern void IPC_FIFOsend(vio2sf_state *st, uint8_t proc, uint32_t val);
+extern uint32_t IPC_FIFOrecv(vio2sf_state *st, uint8_t proc);
+extern void IPC_FIFOcnt(vio2sf_state *st, uint8_t proc, uint16_t val);
