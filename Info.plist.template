@@ -777,6 +777,8 @@
 				<string>rsf</string>
 				<string>rsm</string>
 				<string>rsnd</string>
+				<string>rsoundast</string>
+				<string>rsoundsnd</string>
 				<string>rsp</string>
 				<string>rstm</string>
 				<string>rvw</string>
@@ -827,6 +829,7 @@
 				<string>sdp</string>
 				<string>sdf</string>
 				<string>sdt</string>
+				<string>sdx</string>
 				<string>se</string>
 				<string>se3</string>
 				<string>seb</string>
