@@ -1,44 +1,41 @@
-#ifndef BITS_H
-#define BITS_H
+#pragma once
 
-#define BIT(n)  (1<<(n))
+inline uint32_t BIT(uint32_t n) { return 1 << n; }
 
-#define BIT_N(i,n)  (((i)>>(n))&1)
-#define BIT0(i)     ((i)&1)
-#define BIT1(i)     BIT_N(i,1)
-#define BIT2(i)     BIT_N(i,2)
-#define BIT3(i)     BIT_N(i,3)
-#define BIT4(i)     BIT_N(i,4)
-#define BIT5(i)     BIT_N(i,5)
-#define BIT6(i)     BIT_N(i,6)
-#define BIT7(i)     BIT_N(i,7)
-#define BIT8(i)     BIT_N(i,8)
-#define BIT9(i)     BIT_N(i,9)
-#define BIT10(i)     BIT_N(i,10)
-#define BIT11(i)     BIT_N(i,11)
-#define BIT12(i)     BIT_N(i,12)
-#define BIT13(i)     BIT_N(i,13)
-#define BIT14(i)     BIT_N(i,14)
-#define BIT15(i)     BIT_N(i,15)
-#define BIT16(i)     BIT_N(i,16)
-#define BIT17(i)     BIT_N(i,17)
-#define BIT18(i)     BIT_N(i,18)
-#define BIT19(i)     BIT_N(i,19)
-#define BIT20(i)     BIT_N(i,20)
-#define BIT21(i)     BIT_N(i,21)
-#define BIT22(i)     BIT_N(i,22)
-#define BIT23(i)     BIT_N(i,23)
-#define BIT24(i)     BIT_N(i,24)
-#define BIT25(i)     BIT_N(i,25)
-#define BIT26(i)     BIT_N(i,26)
-#define BIT27(i)     BIT_N(i,27)
-#define BIT28(i)     BIT_N(i,28)
-#define BIT29(i)     BIT_N(i,29)
-#define BIT30(i)     BIT_N(i,30)
-#define BIT31(i)    ((i)>>31)
+inline uint32_t BIT_N(uint32_t i, uint32_t n) { return (i >> n) & 1; }
+inline uint32_t BIT0(uint32_t i) { return i & 1; }
+inline uint32_t BIT1(uint32_t i) { return BIT_N(i, 1); }
+inline uint32_t BIT2(uint32_t i) { return BIT_N(i, 2); }
+inline uint32_t BIT3(uint32_t i) { return BIT_N(i, 3); }
+inline uint32_t BIT4(uint32_t i) { return BIT_N(i, 4); }
+inline uint32_t BIT5(uint32_t i) { return BIT_N(i, 5); }
+inline uint32_t BIT6(uint32_t i) { return BIT_N(i, 6); }
+inline uint32_t BIT7(uint32_t i) { return BIT_N(i, 7); }
+inline uint32_t BIT8(uint32_t i) { return BIT_N(i, 8); }
+inline uint32_t BIT9(uint32_t i) { return BIT_N(i, 9); }
+inline uint32_t BIT10(uint32_t i) { return BIT_N(i, 10); }
+inline uint32_t BIT11(uint32_t i) { return BIT_N(i, 11); }
+inline uint32_t BIT12(uint32_t i) { return BIT_N(i, 12); }
+inline uint32_t BIT13(uint32_t i) { return BIT_N(i, 13); }
+inline uint32_t BIT14(uint32_t i) { return BIT_N(i, 14); }
+inline uint32_t BIT15(uint32_t i) { return BIT_N(i, 15); }
+inline uint32_t BIT16(uint32_t i) { return BIT_N(i, 16); }
+inline uint32_t BIT17(uint32_t i) { return BIT_N(i, 17); }
+inline uint32_t BIT18(uint32_t i) { return BIT_N(i, 18); }
+inline uint32_t BIT19(uint32_t i) { return BIT_N(i, 19); }
+inline uint32_t BIT20(uint32_t i) { return BIT_N(i, 20); }
+inline uint32_t BIT21(uint32_t i) { return BIT_N(i, 21); }
+inline uint32_t BIT22(uint32_t i) { return BIT_N(i, 22); }
+inline uint32_t BIT23(uint32_t i) { return BIT_N(i, 23); }
+inline uint32_t BIT24(uint32_t i) { return BIT_N(i, 24); }
+inline uint32_t BIT25(uint32_t i) { return BIT_N(i, 25); }
+inline uint32_t BIT26(uint32_t i) { return BIT_N(i, 26); }
+inline uint32_t BIT27(uint32_t i) { return BIT_N(i, 27); }
+inline uint32_t BIT28(uint32_t i) { return BIT_N(i, 28); }
+inline uint32_t BIT29(uint32_t i) { return BIT_N(i, 29); }
+inline uint32_t BIT30(uint32_t i) { return BIT_N(i, 30); }
+inline uint32_t BIT31(uint32_t i) { return i >> 31; }
 
-#define CONDITION(i)  (i)>>28
+inline uint32_t CONDITION(uint32_t i) { return i >> 28; }
 
-#define REG_POS(i,n)         (((i)>>n)&0xF)
-
-#endif
+inline uint32_t REG_POS(uint32_t i, uint32_t n) { return (i >> n) & 0xF; }

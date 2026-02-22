@@ -1,26 +1,22 @@
-/*  Copyright (C) 2006 Theo Berkau
+/*
+	Copyright (C) 2006 Theo Berkau
+	Copyright (C) 2006-2011 DeSmuME team
 
-    Ideas borrowed from Stephane Dallongeville's SCSP core
+	This file is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 2 of the License, or
+	(at your option) any later version.
 
-    This file is part of DeSmuME
+	This file is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    DeSmuME is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    DeSmuME is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with DeSmuME; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	You should have received a copy of the GNU General Public License
+	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REGISTERS_H
-#define REGISTERS_H
+#pragma once
 
 #define REG_REGION_MASK                         0x0FFFEF80
 #define REG_BASE_DISPx                          0x04000000
@@ -78,22 +74,40 @@
 #define REG_DISPA_MASTERBRIGHT                  0x0400006C
 
 // DMA
+#define _REG_DMA_CONTROL_MIN                    0x040000B0
 #define REG_DMA0SAD                             0x040000B0
+#define REG_DMA0SADL                            0x040000B0
+#define REG_DMA0SADH                            0x040000B2
 #define REG_DMA0DAD                             0x040000B4
+#define REG_DMA0DADL                            0x040000B4
+#define REG_DMA0DADH                            0x040000B6
 #define REG_DMA0CNTL                            0x040000B8
 #define REG_DMA0CNTH                            0x040000BA
 #define REG_DMA1SAD                             0x040000BC
+#define REG_DMA1SADL                            0x040000BC
+#define REG_DMA1SADH                            0x040000BE
 #define REG_DMA1DAD                             0x040000C0
+#define REG_DMA1DADL                            0x040000C0
+#define REG_DMA1DADH                            0x040000C2
 #define REG_DMA1CNTL                            0x040000C4
 #define REG_DMA1CNTH                            0x040000C6
 #define REG_DMA2SAD                             0x040000C8
+#define REG_DMA2SADL                            0x040000C8
+#define REG_DMA2SADH                            0x040000CA
 #define REG_DMA2DAD                             0x040000CC
+#define REG_DMA2DADL                            0x040000CC
+#define REG_DMA2DADH                            0x040000CE
 #define REG_DMA2CNTL                            0x040000D0
 #define REG_DMA2CNTH                            0x040000D2
 #define REG_DMA3SAD                             0x040000D4
+#define REG_DMA3SADL                            0x040000D4
+#define REG_DMA3SADH                            0x040000D6
 #define REG_DMA3DAD                             0x040000D8
+#define REG_DMA3DADL                            0x040000D8
+#define REG_DMA3DADH                            0x040000DA
 #define REG_DMA3CNTL                            0x040000DC
 #define REG_DMA3CNTH                            0x040000DE
+#define _REG_DMA_CONTROL_MAX                    0x040000DF
 #define REG_DMA0FILL                            0x040000E0
 #define REG_DMA1FILL                            0x040000E4
 #define REG_DMA2FILL                            0x040000E8
@@ -164,7 +178,7 @@
 #define REG_SQRTRESULT                          0x040002B4
 #define REG_SQRTPARAM                           0x040002B8
 
-// Other 
+// Other
 #define REG_POSTFLG                             0x04000300
 #define REG_HALTCNT                             0x04000301
 #define REG_POWCNT1                             0x04000304
@@ -269,6 +283,10 @@
 #define REG_DISPA_DISPCAPCNT                    0x04000064
 #define REG_DISPA_DISPMMEMFIFO                  0x04000068
 
+#define REG_DISPA_DISP3DCNT_BIT_RDLINES_UNDERFLOW 0x1000
+#define REG_DISPA_DISP3DCNT_BIT_RAM_OVERFLOW 0x2000
+#define REG_DISPA_DISP3DCNT_BITS_ACK (REG_DISPA_DISP3DCNT_BIT_RDLINES_UNDERFLOW|REG_DISPA_DISP3DCNT_BIT_RAM_OVERFLOW)
+
 
 #define eng_3D_RDLINES_COUNT   0x04000320
 #define eng_3D_EDGE_COLOR      0x04000330
@@ -281,6 +299,9 @@
 #define eng_3D_FOG_TABLE       0x04000360
 #define eng_3D_TOON_TABLE      0x04000380
 #define eng_3D_GXFIFO          0x04000400
+
+//DSI
+#define REG_DSIMODE 0x04004000
 
 // 3d commands
 #define cmd_3D_MTX_MODE        0x04000440
@@ -328,6 +349,80 @@
 #define eng_3D_VEC_RESULT      0x04000630
 #define eng_3D_CLIPMTX_RESULT  0x04000640
 #define eng_3D_VECMTX_RESULT   0x04000680
-  
 
-#endif
+#define IPCFIFOCNT_SENDEMPTY 0x0001
+#define IPCFIFOCNT_SENDFULL 0x0002
+#define IPCFIFOCNT_SENDIRQEN 0x0004
+#define IPCFIFOCNT_SENDCLEAR 0x0008
+#define IPCFIFOCNT_RECVEMPTY 0x0100
+#define IPCFIFOCNT_RECVFULL 0x0200
+#define IPCFIFOCNT_RECVIRQEN 0x0400
+#define IPCFIFOCNT_FIFOERROR 0x4000
+#define IPCFIFOCNT_FIFOENABLE 0x8000
+#define IPCFIFOCNT_WRITEABLE (IPCFIFOCNT_SENDIRQEN | IPCFIFOCNT_RECVIRQEN | IPCFIFOCNT_FIFOENABLE)
+
+#define IPCSYNC_IRQ_SEND 0x2000
+#define IPCSYNC_IRQ_RECV 0x4000
+
+#define IRQ_BIT_LCD_VBLANK 0
+#define IRQ_BIT_LCD_HBLANK 1
+#define IRQ_BIT_LCD_VMATCH 2
+#define IRQ_BIT_TIMER_0 3
+#define IRQ_BIT_TIMER_1 4
+#define IRQ_BIT_TIMER_2 5
+#define IRQ_BIT_TIMER_3 6
+#define IRQ_BIT_ARM7_SIO 7
+#define IRQ_BIT_DMA_0 8
+#define IRQ_BIT_DMA_2 9
+#define IRQ_BIT_DMA_3 10
+#define IRQ_BIT_DMA_4 11
+#define IRQ_BIT_KEYPAD 12
+#define IRQ_BIT_GAMEPAK 13
+#define IRQ_BIT_IPCSYNC 16
+#define IRQ_BIT_IPCFIFO_SENDEMPTY 17
+#define IRQ_BIT_IPCFIFO_RECVNONEMPTY 18
+#define IRQ_BIT_GC_TRANSFER_COMPLETE 19
+#define IRQ_BIT_GC_IREQ_MC 20
+#define IRQ_BIT_ARM9_GXFIFO 21
+#define IRQ_BIT_ARM7_FOLD 22
+#define IRQ_BIT_ARM7_SPI 23
+#define IRQ_BIT_ARM7_WIFI 24
+
+#define IRQ_MASK_LCD_VBLANK (1<<0)
+#define IRQ_MASK_LCD_HBLANK (1<<1)
+#define IRQ_MASK_LCD_VMATCH (1<<2)
+#define IRQ_MASK_TIMER_0 (1<<3)
+#define IRQ_MASK_TIMER_1 (1<<4)
+#define IRQ_MASK_TIMER_2 (1<<5)
+#define IRQ_MASK_TIMER_3 (1<<6)
+#define IRQ_MASK_ARM7_SIO (1<<7)
+#define IRQ_MASK_DMA_0 (1<<8)
+#define IRQ_MASK_DMA_2 (1<<9)
+#define IRQ_MASK_DMA_3 (1<<10)
+#define IRQ_MASK_DMA_4 (1<<11)
+#define IRQ_MASK_KEYPAD (1<<12)
+#define IRQ_MASK_GAMEPAK (1<<13)
+#define IRQ_MASK_IPCSYNC (1<<16)
+#define IRQ_MASK_IPCFIFO_SENDEMPTY (1<<17)
+#define IRQ_MASK_IPCFIFO_RECVNONEMPTY (1<<18)
+#define IRQ_MASK_GC_TRANSFER_COMPLETE (1<<19)
+#define IRQ_MASK_GC_IREQ_MC (1<<20)
+#define IRQ_MASK_ARM9_GXFIFO (1<<21)
+#define IRQ_MASK_ARM7_FOLD (1<<22)
+#define IRQ_MASK_ARM7_SPI (1<<23)
+#define IRQ_MASK_ARM7_WIFI (1<<24)
+
+#define TSC_MEASURE_TEMP1    0
+#define TSC_MEASURE_Y        1
+#define TSC_MEASURE_BATTERY  2
+#define TSC_MEASURE_Z1       3
+#define TSC_MEASURE_Z2       4
+#define TSC_MEASURE_X        5
+#define TSC_MEASURE_AUX      6
+#define TSC_MEASURE_TEMP2    7
+
+#define EXMEMCNT_MASK_SLOT2_ARM7 (1<<7)
+#define EXMEMCNT_MASK_SLOT2_SRAM_TIME (3)
+#define EXMEMCNT_MASK_SLOT2_ROM_1ST_TIME (3<<2)
+#define EXMEMCNT_MASK_SLOT2_ROM_2ND_TIME (1<<4)
+#define EXMEMCNT_MASK_SLOT2_CLOCKRATE (3<<5)
