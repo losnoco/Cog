@@ -3088,3 +3088,29 @@ template uint32_t MMU_aluMemAccessCycles<1, 16, MMU_AD_READ>(vio2sf_state *st, u
 template uint32_t MMU_aluMemAccessCycles<1, 16, MMU_AD_WRITE>(vio2sf_state *st, uint32_t aluCycles, uint32_t addr);
 template uint32_t MMU_aluMemAccessCycles<1, 32, MMU_AD_READ>(vio2sf_state *st, uint32_t aluCycles, uint32_t addr);
 template uint32_t MMU_aluMemAccessCycles<1, 32, MMU_AD_WRITE>(vio2sf_state *st, uint32_t aluCycles, uint32_t addr);
+
+template uint32_t MMU_memAccessCycles<0, 8, MMU_AD_READ, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 8, MMU_AD_READ, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 8, MMU_AD_WRITE, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 8, MMU_AD_WRITE, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 16, MMU_AD_READ, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 16, MMU_AD_READ, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 16, MMU_AD_WRITE, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 16, MMU_AD_WRITE, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 32, MMU_AD_READ, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 32, MMU_AD_READ, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 32, MMU_AD_WRITE, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<0, 32, MMU_AD_WRITE, true>(vio2sf_state *st, uint32_t addr);
+
+template uint32_t MMU_memAccessCycles<1, 8, MMU_AD_READ, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 8, MMU_AD_READ, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 8, MMU_AD_WRITE, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 8, MMU_AD_WRITE, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 16, MMU_AD_READ, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 16, MMU_AD_READ, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 16, MMU_AD_WRITE, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 16, MMU_AD_WRITE, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 32, MMU_AD_READ, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 32, MMU_AD_READ, true>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 32, MMU_AD_WRITE, false>(vio2sf_state *st, uint32_t addr);
+template uint32_t MMU_memAccessCycles<1, 32, MMU_AD_WRITE, true>(vio2sf_state *st, uint32_t addr);
