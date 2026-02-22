@@ -59,10 +59,6 @@ void armcpu_t::changeCPSR()
 
 void armcpu_init(armcpu_t *armcpu, uint32_t adr)
 {
-#if defined(_M_X64) || defined(__x86_64__)
-	memcpy(&armcpu->cond_table[0], &arm_cond_table[0], sizeof(arm_cond_table));
-#endif
-
 	armcpu->LDTBit = !armcpu->proc_ID; // Si ARM9 utiliser le syte v5 pour le load
 	armcpu->intVector = 0xFFFF0000 * !armcpu->proc_ID;
 	armcpu->waitIRQ = false;
