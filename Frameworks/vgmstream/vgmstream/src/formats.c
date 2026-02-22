@@ -485,6 +485,8 @@ static const char* extension_list[] = {
     "rsf",
     "rsm",
     "rsnd", //txth/reserved [Birushana: Ichijuu no Kaze (Switch)]
+    "rsoundast",
+    "rsoundsnd",
     "rsp",
     "rstm", //fake extension/header id for .rstm (in bigfiles)
     "rvw", //txth/reserved [Half-Minute Hero (PC)]
@@ -536,6 +538,7 @@ static const char* extension_list[] = {
     "sdp", //txth/reserved [Metal Gear Arcade (AC)]
     "sdf",
     "sdt",
+    "sdx", //txth/reserved [Anarchy Reigns (multi)]
     "se",
     "se3", //txth/reserved (.nub container) [Tales of Vesperia (X360/PS3), Tales of Graces f (PS3)]
     "seb",
@@ -1319,7 +1322,8 @@ static const meta_info meta_info_list[] = {
         {meta_AKB,                  "Square Enix AKB header"},
         {meta_PASX,                 "Premium Agency PASX header"},
         {meta_XMA_RIFF,             "Microsoft XMA RIFF header"},
-        {meta_ASTB,                 "Capcom ASTB header"},
+        {meta_AST_MTF,              "Capcom AST header"},
+        {meta_SND_MTF,              "Capcom SND header"},
         {meta_WWISE_RIFF,           "Audiokinetic Wwise RIFF header"},
         {meta_UBI_RAKI,             "Ubisoft RAKI header"},
         {meta_SNDX,                 "Sony SNDX header"},
@@ -1340,7 +1344,6 @@ static const meta_info meta_info_list[] = {
         {meta_EA_SNU,               "Electronic Arts SNU header"},
         {meta_AWC,                  "Rockstar AWC header"},
         {meta_OPUS,                 "Nintendo Switch OPUS header"},
-        {meta_ASTL,                 "Capcom ASTL header"},
         {meta_UBI_SB,               "Ubisoft SBx header"},
         {meta_UBI_APM,              "Ubisoft APM header"},
         {meta_NAAC,                 "Namco NAAC header"},
@@ -1523,6 +1526,7 @@ static const meta_info meta_info_list[] = {
         {meta_BWAV_WARTHOG,         "Warthog .BWAV header"},
         {meta_PS2P,                 "THQ Australia PS2P header"},
         {meta_GCSP,                 "THQ Australia GCSP header"},
+        {meta_UEOPUS,               "Epic Games UEOPUS header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {
@@ -1678,7 +1682,8 @@ void get_vgmstream_meta_description(VGMSTREAM* vgmstream, char* out, size_t out_
     }
 
 #ifdef VGM_USE_FFMPEG
-    if (vgmstream->coding_type ==  coding_FFmpeg) {
+    // include FFmpeg's format description for the generic ffmpeg.c parser
+    if (vgmstream->coding_type == coding_FFmpeg && vgmstream->meta_type == meta_FFMPEG) {
         const char* description_ffmpeg = ffmpeg_get_format_name(vgmstream->codec_data);
         if (description_ffmpeg != NULL) {
             snprintf(out, out_size, "%s (%s)", description, description_ffmpeg);
