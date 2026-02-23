@@ -1,7 +1,7 @@
-#include "sampledata.h"
+#include <vio2sf/sampledata.h>
 #include "adpcmdecoder.h"
 #include "interpolator.h"
-#include "../desmume/MMU.h"
+#include <vio2sf/MMU.h>
 
 SampleData::SampleData()
 : std::vector<int32_t>(), baseAddr(0), loopStart(0), loopLength(0), st(0)

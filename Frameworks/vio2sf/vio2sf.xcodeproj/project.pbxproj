@@ -19,44 +19,51 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		83A122C42F4B111200FD7A1D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		83051FA52F4C0A9F004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				desmume/instruction_tabdef.inc,
-				desmume/thumb_tabdef.inc,
+				vio2sf/desmume/instruction_tabdef.inc,
+				vio2sf/desmume/thumb_tabdef.inc,
+			);
+			target = 83DE0C05180A9BD400269051 /* vio2sf */;
+		};
+		83051FA62F4C0AD6004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			privateHeaders = (
+				vio2sf/armcpu.h,
+				vio2sf/bits.h,
+				vio2sf/cp15.h,
+				vio2sf/emufile.h,
+				vio2sf/FIFO.h,
+				vio2sf/firmware.h,
+				vio2sf/instructions.h,
+				vio2sf/matrix.h,
+				vio2sf/mc.h,
+				vio2sf/mem.h,
+				vio2sf/metaspu.h,
+				vio2sf/MMU_timing.h,
+				vio2sf/MMU.h,
+				vio2sf/NDSSystem.h,
+				vio2sf/PACKED_END.h,
+				vio2sf/PACKED.h,
+				vio2sf/readwrite.h,
+				vio2sf/registers.h,
+				vio2sf/samplecache.h,
+				vio2sf/sampledata.h,
+				vio2sf/slot1.h,
+				vio2sf/SPU.h,
+				vio2sf/types.h,
 			);
 			publicHeaders = (
-				desmume/armcpu.h,
-				desmume/bits.h,
-				desmume/cp15.h,
-				desmume/emufile.h,
-				desmume/FIFO.h,
-				desmume/firmware.h,
-				desmume/instructions.h,
-				desmume/matrix.h,
-				desmume/mc.h,
-				desmume/mem.h,
-				desmume/metaspu/metaspu.h,
-				desmume/MMU_timing.h,
-				desmume/MMU.h,
-				desmume/NDSSystem.h,
-				desmume/PACKED_END.h,
-				desmume/PACKED.h,
-				desmume/readwrite.h,
-				desmume/registers.h,
-				desmume/slot1.h,
-				desmume/SPU.h,
-				desmume/types.h,
-				desmume/vio2sf.h,
-				spu/samplecache.h,
-				spu/sampledata.h,
+				vio2sf/vio2sf.h,
 			);
 			target = 83DE0C05180A9BD400269051 /* vio2sf */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		83A1228D2F4B107100FD7A1D /* vio2sf */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (83A122C42F4B111200FD7A1D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); name = vio2sf; path = src/vio2sf; sourceTree = "<group>"; };
+		83051F552F4C0A60004C0413 /* src */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (83051FA52F4C0A9F004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = src; sourceTree = "<group>"; };
+		83051F8C2F4C0A6C004C0413 /* include */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (83051FA62F4C0AD6004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = include; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +122,8 @@
 		83DE0C0F180A9BD400269051 /* vio2sf */ = {
 			isa = PBXGroup;
 			children = (
-				83A1228D2F4B107100FD7A1D /* vio2sf */,
+				83051F8C2F4C0A6C004C0413 /* include */,
+				83051F552F4C0A60004C0413 /* src */,
 				83DE0C10180A9BD400269051 /* Supporting Files */,
 			);
 			path = vio2sf;
@@ -157,7 +165,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				83A1228D2F4B107100FD7A1D /* vio2sf */,
+				83051F552F4C0A60004C0413 /* src */,
+				83051F8C2F4C0A6C004C0413 /* include */,
 			);
 			name = vio2sf;
 			productName = vio2sf;
@@ -171,7 +180,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2620;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83DE0C00180A9BD400269051 /* Build configuration list for PBXProject "vio2sf" */;
