@@ -17,7 +17,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
-#include "../vio2sf.h"
+#include <vio2sf/vio2sf.h>
 
 static void info(vio2sf_state *, char *info) { strcpy(info, "Slot1 Retail card emulation"); }
 static void config(vio2sf_state *) {}
