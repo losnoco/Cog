@@ -165,6 +165,8 @@ void SPU_ReInit(vio2sf_state *st, bool fakeBoot)
 
 int SPU_Init(vio2sf_state *st, int coreid, int buffersize)
 {
+  SPU_DeInit(st);
+
   st->SPU_core = new SPU_struct(st, (int)ceil(st->samples_per_hline));
   SPU_Reset(st);
 
