@@ -27,7 +27,7 @@
 #include <vio2sf/GBACart.h>
 #include <vio2sf/types.h>
 #include <vio2sf/MemConstants.h>
-#include <vio2sf/DSi_NAND.h>
+//#include <vio2sf/DSi_NAND.h>
 #include <vio2sf/FATStorage.h>
 #include <vio2sf/FreeBIOS.h>
 #include <vio2sf/GPU.h>
@@ -129,7 +129,7 @@ struct DSiArgs final : public NDSArgs
 
     /// NAND image to install.
     /// Defaults to std::nullopt, which means no NAND.
-    std::optional<DSi_NAND::NANDImage> NANDImage;
+    //std::optional<DSi_NAND::NANDImage> NANDImage;
 
     /// SD card to install.
     /// Defaults to std::nullopt, which means no SD card.

@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/AREngine.h>
 #include <vio2sf/Platform.h>
 

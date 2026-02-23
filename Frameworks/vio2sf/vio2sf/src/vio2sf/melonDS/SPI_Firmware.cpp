@@ -67,7 +67,9 @@ Firmware::WifiAccessPoint::WifiAccessPoint(int consoletype)
 {
     memset(Bytes, 0, sizeof(Bytes));
     strncpy(SSID, DEFAULT_SSID, sizeof(SSID));
+#if 0
     if (consoletype == 1) Mtu = 1400;
+#endif
     Status = AccessPointStatus::Normal;
     ConnectionConfigured = 0x01;
     UpdateChecksum();
@@ -95,6 +97,7 @@ void Firmware::ExtendedWifiAccessPoint::UpdateChecksum()
 Firmware::FirmwareHeader::FirmwareHeader(int consoletype)
 {
     memset(Bytes, 0, sizeof(Bytes));
+#if 0
     if (consoletype == 1)
     {
         ConsoleType = FirmwareConsoleType::DSi;
@@ -106,6 +109,7 @@ Firmware::FirmwareHeader::FirmwareHeader(int consoletype)
         memset(&Bytes[0x22], 0, 8);
     }
     else
+#endif
     {
         ConsoleType = FirmwareConsoleType::DSLite; // TODO: make configurable?
         WifiVersion = WifiVersion::W006;
@@ -165,6 +169,7 @@ Firmware::UserData::UserData(int consoletype)
     Settings = Language::English | BacklightLevel::Max; // NOLINT(*-suspicious-enum-usage)
     memcpy(Nickname, DEFAULT_USERNAME.data(), DEFAULT_USERNAME.size() * sizeof(std::u16string_view::value_type));
     NameLength = DEFAULT_USERNAME.size();
+#if 0
     if (consoletype == 1)
     {
         // The firmware header console type's bit 6 implies the existence of a
@@ -174,6 +179,7 @@ Firmware::UserData::UserData(int consoletype)
         ExtendedSettings.ExtendedLanguage = (Language) (Settings & 0x7);
         ExtendedSettings.SupportedLanguageMask = 0x7F;
     }
+#endif
     UpdateChecksum();
 }
 
@@ -241,6 +247,7 @@ Firmware::Firmware(int consoletype)
         WifiAccessPoint(),
     };
 
+#if 0
     if (consoletype == 1)
     {
         std::array<ExtendedWifiAccessPoint, 3>& extendedaccesspoints = *reinterpret_cast<std::array<ExtendedWifiAccessPoint, 3>*>(GetExtendedAccessPointPosition());
@@ -251,6 +258,7 @@ Firmware::Firmware(int consoletype)
             ExtendedWifiAccessPoint(),
         };
     }
+#endif
 }
 
 Firmware::Firmware(Platform::FileHandle* file) : FirmwareBuffer(nullptr), FirmwareBufferLength(0), FirmwareMask(0)

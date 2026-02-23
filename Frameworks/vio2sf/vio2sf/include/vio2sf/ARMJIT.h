@@ -106,8 +106,8 @@ public:
     AddressRange CodeIndexARM7BIOS[ARM7BIOSSize / 512] {};
     AddressRange CodeIndexARM7WRAM[ARM7WRAMSize / 512] {};
     AddressRange CodeIndexARM7WVRAM[0x40000 / 512] {};
-    AddressRange CodeIndexBIOS9DSi[0x10000 / 512] {};
-    AddressRange CodeIndexBIOS7DSi[0x10000 / 512] {};
+    /*AddressRange CodeIndexBIOS9DSi[0x10000 / 512] {};
+    AddressRange CodeIndexBIOS7DSi[0x10000 / 512] {};*/
     AddressRange CodeIndexNWRAM_A[NWRAMSize / 512] {};
     AddressRange CodeIndexNWRAM_B[NWRAMSize / 512] {};
     AddressRange CodeIndexNWRAM_C[NWRAMSize / 512] {};
@@ -120,8 +120,8 @@ public:
     u64 FastBlockLookupARM7BIOS[ARM7BIOSSize / 2] {};
     u64 FastBlockLookupARM7WRAM[ARM7WRAMSize / 2] {};
     u64 FastBlockLookupARM7WVRAM[0x40000 / 2] {};
-    u64 FastBlockLookupBIOS9DSi[0x10000 / 2] {};
-    u64 FastBlockLookupBIOS7DSi[0x10000 / 2] {};
+    /*u64 FastBlockLookupBIOS9DSi[0x10000 / 2] {};
+    u64 FastBlockLookupBIOS7DSi[0x10000 / 2] {};*/
     u64 FastBlockLookupNWRAM_A[NWRAMSize / 2] {};
     u64 FastBlockLookupNWRAM_B[NWRAMSize / 2] {};
     u64 FastBlockLookupNWRAM_C[NWRAMSize / 2] {};
@@ -141,8 +141,8 @@ public:
         NULL,
         NULL,
         CodeIndexARM7WVRAM,
-        CodeIndexBIOS9DSi,
-        CodeIndexBIOS7DSi,
+        NULL,//CodeIndexBIOS9DSi,
+        NULL,//CodeIndexBIOS7DSi,
         CodeIndexNWRAM_A,
         CodeIndexNWRAM_B,
         CodeIndexNWRAM_C
@@ -163,8 +163,8 @@ public:
         NULL,
         NULL,
         FastBlockLookupARM7WVRAM,
-        FastBlockLookupBIOS9DSi,
-        FastBlockLookupBIOS7DSi,
+        NULL,//FastBlockLookupBIOS9DSi,
+        NULL,//FastBlockLookupBIOS7DSi,
         FastBlockLookupNWRAM_A,
         FastBlockLookupNWRAM_B,
         FastBlockLookupNWRAM_C

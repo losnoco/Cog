@@ -18,7 +18,7 @@
 
 #include <string.h>
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/NDSCart.h>
 #include <vio2sf/CRC32.h>
 #include <vio2sf/Platform.h>
@@ -111,6 +111,7 @@ void NDSCartSlot::Key1_ApplyKeycode(u32* keycode, u32 mod) noexcept
 
 void NDSCartSlot::Key1_LoadKeyBuf(bool dsimode) noexcept
 {
+#if 0
     if (NDS.ConsoleType == 1)
     {
         // DSi mode: grab the right key depending on the requested cart mode
@@ -134,6 +135,7 @@ void NDSCartSlot::Key1_LoadKeyBuf(bool dsimode) noexcept
         }
     }
     else
+#endif
     {
         // DS mode: load from ARM7 BIOS at 0x0030
 
