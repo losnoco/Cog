@@ -14,7 +14,7 @@
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		8396DAFC2F3B21FB003072ED /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
+			privateHeaders = (
 				include/snes9x/65c816.h,
 				include/snes9x/apu/apu.h,
 				include/snes9x/apu/bapu/dsp/blargg_common.h,
@@ -30,6 +30,8 @@
 				include/snes9x/memmap.h,
 				include/snes9x/port.h,
 				include/snes9x/ppu.h,
+			);
+			publicHeaders = (
 				include/snes9x/snes9x.h,
 			);
 			target = 8343EAB32F3759FF0068AB0B /* snes9x */;
