@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/ARM.h>
 #include <vio2sf/ARMInterpreter.h>
 #include <vio2sf/AREngine.h>
@@ -859,8 +859,10 @@ void ARMv4::Execute()
     if (Halted == 4)
     {
         assert(NDS.ConsoleType == 1);
+#if 0
         auto& dsi = dynamic_cast<melonDS::DSi&>(NDS);
         dsi.SoftReset();
+#endif
         Halted = 2;
     }
 }

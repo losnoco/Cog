@@ -17,7 +17,7 @@
 */
 
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/Mic.h>
 
 namespace melonDS

@@ -41,7 +41,8 @@
 #include <vio2sf/ARMJIT_Compiler.h>
 #include <vio2sf/ARMJIT_Global.h>
 
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
+#include <vio2sf/NDS.h>
 #include <vio2sf/GPU.h>
 #include <vio2sf/GPU3D.h>
 #include <vio2sf/Wifi.h>
@@ -583,6 +584,7 @@ void ARMJIT_Memory::RemapDTCM(u32 newBase, u32 newSize) noexcept
 
 void ARMJIT_Memory::RemapNWRAM(int num) noexcept
 {
+#if 0
     if (NDS.ConsoleType == 0)
         return;
 
@@ -606,6 +608,7 @@ void ARMJIT_Memory::RemapNWRAM(int num) noexcept
         Mappings[memregion_NewSharedWRAM_A + num][i].Unmap(memregion_NewSharedWRAM_A + num, NDS);
     }
     Mappings[memregion_NewSharedWRAM_A + num].Clear();
+#endif
 }
 
 void ARMJIT_Memory::RemapSWRAM() noexcept
@@ -1109,6 +1112,7 @@ bool ARMJIT_Memory::GetMirrorLocation(int region, u32 num, u32 addr, u32& memory
         return false;
     case memregion_NewSharedWRAM_A:
         {
+#if 0
             auto* dsi = dynamic_cast<DSi*>(&NDS);
             assert(dsi != nullptr);
             u8* ptr = dsi->NWRAMMap_A[num][(addr >> 16) & dsi->NWRAMMask[num][0]];
@@ -1119,10 +1123,12 @@ bool ARMJIT_Memory::GetMirrorLocation(int region, u32 num, u32 addr, u32& memory
                 mirrorSize = 0x10000;
                 return true;
             }
+#endif
             return false; // zero filled memory
         }
     case memregion_NewSharedWRAM_B:
         {
+#if 0
             auto* dsi = dynamic_cast<DSi*>(&NDS);
             assert(dsi != nullptr);
             u8* ptr = dsi->NWRAMMap_B[num][(addr >> 15) & dsi->NWRAMMask[num][1]];
@@ -1133,10 +1139,12 @@ bool ARMJIT_Memory::GetMirrorLocation(int region, u32 num, u32 addr, u32& memory
                 mirrorSize = 0x8000;
                 return true;
             }
+#endif
             return false; // zero filled memory
         }
     case memregion_NewSharedWRAM_C:
         {
+#if 0
             auto* dsi = dynamic_cast<DSi*>(&NDS);
             assert(dsi != nullptr);
             u8* ptr = dsi->NWRAMMap_C[num][(addr >> 15) & dsi->NWRAMMask[num][2]];
@@ -1147,9 +1155,11 @@ bool ARMJIT_Memory::GetMirrorLocation(int region, u32 num, u32 addr, u32& memory
                 mirrorSize = 0x8000;
                 return true;
             }
+#endif
             return false; // zero filled memory
         }
     case memregion_BIOS9DSi:
+#if 0
         if (num == 0)
         {
             auto* dsi = dynamic_cast<DSi*>(&NDS);
@@ -1158,8 +1168,10 @@ bool ARMJIT_Memory::GetMirrorLocation(int region, u32 num, u32 addr, u32& memory
             mirrorSize = dsi->SCFG_BIOS & (1<<0) ? 0x8000 : 0x10000;
             return true;
         }
+#endif
         return false;
     case memregion_BIOS7DSi:
+#if 0
         if (num == 1)
         {
             auto* dsi = dynamic_cast<DSi*>(&NDS);
@@ -1168,6 +1180,7 @@ bool ARMJIT_Memory::GetMirrorLocation(int region, u32 num, u32 addr, u32& memory
             mirrorSize = dsi->SCFG_BIOS & (1<<8) ? 0x8000 : 0x10000;
             return true;
         }
+#endif
         return false;
     default:
         assert(false && "For the time being this should only be used for code");
@@ -1202,37 +1215,45 @@ u32 ARMJIT_Memory::LocaliseAddress(int region, u32 num, u32 addr) const noexcept
         return (addr & 0x3FFFF) | (memregion_VWRAM << 27);
     case memregion_NewSharedWRAM_A:
         {
+#if 0
             auto* dsi = dynamic_cast<DSi*>(&NDS);
             assert(dsi != nullptr);
             u8* ptr = dsi->NWRAMMap_A[num][(addr >> 16) & dsi->NWRAMMask[num][0]];
             if (ptr)
                 return (ptr - GetNWRAM_A() + (addr & 0xFFFF)) | (memregion_NewSharedWRAM_A << 27);
             else
+#endif
                 return memregion_Other << 27; // zero filled memory
         }
     case memregion_NewSharedWRAM_B:
         {
+#if 0
             auto* dsi = dynamic_cast<DSi*>(&NDS);
             assert(dsi != nullptr);
             u8* ptr = dsi->NWRAMMap_B[num][(addr >> 15) & dsi->NWRAMMask[num][1]];
             if (ptr)
                 return (ptr - GetNWRAM_B() + (addr & 0x7FFF)) | (memregion_NewSharedWRAM_B << 27);
             else
+#endif
                 return memregion_Other << 27;
         }
     case memregion_NewSharedWRAM_C:
         {
+#if 0
             auto* dsi = dynamic_cast<DSi*>(&NDS);
             assert(dsi != nullptr);
             u8* ptr = dsi->NWRAMMap_C[num][(addr >> 15) & dsi->NWRAMMask[num][2]];
             if (ptr)
                 return (ptr - GetNWRAM_C() + (addr & 0x7FFF)) | (memregion_NewSharedWRAM_C << 27);
             else
+#endif
                 return memregion_Other << 27;
         }
+#if 0
     case memregion_BIOS9DSi:
     case memregion_BIOS7DSi:
         return (addr & 0xFFFF) | (region << 27);
+#endif
     default:
         assert(false && "This should only be needed for regions which can contain code");
         return memregion_Other << 27;
@@ -1251,6 +1272,7 @@ int ARMJIT_Memory::ClassifyAddress9(u32 addr) const noexcept
     }
     else
     {
+#if 0
         if (NDS.ConsoleType == 1)
         {
             auto& dsi = static_cast<DSi&>(NDS);
@@ -1262,6 +1284,7 @@ int ARMJIT_Memory::ClassifyAddress9(u32 addr) const noexcept
                 return memregion_BIOS9DSi;
             }
         }
+#endif
 
         if ((addr & 0xFFFFF000) == 0xFFFF0000)
         {
@@ -1273,6 +1296,7 @@ int ARMJIT_Memory::ClassifyAddress9(u32 addr) const noexcept
         case 0x02000000:
             return memregion_MainRAM;
         case 0x03000000:
+#if 0
             if (NDS.ConsoleType == 1)
             {
                 auto& dsi = static_cast<DSi&>(NDS);
@@ -1283,6 +1307,7 @@ int ARMJIT_Memory::ClassifyAddress9(u32 addr) const noexcept
                 if (addr >= dsi.NWRAMStart[0][2] && addr < dsi.NWRAMEnd[0][2])
                     return memregion_NewSharedWRAM_C;
             }
+#endif
 
             if (NDS.SWRAM_ARM9.Mem)
                 return memregion_SharedWRAM;
@@ -1301,6 +1326,7 @@ int ARMJIT_Memory::ClassifyAddress9(u32 addr) const noexcept
 
 int ARMJIT_Memory::ClassifyAddress7(u32 addr) const noexcept
 {
+#if 0
     if (NDS.ConsoleType == 1)
     {
         auto& dsi = static_cast<DSi&>(NDS);
@@ -1312,6 +1338,7 @@ int ARMJIT_Memory::ClassifyAddress7(u32 addr) const noexcept
             return memregion_BIOS7DSi;
         }
     }
+#endif
 
     if (addr < 0x00004000)
     {
@@ -1325,6 +1352,7 @@ int ARMJIT_Memory::ClassifyAddress7(u32 addr) const noexcept
         case 0x02800000:
             return memregion_MainRAM;
         case 0x03000000:
+#if 0
             if (NDS.ConsoleType == 1)
             {
                 auto& dsi = static_cast<DSi&>(NDS);
@@ -1335,6 +1363,7 @@ int ARMJIT_Memory::ClassifyAddress7(u32 addr) const noexcept
                 if (addr >= dsi.NWRAMStart[1][2] && addr < dsi.NWRAMEnd[1][2])
                     return memregion_NewSharedWRAM_C;
             }
+#endif
 
             if (NDS.SWRAM_ARM7.Mem)
                 return memregion_SharedWRAM;

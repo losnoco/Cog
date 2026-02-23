@@ -306,6 +306,7 @@ void RTC::ProcessIRQ(int type) // 0=minute carry 1=periodic 2=status reg write
             if (State.Alarm1[2] & (1<<7))
                 cond = cond && ((State.Alarm1[2] & 0x7F) == State.DateTime[5]);
 
+#if 0
             if (NDS.ConsoleType == 1)
             {
                 if (State.AlarmDate1[1] & (1<<6))
@@ -315,6 +316,7 @@ void RTC::ProcessIRQ(int type) // 0=minute carry 1=periodic 2=status reg write
                 if (State.AlarmDate1[2] & (1<<7))
                     cond = cond && ((State.AlarmDate1[2] & 0x3F) == State.DateTime[2]);
             }
+#endif
 
             if (cond)
                 SetIRQ(0x10);
@@ -348,6 +350,7 @@ void RTC::ProcessIRQ(int type) // 0=minute carry 1=periodic 2=status reg write
             if (State.Alarm2[2] & (1<<7))
                 cond = cond && ((State.Alarm2[2] & 0x7F) == State.DateTime[5]);
 
+#if 0
             if (NDS.ConsoleType == 1)
             {
                 if (State.AlarmDate2[1] & (1<<6))
@@ -357,6 +360,7 @@ void RTC::ProcessIRQ(int type) // 0=minute carry 1=periodic 2=status reg write
                 if (State.AlarmDate2[2] & (1<<7))
                     cond = cond && ((State.AlarmDate2[2] & 0x3F) == State.DateTime[2]);
             }
+#endif
 
             if (cond)
                 SetIRQ(0x20);
@@ -852,6 +856,7 @@ void RTC::ByteIn(u8 val)
         else
             CurCmd = val;
 
+#if 0
         if (NDS.ConsoleType == 1)
         {
             // for DSi: handle extra commands
@@ -862,6 +867,7 @@ void RTC::ByteIn(u8 val)
                 CurCmd = rev[CurCmd & 0xF];
             }
         }
+#endif
 
         if (CurCmd & 0x80)
         {

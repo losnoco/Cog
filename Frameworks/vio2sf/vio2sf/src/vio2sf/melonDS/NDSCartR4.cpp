@@ -18,7 +18,7 @@
 
 #include <string.h>
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/NDSCart.h>
 #include <vio2sf/Platform.h>
 

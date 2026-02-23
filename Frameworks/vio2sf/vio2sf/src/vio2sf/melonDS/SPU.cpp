@@ -22,8 +22,8 @@
 #include <vio2sf/Platform.h>
 #include <vio2sf/NDS.h>
 #include <vio2sf/Mic.h>
-#include <vio2sf/DSi.h>
-#include <vio2sf/DSi_I2S.h>
+/*#include <vio2sf/DSi.h>
+#include <vio2sf/DSi_I2S.h>*/
 #include <vio2sf/SPU.h>
 
 #include "blip-buf/blip_buf.h"
@@ -986,12 +986,14 @@ void SPU::Mix(u32 spucycles)
 
     NDS.Mic.Advance(spucycles << 1);
 
+#if 0
     if (NDS.ConsoleType == 1)
     {
         // for the DSi, we run the I2S interface here, so it can mix in DSP audio
         // this isn't the cleanest, but it's the easiest, since the audio output apparatus is here
         ((DSi&)NDS).I2S.SampleClock(output);
     }
+#endif
 
     // The original DS and DS lite degrade the output from 16 to 10 bit before output
     if (Degrade10Bit)

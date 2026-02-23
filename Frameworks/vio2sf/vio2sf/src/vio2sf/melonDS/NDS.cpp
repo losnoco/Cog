@@ -37,11 +37,13 @@
 #include <vio2sf/Args.h>
 #include "version.h"
 
+#if 0
 #include <vio2sf/DSi.h>
 #include <vio2sf/DSi_SPI_TSC.h>
 #include <vio2sf/DSi_NWifi.h>
 #include <vio2sf/DSi_Camera.h>
 #include <vio2sf/DSi_DSP.h>
+#endif
 #include <vio2sf/ARMJIT.h>
 #include <vio2sf/ARMJIT_Memory.h>
 
@@ -438,6 +440,7 @@ void NDS::Reset()
 
     JIT.Reset();
 
+#if 0
     if (ConsoleType == 1)
     {
         // BIOS files are now loaded by the frontend
@@ -446,6 +449,7 @@ void NDS::Reset()
         MainRAMMask = 0xFFFFFF;
     }
     else
+#endif
     {
         ARM9ClockShift = 1;
         MainRAMMask = 0x3FFFFF;
@@ -613,8 +617,10 @@ u32 NDS::GetSavestateConfig()
 {
     u32 ret = 0;
 
+#if 0
     if (ConsoleType == 1)
         ret |= SC_Console_DSi;
+#endif
 
     return ret;
 }
@@ -747,7 +753,7 @@ bool NDS::DoSavestate(Savestate* file)
     RTC.DoSavestate(file);
     Wifi.DoSavestate(file);
 
-    DoSavestateExtra(file); // Handles DSi state if applicable
+    //DoSavestateExtra(file); // Handles DSi state if applicable
 
     if (!file->Saving)
     {
@@ -989,11 +995,13 @@ u32 NDS::RunFrame()
                     if (!(CPUStop & CPUStop_GXStall)) DMAs[1].Run();
                     if (!(CPUStop & CPUStop_GXStall)) DMAs[2].Run();
                     if (!(CPUStop & CPUStop_GXStall)) DMAs[3].Run();
+#if 0
                     if (ConsoleType == 1)
                     {
                         auto& dsi = dynamic_cast<melonDS::DSi&>(*this);
                         dsi.RunNDMAs(0);
                     }
+#endif
                 }
                 else
                 {
@@ -1016,11 +1024,13 @@ u32 NDS::RunFrame()
                         DMAs[5].Run();
                         DMAs[6].Run();
                         DMAs[7].Run();
+#if 0
                         if (ConsoleType == 1)
                         {
                             auto& dsi = dynamic_cast<melonDS::DSi&>(*this);
                             dsi.RunNDMAs(1);
                         }
+#endif
                     }
                     else
                     {
@@ -1354,8 +1364,10 @@ void NDS::UpdateIRQ(u32 cpu)
     if (IME[cpu] & 0x1)
     {
         arm.IRQ = !!(IE[cpu] & IF[cpu]);
+#if 0
         if ((ConsoleType == 1) && cpu)
             arm.IRQ |= !!(IE2 & IF2);
+#endif
     }
     else
     {
@@ -1408,8 +1420,10 @@ bool NDS::HaltInterrupted(u32 cpu) const
     if (IF[cpu] & IE[cpu])
         return true;
 
+#if 0
     if ((ConsoleType == 1) && cpu && (IF2 & IE2))
         return true;
+#endif
 
     return false;
 }
@@ -1447,11 +1461,13 @@ void NDS::GXFIFOStall()
         DMAs[1].StallIfRunning();
         DMAs[2].StallIfRunning();
         DMAs[3].StallIfRunning();
+#if 0
         if (ConsoleType == 1)
         {
             auto& dsi = dynamic_cast<melonDS::DSi&>(*this);
             dsi.StallNDMAs();
         }
+#endif
     }
 }
 

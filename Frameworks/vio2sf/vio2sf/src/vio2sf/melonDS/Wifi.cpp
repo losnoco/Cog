@@ -188,8 +188,10 @@ void Wifi::Reset()
         IOPORT(0x000) = 0x1440;
     else if (consoletype == Firmware::FirmwareConsoleType::DSLite || consoletype == Firmware::FirmwareConsoleType::iQueDSLite)
         IOPORT(0x000) = 0xC340;
+#if 0
     else if (NDS.ConsoleType == 1 && consoletype == Firmware::FirmwareConsoleType::DSi)
         IOPORT(0x000) = 0xC340; // DSi has the modern DS-wifi variant
+#endif
     else
     {
         Log(LogLevel::Warn, "wifi: unknown console type %02X\n", consoletype);
@@ -332,6 +334,7 @@ void Wifi::UpdatePowerOn()
 {
     bool on = Enabled;
 
+#if 0
     if (NDS.ConsoleType == 1)
     {
         // TODO for DSi:
@@ -340,6 +343,7 @@ void Wifi::UpdatePowerOn()
         // * turning wifi off via POWCNT2 while sending breaks further attempts at sending frames
     }
     else
+#endif
     {
         on = on && ((IOPORT(W_PowerUS) & 0x1) == 0);
     }

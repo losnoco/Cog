@@ -22,9 +22,9 @@
 #include <memory>
 #include <utility>
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/SPI.h>
-#include <vio2sf/DSi_SPI_TSC.h>
+//#include <vio2sf/DSi_SPI_TSC.h>
 #include <vio2sf/Mic.h>
 #include <vio2sf/Platform.h>
 
@@ -131,6 +131,7 @@ void FirmwareMem::SetupDirectBoot()
     const auto& header = FirmwareData.GetHeader();
     const auto& userdata = FirmwareData.GetEffectiveUserData();
 
+#if 0
     if (NDS.ConsoleType == 1)
     {
         // The ARMWrite methods are virtual, they'll delegate to DSi if necessary
@@ -144,6 +145,7 @@ void FirmwareMem::SetupDirectBoot()
             NDS.ARM9Write32(0x02FFFC80+i, *(u32*)&userdata.Bytes[i]);
     }
     else
+#endif
     {
         NDS.ARM9Write32(0x027FF864, 0);
         NDS.ARM9Write32(0x027FF868, header.UserSettingsOffset << 3); // user settings offset
@@ -456,9 +458,11 @@ SPIHost::SPIHost(melonDS::NDS& nds, Firmware&& firmware) : NDS(nds)
     Devices[SPIDevice_FirmwareMem] = new FirmwareMem(NDS, std::move(firmware));
     Devices[SPIDevice_PowerMan] = new PowerMan(NDS);
 
+#if 0
     if (NDS.ConsoleType == 1)
         Devices[SPIDevice_TSC] = new DSi_TSC(static_cast<DSi&>(NDS));
     else
+#endif
         Devices[SPIDevice_TSC] = new TSC(NDS);
 }
 

@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 #include <vio2sf/NDS.h>
-#include <vio2sf/DSi.h>
+//#include <vio2sf/DSi.h>
 #include <vio2sf/DMA.h>
 #include <vio2sf/GPU.h>
 #include <vio2sf/GPU3D.h>
