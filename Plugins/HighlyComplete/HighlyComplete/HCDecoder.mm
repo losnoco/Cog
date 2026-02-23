@@ -1234,8 +1234,10 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		SetDesmumeSampleRate(core, TWOSF_SAMPLE_RATE);
 		int BUFFERSIZE = TWOSF_SAMPLE_RATE / 59.837;
 		if(SPU_Init(core, SNDIFID_2SF, BUFFERSIZE)) {
+			delete sndif;
 			if(state.rom) free(state.rom);
 			if(state.state) free(state.state);
+			return NO;
 		}
 
 		SPUInterpolationMode resampling_int = SPUInterpolation_None;
@@ -1723,8 +1725,10 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			delete buffer;
 		} else if(type == 0x24) {
 			twosf_sndif *sndif = (twosf_sndif *)emulatorCore;
-			MMU_unsetRom(&sndif->core);
-			NDS_DeInit(&sndif->core);
+			vio2sf_state *core = &sndif->core;
+			SPU_DeInit(core);
+			MMU_unsetRom(core);
+			NDS_DeInit(core);
 			delete sndif;
 		} else if(type == 0x25) {
 			try {

@@ -49,4 +49,7 @@ vio2sf_state::vio2sf_state()
 
 vio2sf_state::~vio2sf_state()
 {
+	delete synchronizer;
+	if(postProcessBuffer)
+		free(postProcessBuffer);
 }
