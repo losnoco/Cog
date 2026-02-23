@@ -453,7 +453,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2620;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 8360EEDF17F92AC8005208A4 /* Build configuration list for PBXProject "HighlyComplete" */;

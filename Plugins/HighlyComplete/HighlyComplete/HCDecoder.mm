@@ -36,11 +36,8 @@
 #include <list>
 
 #undef ROR
-#define BIT VIO2SF_BIT
-#define ROR VIO2SF_ROR
-#import <vio2sf/vio2sf.h>
-#undef BIT
-#undef ROR
+#define JIT_ENABLED 1
+#import <vio2sf/NDS.h>
 
 #import <lazyusf2/usf.h>
 
@@ -635,81 +632,9 @@ static int ncsf_loader(void *context, const uint8_t *exe, size_t exe_size,
 	return 0;
 }
 
-struct twosf_sndif
-{
-	vio2sf_state core;
-	std::vector<uint8_t> buf;
-	std::list<std::vector<uint8_t>> buffer_rope;
-	unsigned filled, used;
-	uint32_t bufferbytes, cycles;
-	int xfs_load, sync_type;
-	twosf_sndif()
-	: filled(0), used(0), bufferbytes(0), cycles(0), xfs_load(0), sync_type(0) { }
-};
-
-static void SNDIFDeInit(void *context) { }
-
-static int SNDIFInit(void *context, int buffersize)
-{
-	twosf_sndif *sndif = (twosf_sndif *) context;
-	uint32_t bufferbytes = buffersize * sizeof(int16_t);
-	SNDIFDeInit(context);
-	sndif->buf.resize(bufferbytes + 3);
-	sndif->bufferbytes = bufferbytes;
-	sndif->filled = sndif->used = 0;
-	sndif->cycles = 0;
-	return 0;
-}
-
-static void SNDIFMuteAudio(void *) { }
-static void SNDIFUnMuteAudio(void *) { }
-static void SNDIFSetVolume(void *, int) { }
-
-static uint32_t SNDIFGetAudioSpace(void *context)
-{
-	twosf_sndif *sndif = (twosf_sndif *)context;
-	return sndif->bufferbytes >> 2; // bytes to samples
-}
-
-static void SNDIFUpdateAudio(void *context, int16_t *buffer, uint32_t num_samples)
-{
-	twosf_sndif *sndif = (twosf_sndif *)context;
-	uint32_t num_bytes = num_samples << 2;
-	if (num_bytes > sndif->bufferbytes)
-		num_bytes = sndif->bufferbytes;
-	memcpy(&sndif->buf[0], buffer, num_bytes);
-	sndif->buffer_rope.push_back(std::vector<uint8_t>(reinterpret_cast<uint8_t*>(buffer), reinterpret_cast<uint8_t*>(buffer) + num_bytes));
-	sndif->filled = num_bytes;
-	sndif->used = 0;
-}
-
-static const int SNDIFID_2SF = 1;
-static SoundInterface_struct SNDIF_2SF =
-{
-	SNDIFID_2SF,
-	"2sf Sound Interface",
-	SNDIFInit,
-	SNDIFDeInit,
-	SNDIFUpdateAudio,
-	SNDIFGetAudioSpace,
-	SNDIFMuteAudio,
-	SNDIFUnMuteAudio,
-	SNDIFSetVolume,
-	nullptr,
-	nullptr,
-	nullptr
-};
-
-SoundInterface_struct *SNDCoreList[] =
-{
-	&SNDIF_2SF,
-	&SNDDummy,
-	nullptr
-};
-
 struct twosf_loader_state {
-	uint8_t *rom;
-	uint8_t *state;
+	std::unique_ptr<uint8_t[]> rom;
+	std::unique_ptr<uint8_t[]> state;
 	size_t rom_size;
 	size_t state_size;
 
@@ -720,20 +645,18 @@ struct twosf_loader_state {
 static int load_twosf_map(struct twosf_loader_state *state, int issave, const unsigned char *udata, unsigned usize) {
 	if(usize < 8) return -1;
 
-	unsigned char *iptr;
+	std::unique_ptr<uint8_t[]> iptr;
 	size_t isize;
-	unsigned char *xptr;
+	std::unique_ptr<uint8_t[]> xptr;
 	unsigned xsize = get_le32(udata + 4);
 	unsigned xofs = get_le32(udata + 0);
 	if(issave) {
-		iptr = state->state;
+		iptr = std::move(state->state);
 		isize = state->state_size;
-		state->state = 0;
 		state->state_size = 0;
 	} else {
-		iptr = state->rom;
+		iptr = std::move(state->rom);
 		isize = state->rom_size;
-		state->rom = 0;
 		state->rom_size = 0;
 	}
 	if(!iptr) {
@@ -747,10 +670,10 @@ static int load_twosf_map(struct twosf_loader_state *state, int issave, const un
 			rsize |= rsize >> 16;
 			rsize += 1;
 		}
-		iptr = (unsigned char *)malloc(rsize + 10);
+		iptr = std::make_unique<uint8_t[]>(rsize + 10);
 		if(!iptr)
 			return -1;
-		memset(iptr, 0, rsize + 10);
+		std::fill_n(&iptr[0], rsize + 10, 0);
 		isize = rsize;
 	} else if(isize < xofs + xsize) {
 		size_t rsize = xofs + xsize;
@@ -763,20 +686,21 @@ static int load_twosf_map(struct twosf_loader_state *state, int issave, const un
 			rsize |= rsize >> 16;
 			rsize += 1;
 		}
-		xptr = (unsigned char *)realloc(iptr, xofs + rsize + 10);
+		xptr = std::make_unique<uint8_t[]>(xofs + rsize + 10);
 		if(!xptr) {
-			free(iptr);
 			return -1;
 		}
-		iptr = xptr;
+		std::copy_n(&iptr[0], isize, &xptr[0]);
+		std::fill_n(&xptr[isize], rsize + 10, 0);
+		iptr = std::move(xptr);
 		isize = rsize;
 	}
-	memcpy(iptr + xofs, udata + 8, xsize);
+	std::copy_n(udata + 8, xsize, &iptr[xofs]);
 	if(issave) {
-		state->state = iptr;
+		state->state = std::move(iptr);
 		state->state_size = isize;
 	} else {
-		state->rom = iptr;
+		state->rom = std::move(iptr);
 		state->rom_size = isize;
 	}
 	return 0;
@@ -1203,87 +1127,94 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		state.initial_frames = -1;
 
 		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x24, twosf_loader, &state, twosf_info, &state, 1) <= 0) {
-			if(state.rom) free(state.rom);
-			if(state.state) free(state.state);
 			return NO;
 		}
 
 		if(state.rom_size > UINT_MAX || state.state_size > UINT_MAX) {
-			if(state.rom) free(state.rom);
-			if(state.state) free(state.state);
 			return NO;
 		}
 
-		twosf_sndif *sndif = new twosf_sndif;
-		if(!sndif) {
-			if(state.rom) free(state.rom);
-			if(state.state) free(state.state);
+		/*FILE * f = fopen([[NSTemporaryDirectory() stringByAppendingPathComponent:@"rom.nds"] UTF8String], "wb");
+		fwrite(state.rom.get(), 1, state.rom_size, f);
+		fclose(f);*/
+
+		auto arm9bios = std::make_unique<melonDS::ARM9BIOSImage>(melonDS::FreeBIOSGetNtrArm9());
+		if (!arm9bios) {
+			return NO;
+		}
+		auto arm7bios = std::make_unique<melonDS::ARM7BIOSImage>(melonDS::FreeBIOSGetNtrArm7());
+		if (!arm7bios) {
+			return NO;
+		}
+		melonDS::Firmware _firmware = melonDS::Firmware(0);
+		auto firmware = std::make_optional(_firmware);
+		if (!firmware) {
 			return NO;
 		}
 
-		vio2sf_state *core = &sndif->core;
-		core->SNDCoreList = SNDCoreList;
-		core->SNDCoreContext = (void *)sndif;
+		melonDS::JITArgs _jitargs {
+			32,
+			true,
+			true,
+			true
+		};
+		auto jitargs = std::make_optional(_jitargs);
 
-		if(NDS_Init(core)) {
-			if(state.rom) free(state.rom);
-			if(state.state) free(state.state);
-			return NO;
-		}
+		std::optional<melonDS::GDBArgs> gdbargs = std::nullopt;
 
-		SetDesmumeSampleRate(core, TWOSF_SAMPLE_RATE);
-		int BUFFERSIZE = TWOSF_SAMPLE_RATE / 59.837;
-		if(SPU_Init(core, SNDIFID_2SF, BUFFERSIZE)) {
-			delete sndif;
-			if(state.rom) free(state.rom);
-			if(state.state) free(state.state);
-			return NO;
-		}
-
-		SPUInterpolationMode resampling_int = SPUInterpolation_None;
+		melonDS::AudioInterpolation resampling_int = melonDS::AudioInterpolation::None;
 		NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
 		if([resampling isEqualToString:@"zoh"])
-			resampling_int = SPUInterpolation_None;
+			resampling_int = melonDS::AudioInterpolation::None;
 		else if([resampling isEqualToString:@"blep"])
-			resampling_int = SPUInterpolation_None;
+			resampling_int = melonDS::AudioInterpolation::None;
 		else if([resampling isEqualToString:@"linear"])
-			resampling_int = SPUInterpolation_Linear;
+			resampling_int = melonDS::AudioInterpolation::Linear;
 		else if([resampling isEqualToString:@"blam"])
-			resampling_int = SPUInterpolation_Linear;
+			resampling_int = melonDS::AudioInterpolation::Linear;
 		else if([resampling isEqualToString:@"cubic"])
-			resampling_int = SPUInterpolation_Cosine;
+			resampling_int = melonDS::AudioInterpolation::Cubic;
 		else if([resampling isEqualToString:@"sinc"])
-			resampling_int = SPUInterpolation_Sharp;
+			resampling_int = melonDS::AudioInterpolation::Cubic;
 
-		core->CommonSettings.spuInterpolationMode = resampling_int;
-		std::fill_n(core->CommonSettings.spu_muteChannels, 16, false);
+		melonDS::NDSArgs ndsargs {
+			std::move(arm9bios),
+			std::move(arm7bios),
+			std::move(*firmware),
+			jitargs,
+			melonDS::AudioBitDepth::Auto,
+			resampling_int,
+			TWOSF_SAMPLE_RATE,
+			gdbargs,
+		};
 
-		emulatorCore = (uint8_t *)sndif;
-		emulatorExtra = state.rom;
-
-		core->execute = false;
-
-		MMU_unsetRom(core);
-		if(state.rom) {
-			NDS_SetROM(core, state.rom, (uint32_t) (state.rom_size - 1));
-			core->gameInfo.loadData(reinterpret_cast<char *>(state.rom), (uint32_t) state.rom_size - 1);
+		melonDS::NDS *nds = new melonDS::NDS(std::move(ndsargs), NULL);
+		if(!nds) {
+			return NO;
 		}
 
-		NDS_Reset(core);
+		auto cart = melonDS::NDSCart::ParseROM(std::move(state.rom), (uint32_t) state.rom_size);
+		nds->SetNDSCart(std::move(cart));
+		nds->SetGBACart(nullptr);
 
-		core->execute = true;
+		nds->Reset();
+		nds->SPI.GetPowerMan()->SetBatteryLevelOkay(true);
+
+		if(nds->NeedsDirectBoot())
+			nds->SetupDirectBoot("dummy.nds");
+
+		nds->Start();
 
 		if(state.initial_frames > 0) {
-			for(int i = 0; i < state.initial_frames; ++i)
-				NDS_exec<false>(core);
+			int frames = state.initial_frames;
+			while(frames > 0) {
+				nds->RunFrame();
+				nds->SPU.DrainOutput();
+				frames--;
+			}
 		}
 
-		sndif->xfs_load = true;
-		core->CommonSettings.rigorous_timing = true;
-		core->CommonSettings.spu_advanced = true;
-		core->CommonSettings.advanced_timing = true;
-
-		if(state.state) free(state.state);
+		emulatorCore = (uint8_t *)nds;
 	} else if(type == 0x25) {
 		struct ncsf_loader_state *state = NULL;
 		Player *player = NULL;
@@ -1559,72 +1490,30 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		}
 		frames = offset >> 2;
 	} else if(type == 0x24) {
-		twosf_sndif *sndif = (twosf_sndif *)emulatorCore;
+		melonDS::NDS *nds = (melonDS::NDS *)emulatorCore;
 
-		static const double HBASE_CYCLES = 33509300.322234;
-		static const double HLINE_CYCLES = 6 * (99 + 256);
-		static const double VDIVISION = 100;
-		static const double VLINES = 263;
-		static const double VBASE_CYCLES = HBASE_CYCLES / VDIVISION;
+		UInt32 frames_to_do = frames;
+		UInt32 offset = 0;
 
-		uint32_t HSAMPLES = static_cast<uint32_t>(static_cast<double>(TWOSF_SAMPLE_RATE * HLINE_CYCLES) / HBASE_CYCLES);
-		uint32_t VSAMPLES = static_cast<uint32_t>(static_cast<double>(TWOSF_SAMPLE_RATE * HLINE_CYCLES * VLINES) / HBASE_CYCLES);
-
-		unsigned bytes = frames << 2;
-		unsigned offset = 0;
-		size_t ropeAvail = 0;
-		while(ropeAvail < bytes) {
-			ropeAvail = 0;
-			for(const auto& buf : sndif->buffer_rope) {
-				ropeAvail += buf.size();
-			}
-			unsigned remainbytes = sndif->filled - sndif->used;
-			if(remainbytes > 0) {
-				if(remainbytes > bytes) {
-					sndif->used += bytes;
-					remainbytes -= bytes;
-					break;
-				} else {
-					sndif->used += remainbytes;
-					remainbytes = 0;
+		while(frames_to_do > 0) {
+			int num_avail = nds->SPU.GetOutputSize();
+			if(!num_avail)
+				nds->RunFrame();
+			if(num_avail > frames_to_do)
+				num_avail = frames_to_do;
+			int num_in;
+			if(num_avail) {
+				if(buf)
+					num_in = nds->SPU.ReadOutput(((int16_t *)buf) + offset * 2, num_avail);
+				else {
+					nds->SPU.DrainOutput();
+					num_in = num_avail;
 				}
-			}
-			if(!remainbytes) {
-				if(sndif->sync_type == 1) {
-					/* vsync */
-					sndif->cycles += (TWOSF_SAMPLE_RATE / VDIVISION) * HLINE_CYCLES * VLINES;
-					if(sndif->cycles >= static_cast<uint32_t>(VBASE_CYCLES * (VSAMPLES + 1)))
-						sndif->cycles -= static_cast<uint32_t>(VBASE_CYCLES * (VSAMPLES + 1));
-					else
-						sndif->cycles -= static_cast<uint32_t>(VBASE_CYCLES * VSAMPLES);
-				} else {
-					/* hsync */
-					sndif->cycles += TWOSF_SAMPLE_RATE * HLINE_CYCLES;
-					if (sndif->cycles >= static_cast<uint32_t>(HBASE_CYCLES * (HSAMPLES + 1)))
-						sndif->cycles -= static_cast<uint32_t>(HBASE_CYCLES * (HSAMPLES + 1));
-					else
-						sndif->cycles -= static_cast<uint32_t>(HBASE_CYCLES * HSAMPLES);
-				}
-				NDS_exec<false>(&sndif->core);
-				SPU_Emulate_user(&sndif->core);
+				offset += num_in;
+				frames_to_do -= num_in;
 			}
 		}
-		while(bytes > 0) {
-			std::vector<uint8_t>& segment = sndif->buffer_rope.front();
-			size_t sz = segment.size();
-			if(bytes >= sz) {
-				if(buf)
-					memcpy(reinterpret_cast<uint8_t *>(buf) + offset, &segment[0], sz);
-				sndif->buffer_rope.erase(sndif->buffer_rope.begin());
-				offset += sz;
-				bytes -= sz;
-			} else {
-				if(buf)
-					memcpy(reinterpret_cast<uint8_t *>(buf) + offset, &segment[0], bytes);
-				segment.erase(segment.begin(), segment.begin() + bytes);
-				bytes = 0;
-			}
-		}
+		nds->RunFrame();
 	} else if(type == 0x25) {
 		try {
 			Player *player = (Player *)emulatorCore;
@@ -1724,12 +1613,9 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			S9xDeinitAPU(st);
 			delete buffer;
 		} else if(type == 0x24) {
-			twosf_sndif *sndif = (twosf_sndif *)emulatorCore;
-			vio2sf_state *core = &sndif->core;
-			SPU_DeInit(core);
-			MMU_unsetRom(core);
-			NDS_DeInit(core);
-			delete sndif;
+			melonDS::NDS *nds = (melonDS::NDS *)emulatorCore;
+			nds->Stop();
+			delete nds;
 		} else if(type == 0x25) {
 			try {
 				Player *player = (Player *)emulatorCore;
@@ -1750,8 +1636,6 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			struct gsf_running_state *rstate = (struct gsf_running_state *)emulatorExtra;
 			free(rstate->rom);
 			free(rstate);
-		} else if(type == 0x24) {
-			free(emulatorExtra);
 		} else if(type == 0x25) {
 			try {
 				struct ncsf_loader_state *state = (struct ncsf_loader_state *)emulatorExtra;
@@ -1884,74 +1768,21 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		}
 		framesRead = frame;
 	} else if(type == 0x24) {
-		twosf_sndif *sndif = (twosf_sndif *)emulatorCore;
+		melonDS::NDS *nds = (melonDS::NDS *)emulatorCore;
 
 		long frames_to_run = frame - framesRead;
 
-		static const double HBASE_CYCLES = 33509300.322234;
-		static const double HLINE_CYCLES = 6 * (99 + 256);
-		static const double VDIVISION = 100;
-		static const double VLINES = 263;
-		static const double VBASE_CYCLES = HBASE_CYCLES / VDIVISION;
-
-		uint32_t HSAMPLES = static_cast<uint32_t>(static_cast<double>(TWOSF_SAMPLE_RATE * HLINE_CYCLES) / HBASE_CYCLES);
-		uint32_t VSAMPLES = static_cast<uint32_t>(static_cast<double>(TWOSF_SAMPLE_RATE * HLINE_CYCLES * VLINES) / HBASE_CYCLES);
-
 		while(frames_to_run > 0) {
-			long frames_this_run = TWOSF_SAMPLE_RATE;
-			if(frames_this_run > frames_to_run)
-				frames_this_run = frames_to_run;
-
-			long bytes = frames_this_run << 2;
-			size_t ropeAvail = 0;
-			while(ropeAvail < bytes) {
-				ropeAvail = 0;
-				for(const auto& buf : sndif->buffer_rope) {
-					ropeAvail += buf.size();
-				}
-				unsigned remainbytes = sndif->filled - sndif->used;
-				if(remainbytes > 0) {
-					if(remainbytes > bytes) {
-						sndif->used += bytes;
-						remainbytes -= bytes;
-						break;
-					} else {
-						sndif->used += remainbytes;
-						remainbytes = 0;
-					}
-				}
-				if(!remainbytes) {
-					if(sndif->sync_type == 1) {
-						/* vsync */
-						sndif->cycles += (TWOSF_SAMPLE_RATE / VDIVISION) * HLINE_CYCLES * VLINES;
-						if(sndif->cycles >= static_cast<uint32_t>(VBASE_CYCLES * (VSAMPLES + 1)))
-							sndif->cycles -= static_cast<uint32_t>(VBASE_CYCLES * (VSAMPLES + 1));
-						else
-							sndif->cycles -= static_cast<uint32_t>(VBASE_CYCLES * VSAMPLES);
-					} else {
-						/* hsync */
-						sndif->cycles += TWOSF_SAMPLE_RATE * HLINE_CYCLES;
-						if (sndif->cycles >= static_cast<uint32_t>(HBASE_CYCLES * (HSAMPLES + 1)))
-							sndif->cycles -= static_cast<uint32_t>(HBASE_CYCLES * (HSAMPLES + 1));
-						else
-							sndif->cycles -= static_cast<uint32_t>(HBASE_CYCLES * HSAMPLES);
-					}
-					NDS_exec<false>(&sndif->core);
-					SPU_Emulate_user(&sndif->core);
-				}
+			long samples = nds->SPU.GetOutputSize();
+			if(samples <= frames_to_run) {
+				nds->SPU.DrainOutput();
+				frames_to_run -= samples;
+				nds->RunFrame();
+			} else {
+				int16_t temp[frames_to_run * 2];
+				nds->SPU.ReadOutput(temp, (int)frames_to_run);
+				break;
 			}
-			while(bytes > 0) {
-				std::vector<uint8_t>& segment = sndif->buffer_rope.front();
-				size_t sz = segment.size();
-				if(bytes >= sz) {
-					sndif->buffer_rope.erase(sndif->buffer_rope.begin());
-					bytes -= sz;
-				} else {
-					segment.erase(segment.begin(), segment.begin() + bytes);
-					bytes = 0;
-				}
-			}
-			frames_to_run -= frames_this_run;
 		}
 
 		framesRead = frame;
