@@ -19,50 +19,172 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		83051FA52F4C0A9F004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				vio2sf/desmume/instruction_tabdef.inc,
-				vio2sf/desmume/thumb_tabdef.inc,
-			);
-			target = 83DE0C05180A9BD400269051 /* vio2sf */;
-		};
 		83051FA62F4C0AD6004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			privateHeaders = (
-				vio2sf/armcpu.h,
-				vio2sf/bits.h,
-				vio2sf/cp15.h,
-				vio2sf/emufile.h,
+				vio2sf/ARCodeFile.h,
+				vio2sf/AREngine.h,
+				vio2sf/Args.h,
+				vio2sf/ARM_InstrInfo.h,
+				vio2sf/ARM.h,
+				vio2sf/ArmCommon.h,
+				vio2sf/ARMInterpreter.h,
+				vio2sf/ARMJIT_A64/ARMJIT_Compiler_A64.h,
+				vio2sf/ARMJIT_Compiler.h,
+				vio2sf/ARMJIT_Global.h,
+				vio2sf/ARMJIT_Internal.h,
+				vio2sf/ARMJIT_Memory.h,
+				vio2sf/ARMJIT_RegisterCache.h,
+				vio2sf/ARMJIT_x64/ARMJIT_Compiler_x64.h,
+				vio2sf/ARMJIT.h,
+				vio2sf/CRC32.h,
+				vio2sf/debug/GdbArch.h,
+				vio2sf/debug/GdbCmds.h,
+				vio2sf/debug/GdbStub.h,
+				vio2sf/DMA.h,
+				vio2sf/dolphin/Arm64Emitter.h,
+				vio2sf/dolphin/BitSet.h,
+				vio2sf/dolphin/CommonFuncs.h,
+				vio2sf/dolphin/Compat.h,
+				vio2sf/dolphin/x64ABI.h,
+				vio2sf/dolphin/x64Emitter.h,
+				vio2sf/dolphin/x64Reg.h,
+				vio2sf/DSi_AES.h,
+				vio2sf/DSi_Camera.h,
+				vio2sf/DSi_DSP.h,
+				vio2sf/DSi_I2C.h,
+				vio2sf/DSi_I2S.h,
+				vio2sf/DSi_NAND.h,
+				vio2sf/DSi_NDMA.h,
+				vio2sf/DSi_NWifi.h,
+				vio2sf/DSi_SD.h,
+				vio2sf/DSi_SPI_TSC.h,
+				vio2sf/DSi_TMD.h,
+				vio2sf/fatfs/diskio.h,
+				vio2sf/fatfs/ff.h,
+				vio2sf/fatfs/ffconf.h,
+				vio2sf/FATIO.h,
+				vio2sf/FATStorage.h,
 				vio2sf/FIFO.h,
-				vio2sf/firmware.h,
-				vio2sf/instructions.h,
-				vio2sf/matrix.h,
-				vio2sf/mc.h,
-				vio2sf/mem.h,
-				vio2sf/metaspu.h,
-				vio2sf/MMU_timing.h,
-				vio2sf/MMU.h,
-				vio2sf/NDSSystem.h,
-				vio2sf/PACKED_END.h,
-				vio2sf/PACKED.h,
-				vio2sf/readwrite.h,
-				vio2sf/registers.h,
-				vio2sf/samplecache.h,
-				vio2sf/sampledata.h,
-				vio2sf/slot1.h,
+				vio2sf/FreeBIOS.h,
+				vio2sf/GBACart.h,
+				vio2sf/GPU.h,
+				vio2sf/GPU2D_Soft.h,
+				vio2sf/GPU2D.h,
+				vio2sf/GPU3D_Soft.h,
+				vio2sf/GPU3D.h,
+				vio2sf/JitBlock.h,
+				vio2sf/MemConstants.h,
+				vio2sf/MemRegion.h,
+				vio2sf/Mic.h,
+				vio2sf/NDS_Header.h,
+				vio2sf/NDSCart.h,
+				vio2sf/NonStupidBitfield.h,
+				vio2sf/Platform.h,
+				vio2sf/ROMList.h,
+				vio2sf/RTC.h,
+				vio2sf/Savestate.h,
+				vio2sf/SPI_Firmware.h,
+				vio2sf/SPI.h,
 				vio2sf/SPU.h,
+				"vio2sf/tiny-AES-c/aes.h",
+				"vio2sf/tiny-AES-c/aes.hpp",
+				vio2sf/TinyVector.h,
 				vio2sf/types.h,
+				vio2sf/Wifi.h,
 			);
 			publicHeaders = (
-				vio2sf/vio2sf.h,
+				vio2sf/DSi.h,
+				vio2sf/GPU_Soft.h,
+				vio2sf/NDS.h,
+			);
+			target = 83DE0C05180A9BD400269051 /* vio2sf */;
+		};
+		838F20F52F4C677E001DBA18 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				vio2sf/melonDS/ARMJIT_A64/ARMJIT_ALU.cpp,
+				vio2sf/melonDS/ARMJIT_A64/ARMJIT_Branch.cpp,
+				vio2sf/melonDS/ARMJIT_A64/ARMJIT_Compiler.cpp,
+				vio2sf/melonDS/ARMJIT_A64/ARMJIT_Linkage.S,
+				vio2sf/melonDS/ARMJIT_A64/ARMJIT_LoadStore.cpp,
+				vio2sf/melonDS/ARMJIT_x64/ARMJIT_ALU.cpp,
+				vio2sf/melonDS/ARMJIT_x64/ARMJIT_Branch.cpp,
+				vio2sf/melonDS/ARMJIT_x64/ARMJIT_Compiler.cpp,
+				vio2sf/melonDS/ARMJIT_x64/ARMJIT_GenOffsets.cpp,
+				vio2sf/melonDS/ARMJIT_x64/ARMJIT_Linkage.S,
+				vio2sf/melonDS/ARMJIT_x64/ARMJIT_LoadStore.cpp,
+				"vio2sf/melonDS/blip-buf/readme.txt",
+				vio2sf/melonDS/CMakeLists.txt,
+				vio2sf/melonDS/debug/gdb_test/.gitignore,
+				vio2sf/melonDS/debug/gdb_test/main.cpp,
+				vio2sf/melonDS/debug/gdb_test/Makefile,
+				vio2sf/melonDS/debug/GdbCmds.cpp,
+				vio2sf/melonDS/debug/GdbProto.cpp,
+				vio2sf/melonDS/debug/GdbStub.cpp,
+				vio2sf/melonDS/dolphin/Arm64Emitter.cpp,
+				vio2sf/melonDS/dolphin/MathUtil.cpp,
+				vio2sf/melonDS/dolphin/x64ABI.cpp,
+				vio2sf/melonDS/dolphin/x64CPUDetect.cpp,
+				vio2sf/melonDS/dolphin/x64Emitter.cpp,
+				vio2sf/melonDS/fatfs/00history.txt,
+				vio2sf/melonDS/fatfs/00readme.txt,
+				vio2sf/melonDS/GPU_OpenGL.cpp,
+				vio2sf/melonDS/GPU2D_OpenGL.cpp,
+				vio2sf/melonDS/GPU3D_Compute.cpp,
+				vio2sf/melonDS/GPU3D_OpenGL.cpp,
+				vio2sf/melonDS/GPU3D_TexcacheOpenGL.cpp,
+				vio2sf/melonDS/OpenGLSupport.cpp,
+				vio2sf/melonDS/teakra/.gitignore,
+				vio2sf/melonDS/teakra/.travis.yml,
+				vio2sf/melonDS/teakra/appveyor.yml,
+				vio2sf/melonDS/teakra/CMakeLists.txt,
+				vio2sf/melonDS/teakra/CMakeModules/CreateDirectoryGroups.cmake,
+				vio2sf/melonDS/teakra/externals/CMakeLists.txt,
+				vio2sf/melonDS/teakra/README.md,
+				vio2sf/melonDS/teakra/src/ahbm.md,
+				vio2sf/melonDS/teakra/src/apbp.md,
+				vio2sf/melonDS/teakra/src/btdmp.md,
+				vio2sf/melonDS/teakra/src/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/coff_reader/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/coff_reader/main.cpp,
+				vio2sf/melonDS/teakra/src/cru.md,
+				vio2sf/melonDS/teakra/src/decoder.md,
+				vio2sf/melonDS/teakra/src/disassembler_c.cpp,
+				vio2sf/melonDS/teakra/src/dma.md,
+				vio2sf/melonDS/teakra/src/dsp1_reader/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/dsp1_reader/main.cpp,
+				vio2sf/melonDS/teakra/src/icu.md,
+				vio2sf/melonDS/teakra/src/makedsp1/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/makedsp1/main.cpp,
+				vio2sf/melonDS/teakra/src/makedsp1/sha256.cpp,
+				vio2sf/melonDS/teakra/src/miu.md,
+				vio2sf/melonDS/teakra/src/mmio.md,
+				vio2sf/melonDS/teakra/src/mod_test_generator/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/mod_test_generator/main.cpp,
+				vio2sf/melonDS/teakra/src/ocem.md,
+				vio2sf/melonDS/teakra/src/pmu.md,
+				vio2sf/melonDS/teakra/src/processor_general.md,
+				vio2sf/melonDS/teakra/src/README.md,
+				vio2sf/melonDS/teakra/src/register.md,
+				vio2sf/melonDS/teakra/src/sio.md,
+				vio2sf/melonDS/teakra/src/step2_test_generator/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/step2_test_generator/main.cpp,
+				vio2sf/melonDS/teakra/src/teakra_c.cpp,
+				vio2sf/melonDS/teakra/src/test_generator/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/test_generator/main.cpp,
+				vio2sf/melonDS/teakra/src/test_verifier/CMakeLists.txt,
+				vio2sf/melonDS/teakra/src/test_verifier/main.cpp,
+				vio2sf/melonDS/teakra/src/timer.md,
+				"vio2sf/melonDS/tiny-AES-c/README.md",
+				vio2sf/melonDS/version.h.in,
 			);
 			target = 83DE0C05180A9BD400269051 /* vio2sf */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		83051F552F4C0A60004C0413 /* src */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (83051FA52F4C0A9F004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = src; sourceTree = "<group>"; };
+		83051F552F4C0A60004C0413 /* src */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (838F20F52F4C677E001DBA18 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = src; sourceTree = "<group>"; };
 		83051F8C2F4C0A6C004C0413 /* include */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (83051FA62F4C0AD6004C0413 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = include; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -244,7 +366,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -280,6 +402,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"JIT_ENABLED=1",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -305,7 +428,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -337,6 +460,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "JIT_ENABLED=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;

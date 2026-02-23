@@ -1,0 +1,474 @@
+/*
+    Copyright 2016-2026 melonDS team
+
+    This file is part of melonDS.
+
+    melonDS is free software: you can redistribute it and/or modify it under
+    the terms of the GNU General Public License as published by the Free
+    Software Foundation, either version 3 of the License, or (at your option)
+    any later version.
+
+    melonDS is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with melonDS. If not, see http://www.gnu.org/licenses/.
+*/
+
+#ifndef PLATFORM_H
+#define PLATFORM_H
+
+#include <vio2sf/types.h>
+
+#include <functional>
+#include <string>
+
+namespace melonDS
+{
+class Firmware;
+
+namespace Platform
+{
+
+enum StopReason {
+    /**
+     * The emulator stopped for some unspecified reason.
+     * Not necessarily an error.
+     */
+    Unknown,
+
+    /**
+     * The emulator stopped due to an external call to \c NDS::Stop,
+     * most likely because the user stopped the game manually.
+     */
+    External,
+
+    /**
+     * The emulator stopped because it tried to enter GBA mode,
+     * which melonDS does not support.
+     */
+    GBAModeNotSupported,
+
+    /**
+     * The emulator stopped because of an error in the emulated console,
+     * not necessarily because of an error in melonDS.
+     */
+    BadExceptionRegion,
+
+    /**
+     * The emulated console shut itself down normally,
+     * likely because its system settings were adjusted
+     * or its "battery" ran out.
+     */
+    PowerOff,
+};
+
+/**
+ * Signals to the frontend that no more frames should be requested.
+ * Frontends should not call this directly;
+ * use \c NDS::Stop instead.
+ */
+void SignalStop(StopReason reason, void* userdata);
+
+
+/**
+ * Denotes how a file will be opened and accessed.
+ * Flags may or may not correspond to the operating system's file API.
+ */
+enum FileMode : unsigned {
+    None = 0,
+
+    /**
+     * Opens a file for reading.
+     * Either this or \c Write must be set.
+     * Similar to \c "r" in \c fopen.
+     */
+    Read = 0b00'00'01,
+
+    /**
+     * Opens a file for writing, creating it if it doesn't exist.
+     * Will truncate existing files unless \c Preserve is set.
+     * Either this or \c Read must be set.
+     * Similar to <tt>fopen</tt>'s \c "w" flag.
+     */
+    Write = 0b00'00'10,
+
+    /**
+     * Opens an existing file as-is without truncating it.
+     * The file may still be created unless \c NoCreate is set.
+     * @note This flag has no effect if \c Write is not set.
+     */
+    Preserve = 0b00'01'00,
+
+    /**
+     * Do not create the file if it doesn't exist.
+     * @note This flag has no effect if \c Write is not set.
+     */
+    NoCreate = 0b00'10'00,
+
+    /**
+     * Opens a file in text mode,
+     * rather than the default binary mode.
+     * Text-mode files may have their line endings converted
+     * to match the operating system,
+     * and may also be line-buffered.
+     */
+    Text = 0b01'00'00,
+
+    /**
+     * Opens a file in append mode.
+     */
+    Append = 0b10'00'00,
+
+    /**
+     * Opens a file for reading and writing.
+     * Equivalent to <tt>Read | Write</tt>.
+     */
+    ReadWrite = Read | Write,
+
+    /**
+     * Opens a file for reading and writing
+     * without truncating it or creating a new one.
+     * Equivalent to <tt>Read | Write | Preserve | NoCreate</tt>.
+     */
+    ReadWriteExisting = Read | Write | Preserve | NoCreate,
+
+    /**
+     * Opens a file for reading in text mode.
+     * Equivalent to <tt>Read | Text</tt>.
+     */
+    ReadText = Read | Text,
+
+    /**
+     * Opens a file for writing in text mode,
+     * creating it if it doesn't exist.
+     * Equivalent to <tt>Write | Text</tt>.
+     */
+    WriteText = Write | Text,
+};
+
+/**
+ * Denotes the origin of a seek operation.
+ * Similar to \c fseek's \c SEEK_* constants.
+ */
+enum class FileSeekOrigin
+{
+    Start,
+    Current,
+    End,
+};
+
+/**
+ * Opaque handle for a file object.
+ * This can be implemented as a struct defined by the frontend,
+ * or as a simple pointer cast.
+ * The core will never look inside this struct,
+ * but frontends may do so freely.
+ */
+struct FileHandle;
+
+// retrieves the path to a local file, without opening the file
+std::string GetLocalFilePath(const std::string& filename);
+
+// Simple fopen() wrapper that supports UTF8.
+// Can be optionally restricted to only opening a file that already exists.
+FileHandle* OpenFile(const std::string& path, FileMode mode);
+
+// opens files local to the emulator (melonDS.ini, BIOS, firmware, ...)
+// For Windows builds, or portable UNIX builds it checks, by order of priority:
+//   * current working directory
+//   * emulator directory (essentially where the melonDS executable is) if supported
+//   * any platform-specific application data directories
+// in create mode, if the file doesn't exist, it will be created in the emulator
+// directory if supported, or in the current directory otherwise
+// For regular UNIX builds, the user's configuration directory is always used.
+FileHandle* OpenLocalFile(const std::string& path, FileMode mode);
+
+/// Returns true if the given file exists.
+bool FileExists(const std::string& name);
+bool LocalFileExists(const std::string& name);
+
+// Returns true if we have permission to write to the file.
+// Warning: Also creates the file if not present!
+bool CheckFileWritable(const std::string& filepath);
+
+// Same as above (CheckFileWritable()) but for local files.
+bool CheckLocalFileWritable(const std::string& filepath);
+
+/** Close a file opened with \c OpenFile.
+ * @returns \c true if the file was closed successfully, false otherwise.
+ * @post \c file is no longer valid and should not be used.
+ * The underlying object may still be allocated (e.g. if the frontend refcounts files),
+ * but that's an implementation detail.
+ * @see fclose
+ */
+bool CloseFile(FileHandle* file);
+
+/// @returns \c true if there is no more data left to read in this file,
+/// \c false if there is still data left to read or if there was an error.
+/// @see feof
+bool IsEndOfFile(FileHandle* file);
+
+/// @see fgets
+bool FileReadLine(char* str, int count, FileHandle* file);
+
+/// @see ftell
+u64 FilePosition(FileHandle* file);
+
+/// @see fseek
+bool FileSeek(FileHandle* file, s64 offset, FileSeekOrigin origin);
+
+/// @see rewind
+void FileRewind(FileHandle* file);
+
+/// @see fread
+u64 FileRead(void* data, u64 size, u64 count, FileHandle* file);
+
+/// @see fflush
+bool FileFlush(FileHandle* file);
+
+/// @see fwrite
+u64 FileWrite(const void* data, u64 size, u64 count, FileHandle* file);
+
+/// @see fprintf
+u64 FileWriteFormatted(FileHandle* file, const char* fmt, ...);
+
+/// @returns The length of the file in bytes, or 0 if there was an error.
+/// @note If this function checks the length by using \c fseek and \c ftell
+/// (or local equivalents), it must leave the stream position as it was found.
+u64 FileLength(FileHandle* file);
+
+enum LogLevel
+{
+    Debug,
+    Info,
+    Warn,
+    Error,
+};
+
+void Log(LogLevel level, const char* fmt, ...);
+
+struct Thread;
+Thread* Thread_Create(std::function<void()> func);
+void Thread_Free(Thread* thread);
+void Thread_Wait(Thread* thread);
+
+struct Semaphore;
+Semaphore* Semaphore_Create();
+void Semaphore_Free(Semaphore* sema);
+void Semaphore_Reset(Semaphore* sema);
+void Semaphore_Wait(Semaphore* sema);
+/// Waits for the semaphore to be signaled, or until the timeout (in milliseconds) expires.
+/// If the timeout is 0, then don't wait; return immediately if the semaphore is not signaled.
+bool Semaphore_TryWait(Semaphore* sema, int timeout_ms = 0);
+void Semaphore_Post(Semaphore* sema, int count = 1);
+
+struct Mutex;
+Mutex* Mutex_Create();
+void Mutex_Free(Mutex* mutex);
+void Mutex_Lock(Mutex* mutex);
+void Mutex_Unlock(Mutex* mutex);
+bool Mutex_TryLock(Mutex* mutex);
+
+void Sleep(u64 usecs);
+
+u64 GetMSCount();
+u64 GetUSCount();
+
+
+// functions called when the NDS or GBA save files need to be written back to storage
+// savedata and savelen are always the entire save memory buffer and its full length
+// writeoffset and writelen indicate which part of the memory was altered
+void WriteNDSSave(const u8* savedata, u32 savelen, u32 writeoffset, u32 writelen, void* userdata);
+void WriteGBASave(const u8* savedata, u32 savelen, u32 writeoffset, u32 writelen, void* userdata);
+
+/// Called when the firmware needs to be written back to storage,
+/// after one of the supported write commands finishes execution.
+/// @param firmware The firmware that was just written.
+/// @param writeoffset The offset of the first byte that was written to firmware.
+/// @param writelen The number of bytes that were written to firmware.
+void WriteFirmware(const Firmware& firmware, u32 writeoffset, u32 writelen, void* userdata);
+
+// called when the RTC date/time is changed and the frontend might need to take it into account
+void WriteDateTime(int year, int month, int day, int hour, int minute, int second, void* userdata);
+
+
+// local multiplayer comm interface
+// packet type: DS-style TX header (12 bytes) + original 802.11 frame
+void MP_Begin(void* userdata);
+void MP_End(void* userdata);
+int MP_SendPacket(u8* data, int len, u64 timestamp, void* userdata);
+int MP_RecvPacket(u8* data, u64* timestamp, void* userdata);
+int MP_SendCmd(u8* data, int len, u64 timestamp, void* userdata);
+int MP_SendReply(u8* data, int len, u64 timestamp, u16 aid, void* userdata);
+int MP_SendAck(u8* data, int len, u64 timestamp, void* userdata);
+int MP_RecvHostPacket(u8* data, u64* timestamp, void* userdata);
+u16 MP_RecvReplies(u8* data, u64 timestamp, u16 aidmask, void* userdata);
+
+
+// network comm interface
+// packet type: Ethernet (802.3)
+int Net_SendPacket(u8* data, int len, void* userdata);
+int Net_RecvPacket(u8* data, void* userdata);
+using SendPacketCallback = std::function<void(const u8* data, int len)>;
+
+
+// interface for camera emulation
+// camera numbers:
+// 0 = DSi outer camera
+// 1 = DSi inner camera
+// other values reserved for future camera addon emulation
+void Camera_Start(int num, void* userdata);
+void Camera_Stop(int num, void* userdata);
+void Camera_CaptureFrame(int num, u32* frame, int width, int height, bool yuv, void* userdata);
+
+
+// microphone interface
+
+/**
+ * Starts microphone recording.
+ * The platform may use this to request access to a physical microphone.
+ * @param userdata instance user data
+ */
+void Mic_Start(void* userdata);
+
+/**
+ * Stops microphone recording.
+ * @param userdata instance user data
+ */
+void Mic_Stop(void* userdata);
+
+/**
+ * Requests input data from the microphone.
+ * @param data pointer to the destination buffer, signed 16-bit mono at 47.6 KHz
+ * @param maxlength maximum length in samples that the destination buffer can receive
+ * @return length in samples that was able to be read
+ */
+int Mic_ReadInput(s16* data, int maxlength, void* userdata);
+
+
+// interface for AAC decoding (ie. DSi DSP HLE)
+
+struct AACDecoder;
+
+/**
+ * Initializes an AAC decoder context.
+ * @return a pointer to an AAC decoder context, or NULL if initialization fails
+ */
+AACDecoder* AAC_Init();
+
+/**
+ * Deinitializes an AAC decoder context.
+ * @param dec the context to be freed
+ */
+void AAC_DeInit(AACDecoder* dec);
+
+/**
+ * Configures the AAC decoder with new parameters (sampling frequency, channels).
+ * @param dec the context to be configured
+ * @param frequency the sampling frequency
+ * @param channels the channel setup value (1=mono, 2=stereo)
+ * @return true if configuration was successful, false if not
+ */
+bool AAC_Configure(AACDecoder* dec, int frequency, int channels);
+
+/**
+ * Decodes an AAC frame.
+ * Takes a raw AAC frame, without any ADIF or ADTS headers.
+ * Output is signed PCM6, interleaved. Output length is 1024 samples.
+ * @param dec the decoder context to use
+ * @param input the AAC frame to decode
+ * @param inputlen the length of the AAC frame in bytes
+ * @param output the buffer to write decoded output into
+ * @param outputlen the length of the output buffer in bytes
+ * @return true if decoding was successful, false if not
+ */
+bool AAC_DecodeFrame(AACDecoder* dec, const void* input, int inputlen, void* output, int outputlen);
+
+
+// interface for addon inputs
+
+enum KeyType
+{
+    KeyGuitarGripGreen,
+    KeyGuitarGripRed,
+    KeyGuitarGripYellow,
+    KeyGuitarGripBlue,
+};
+
+// Check if a given key is being pressed.
+// @param type The type of the key to check.
+bool Addon_KeyDown(KeyType type, void* userdata);
+
+// Called by the DS Rumble Pak emulation to start the necessary
+// rumble effects on the connected game controller, if available.
+// @param len The duration of the controller rumble effect in milliseconds.
+void Addon_RumbleStart(u32 len, void* userdata);
+
+// Called by the DS Rumble Pak emulation to stop any necessary
+// rumble effects on the connected game controller, if available.
+void Addon_RumbleStop(void* userdata);
+
+enum MotionQueryType
+{
+    /**
+     * @brief X axis acceleration, measured in SI meters per second squared.
+     * On a DS, the X axis refers to the top screen X-axis (left ... right).
+     */
+    MotionAccelerationX,
+    /**
+     * @brief Y axis acceleration, measured in SI meters per second squared.
+     * On a DS, the Y axis refers to the top screen Y-axis (bottom ... top).
+     */
+    MotionAccelerationY,
+    /**
+     * @brief Z axis acceleration, measured in SI meters per second squared.
+     * On a DS, the Z axis refers to the axis perpendicular to the top screen (farther ... closer).
+     */
+    MotionAccelerationZ,
+    /**
+     * @brief X axis rotation, measured in radians per second.
+     */
+    MotionRotationX,
+    /**
+     * @brief Y axis rotation, measured in radians per second.
+     */
+    MotionRotationY,
+    /**
+     * @brief Z axis rotation, measured in radians per second.
+     */
+    MotionRotationZ,
+};
+
+// Called by the DS Motion Pak emulation to query the game controller's
+// aceelration and rotation, if available.
+// @param type The value being queried.
+float Addon_MotionQuery(MotionQueryType type, void* userdata);
+
+struct DynamicLibrary;
+
+/**
+ * @param lib The name of the library to load.
+ * @return A handle to the loaded library, or \c nullptr if the library could not be loaded.
+ */
+DynamicLibrary* DynamicLibrary_Load(const char* lib);
+
+/**
+ * Releases a loaded library.
+ * Pointers to functions in the library will be invalidated.
+ * @param lib The library to unload.
+ */
+void DynamicLibrary_Unload(DynamicLibrary* lib);
+
+/**
+ * Loads a function from a library.
+ * @param lib The library to load the function from.
+ * @param name The name of the function to load.
+ * @return A pointer to the loaded function, or \c nullptr if the function could not be loaded.
+ */
+void* DynamicLibrary_LoadFunction(DynamicLibrary* lib, const char* name);
+}
+
+}
+#endif // PLATFORM_H
