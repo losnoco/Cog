@@ -47,6 +47,8 @@
 
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineDisabled", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"disabled"}];
 
+	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineSignalsmith", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"signalsmith"}];
+
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineFaster", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"faster"}];
 
 	[self addObject:@{@"name": NSLocalizedStringFromTableInBundle(@"EngineFiner", nil, [NSBundle bundleForClass:[self class]], @""), @"preference": @"finer"}];

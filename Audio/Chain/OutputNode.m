@@ -12,6 +12,7 @@
 #import "OutputCoreAudio.h"
 
 #import "DSPRubberbandNode.h"
+#import "DSPSignalsmithStretchNode.h"
 #import "DSPFSurroundNode.h"
 #import "DSPEqualizerNode.h"
 #import "VisualizationNode.h"
@@ -24,6 +25,7 @@
 	Node *previousInput;
 
 	DSPRubberbandNode *rubberbandNode;
+	DSPSignalsmithStretchNode *signalsmithNode;
 	DSPFSurroundNode *fsurroundNode;
 	DSPEqualizerNode *equalizerNode;
 	VisualizationNode *visualizationNode;
@@ -53,7 +55,9 @@
 	if(!DSPsLaunched) {
 		rubberbandNode = [[DSPRubberbandNode alloc] initWithController:self previous:nil latency:0.1];
 		if(!rubberbandNode) return NO;
-		fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:rubberbandNode latency:0.03];
+		signalsmithNode = [[DSPSignalsmithStretchNode alloc] initWithController:self previous:rubberbandNode latency:0.1];
+		if(!signalsmithNode) return NO;
+		fsurroundNode = [[DSPFSurroundNode alloc] initWithController:self previous:signalsmithNode latency:0.03];
 		if(!fsurroundNode) return NO;
 		equalizerNode = [[DSPEqualizerNode alloc] initWithController:self previous:fsurroundNode latency:0.03];
 		if(!equalizerNode) return NO;
@@ -173,7 +177,7 @@
 
 - (NSArray *)DSPs {
 	if(DSPsLaunched) {
-		return @[rubberbandNode, fsurroundNode, equalizerNode, visualizationNode];
+		return @[rubberbandNode, signalsmithNode, fsurroundNode, equalizerNode, visualizationNode];
 	} else {
 		return @[];
 	}
