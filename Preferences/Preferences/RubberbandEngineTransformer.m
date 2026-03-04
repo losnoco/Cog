@@ -23,6 +23,7 @@
 	if([value isKindOfClass:[NSString class]]) {
 		NSString *stringValue = value;
 		if([stringValue isEqualToString:@"disabled"] ||
+		   [stringValue isEqualToString:@"signalsmith"] ||
 		   [stringValue isEqualToString:@"finer"]) {
 			return @(NO);
 		}
@@ -46,7 +47,8 @@
 
 	if([value isKindOfClass:[NSString class]]) {
 		NSString *stringValue = value;
-		if([stringValue isEqualToString:@"disabled"]) {
+		if([stringValue isEqualToString:@"disabled"] ||
+		   [stringValue isEqualToString:@"signalsmith"]) {
 			return @(NO);
 		}
 	}

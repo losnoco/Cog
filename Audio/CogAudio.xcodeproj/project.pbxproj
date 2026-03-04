@@ -39,6 +39,8 @@
 		17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DD30B8D0F7000A34E87 /* PluginController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.mm */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83084F012F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83084F002F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm */; };
+		83084F032F5864C800EC1777 /* DSPSignalsmithStretchNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83084F022F5864C800EC1777 /* DSPSignalsmithStretchNode.h */; };
 		831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 831A50132865A7FD0049CFE4 /* rsstate.hpp */; };
 		831A50162865A8800049CFE4 /* rsstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831A50152865A8800049CFE4 /* rsstate.cpp */; };
 		831A50182865A8B30049CFE4 /* rsstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A50172865A8B30049CFE4 /* rsstate.h */; };
@@ -176,6 +178,8 @@
 		17F94DD40B8D0F7000A34E87 /* PluginController.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginController.mm; sourceTree = "<group>"; };
 		17F94DDC0B8D101100A34E87 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Plugin.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* CogAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogAudio_Prefix.pch; sourceTree = "<group>"; };
+		83084F002F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DSPSignalsmithStretchNode.mm; sourceTree = "<group>"; };
+		83084F022F5864C800EC1777 /* DSPSignalsmithStretchNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPSignalsmithStretchNode.h; sourceTree = "<group>"; };
 		831A50132865A7FD0049CFE4 /* rsstate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rsstate.hpp; sourceTree = "<group>"; };
 		831A50152865A8800049CFE4 /* rsstate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rsstate.cpp; sourceTree = "<group>"; };
 		831A50172865A8B30049CFE4 /* rsstate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rsstate.h; sourceTree = "<group>"; };
@@ -566,6 +570,8 @@
 				83F843242D5C66E9008C123B /* DSPEqualizerNode.m */,
 				833738E92D5EA52500278628 /* DSPDownmixNode.h */,
 				833738EB2D5EA53500278628 /* DSPDownmixNode.m */,
+				83084F022F5864C800EC1777 /* DSPSignalsmithStretchNode.h */,
+				83084F002F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm */,
 			);
 			path = DSP;
 			sourceTree = "<group>";
@@ -604,6 +610,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				83084F032F5864C800EC1777 /* DSPSignalsmithStretchNode.h in Headers */,
 				83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */,
 				833442422D6EFA6700C51D38 /* VisualizationController.h in Headers */,
 				83CFA54A2E535B9B008BC289 /* SimpleBuffer.h in Headers */,
@@ -771,6 +778,7 @@
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				834FD4F127AF93680063BC83 /* ChunkList.m in Sources */,
 				83FFED532D5B09320044CCAF /* DSPNode.m in Sources */,
+				83084F012F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm in Sources */,
 				8EC122600B993BD500C5B3AD /* ConverterNode.m in Sources */,
 				835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */,
 				83A349722D5C41810096D530 /* FSurroundFilter.mm in Sources */,
@@ -808,6 +816,7 @@
 				HEADER_SEARCH_PATHS = (
 					../ThirdParty/soxr/include,
 					../ThirdParty/rubberband/include,
+					../ThirdParty/signalsmith,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@rpath";
@@ -845,6 +854,7 @@
 				HEADER_SEARCH_PATHS = (
 					../ThirdParty/soxr/include,
 					../ThirdParty/rubberband/include,
+					../ThirdParty/signalsmith,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@rpath";

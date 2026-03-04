@@ -57,7 +57,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
 		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
-		enableRubberband = ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"disabled"];
+		enableRubberband = ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"disabled"] &&
+		                   ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"signalsmith"];
 
 		pitch = [defaults doubleForKey:@"pitch"];
 		tempo = [defaults doubleForKey:@"tempo"];
@@ -127,7 +128,8 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		tsapplynewoptions = YES;
 	} else if([[keyPath substringToIndex:17] isEqualToString:@"values.rubberband"]) {
 		NSUserDefaults *defaults = [[NSUserDefaultsController sharedUserDefaultsController] defaults];
-		enableRubberband = ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"disabled"];
+		enableRubberband = ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"disabled"] &&
+		                   ![[defaults stringForKey:@"rubberbandEngine"] isEqualToString:@"signalsmith"];
 		if(enableRubberband && ts) {
 			RubberBandOptions options = [self getRubberbandOptions];
 			RubberBandOptions changed = options ^ tslastoptions;

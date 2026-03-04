@@ -19,3 +19,9 @@
 [submodule "Frameworks/libsidplayfp/sidplayfp"]
 	path = Frameworks/libsidplayfp/sidplayfp
 	url = https://github.com/kode54/libsidplayfp.git
+[submodule "ThirdParty/signalsmith/signalsmith-stretch"]
+	path = ThirdParty/signalsmith/signalsmith-stretch
+	url = https://github.com/Signalsmith-Audio/signalsmith-stretch.git
+[submodule "ThirdParty/signalsmith/signalsmith-linear"]
+	path = ThirdParty/signalsmith/signalsmith-linear
+	url = https://github.com/Signalsmith-Audio/linear.git

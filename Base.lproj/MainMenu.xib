@@ -2643,9 +2643,9 @@ Gw
                     <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="40.824829049999998" tickMarkPosition="left" sliderType="linear" id="vTw-tV-W5R"/>
                     <connections>
                         <action selector="changePitch:" target="705" id="bZt-zY-tjg"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="3Kk-ix-XCv">
+                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="N2w-jM-0Sd">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineEnabledTransformer</string>
+                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
                             </dictionary>
                         </binding>
                         <outlet property="_TempoSlider" destination="stI-oD-51s" id="HMq-pE-Ssc"/>
@@ -2660,9 +2660,9 @@ Gw
                     </buttonCell>
                     <connections>
                         <action selector="pressLock:" target="Ta5-Ik-jh9" id="HnF-AC-arz"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="BUK-i6-qzt">
+                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="8bJ-3a-LzT">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineEnabledTransformer</string>
+                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>
@@ -2673,9 +2673,9 @@ Gw
                     <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="40.824829049999998" tickMarkPosition="left" sliderType="linear" id="94j-7B-a8j"/>
                     <connections>
                         <action selector="changeTempo:" target="705" id="8xu-Dm-ceG"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="eRW-kg-FQc">
+                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="xz9-lY-zDB">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineEnabledTransformer</string>
+                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
                             </dictionary>
                         </binding>
                         <outlet property="_PitchSlider" destination="6P4-yi-9TK" id="QaV-cx-2wf"/>
@@ -2690,9 +2690,9 @@ Gw
                     </buttonCell>
                     <connections>
                         <action selector="pressReset:" target="Ta5-Ik-jh9" id="zoi-N3-teA"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="GU1-d5-uWi">
+                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="nEe-pX-tFm">
                             <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineEnabledTransformer</string>
+                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
                             </dictionary>
                         </binding>
                     </connections>

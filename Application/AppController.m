@@ -76,10 +76,6 @@ static AppController *kAppController = nil;
 	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
 									forName:@"NumberHertzToStringTransformer"];
 
-	NSValueTransformer *rubberbandEngineEnabledTransformer = [RubberbandEngineEnabledTransformer new];
-	[NSValueTransformer setValueTransformer:rubberbandEngineEnabledTransformer
-									forName:@"RubberbandEngineEnabledTransformer"];
-
 	NSValueTransformer *rubberbandEngineHiddenTransformer = [RubberbandEngineHiddenTransformer new];
 	[NSValueTransformer setValueTransformer:rubberbandEngineHiddenTransformer
 									forName:@"RubberbandEngineHiddenTransformer"];

@@ -186,6 +186,17 @@
         }
       }
     },
+    "EngineSignalsmith" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signalsmith"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
     "Enqueue" : {
       "localizations" : {
         "es" : {
@@ -695,6 +706,10 @@
           }
         }
       }
+    },
+    "Signalsmith" : {
+      "extractionState" : "manual",
+      "shouldTranslate" : false
     },
     "Sinc Interpolation" : {
       "localizations" : {
