@@ -638,6 +638,7 @@ static const char* extension_list[] = {
 
     "u0",
     "ue4opus",
+    "ueopus",
     "ueba",
     "ulw", //txth/raw [Burnout (GC)]
     "um3",
@@ -833,6 +834,7 @@ static const coding_info coding_info_list[] = {
         {coding_SILENCE,            "Silence"},
 
         {coding_PCM16LE,            "16-bit Little Endian PCM"},
+        {coding_PCM16LE_U,          "16-bit Little Endian unsigned PCM"},
         {coding_PCM16BE,            "16-bit Big Endian PCM"},
         {coding_PCM16_int,          "16-bit PCM (block)"},
         {coding_PCM8,               "8-bit signed PCM"},
