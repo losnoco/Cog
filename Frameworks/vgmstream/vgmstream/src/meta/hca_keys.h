@@ -787,6 +787,11 @@ static const hcakey_info hcakey_list[] = {
     {0xf7c51ef55106e4a0},       // music_0910010
     {0xcd35d39900ebaedc},       // music_0910011
     {0x9016ad7c792423d4},       // music_0910012
+    {0xb349394b777f44d6},       // music_0910013
+    {0xccaf12d7171bde1c},       // music_0910014
+    {0xfeeb6fbb13e7d8e7},       // music_0910015
+    {0x7327e6e84f35a60e},       // music_0910016
+    {0x564c9efdae90c8fa},       // music_0910017
     {0x4683c57919dbdeee},       // music_0920001
     {0x126d0d20ad7f0401},       // music_0920002
     {0x1652eb8bf3cea8f5},       // music_0920003
@@ -1350,6 +1355,10 @@ static const hcakey_info hcakey_list[] = {
     {0xd297e85b8558540a},       // music_5050348
     {0xaf6972d6862ee8b4},       // music_5050349
     {0x245a8c2af43a4b82},       // music_5050354
+    {0x0710898fa430e4ac},       // music_5050357
+    {0x83ed45c42aaf321c},       // music_5050358
+    {0x7bd3a548768ccaac},       // music_5050359
+    {0xa6ead310cbd170e0},       // music_5050360
     {0x14ff7f4c5bbfeee9},       // music_5050361
     {0x52c250eade92393b},       // music_9010001
     {0xf66e6bb5b0599b07},       // music_9010002
@@ -1645,6 +1654,9 @@ static const hcakey_info hcakey_list[] = {
 
     // Gakuen Bungo Stray Dogs (Android)
     {5954769908396182294},      // 52A397AE9523CB16
+
+    // Outrankers (Android)
+    {8681634889512614279},      // 787B5CEF4B097987
 
 };
 
