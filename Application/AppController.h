@@ -83,6 +83,7 @@
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication hasVisibleWindows:(BOOL)flag;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 - (void)application:(NSApplication *)theApplication openFiles:(NSArray *)filenames;
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *) app;
 
 - (void)registerHotKeys;
 
