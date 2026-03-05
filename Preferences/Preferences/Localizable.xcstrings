@@ -159,13 +159,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faster"
+            "value" : "Rubber Band: Faster"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más rápido"
+            "value" : "Rubber Band: Más rápido"
           }
         }
       }
@@ -175,13 +175,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finer"
+            "value" : "Rubber Band: Finer"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor calidad"
+            "value" : "Rubber Band: Mejor calidad"
           }
         }
       }

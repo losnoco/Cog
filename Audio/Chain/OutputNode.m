@@ -349,6 +349,7 @@
 		previousNode = nil;
 		visualizationNode = nil;
 		fsurroundNode = nil;
+		signalsmithNode = nil;
 		rubberbandNode = nil;
 		previousInput = nil;
 	}
