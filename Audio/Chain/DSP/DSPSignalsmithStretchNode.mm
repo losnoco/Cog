@@ -13,6 +13,7 @@
 
 #import "Logging.h"
 
+#define SIGNALSMITH_USE_ACCELERATE 1
 #import <signalsmith-stretch/signalsmith-stretch.h>
 
 static void * kDSPSignalsmithStretchNodeContext = &kDSPSignalsmithStretchNodeContext;
@@ -25,7 +26,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	Stretch *ts;
 	size_t tschannels;
 	double tssamplerate;
-	ssize_t toDrop, samplesBuffered;
+	ssize_t samplesBuffered;
 	BOOL tsapplynewoptions;
 	double tempo, pitch;
 	double lastTempo, lastPitch;
@@ -132,21 +133,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
 	ts->setTransposeFactor(pitch, 8000.0 / tssamplerate);
 
-	toDrop = ts->outputLatency();
 	samplesBuffered = 0;
-
-	ssize_t toPad = ts->inputLatency();
-	if(toPad > 0) {
-		for(size_t i = 0; i < tschannels; ++i) {
-			memset(rsInBuffer[i], 0, 4096 * sizeof(float));
-		}
-		while(toPad > 0) {
-			ssize_t p = toPad;
-			if(p > 4096) p = 4096;
-			ts->process(rsInBuffer, (int)p, rsOutBuffer, 0);
-			toPad -= p;
-		}
-	}
 
 	tsapplynewoptions = NO;
 	flushed = NO;
@@ -309,24 +296,48 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	}
 
 	ssize_t samplesToProcess = 4096;
-	ssize_t samplesToOutput = floor(samplesToProcess / tempo + 0.5);
-	if(samplesToOutput > 65536) {
-		samplesToProcess = floor(65536.0 * tempo + 0.5);
-		if(!samplesToProcess)
-			return [self readChunk:4096];
-	}
+	ssize_t samplesToOutput = 0;
 
 	int channels = (int)(inputFormat.mChannelsPerFrame);
 
-	if(samplesToProcess > 0) {
+	if(!flushed && samplesToProcess > 0) {
+		if(!countOut) {
+			ssize_t seekLength = ts->outputSeekLength(tempo);
+			if(seekLength > 65536)
+				seekLength = 65536;
+			AudioChunk *chunk = [self readAndMergeChunksAsFloat32:seekLength];
+			if(!chunk || ![chunk frameCount]) {
+				[mutex unlock];
+				return nil;
+			}
+
+			streamTimestamp = [chunk streamTimestamp];
+			streamTimeRatio = [chunk streamTimeRatio];
+			isHDCD = isHDCD || [chunk isHDCD];
+			isResetForward = isResetForward || chunk.resetForward;
+
+			size_t frameCount = [chunk frameCount];
+			countIn += ((double)frameCount) / tempo;
+
+			NSData *sampleData = [chunk removeSamples:frameCount];
+
+			for (size_t i = 0; i < channels; ++i) {
+				cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsOutBuffer[i], 1);
+			}
+
+			ts->outputSeek(rsOutBuffer, (int)frameCount);
+		}
+
 		AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
 		if(!chunk || ![chunk frameCount]) {
 			[mutex unlock];
 			return nil;
 		}
 
-		streamTimestamp = [chunk streamTimestamp];
-		streamTimeRatio = [chunk streamTimeRatio];
+		if(countOut) {
+			streamTimestamp = [chunk streamTimestamp];
+			streamTimeRatio = [chunk streamTimeRatio];
+		}
 		isHDCD = isHDCD || [chunk isHDCD];
 		isResetForward = isResetForward || chunk.resetForward;
 
@@ -341,19 +352,29 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
 		flushed = [[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES;
 
+		samplesToOutput = floor(frameCount / tempo + 0.5);
+		if(samplesToOutput > 65536) {
+			samplesToProcess = floor(65536.0 * tempo + 0.5);
+			if(!samplesToProcess)
+				return nil;
+			frameCount = (size_t)std::min((ssize_t)frameCount, samplesToProcess);
+		}
+
 		ts->process(rsInBuffer, (int)frameCount, rsOutBuffer, (int)samplesToOutput);
 
-		ssize_t blockDrop = 0;
-		if(toDrop > 0) {
-			blockDrop = toDrop;
-			if(blockDrop > samplesToOutput) blockDrop = samplesToOutput;
-			toDrop -= blockDrop;
-			if(blockDrop == samplesToOutput)
-				return nil;
-		}
-		samplesToOutput -= blockDrop;
 		for (size_t i = 0; i < channels; ++i) {
-			cblas_scopy((int)samplesToOutput, rsOutBuffer[i] + blockDrop, 1, &rsDeinterleaveBuffer[i], (int)tschannels);
+			cblas_scopy((int)samplesToOutput, rsOutBuffer[i], 1, &rsDeinterleaveBuffer[i], channels);
+		}
+
+		if(flushed) {
+			ssize_t toFlush = ts->outputLatency() + (ssize_t)floor(ts->inputLatency() / tempo + 0.5);
+			if(toFlush + samplesToOutput > 65536)
+				toFlush = 65536 - samplesToOutput;
+			ts->flush(rsOutBuffer, (int)toFlush);
+			for (size_t i = 0; i < channels; ++i) {
+				cblas_scopy((int)toFlush, rsOutBuffer[i], 1, &rsDeinterleaveBuffer[i + channels * samplesToOutput], channels);
+			}
+			samplesToOutput += toFlush;
 		}
 
 		samplesBuffered = samplesToOutput;
@@ -363,7 +384,6 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 		if(samplesBuffered > 0) {
 			ssize_t ideal = (ssize_t)floor(countIn + 0.5);
 			if(countOut + samplesBuffered > ideal) {
-				// Rubber Band does not account for flushing duration in real time mode
 				samplesBuffered = ideal - countOut;
 			}
 		}
@@ -400,11 +420,6 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 - (double)secondsBuffered {
 	double rbBuffered = 0.0;
 	if(ts) {
-		// We don't use Rubber Band's latency function, because at least in Cog's case,
-		// by the time we call this function, and also, because it doesn't account for
-		// how much audio will be lopped off at the end of the process.
-		//
-		// Tested once, this tends to be close to zero when actually called.
 		rbBuffered = countIn - (double)(countOut);
 		if(rbBuffered < 0) {
 			rbBuffered = 0.0;
