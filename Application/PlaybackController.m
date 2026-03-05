@@ -327,7 +327,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(!pe.url) {
 		pe.error = YES;
 		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
-		[SentrySDK captureMessage:@"Attempted to play a bad file with no URL"];
+		[SentrySDK captureMessage:[NSString stringWithFormat:@"Attempted to play a bad file with no URL: %@", pe.urlString]];
 		return;
 	}
 
