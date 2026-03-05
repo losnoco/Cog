@@ -1047,4 +1047,8 @@ static NSDictionary *shortcutDefaults = nil;
 	}
 }
 
+- (BOOL) applicationSupportsSecureRestorableState:(NSApplication *) app {
+	return YES;
+}
+
 @end
