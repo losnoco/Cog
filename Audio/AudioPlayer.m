@@ -444,7 +444,7 @@
 	BOOL pathsEqual = NO;
 
 	if(!lastChain || ![lastChain isKindOfClass:[BufferChain class]] ||
-	   ![lastChain streamURL] ||
+	   ![lastChain streamURL] || ![[lastChain streamURL] isKindOfClass:[NSURL class]] ||
 	   !nextStream || ![nextStream isKindOfClass:[NSURL class]]) {
 		DLog(@"Previous chain or next stream references broken, or invalid classes");
 		if(!nextStream || ![nextStream isKindOfClass:[NSURL class]]) {
