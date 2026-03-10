@@ -195,7 +195,7 @@ int read_ai_regs(void* opaque, uint32_t address, uint32_t* value)
     {
         *value = get_remaining_dma_length(ai);
     }
-    else
+    else if (reg < AI_REGS_COUNT)
     {
         *value = ai->regs[reg];
     }
@@ -230,7 +230,10 @@ int write_ai_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
         return 0;
     }
 
-    masked_write(&ai->regs[reg], value, mask);
+    if (reg < AI_REGS_COUNT)
+    {
+        masked_write(&ai->regs[reg], value, mask);
+    }
 
     return 0;
 }

@@ -123,6 +123,9 @@ static void dma_pi_write(usf_state_t * state, struct pi_controller* pi)
             unsigned long rom_address = (((pi->regs[PI_CART_ADDR_REG]-0x10000000)&0x3FFFFFF)+i);
             unsigned long ram_address = (pi->regs[PI_DRAM_ADDR_REG]+i);
 
+            if (ram_address >= pi->ri->rdram.dram_size)
+                break;
+
             if (state->enable_trimming_mode)
             {
                 bit_array_set(state->barray_rom, rom_address / 4);
@@ -165,6 +168,9 @@ static void dma_pi_write(usf_state_t * state, struct pi_controller* pi)
         {
             unsigned long rom_address = (((pi->regs[PI_CART_ADDR_REG]-0x10000000)&0x3FFFFFF)+i);
             unsigned long ram_address = (pi->regs[PI_DRAM_ADDR_REG]+i);
+
+            if (ram_address >= pi->ri->rdram.dram_size)
+                break;
 
             if (state->enable_trimming_mode)
             {
@@ -217,7 +223,8 @@ int read_pi_regs(void* opaque, uint32_t address, uint32_t* value)
     struct pi_controller* pi = (struct pi_controller*)opaque;
     uint32_t reg = pi_reg(address);
 
-    *value = pi->regs[reg];
+    if (reg < PI_REGS_COUNT)
+        *value = pi->regs[reg];
 
     return 0;
 }
@@ -256,7 +263,10 @@ int write_pi_regs(void* opaque, uint32_t address, uint32_t value, uint32_t mask)
         return 0;
     }
 
-    masked_write(&pi->regs[reg], value, mask);
+    if (reg < PI_REGS_COUNT)
+    {
+        masked_write(&pi->regs[reg], value, mask);
+    }
 
     return 0;
 }
