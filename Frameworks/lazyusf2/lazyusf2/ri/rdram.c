@@ -52,7 +52,11 @@ int read_rdram_regs(void* opaque, uint32_t address, uint32_t* value)
     struct ri_controller* ri = (struct ri_controller*)opaque;
     uint32_t reg = rdram_reg(address);
 
-    *value = ri->rdram.regs[reg];
+    if (reg < RDRAM_REGS_COUNT) {
+        *value = ri->rdram.regs[reg];
+    } else {
+        *value = 0;
+    }
 
     return 0;
 }
@@ -62,7 +66,9 @@ int write_rdram_regs(void* opaque, uint32_t address, uint32_t value, uint32_t ma
     struct ri_controller* ri = (struct ri_controller*)opaque;
     uint32_t reg = rdram_reg(address);
 
-    masked_write(&ri->rdram.regs[reg], value, mask);
+    if (reg < RDRAM_REGS_COUNT) {
+        masked_write(&ri->rdram.regs[reg], value, mask);
+    }
 
     return 0;
 }

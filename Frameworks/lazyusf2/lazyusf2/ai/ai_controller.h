@@ -67,7 +67,7 @@ struct ai_controller
 
 static osal_inline uint32_t ai_reg(uint32_t address)
 {
-    return (address & 0xffff) >> 2;
+    return (address & 0x1f) >> 2;
 }
 
 /* This is for enablefifofull */

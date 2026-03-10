@@ -281,7 +281,8 @@ int read_rsp_regs2(void* opaque, uint32_t address, uint32_t* value)
     struct rsp_core* sp = (struct rsp_core*)opaque;
     uint32_t reg = rsp_reg2(address);
 
-    *value = sp->regs2[reg];
+    if (reg < SP_REGS2_COUNT)
+        *value = sp->regs2[reg];
 
     return 0;
 }
@@ -291,7 +292,8 @@ int write_rsp_regs2(void* opaque, uint32_t address, uint32_t value, uint32_t mas
     struct rsp_core* sp = (struct rsp_core*)opaque;
     uint32_t reg = rsp_reg2(address);
 
-    masked_write(&sp->regs2[reg], value, mask);
+    if (reg < SP_REGS2_COUNT)
+        masked_write(&sp->regs2[reg], value, mask);
 
     return 0;
 }
