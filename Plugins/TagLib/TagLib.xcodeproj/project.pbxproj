@@ -16,6 +16,7 @@
 		8356BCE527B377C20074E50C /* TagLibID3v2Reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */; };
 		8356BCE627B377C20074E50C /* TagLibID3v2Reader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */; };
 		8384913A18081FFC00E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384913918081FFC00E7332D /* Logging.h */; };
+		8394D2972F65803A002FFAAC /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8394D2962F65803A002FFAAC /* CogAudio.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TagLibID3v2Reader.mm; sourceTree = "<group>"; };
 		83747BF52862D9470021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384913918081FFC00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
+		8394D2962F65803A002FFAAC /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B6048680CD000E48DA /* TagLib.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TagLib.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8394D2972F65803A002FFAAC /* CogAudio.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 				83344E182D4B536200C120FA /* tag.framework in Frameworks */,
 			);
@@ -76,6 +79,7 @@
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				8394D2952F65803A002FFAAC /* Frameworks */,
 			);
 			name = TagLib;
 			sourceTree = "<group>";
@@ -156,6 +160,14 @@
 			);
 			name = "Xcode-config";
 			path = "../../Xcode-config";
+			sourceTree = "<group>";
+		};
+		8394D2952F65803A002FFAAC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8394D2962F65803A002FFAAC /* CogAudio.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

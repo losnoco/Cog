@@ -357,16 +357,25 @@ namespace TagLib {
      * \c true and returns the integer. Otherwise it sets \a *ok to \c false
      * and the result is undefined.
      */
-    int toInt(bool *ok = nullptr, int base = 10) const;
+    int toInt(bool *ok = nullptr) const;
 
     /*!
-     * Convert the string to a float.
+     * Convert the string to an integer.
      *
      * If the conversion was successful, it sets the value of \a *ok to
-     * \c true and returns the float. Otherwise it sets \a *ok to \c false
+     * \c true and returns the integer. Otherwise it sets \a *ok to \c false
      * and the result is undefined.
      */
-    float toFloat(bool *ok = nullptr) const;
+    long long toLongLong(bool *ok = nullptr, int base = 10) const;
+
+    /*!
+     * Convert the string to an integer.
+     *
+     * If the conversion was successful, it sets the value of \a *ok to
+     * \c true and returns the integer. Otherwise it sets \a *ok to \c false
+     * and the result is undefined.
+     */
+    unsigned long long toULongLong(bool *ok = nullptr, int base = 10) const;
 
     /*!
      * Returns a string with the leading and trailing whitespace stripped.
@@ -392,6 +401,11 @@ namespace TagLib {
      * Converts the base-10 integer \a n to a string.
      */
     static String fromLongLong(long long n);
+
+    /*!
+     * Converts the base-10 integer \a n to a string.
+     */
+    static String fromULongLong(unsigned long long n);
 
     /*!
      * Returns a reference to the character at position \a i.

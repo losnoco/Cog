@@ -9,9 +9,8 @@
 #import "TagLibMetadataReader.h"
 #import <tag/audioproperties.h>
 #import <tag/fileref.h>
-#import <tag/flacfile.h>
-#import <tag/mpcproperties.h>
 #import <tag/tag.h>
+#import <tag/tpropertymap.h>
 
 #import "Logging.h"
 
@@ -19,90 +18,54 @@
 
 @implementation TagLibMetadataReader
 
-+ (NSDictionary *)readMetadataFromTag:(const TagLib::Tag *)tag {
++ (NSDictionary *)readMetadataFromFile:(const TagLib::FileRef &)f {
 	NSMutableDictionary *dict = [NSMutableDictionary new];
 
 	try {
-		TagLib::String artist, albumartist, composer, title, album, genre, comment, unsyncedlyrics;
-		int year, track, disc;
-		TagLib::Tag::ReplayGain rg;
-		TagLib::String cuesheet;
-		TagLib::String soundcheck;
-		
-		artist = tag->artist();
-		albumartist = tag->albumartist();
-		composer = tag->composer();
-		title = tag->title();
-		
-		album = tag->album();
-		genre = tag->genre();
-		comment = tag->comment();
-		cuesheet = tag->cuesheet();
-		
-		unsyncedlyrics = tag->unsyncedlyrics();
-		
-		year = tag->year();
-		if(year)
-			[dict setObject:@(year) forKey:@"year"];
-		
-		track = tag->track();
-		if(track)
-			[dict setObject:@(track) forKey:@"track"];
-		
-		disc = tag->disc();
-		if(disc)
-			[dict setObject:@(disc) forKey:@"disc"];
-		
-		rg = tag->replaygain();
-		if(!rg.isEmpty()) {
-			if(rg.albumGainSet())
-				[dict setObject:@(rg.albumGain()) forKey:@"replaygain_album_gain"];
-			if(rg.albumPeakSet())
-				[dict setObject:@(rg.albumPeak()) forKey:@"replaygain_album_peak"];
-			if(rg.trackGainSet())
-				[dict setObject:@(rg.trackGain()) forKey:@"replaygain_track_gain"];
-			if(rg.trackPeakSet())
-				[dict setObject:@(rg.trackPeak()) forKey:@"replaygain_track_peak"];
+		TagLib::String title;
+
+		TagLib::Tag *tag = f.tag();
+		if(tag) {
+			title = tag->title();
 		}
+
+		TagLib::PropertyMap tags = f.properties();
 		
-		soundcheck = tag->soundcheck();
-		if(!soundcheck.isEmpty()) {
-			[dict setObject:[NSString stringWithUTF8String:soundcheck.toCString(true)] forKey:@"soundcheck"];
+		NSDictionary *tagmap = @{@"tracknumber": @"track",
+								 @"discnumber": @"disc",
+								 @"itunnorm": @"soundcheck"};
+
+		for(auto i = tags.cbegin(); i != tags.cend(); ++i) {
+			NSString *name = [guess_encoding_of_string(i->first.toCString(true)) lowercaseString];
+			NSMutableArray *valuelist = [NSMutableArray new];
+			for(auto j = i->second.begin(); j != i->second.end(); ++j) {
+				[valuelist addObject:guess_encoding_of_string(j->toCString(true))];
+			}
+			NSString *mapped = [tagmap valueForKey:name];
+			if(mapped) {
+				[dict setValue:valuelist forKey:mapped];
+			} else {
+				[dict setValue:valuelist forKey:name];
+			}
 		}
-		
-		if(!artist.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:artist.toCString(true)] forKey:@"artist"];
-		
-		if(!albumartist.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:albumartist.toCString(true)] forKey:@"albumartist"];
-		
-		if(!composer.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:composer.toCString(true)] forKey:@"composer"];
-		
-		if(!album.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:album.toCString(true)] forKey:@"album"];
-		
-		if(!title.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:title.toCString(true)] forKey:@"title"];
-		
-		if(!genre.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:genre.toCString(true)] forKey:@"genre"];
-		
-		if(!cuesheet.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:cuesheet.toCString(true)] forKey:@"cuesheet"];
-		
-		if(!comment.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:comment.toCString(true)] forKey:@"comment"];
-		
-		if(!unsyncedlyrics.isEmpty())
-			[dict setObject:[NSString stringWithUTF8String:unsyncedlyrics.toCString(true)] forKey:@"unsyncedlyrics"];
+
+		TagLib::StringList names = f.complexPropertyKeys();
+
+		if(!title.isEmpty()) {
+			NSString *titlename;
+			if(names.contains("CHAPTERS")) {
+				titlename = @"album";
+			} else {
+				titlename = @"title";
+			}
+			[dict setValue:guess_encoding_of_string(title.toCString(true)) forKey:titlename];
+		}
 		
 		// Try to load the image.
 		NSData *image = nil;
 		
-		TagLib::StringList properties = tag->complexPropertyKeys();
-		if(properties.contains("PICTURE")) {
-			const TagLib::List<TagLib::VariantMap> &props = tag->complexProperties("PICTURE");
+		if(names.contains("PICTURE")) {
+			const TagLib::List<TagLib::VariantMap> &props = f.complexProperties("PICTURE");
 			if(!props.isEmpty()) {
 				const TagLib::VariantMap &picture = props.front();
 				TagLib::ByteVector data = picture["data"].toByteVector();
@@ -168,11 +131,7 @@
 	try {
 		TagLib::FileRef f((const char *)[[url path] UTF8String], false);
 		if(!f.isNull()) {
-			const TagLib::Tag *tag = f.tag();
-
-			if(tag) {
-				dict = [self readMetadataFromTag:tag];
-			}
+			dict = [self readMetadataFromFile:f];
 		}
 	} catch (std::exception &e) {
 		ALog(@"Exception caught reading file with TagLib: %s", e.what());
@@ -199,7 +158,7 @@
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"audio/x-ms-wma", @"audio/x-musepack", @"audio/mpeg", @"audio/x-mp3", @"audio/mp4", @"audio/x-apl", @"audio/wav", @"audio/aiff", @"audio/x-wavpack", @"audio/ogg"];
+	return @[@"audio/x-ms-wma", @"audio/x-musepack", @"audio/mpeg", @"audio/x-mp3", @"audio/mp4", @"audio/x-apl", @"audio/wav", @"audio/aiff", @"audio/x-wavpack", @"audio/ogg", @"audio/matroska"];
 }
 
 + (float)priority {

@@ -42,7 +42,6 @@ namespace TagLib {
       class TAGLIB_EXPORT Tag : public TagLib::Tag
       {
       public:
-        using TagLib::Tag::ReplayGain;
         Tag();
         ~Tag() override;
 
@@ -53,11 +52,6 @@ namespace TagLib {
         String title() const override;
 
         /*!
-         * Not supported.  Therefore always returns String().
-         */
-         String albumartist() const override;
-
-         /*!
          * Returns the artist name; if no artist name is present in the tag
          * String() will be returned.
          */
@@ -66,17 +60,7 @@ namespace TagLib {
         /*!
          * Not supported.  Therefore always returns String().
          */
-         String composer() const override;
-
-        /*!
-         * Not supported.  Therefore always returns String().
-         */
         String album() const override;
-
-        /*!
-         * Not supported.  Therefore always returns String().
-         */
-        String unsyncedlyrics() const override;
 
         /*!
          * Not supported.  Therefore always returns String().
@@ -99,35 +83,10 @@ namespace TagLib {
         unsigned int track() const override;
 
         /*!
-         * Not supported.  Therefore always returns 0.
-         */
-        unsigned int disc() const override;
-
-        /*!
-         * Not supported.  Therefore always returns String().
-         */
-        String cuesheet() const override;
-
-        /*!
-         * Not supported.  Therefore always returns ReplayGain().
-         */
-        ReplayGain replaygain() const override;
-
-        /*!
-         * Not supported.  Therefore always returns String().
-         */
-        String soundcheck() const override;
-
-        /*!
          * Sets the title to \a title.  If \a title is String() then this
          * value will be cleared.
          */
         void setTitle(const String &title) override;
-
-        /*!
-         * Not supported and therefore ignored.
-         */
-        void setAlbumArtist(const String &albumartist) override;
 
         /*!
          * Sets the artist to \a artist.  If \a artist is String() then this
@@ -138,17 +97,7 @@ namespace TagLib {
         /*!
          * Not supported and therefore ignored.
          */
-        void setComposer(const String &composer) override;       
-
-        /*!
-         * Not supported and therefore ignored.
-         */
         void setAlbum(const String &album) override;
-
-        /*!
-         * Not supported and therefore ignored.
-         */
-        void setUnsyncedLyrics(const String &unsyncedlyrics) override;
 
         /*!
          * Not supported and therefore ignored.
@@ -169,26 +118,6 @@ namespace TagLib {
          * Not supported and therefore ignored.
          */
         void setTrack(unsigned int track) override;
-
-        /*!
-         * Not supported and therefore ignored.
-         */
-        void setDisc(unsigned int disc) override;
-
-        /*!
-         * Not supported and therefore ignored.
-         */
-        void setCuesheet(const String &cuesheet) override;
-
-        /*!
-         * Not supported and therefore ignored.
-         */
-        void setReplaygain(ReplayGain replaygain) override;
-
-        /*!
-         * Not supported and therefore ignored.
-         */
-        void setSoundcheck(const String &soundcheck) override;
 
         /*!
          * Implements the unified property interface -- export function.
