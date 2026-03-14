@@ -11,5 +11,5 @@ cmake -B build.x86.d -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_T
 cmake -B build.arm -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath
 ```
 
-Using taglib 2.1.1, with the included patch.
+Using taglib 2.2.1, with no patches applied.
 

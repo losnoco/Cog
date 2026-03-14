@@ -41,8 +41,6 @@ namespace TagLib {
     class TAGLIB_EXPORT Tag : public TagLib::Tag
     {
     public:
-      using TagLib::Tag::ReplayGain;
-
       Tag();
       ~Tag() override;
 
@@ -57,27 +55,12 @@ namespace TagLib {
       /*!
        * Not supported by Shorten files.  Therefore always returns an empty string.
        */
-      String albumartist() const override;
-
-      /*!
-       * Not supported by Shorten files.  Therefore always returns an empty string.
-       */
       String artist() const override;
 
       /*!
        * Not supported by Shorten files.  Therefore always returns an empty string.
        */
-      String composer() const override;
-
-      /*!
-       * Not supported by Shorten files.  Therefore always returns an empty string.
-       */
       String album() const override;
-
-      /*!
-       * Not supported by Shorten files.  Therefore always returns an empty string.
-       */
-      String unsyncedlyrics() const override;
 
       /*!
        * Not supported by Shorten files.  Therefore always returns an empty string.
@@ -100,34 +83,9 @@ namespace TagLib {
       unsigned int track() const override;
 
       /*!
-       * Not supported by Shorten files.  Therefore always returns 0.
-       */
-      unsigned int disc() const override;
-
-      /*!
-       * Not supported by Shorten files.  Therefore always returns an empty string.
-       */
-      String cuesheet() const override;
-
-      /*!
-       * Not supported by Shorten files.  Therefore always returns an empty string.
-       */
-      ReplayGain replaygain() const override;
-
-      /*!
-       * Not supported by Shorten files.  Therefore always returns an empty string.
-       */
-      String soundcheck() const override;
-
-      /*!
        * Not supported by Shorten files and therefore ignored.
        */
       void setTitle(const String &title) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
-      void setAlbumArtist(const String &albumartist) override;
 
       /*!
        * Not supported by Shorten files and therefore ignored.
@@ -137,17 +95,7 @@ namespace TagLib {
       /*!
        * Not supported by Shorten files and therefore ignored.
        */
-      void setComposer(const String &composer) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
       void setAlbum(const String &album) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
-      void setUnsyncedLyrics(const String &unsyncedlyrics) override;
 
       /*!
        * Not supported by Shorten files and therefore ignored.
@@ -168,26 +116,6 @@ namespace TagLib {
        * Not supported by Shorten files and therefore ignored.
        */
       void setTrack(unsigned int track) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
-      void setDisc(unsigned int disc) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
-      void setCuesheet(const String &cuesheet) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
-      void setReplaygain(ReplayGain replaygain) override;
-
-      /*!
-       * Not supported by Shorten files and therefore ignored.
-       */
-      void setSoundcheck(const String &soundcheck) override;
 
       /*!
        * Implements the unified property interface -- export function.

@@ -60,11 +60,7 @@
 
 		TagLib::FileRef f((TagLib::IOStream *)&vectorStream, false);
 		if(!f.isNull()) {
-			const TagLib::Tag *tag = f.tag();
-
-			if(tag) {
-				dict = [TagLibMetadataReader readMetadataFromTag:tag];
-			}
+			dict = [TagLibMetadataReader readMetadataFromFile:f];
 		}
 	} catch (std::exception &e) {
 		ALog(@"Exception caught processing ID3v2 tag with TagLib: %s", e.what());
