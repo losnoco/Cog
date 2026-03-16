@@ -344,13 +344,11 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (BOOL)setup {
-	if(@available(macOS 10.15, *)) {
+	{
 		NSWindow *window = self.window;
 		EDR = (window) ? (window.screen.maximumPotentialExtendedDynamicRangeColorComponentValue > 1.0) : NO;
-	} else {
-		EDR = NO;
 	}
-	
+
 	pixelFormat = MTLPixelFormatBGRA8Unorm;
 	CFStringRef colorSpaceName = kCGColorSpaceITUR_709;
 	if(@available(macOS 10.15.4, *)) {

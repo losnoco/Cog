@@ -145,10 +145,7 @@
 
 	PathItem *pi = [[pathsList arrangedObjects] objectAtIndex:row];
 
-	CGFloat fontSize = 11.0;
-	if(@available(macOS 10.14, *)) {
-		fontSize = 13.0;
-	}
+	CGFloat fontSize = 13.0;
 
 	NSButton *cellButton = nil;
 	NSString *cellText = @"";
