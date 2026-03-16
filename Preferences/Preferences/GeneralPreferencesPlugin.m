@@ -75,15 +75,6 @@
 }
 
 - (GeneralPreferencePane *)notificationsPane {
-	if(@available(macOS 10.14, *)) {
-		if(iTunesStyleCheck) {
-			iTunesStyleCheck.hidden = YES;
-			NSSize size = notificationsView.frame.size;
-			size.height -= 18;
-			[notificationsView setFrameSize:size];
-		}
-	}
-
 	return [GeneralPreferencePane preferencePaneWithView:notificationsView
 	                                               title:NSLocalizedPrefString(@"Notifications")
 	                                      systemIconName:@"bell.fill"

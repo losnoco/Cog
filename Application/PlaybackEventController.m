@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 
 	PlaylistEntry *entry;
 
-	Boolean didGainUN API_AVAILABLE(macosx(10.14));
+	Boolean didGainUN;
 }
 
 - (void)initDefaults {
@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 
 		didGainUN = NO;
 
-		if(@available(macOS 10.14, *)) {
+		{
 			UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
 			[center
 			requestAuthorizationWithOptions:UNAuthorizationOptionAlert
@@ -61,7 +61,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 				              if(granted) {
 					              UNNotificationAction *skipAction = [UNNotificationAction
 					              actionWithIdentifier:@"skip"
-					                             title:@"Skip"
+												 title:NSLocalizedString(@"SkipAction", @"")
 					                           options:UNNotificationActionOptionNone];
 
 					              UNNotificationCategory *playCategory = [UNNotificationCategory
@@ -92,8 +92,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:
-         (void (^)(UNNotificationPresentationOptions options))completionHandler
-API_AVAILABLE(macos(10.14)) {
+         (void (^)(UNNotificationPresentationOptions options))completionHandler {
 	UNNotificationPresentationOptions presentationOptions = UNNotificationPresentationOptionAlert;
 
 	completionHandler(presentationOptions);
@@ -101,7 +100,7 @@ API_AVAILABLE(macos(10.14)) {
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler API_AVAILABLE(macos(10.14)) {
+         withCompletionHandler:(void (^)(void))completionHandler {
 	if([[response actionIdentifier] isEqualToString:@"skip"]) {
 		[playbackController next:self];
 	}
@@ -160,7 +159,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
 		if([defaults boolForKey:@"notifications.enable"]) {
-			if(@available(macOS 10.14, *)) {
+			{
 				if(didGainUN) {
 					UNUserNotificationCenter *center =
 					[UNUserNotificationCenter currentNotificationCenter];
@@ -242,47 +241,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 						         NSLog(@"%@", error.localizedDescription);
 					         }];
 				}
-			} else {
-				NSUserNotification *notif = [NSUserNotification new];
-				notif.title = [pe title];
-
-				NSString *subtitle;
-				NSString *artist = (pe.artist && [pe.artist length]) ? pe.artist : nil;
-				NSString *album = (pe.album && [pe.album length]) ? pe.album : nil;
-				if(artist && album) {
-					subtitle = [NSString stringWithFormat:@"%@ - %@", artist, album];
-				} else if(artist) {
-					subtitle = artist;
-				} else if(album) {
-					subtitle = album;
-				} else {
-					subtitle = @"";
-				}
-
-				if([defaults boolForKey:@"notifications.itunes-style"]) {
-					notif.subtitle = subtitle;
-					[notif setValue:@YES forKey:@"_showsButtons"];
-				} else {
-					notif.informativeText = subtitle;
-				}
-
-				if([notif respondsToSelector:@selector(setContentImage:)]) {
-					if([defaults boolForKey:@"notifications.show-album-art"] &&
-					   [pe albumArtInternal]) {
-						NSImage *image = [pe albumArt];
-
-						if([defaults boolForKey:@"notifications.itunes-style"]) {
-							[notif setValue:image forKey:@"_identityImage"];
-						} else {
-							notif.contentImage = image;
-						}
-					}
-				}
-
-				notif.actionButtonTitle = NSLocalizedString(@"SkipAction", @"");
-
-				[[NSUserNotificationCenter defaultUserNotificationCenter]
-				scheduleNotification:notif];
 			}
 		}
 	}

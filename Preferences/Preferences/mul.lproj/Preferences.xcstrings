@@ -694,24 +694,6 @@
         }
       }
     },
-    "cOb-hQ-7K8.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Use iTunes style\"; ObjectID = \"cOb-hQ-7K8\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Use iTunes style"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usar estilo de iTunes"
-          }
-        }
-      }
-    },
     "CQI-YZ-B3V.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Spectrum peaks\"; ObjectID = \"CQI-YZ-B3V\";",
       "extractionState" : "extracted_with_value",
