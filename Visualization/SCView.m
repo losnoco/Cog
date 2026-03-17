@@ -21,10 +21,10 @@
 
 static void *kSCViewContext = &kSCViewContext;
 
-extern NSString *CogPlaybackDidBeginNotificiation;
-extern NSString *CogPlaybackDidPauseNotificiation;
-extern NSString *CogPlaybackDidResumeNotificiation;
-extern NSString *CogPlaybackDidStopNotificiation;
+extern NSNotificationName CogPlaybackDidBeginNotificiation;
+extern NSNotificationName CogPlaybackDidPauseNotificiation;
+extern NSNotificationName CogPlaybackDidResumeNotificiation;
+extern NSNotificationName CogPlaybackDidStopNotificiation;
 
 static NSString *getRomName(NSString *baseName) {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);

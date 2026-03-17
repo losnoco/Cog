@@ -25,10 +25,10 @@
 #define DEFAULT_TEMPO_DOWN 0.2
 #define DEFAULT_TEMPO_UP DEFAULT_TEMPO_DOWN
 
-extern NSString *CogPlaybackDidBeginNotificiation;
-extern NSString *CogPlaybackDidPauseNotificiation;
-extern NSString *CogPlaybackDidResumeNotificiation;
-extern NSString *CogPlaybackDidStopNotificiation;
+extern NSNotificationName CogPlaybackDidBeginNotificiation;
+extern NSNotificationName CogPlaybackDidPauseNotificiation;
+extern NSNotificationName CogPlaybackDidResumeNotificiation;
+extern NSNotificationName CogPlaybackDidStopNotificiation;
 
 extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 

@@ -8,7 +8,7 @@
 
 #import "AppearancePane.h"
 
-static NSString *CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
+static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
 
 @implementation AppearancePane
 

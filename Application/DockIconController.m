@@ -16,6 +16,8 @@ static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackSt
 
 static NSString *CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
 
+static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
+
 - (void)startObserving {
 	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
 	[playbackController addObserver:self forKeyPath:@"progressOverall" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
