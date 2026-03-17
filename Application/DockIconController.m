@@ -14,34 +14,34 @@
 
 static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackStatusObservationContext";
 
-static NSString *CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
+static void *DockIconPlaybackStatusObservationContext = &DockIconPlaybackStatusObservationContext;
 
 static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
 
 - (void)startObserving {
-	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[playbackController addObserver:self forKeyPath:@"progressOverall" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld) context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons" options:0 context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIcons" options:0 context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIconsPlaque" options:0 context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[playbackController addObserver:self forKeyPath:@"playbackStatus" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:DockIconPlaybackStatusObservationContext];
+	[playbackController addObserver:self forKeyPath:@"progressOverall" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld) context:DockIconPlaybackStatusObservationContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.colorfulDockIcons" options:0 context:DockIconPlaybackStatusObservationContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIcons" options:0 context:DockIconPlaybackStatusObservationContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIconsPlaque" options:0 context:DockIconPlaybackStatusObservationContext];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshDockIcons:) name:CogCustomDockIconsReloadNotification object:nil];
 }
 
 - (void)stopObserving {
-	[playbackController removeObserver:self forKeyPath:@"playbackStatus" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[playbackController removeObserver:self forKeyPath:@"progressOverall" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.colorfulDockIcons" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIcons" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
-	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIconsPlaque" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[playbackController removeObserver:self forKeyPath:@"playbackStatus" context:DockIconPlaybackStatusObservationContext];
+	[playbackController removeObserver:self forKeyPath:@"progressOverall" context:DockIconPlaybackStatusObservationContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.colorfulDockIcons" context:DockIconPlaybackStatusObservationContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIcons" context:DockIconPlaybackStatusObservationContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIconsPlaque" context:DockIconPlaybackStatusObservationContext];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:CogCustomDockIconsReloadNotification object:nil];
 }
 
 - (void)startObservingProgress:(NSProgress *)progress {
-	[progress addObserver:self forKeyPath:@"fractionCompleted" options:0 context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[progress addObserver:self forKeyPath:@"fractionCompleted" options:0 context:DockIconPlaybackStatusObservationContext];
 }
 
 - (void)stopObservingProgress:(NSProgress *)progress {
-	[progress removeObserver:self forKeyPath:@"fractionCompleted" context:(__bridge void *_Nullable)(DockIconPlaybackStatusObservationContext)];
+	[progress removeObserver:self forKeyPath:@"fractionCompleted" context:DockIconPlaybackStatusObservationContext];
 }
 
 static NSString *getBadgeName(NSString *baseName, BOOL colorfulIcons) {
@@ -234,7 +234,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-	if([DockIconPlaybackStatusObservationContext isEqual:(__bridge id)(context)]) {
+	if(context == DockIconPlaybackStatusObservationContext) {
 		if([keyPath isEqualToString:@"playbackStatus"]) {
 			NSInteger playbackStatus = [[change objectForKey:NSKeyValueChangeNewKey] integerValue];
 
