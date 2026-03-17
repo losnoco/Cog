@@ -679,13 +679,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rubber Band"
+            "value" : "Speed Control"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rubber Band"
+            "value" : "Control de velocidad"
           }
         }
       }

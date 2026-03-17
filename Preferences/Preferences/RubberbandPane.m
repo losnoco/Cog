@@ -16,6 +16,9 @@
 }
 
 - (NSImage *)icon {
+	if(@available(macOS 11.0, *))
+		return [NSImage imageWithSystemSymbolName:@"deskclock" accessibilityDescription:nil];
+
 	NSImage *icon = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"rubberband"]];
 	[icon setTemplate:YES];
 	return icon;
