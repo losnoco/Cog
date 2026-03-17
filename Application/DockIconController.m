@@ -12,7 +12,7 @@
 
 @implementation DockIconController
 
-static NSString *DockIconPlaybackStatusObservationContext = @"DockIconPlaybackStatusObservationContext";
+APPKIT_EXTERN NSNotificationName const NSWorkspaceIconAppearanceConfigurationDidChangeNotification API_AVAILABLE(macos(26.0));
 
 static void *DockIconPlaybackStatusObservationContext = &DockIconPlaybackStatusObservationContext;
 
@@ -25,6 +25,9 @@ static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCust
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIcons" options:0 context:DockIconPlaybackStatusObservationContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIconsPlaque" options:0 context:DockIconPlaybackStatusObservationContext];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshDockIcons:) name:CogCustomDockIconsReloadNotification object:nil];
+	if(@available(macOS 26.0, *)) {
+		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(refreshDockIcons:) name:NSWorkspaceIconAppearanceConfigurationDidChangeNotification object:nil];
+	}
 }
 
 - (void)stopObserving {
@@ -34,6 +37,9 @@ static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCust
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIcons" context:DockIconPlaybackStatusObservationContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIconsPlaque" context:DockIconPlaybackStatusObservationContext];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:CogCustomDockIconsReloadNotification object:nil];
+	if(@available(macOS 26.0, *)) {
+		[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self name:NSWorkspaceIconAppearanceConfigurationDidChangeNotification object:nil];
+	}
 }
 
 - (void)startObservingProgress:(NSProgress *)progress {
@@ -131,8 +137,6 @@ static NSString *getCustomIconName(NSString *baseName) {
 		lastProgressStatus = @(progressStatus);
 	}
 
-	BOOL errorStatus = [playbackController isError];
-
 	BOOL displayProgress = (progressStatus >= 0.0);
 
 	NSImage *badgeImage = nil;
@@ -141,7 +145,8 @@ static NSString *getCustomIconName(NSString *baseName) {
 	BOOL glassIcons = NO;
 	if(@available(macOS 26, *)) {
 		colorfulIcons = NO;
-		glassIcons = YES;
+		glassIcons = !useCustomDockIcons;
+		drawIcon = glassIcons;
 	}
 
 	if((colorfulIcons && lastColorfulStatus < 1) ||
@@ -153,9 +158,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 	NSDockTile *dockTile = [NSApp dockTile];
 
 	if(drawIcon) {
-		if(glassIcons && errorStatus) {
-			badgeImage = [NSImage imageNamed:@"Huh"];
-		} else {
+		if(!glassIcons) {
 			switch(playbackStatus) {
 				case CogStatusPlaying:
 					badgeImage = useCustomDockIcons ? dockCustomPlay : [NSImage imageNamed:getBadgeName(@"Play", colorfulIcons)];
@@ -170,21 +173,39 @@ static NSString *getCustomIconName(NSString *baseName) {
 			}
 		}
 
-		NSSize badgeSize = [badgeImage size];
+		if(!glassIcons) {
+			NSSize badgeSize = [badgeImage size];
+			
+			NSImage *newDockImage = (glassIcons || (useCustomDockIcons && !useCustomDockIconsPlaque)) ? [[NSImage alloc] initWithSize:NSMakeSize(1024, 1024)] : [dockImage copy];
+			[newDockImage lockFocus];
+			
+			[badgeImage drawInRect:NSMakeRect(0, 0, 1024, 1024)
+						  fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
+						 operation:NSCompositingOperationSourceOver
+						  fraction:1.0];
+			
+			[newDockImage unlockFocus];
+			
+			NSImageView *imageView = [NSImageView new];
+			[imageView setImage:newDockImage];
+			self->imageView = imageView;
+			hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1024, 1024)];
+			stackView = [NSStackView new];
+			stackView.translatesAutoresizingMaskIntoConstraints = NO;
+			[stackView addView:imageView inGravity:NSStackViewGravityTop];
+			[hostView addSubview:stackView];
+		} else {
+			if(@available(macOS 26, *)) {
+				hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 128, 128)];
+				imageView = [SwiftUIIconBridge create];
+				stackView = [NSStackView new];
+				stackView.translatesAutoresizingMaskIntoConstraints = NO;
+				[stackView addView:imageView inGravity:NSStackViewGravityTop];
+				[hostView addSubview:stackView];
+			}
+		}
 
-		NSImage *newDockImage = (glassIcons || (useCustomDockIcons && !useCustomDockIconsPlaque)) ? [[NSImage alloc] initWithSize:NSMakeSize(1024, 1024)] : [dockImage copy];
-		[newDockImage lockFocus];
-
-		[badgeImage drawInRect:NSMakeRect(0, 0, 1024, 1024)
-		              fromRect:NSMakeRect(0, 0, badgeSize.width, badgeSize.height)
-		             operation:NSCompositingOperationSourceOver
-		              fraction:1.0];
-
-		[newDockImage unlockFocus];
-
-		imageView = [NSImageView new];
-		[imageView setImage:newDockImage];
-		[dockTile setContentView:imageView];
+		[dockTile setContentView:hostView];
 
 		progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, dockTile.size.width, 10.0)];
 		[progressIndicator setStyle:NSProgressIndicatorStyleBar];
@@ -194,16 +215,33 @@ static NSString *getCustomIconName(NSString *baseName) {
 		[progressIndicator setMaxValue:100];
 		[progressIndicator setHidden:YES];
 
-		[imageView addSubview:progressIndicator];
+		[stackView addView:progressIndicator inGravity:NSStackViewGravityBottom];
 
 		displayChanged = YES;
 	}
 
 	if(displayProgress) {
-		if(!imageView) {
-			imageView = [NSImageView new];
-			[imageView setImage:[NSApp applicationIconImage]];
-			[dockTile setContentView:imageView];
+		if(!hostView) {
+			if(glassIcons) {
+				if(@available(macOS 26.0, *)) {
+					hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 128, 128)];
+					imageView = [SwiftUIIconBridge create];
+					stackView = [NSStackView new];
+					stackView.translatesAutoresizingMaskIntoConstraints = NO;
+					[stackView addView:imageView inGravity:NSStackViewGravityTop];
+					[hostView addSubview:stackView];
+				}
+			} else {
+				NSImageView *imageView = [NSImageView new];
+				[imageView setImage:[NSApp applicationIconImage]];
+				self->imageView = imageView;
+				hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1024, 1024)];
+				stackView = [NSStackView new];
+				stackView.translatesAutoresizingMaskIntoConstraints = NO;
+				[stackView addView:imageView inGravity:NSStackViewGravityTop];
+				[hostView addSubview:stackView];
+			}
+			[dockTile setContentView:hostView];
 		}
 
 		if(!progressIndicator) {
@@ -213,7 +251,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 			[progressIndicator setMinValue:0];
 			[progressIndicator setMaxValue:100];
 
-			[imageView addSubview:progressIndicator];
+			[stackView addView:progressIndicator inGravity:NSStackViewGravityBottom];
 		}
 
 		[progressIndicator setDoubleValue:progressStatus];

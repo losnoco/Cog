@@ -26,7 +26,9 @@
 	NSInteger lastColorfulStatus;
 	NSNumber *lastProgressStatus;
 
-	NSImageView *imageView;
+	NSView *hostView;
+	NSStackView *stackView;
+	NSView *imageView;
 	NSProgressIndicator *progressIndicator;
 }
 
