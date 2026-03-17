@@ -146,7 +146,6 @@
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
 		837DC92B285B05710005C58A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837DC92A285B05710005C58A /* CoreData.framework */; };
 		837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */; };
-		837FD32E2F692CAE00DFB3AE /* AppIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 837FD32D2F692CAE00DFB3AE /* AppIconView.swift */; };
 		8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952E2E4609CF00A7CFD8 /* libyuv.a */; };
 		838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952D2E4609CF00A7CFD8 /* libdav1d.a */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
@@ -1006,7 +1005,6 @@
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
 		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		837DC930285B3F790005C58A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
-		837FD32D2F692CAE00DFB3AE /* AppIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconView.swift; sourceTree = "<group>"; };
 		8381A09027C5F72F00A1C530 /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA256Digest.h; sourceTree = "<group>"; };
 		8383952D2E4609CF00A7CFD8 /* libdav1d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdav1d.a; path = ThirdParty/avif/lib/libdav1d.a; sourceTree = "<group>"; };
 		8383952E2E4609CF00A7CFD8 /* libyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyuv.a; path = ThirdParty/avif/lib/libyuv.a; sourceTree = "<group>"; };
@@ -1210,7 +1208,6 @@
 		177042960B8BC53600B86321 /* Application */ = {
 			isa = PBXGroup;
 			children = (
-				837FD32D2F692CAE00DFB3AE /* AppIconView.swift */,
 				177042970B8BC53600B86321 /* AppController.h */,
 				177042980B8BC53600B86321 /* AppController.m */,
 				177042990B8BC53600B86321 /* PlaybackController.h */,
@@ -2698,7 +2695,6 @@
 				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,
 				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
-				837FD32E2F692CAE00DFB3AE /* AppIconView.swift in Sources */,
 				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,

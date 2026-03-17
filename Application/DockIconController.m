@@ -12,8 +12,6 @@
 
 @implementation DockIconController
 
-APPKIT_EXTERN NSNotificationName const NSWorkspaceIconAppearanceConfigurationDidChangeNotification API_AVAILABLE(macos(26.0));
-
 static void *DockIconPlaybackStatusObservationContext = &DockIconPlaybackStatusObservationContext;
 
 static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCustomDockIconsReloadNotification";
@@ -25,9 +23,6 @@ static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCust
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIcons" options:0 context:DockIconPlaybackStatusObservationContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.customDockIconsPlaque" options:0 context:DockIconPlaybackStatusObservationContext];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshDockIcons:) name:CogCustomDockIconsReloadNotification object:nil];
-	if(@available(macOS 26.0, *)) {
-		[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self selector:@selector(refreshDockIcons:) name:NSWorkspaceIconAppearanceConfigurationDidChangeNotification object:nil];
-	}
 }
 
 - (void)stopObserving {
@@ -37,9 +32,6 @@ static NSNotificationName const CogCustomDockIconsReloadNotification = @"CogCust
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIcons" context:DockIconPlaybackStatusObservationContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.customDockIconsPlaque" context:DockIconPlaybackStatusObservationContext];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:CogCustomDockIconsReloadNotification object:nil];
-	if(@available(macOS 26.0, *)) {
-		[[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:self name:NSWorkspaceIconAppearanceConfigurationDidChangeNotification object:nil];
-	}
 }
 
 - (void)startObservingProgress:(NSProgress *)progress {
@@ -158,6 +150,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 	NSDockTile *dockTile = [NSApp dockTile];
 
 	if(drawIcon) {
+		NSString *badgeLabel = nil;
 		if(!glassIcons) {
 			switch(playbackStatus) {
 				case CogStatusPlaying:
@@ -170,6 +163,24 @@ static NSString *getCustomIconName(NSString *baseName) {
 				default:
 					badgeImage = useCustomDockIcons ? dockCustomStop : [NSImage imageNamed:getBadgeName(@"Stop", colorfulIcons)];
 					break;
+			}
+		} else {
+			if([playbackController isError]) {
+				badgeLabel = @"?";
+			} else {
+				switch(playbackStatus) {
+					case CogStatusPlaying:
+						badgeLabel = @"\u23f5";
+						break;
+						
+					case CogStatusPaused:
+						badgeLabel = @"\u23f8";
+						break;
+						
+					default:
+						badgeLabel = nil;
+						break;
+				}
 			}
 		}
 
@@ -194,18 +205,13 @@ static NSString *getCustomIconName(NSString *baseName) {
 			stackView.translatesAutoresizingMaskIntoConstraints = NO;
 			[stackView addView:imageView inGravity:NSStackViewGravityTop];
 			[hostView addSubview:stackView];
+
+			[dockTile setContentView:hostView];
 		} else {
 			if(@available(macOS 26, *)) {
-				hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 128, 128)];
-				imageView = [SwiftUIIconBridge create];
-				stackView = [NSStackView new];
-				stackView.translatesAutoresizingMaskIntoConstraints = NO;
-				[stackView addView:imageView inGravity:NSStackViewGravityTop];
-				[hostView addSubview:stackView];
+				[dockTile setBadgeLabel:badgeLabel];
 			}
 		}
-
-		[dockTile setContentView:hostView];
 
 		progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0.0, 0.0, dockTile.size.width, 10.0)];
 		[progressIndicator setStyle:NSProgressIndicatorStyleBar];
@@ -222,16 +228,7 @@ static NSString *getCustomIconName(NSString *baseName) {
 
 	if(displayProgress) {
 		if(!hostView) {
-			if(glassIcons) {
-				if(@available(macOS 26.0, *)) {
-					hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 128, 128)];
-					imageView = [SwiftUIIconBridge create];
-					stackView = [NSStackView new];
-					stackView.translatesAutoresizingMaskIntoConstraints = NO;
-					[stackView addView:imageView inGravity:NSStackViewGravityTop];
-					[hostView addSubview:stackView];
-				}
-			} else {
+			if(!glassIcons) {
 				NSImageView *imageView = [NSImageView new];
 				[imageView setImage:[NSApp applicationIconImage]];
 				self->imageView = imageView;
@@ -240,8 +237,8 @@ static NSString *getCustomIconName(NSString *baseName) {
 				stackView.translatesAutoresizingMaskIntoConstraints = NO;
 				[stackView addView:imageView inGravity:NSStackViewGravityTop];
 				[hostView addSubview:stackView];
+				[dockTile setContentView:hostView];
 			}
-			[dockTile setContentView:hostView];
 		}
 
 		if(!progressIndicator) {
