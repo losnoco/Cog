@@ -109,12 +109,12 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 
 #define DEFAULT_SEEK 5
 
-NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
-NSString *CogPlaybackDidPauseNotificiation = @"CogPlaybackDidPauseNotificiation";
-NSString *CogPlaybackDidResumeNotificiation = @"CogPlaybackDidResumeNotificiation";
-NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
+NSNotificationName CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
+NSNotificationName CogPlaybackDidPauseNotificiation = @"CogPlaybackDidPauseNotificiation";
+NSNotificationName CogPlaybackDidResumeNotificiation = @"CogPlaybackDidResumeNotificiation";
+NSNotificationName CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
-NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
+NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
 
 @synthesize playbackStatus;
 

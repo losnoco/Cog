@@ -11,10 +11,10 @@
 
 #import <CogAudio/MIDIVisualizationController.h>
 
-static NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
+static NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
 
-static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
-static NSString *CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
+static NSNotificationName CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
+static NSNotificationName CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
 
 static void *kSCViewContext = &kSCViewContext;
 

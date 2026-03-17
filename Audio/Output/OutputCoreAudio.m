@@ -23,11 +23,11 @@
 #import <NSFileHandle+CreateFile.h>
 #endif
 
-static NSString *CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
+static NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
 
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
-static NSString *CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
+static NSNotificationName CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 
 @implementation OutputCoreAudio {
 	VisualizationController *visController;
