@@ -6,66 +6,31 @@
 //
 
 import Cocoa
-import WebKit
 
-class AboutWindowController: NSWindowController, WKNavigationDelegate {
-    
-    @IBOutlet weak var appName: NSTextField!
-    @IBOutlet weak var appVersion: NSTextField!
-    @IBOutlet weak var appCopyright: NSTextField!
-    
-    @IBOutlet weak var creditsView: WKWebView!
-    
-    override var windowNibName: NSNib.Name? {
-        return "AboutWindowController"
+class AboutWindowController: NSWindowController {
+
+    override func loadWindow() {
+        let hostingController = AboutViewHostingController()
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 600),
+            styleMask: [.titled, .closable, .fullSizeContentView],
+            backing: .buffered,
+            defer: false
+        )
+        window.contentViewController = hostingController
+        window.title = "About Cog"
+        window.titlebarAppearsTransparent = true
+        window.titleVisibility = .hidden
+        window.isMovableByWindowBackground = true
+        window.appearance = NSAppearance(named: .darkAqua)
+        self.window = window
     }
-    
-    @IBOutlet weak var vfxView: NSVisualEffectView!
-    
-    override func windowDidLoad() {
-        super.windowDidLoad()
-        
-        self.window?.center()
-        self.window?.isMovableByWindowBackground = true
-        
-        creditsView.setValue(false, forKey: "drawsBackground")
 
-        vfxView.wantsLayer = true
-        vfxView.layer?.cornerRadius = 4
-
-        // fill up labels
-        
-        appName.stringValue = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String
-        
-        let shortVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-        let fullVersionString = Bundle.main.object(forInfoDictionaryKey: "GitVersion") as! String
-        
-        appVersion.stringValue = String.localizedStringWithFormat(NSLocalizedString("Version %@ (%@)", comment: "Version string"), shortVersionString, fullVersionString);
-        
-        appCopyright.stringValue = Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as! String
-        
-        if let creditsFile = Bundle.main.url(forResource: "Credits", withExtension: "html") {
-            let data = try! Data(contentsOf: creditsFile)
-            
-            creditsView.loadHTMLString(String(data: data, encoding: .utf8) ?? "Could not load credits.", baseURL: nil)
-            
+    override func showWindow(_ sender: Any?) {
+        if window == nil {
+            loadWindow()
         }
-        
-        creditsView.navigationDelegate = self
-
-    }
-    
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if navigationAction.navigationType == .linkActivated,
-           let url = navigationAction.request.url {
-            NSWorkspace.shared.open(url)
-            decisionHandler(.cancel)
-            return
-        }
-        decisionHandler(.allow)
-    }
-
-    @objc func cancel(_ sender: Any?) {
-        close()
+        window?.center()
+        super.showWindow(sender)
     }
 }
