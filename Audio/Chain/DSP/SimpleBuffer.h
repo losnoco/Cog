@@ -5,7 +5,7 @@
 //  Created by Christopher Snowhill on 8/18/25.
 //
 
-#import "DSPNode.h"
+#import <CogAudio/DSPNode.h>
 
 @interface SimpleBuffer : DSPNode
 
