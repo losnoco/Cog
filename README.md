@@ -1,12 +1,6 @@
 Cog [![buildable](https://github.com/losnoco/Cog/actions/workflows/debug.yml/badge.svg)](https://github.com/losnoco/Cog/actions/workflows/debug.yml) [![Join the chat at https://gitter.im/losnoco/cog](https://badges.gitter.im/losnoco/cog.svg)](https://gitter.im/losnoco/cog?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ===
 
-Cog uses [Lokalise](https://lokalise.com/) for translation. If you want to contribute translations to Cog, send an email to kevin@kddlb.cl.
-
-<img src="https://github.com/losnoco/Cog/blob/main/.github/images/Lokalise_logo_colour_black_text.svg" width="200"/>
-
----
-
 Cog is authored by Vincent Spader. It is released under the GPL. See COPYING for details.
 
 The libraries folder contains various decoding and tagging libraries, which i have created Xcode projects for, and possibly modified to make compile on OS X. The various libraries are under each of their own licenses/copyrights.
