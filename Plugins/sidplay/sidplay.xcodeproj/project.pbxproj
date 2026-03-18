@@ -176,7 +176,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2630;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 8314D62C1A354DFE00EEE8E6 /* Build configuration list for PBXProject "sidplay" */;

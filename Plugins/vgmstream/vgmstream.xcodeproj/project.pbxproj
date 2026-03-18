@@ -209,7 +209,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2630;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 836F6B0B18BDB80D0095E648 /* Build configuration list for PBXProject "vgmstream" */;

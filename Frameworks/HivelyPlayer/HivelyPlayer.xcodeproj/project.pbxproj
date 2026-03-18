@@ -140,7 +140,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2630;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 836FB550182053D700B3AD2D /* Build configuration list for PBXProject "HivelyPlayer" */;

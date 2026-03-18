@@ -170,7 +170,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2630;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83B066A6180D56B9008E3612 /* Build configuration list for PBXProject "midi_processing" */;
