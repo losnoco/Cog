@@ -197,16 +197,9 @@ static NSString *getCustomIconName(NSString *baseName) {
 			
 			[newDockImage unlockFocus];
 			
-			NSImageView *imageView = [NSImageView new];
+			imageView = [NSImageView new];
 			[imageView setImage:newDockImage];
-			self->imageView = imageView;
-			hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1024, 1024)];
-			stackView = [NSStackView new];
-			stackView.translatesAutoresizingMaskIntoConstraints = NO;
-			[stackView addView:imageView inGravity:NSStackViewGravityTop];
-			[hostView addSubview:stackView];
-
-			[dockTile setContentView:hostView];
+			[dockTile setContentView:imageView];
 		} else {
 			if(@available(macOS 26, *)) {
 				[dockTile setBadgeLabel:badgeLabel];
@@ -221,24 +214,17 @@ static NSString *getCustomIconName(NSString *baseName) {
 		[progressIndicator setMaxValue:100];
 		[progressIndicator setHidden:YES];
 
-		[stackView addView:progressIndicator inGravity:NSStackViewGravityBottom];
+        if(imageView)
+            [imageView addSubview:progressIndicator];
 
 		displayChanged = YES;
 	}
 
 	if(displayProgress) {
-		if(!hostView) {
-			if(!glassIcons) {
-				NSImageView *imageView = [NSImageView new];
-				[imageView setImage:[NSApp applicationIconImage]];
-				self->imageView = imageView;
-				hostView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1024, 1024)];
-				stackView = [NSStackView new];
-				stackView.translatesAutoresizingMaskIntoConstraints = NO;
-				[stackView addView:imageView inGravity:NSStackViewGravityTop];
-				[hostView addSubview:stackView];
-				[dockTile setContentView:hostView];
-			}
+		if(!imageView && !glassIcons) {
+			imageView = [NSImageView new];
+			[imageView setImage:[NSApp applicationIconImage]];
+			[dockTile setContentView:imageView];
 		}
 
 		if(!progressIndicator) {
@@ -248,7 +234,8 @@ static NSString *getCustomIconName(NSString *baseName) {
 			[progressIndicator setMinValue:0];
 			[progressIndicator setMaxValue:100];
 
-			[stackView addView:progressIndicator inGravity:NSStackViewGravityBottom];
+            if(imageView)
+                [imageView addSubview:progressIndicator];
 		}
 
 		[progressIndicator setDoubleValue:progressStatus];
