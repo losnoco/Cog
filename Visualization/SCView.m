@@ -779,11 +779,13 @@ _END:
    NSUInteger _allocated;
 }
 
+#if 0 // Not actually used below
 /* macOS requires constants in a buffer to have a 256 byte alignment. */
 #ifdef TARGET_OS_MAC
 static const NSUInteger kConstantAlignment = 256;
 #else
 static const NSUInteger kConstantAlignment = 4;
+#endif
 #endif
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device blockLen:(NSUInteger)blockLen
