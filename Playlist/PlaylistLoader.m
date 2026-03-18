@@ -882,7 +882,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 
 	NSLock *outLock = [NSLock new];
 	NSMutableArray *outArray = [NSMutableArray new];
-	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore"); // CogAudio
+	Class dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore"); // CogAudio
 	RedundantPlaylistDataStore *dataStore = [dataStoreClass new];
 
 	__block NSLock *weakLock = outLock;
