@@ -40,10 +40,6 @@
 }
 @end
 
-@interface PathSuggester ()
-
-@end
-
 @implementation PathSuggester
 
 - (id)init {
@@ -51,9 +47,9 @@
 }
 
 - (IBAction)beginSuggestion:(id)sender {
-	[self showWindow:self];
+	[self showWindow:sender];
 
-	[pathsList removeObjects:[pathsList arrangedObjects]];
+	[viewController removeObjects:[viewController arrangedObjects]];
 
 	NSPersistentContainer *pc = [NSClassFromString(@"PlaylistController") sharedPersistentContainer];
 
@@ -126,24 +122,50 @@
 	}
 
 	NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"path.length" ascending:YES];
-	[pathsList setSortDescriptors:@[sortDescriptor]];
+	[viewController setSortDescriptors:@[sortDescriptor]];
 
 	[items sortUsingDescriptors:@[sortDescriptor]];
 
-	[pathsList addObjects:items];
+	[viewController addObjects:items];
 
-	[pathsList setSelectedObjects:@[]];
+	[viewController setSelectedObjects:@[]];
 }
 
 - (void)windowDidLoad {
 	[super windowDidLoad];
 }
 
+@end
+
+@implementation PathSuggesterView
+
+- (IBAction)applyPaths:(id)sender {
+    for(PathItem *pi in [self arrangedObjects]) {
+        if(pi.enabled) {
+            NSOpenPanel *panel = [NSOpenPanel openPanel];
+            [panel setAllowsMultipleSelection:NO];
+            [panel setCanChooseDirectories:YES];
+            [panel setCanChooseFiles:NO];
+            [panel setFloatingPanel:YES];
+            [panel setDirectoryURL:[NSURL fileURLWithPath:pi.path]];
+            NSInteger result = [panel runModal];
+            if(result == NSModalResponseOK) {
+                [sandboxPathBehaviorController addUrl:[panel URL]];
+            }
+        }
+    }
+    [window close];
+}
+
 - (NSView *_Nullable)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *_Nullable)tableColumn row:(NSInteger)row {
 	NSString *cellIdentifier = @"";
 	NSTextAlignment cellTextAlignment = NSTextAlignmentLeft;
 
-	PathItem *pi = [[pathsList arrangedObjects] objectAtIndex:row];
+    // safety
+    if(row < 0 || row >= [[self arrangedObjects] count])
+        return nil;
+
+	PathItem *pi = [[self arrangedObjects] objectAtIndex:row];
 
 	CGFloat fontSize = 13.0;
 
@@ -183,24 +205,6 @@
 	}
 
 	return view;
-}
-
-- (IBAction)applyPaths:(id)sender {
-	for(PathItem *pi in [pathsList arrangedObjects]) {
-		if(pi.enabled) {
-			NSOpenPanel *panel = [NSOpenPanel openPanel];
-			[panel setAllowsMultipleSelection:NO];
-			[panel setCanChooseDirectories:YES];
-			[panel setCanChooseFiles:NO];
-			[panel setFloatingPanel:YES];
-			[panel setDirectoryURL:[NSURL fileURLWithPath:pi.path]];
-			NSInteger result = [panel runModal];
-			if(result == NSModalResponseOK) {
-				[sandboxPathBehaviorController addUrl:[panel URL]];
-			}
-		}
-	}
-	[[self window] orderOut:self];
 }
 
 @end

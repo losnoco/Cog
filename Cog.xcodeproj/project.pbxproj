@@ -12,12 +12,12 @@
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
 		0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78692F6B1ECF00537320 /* CreditsView.swift */; };
 		0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78682F6B1ECF00537320 /* AboutView.swift */; };
+		0AC233A32F6C3B4900E6FE2E /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 0AC233A22F6C3B4900E6FE2E /* SwiftUIIntrospect */; };
 		170B55940D6E5E7B006B9E92 /* StatusImageTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 170B55930D6E5E7B006B9E92 /* StatusImageTransformer.m */; };
 		171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57D90C091F2B00F6AFAF /* flac.icns */; };
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
-		171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 171CB3DB0F63670D0047EF0A /* PreferencesWindow.m */; };
 		171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */ = {isa = PBXBuildFile; fileRef = 171EFE8B0F59FEAE000ADC42 /* DockIconController.m */; };
 		17249F0F0D82E17700F33392 /* ToggleQueueTitleTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 17249F0E0D82E17700F33392 /* ToggleQueueTitleTransformer.m */; };
 		172A12330F5911D20078EF0C /* RepeatTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12320F5911D20078EF0C /* RepeatTransformers.m */; };
@@ -64,7 +64,6 @@
 		17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C809E30C3BD46D005707C4 /* CoreAudio.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3CD0CBED663008D969D /* GME.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1000F63255200694C57 /* InfoWindowController.m */; };
-		17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */; };
 		17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2760CF8B2830028F5B5 /* cue.icns */; };
 		17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2770CF8B2830028F5B5 /* it.icns */; };
 		17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2780CF8B2830028F5B5 /* pls.icns */; };
@@ -85,6 +84,19 @@
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
+		515000000000000000000001 /* PreferencePaneDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000001 /* PreferencePaneDescriptor.swift */; };
+		515000000000000000000002 /* NotificationsPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000002 /* NotificationsPaneView.swift */; };
+		515000000000000000000003 /* PlaylistPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000003 /* PlaylistPaneView.swift */; };
+		515000000000000000000004 /* RubberbandPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000004 /* RubberbandPaneView.swift */; };
+		515000000000000000000005 /* OutputPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000005 /* OutputPaneView.swift */; };
+		515000000000000000000006 /* AppearancePaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000006 /* AppearancePaneView.swift */; };
+		515000000000000000000007 /* GeneralPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000007 /* GeneralPaneView.swift */; };
+		515000000000000000000008 /* MIDIPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000008 /* MIDIPaneView.swift */; };
+		515000000000000000000009 /* HotKeyPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000009 /* HotKeyPaneView.swift */; };
+		51500000000000000000000A /* ColorWellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000A /* ColorWellView.swift */; };
+		51500000000000000000000B /* ShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000B /* ShortcutField.swift */; };
+		51500000000000000000000C /* SandboxPathModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000C /* SandboxPathModel.swift */; };
+		51500000000000000000000D /* AudioDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000D /* AudioDeviceModel.swift */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EAF0D6341F6000AB68C /* SpotlightTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EAE0D6341F6000AB68C /* SpotlightTransformers.m */; };
@@ -92,6 +104,9 @@
 		56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */ = {isa = PBXBuildFile; fileRef = 56C63D900D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m */; };
 		56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */; };
 		56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 56DB08540D67185300453B6A /* NSArray+CogSort.m */; };
+		616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606000000000000000000002 /* SandboxPathBehaviorController.m */; };
+		616000000000000000000002 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 606000000000000000000004 /* PathSuggester.m */; };
+		62FE80E521E14AFB9C8B48E5 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */ = {isa = PBXBuildFile; fileRef = 8307D30D28606148000FF8EB /* SandboxBroker.m */; };
 		830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 830C379F27B95E3000E02BB0 /* Equalizer.xib */; };
@@ -165,6 +180,9 @@
 		839080562E88F5DE00D5D683 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 839080512E88F5DE00D5D683 /* Cocoa.framework */; };
 		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
 		839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */; };
+		8399AFC22F6B8E20005F4A39 /* MIDIConfig.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8399AFC12F6B8E20005F4A39 /* MIDIConfig.mm */; };
+		8399AFC32F6B8E20005F4A39 /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8399AFBF2F6B8E20005F4A39 /* AUPlayerView.mm */; };
+		8399AFC62F6BAAE4005F4A39 /* PathSuggester.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8399AFC42F6BAAE4005F4A39 /* PathSuggester.xib */; };
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
@@ -208,7 +226,8 @@
 		8E8D41C80CBB0DA900135C1B /* Pls.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E8D41C70CBB0DA000135C1B /* Pls.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */; };
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ED69CA3B25BE2A390090B90D /* Preferences.preferencePane in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F5622E0C3BD8FB0019975C /* Preferences.preferencePane */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */; };
+		E20C8ADB5FA449AD83F40538 /* PreferencesRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */; };
 		ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; };
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */; };
@@ -320,20 +339,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = CogAudio;
-		};
-		17F5622D0C3BD8FB0019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562260C3BD8FB0019975C /* Preferences.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
-			remoteInfo = Preferences;
-		};
-		17F5623A0C3BD9280019975C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17F562260C3BD8FB0019975C /* Preferences.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = Preferences;
 		};
 		566D321A0D538550004466A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -701,7 +706,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				ED69CA3B25BE2A390090B90D /* Preferences.preferencePane in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -789,8 +793,6 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
-		171CB3DA0F63670D0047EF0A /* PreferencesWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindow.h; path = Preferences/PreferencesWindow.h; sourceTree = "<group>"; };
-		171CB3DB0F63670D0047EF0A /* PreferencesWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencesWindow.m; path = Preferences/PreferencesWindow.m; sourceTree = "<group>"; };
 		171EFE8A0F59FEAE000ADC42 /* DockIconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DockIconController.h; sourceTree = "<group>"; };
 		171EFE8B0F59FEAE000ADC42 /* DockIconController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DockIconController.m; sourceTree = "<group>"; };
 		17249F0D0D82E17700F33392 /* ToggleQueueTitleTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleQueueTitleTransformer.h; sourceTree = "<group>"; };
@@ -872,9 +874,6 @@
 		17C8F3C80CBED663008D969D /* GME.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GME.xcodeproj; path = Plugins/GME/GME.xcodeproj; sourceTree = "<group>"; };
 		17D1B0FF0F63255200694C57 /* InfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoWindowController.h; path = InfoInspector/InfoWindowController.h; sourceTree = "<group>"; };
 		17D1B1000F63255200694C57 /* InfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InfoWindowController.m; path = InfoInspector/InfoWindowController.m; sourceTree = "<group>"; };
-		17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePluginController.h; path = Preferences/PreferencePluginController.h; sourceTree = "<group>"; };
-		17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PreferencePluginController.m; path = Preferences/PreferencePluginController.m; sourceTree = "<group>"; };
-		17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencePanePlugin.h; path = Preferences/PreferencePanePlugin.h; sourceTree = "<group>"; };
 		17D1B2760CF8B2830028F5B5 /* cue.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = cue.icns; sourceTree = "<group>"; };
 		17D1B2770CF8B2830028F5B5 /* it.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = it.icns; sourceTree = "<group>"; };
 		17D1B2780CF8B2830028F5B5 /* pls.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = pls.icns; sourceTree = "<group>"; };
@@ -900,16 +899,29 @@
 		17E0D61B0F520F9F005B6FED /* VolumeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeSlider.m; path = Window/VolumeSlider.m; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
-		17F562260C3BD8FB0019975C /* Preferences.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Preferences.xcodeproj; path = Preferences/Preferences/Preferences.xcodeproj; sourceTree = "<group>"; };
 		17F6C8050F603701000D9DA9 /* PlaybackEventController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackEventController.h; sourceTree = "<group>"; };
 		17F6C8060F603701000D9DA9 /* PlaybackEventController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaybackEventController.m; sourceTree = "<group>"; };
 		17FAEBAA0F662985007C8707 /* ToolTipTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToolTipTextField.h; sourceTree = "<group>"; };
 		17FAEBAB0F662985007C8707 /* ToolTipTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToolTipTextField.m; sourceTree = "<group>"; };
+		27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesRootView.swift; path = Preferences/PreferencesRootView.swift; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		505000000000000000000001 /* PreferencePaneDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencePaneDescriptor.swift; path = Preferences/PreferencePaneDescriptor.swift; sourceTree = "<group>"; };
+		505000000000000000000002 /* NotificationsPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsPaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000003 /* PlaylistPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistPaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000004 /* RubberbandPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RubberbandPaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000005 /* OutputPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputPaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000006 /* AppearancePaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000007 /* GeneralPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000008 /* MIDIPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIPaneView.swift; sourceTree = "<group>"; };
+		505000000000000000000009 /* HotKeyPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyPaneView.swift; sourceTree = "<group>"; };
+		50500000000000000000000A /* ColorWellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorWellView.swift; sourceTree = "<group>"; };
+		50500000000000000000000B /* ShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutField.swift; sourceTree = "<group>"; };
+		50500000000000000000000C /* SandboxPathModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxPathModel.swift; sourceTree = "<group>"; };
+		50500000000000000000000D /* AudioDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceModel.swift; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
@@ -925,6 +937,10 @@
 		56DB084B0D6717DC00453B6A /* NSNumber+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSNumber+CogSort.m"; path = "Spotlight/NSNumber+CogSort.m"; sourceTree = "<group>"; };
 		56DB08530D67185300453B6A /* NSArray+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+CogSort.h"; path = "Spotlight/NSArray+CogSort.h"; sourceTree = "<group>"; };
 		56DB08540D67185300453B6A /* NSArray+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+CogSort.m"; path = "Spotlight/NSArray+CogSort.m"; sourceTree = "<group>"; };
+		606000000000000000000001 /* SandboxPathBehaviorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SandboxPathBehaviorController.h; path = Preferences/SandboxPathBehaviorController.h; sourceTree = "<group>"; };
+		606000000000000000000002 /* SandboxPathBehaviorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SandboxPathBehaviorController.m; path = Preferences/SandboxPathBehaviorController.m; sourceTree = "<group>"; };
+		606000000000000000000003 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PathSuggester.h; path = Preferences/PathSuggester.h; sourceTree = "<group>"; };
+		606000000000000000000004 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PathSuggester.m; path = Preferences/PathSuggester.m; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		8307D30C28606148000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxBroker.h; sourceTree = "<group>"; };
 		8307D30D28606148000FF8EB /* SandboxBroker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SandboxBroker.m; sourceTree = "<group>"; };
@@ -1033,12 +1049,18 @@
 		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		839614AC286EDA5C00D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpectrumWindow.xib; sourceTree = "<group>"; };
 		83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedundantPlaylistDataStore.h; sourceTree = "<group>"; };
+		8399AFBD2F6B8C6B005F4A39 /* Shortcuts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shortcuts.h; sourceTree = "<group>"; };
+		8399AFBE2F6B8E20005F4A39 /* AUPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AUPlayerView.h; path = Preferences/AUPlayerView.h; sourceTree = "<group>"; };
+		8399AFBF2F6B8E20005F4A39 /* AUPlayerView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AUPlayerView.mm; path = Preferences/AUPlayerView.mm; sourceTree = "<group>"; };
+		8399AFC02F6B8E20005F4A39 /* MIDIConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIConfig.h; path = Preferences/MIDIConfig.h; sourceTree = "<group>"; };
+		8399AFC12F6B8E20005F4A39 /* MIDIConfig.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = MIDIConfig.mm; path = Preferences/MIDIConfig.mm; sourceTree = "<group>"; };
+		8399AFC52F6BAAE4005F4A39 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PathSuggester.xib; sourceTree = "<group>"; };
+		8399AFC72F6BAAFC005F4A39 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/PathSuggester.xcstrings; sourceTree = "<group>"; };
 		8399D4E01805A55000B503B1 /* XmlContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XmlContainer.m; sourceTree = "<group>"; };
 		8399D4E11805A55000B503B1 /* XmlContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlContainer.h; sourceTree = "<group>"; };
 		839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NumberHertzToStringTransformer.swift; path = Transformers/NumberHertzToStringTransformer.swift; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
-		839E3B53286595D700880EA2 /* GeneralPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneralPane.h; path = Preferences/Preferences/GeneralPane.h; sourceTree = "<group>"; };
 		839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SADIE_D02-96000.mhr"; sourceTree = "<group>"; };
 		839E876C2D5DA0AC00A13526 /* RubberbandEngineTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RubberbandEngineTransformer.h; path = Preferences/Preferences/RubberbandEngineTransformer.h; sourceTree = "<group>"; };
 		839E876D2D5DA0AC00A13526 /* RubberbandEngineTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RubberbandEngineTransformer.m; path = Preferences/Preferences/RubberbandEngineTransformer.m; sourceTree = "<group>"; };
@@ -1090,8 +1112,9 @@
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFMPEG.xcodeproj; path = Plugins/FFMPEG/FFMPEG.xcodeproj; sourceTree = "<group>"; };
+		C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesModel.swift; path = Preferences/PreferencesModel.swift; sourceTree = "<group>"; };
+		DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesWindow.swift; path = Preferences/PreferencesWindow.swift; sourceTree = "<group>"; };
 		ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
-		ED69CF0925BE74BB0090B90D /* Shortcuts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shortcuts.h; path = Preferences/Shortcuts.h; sourceTree = "<group>"; };
 		EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSliderToolbarItem.swift; path = Window/PositionSliderToolbarItem.swift; sourceTree = "<group>"; };
 		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
@@ -1102,6 +1125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AC233A32F6C3B4900E6FE2E /* SwiftUIIntrospect in Frameworks */,
 				83DFCDA12E8532E5009E3DF1 /* nuked_sc55.framework in Frameworks */,
 				8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */,
 				ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */,
@@ -1487,14 +1511,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		17F562270C3BD8FB0019975C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				17F5622E0C3BD8FB0019975C /* Preferences.preferencePane */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1534,13 +1550,13 @@
 			children = (
 				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
-				8E07AD280AAC9BE600A4B32F /* Preference Panes */,
 				8E75758E09F31D800080F1EE /* Icons */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				833125092E817A63005C8895 /* InfoPlist.xcstrings */,
 				8331250B2E817A63005C8895 /* Localizable.xcstrings */,
 				832923AE279FAC400048201E /* Cog.q1.json */,
 				831B99BE27C23E88005A969B /* Cog.sdef */,
+				8399AFC42F6BAAE4005F4A39 /* PathSuggester.xib */,
 				830C379F27B95E3000E02BB0 /* Equalizer.xib */,
 				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
@@ -1580,6 +1596,26 @@
 				3DDFC2472344EC6B000F1453 /* Shared.xcconfig */,
 			);
 			path = "Xcode-config";
+			sourceTree = "<group>";
+		};
+		525000000000000000000001 /* Panes */ = {
+			isa = PBXGroup;
+			children = (
+				505000000000000000000002 /* NotificationsPaneView.swift */,
+				505000000000000000000003 /* PlaylistPaneView.swift */,
+				505000000000000000000004 /* RubberbandPaneView.swift */,
+				505000000000000000000005 /* OutputPaneView.swift */,
+				505000000000000000000006 /* AppearancePaneView.swift */,
+				505000000000000000000007 /* GeneralPaneView.swift */,
+				505000000000000000000008 /* MIDIPaneView.swift */,
+				505000000000000000000009 /* HotKeyPaneView.swift */,
+				50500000000000000000000A /* ColorWellView.swift */,
+				50500000000000000000000B /* ShortcutField.swift */,
+				50500000000000000000000C /* SandboxPathModel.swift */,
+				50500000000000000000000D /* AudioDeviceModel.swift */,
+			);
+			name = Panes;
+			path = Preferences/Panes;
 			sourceTree = "<group>";
 		};
 		566D32170D538550004466A5 /* Products */ = {
@@ -1917,25 +1953,24 @@
 		8E07AAEA0AAC90DC00A4B32F /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				839E3B53286595D700880EA2 /* GeneralPane.h */,
-				ED69CF0925BE74BB0090B90D /* Shortcuts.h */,
-				17D1B2610F633D2C00694C57 /* PreferencePanePlugin.h */,
-				17D1B25B0F633A4F00694C57 /* PreferencePluginController.h */,
-				17D1B25C0F633A4F00694C57 /* PreferencePluginController.m */,
+				8399AFBD2F6B8C6B005F4A39 /* Shortcuts.h */,
+				8399AFBE2F6B8E20005F4A39 /* AUPlayerView.h */,
+				8399AFBF2F6B8E20005F4A39 /* AUPlayerView.mm */,
+				8399AFC02F6B8E20005F4A39 /* MIDIConfig.h */,
+				8399AFC12F6B8E20005F4A39 /* MIDIConfig.mm */,
 				8E07AB760AAC930B00A4B32F /* PreferencesController.h */,
 				8E07AB770AAC930B00A4B32F /* PreferencesController.m */,
-				171CB3DA0F63670D0047EF0A /* PreferencesWindow.h */,
-				171CB3DB0F63670D0047EF0A /* PreferencesWindow.m */,
+				505000000000000000000001 /* PreferencePaneDescriptor.swift */,
+				606000000000000000000001 /* SandboxPathBehaviorController.h */,
+				606000000000000000000002 /* SandboxPathBehaviorController.m */,
+				606000000000000000000003 /* PathSuggester.h */,
+				606000000000000000000004 /* PathSuggester.m */,
+				C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */,
+				27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */,
+				DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */,
+				525000000000000000000001 /* Panes */,
 			);
 			name = Preferences;
-			sourceTree = "<group>";
-		};
-		8E07AD280AAC9BE600A4B32F /* Preference Panes */ = {
-			isa = PBXGroup;
-			children = (
-				17F562260C3BD8FB0019975C /* Preferences.xcodeproj */,
-			);
-			name = "Preference Panes";
 			sourceTree = "<group>";
 		};
 		8E75752A09F31D5A0080F1EE /* Playlist */ = {
@@ -2068,7 +2103,6 @@
 				17C809880C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809E50C3BD47C005707C4 /* PBXTargetDependency */,
 				17F5613F0C3BD4E90019975C /* PBXTargetDependency */,
-				17F5623B0C3BD9280019975C /* PBXTargetDependency */,
 				8E8D40930CBB03AF00135C1B /* PBXTargetDependency */,
 				8E8D41CC0CBB0DD200135C1B /* PBXTargetDependency */,
 				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
@@ -2078,6 +2112,7 @@
 			name = Cog;
 			packageProductDependencies = (
 				83F9FFEE2D6EB75B00026576 /* Sentry */,
+				0AC233A22F6C3B4900E6FE2E /* SwiftUIIntrospect */,
 			);
 			productInstallPath = /Applications;
 			productName = Cog;
@@ -2105,6 +2140,7 @@
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Cog */;
 			packageReferences = (
 				83F9FFED2D6EB75B00026576 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				0AC233A12F6C3B4900E6FE2E /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 			);
 			projectDirPath = "";
 			projectReferences = (
@@ -2209,10 +2245,6 @@
 					ProjectRef = 8E8D41C20CBB0DA000135C1B /* Pls.xcodeproj */;
 				},
 				{
-					ProductGroup = 17F562270C3BD8FB0019975C /* Products */;
-					ProjectRef = 17F562260C3BD8FB0019975C /* Preferences.xcodeproj */;
-				},
-				{
 					ProductGroup = 83CA5AFA20E4E394003E463A /* Products */;
 					ProjectRef = 17C808A70C3BD1BA005707C4 /* Shorten.xcodeproj */;
 				},
@@ -2300,13 +2332,6 @@
 			fileType = wrapper.framework;
 			path = CogAudio.framework;
 			remoteRef = 17F561320C3BD4DC0019975C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		17F5622E0C3BD8FB0019975C /* Preferences.preferencePane */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = Preferences.preferencePane;
-			remoteRef = 17F5622D0C3BD8FB0019975C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		566D321B0D538550004466A5 /* APL.bundle */ = {
@@ -2543,6 +2568,7 @@
 				8384914018083E4E00E7332D /* filetype.icns in Resources */,
 				17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */,
 				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,
+				8399AFC62F6BAAE4005F4A39 /* PathSuggester.xib in Resources */,
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
 				8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */,
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
@@ -2665,6 +2691,8 @@
 				8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */,
 				179D03260E0CB2500064A77A /* PathNode.m in Sources */,
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
+				8399AFC22F6B8E20005F4A39 /* MIDIConfig.mm in Sources */,
+				8399AFC32F6B8E20005F4A39 /* AUPlayerView.mm in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
@@ -2693,8 +2721,24 @@
 				178456120F631E31007E8021 /* SideViewController.m in Sources */,
 				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,
-				17D1B25D0F633A4F00694C57 /* PreferencePluginController.m in Sources */,
-				171CB3DC0F63670D0047EF0A /* PreferencesWindow.m in Sources */,
+				B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */,
+				E20C8ADB5FA449AD83F40538 /* PreferencesRootView.swift in Sources */,
+				62FE80E521E14AFB9C8B48E5 /* PreferencesWindow.swift in Sources */,
+				515000000000000000000001 /* PreferencePaneDescriptor.swift in Sources */,
+				515000000000000000000002 /* NotificationsPaneView.swift in Sources */,
+				515000000000000000000003 /* PlaylistPaneView.swift in Sources */,
+				515000000000000000000004 /* RubberbandPaneView.swift in Sources */,
+				515000000000000000000005 /* OutputPaneView.swift in Sources */,
+				515000000000000000000006 /* AppearancePaneView.swift in Sources */,
+				515000000000000000000007 /* GeneralPaneView.swift in Sources */,
+				515000000000000000000008 /* MIDIPaneView.swift in Sources */,
+				515000000000000000000009 /* HotKeyPaneView.swift in Sources */,
+				51500000000000000000000A /* ColorWellView.swift in Sources */,
+				51500000000000000000000B /* ShortcutField.swift in Sources */,
+				51500000000000000000000C /* SandboxPathModel.swift in Sources */,
+				51500000000000000000000D /* AudioDeviceModel.swift in Sources */,
+				616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */,
+				616000000000000000000002 /* PathSuggester.m in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
 				1778D3CA0F645BF00037E7A0 /* MissingAlbumArtTransformer.m in Sources */,
 				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
@@ -2745,11 +2789,6 @@
 			isa = PBXTargetDependency;
 			name = CogAudio;
 			targetProxy = 17F5613E0C3BD4E90019975C /* PBXContainerItemProxy */;
-		};
-		17F5623B0C3BD9280019975C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Preferences;
-			targetProxy = 17F5623A0C3BD9280019975C /* PBXContainerItemProxy */;
 		};
 		8327DBA8293CAD0A00CD0580 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2957,6 +2996,15 @@
 				8331250E2E817A63005C8895 /* mul */,
 			);
 			name = SpectrumWindow.xib;
+			sourceTree = "<group>";
+		};
+		8399AFC42F6BAAE4005F4A39 /* PathSuggester.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8399AFC52F6BAAE4005F4A39 /* Base */,
+				8399AFC72F6BAAFC005F4A39 /* mul */,
+			);
+			name = PathSuggester.xib;
 			sourceTree = "<group>";
 		};
 		83B61E2229A8296500CD0580 /* LyricsWindow.xib */ = {
@@ -3223,6 +3271,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0AC233A12F6C3B4900E6FE2E /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/swiftui-introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 26.0.1;
+			};
+		};
 		83F9FFED2D6EB75B00026576 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
@@ -3234,6 +3290,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0AC233A22F6C3B4900E6FE2E /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0AC233A12F6C3B4900E6FE2E /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
+			productName = SwiftUIIntrospect;
+		};
 		83F9FFEE2D6EB75B00026576 /* Sentry */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 83F9FFED2D6EB75B00026576 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;

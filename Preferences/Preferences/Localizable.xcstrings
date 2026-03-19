@@ -327,23 +327,6 @@
         }
       }
     },
-    "Nightly" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nightly"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nocturna"
-          }
-        }
-      }
-    },
     "No volume scaling" : {
       "localizations" : {
         "es" : {
@@ -787,23 +770,6 @@
         }
       }
     },
-    "Stable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stable"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estable"
-          }
-        }
-      }
-    },
     "Synthesis" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -875,40 +841,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suaves"
-          }
-        }
-      }
-    },
-    "Unstable" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unstable"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inestable"
-          }
-        }
-      }
-    },
-    "Updates" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Updates"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Actualizaciones"
           }
         }
       }

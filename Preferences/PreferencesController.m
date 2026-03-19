@@ -7,20 +7,13 @@
 //
 
 #import "PreferencesController.h"
-#import "PreferencePluginController.h"
-#import "PreferencesWindow.h"
+#import "Cog-Swift.h"
 
 @implementation PreferencesController
 
 - (void)initWindow {
 	if(nil == window) {
-		// Determine path to the sample preference panes
-		NSString *pluginPath = [[NSBundle mainBundle] pathForResource:@"Preferences" ofType:@"preferencePane"];
-		NSBundle *bundle = [NSBundle bundleWithPath:pluginPath];
-
-		PreferencePluginController *pluginController = [[PreferencePluginController alloc] initWithPlugins:@[bundle]];
-
-		window = [[PreferencesWindow alloc] initWithPreferencePanes:[pluginController preferencePanes]];
+		window = [PreferencesWindow new];
 	}
 }
 

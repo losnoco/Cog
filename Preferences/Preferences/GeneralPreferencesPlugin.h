@@ -26,7 +26,6 @@
 	IBOutlet RubberbandPane *rubberbandPane;
 
 	IBOutlet NSView *playlistView;
-	IBOutlet NSView *updatesView;
 	IBOutlet NSView *notificationsView;
 
 	__weak IBOutlet NSButton *iTunesStyleCheck;
@@ -37,7 +36,6 @@
 - (MIDIPane *)midiPane;
 - (GeneralPane *)generalPane;
 
-- (GeneralPreferencePane *)updatesPane;
 - (GeneralPreferencePane *)playlistPane;
 - (GeneralPreferencePane *)notificationsPane;
 - (GeneralPreferencePane *)appearancePane;

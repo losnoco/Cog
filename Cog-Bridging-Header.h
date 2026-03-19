@@ -3,3 +3,6 @@
 //
 
 #import <CogAudio/Status.h>
+#import <MASShortcut/Shortcut.h>
+#import "Preferences/PathSuggester.h"
+#import "Preferences/MIDIConfig.h"
