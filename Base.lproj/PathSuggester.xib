@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PathSuggester">
             <connections>
-                <outlet property="pathsList" destination="co7-fb-ZfR" id="Gfj-wX-lfj"/>
-                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+                <outlet property="sandboxPathBehaviorController" destination="OTQ-WZ-bPj" id="GV7-ty-XGZ"/>
+                <outlet property="viewController" destination="SaL-Qe-xaK" id="A7V-na-KX2"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="lJZ-yk-IyF"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -18,9 +19,9 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="480" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1055"/>
-            <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1050"/>
+            <view key="contentView" misplaced="YES" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="242"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qDP-bP-gt0">
@@ -52,9 +53,8 @@
                                                     <rect key="frame" x="8" y="0.0" width="62" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JEu-SS-Ht2">
+                                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="JEu-SS-Ht2">
                                                             <rect key="frame" x="0.0" y="4" width="62" height="16"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="RLN-Pa-Mhl">
                                                                 <font key="font" usesAppearanceFont="YES"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -62,13 +62,18 @@
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="JEu-SS-Ht2" firstAttribute="leading" secondItem="IEa-52-JSd" secondAttribute="leading" constant="2" id="EjX-aX-QxE"/>
+                                                        <constraint firstItem="JEu-SS-Ht2" firstAttribute="centerX" secondItem="IEa-52-JSd" secondAttribute="centerX" id="Mul-IO-lmL"/>
+                                                        <constraint firstItem="JEu-SS-Ht2" firstAttribute="centerY" secondItem="IEa-52-JSd" secondAttribute="centerY" id="hxQ-wx-8LD"/>
+                                                    </constraints>
                                                     <connections>
                                                         <outlet property="textField" destination="JEu-SS-Ht2" id="nHb-KP-VcE"/>
                                                     </connections>
                                                 </tableCellView>
                                             </prototypeCellViews>
                                             <connections>
-                                                <binding destination="co7-fb-ZfR" name="value" keyPath="arrangedObjects.enabled" id="AYu-Hb-5Oz"/>
+                                                <binding destination="SaL-Qe-xaK" name="value" keyPath="arrangedObjects.enabled" id="fju-H8-ZUT"/>
                                             </connections>
                                         </tableColumn>
                                         <tableColumn identifier="path" width="337" minWidth="40" maxWidth="1000" id="23r-ai-XoX">
@@ -87,9 +92,8 @@
                                                     <rect key="frame" x="87" y="0.0" width="334" height="24"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3sg-yr-7pE">
-                                                            <rect key="frame" x="0.0" y="4" width="335" height="16"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="3sg-yr-7pE">
+                                                            <rect key="frame" x="0.0" y="4" width="334" height="16"/>
                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="xFm-ed-yBb">
                                                                 <font key="font" usesAppearanceFont="YES"/>
                                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -97,22 +101,28 @@
                                                             </textFieldCell>
                                                         </textField>
                                                     </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="3sg-yr-7pE" firstAttribute="centerX" secondItem="Myn-dz-D1X" secondAttribute="centerX" id="JSw-Hz-kF2"/>
+                                                        <constraint firstItem="3sg-yr-7pE" firstAttribute="leading" secondItem="Myn-dz-D1X" secondAttribute="leading" constant="2" id="kAS-gd-aX4"/>
+                                                        <constraint firstItem="3sg-yr-7pE" firstAttribute="centerY" secondItem="Myn-dz-D1X" secondAttribute="centerY" id="nxn-eQ-9hs"/>
+                                                    </constraints>
                                                     <connections>
                                                         <outlet property="textField" destination="3sg-yr-7pE" id="QRi-Ud-o8O"/>
                                                     </connections>
                                                 </tableCellView>
                                             </prototypeCellViews>
                                             <connections>
-                                                <binding destination="co7-fb-ZfR" name="value" keyPath="arrangedObjects.path" id="6z5-hZ-eM6"/>
+                                                <binding destination="SaL-Qe-xaK" name="value" keyPath="arrangedObjects.path" id="lle-Ea-PLG"/>
                                             </connections>
                                         </tableColumn>
                                     </tableColumns>
                                     <connections>
-                                        <outlet property="dataSource" destination="co7-fb-ZfR" id="fsu-oW-sXa"/>
-                                        <outlet property="delegate" destination="-2" id="e4J-bb-n4Z"/>
+                                        <outlet property="dataSource" destination="SaL-Qe-xaK" id="fDB-85-hpg"/>
+                                        <outlet property="delegate" destination="SaL-Qe-xaK" id="oKs-86-Rik"/>
                                     </connections>
                                 </tableView>
                             </subviews>
+                            <nil key="backgroundColor"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Uts-zz-KoA">
                             <rect key="frame" x="1" y="181" width="438" height="15"/>
@@ -149,7 +159,7 @@
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <action selector="applyPaths:" target="-2" id="aP1-hj-jCO"/>
+                                <action selector="applyPaths:" target="SaL-Qe-xaK" id="OiG-Nb-Jlf"/>
                             </connections>
                         </button>
                     </toolbarItem>
@@ -158,12 +168,14 @@
                     <toolbarItem reference="cJV-DM-SOV"/>
                 </defaultToolbarItems>
             </toolbar>
-            <connections>
-                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
-            </connections>
             <point key="canvasLocation" x="139" y="90"/>
         </window>
-        <arrayController id="co7-fb-ZfR" userLabel="Paths Array Controller">
+        <customObject id="OTQ-WZ-bPj" customClass="SandboxPathBehaviorController"/>
+        <arrayController id="SaL-Qe-xaK" customClass="PathSuggesterView">
+            <connections>
+                <outlet property="sandboxPathBehaviorController" destination="OTQ-WZ-bPj" id="uTq-k3-JHn"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gqz-nS-1wO"/>
+            </connections>
             <declaredKeys>
                 <string>path</string>
                 <string>enabled</string>

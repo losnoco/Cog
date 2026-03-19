@@ -11,9 +11,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PathSuggester : NSWindowController <NSTableViewDelegate> {
+@interface PathSuggesterView : NSArrayController<NSTableViewDelegate, NSTableViewDataSource> {
+    IBOutlet SandboxPathBehaviorController *sandboxPathBehaviorController;
+    IBOutlet NSWindow *window;
+}
+@end
+
+@interface PathSuggester : NSWindowController {
 	IBOutlet SandboxPathBehaviorController *sandboxPathBehaviorController;
-	IBOutlet NSArrayController *pathsList;
+    IBOutlet PathSuggesterView *viewController;
 }
 
 - (IBAction)beginSuggestion:(id)sender;

@@ -6,7 +6,7 @@
 //
 //
 
-#import "MIDIPane.h"
+#import "MIDIConfig.h"
 
 #import "SandboxBroker.h"
 
@@ -18,76 +18,16 @@
 
 #import "SHA256Digest.h"
 
-@implementation MIDIPane {
-	NSTimer *startupTimer;
-}
+static NSNotificationName midiConfigNotification = @"CogMIDIConfigurePlugin";
 
-- (void)awakeFromNib {
-	__block MIDIPane *_self = self;
-	startupTimer = [NSTimer timerWithTimeInterval:0.2 repeats:YES block:^(NSTimer * _Nonnull timer) {
-		NSUInteger selectedItem = [_self->midiPluginControl indexOfSelectedItem];
-		NSArray *arrangedObjects = [_self->midiPluginBehaviorArrayController arrangedObjects];
-		if([arrangedObjects count] > selectedItem) {
-			NSDictionary *selectedInfo = arrangedObjects[selectedItem];
-			[_self->midiPluginSetupButton setEnabled:[[selectedInfo objectForKey:@"configurable"] boolValue]];
-			[timer invalidate];
-		}
-	}];
-	[[NSRunLoop mainRunLoop] addTimer:startupTimer forMode:NSRunLoopCommonModes];
-}
-
-- (void)dealloc {
-	[startupTimer invalidate];
-	startupTimer = nil;
-}
-
-- (NSString *)title {
-	return NSLocalizedPrefString(@"Synthesis");
-}
-
-- (NSImage *)icon {
-	if(@available(macOS 11.0, *))
-		return [NSImage imageWithSystemSymbolName:@"pianokeys" accessibilityDescription:nil];
-	return [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForImageResource:@"midi"]];
-}
-
-- (IBAction)setSoundFont:(id)sender {
-	NSArray *fileTypes = @[@"sf2", @"sf2pack", @"sflist", @"sf3"];
-	NSOpenPanel *panel = [NSOpenPanel openPanel];
-	[panel setAllowsMultipleSelection:NO];
-	[panel setCanChooseDirectories:NO];
-	[panel setCanChooseFiles:YES];
-	[panel setFloatingPanel:YES];
-	[panel setAllowedFileTypes:fileTypes];
-	NSString *oldPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"soundFontPath"];
-	if(oldPath != nil)
-		[panel setDirectoryURL:[NSURL fileURLWithPath:oldPath]];
-	NSInteger result = [panel runModal];
-	if(result == NSModalResponseOK) {
-		[[NSUserDefaults standardUserDefaults] setValue:[[panel URL] path] forKey:@"soundFontPath"];
-
-		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
-		NSURL *pathUrl = [panel URL];
-		if(![[sandboxBrokerClass sharedSandboxBroker] areAllPathsSafe:@[pathUrl]]) {
-			id appControllerClass = NSClassFromString(@"AppController");
-			[appControllerClass globalShowPathSuggester];
-		}
-	}
-}
-
-- (IBAction)setMidiPlugin:(id)sender {
-	NSUInteger selectedItem = [midiPluginControl indexOfSelectedItem];
-	NSDictionary *selectedInfo = [midiPluginBehaviorArrayController arrangedObjects][selectedItem];
-	[midiPluginSetupButton setEnabled:[[selectedInfo objectForKey:@"configurable"] boolValue]];
-}
-
+@implementation MIDIConfigHost
 static OSType getOSType(const char *in_) {
 	const unsigned char *in = (const unsigned char *)in_;
 	OSType v = (in[0] << 24) + (in[1] << 16) + (in[2] << 8) + in[3];
 	return v;
 }
 
-- (void)setupAU:(NSString *)plugin {
++ (void)setupAU:(NSString *)plugin {
 	const char *cplugin = [plugin UTF8String];
 
 	AudioComponentDescription cd = { 0 };
@@ -123,7 +63,7 @@ static OSType getOSType(const char *in_) {
 	}
 }
 
-- (NSString *)romPath {
++ (NSString *)romPath {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
 	basePath = [basePath stringByAppendingPathComponent:@"Roms"];
@@ -131,20 +71,20 @@ static OSType getOSType(const char *in_) {
 	return basePath;
 }
 
-- (void)removeNuked:(NSString *)romPath isDir:(BOOL)dir {
++ (void)removeNuked:(NSString *)romPath isDir:(BOOL)dir {
 	NSError *error = nil;
 	[[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
 
 	NSAlert *alert = [NSAlert new];
-	[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
+	[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
 	if(error) {
-		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedPrefString(dir ? @"NukedErrorDirExistsError" : @"NukedErrorFileExistsError"), error]];
+		[alert setInformativeText:[NSString stringWithFormat:(dir ? NSLocalizedString(@"NukedErrorDirExistsError", @"Error message indicating ROM directory exists but could not be removed. A %@ operator should be placed for a NSError to be printed.") : NSLocalizedString(@"NukedErrorFileExistsError", @"Error message indicating ROM directory exists, but is somehow a file, and could not be removed. A %@ operator should be placed for a NSError to be printed.")), error]];
 	} else {
-		[alert setInformativeText:NSLocalizedPrefString(dir ? @"NukedInfoDirExists" : @"NukedErrorFileExists")];
+		[alert setInformativeText:dir ? NSLocalizedString(@"NukedInfoDirExists", @"A status message indicating that the Nuked SC-55 ROM directory existed, but was successfully removed.") : NSLocalizedString(@"NukedErrorFileExists", @"A status message indicating that the Nuked SC-55 ROM directory path existed, and was somehow just a file.")];
 	}
-	[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];
-			
-	[alert beginSheetModalForWindow:[view window] completionHandler:^(NSModalResponse returnCode) {
+	[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
+
+	[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
 	}];
 }
 
@@ -158,7 +98,7 @@ static NSString *nukedRlp3237 = @"RLP-3237";
 static NSString *nukedSc155 = @"SC-155";
 static NSString *nukedSc155mk2 = @"SC-155mk2";
 
-- (NSDictionary *)nukedDevices {
++ (NSDictionary *)nukedDevices {
 	return @{nukedSc55mk2: @{@"count": @(5)},
 			 nukedSc55st: @{@"count": @(0)},
 			 nukedSc55mk1: @{@"count": @(5)},
@@ -170,7 +110,7 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 			 nukedSc155mk2: @{@"count": @(0)}};
 }
 
-- (NSDictionary *)nukedRomsets {
++ (NSDictionary *)nukedRomsets {
 	return @{@"8a1eb33c7599b746c0c50283e4349a1bb1773b5c0ec0e9661219bf6c067d2042":
 				 @{@"name": @"rom1.bin", @"type": nukedSc55mk2},
 			 @"a4c9fd821059054c7e7681d61f49ce6f42ed2fe407a7ec1ba0dfdc9722582ce0":
@@ -203,17 +143,17 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 				 @{@"name": @"jv880_waverom2.bin", @"type": nukedJv880}*/};
 }
 
-- (void)importNuked:(NSString *)romPath {
++ (void)importNuked:(NSString *)romPath {
 	NSFileManager *defaultManager = [NSFileManager defaultManager];
 	NSError *error = nil;
 	[defaultManager createDirectoryAtPath:romPath withIntermediateDirectories:YES attributes:nil error:&error];
 	if(error) {
 		NSAlert *alert = [NSAlert new];
-		[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
-		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedPrefString(@"NukedErrorDirCreateError"), error]];
-		[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];
+		[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
+		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"NukedErrorDirCreateError", @"The error message for the Nuked SC-55 setup error dialog for when directory creation failed. It should have a placeholder %@ to receive the NSError."), error]];
+		[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
 
-		[alert beginSheetModalForWindow:[view window] completionHandler:^(NSModalResponse returnCode) {
+		[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
 		}];
 
 		[defaultManager removeItemAtPath:romPath error:&error];
@@ -268,11 +208,11 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 				fex_close(fex);
 
 				NSAlert *alert = [NSAlert new];
-				[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
-				[alert setInformativeText:NSLocalizedPrefString(@"NukedErrorBrokenSet")];
-				[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];
+				[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
+				[alert setInformativeText:NSLocalizedString(@"NukedErrorBrokenSet", @"An error message indicating that the Nuked SC-55 ROM set archive specified is broken and cannot be used.")];
+				[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
 						
-				[alert beginSheetModalForWindow:[view window] completionHandler:^(NSModalResponse returnCode) {
+				[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
 				}];
 
 				[defaultManager removeItemAtPath:romPath error:&error];
@@ -287,18 +227,18 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 			}];
 
 			NSAlert *alert = [NSAlert new];
-			[alert setMessageText:NSLocalizedPrefString(@"NukedInfoTitle")];
-			[alert setInformativeText:[NSString stringWithFormat:NSLocalizedPrefString(@"NukedInfoSetInstalled"), currentDevice]];
-			[alert addButtonWithTitle:NSLocalizedPrefString(@"NukedOK")];
+			[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
+			[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"NukedInfoSetInstalled", @"Status alert message for Nuked SC-55 setup, on successful install of a ROM set. A placeholder %@ should be inserted to receive the NSString indicating the device model name."), currentDevice]];
+			[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
 
-			[alert beginSheetModalForWindow:[view window] completionHandler:^(NSModalResponse returnCode) {
+			[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
 			}];
 		}
 	}
 	return;
 }
 
-- (void)setupNuked {
++ (void)setupNuked {
 	NSString *_romPath = [self romPath];
 	NSFileManager *defaultManager = [NSFileManager defaultManager];
 	BOOL dir = NO;
@@ -311,13 +251,8 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 	}
 }
 
-- (IBAction)setupPlugin:(id)sender {
-	NSUInteger selectedItem = [midiPluginControl indexOfSelectedItem];
-	NSDictionary *selectedInfo = [midiPluginBehaviorArrayController arrangedObjects][selectedItem];
-	if(![[selectedInfo objectForKey:@"configurable"] boolValue])
-		return;
-
-	NSString *plugin = [selectedInfo objectForKey:@"preference"];
++ (void)setupPlugin {
+	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 
 	if([plugin isEqualToString:@"NukeSc55"]) {
 		[self setupNuked];
