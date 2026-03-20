@@ -61,10 +61,10 @@ public:
 	void SetLogCallback(PLAYER_LOG_CB cbFunc, void* cbParam);
 	UINT8 GetState(void) const;
 	UINT32 GetCurPos(UINT8 unit) const;
-	double GetCurTime(UINT8 flags) const;
-	double GetTotalTime(UINT8 flags) const;
+	double GetCurTime(UINT8 flags) const;	// TODO: add GetCurSample()
+	double GetTotalTime(UINT8 flags) const;	// TODO: add GetTotalSamples()
 	UINT32 GetCurLoop(void) const;
-	double GetLoopTime(void) const;
+	double GetLoopTime(void) const;	// TODO: add GetLoopSamples()
 	PlayerBase* GetPlayer(void);
 	const PlayerBase* GetPlayer(void) const;
 	

@@ -55,16 +55,20 @@ struct PLR_SONG_INFO
 	UINT32 songLen;		// song length in ticks
 	UINT32 loopTick;	// tick position where the loop begins (-1 = no loop)
 	INT32 volGain;		// song-specific volume gain, 16.16 fixed point factor (0x10000 = 100%)
-	UINT32 deviceCnt;	// number of used sound devices
+	UINT32 deviceCnt;	// number of used sound devices (Note: excludes linked devices)
 };
 
 struct PLR_DEV_INFO
 {
-	UINT32 id;		// device ID
-	DEV_ID type;	// device type
-	UINT8 instance;	// instance ID of this device type (0xFF -> N/A for this format)
-	UINT16 volume;	// output volume (0x100 = 100%)
-	UINT32 core;	// FCC of device emulation core
+	UINT32 id;			// device ID
+	UINT32 parentIdx;	// index of parent device, when this is a linked device, (UINT32)-1 when there is no parent
+						// Note: Linked devices are mainly an implementation detail.
+						//       They can are used to determine properties like channel counts, but should NOT be shown to the user.
+	DEV_ID type;		// device type
+	UINT16 instance;	// instance ID of this device type (0xFFFF -> N/A for this format)
+						// linked device: index of linked device in relation to parent
+	UINT16 volume;		// output volume (0x100 = 100%)
+	UINT32 core;		// FCC of device emulation core
 	UINT32 smplRate;	// current sample rate (0 if not running)
 	const DEV_DECL* devDecl;	// device declaration
 	const DEV_GEN_CFG* devCfg;	// device configuration parameters
@@ -72,7 +76,7 @@ struct PLR_DEV_INFO
 
 struct PLR_MUTE_OPTS
 {
-	UINT8 disable;		// suspend emulation (0x01 = main device, 0x02 = linked, 0xFF = all)
+	UINT8 disable;		// suspend emulation (bitmask: 0x01 = main device, 0x02 = linked, 0xFF = all)
 	UINT32 chnMute[2];	// channel muting mask ([1] is used for linked devices)
 };
 struct PLR_PAN_OPTS

@@ -23,8 +23,8 @@
 #define DEVID_NES_APU	0x14	// also known as RP2A03/RP2A07
 #define DEVID_YMW258	0x15	// also known as MultiPCM
 #define DEVID_uPD7759	0x16
-#define DEVID_OKIM6258	0x17	// also known as MSM6258
-#define DEVID_OKIM6295	0x18	// also known as MSM6295
+#define DEVID_MSM6258	0x17
+#define DEVID_MSM6295	0x18
 #define DEVID_K051649	0x19	// also known as SCC1, variants: K052539, also known as SCC+
 #define DEVID_K054539	0x1A
 #define DEVID_C6280		0x1B
@@ -46,4 +46,9 @@
 #define DEVID_K007232	0x2A
 #define DEVID_K005289	0x2B
 #define DEVID_MSM5205	0x2C	// variants: MSM5205, MSM6585
+#define DEVID_MSM5232	0x2D
+#define DEVID_BSMT2000	0x2E
+#define DEVID_ICS2115	0x2F
+#define DEVID_YM2414	0x81	// YM2414 (OPZ), used in TX81Z
+
 #endif	// __SOUNDDEVS_H__
