@@ -111,7 +111,7 @@ public:
 	UINT32 Render(UINT32 smplCnt, WAVE_32BS* data);
 	
 private:
-	UINT8 GetDeviceInstance(size_t id) const;
+	size_t GetDeviceInstance(size_t id) const;
 	size_t DeviceID2OptionID(UINT32 id) const;
 	void RefreshMuting(S98_CHIPDEV& chipDev, const PLR_MUTE_OPTS& muteOpts);
 	void RefreshPanning(S98_CHIPDEV& chipDev, const PLR_PAN_OPTS& panOpts);

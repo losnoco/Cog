@@ -115,6 +115,7 @@ private:
 	void RefreshMuting(GYM_CHIPDEV& chipDev, const PLR_MUTE_OPTS& muteOpts);
 	void RefreshPanning(GYM_CHIPDEV& chipDev, const PLR_PAN_OPTS& panOpts);
 	
+	static bool CheckRawGYMFile(UINT32 dataLen, const UINT8* data);
 	UINT8 DecompressZlibData(void);
 	void CalcSongLength(void);
 	UINT8 LoadTags(void);

@@ -17,13 +17,15 @@ typedef UINT8 DEV_ID;
 typedef struct _device_core_definition DEV_DEF;
 typedef struct _device_declaration DEV_DECL;
 typedef struct _device_info DEV_INFO;
-typedef struct _device_generic_config DEV_GEN_CFG;
+typedef struct _device_link_ids DEVLINK_IDS;
 typedef struct _device_link_info DEVLINK_INFO;
+typedef struct _device_generic_config DEV_GEN_CFG;
 
 
 typedef const char* (*DEVDECLFUNC_NAME)(const DEV_GEN_CFG* devCfg);
 typedef UINT16 (*DEVDECLFUNC_CHNCOUNT)(const DEV_GEN_CFG* devCfg);
 typedef const char** (*DEVDECLFUNC_CHNNAMES)(const DEV_GEN_CFG* devCfg);
+typedef const DEVLINK_IDS* (*DEVDECLFUNC_LINKIDS)(const DEV_GEN_CFG* devCfg);
 
 
 typedef void (*DEVCB_SRATE_CHG)(void* userParam, UINT32 newSRate);
@@ -123,6 +125,7 @@ struct _device_declaration
 	DEVDECLFUNC_NAME name;			// return name of the device
 	DEVDECLFUNC_CHNCOUNT channelCount;	// return number of channels (for muting / panning)
 	DEVDECLFUNC_CHNNAMES channelNames;	// return list of names for each channel or NULL (no special channel names)
+	DEVDECLFUNC_LINKIDS linkDevIDs;	// return list of device IDs that the sound cores will likely expect to be linked or NULL (no linked devices)
 	const DEV_DEF* cores[];			// list of supported sound cores, terminated by NULL pointer
 };	// DEV_DECL
 struct _device_info
@@ -135,6 +138,12 @@ struct _device_info
 	UINT32 linkDevCount;	// number of link-able devices
 	DEVLINK_INFO* linkDevs;	// [freed by caller]
 };	// DEV_INFO
+
+struct _device_link_ids
+{
+	UINT32 devCount;	// number of link-able devices
+	DEV_ID devIDs[];	// list of device IDs that can be expected to be linked
+};	// DEVLINK_IDS
 struct _device_link_info
 {
 	DEV_ID devID;		// device ID (DEVID_ constant)

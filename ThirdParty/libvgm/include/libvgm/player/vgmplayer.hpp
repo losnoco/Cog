@@ -271,7 +271,9 @@ protected:
 	void Cmd_OKIM6295_Reg(void);			// command B8 - OKIM6295 register write (Ofs8_Data8 with minor fixes)
 	void Cmd_K007232_Reg(void);				// command 41 - K007232 register write (Ofs8_Data8 with minor fixes)
 	void Cmd_AY_Stereo(void);				// command 30 - set AY8910 stereo mask
-	
+	void Cmd_BSMT2000_Reg(void);			// command C9 - BSMT2000 register write (16-bit data, 8-bit offset)
+	void Cmd_BSMT2000_Mode(void);			// command 32 - BSMT2000 mode change (8-bit data)
+
 	CPCONV* _cpcUTF16;	// UTF-16 LE -> UTF-8 codepage conversion
 	DEV_LOGGER _logger;
 	DATA_LOADER *_dLoad;
@@ -282,8 +284,8 @@ protected:
 	enum
 	{
 		_HDR_BUF_SIZE = 0x100,
-		_OPT_DEV_COUNT = 0x2d,
-		_CHIP_COUNT = 0x2d,
+		_OPT_DEV_COUNT = 0x30,
+		_CHIP_COUNT = 0x30,
 		_PCM_BANK_COUNT = 0x40
 	};
 	
