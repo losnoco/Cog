@@ -49,9 +49,5 @@ func dataFromArchivedColor(_ color: NSColor) -> Data? {
 }
 
 func colorFromArchivedData(_ data: Data) -> NSColor? {
-    if #available(macOS 11.0, *) {
-        return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
-    } else {
-        return NSKeyedUnarchiver.unarchiveObject(with: data) as? NSColor
-    }
+    return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data)
 }
