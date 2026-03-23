@@ -3,7 +3,6 @@
 #import "FileTreeController.h"
 #import "FileTreeOutlineView.h"
 #import "FileTreeViewController.h"
-#import "FontSizetoLineHeightTransformer.h"
 #import "OpenURLPanel.h"
 #import "PathNode.h"
 #import "PlaybackController.h"
@@ -11,20 +10,13 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 #import "PlaylistView.h"
-#import "RubberbandEngineTransformer.h"
 #import "SQLiteStore.h"
 #import "SandboxBroker.h"
 #import "SpotlightWindowController.h"
-#import "StringToURLTransformer.h"
 #import <CogAudio/Status.h>
 
 #import "DualWindow.h"
 #import "Logging.h"
-#import "MiniModeMenuTitleTransformer.h"
-
-#import "ColorToValueTransformer.h"
-#import "MaybeSecureValueDataTransformer.h"
-#import "TotalTimeTransformer.h"
 
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>

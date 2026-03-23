@@ -13,7 +13,6 @@
 #import "NSString+CogSort.h"
 #import "PlaylistLoader.h"
 #import "SpotlightPlaylistEntry.h"
-#import "SpotlightTransformers.h"
 
 #import "Logging.h"
 
