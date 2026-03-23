@@ -9,7 +9,6 @@
 #import "InfoWindowController.h"
 #import "AppController.h"
 #import "Logging.h"
-#import "MissingAlbumArtTransformer.h"
 #import "PlaylistEntry.h"
 
 @implementation InfoWindowController

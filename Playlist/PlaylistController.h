@@ -10,6 +10,8 @@
 #import <CoreData/CoreData.h>
 #import <Foundation/NSUndoManager.h>
 
+#import "PlaylistControllerEnums.h"
+
 #import "DNDArrayController.h"
 
 @class AlbumArtwork;
@@ -20,25 +22,9 @@
 @class PlaybackController;
 @class AppController;
 
-typedef NS_ENUM(NSInteger, RepeatMode) {
-	RepeatModeNoRepeat = 0,
-	RepeatModeRepeatOne,
-	RepeatModeRepeatAlbum,
-	RepeatModeRepeatAll
-};
-
 static inline BOOL IsRepeatOneSet(void) {
 	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatModeRepeatOne;
 }
-
-typedef enum { ShuffleOff = 0,
-	           ShuffleAlbums,
-	           ShuffleAll } ShuffleMode;
-
-typedef NS_ENUM(NSInteger, URLOrigin) {
-	URLOriginInternal = 0,
-	URLOriginExternal
-};
 
 @interface PlaylistController : DNDArrayController <NSTableViewDelegate> {
 	IBOutlet PlaylistLoader *playlistLoader;

@@ -4,5 +4,7 @@
 
 #import <CogAudio/Status.h>
 #import <MASShortcut/Shortcut.h>
+#import "Playlist/PlaylistControllerEnums.h"
 #import "Preferences/PathSuggester.h"
 #import "Preferences/MIDIConfig.h"
+#import "Spotlight/SpotlightWindowController.h"

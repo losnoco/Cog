@@ -10,12 +10,8 @@
 #import "PlaybackController.h"
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
-#import "RepeatTransformers.h"
 #import "Shuffle.h"
-#import "ShuffleTransformers.h"
 #import "SpotlightWindowController.h"
-#import "StatusImageTransformer.h"
-#import "ToggleQueueTitleTransformer.h"
 
 #import "NSString+CogSort.h"
 #import "NSString+FinderCompare.h"
