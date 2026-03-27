@@ -74,19 +74,19 @@
       }
     },
     "31.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Year\"; ObjectID = \"31\";",
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Date\"; ObjectID = \"31\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Year"
+            "value" : "Date"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Año"
+            "value" : "Fecha"
           }
         }
       }

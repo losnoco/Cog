@@ -29,7 +29,7 @@ extern NSPersistentContainer *kPersistentContainer;
 	importKeys = @{ @"kMDItemTitle": @"title",
 		            @"kMDItemAlbum": @"album",
 		            @"kMDItemAudioTrackNumber": @"track",
-		            @"kMDItemRecordingYear": @"year",
+		            @"kMDItemRecordingYear": @"date",
 		            @"kMDItemMusicalGenre": @"genre",
 		            @"kMDItemDurationSeconds": @"length",
 		            @"kMDItemPath": URLTransform,
