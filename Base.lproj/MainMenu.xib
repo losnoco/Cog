@@ -2785,6 +2785,7 @@ Gw
         </customObject>
     </objects>
     <resources>
+        <image name="arrow.trianglehead.2.counterclockwise.rotate.90" catalog="system" width="16" height="15"/>
         <image name="arrow.trianglehead.clockwise.rotate.90" catalog="system" width="16" height="15"/>
         <image name="backward.end.fill" catalog="system" width="15" height="12"/>
         <image name="backward.fill" catalog="system" width="20" height="12"/>
