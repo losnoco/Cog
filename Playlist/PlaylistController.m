@@ -378,12 +378,12 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	long sec = (long)(tt);
 	hoursAndMinutes = ldiv(sec / 60, 60);
-    
-    NSString *week = NSLocalizedString(@"%1d week(s)", @"week for total");
-    NSString *day = NSLocalizedString(@"%1d day(s)", @"day for total");
-    NSString *hour = NSLocalizedString(@"%1d hour(s)", @"hour for total");
-    NSString *min = NSLocalizedString(@"%1d minute(s)", @"minute for total");
-    NSString *second = NSLocalizedString(@"%1d second(s)", @"second for total");
+
+	NSString *week = NSLocalizedString(@"%1d week(s)", @"week for total");
+	NSString *day = NSLocalizedString(@"%1d day(s)", @"day for total");
+	NSString *hour = NSLocalizedString(@"%1d hour(s)", @"hour for total");
+	NSString *min = NSLocalizedString(@"%1d minute(s)", @"minute for total");
+	NSString *second = NSLocalizedString(@"%1d second(s)", @"second for total");
 
 	if(hoursAndMinutes.quot >= 24) {
 		daysAndHours = ldiv(hoursAndMinutes.quot, 24);
