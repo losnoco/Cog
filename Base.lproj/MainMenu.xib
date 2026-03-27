@@ -435,8 +435,8 @@
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1919"/>
                                                     </connections>
                                                 </tableColumn>
-                                                <tableColumn identifier="year" editable="NO" width="95.5" minWidth="42" maxWidth="96" id="848">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Year">
+                                                <tableColumn identifier="date" editable="NO" width="94" minWidth="42" maxWidth="96" id="848" userLabel="Date">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Date">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
@@ -471,7 +471,7 @@
                                                         </tableCellView>
                                                     </prototypeCellViews>
                                                     <connections>
-                                                        <binding destination="218" name="value" keyPath="arrangedObjects.year" id="851"/>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.date" id="851"/>
                                                         <binding destination="1689" name="fontSize" keyPath="values.fontSize" id="1921"/>
                                                     </connections>
                                                 </tableColumn>
@@ -2285,7 +2285,7 @@ Gw
                 <string>title</string>
                 <string>genre</string>
                 <string>track</string>
-                <string>year</string>
+                <string>date</string>
                 <string>length</string>
                 <string>channels</string>
                 <string>bitsPerSample</string>
@@ -2348,12 +2348,12 @@ Gw
                 <outlet property="repeatButton" destination="1640" id="twI-AO-RJG"/>
                 <outlet property="showAlbumColumn" destination="1340" id="1350"/>
                 <outlet property="showArtistColumn" destination="1339" id="1349"/>
+                <outlet property="showDateColumn" destination="1344" id="1354"/>
                 <outlet property="showGenreColumn" destination="1341" id="1351"/>
                 <outlet property="showIndexColumn" destination="1337" id="1347"/>
                 <outlet property="showLengthColumn" destination="1342" id="1352"/>
                 <outlet property="showTitleColumn" destination="1338" id="1348"/>
                 <outlet property="showTrackColumn" destination="1343" id="1353"/>
-                <outlet property="showYearColumn" destination="1344" id="1354"/>
                 <outlet property="shuffleButton" destination="1637" id="Nzr-Mw-z9P"/>
                 <outlet property="spotlightWindowController" destination="1675" id="1677"/>
                 <outlet property="totalTimeField" destination="778" id="1659"/>
@@ -2640,7 +2640,7 @@ Gw
                 <menuItem title="Genre" state="on" keyEquivalent="G" id="1341"/>
                 <menuItem title="Length" state="on" keyEquivalent="L" id="1342"/>
                 <menuItem title="Track" state="on" keyEquivalent="R" id="1343"/>
-                <menuItem title="Year" state="on" keyEquivalent="Y" id="1344"/>
+                <menuItem title="Date" state="on" keyEquivalent="D" id="1344"/>
             </items>
             <point key="canvasLocation" x="-166" y="-282"/>
         </menu>

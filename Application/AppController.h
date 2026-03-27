@@ -40,7 +40,7 @@
 	IBOutlet NSMenuItem *showPlayCountColumn;
 	IBOutlet NSMenuItem *showLengthColumn;
 	IBOutlet NSMenuItem *showTrackColumn;
-	IBOutlet NSMenuItem *showYearColumn;
+	IBOutlet NSMenuItem *showDateColumn;
 
 	IBOutlet NSMenu *dockMenu;
 	IBOutlet NSMenuItem *currentArtistItem;

@@ -1238,19 +1238,19 @@
       }
     },
     "848.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Year\"; ObjectID = \"848\";",
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Date\"; ObjectID = \"848\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Year"
+            "value" : "Date"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Año"
+            "value" : "Fecha"
           }
         }
       }
@@ -1580,19 +1580,19 @@
       }
     },
     "1344.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Year\"; ObjectID = \"1344\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date\"; ObjectID = \"1344\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Year"
+            "value" : "Date"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Año"
+            "value" : "Fecha"
           }
         }
       }
