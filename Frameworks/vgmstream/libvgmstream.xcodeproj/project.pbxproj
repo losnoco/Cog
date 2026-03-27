@@ -126,6 +126,10 @@
 		832FC36C278FA4CB0056A860 /* ubi_ckd_cwav_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 832FC367278FA4CB0056A860 /* ubi_ckd_cwav_streamfile.h */; };
 		832FC36D278FA4CB0056A860 /* ubi_ckd_cwav.c in Sources */ = {isa = PBXBuildFile; fileRef = 832FC36B278FA4CB0056A860 /* ubi_ckd_cwav.c */; };
 		832FC36F278FAE3E0056A860 /* encrypted_mc161_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 832FC36E278FAE3E0056A860 /* encrypted_mc161_streamfile.h */; };
+		833064C92F7633F300ADADB1 /* crid.c in Sources */ = {isa = PBXBuildFile; fileRef = 833064C72F7633F300ADADB1 /* crid.c */; };
+		833064CA2F7633F300ADADB1 /* crid_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 833064C82F7633F300ADADB1 /* crid_streamfile.h */; };
+		833064CD2F7634CC00ADADB1 /* resampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 833064CB2F7634CC00ADADB1 /* resampler.h */; };
+		833064CE2F7634CC00ADADB1 /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 833064CC2F7634CC00ADADB1 /* resampler.c */; };
 		83345A521F8AEB2800B2EAA4 /* xvag.c in Sources */ = {isa = PBXBuildFile; fileRef = 83345A4E1F8AEB2800B2EAA4 /* xvag.c */; };
 		83349719275DD2AC00302E21 /* wbk.c in Sources */ = {isa = PBXBuildFile; fileRef = 83349715275DD2AC00302E21 /* wbk.c */; };
 		8339B323280FDF250076F74B /* sspf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8339B322280FDF250076F74B /* sspf.c */; };
@@ -1075,6 +1079,10 @@
 		832FC367278FA4CB0056A860 /* ubi_ckd_cwav_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ubi_ckd_cwav_streamfile.h; sourceTree = "<group>"; };
 		832FC36B278FA4CB0056A860 /* ubi_ckd_cwav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ubi_ckd_cwav.c; sourceTree = "<group>"; };
 		832FC36E278FAE3E0056A860 /* encrypted_mc161_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = encrypted_mc161_streamfile.h; sourceTree = "<group>"; };
+		833064C72F7633F300ADADB1 /* crid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crid.c; sourceTree = "<group>"; };
+		833064C82F7633F300ADADB1 /* crid_streamfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crid_streamfile.h; sourceTree = "<group>"; };
+		833064CB2F7634CC00ADADB1 /* resampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
+		833064CC2F7634CC00ADADB1 /* resampler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		83345A4E1F8AEB2800B2EAA4 /* xvag.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xvag.c; sourceTree = "<group>"; };
 		83349715275DD2AC00302E21 /* wbk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wbk.c; sourceTree = "<group>"; };
 		8339B322280FDF250076F74B /* sspf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sspf.c; sourceTree = "<group>"; };
@@ -2066,6 +2074,8 @@
 				834F7EB12C70A786003AC386 /* plugins.c */,
 				834F7EB42C70A786003AC386 /* render.h */,
 				834F7EB32C70A786003AC386 /* render.c */,
+				833064CB2F7634CC00ADADB1 /* resampler.h */,
+				833064CC2F7634CC00ADADB1 /* resampler.c */,
 				834F7EB52C70A786003AC386 /* sbuf.h */,
 				835DF7022C79ABB50008814A /* sbuf.c */,
 				834F7EB62C70A786003AC386 /* seek.c */,
@@ -2342,6 +2352,8 @@
 				8346D97825BF838C00D1A8B0 /* compresswave.c */,
 				83A8BAE425667AA7000F5F3F /* cpk.c */,
 				836DF625298F864100CD0580 /* cps.c */,
+				833064C72F7633F300ADADB1 /* crid.c */,
+				833064C82F7633F300ADADB1 /* crid_streamfile.h */,
 				83FC176B23AC58D100E1025F /* csb.c */,
 				834FE0D8215C79EA000A5D3D /* csmp.c */,
 				836F6E3C18BDC2180095E648 /* cstr.c */,
@@ -2930,6 +2942,7 @@
 				837CEAFE23487F2C00E62A4A /* jstm_streamfile.h in Headers */,
 				834F7DB02C7093EA003AC386 /* circus_vq_lib.h in Headers */,
 				832BF82021E0514B006F50F1 /* zsnd_streamfile.h in Headers */,
+				833064CA2F7633F300ADADB1 /* crid_streamfile.h in Headers */,
 				834F7E862C709FED003AC386 /* api_version.h in Headers */,
 				8375737721F950ED00F01AF5 /* ubi_sb_streamfile.h in Headers */,
 				833E82F42A28587D00CD0580 /* companion_files.h in Headers */,
@@ -3006,6 +3019,7 @@
 				8306B0E820984590000302D4 /* opus_interleave_streamfile.h in Headers */,
 				83031EDD243C510500C3F3E0 /* xnb_streamfile.h in Headers */,
 				83D2007B248DDB770048BD24 /* mups_streamfile.h in Headers */,
+				833064CD2F7634CC00ADADB1 /* resampler.h in Headers */,
 				83BDCD932E418A8F003FC007 /* awb_aac_encryption_streamfile.h in Headers */,
 				834F7E912C70A1AB003AC386 /* vgmstream_init.h in Headers */,
 				83AFABBD23795202002F3947 /* ea_eaac_opus_streamfile.h in Headers */,
@@ -3256,6 +3270,7 @@
 				832FC36D278FA4CB0056A860 /* ubi_ckd_cwav.c in Sources */,
 				83349719275DD2AC00302E21 /* wbk.c in Sources */,
 				83FC417326D3304D009A2022 /* xsh_xsd_xss.c in Sources */,
+				833064C92F7633F300ADADB1 /* crid.c in Sources */,
 				83E7FD6525EF2B2400683FD2 /* tac.c in Sources */,
 				834F7EC22C70A786003AC386 /* api_decode_open.c in Sources */,
 				83135AC12F2C851300380E01 /* ps2p.c in Sources */,
@@ -3634,6 +3649,7 @@
 				8306B0B120984552000302D4 /* blocked_halpst.c in Sources */,
 				83D26A8426E66DC2001A9475 /* chunks.c in Sources */,
 				834F7DD52C7093EA003AC386 /* l5_555_decoder.c in Sources */,
+				833064CE2F7634CC00ADADB1 /* resampler.c in Sources */,
 				836F6FD018BDC2190095E648 /* ps2_b1s.c in Sources */,
 				83031ED1243C50DF00C3F3E0 /* encrypted.c in Sources */,
 				834FE0FE215C79ED000A5D3D /* ps_headerless.c in Sources */,
