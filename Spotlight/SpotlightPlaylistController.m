@@ -16,7 +16,7 @@ static NSArray *cellIdentifiers = nil;
 @implementation SpotlightPlaylistController
 
 + (void)initialize {
-	cellIdentifiers = @[@"title", @"artist", @"album", @"length", @"year", @"genre", @"track"];
+	cellIdentifiers = @[@"title", @"artist", @"album", @"length", @"date", @"genre", @"track"];
 }
 
 // Allow drag and drop from Spotlight into main playlist
@@ -77,7 +77,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 				break;
 
 			case 4:
-				if([pe year]) cellText = pe.yearText;
+				if([pe date]) cellText = pe.date;
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
 

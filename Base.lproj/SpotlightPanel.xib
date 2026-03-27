@@ -218,8 +218,8 @@ DQ
                                                 <binding destination="186" name="fontSize" keyPath="values.fontSize" id="208"/>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn identifier="year" editable="NO" width="47" minWidth="10" maxWidth="1000" hidden="YES" id="31">
-                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Year">
+                                        <tableColumn identifier="date" editable="NO" width="47" minWidth="10" maxWidth="1000" hidden="YES" id="31">
+                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Date">
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
@@ -250,7 +250,7 @@ DQ
                                                 </tableCellView>
                                             </prototypeCellViews>
                                             <connections>
-                                                <binding destination="16" name="value" keyPath="arrangedObjects.year" id="94">
+                                                <binding destination="16" name="value" keyPath="arrangedObjects.date" id="94">
                                                     <dictionary key="options">
                                                         <integer key="NSConditionallySetsEditable" value="1"/>
                                                     </dictionary>
@@ -422,7 +422,7 @@ DQ
         <arrayController objectClassName="PlaylistEntry" preservesSelection="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" clearsFilterPredicateOnInsertion="NO" id="16" customClass="SpotlightPlaylistController">
             <declaredKeys>
                 <string>title</string>
-                <string>year</string>
+                <string>date</string>
                 <string>artist</string>
                 <string>album</string>
                 <string>genre</string>
