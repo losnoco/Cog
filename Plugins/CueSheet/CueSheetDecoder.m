@@ -52,10 +52,12 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	NSDictionary *metadata = @{};
 	if(track != nil)
 		metadata = [CueSheetMetadataReader processDataForTrack:track];
-	if(decoder != nil)
-		return [metadata dictionaryByMergingWith:[decoder metadata]];
-	else
-		return metadata;
+    if(decoder != nil) {
+        NSDictionary *decoderMetadata = [decoder metadata];
+        if(decoderMetadata != nil) // second dictionary takes priority
+            return [decoderMetadata dictionaryByMergingWith:metadata];
+    }
+    return metadata;
 }
 
 - (BOOL)open:(id<CogSource>)s {
