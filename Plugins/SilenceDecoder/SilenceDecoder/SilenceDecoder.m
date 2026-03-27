@@ -83,7 +83,7 @@ enum { channels = 2 };
 
 	remain = length - frame;
 
-	seconds = (double)(frame) / sample_rate;
+	seconds = (double)(frame) / (double)(sample_rate);
 
 	return frame;
 }
