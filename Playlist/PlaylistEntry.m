@@ -877,13 +877,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 @dynamic year;
 - (int32_t)year {
-	NSString *value = [self readAllValuesAsString:@"date"];
-	if(!value) {
-		value = [self readAllValuesAsString:@"recording_date"];
-	}
-	if(!value) {
-		value = [self readAllValuesAsString:@"year"];
-	}
+	NSString *value = self.date;
 	if(value) {
 		return [value intValue];
 	} else {
@@ -892,10 +886,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 - (void)setYear:(int32_t)year {
-	NSString *svalue = [NSString stringWithFormat:@"%u", year];
-	[self setValue:@"year" fromString:svalue];
-	[self setValue:@"date" fromString:nil];
-	[self setValue:@"recording_date" fromString:nil];
+	NSString *svalue = year ? [NSString stringWithFormat:@"%u", year] : nil;
+	[self setDate:svalue];
 }
 
 @dynamic date;
