@@ -1901,6 +1901,7 @@ bin/$(FLAVOUR_DIR)libopenmpt.pc:
 	$(VERYSILENT)echo '' >> $@.tmp
 	$(VERYSILENT)echo 'Name: libopenmpt' >> $@.tmp
 	$(VERYSILENT)echo 'Description: Tracker module player based on OpenMPT' >> $@.tmp
+	$(VERYSILENT)echo 'URL: https://lib.openmpt.org/' >> $@.tmp
 	$(VERYSILENT)echo 'Version: $(DIST_LIBOPENMPT_VERSION)' >> $@.tmp
 	$(VERYSILENT)echo 'Requires.private: $(PC_REQUIRES_ZLIB) $(PC_REQUIRES_MPG123) $(PC_REQUIRES_OGG) $(PC_REQUIRES_VORBIS) $(PC_REQUIRES_VORBISFILE)' >> $@.tmp
 	$(VERYSILENT)echo 'Libs: -L$${libdir} -lopenmpt' >> $@.tmp

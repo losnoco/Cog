@@ -60,7 +60,7 @@ struct UltSample
 
 		mptSmp.nLength = sizeEnd - sizeStart;
 		mptSmp.nSustainStart = loopStart;
-		mptSmp.nSustainEnd = std::min(static_cast<SmpLength>(loopEnd), mptSmp.nLength);
+		mptSmp.nSustainEnd = loopEnd;
 		mptSmp.nVolume = volume;
 
 		mptSmp.nC5Speed = speed * 2;  // Doubled to fit the note range

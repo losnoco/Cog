@@ -91,7 +91,10 @@ struct MixLoopState
 	// Returns the buffer length required to render a certain amount of samples, based on the channel's playback speed.
 	static MPT_FORCEINLINE uint32 DistanceToBufferLength(SamplePosition from, SamplePosition to, SamplePosition inc)
 	{
-		return static_cast<uint32>((to - from - SamplePosition(1)) / inc) + 1;
+		if(from < to)
+			return static_cast<uint32>((to - from - SamplePosition(1)) / inc) + 1;
+		else
+			return 1;
 	}
 
 	// Check how many samples can be rendered without encountering loop or sample end, and also update loop position / direction
@@ -227,16 +230,20 @@ struct MixLoopState
 		{
 			if(nPosInt >= lookaheadStart)
 			{
+				// We are close to the loop end
 				if(nInc.IsNegative())
 				{
+					// Going backward -> only go up to start of lookahead area
 					nSmpCount = DistanceToBufferLength(SamplePosition(lookaheadStart, 0), nPos, nInv);
 					chn.pCurrentSample = lookaheadPointer;
 				} else if(nPosInt <= chn.nLoopEnd)
 				{
+					// Going forward, approaching loop end -> only go up to end of loop
 					nSmpCount = DistanceToBufferLength(nPos, SamplePosition(chn.nLoopEnd, 0), nInv);
 					chn.pCurrentSample = lookaheadPointer;
 				} else
 				{
+					// We are already past the end of the loop
 					nSmpCount = DistanceToBufferLength(nPos, SamplePosition(chn.nLength, 0), nInv);
 				}
 				checkDest = false;
@@ -244,7 +251,7 @@ struct MixLoopState
 			{
 				// We just restarted the loop, so interpolate correctly after wrapping around
 				nSmpCount = DistanceToBufferLength(nPos, SamplePosition(nLoopStart + InterpolationLookaheadBufferSize, 0), nInv);
-				chn.pCurrentSample = lookaheadPointer + (chn.nLength - nLoopStart) * chn.pModSample->GetBytesPerSample();
+				chn.pCurrentSample = lookaheadPointer + (chn.nLoopEnd - nLoopStart) * chn.pModSample->GetBytesPerSample();
 				checkDest = false;
 			} else if(nInc.IsPositive() && static_cast<SmpLength>(nPosDest) >= lookaheadStart && nSmpCount > 1)
 			{

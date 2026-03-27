@@ -155,8 +155,9 @@
 #define MPT_MAYBE_CONSTANT_IF(x) \
 	_Pragma("clang diagnostic push") \
 	_Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \
-	_Pragma("clang diagnostic ignored \"-Wtype-limits\"") \
+	_Pragma("clang diagnostic ignored \"-Wunreachable-code\"") \
 	_Pragma("clang diagnostic ignored \"-Wtautological-constant-out-of-range-compare\"") \
+	_Pragma("clang diagnostic ignored \"-Wtype-limits\"") \
 	if (x) \
 		_Pragma("clang diagnostic pop") \
 /**/
