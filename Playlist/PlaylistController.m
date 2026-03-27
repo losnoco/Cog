@@ -43,7 +43,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 + (void)initialize {
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
-		                @"album", @"length", @"year", @"genre", @"track", @"path",
+		                @"album", @"length", @"date", @"genre", @"track", @"path",
 		                @"filename", @"codec", @"rating", @"samplerate",
 		                @"bitspersample", @"bitrate", @"composer", @"playcount"];
 
@@ -488,7 +488,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 				break;
 
 			case 7:
-				if([pe year]) cellText = pe.yearText;
+				if([pe date]) cellText = pe.date;
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
 
@@ -683,14 +683,14 @@ static void *playlistControllerContext = &playlistControllerContext;
 	 - status - compare
 	 1
 
-	 - length, year, samplerate, bitspersample - numeric
-	 6, 7, 14, 15
+	 - length, samplerate, bitspersample - numeric
+	 6, 14, 15
 
 	 - playcount vs "playCount" - numeric
 	 18
 
-	 - title, albumartist, artist, album, genre, path, filename, codec, composer - strings, finderCompare
-	 2, 3, 4, 5, 8, 10, 11, 12, 17
+	 - title, albumartist, artist, album, date, genre, path, filename, codec, composer - strings, finderCompare
+	 2, 3, 4, 5, 7, 8, 10, 11, 12, 17
 
 	 - rating, bitrate, numeric with text decorators - compare
 	 13, 16
@@ -709,6 +709,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 3:
 		case 4:
 		case 5:
+		case 7:
 		case 8:
 		case 10:
 		case 11:
@@ -719,7 +720,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 			break;
 
 		case 6:
-		case 7:
 		case 14:
 		case 15:
 			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compareTrackNumbers:)];

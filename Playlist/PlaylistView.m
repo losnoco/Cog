@@ -41,7 +41,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 								@{@"id": @"composer", @"width": @(151), @"hidden": @YES},
 								@{@"id": @"album", @"width": @(202), @"hidden": @NO},
 								@{@"id": @"length", @"width": @(95), @"hidden": @NO},
-								@{@"id": @"year", @"width": @(95), @"hidden": @NO},
+								@{@"id": @"date", @"width": @(95), @"hidden": @NO},
 								@{@"id": @"genre", @"width": @(114), @"hidden": @NO},
 								@{@"id": @"track", @"width": @(71), @"hidden": @NO},
 								@{@"id": @"playcount", @"width": @(71), @"hidden": @NO},
