@@ -78,7 +78,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 
 	NSString *album = @"";
 	NSString *artist = @"";
-	NSNumber *year = @(0);
+	NSString *date = @"";
 	NSNumber *track = @(0);
 	NSNumber *disc = @(0);
 	NSString *title = @"";
@@ -121,7 +121,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 			} else if(!strcasecmp(tag_key, "ARTIST")) {
 				artist = value;
 			} else if(!strcasecmp(tag_key, "DATE")) {
-				year = @([value intValue]);
+				date = value;
 			} else if(!strcasecmp(tag_key, "TRACK") ||
 			          !strcasecmp(tag_key, "TRACKNUMBER")) {
 				track = @([value intValue]);
@@ -181,8 +181,8 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 		[mutableMetadata setValue:album forKey:@"album"];
 	if(![artist isEqualToString:@""])
 		[mutableMetadata setValue:artist forKey:@"artist"];
-	if(![year isEqualToNumber:@(0)])
-		[mutableMetadata setValue:year forKey:@"year"];
+	if(![date isEqualToString:@""])
+		[mutableMetadata setValue:date forKey:@"date"];
 
 	NSDictionary *metadata = [NSDictionary dictionaryWithDictionary:mutableMetadata];
 
