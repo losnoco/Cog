@@ -364,14 +364,16 @@ static BOOL consentLastEnabled = NO;
 					};
 
 					// And now to set up user feedback prompting
-					options.onCrashedLastRun = ^void(SentryEvent * _Nonnull event) {
-						// capture user feedback
-						FeedbackController *fbcon = [FeedbackController new];
-						[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
-						if([fbcon waitForCompletion]) {
-							SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];
-
-							[SentrySDK captureFeedback:feedback];
+					options.onLastRunStatusDetermined = ^void(enum SentryLastRunStatus status, SentryEvent * _Nullable event) {
+						if(status == SentryLastRunStatusDidCrash && event) {
+							// capture user feedback
+							FeedbackController *fbcon = [FeedbackController new];
+							[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
+							if([fbcon waitForCompletion]) {
+								SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];
+								
+								[SentrySDK captureFeedback:feedback];
+							}
 						}
 					};
 				}];
