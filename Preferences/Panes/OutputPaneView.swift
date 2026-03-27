@@ -44,7 +44,7 @@ private final class OutputPrefs: ObservableObject {
     }
 }
 
-private let volumeOptions: [(LocalizedStringKey, String, Int)] = [
+@MainActor private let volumeOptions: [(LocalizedStringKey, String, Int)] = [
     ("ReplayGain Album Gain with peak", "albumGainWithPeak", 0),
     ("ReplayGain Album Gain", "albumGain", 0),
     ("ReplayGain Track Gain with peak", "trackGainWithPeak", 0),
@@ -54,7 +54,7 @@ private let volumeOptions: [(LocalizedStringKey, String, Int)] = [
     ("No volume scaling", "none", 2),
 ]
 
-private let resamplingOptions: [(LocalizedStringKey, String)] = [
+@MainActor private let resamplingOptions: [(LocalizedStringKey, String)] = [
     ("Zero Order Hold", "zoh"),
     ("Blep Synthesis", "blep"),
     ("Linear Interpolation", "linear"),

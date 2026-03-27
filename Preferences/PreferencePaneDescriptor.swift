@@ -3,8 +3,8 @@ import SwiftUI
 /// Backport of @StateObject for macOS 10.15 (retains object identity via @State,
 /// observes changes via @ObservedObject). update() is called by SwiftUI before each
 /// body evaluation to sync the two.
-@propertyWrapper
-struct StateObjectCompat<ObjectType: ObservableObject>: DynamicProperty {
+@MainActor @propertyWrapper
+struct StateObjectCompat<ObjectType: ObservableObject>: @MainActor DynamicProperty {
     @State private var storage: ObjectType
     @ObservedObject private var observed: ObjectType
 
@@ -32,7 +32,7 @@ struct PreferencePaneDescriptor: Identifiable {
     let body: AnyView
     var showPathSuggesterAction: ((NSWindow) -> Void)? = nil
 
-    static func allPanes() -> [PreferencePaneDescriptor] {
+    @MainActor static func allPanes() -> [PreferencePaneDescriptor] {
         [
             PreferencePaneDescriptor(
                 title: "Playlist",

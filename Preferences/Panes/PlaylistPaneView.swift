@@ -43,7 +43,7 @@ private final class PlaylistPrefs: ObservableObject {
     }
 }
 
-private let behaviorOptions: [(label: LocalizedStringKey, value: String)] = [
+@MainActor private let behaviorOptions: [(label: LocalizedStringKey, value: String)] = [
     ("Clear Playlist and Play", "clearAndPlay"),
     ("Enqueue", "enqueue"),
     ("Enqueue and Play", "enqueueAndPlay"),

@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 
 // Static variable for PausingQueryTransformer
-private var searchController: SpotlightWindowController?
+nonisolated(unsafe) private var searchController: SpotlightWindowController?
 
 @objc(PausingQueryTransformer)
 class PausingQueryTransformer: ValueTransformer {
@@ -25,7 +25,8 @@ class PausingQueryTransformer: ValueTransformer {
         // Rather unintuitively, this piece of code eliminates the "flicker"
         // when searching for new results, which resulted from a pause when the
         // search query stops gathering and sends an empty results array through KVO.
-        if (value as? NSArray)?.count ?? 0 > 0 || searchController?.query.isGathering ?? false {
+        let isGathering: Bool = DispatchQueue.main.sync { searchController?.query.isGathering ?? false }
+        if (value as? NSArray)?.count ?? 0 > 0 || isGathering {
             oldResults = value as? NSArray
         }
         return oldResults

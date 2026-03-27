@@ -100,7 +100,7 @@ private func fourCharCode(_ value: OSType) -> String {
     }
 }
 
-private let flavorOptions: [(LocalizedStringKey, String)] = [
+@MainActor private let flavorOptions: [(LocalizedStringKey, String)] = [
     ("Default (auto)", "default"),
     ("General MIDI", "gm"),
     ("General MIDI 2", "gm2"),
