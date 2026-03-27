@@ -93,7 +93,8 @@
 
 			NSDictionary *cuesheetMetadata = [CueSheetMetadataReader processDataForTrack:track];
 
-			return [cuesheetMetadata dictionaryByMergingWith:fileMetadata];
+            // second dictionary takes priority
+			return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];
 		}
 	}
 
