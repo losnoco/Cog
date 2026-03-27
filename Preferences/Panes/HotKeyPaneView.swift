@@ -1,6 +1,6 @@
 import SwiftUI
 
-private let shortcuts: [(label: LocalizedStringKey, key: String)] = [
+@MainActor private let shortcuts: [(label: LocalizedStringKey, key: String)] = [
     ("Play / Pause",    "cogPlayShortcutV2"),
     ("Next",            "cogNextShortcutV2"),
     ("Previous",        "cogPrevShortcutV2"),

@@ -27,7 +27,7 @@ struct ColorWellView: NSViewRepresentable {
         return colorFromArchivedData(data) ?? defaultColor
     }
 
-    final class Coordinator: NSObject {
+    @MainActor final class Coordinator: NSObject {
         var key: String
         let defaultColor: NSColor
 
