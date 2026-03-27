@@ -570,6 +570,7 @@
 				<string>hwd</string>
 				<string>iab</string>
 				<string>iadp</string>
+				<string>iap</string>
 				<string>idmsf</string>
 				<string>idsp</string>
 				<string>idvi</string>
@@ -689,6 +690,7 @@
 				<string>msv</string>
 				<string>msvp</string>
 				<string>msx</string>
+				<string>mta</string>
 				<string>mta2</string>
 				<string>mtaf</string>
 				<string>mtt</string>
@@ -931,6 +933,7 @@
 				<string>ueba</string>
 				<string>ulw</string>
 				<string>um3</string>
+				<string>usm</string>
 				<string>utk</string>
 				<string>uv</string>
 				<string>v</string>

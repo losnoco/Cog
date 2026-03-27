@@ -1058,6 +1058,8 @@ VGMSTREAM* init_vgmstream_ps2p(STREAMFILE* sf);
 
 VGMSTREAM* init_vgmstream_gcsp(STREAMFILE* sf);
 
+VGMSTREAM* init_vgmstream_crid(STREAMFILE* sf);
+
 VGMSTREAM* init_vgmstream_srcd(STREAMFILE* sf);
 
 #endif

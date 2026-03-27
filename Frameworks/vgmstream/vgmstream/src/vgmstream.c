@@ -122,7 +122,6 @@ bool prepare_vgmstream(VGMSTREAM* vgmstream, STREAMFILE* sf) {
         vgmstream->loop_end_sample = 0;
     }
 
-VGM_LOG("final setup\n");
     setup_vgmstream(vgmstream); /* final setup */
 
     return true;
@@ -182,6 +181,8 @@ void reset_vgmstream(VGMSTREAM* vgmstream) {
     decode_reset(vgmstream);
 
     render_reset(vgmstream);
+
+    mixer_reset(vgmstream->mixer);
 
     /* note that this does not reset the constituent STREAMFILES
      * (vgmstream->ch[N].streamfiles' internal state, like internal offset, though shouldn't matter) */
