@@ -168,6 +168,9 @@
 			<property name="year" code="pYer" description="The year of the entry." type="integer" access="r">
 				<cocoa key="year" insert-at-beginning="yes"/>
 			</property>
+			<property name="date" code="pDat" description="The full date of the entry." type="text" access="r">
+				<cocoa key="date" insert-at-beginning="yes"/>
+			</property>
 			<property name="bitrate" code="pBit" description="The bitrate of the entry, in kilobits per second." type="integer" access="r">
 				<cocoa key="bitrate" insert-at-beginning="yes"/>
 			</property>
