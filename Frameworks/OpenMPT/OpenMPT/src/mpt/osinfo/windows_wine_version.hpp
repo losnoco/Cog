@@ -7,6 +7,7 @@
 
 #include "mpt/base/detect.hpp"
 #include "mpt/base/integer.hpp"
+#include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
 #include "mpt/osinfo/windows_version.hpp"
 

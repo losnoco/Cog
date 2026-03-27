@@ -129,7 +129,7 @@ static std::string get_library_version_string() {
 	str += mpt::format_value_default<std::string>(OPENMPT_API_VERSION_MINOR);
 	str += ".";
 	str += mpt::format_value_default<std::string>(OPENMPT_API_VERSION_PATCH);
-	if ( std::string(OPENMPT_API_VERSION_PREREL).length() > 0 ) {
+	MPT_MAYBE_CONSTANT_IF ( std::string(OPENMPT_API_VERSION_PREREL).length() > 0 ) {
 		str += OPENMPT_API_VERSION_PREREL;
 	}
 	std::vector<std::string> fields;
@@ -224,7 +224,7 @@ std::string get_string( const std::string & key ) {
 #endif // MPT_COMPILER_CLANG
 		return ( std::string(OPENMPT_API_VERSION_PREREL).length() == 0 ) ? "1" : "0";
 #if MPT_COMPILER_CLANG
-#pragma clang diagnostic push
+#pragma clang diagnostic pop
 #endif // MPT_COMPILER_CLANG
 	} else if ( key == "library_features" ) {
 		return get_library_features_string();

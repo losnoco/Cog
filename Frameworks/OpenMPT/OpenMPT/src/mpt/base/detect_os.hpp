@@ -48,6 +48,7 @@
 // https://en.wikipedia.org/wiki/Windows_10_version_history
 // https://en.wikipedia.org/wiki/Windows_11_version_history
 // https://www.windowslatest.com/2021/09/03/windows-11-build-22449-is-now-available-with-new-loading-animation/
+// https://en.wikipedia.org/wiki/List_of_Microsoft_codenames#Windows_platform_engineering_milestones
 
 //      Release          NTDDI-version                                   NTDDI-constant  Release     Build.Sub  Codename      Semester     Semester Semester Marketing-Name    min-SDK-Version WDK_NTDDI_VERSION
 //                                                                                            .Version                                     Codename  Date
@@ -83,7 +84,8 @@
 //                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0e) // NTDDI_WIN11_ZN         23H2                                       Zinc      23H2                         10.0.26100.? NTDDI_WIN11_GE
 //                       MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x0f) // NTDDI_WIN11_GA         24H1                                       Gallium   24H1                         10.0.26100.? NTDDI_WIN11_GE
 #define MPT_WIN_11_24H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) // NTDDI_WIN11_GE   Win11.24H2 26100      Hudson Valley Germanium R1 Germanium 24H2    2024 Update          10.0.26100.? NTDDI_WIN11_GE
-//      MPT_WIN_11_25H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) //                  Win11.24H2 26200      ?             ?            ?         25H2    2025 Update          10.0.26200.? NTDDI_WIN11_GE
+//      MPT_WIN_11_25H2  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) //                  Win11.25H2 26200      ?             ?            ?         25H2    2025 Update          10.0.26100.? NTDDI_WIN11_GE
+//      MPT_WIN_11_26H1  MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) //                  Win11.26H1 28000      ?             ?            Bromine   26H2                         10.0.26100.? NTDDI_WIN11_GE
 
 // MPT_WIN_API_DESKTOP     : Windows 8/10 Desktop Application (Win32)
 // MPT_WIN_API_UNIVERSAL   : Windows 10 Store App / Universal App
@@ -101,19 +103,38 @@
 
 #elif defined(__EMSCRIPTEN__)
 #define MPT_OS_EMSCRIPTEN 1
-#if !defined(__EMSCRIPTEN_major__) || !defined(__EMSCRIPTEN_minor__) || !defined(__EMSCRIPTEN_tiny__)
+#if !defined(__EMSCRIPTEN_MAJOR__) || !defined(__EMSCRIPTEN_MINOR__) || !defined(__EMSCRIPTEN_TINY__) || !defined(__EMSCRIPTEN_major__) || !defined(__EMSCRIPTEN_minor__) || !defined(__EMSCRIPTEN_tiny__)
 #include <emscripten/version.h>
 #endif
-#if defined(__EMSCRIPTEN_major__) && defined(__EMSCRIPTEN_minor__)
-#if (__EMSCRIPTEN_major__ > 3)
+#if defined(__EMSCRIPTEN_MAJOR__)
+#define MPT_OS_EMSCRIPTEN_VERSION_MAJOR __EMSCRIPTEN_MAJOR__
+#elif defined(__EMSCRIPTEN_major__)
+#define MPT_OS_EMSCRIPTEN_VERSION_MAJOR __EMSCRIPTEN_major__
+#else
+#define MPT_OS_EMSCRIPTEN_VERSION_MAJOR 0
+#endif
+#if defined(__EMSCRIPTEN_MINOR__)
+#define MPT_OS_EMSCRIPTEN_VERSION_MINOR __EMSCRIPTEN_MINOR__
+#elif defined(__EMSCRIPTEN_minor__)
+#define MPT_OS_EMSCRIPTEN_VERSION_MINOR __EMSCRIPTEN_minor__
+#else
+#define MPT_OS_EMSCRIPTEN_VERSION_MINOR 0
+#endif
+#if defined(__EMSCRIPTEN_TINY__)
+#define MPT_OS_EMSCRIPTEN_VERSION_TINY __EMSCRIPTEN_TINY__
+#elif defined(__EMSCRIPTEN_tiny__)
+#define MPT_OS_EMSCRIPTEN_VERSION_TINY __EMSCRIPTEN_tiny__
+#else
+#define MPT_OS_EMSCRIPTEN_VERSION_TINY 0
+#endif
+#if (MPT_OS_EMSCRIPTEN_VERSION_MAJOR > 3)
 // ok
-#elif (__EMSCRIPTEN_major__ == 3) && (__EMSCRIPTEN_minor__ > 1)
+#elif (MPT_OS_EMSCRIPTEN_VERSION_MAJOR == 3) && (MPT_OS_EMSCRIPTEN_VERSION_MINOR > 1)
 // ok
-#elif (__EMSCRIPTEN_major__ == 3) && (__EMSCRIPTEN_minor__ == 1) && (__EMSCRIPTEN_tiny__ >= 51)
+#elif (MPT_OS_EMSCRIPTEN_VERSION_MAJOR == 3) && (MPT_OS_EMSCRIPTEN_VERSION_MINOR == 1) && (MPT_OS_EMSCRIPTEN_VERSION_TINY >= 51)
 // ok
 #else
 #error "Emscripten >= 3.1.51 is required."
-#endif
 #endif
 
 

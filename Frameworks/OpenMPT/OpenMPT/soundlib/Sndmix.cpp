@@ -1619,7 +1619,7 @@ void CSoundFile::ProcessArpeggio(CHANNELINDEX nChn, int32 &period, Tuning::NOTEI
 						// Test case: ArpWraparound.mod, and the snare sound in "Jim is dead" by doh.
 						if(note == NOTE_MIDDLEC + 24)
 						{
-							period = int32_max;
+							period = 65536;  // Period 0 is treated as period 65536 by the Paula chip
 							return;
 						} else if(note > NOTE_MIDDLEC + 24)
 						{

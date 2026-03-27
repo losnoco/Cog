@@ -132,10 +132,7 @@ CSoundFile::ProbeResult CSoundFile::ProbeFileHeaderUNIC(MemoryFileReader file, c
 	if(!headerValidationResult.totalSampleSize)
 		return ProbeFailure;
 
-	if(pfilesize && *pfilesize < 1084 + headerValidationResult.numPatterns * 64u * 4u * 3u + headerValidationResult.totalSampleSize)
-		return ProbeFailure;
-	
-	return ProbeSuccess;
+	return ProbeAdditionalSize(file, pfilesize, (headerValidationResult.numPatterns - 1u) * 64u * 4u * 3u + headerValidationResult.totalSampleSize);
 }
 
 

@@ -490,7 +490,7 @@ static void clear_current_timeinfo() {
 static void WINAPI openmpt_About( HWND win ) {
 	std::ostringstream about;
 	about << SHORT_TITLE << " version " << openmpt::string::get( "library_version" ) << " " << "(built " << openmpt::string::get( "build" ) << ")" << std::endl;
-	about << " Copyright (c) 2013-2025 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
+	about << " Copyright (c) 2013-2026 OpenMPT Project Developers and Contributors (https://lib.openmpt.org/)" << std::endl;
 	about << " OpenMPT version " << openmpt::string::get( "core_version" ) << std::endl;
 	about << std::endl;
 	about << openmpt::string::get( "contact" ) << std::endl;
@@ -1724,8 +1724,8 @@ static XMPIN xmpin = {
 	/*VisRender,*/nullptr,
 	VisRenderDC,
 	/*VisButton,*/nullptr,
+	/*VisConfig*/nullptr,
 
-	nullptr, // reserved2
 	openmpt_GetConfig,
 	openmpt_SetConfig,
 

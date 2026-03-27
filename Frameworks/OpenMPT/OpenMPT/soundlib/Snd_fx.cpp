@@ -2315,13 +2315,16 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 	// Always NNA cut
 	if(!(GetType() & (MOD_TYPE_IT | MOD_TYPE_MPT | MOD_TYPE_MT2)) || !m_nInstruments || forceCut)
 	{
-		if(!srcChn.nLength || srcChn.dwFlags[CHN_MUTE] || !(srcChn.rightVol | srcChn.leftVol))
+		if(srcChn.dwFlags[CHN_MUTE])
 			return CHANNELINDEX_INVALID;
 
 #ifndef NO_PLUGINS
 		if(applyNNAtoPlug)
 			SendMIDINote(nChn, NOTE_KEYOFF, 0, m_playBehaviour[kMIDINotesFromChannelPlugin] ? pPlugin : nullptr);
 #endif  // NO_PLUGINS
+
+		if(!srcChn.nLength || !(srcChn.rightVol | srcChn.leftVol))
+			return CHANNELINDEX_INVALID;
 
 		if(srcChn.dwFlags[CHN_ADLIB] && m_opl)
 		{
