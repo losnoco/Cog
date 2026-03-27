@@ -134,7 +134,7 @@ static std::string FCC2Str(UINT32 fcc) {
 	NSString* title = @"";
 	NSString* artist = @"";
 	NSString* album = @"";
-	NSNumber* year = @(0);
+	NSString* date = @"";
 
 	PlayerBase* player = mainPlr.GetPlayer();
 
@@ -147,9 +147,7 @@ static std::string FCC2Str(UINT32 fcc) {
 		else if(!strcmp(t[0], "GAME"))
 			album = guess_encoding_of_string(t[1]);
 		else if(!strcmp(t[0], "DATE")) {
-			char* end;
-			unsigned long theYear = strtoul(t[1], &end, 10);
-			year = @(theYear);
+			date = guess_encoding_of_string(t[1]);
 		}
 	}
 
@@ -167,14 +165,14 @@ static std::string FCC2Str(UINT32 fcc) {
 		@"album",
 		@"title",
 		@"artist",
-		@"year"
+		@"date"
 	};
 	const id values[] = {
 		system,
 		album,
 		title,
 		artist,
-		year
+		date
 	};
 	return [NSDictionary initWithOptionalObjects:values forKeys:keys count:sizeof(keys) / sizeof(keys[0])];
 }
