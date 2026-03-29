@@ -108,9 +108,9 @@
 - (void)notifyStreamChanged:(id)userInfo;
 - (void)notifyStreamChangedMainThread:(id)userInfo;
 
-- (void)beginEqualizer:(AudioUnit)eq;
-- (void)refreshEqualizer:(AudioUnit)eq;
-- (void)endEqualizer:(AudioUnit)eq;
+- (void)beginEqualizer:(void *)eq;
+- (void)refreshEqualizer:(void *)eq;
+- (void)endEqualizer:(void *)eq;
 
 - (BOOL)endOfInputReached:(BufferChain *)sender;
 - (void)setShouldContinue:(BOOL)s;
