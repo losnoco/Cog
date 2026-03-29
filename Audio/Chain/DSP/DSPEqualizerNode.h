@@ -10,9 +10,7 @@
 
 #import <CogAudio/DSPNode.h>
 
-@interface DSPEqualizerNode : DSPNode {
-	float *samplePtr;
-}
+@interface DSPEqualizerNode : DSPNode
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency;
 
@@ -25,6 +23,10 @@
 
 - (void)process;
 - (AudioChunk * _Nullable)convert;
+
+- (void)setBandGain:(float)gainDB forIndex:(int)i;
+- (void)setAllBands:(float *_Nonnull)gainsDB;
+- (void)setPreamp:(float)preampDB;
 
 @end
 

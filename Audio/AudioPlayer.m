@@ -336,15 +336,15 @@
 	[self sendDelegateMethod:@selector(audioPlayer:didStopNaturally:) withObject:userInfo waitUntilDone:NO];
 }
 
-- (void)beginEqualizer:(AudioUnit)eq {
+- (void)beginEqualizer:(void *)eq {
 	[self sendDelegateMethod:@selector(audioPlayer:displayEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 
-- (void)refreshEqualizer:(AudioUnit)eq {
+- (void)refreshEqualizer:(void *)eq {
 	[self sendDelegateMethod:@selector(audioPlayer:refreshEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 
-- (void)endEqualizer:(AudioUnit)eq {
+- (void)endEqualizer:(void *)eq {
 	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 

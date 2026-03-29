@@ -24,17 +24,29 @@ extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
 
+static const double equalizer_q = 1.4;
+
+static const float apple_equalizer_bands[31] = { 20, 25, 31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1200, 1600, 2000, 2500, 3100, 4000, 5000, 6300, 8000, 10000, 12000, 16000, 20000 };
+
+typedef struct {
+	double b0, b1, b2;
+	double a1, a2;
+} biquadcoefficients;
+
 @implementation DSPEqualizerNode {
 	BOOL enableEqualizer;
 	BOOL equalizerInitialized;
+	BOOL equalizerBegin;
 
 	double equalizerPreamp;
 
 	__weak AudioPlayer *audioPlayer;
 
-	AudioUnit _eq;
+	float eqBandGains[31];
 
-	AudioTimeStamp timeStamp;
+	int eqSectionCount;
+	biquadcoefficients *coefs;
+	vDSP_biquadm_Setup eqSetup;
 
 	BOOL stopping, paused;
 	NSRecursiveLock *mutex;
@@ -47,40 +59,107 @@ static void * kDSPEqualizerNodeContext = &kDSPEqualizerNodeContext;
 	uint32_t lastInputChannelConfig, inputChannelConfig;
 	uint32_t outputChannelConfig;
 
-	float inBuffer[4096 * 32];
-	float eqBuffer[4096 * 32];
 	float outBuffer[4096 * 32];
 }
 
-static void fillBuffers(AudioBufferList *ioData, const float *inbuffer, size_t count, size_t offset) {
-	const size_t channels = ioData->mNumberBuffers;
-	for(int i = 0; i < channels; ++i) {
-		const size_t maxCount = (ioData->mBuffers[i].mDataByteSize / sizeof(float)) - offset;
-		float *output = ((float *)ioData->mBuffers[i].mData) + offset;
-		const float *input = inbuffer + i;
-		cblas_scopy((int)((count > maxCount) ? maxCount : count), input, (int)channels, output, 1);
-		ioData->mBuffers[i].mNumberChannels = 1;
+static inline void setupOneBand(double frequency, float gainDB, double q, double sampleRate, biquadcoefficients *coefs) {
+	if(frequency <= 0.0 || frequency >= sampleRate / 2.0) {
+		coefs->b0 = 1.0;
+		coefs->b1 = 0.0;
+		coefs->b2 = 0.0;
+		coefs->a1 = 0.0;
+		coefs->a2 = 0.0;
+		return;
 	}
+
+	double A = pow(10.0, (double)(gainDB) / 40.0);
+	double omega = 2.0 * M_PI * frequency / sampleRate;
+	double sinW = sin(omega);
+	double cosW = cos(omega);
+	double alpha = sinW / (2.0 * q);
+
+	double b0 = 1.0 + alpha * A;
+	double b1 = -2.0 * cosW;
+	double b2 = 1.0 - alpha * A;
+	double a0 = 1.0 + alpha / A;
+	double a1 = -2.0 * cosW;
+	double a2 = 1.0 - alpha / A;
+
+	coefs->b0 = b0 / a0;
+	coefs->b1 = b1 / a0;
+	coefs->b2 = b2 / a0;
+	coefs->a1 = a1 / a0;
+	coefs->a2 = a2 / a0;
 }
 
-static void clearBuffers(AudioBufferList *ioData, size_t count, size_t offset) {
-	for(int i = 0; i < ioData->mNumberBuffers; ++i) {
-		memset((uint8_t *)ioData->mBuffers[i].mData + offset * sizeof(float), 0, count * sizeof(float));
-		ioData->mBuffers[i].mNumberChannels = 1;
+- (void)setupCoefficients {
+	if(!equalizerBegin) [mutex lock];
+
+	eqSectionCount = 0;
+
+	int channels = inputFormat.mChannelsPerFrame;
+
+	if(!coefs) {
+		coefs = (biquadcoefficients *) calloc(31 * channels, sizeof(*coefs));
+		if(!coefs) {
+			if(!equalizerBegin) [mutex unlock];
+			return;
+		}
 	}
+
+	for(int i = 0; i < 31; ++i) {
+		setupOneBand(apple_equalizer_bands[i], eqBandGains[i], equalizer_q, inputFormat.mSampleRate, &coefs[i * channels]);
+		for(int j = 1; j < channels; ++j) {
+			memcpy(&coefs[i * channels + j], &coefs[i * channels], sizeof(*coefs));
+		}
+	}
+
+	eqSectionCount = 31;
+
+	if(!eqSetup) {
+		eqSetup = vDSP_biquadm_CreateSetup((const double *)coefs, 31, channels);
+		if(!eqSetup) {
+			if(!equalizerBegin) [mutex unlock];
+			return;
+		}
+	} else {
+		vDSP_biquadm_ResetState(eqSetup);
+		vDSP_biquadm_SetCoefficientsDouble(eqSetup, (const double *)coefs, 0, 0, 31, channels);
+	}
+
+	if(!equalizerBegin) [mutex unlock];
 }
 
-static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
-	if(inNumberFrames > 4096 || !inRefCon) {
-		clearBuffers(ioData, inNumberFrames, 0);
-		return 0;
+- (void)setBandGain:(float)gainDB forIndex:(int)i {
+	if(!equalizerBegin) [mutex lock];
+	if(coefs) {
+		int channels = inputFormat.mChannelsPerFrame;
+		eqBandGains[i] = gainDB;
+		setupOneBand(apple_equalizer_bands[i], gainDB, equalizer_q, inputFormat.mSampleRate, &coefs[i * channels]);
+		for(int j = 1; j < channels; ++j) {
+			memcpy(&coefs[i * channels + j], &coefs[i * channels], sizeof(*coefs));
+		}
+		if(eqSetup) {
+			vDSP_biquadm_ResetState(eqSetup);
+			vDSP_biquadm_SetCoefficientsDouble(eqSetup, (const double *)(&coefs[i * channels]), i, 0, 1, channels);
+		}
 	}
+	if(!equalizerBegin) [mutex unlock];
+}
 
-	DSPEqualizerNode *_self = (__bridge DSPEqualizerNode *)inRefCon;
+- (void)setAllBands:(float *_Nonnull)gainsDB {
+	if(!equalizerBegin) [mutex lock];
+	if(coefs) {
+		memcpy(eqBandGains, gainsDB, sizeof(eqBandGains));
+		[self setupCoefficients];
+	}
+	if(!equalizerBegin) [mutex unlock];
+}
 
-	fillBuffers(ioData, _self->samplePtr, inNumberFrames, 0);
-
-	return 0;
+- (void)setPreamp:(float)preampDB {
+	if(!equalizerBegin) [mutex lock];
+	equalizerPreamp = pow(10.0, preampDB / 20.0);
+	if(!equalizerBegin) [mutex unlock];
 }
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
@@ -148,83 +227,18 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 - (BOOL)fullInit {
 	[mutex lock];
 	if(enableEqualizer) {
-		AudioComponentDescription desc;
+		[self setupCoefficients];
 
-		desc.componentType = kAudioUnitType_Effect;
-		desc.componentSubType = kAudioUnitSubType_GraphicEQ;
-		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
-		desc.componentFlags = 0;
-		desc.componentFlagsMask = 0;
-
-		AudioComponent comp = NULL;
-
-		comp = AudioComponentFindNext(comp, &desc);
-		if(!comp) {
+		if(!coefs || !eqSetup) {
 			[mutex unlock];
 			return NO;
 		}
-
-		OSStatus status = AudioComponentInstanceNew(comp, &_eq);
-		if(status != noErr) {
-			[mutex unlock];
-			return NO;
-		}
-
-		UInt32 value;
-		UInt32 size = sizeof(value);
-
-		value = 4096;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice,
-							 kAudioUnitScope_Global, 0, &value, size);
-
-		value = 127;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_RenderQuality,
-							 kAudioUnitScope_Global, 0, &value, size);
-
-		AURenderCallbackStruct callbackStruct;
-		callbackStruct.inputProcRefCon = (__bridge void *)self;
-		callbackStruct.inputProc = eqRenderCallback;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_SetRenderCallback,
-							 kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
-
-		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
-
-		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
-
-		AudioStreamBasicDescription asbd = inputFormat;
-
-		// Of course, non-interleaved has only one sample per frame/packet, per buffer
-		asbd.mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
-		asbd.mBytesPerFrame = sizeof(float);
-		asbd.mBytesPerPacket = sizeof(float);
-		asbd.mFramesPerPacket = 1;
-
-		UInt32 maximumFrames = 4096;
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maximumFrames, sizeof(maximumFrames));
-
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
-							 kAudioUnitScope_Input, 0, &asbd, sizeof(asbd));
-
-		AudioUnitSetProperty(_eq, kAudioUnitProperty_StreamFormat,
-							 kAudioUnitScope_Output, 0, &asbd, sizeof(asbd));
-		AudioUnitReset(_eq, kAudioUnitScope_Input, 0);
-		AudioUnitReset(_eq, kAudioUnitScope_Output, 0);
-
-		AudioUnitReset(_eq, kAudioUnitScope_Global, 0);
-
-		status = AudioUnitInitialize(_eq);
-		if(status != noErr) {
-			[mutex unlock];
-			return NO;
-		}
-
-		bzero(&timeStamp, sizeof(timeStamp));
-		timeStamp.mFlags = kAudioTimeStampSampleTimeValid;
 
 		equalizerInitialized = YES;
 
-		[[self audioPlayer] beginEqualizer:_eq];
+		equalizerBegin = YES;
+		[[self audioPlayer] beginEqualizer:(__bridge void *)self];
+		equalizerBegin = NO;
 	}
 
 	[mutex unlock];
@@ -234,14 +248,16 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 - (void)fullShutdown {
 	[mutex lock];
-	if(_eq) {
+	if(coefs) {
 		if(equalizerInitialized) {
-			[[self audioPlayer] endEqualizer:_eq];
-			AudioUnitUninitialize(_eq);
+			[[self audioPlayer] endEqualizer:(__bridge void *)self];
+			if(eqSetup) {
+				vDSP_biquadm_DestroySetup(eqSetup);
+				eqSetup = NULL;
+			}
+			free(coefs); coefs = NULL;
 			equalizerInitialized = NO;
 		}
-		AudioComponentInstanceDispose(_eq);
-		_eq = NULL;
 	}
 	[mutex unlock];
 }
@@ -352,41 +368,25 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 	double streamTimestamp = [chunk streamTimestamp];
 
-	samplePtr = &inBuffer[0];
-	size_t channels = inputFormat.mChannelsPerFrame;
+	int channels = inputFormat.mChannelsPerFrame;
 
 	size_t frameCount = [chunk frameCount];
-	NSData *sampleData = [chunk removeSamples:frameCount];
-
-	cblas_scopy((int)(frameCount * channels), [sampleData bytes], 1, &inBuffer[0], 1);
-
-	const size_t channelsminusone = channels - 1;
-	uint8_t tempBuffer[sizeof(AudioBufferList) + sizeof(AudioBuffer) * channelsminusone];
-	AudioBufferList *ioData = (AudioBufferList *)&tempBuffer[0];
-
-	ioData->mNumberBuffers = (UInt32)channels;
-	for(size_t i = 0; i < channels; ++i) {
-		ioData->mBuffers[i].mData = &eqBuffer[4096 * i];
-		ioData->mBuffers[i].mDataByteSize = (UInt32)(frameCount * sizeof(float));
-		ioData->mBuffers[i].mNumberChannels = 1;
-	}
-
-	OSStatus status = AudioUnitRender(_eq, NULL, &timeStamp, 0, (UInt32)frameCount, ioData);
-
-	if(status != noErr) {
-		[mutex unlock];
-		return nil;
-	}
-
-	timeStamp.mSampleTime += ((double)frameCount) / inputFormat.mSampleRate;
-
-	for(int i = 0; i < channels; ++i) {
-		cblas_scopy((int)frameCount, &eqBuffer[4096 * i], 1, &outBuffer[i], (int)channels);
-	}
 
 	AudioChunk *outputChunk = nil;
 	if(frameCount) {
+		NSData *sampleData = [chunk removeSamples:frameCount];
+		
+		const float *inBuffer = (const float *)[sampleData bytes];
+
+		memcpy(outBuffer, inBuffer, frameCount * channels * sizeof(float));
+
 		scale_by_volume(&outBuffer[0], frameCount * channels, equalizerPreamp);
+
+		float * buffers[channels];
+		for(int i = 0; i < channels; ++i) {
+			buffers[i] = &outBuffer[i];
+		}
+		vDSP_biquadm(eqSetup, (const float **)buffers, channels, buffers, channels, (vDSP_Length)frameCount);
 
 		outputChunk = [AudioChunk new];
 		[outputChunk setFormat:inputFormat];

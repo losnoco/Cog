@@ -12,9 +12,11 @@
 #import <AudioUnit/AudioUnit.h>
 #import <AudioUnit/AudioUnitCarbonView.h>
 
-void equalizerApplyGenre(AudioUnit _Nullable au, const NSString *_Nonnull genre);
-void equalizerLoadPreset(AudioUnit _Nullable au);
-void equalizerApplyPreset(AudioUnit _Nullable au, const NSDictionary *_Nonnull preset);
+#import <CogAudio/DSPEqualizerNode.h>
+
+void equalizerApplyGenre(DSPEqualizerNode *_Nullable eq, const NSString *_Nonnull genre);
+void equalizerLoadPreset(DSPEqualizerNode *_Nullable eq);
+void equalizerApplyPreset(DSPEqualizerNode *_Nullable eq, const NSDictionary *_Nonnull preset);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,10 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
 	IBOutlet EqualizerSlider *eq12kHz;
 	IBOutlet EqualizerSlider *eq16kHz;
 	IBOutlet EqualizerSlider *eq20kHz;
-	AudioUnit au;
+	__weak DSPEqualizerNode *_eq;
 }
 
-- (void)setEQ:(AudioUnit _Nullable)au;
+- (void)setEQ:(void *_Nullable)eq;
 
 - (IBAction)toggleWindow:(id)sender;
 

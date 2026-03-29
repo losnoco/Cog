@@ -226,7 +226,7 @@ static void loadPresets(void) {
 	}
 }
 
-void equalizerApplyGenre(AudioUnit au, const NSString *genre) {
+void equalizerApplyGenre(DSPEqualizerNode *eq, const NSString *genre) {
 	equalizerGenre = genre;
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"GraphicEQtrackgenre"]) {
 		loadPresets();
@@ -256,41 +256,38 @@ void equalizerApplyGenre(AudioUnit au, const NSString *genre) {
 			NSInteger index = [equalizer_presets_processed indexOfObject:preset];
 			[[NSUserDefaults standardUserDefaults] setInteger:index forKey:@"GraphicEQpreset"];
 
-			equalizerApplyPreset(au, preset);
+			equalizerApplyPreset(eq, preset);
 		}
 	}
 }
 
-void equalizerLoadPreset(AudioUnit au) {
+void equalizerLoadPreset(DSPEqualizerNode *eq) {
 	NSInteger index = [[NSUserDefaults standardUserDefaults] integerForKey:@"GraphicEQpreset"];
 	if(index >= 0 && index < [equalizer_presets_processed count]) {
 		NSDictionary *preset = [equalizer_presets_processed objectAtIndex:index];
-		equalizerApplyPreset(au, preset);
-	} else if(au) {
+		equalizerApplyPreset(eq, preset);
+	} else if(eq) {
 		@synchronized(cog_equalizer_band_settings) {
 			if(!cog_equalizer_band_settings)
 				cog_equalizer_band_settings = _cog_equalizer_band_settings();
 		}
 
-		AudioUnitSetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, 1, 0);
-		for(NSInteger i = 1; i < [cog_equalizer_band_settings count]; ++i) {
+		float equalizerBands[31] = {0};
+
+		for(NSInteger i = 0; i < 31; ++i) {
 			float value = [[NSUserDefaults standardUserDefaults] floatForKey:[cog_equalizer_band_settings objectAtIndex:i]];
-			AudioUnitSetParameter(au, (int)(i - 1), kAudioUnitScope_Global, 0, value, 0);
+			equalizerBands[i] = value;
 		}
+
+		[eq setAllBands:equalizerBands];
 	}
 }
 
-void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
+void equalizerApplyPreset(DSPEqualizerNode *eq, const NSDictionary *preset) {
 	if(preset) {
 		@synchronized(cog_equalizer_band_settings) {
 			if(!cog_equalizer_band_settings)
 				cog_equalizer_band_settings = _cog_equalizer_band_settings();
-		}
-
-		if(au) {
-			AudioUnitParameterValue paramValue = 0;
-			if(AudioUnitGetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, &paramValue))
-				return;
 		}
 
 		float presetValues[31];
@@ -299,14 +296,14 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 		float preamp = getPreamp(preset);
 
 		[[NSUserDefaults standardUserDefaults] setFloat:preamp forKey:[cog_equalizer_band_settings objectAtIndex:0]];
-		if(au) {
-			AudioUnitSetParameter(au, kGraphicEQParam_NumberOfBands, kAudioUnitScope_Global, 0, 1, 0);
-		}
+
 		for(unsigned int i = 0; i < 31; ++i) {
 			[[NSUserDefaults standardUserDefaults] setFloat:presetValues[i] forKey:[cog_equalizer_band_settings objectAtIndex:i + 1]];
-			if(au) {
-				AudioUnitSetParameter(au, i, kAudioUnitScope_Global, 0, presetValues[i], 0);
-			}
+		}
+
+		if(eq) {
+			[eq setPreamp:preamp];
+			[eq setAllBands:presetValues];
 		}
 	}
 }
@@ -360,8 +357,8 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	[self handleMouseEvents];
 }
 
-- (void)setEQ:(AudioUnit)au {
-	self->au = au;
+- (void)setEQ:(void *)eq {
+	self->_eq = (__bridge DSPEqualizerNode *)eq;
 }
 
 - (IBAction)toggleWindow:(id)sender {
@@ -375,7 +372,7 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 }
 
 - (IBAction)toggleTracking:(id)sender {
-	equalizerApplyGenre(au, equalizerGenre);
+	equalizerApplyGenre(_eq, equalizerGenre);
 
 	[self changePreset:presetSelector];
 }
@@ -494,8 +491,8 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	} else if(tag < [cog_equalizer_band_settings count]) {
 		float value = [sender floatValue];
 		[[NSUserDefaults standardUserDefaults] setFloat:value forKey:[cog_equalizer_band_settings objectAtIndex:tag]];
-		if(au)
-			AudioUnitSetParameter(au, (int)(tag - 1), kAudioUnitScope_Global, 0, value, 0);
+		if(_eq)
+			[_eq setBandGain:value forIndex:(int)(tag - 1)];
 	}
 }
 
@@ -505,7 +502,7 @@ void equalizerApplyPreset(AudioUnit au, const NSDictionary *preset) {
 	if(index >= 0 && index < [equalizer_presets_processed count]) {
 		NSDictionary *preset = [equalizer_presets_processed objectAtIndex:index];
 
-		equalizerApplyPreset(au, preset);
+		equalizerApplyPreset(_eq, preset);
 	}
 }
 

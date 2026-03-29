@@ -66,7 +66,7 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	NSProgress *progressOverall;
 	NSProgress *progressJob;
 
-	AudioUnit _eq;
+	void *_eq;
 }
 
 @property CogStatus playbackStatus;
