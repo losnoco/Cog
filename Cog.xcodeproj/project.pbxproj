@@ -77,6 +77,10 @@
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
 		17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17FAEBAB0F662985007C8707 /* ToolTipTextField.m */; };
+		420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */; };
+		4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4218AC4F2E469BC30024810A /* AudioScrobbler.swift */; };
+		AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56961334CC939A7158B7470 /* KeychainHelper.swift */; };
+		42777C332E54E091005B0E11 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42777C322E54E091005B0E11 /* Secrets.swift */; };
 		515000000000000000000001 /* PreferencePaneDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000001 /* PreferencePaneDescriptor.swift */; };
 		515000000000000000000002 /* NotificationsPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000002 /* NotificationsPaneView.swift */; };
 		515000000000000000000003 /* PlaylistPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000003 /* PlaylistPaneView.swift */; };
@@ -90,9 +94,6 @@
 		51500000000000000000000B /* ShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000B /* ShortcutField.swift */; };
 		51500000000000000000000C /* SandboxPathModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000C /* SandboxPathModel.swift */; };
 		51500000000000000000000D /* AudioDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000D /* AudioDeviceModel.swift */; };
-		420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */; };
-		4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4218AC4F2E469BC30024810A /* AudioScrobbler.swift */; };
-		42777C332E54E091005B0E11 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42777C322E54E091005B0E11 /* Secrets.swift */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EB10D634206000AB68C /* SpotlightPlaylistController.m */; };
@@ -895,6 +896,10 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+		420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMAPI.swift; sourceTree = "<group>"; };
+		4218AC4F2E469BC30024810A /* AudioScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioScrobbler.swift; sourceTree = "<group>"; };
+		F56961334CC939A7158B7470 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		42777C322E54E091005B0E11 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = Generated/Secrets.swift; sourceTree = "<group>"; };
 		505000000000000000000001 /* PreferencePaneDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencePaneDescriptor.swift; path = Preferences/PreferencePaneDescriptor.swift; sourceTree = "<group>"; };
 		505000000000000000000002 /* NotificationsPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000003 /* PlaylistPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistPaneView.swift; sourceTree = "<group>"; };
@@ -908,9 +913,6 @@
 		50500000000000000000000B /* ShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutField.swift; sourceTree = "<group>"; };
 		50500000000000000000000C /* SandboxPathModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxPathModel.swift; sourceTree = "<group>"; };
 		50500000000000000000000D /* AudioDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceModel.swift; sourceTree = "<group>"; };
-		420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMAPI.swift; sourceTree = "<group>"; };
-		4218AC4F2E469BC30024810A /* AudioScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioScrobbler.swift; sourceTree = "<group>"; };
-		42777C322E54E091005B0E11 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = Generated/Secrets.swift; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
@@ -1578,6 +1580,16 @@
 			path = "Xcode-config";
 			sourceTree = "<group>";
 		};
+		4218AC4E2E469BA50024810A /* Scrobbler */ = {
+			isa = PBXGroup;
+			children = (
+				420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */,
+				4218AC4F2E469BC30024810A /* AudioScrobbler.swift */,
+				F56961334CC939A7158B7470 /* KeychainHelper.swift */,
+			);
+			path = Scrobbler;
+			sourceTree = "<group>";
+		};
 		525000000000000000000001 /* Panes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1596,15 +1608,6 @@
 			);
 			name = Panes;
 			path = Preferences/Panes;
-                        sourceTree = "<group>";
-                };
-		4218AC4E2E469BA50024810A /* Scrobbler */ = {
-			isa = PBXGroup;
-			children = (
-				420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */,
-				4218AC4F2E469BC30024810A /* AudioScrobbler.swift */,
-			);
-			path = Scrobbler;
 			sourceTree = "<group>";
 		};
 		566D32170D538550004466A5 /* Products */ = {
@@ -2753,6 +2756,7 @@
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
 				83E9987A2F7135310017AE33 /* MaybeSecureValueDataTransformer.swift in Sources */,
 				4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */,
+				AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */,
 				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,
 				F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */,
