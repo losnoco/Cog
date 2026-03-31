@@ -98,6 +98,12 @@ struct PreferencePaneDescriptor: Identifiable {
                 icon: paneIcon(system: "deskclock", legacy: "rubberband"),
                 body: AnyView(RubberbandPaneView())
             ),
+            PreferencePaneDescriptor(
+                title: "Last.FM",
+                localizedTitle: NSLocalizedString("Last.FM", comment: "Preference pane title"),
+                icon: paneIcon(system: "music.note", legacy: "lastfm"),
+                body: AnyView(LastFMPaneView())
+            ),
         ]
     }
 
