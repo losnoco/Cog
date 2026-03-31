@@ -16,17 +16,15 @@ public class AudioScrobblerTrack: NSObject {
     public let album: String?
     public let trackNumber: Int
     public let length: TimeInterval
-    public var position: TimeInterval
 
     @objc
-    public init(title: String, artist: String?, albumArtist: String?, album: String?, trackNumber: Int, length: TimeInterval, position: TimeInterval) {
+    public init(title: String, artist: String?, albumArtist: String?, album: String?, trackNumber: Int, length: TimeInterval) {
         self.title = title
         self.artist = artist
         self.albumArtist = albumArtist
         self.album = album
         self.trackNumber = trackNumber
         self.length = length
-        self.position = position
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -121,52 +119,23 @@ public class AudioScrobbler: NSObject, @unchecked Sendable {
     var lastScrobble: NowPlaying?
 
     @objc
-    public func updateNowPlaying(_ track: AudioScrobblerTrack, isPlaying: Bool) {
-        print("AudioScrobbler: [isPlaying: \(isPlaying)]: [\(String(format: "%.2f", track.position))] [\(track.title)]")
-
-        // Update currently playing track timestamp
-        if nowPlaying?.track == track {
-            nowPlaying?.track.position = track.position
-        }
-
-        // "It is often most convenient to send a scrobble request when a track has finished playing."
-        let trackStopped = (isPlaying == false) || (self.nowPlaying?.track != track)
-        if let nowPlaying = self.nowPlaying, trackStopped {
-            scrobble(nowPlaying)
-        }
-
-        // Change currently playing track after the previous one has been scrobbled.
-        if self.nowPlaying?.track != track {
-            lastScrobble = nil
-            nowPlaying = NowPlaying(track: track, start: Date())
-            self.setNowPlaying(track)
-        }
+    public func updateNowPlaying(_ track: AudioScrobblerTrack) {
+        guard enabled else { return }
+        guard nowPlaying?.track != track else { return }
+        lastScrobble = nil
+        nowPlaying = NowPlaying(track: track, start: Date())
+        setNowPlaying(track)
     }
 
-    private func scrobble(_ nowPlaying: NowPlaying) {
-        guard enabled else {
-            return
-        }
-
-        // Guidelines:
-        // https://www.last.fm/api/scrobbling
-        // - The track must be longer than 30 seconds.
-        // - And the track has been played for at least half its duration, or for 4 minutes (whichever occurs earlier.)
-        guard nowPlaying.track.length >= 30.0 else {
-            // Track is shorter than 30 seconds
-            return
-        }
-        guard nowPlaying.track.position >= min(240, nowPlaying.track.length / 2.0) else {
-            // the track has been played for at least half its duration, or for 4 minutes
-            return
-        }
-        guard lastScrobble != nowPlaying else {
-            // has already been scrobbled
-            return
-        }
+    @objc
+    public func scrobbleTrack(_ track: AudioScrobblerTrack) {
+        guard enabled else { return }
+        guard let nowPlaying, nowPlaying.track.isEqual(track) else { return }
+        guard lastScrobble != nowPlaying else { return }
 
         print("AudioScrobbler: will scrobble [\(nowPlaying.track.title)]")
-        let track = nowPlaying.track
+        lastScrobble = nowPlaying
+
         var params: [String: String] = [
             "track": track.title,
             "timestamp": "\(Int(nowPlaying.start.timeIntervalSince1970))"
@@ -188,10 +157,6 @@ public class AudioScrobbler: NSObject, @unchecked Sendable {
         if track.length > 0 {
             params["duration"] = "\(Int(track.length))"
         }
-        guard params.count > 0 else {
-            return
-        }
-        lastScrobble = nowPlaying
 
         // TODO: setup a local cache queue to send scrobbles in
         // case the request fails
