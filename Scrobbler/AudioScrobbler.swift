@@ -68,9 +68,6 @@ public class AudioScrobbler: NSObject, @unchecked Sendable {
             apiKey: Secrets.lastFmApiKey,
             apiSecret: Secrets.lastFmApiSecret
         )
-
-        // TODO: move to settings screen
-        lastFM.authenticate()
     }
 
     private func setNowPlaying(_ track: AudioScrobblerTrack) {
