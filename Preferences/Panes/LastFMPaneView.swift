@@ -21,9 +21,10 @@ private final class LastFMPrefs: ObservableObject {
 
     init() {
         let d = UserDefaults.standard
-        enableScrobbling = d.object(forKey: "enableAudioScrobbler") as? Bool ?? true
-        connectedUsername = d.string(forKey: "lastFmUsername") ?? ""
-        isAuthenticated = KeychainHelper.loadSessionKey() != nil
+        enableScrobbling = d.object(forKey: "enableAudioScrobbler") as? Bool ?? false
+        let username = d.string(forKey: "lastFmUsername") ?? ""
+        connectedUsername = username
+        isAuthenticated = !username.isEmpty
     }
 
     func connect() {
@@ -38,14 +39,20 @@ private final class LastFMPrefs: ObservableObject {
                 self.isAuthenticating = false
                 switch result {
                 case .success(let auth):
-                    KeychainHelper.save(sessionKey: auth.sessionKey)
+                    guard KeychainHelper.save(sessionKey: auth.sessionKey) else {
+                        self.errorMessage = NSLocalizedString(
+                            "Could not save credentials to Keychain.",
+                            comment: "Last.FM keychain save error"
+                        )
+                        return
+                    }
                     UserDefaults.standard.set(auth.username, forKey: "lastFmUsername")
                     self.connectedUsername = auth.username
                     self.isAuthenticated = true
                     self.username = ""
                     self.password = ""
                 case .failure(let error):
-                    if case LastFMAPIError.authFailed(let message) = error {
+                    if case LastFMAPIError.apiError(let message) = error {
                         self.errorMessage = message
                     } else {
                         self.errorMessage = NSLocalizedString(
