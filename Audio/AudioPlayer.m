@@ -315,6 +315,10 @@
 	return [output amountPlayedInterval];
 }
 
+- (void)setScrobbleThreshold:(double)threshold {
+	[output setScrobbleThreshold:threshold];
+}
+
 - (void)launchOutputThread {
 	initialBufferFilled = YES;
 	if(outputLaunched == NO && startedPaused == NO) {
@@ -553,6 +557,14 @@
 
 - (void)reportPlayCount {
 	[self reportPlayCountForTrack:previousUserInfo];
+}
+
+- (void)reportScrobble {
+	[self reportScrobbleForTrack:previousUserInfo];
+}
+
+- (void)reportScrobbleForTrack:(id)userInfo {
+	[self sendDelegateMethod:@selector(audioPlayer:reportScrobbleForTrack:) withObject:userInfo waitUntilDone:NO];
 }
 
 - (BOOL)selectNextBuffer {
