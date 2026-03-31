@@ -8,7 +8,6 @@ mkdir -p "${OUT_DIR}"
 # API_KEY comes from xcconfig and is available to build scripts as an env var
 LASTFM_API_KEY="${LASTFM_API_KEY:-}"
 LASTFM_API_SECRET="${LASTFM_API_SECRET:-}"
-LASTFM_SESSION="${LASTFM_SESSION:-}"
 
 replacer() {
     while read line; do
@@ -22,6 +21,5 @@ replacer > "${OUT_FILE}" <<EOF
 public enum Secrets {
     public static let lastFmApiKey: String = "${LASTFM_API_KEY}"
     public static let lastFmApiSecret: String = "${LASTFM_API_SECRET}"
-    public static let lastFmSession: String = "${LASTFM_SESSION}"
 }
 EOF
