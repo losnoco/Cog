@@ -40,6 +40,8 @@
 		amountPlayed = 0.0;
 		amountPlayedInterval = 0.0;
 		intervalReported = NO;
+		scrobbleThreshold = 0;
+		scrobbleReported = NO;
 	}
 
 	paused = YES;
@@ -130,6 +132,10 @@
 		intervalReported = YES;
 		[controller reportPlayCount];
 	}
+	if(!scrobbleReported && scrobbleThreshold > 0 && amountPlayed >= scrobbleThreshold) {
+		scrobbleReported = YES;
+		[controller reportScrobble];
+	}
 }
 
 - (void)setAmountPlayed:(double)seconds {
@@ -150,6 +156,11 @@
 	intervalReported = NO;
 }
 
+- (void)setScrobbleThreshold:(double)threshold {
+	scrobbleThreshold = threshold;
+	scrobbleReported = NO;
+}
+
 - (BOOL)selectNextBuffer {
 	BOOL ret = [controller selectNextBuffer];
 	if(!ret) {
@@ -162,6 +173,10 @@
 	if(!intervalReported) {
 		intervalReported = YES;
 		[controller reportPlayCount];
+	}
+	if(!scrobbleReported && scrobbleThreshold > 0) {
+		scrobbleReported = YES;
+		[controller reportScrobble];
 	}
 	[controller endOfInputPlayed];
 	[self resetAmountPlayedInterval];
