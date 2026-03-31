@@ -376,10 +376,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (IBAction)next:(id)sender {
-    // Update metadata for currently playing track to update its position,
-    // in case it needs to be scrobbled when skipped.
-    [self sendMetaData];
-
 	if([playlistController next] == NO)
 		return;
 
@@ -388,10 +384,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (IBAction)prev:(id)sender {
 	double pos = [audioPlayer amountPlayed];
-
-    // Update metadata for currently playing track to update its position,
-    // in case it needs to be scrobbled when skipped.
-    [self sendMetaData];
 
 	if(pos < 5.0) {
 		if([playlistController prev] == NO)
@@ -876,6 +868,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(pe) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidBeginNotificiation object:pe];
 	}
+
+	double duration = [pe.length doubleValue];
+	if (duration >= 30.0) {
+		[player setScrobbleThreshold:MIN(240.0, duration / 2.0)];
+	} else {
+		[player setScrobbleThreshold:0];
+	}
 }
 
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(NSNumber *)s userInfo:(id)userInfo {
@@ -969,6 +968,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
+- (void)audioPlayer:(AudioPlayer *)player reportScrobbleForTrack:(id)userInfo {
+	if(userInfo) {
+		PlaylistEntry *pe = (PlaylistEntry *)userInfo;
+		[[AudioScrobbler shared] scrobbleTrack:[pe audioScrobblerTrack]];
+	}
+}
+
 - (void)audioPlayer:(AudioPlayer *)player updatePosition:(id)userInfo {
 	if(userInfo) {
 		PlaylistEntry *pe = (PlaylistEntry *)userInfo;
@@ -1059,8 +1065,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
     if (entry) {
-        [[AudioScrobbler shared] updateNowPlaying:[entry audioScrobblerTrack]
-                                        isPlaying:playbackStatus == CogStatusPlaying];
+        [[AudioScrobbler shared] updateNowPlaying:[entry audioScrobblerTrack]];
     }
 
 	switch(playbackStatus) {
