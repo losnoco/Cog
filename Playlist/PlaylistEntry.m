@@ -1063,8 +1063,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
                                                                 albumArtist:self.albumartist
                                                                       album:self.album
                                                                 trackNumber:self.track
-                                                                     length:[self.length doubleValue] * 1000
-                                                                   position:self.currentPosition];
+                                                                     length:[self.length doubleValue] * 1000];
     return track;
 }
 @end
