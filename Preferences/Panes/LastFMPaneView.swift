@@ -1,6 +1,6 @@
 import SwiftUI
 
-private final class LastFMPrefs: ObservableObject {
+@MainActor private final class LastFMPrefs: ObservableObject {
     private var isActive = true
 
     @Published var enableScrobbling: Bool {
@@ -34,7 +34,7 @@ private final class LastFMPrefs: ObservableObject {
 
         let api = LastFMAPI(apiKey: Secrets.lastFmApiKey, apiSecret: Secrets.lastFmApiSecret)
         api.authenticateMobile(username: username, password: password) { [weak self] result in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 guard let self, self.isActive else { return }
                 self.isAuthenticating = false
                 switch result {
@@ -122,13 +122,11 @@ struct LastFMPaneView: View {
                 NSLocalizedString("Username", comment: "Last.FM username field"),
                 text: $prefs.username
             )
-            .textContentType(.username)
 
             SecureField(
                 NSLocalizedString("Password", comment: "Last.FM password field"),
                 text: $prefs.password
             )
-            .textContentType(.password)
 
             HStack {
                 Button(NSLocalizedString("Connect", comment: "Last.FM connect button")) {
@@ -136,7 +134,7 @@ struct LastFMPaneView: View {
                 }
                 .disabled(prefs.username.isEmpty || prefs.password.isEmpty || prefs.isAuthenticating)
 
-                if prefs.isAuthenticating {
+                if #available(macOS 11.0, *), prefs.isAuthenticating {
                     ProgressView()
                         .controlSize(.small)
                 }
