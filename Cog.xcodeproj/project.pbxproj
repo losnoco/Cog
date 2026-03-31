@@ -94,6 +94,7 @@
 		51500000000000000000000B /* ShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000B /* ShortcutField.swift */; };
 		51500000000000000000000C /* SandboxPathModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000C /* SandboxPathModel.swift */; };
 		51500000000000000000000D /* AudioDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000D /* AudioDeviceModel.swift */; };
+		51500000000000000000000E /* LastFMPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000E /* LastFMPaneView.swift */; };
 		5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4590D60349B004F5C5D /* SpotlightWindowController.m */; };
 		5604D4F60D60726E004F5C5D /* SpotlightPlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 5604D4F50D60726E004F5C5D /* SpotlightPlaylistEntry.m */; };
 		56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 56462EB10D634206000AB68C /* SpotlightPlaylistController.m */; };
@@ -913,6 +914,7 @@
 		50500000000000000000000B /* ShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutField.swift; sourceTree = "<group>"; };
 		50500000000000000000000C /* SandboxPathModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxPathModel.swift; sourceTree = "<group>"; };
 		50500000000000000000000D /* AudioDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceModel.swift; sourceTree = "<group>"; };
+		50500000000000000000000E /* LastFMPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMPaneView.swift; sourceTree = "<group>"; };
 		5604D4590D60349B004F5C5D /* SpotlightWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpotlightWindowController.m; path = Spotlight/SpotlightWindowController.m; sourceTree = "<group>"; };
 		5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightWindowController.h; path = Spotlight/SpotlightWindowController.h; sourceTree = "<group>"; };
 		5604D4F40D60726E004F5C5D /* SpotlightPlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightPlaylistEntry.h; path = Spotlight/SpotlightPlaylistEntry.h; sourceTree = "<group>"; };
@@ -1605,6 +1607,7 @@
 				50500000000000000000000B /* ShortcutField.swift */,
 				50500000000000000000000C /* SandboxPathModel.swift */,
 				50500000000000000000000D /* AudioDeviceModel.swift */,
+				50500000000000000000000E /* LastFMPaneView.swift */,
 			);
 			name = Panes;
 			path = Preferences/Panes;
@@ -2751,6 +2754,7 @@
 				51500000000000000000000B /* ShortcutField.swift in Sources */,
 				51500000000000000000000C /* SandboxPathModel.swift in Sources */,
 				51500000000000000000000D /* AudioDeviceModel.swift in Sources */,
+				51500000000000000000000E /* LastFMPaneView.swift in Sources */,
 				616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */,
 				616000000000000000000002 /* PathSuggester.m in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
