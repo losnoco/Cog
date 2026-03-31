@@ -79,6 +79,8 @@
 - (double)amountPlayed;
 - (double)amountPlayedInterval;
 
+- (void)setScrobbleThreshold:(double)threshold;
+
 - (void)setNextStream:(NSURL *)url;
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 - (void)resetNextStreams;
@@ -119,6 +121,7 @@
 - (BOOL)selectNextBuffer;
 - (void)endOfInputPlayed;
 - (void)reportPlayCount;
+- (void)reportScrobble;
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
@@ -138,6 +141,7 @@
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player reportPlayCountForTrack:(id)userInfo;
+- (void)audioPlayer:(AudioPlayer *)player reportScrobbleForTrack:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player updatePosition:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player setError:(NSNumber *)status toTrack:(id)userInfo;
 @end
