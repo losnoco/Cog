@@ -4,7 +4,7 @@ import SwiftUI
 /// observes changes via @ObservedObject). update() is called by SwiftUI before each
 /// body evaluation to sync the two.
 @MainActor @propertyWrapper
-struct StateObjectCompat<ObjectType: ObservableObject>: @MainActor DynamicProperty {
+struct StateObjectCompat<ObjectType: ObservableObject>: DynamicProperty {
     @State private var storage: ObjectType
     @ObservedObject private var observed: ObjectType
 
@@ -14,8 +14,10 @@ struct StateObjectCompat<ObjectType: ObservableObject>: @MainActor DynamicProper
         _observed = ObservedObject(initialValue: instance)
     }
 
-    mutating func update() {
-        _observed = ObservedObject(wrappedValue: storage)
+    nonisolated mutating func update() {
+        MainActor.assumeIsolated {
+            _observed = ObservedObject(wrappedValue: storage)
+        }
     }
 
     var wrappedValue: ObjectType { storage }
