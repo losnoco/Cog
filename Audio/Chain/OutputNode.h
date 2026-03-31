@@ -26,6 +26,9 @@
 	BOOL paused;
 	BOOL started;
 	BOOL intervalReported;
+
+	double scrobbleThreshold;
+	BOOL scrobbleReported;
 }
 
 - (double)amountPlayed;
@@ -35,6 +38,8 @@
 - (void)setAmountPlayed:(double)seconds;
 - (void)resetAmountPlayed;
 - (void)resetAmountPlayedInterval;
+
+- (void)setScrobbleThreshold:(double)threshold;
 
 - (BOOL)selectNextBuffer;
 - (void)endOfInputPlayed;
