@@ -12,13 +12,29 @@ enum LastFMAPIError: Error {
     case invalidResponse
     case statusCode(Int)
     case unknown
+    case authFailed(String)
+}
+
+struct LastFMAuthResponse: Decodable {
+    let session: Session
+    struct Session: Decodable {
+        let name: String
+        let key: String
+    }
+}
+
+struct LastFMErrorResponse: Decodable {
+    let error: Int
+    let message: String
 }
 
 class LastFMAPI {
 
     let apiKey: String
     let apiSecret: String
-    var sessionKey: String?
+    var sessionKey: String? {
+        return KeychainHelper.loadSessionKey()
+    }
 
     var isAuthenticated: Bool {
         return sessionKey != nil
@@ -29,9 +45,23 @@ class LastFMAPI {
         self.apiSecret = apiSecret
     }
 
-    func authenticate() {
-        // TODO: implement authentication
-        sessionKey = Secrets.lastFmSession
+    func authenticateMobile(username: String, password: String, completion: @escaping (Result<(sessionKey: String, username: String), Error>) -> Void) {
+        let params = [
+            "username": username,
+            "password": password,
+        ]
+        parsedRequest("auth.getMobileSession", params: params) { (result: Result<LastFMAuthResponse?, Error>) in
+            switch result {
+            case .success(let response):
+                if let response {
+                    completion(.success((sessionKey: response.session.key, username: response.session.name)))
+                } else {
+                    completion(.failure(LastFMAPIError.invalidResponse))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
     }
 
     // TODO: parse response, async/await is only available in 10.15
@@ -119,6 +149,12 @@ class LastFMAPI {
             guard response.statusCode == 200 else {
                 callback?(.failure(LastFMAPIError.statusCode(response.statusCode)))
                 return
+            }
+            if let data = data {
+                if let errorResponse = try? JSONDecoder().decode(LastFMErrorResponse.self, from: data) {
+                    callback?(.failure(LastFMAPIError.authFailed(errorResponse.message)))
+                    return
+                }
             }
             callback?(.success(data))
         }.resume()
