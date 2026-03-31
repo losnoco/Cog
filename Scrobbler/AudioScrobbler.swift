@@ -43,7 +43,7 @@ public class AudioScrobblerTrack: NSObject {
 
 }
 
-public class AudioScrobbler: NSObject {
+public class AudioScrobbler: NSObject, @unchecked Sendable {
 
     let lastFM: LastFMAPI
 
