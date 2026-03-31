@@ -12,7 +12,7 @@ enum LastFMAPIError: Error {
     case invalidResponse
     case statusCode(Int)
     case unknown
-    case authFailed(String)
+    case apiError(String)
 }
 
 struct LastFMAuthResponse: Decodable {
@@ -130,9 +130,13 @@ class LastFMAPI {
         request.httpMethod = httpMethod
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         if httpMethod == "POST" {
+            let allowed = CharacterSet.urlQueryAllowed.subtracting(CharacterSet(charactersIn: "+&="))
             let postString: String = requestParams.compactMap({
-                guard let value = $0.value else { return nil }
-                return $0.key + "=" + value
+                guard let value = $0.value,
+                      let encodedKey = $0.key.addingPercentEncoding(withAllowedCharacters: allowed),
+                      let encodedValue = value.addingPercentEncoding(withAllowedCharacters: allowed)
+                else { return nil }
+                return encodedKey + "=" + encodedValue
             }).joined(separator: "&")
             request.httpBody = postString.data(using: .utf8)
         }
@@ -150,11 +154,12 @@ class LastFMAPI {
                 callback?(.failure(LastFMAPIError.statusCode(response.statusCode)))
                 return
             }
-            if let data = data {
-                if let errorResponse = try? JSONDecoder().decode(LastFMErrorResponse.self, from: data) {
-                    callback?(.failure(LastFMAPIError.authFailed(errorResponse.message)))
-                    return
-                }
+            if let data = data,
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               json["error"] != nil,
+               let errorResponse = try? JSONDecoder().decode(LastFMErrorResponse.self, from: data) {
+                callback?(.failure(LastFMAPIError.apiError(errorResponse.message)))
+                return
             }
             callback?(.success(data))
         }.resume()
