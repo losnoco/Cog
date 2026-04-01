@@ -499,10 +499,26 @@
       }
     },
     "Connect" : {
-      "comment" : "Last.FM connect button"
+      "comment" : "Last.FM connect button",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar sesión"
+          }
+        }
+      }
     },
     "Connected as %@" : {
-      "comment" : "Last.FM connected status"
+      "comment" : "Last.FM connected status",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesión iniciada como %@"
+          }
+        }
+      }
     },
     "ConsentNo" : {
       "localizations" : {
@@ -549,10 +565,32 @@
       }
     },
     "Could not connect to Last.FM. Please try again." : {
-      "comment" : "Last.FM auth network error"
+      "comment" : "Last.FM auth network error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not connect to Last.fm. Please try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo conectar a Last.fm. Intenta nuevamente."
+          }
+        }
+      }
     },
     "Could not save credentials to Keychain." : {
-      "comment" : "Last.FM keychain save error"
+      "comment" : "Last.FM keychain save error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron guardar las credenciales al llavero."
+          }
+        }
+      }
     },
     "CrashlyticsConsentTitle" : {
       "extractionState" : "manual",
@@ -703,7 +741,15 @@
       }
     },
     "Disconnect" : {
-      "comment" : "Last.FM disconnect button"
+      "comment" : "Last.FM disconnect button",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar sesión"
+          }
+        }
+      }
     },
     "Dock Icon" : {
       "localizations" : {
@@ -763,7 +809,21 @@
       }
     },
     "Enable Last.FM scrobbling" : {
-      "comment" : "Last.FM pref toggle"
+      "comment" : "Last.FM pref toggle",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Last.fm scrobbling"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activar scrobbling en Last.fm"
+          }
+        }
+      }
     },
     "Enable Notifications" : {
       "comment" : "A toggle switch for enabling or disabling notifications.",
@@ -1419,7 +1479,16 @@
       }
     },
     "Last.FM" : {
-      "comment" : "Preference pane title"
+      "comment" : "Preference pane title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last.fm"
+          }
+        }
+      },
+      "shouldTranslate" : false
     },
     "Limit volume to prevent clipping" : {
       "comment" : "A toggle that lets the user limit the volume of audio to prevent clipping.",
@@ -1788,7 +1857,15 @@
       }
     },
     "Password" : {
-      "comment" : "Last.FM password field"
+      "comment" : "Last.FM password field",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contraseña"
+          }
+        }
+      }
     },
     "Path" : {
       "comment" : "A column header in the sandbox paths list view, indicating the path.",
@@ -3106,7 +3183,15 @@
       }
     },
     "Username" : {
-      "comment" : "Last.FM username field"
+      "comment" : "Last.FM username field",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre de usuario"
+          }
+        }
+      }
     },
     "ValidNo" : {
       "comment" : "Negative answer to whether a path is valid.",
