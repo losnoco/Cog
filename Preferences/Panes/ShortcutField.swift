@@ -14,4 +14,8 @@ struct ShortcutField: NSViewRepresentable {
     func updateNSView(_ nsView: MASShortcutView, context: Context) {
         nsView.associatedUserDefaultsKey = userDefaultsKey
     }
+	
+	static func dismantleNSView(_ nsView: MASShortcutView, coordinator: ()) {
+		nsView.associatedUserDefaultsKey = nil
+	}
 }
