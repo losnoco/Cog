@@ -2,7 +2,7 @@ import Foundation
 import Security
 
 enum KeychainHelper {
-    private static let service = "com.vinyllo.Cog.lastfm"
+    private static let service = "co.losno.Cog.lastfm"
     private static let account = "sessionKey"
 
     static func save(sessionKey: String) -> Bool {
