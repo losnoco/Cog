@@ -2179,5 +2179,9 @@
 	<string>omxG7Rp0XK9/YEvKbVy7cd44eVAh1LJB6CmjQwjOJz4=</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSHumanReadableCopyright</key>
+	<string>© Vincent Spader, 2005-2011
+© mamburu, 2012-2013
+© Christopher Snowhill, 2013-2026</string>
 </dict>
 </plist>
