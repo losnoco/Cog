@@ -976,7 +976,6 @@
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
 		835A8FC627957310005B3C39 /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = json.c; sourceTree = "<group>"; };
 		835A8FC827957310005B3C39 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
-		835C888B22CC1881001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = en; path = en.lproj/Credits.html; sourceTree = "<group>"; };
 		835F00B4279BD1CD00055FCF /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
 		835F00B8279BD1CD00055FCF /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
 		835FAC7227BCDF2A00BA8562 /* avif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avif.h; sourceTree = "<group>"; };
@@ -1053,6 +1052,7 @@
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SADIE_D02-96000.mhr"; sourceTree = "<group>"; };
+		83A097362F7FF486007BAF78 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Credits.html; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
 		83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
 		83AA7D02279EBC8200087AA4 /* libavutil.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.dylib; path = ThirdParty/ffmpeg/lib/libavutil.60.dylib; sourceTree = "<group>"; };
@@ -2986,7 +2986,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				833F68251CDBCAA800AFB9F0 /* es */,
-				835C888B22CC1881001B4B3F /* en */,
+				83A097362F7FF486007BAF78 /* Base */,
 			);
 			name = Credits.html;
 			sourceTree = "<group>";
