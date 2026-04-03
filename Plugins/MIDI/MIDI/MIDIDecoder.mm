@@ -148,7 +148,7 @@ static OSType getOSType(const char *in_) {
 
 	if([[source url] isFileURL]) {
 		// Let's check for a SoundFont
-		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3"];
+		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json"];
 		NSString *filePath = [[source url] path];
 		NSString *fileNameBase = [filePath lastPathComponent];
 		filePath = [filePath stringByDeletingLastPathComponent];
