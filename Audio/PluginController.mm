@@ -485,6 +485,10 @@ static NSString *xmlEscapeString(NSString * string) {
 \t<string>omxG7Rp0XK9/YEvKbVy7cd44eVAh1LJB6CmjQwjOJz4=</string>\n\
 \t<key>ITSAppUsesNonExemptEncryption</key>\n\
 \t<false/>\n\
+\t<key>NSHumanReadableCopyright</key>\n\
+\t<string>© Vincent Spader, 2005-2011\n\
+© mamburu, 2012-2013\n\
+© Christopher Snowhill, 2013-2026</string>\n\
 </dict>\n\
 </plist>\n";
     NSMutableArray * decodersRegistered = [NSMutableArray new];
