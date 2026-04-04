@@ -64,7 +64,7 @@ static AppController *kAppController = nil;
 	NSValueTransformer *totalTimeTransformer = [TotalTimeTransformer new];
 	[NSValueTransformer setValueTransformer:totalTimeTransformer
 	                                forName:@"TotalTimeTransformer"];
-	
+
 	NSValueTransformer *numberHertzToStringTransformer = [NumberHertzToStringTransformer new];
 	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
 									forName:@"NumberHertzToStringTransformer"];
@@ -175,7 +175,7 @@ static BOOL consentLastEnabled = NO;
 - (void)awakeFromNib {
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @(NO),
 															   @"sentryAskedConsent": @(NO) }];
-	
+
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
 
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
@@ -348,7 +348,7 @@ static BOOL consentLastEnabled = NO;
 	if(context != kAppControllerContext) {
 		return;
 	}
-	
+
 	if([keyPath isEqualToString:@"values.sentryConsented"]) {
 		BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"sentryConsented"];
 		if(enabled != consentLastEnabled) {
@@ -376,7 +376,7 @@ static BOOL consentLastEnabled = NO;
 							[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
 							if([fbcon waitForCompletion]) {
 								SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];
-								
+
 								[SentrySDK captureFeedback:feedback];
 							}
 						}
