@@ -106,6 +106,7 @@
 		616000000000000000000002 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 606000000000000000000004 /* PathSuggester.m */; };
 		62FE80E521E14AFB9C8B48E5 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8305963D277F013200EBFAAE /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; };
 		8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */ = {isa = PBXBuildFile; fileRef = 8307D30D28606148000FF8EB /* SandboxBroker.m */; };
 		830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 830C379F27B95E3000E02BB0 /* Equalizer.xib */; };
 		830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 830C37A427B95EB300E02BB0 /* EqualizerWindowController.m */; };
@@ -1146,6 +1147,7 @@
 				83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
+				8305963D277F013200EBFAAE /* File_Extractor.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
