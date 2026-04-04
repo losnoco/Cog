@@ -333,7 +333,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 			break;
 
 		case NSUserNotificationActivationTypeContentsClicked: {
-			NSWindow *window = [[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"] ? miniWindow : mainWindow;
+			NSWindow *window;
+			if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniPlusMode"])
+				window = miniPlusWindow;
+			else if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"])
+				window = miniWindow;
+			else
+				window = mainWindow;
 
 			[NSApp activateIgnoringOtherApps:YES];
 			[window makeKeyAndOrderFront:self];

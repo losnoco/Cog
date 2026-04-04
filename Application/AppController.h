@@ -8,6 +8,7 @@
 @class PlaylistView;
 @class PlaylistLoader;
 @class PreferencesController;
+@class MiniPlayerPlusWindowController;
 
 @interface AppController : NSObject {
 	IBOutlet NSObjectController *currentEntryController;
@@ -19,6 +20,8 @@
 
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSWindow *miniWindow;
+	IBOutlet NSWindow *miniPlusWindow;
+	IBOutlet MiniPlayerPlusWindowController *miniPlayerPlusWindowController;
 	IBOutlet NSSplitView *mainView;
 
 	IBOutlet NSSegmentedControl *playbackButtons;
@@ -56,6 +59,7 @@
 	NSMutableSet *expandedNodes;
 
 	BOOL miniMode;
+	BOOL miniPlusMode;
 }
 
 @property(strong) IBOutlet NSButton *infoButton;
@@ -103,6 +107,7 @@
 - (void)nodeCollapsed:(NSNotification *)notification;
 
 - (IBAction)toggleMiniMode:(id)sender;
+- (IBAction)toggleMiniPlusMode:(id)sender;
 - (IBAction)toggleToolbarStyle:(id)sender;
 
 - (BOOL)pathSuggesterEmpty;
@@ -119,8 +124,10 @@
 
 @property NSWindow *mainWindow;
 @property NSWindow *miniWindow;
+@property NSWindow *miniPlusWindow;
 
 @property BOOL miniMode;
+@property BOOL miniPlusMode;
 
 @property(nonatomic) BOOL floatingMiniWindow;
 

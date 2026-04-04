@@ -58,6 +58,7 @@ static AppController *kAppController = nil;
 
 @synthesize mainWindow;
 @synthesize miniWindow;
+@synthesize miniPlusWindow;
 
 + (void)initialize {
 	// Register transformers
@@ -81,7 +82,7 @@ static AppController *kAppController = nil;
 	NSValueTransformer *totalTimeTransformer = [TotalTimeTransformer new];
 	[NSValueTransformer setValueTransformer:totalTimeTransformer
 	                                forName:@"TotalTimeTransformer"];
-	
+
 	NSValueTransformer *numberHertzToStringTransformer = [NumberHertzToStringTransformer new];
 	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
 									forName:@"NumberHertzToStringTransformer"];
@@ -192,7 +193,7 @@ static BOOL consentLastEnabled = NO;
 - (void)awakeFromNib {
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @(NO),
 															   @"sentryAskedConsent": @(NO) }];
-	
+
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
 
 #ifdef DEBUG
@@ -303,7 +304,11 @@ static BOOL consentLastEnabled = NO;
 	}
 
 	// Restore mini mode
-	[self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniPlusMode"]) {
+		[self setMiniPlusMode:YES];
+	} else {
+		[self setMiniMode:[[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]];
+	}
 
 	[self setToolbarStyle:[[NSUserDefaults standardUserDefaults] boolForKey:@"toolbarStyleFull"]];
 
@@ -367,7 +372,7 @@ static BOOL consentLastEnabled = NO;
 	if(context != kAppControllerContext) {
 		return;
 	}
-	
+
 	if([keyPath isEqualToString:@"values.sentryConsented"]) {
 		BOOL enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"sentryConsented"];
 		if(enabled != consentLastEnabled) {
@@ -395,7 +400,7 @@ static BOOL consentLastEnabled = NO;
 							[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
 							if([fbcon waitForCompletion]) {
 								SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];
-								
+
 								[SentrySDK captureFeedback:feedback];
 							}
 						}
@@ -974,13 +979,42 @@ static NSDictionary *shortcutDefaults = nil;
 	[self setMiniMode:(!miniMode)];
 }
 
+- (IBAction)toggleMiniPlusMode:(id)sender {
+	[self setMiniPlusMode:(!miniPlusMode)];
+}
+
+- (BOOL)miniPlusMode {
+	return miniPlusMode;
+}
+
+- (void)setMiniPlusMode:(BOOL)newMiniPlusMode {
+	miniPlusMode = newMiniPlusMode;
+	[[NSUserDefaults standardUserDefaults] setBool:miniPlusMode forKey:@"miniPlusMode"];
+
+	if(miniPlusMode) {
+		// Switching to Mini Plus mode: clear regular mini mode and show mini plus window.
+		miniMode = NO;
+		[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"miniMode"];
+		[mainWindow close];
+		[miniWindow close];
+		[miniPlusWindow makeKeyAndOrderFront:self];
+	} else {
+		// Exiting Mini Plus mode: show main window.
+		[miniPlusWindow close];
+		[mainWindow makeKeyAndOrderFront:self];
+	}
+}
+
 - (BOOL)miniMode {
 	return miniMode;
 }
 
 - (void)setMiniMode:(BOOL)newMiniMode {
 	miniMode = newMiniMode;
+	miniPlusMode = NO;
 	[[NSUserDefaults standardUserDefaults] setBool:miniMode forKey:@"miniMode"];
+	[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"miniPlusMode"];
+	[miniPlusWindow close];
 
 	NSWindow *windowToShow = miniMode ? miniWindow : mainWindow;
 	NSWindow *windowToHide = miniMode ? mainWindow : miniWindow;
@@ -1002,10 +1036,12 @@ static NSDictionary *shortcutDefaults = nil;
 		full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnified;
 		mainWindow.toolbarStyle = style;
 		miniWindow.toolbarStyle = style;
+		miniPlusWindow.toolbarStyle = style;
 	} else {
 		NSWindowTitleVisibility titleVisibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
 		mainWindow.titleVisibility = titleVisibility;
 		miniWindow.titleVisibility = titleVisibility;
+		miniPlusWindow.titleVisibility = titleVisibility;
 	}
 
 	// Fix empty area after changing toolbar style in mini window as it has no content view

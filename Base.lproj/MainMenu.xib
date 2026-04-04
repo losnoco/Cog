@@ -1515,6 +1515,192 @@
             </connections>
             <point key="canvasLocation" x="15.5" y="444"/>
         </window>
+        <window title="Cog" separatorStyle="none" titleVisibility="hidden" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="Mini Plus Window" animationBehavior="default" toolbarStyle="unified" id="3100" userLabel="Mini Plus Window (Window)" customClass="MiniPlayerPlusWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <rect key="contentRect" x="200" y="300" width="360" height="500"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1050"/>
+            <value key="minSize" type="size" width="280" height="300"/>
+            <view key="contentView" id="3130">
+                <rect key="frame" x="0.0" y="0.0" width="360" height="500"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                <subviews>
+                    <scrollView autohidesScrollers="YES" horizontalLineScroll="72" horizontalPageScroll="10" verticalLineScroll="72" verticalPageScroll="10" hasHorizontalScroller="NO" id="3130sv">
+                        <rect key="frame" x="0.0" y="0.0" width="360" height="500"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="3130cv">
+                            <rect key="frame" x="0.0" y="0.0" width="360" height="500"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <view id="3130inner">
+                                <rect key="frame" x="0.0" y="0.0" width="360" height="500"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </view>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" id="3130hs">
+                            <rect key="frame" x="0.0" y="0.0" width="100" height="15"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" id="3130vs">
+                            <rect key="frame" x="0.0" y="0.0" width="15" height="100"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                </subviews>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="A1B2C3D4-E5F6-7890-ABCD-EF1234567890" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="3101" userLabel="Mini Plus Toolbar">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="3102"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="3103"/>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0001-7890-ABCD-EF1234567891" label="Playback Buttons" paletteLabel="Playback Buttons" visibilityPriority="15" sizingBehavior="auto" id="3104">
+                        <nil key="toolTip"/>
+                        <segmentedControl key="view" verticalHuggingPriority="750" id="3105" customClass="PlaybackButtons">
+                            <rect key="frame" x="0.0" y="14" width="115" height="24"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="momentary" id="3106">
+                                <font key="font" metaFont="system"/>
+                                <segments>
+                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28">
+                                        <nil key="label"/>
+                                    </segment>
+                                </segments>
+                            </segmentedCell>
+                            <connections>
+                                <outlet property="playbackController" destination="705" id="3410"/>
+                            </connections>
+                        </segmentedControl>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0002-7890-ABCD-EF1234567892" label="Position" paletteLabel="Position" visibilityPriority="15" sizingBehavior="auto" id="3107" customClass="PositionSliderToolbarItem" customModule="Cog" customModuleProvider="target">
+                        <nil key="toolTip"/>
+                        <slider key="view" verticalHuggingPriority="750" id="3108" customClass="PositionSlider">
+                            <rect key="frame" x="0.0" y="14" width="96" height="14"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="3109" customClass="TrackingCell">
+                                <font key="font" metaFont="message" size="11"/>
+                            </sliderCell>
+                            <connections>
+                                <action selector="seek:" target="705" id="3411"/>
+                                <binding destination="1897" name="maxValue" keyPath="content.length" id="3412"/>
+                                <binding destination="705" name="value" keyPath="position" previousBinding="3412" id="3413"/>
+                                <binding destination="705" name="enabled" keyPath="seekable" id="3414"/>
+                                <outlet property="positionTextField" destination="3111" id="3415"/>
+                            </connections>
+                        </slider>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0003-7890-ABCD-EF1234567893" label="Current Time" paletteLabel="Current Time" visibilityPriority="5" sizingBehavior="auto" id="3110">
+                        <nil key="toolTip"/>
+                        <textField key="view" focusRingType="none" verticalHuggingPriority="750" id="3111" customClass="TimeField">
+                            <rect key="frame" x="20" y="14" width="37" height="22"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" title="0:00" usesSingleLineMode="YES" bezelStyle="round" id="3112">
+                                <font key="font" metaFont="message" size="11"/>
+                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0004-7890-ABCD-EF1234567894" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="15" sizingBehavior="auto" id="3113">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="3114" customClass="VolumeButton">
+                            <rect key="frame" x="9" y="14" width="29" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="3115">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <outlet property="_popView" destination="1612" id="3416"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0005-7890-ABCD-EF1234567895" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="3116">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="3117">
+                            <rect key="frame" x="7" y="14" width="32" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3118">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleShuffle:" target="218" id="3417"/>
+                                <binding destination="218" name="image" keyPath="shuffle" id="3418">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">ShuffleImageTransformer</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0006-7890-ABCD-EF1234567896" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" sizingBehavior="auto" id="3119">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="3120">
+                            <rect key="frame" x="6" y="14" width="32" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3121">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleRepeat:" target="218" id="3419"/>
+                                <binding destination="218" name="image" keyPath="repeat" id="3420">
+                                    <dictionary key="options">
+                                        <string key="NSValueTransformerName">RepeatModeImageTransformer</string>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0007-7890-ABCD-EF1234567897" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="3122">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="3123">
+                            <rect key="frame" x="17" y="14" width="32" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3124">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="randomizeList:" target="218" id="3421"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0008-7890-ABCD-EF1234567898" label="Normal Mode" paletteLabel="Normal Mode" image="miniModeOffTemplate" sizingBehavior="auto" id="3125">
+                        <nil key="toolTip"/>
+                        <button key="view" verticalHuggingPriority="750" id="3126">
+                            <rect key="frame" x="25" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3127">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleMiniPlusMode:" target="226" id="3422"/>
+                            </connections>
+                        </button>
+                        <connections>
+                            <action selector="toggleMiniPlusMode:" target="226" id="3428"/>
+                        </connections>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="3104"/>
+                    <toolbarItem reference="3103"/>
+                    <toolbarItem reference="3116"/>
+                    <toolbarItem reference="3119"/>
+                    <toolbarItem reference="3103"/>
+                    <toolbarItem reference="3110"/>
+                    <toolbarItem reference="3107"/>
+                    <toolbarItem reference="3113"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <outlet property="playbackController" destination="705" id="3424"/>
+                <outlet property="playlistController" destination="218" id="3425"/>
+            </connections>
+            <point key="canvasLocation" x="15.5" y="-500"/>
+        </window>
         <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
             <items>
                 <menuItem title="Cog" id="56">
@@ -2237,6 +2423,12 @@ Gw
                                     </binding>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Switch to Mini Player Plus" secondaryImage="pip.swap" catalog="system" keyEquivalent="P" id="3506">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                <connections>
+                                    <action selector="toggleMiniPlusMode:" target="226" id="3507"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show Mini Player On Top" secondaryImage="macwindow.stack" catalog="system" keyEquivalent="T" id="lXN-EZ-xg0" userLabel="Show Mini Player On Top">
                                 <connections>
                                     <binding destination="226" name="value" keyPath="floatingMiniWindow" id="6rr-FP-Fw2"/>
@@ -2324,6 +2516,7 @@ Gw
             <connections>
                 <outlet property="mainWindow" destination="21" id="xhc-8E-Ogp"/>
                 <outlet property="miniWindow" destination="2234" id="iPi-Vv-Mjn"/>
+                <outlet property="miniPlusWindow" destination="3100" id="3505"/>
                 <outlet property="playbackController" destination="705" id="A0d-y8-cA6"/>
             </connections>
         </customObject>
@@ -2339,6 +2532,8 @@ Gw
                 <outlet property="mainView" destination="2123" id="2458"/>
                 <outlet property="mainWindow" destination="21" id="359"/>
                 <outlet property="miniWindow" destination="2234" id="2517"/>
+                <outlet property="miniPlusWindow" destination="3100" id="3503"/>
+                <outlet property="miniPlayerPlusWindowController" destination="3000" id="3504"/>
                 <outlet property="playbackController" destination="705" id="1300"/>
                 <outlet property="playlistController" destination="218" id="236"/>
                 <outlet property="playlistLoader" destination="1319" id="1322"/>
@@ -2806,6 +3001,14 @@ Gw
                 <outlet property="appController" destination="226" id="2538"/>
                 <outlet property="currentEntryController" destination="1897" id="2539"/>
                 <outlet property="playlistSelectionController" destination="2020" id="2540"/>
+            </connections>
+        </customObject>
+        <customObject id="3000" customClass="MiniPlayerPlusWindowController">
+            <connections>
+                <outlet property="appController" destination="226" id="3500"/>
+                <outlet property="currentEntryController" destination="1897" id="3501"/>
+                <outlet property="playlistSelectionController" destination="2020" id="3502"/>
+                <outlet property="window" destination="3100" id="3503b"/>
             </connections>
         </customObject>
         <customObject id="dJ9-b3-BFu" customClass="EqualizerWindowController"/>
