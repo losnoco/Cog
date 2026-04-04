@@ -17,6 +17,7 @@
 
 	IBOutlet NSWindow *mainWindow;
 	IBOutlet NSWindow *miniWindow;
+	IBOutlet NSWindow *miniPlusWindow;
 }
 
 @end

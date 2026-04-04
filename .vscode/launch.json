@@ -9,7 +9,6 @@
             "type": "Ruby",
             "request": "launch",
             "program": "${workspaceRoot}/Scripts/update_feed.rb"
-        },
-        null
+        }
     ]
 }
