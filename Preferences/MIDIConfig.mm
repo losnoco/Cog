@@ -163,7 +163,7 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 	NSArray *fileTypes = @[@"zip", @"rar", @"7z"];
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
 	[panel setAllowsMultipleSelection:NO];
-	[panel setCanChooseDirectories:NO];
+	[panel setCanChooseDirectories:YES];
 	[panel setCanChooseFiles:YES];
 	[panel setFloatingPanel:YES];
 	[panel setAllowedFileTypes:fileTypes];
@@ -172,22 +172,90 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 		NSURL *url = [panel URL];
 		NSString *path = [url path];
 
-		fex_t *fex = NULL;
-		fex_err_t err = fex_open(&fex, [path UTF8String]);
-		if(!err) {
+		BOOL isDir = NO;
+		[[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+
+		if(!isDir) {
+			fex_t *fex = NULL;
+			fex_err_t err = fex_open(&fex, [path UTF8String]);
+			if(!err) {
+				NSString *currentDevice = nil;
+				NSDictionary *devices = [self nukedDevices];
+				NSDictionary *romSets = [self nukedRomsets];
+				NSMutableDictionary *foundSets = [NSMutableDictionary new];
+
+				while(!fex_done(fex)) {
+					const void *data = NULL;
+					err = fex_data(fex, &data);
+					if(!err) {
+						uint64_t size = fex_size(fex);
+						NSData *itemData = [NSData dataWithBytes:data length:size];
+						Class shaClass = NSClassFromString(@"SHA256Digest");
+						NSString *hash = [shaClass digestDataAsString:itemData];
+						NSDictionary *foundItem = romSets[hash];
+						if(foundItem) {
+							if(currentDevice) {
+								if(![currentDevice isEqualToString:foundItem[@"type"]]) {
+									break;
+								}
+							} else {
+								currentDevice = foundItem[@"type"];
+							}
+							foundSets[hash] = @{@"data": itemData, @"name": foundItem[@"name"]};
+						}
+						fex_next(fex);
+					}
+				}
+				if(!fex_done(fex) ||
+				   !currentDevice ||
+				   [devices[currentDevice][@"count"] integerValue] != [foundSets count]) {
+					fex_close(fex);
+
+					NSAlert *alert = [NSAlert new];
+					[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
+					[alert setInformativeText:NSLocalizedString(@"NukedErrorBrokenSet", @"An error message indicating that the Nuked SC-55 ROM set archive specified is broken and cannot be used.")];
+					[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
+
+					[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+					}];
+
+					[defaultManager removeItemAtPath:romPath error:&error];
+					return;
+				}
+
+				fex_close(fex);
+
+				[foundSets enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+					NSString *itemPath = [romPath stringByAppendingPathComponent:obj[@"name"]];
+					[defaultManager createFileAtPath:itemPath contents:obj[@"data"] attributes:nil];
+				}];
+
+				NSAlert *alert = [NSAlert new];
+				[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
+				[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"NukedInfoSetInstalled", @"Status alert message for Nuked SC-55 setup, on successful install of a ROM set. A placeholder %@ should be inserted to receive the NSString indicating the device model name."), currentDevice]];
+				[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
+
+				[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+				}];
+			}
+		} else {
+			NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtURL:url
+													 includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey]
+																		options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
+																   errorHandler:^BOOL(NSURL *url, NSError *error) {
+				return NO;
+			}];
+
 			NSString *currentDevice = nil;
 			NSDictionary *devices = [self nukedDevices];
 			NSDictionary *romSets = [self nukedRomsets];
 			NSMutableDictionary *foundSets = [NSMutableDictionary new];
 
-			while(!fex_done(fex)) {
-				const void *data = NULL;
-				err = fex_data(fex, &data);
-				if(!err) {
-					uint64_t size = fex_size(fex);
-					NSData *itemData = [NSData dataWithBytes:data length:size];
+			for(NSURL *theUrl in enumerator) {
+				NSData *data = [NSData dataWithContentsOfURL:theUrl];
+				if(data) {
 					Class shaClass = NSClassFromString(@"SHA256Digest");
-					NSString *hash = [shaClass digestDataAsString:itemData];
+					NSString *hash = [shaClass digestDataAsString:data];
 					NSDictionary *foundItem = romSets[hash];
 					if(foundItem) {
 						if(currentDevice) {
@@ -197,29 +265,24 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 						} else {
 							currentDevice = foundItem[@"type"];
 						}
-						foundSets[hash] = @{@"data": itemData, @"name": foundItem[@"name"]};
+						foundSets[hash] = @{@"data": data, @"name": foundItem[@"name"]};
 					}
-					fex_next(fex);
 				}
 			}
-			if(!fex_done(fex) ||
-			   !currentDevice ||
-			   [devices[currentDevice][@"count"] integerValue] != [foundSets count]) {
-				fex_close(fex);
 
+			if(!currentDevice ||
+			   [devices[currentDevice][@"count"] integerValue] != [foundSets count]) {
 				NSAlert *alert = [NSAlert new];
 				[alert setMessageText:NSLocalizedString(@"NukedInfoTitle", @"Title of a general Nuked SC-55 Info alert.")];
 				[alert setInformativeText:NSLocalizedString(@"NukedErrorBrokenSet", @"An error message indicating that the Nuked SC-55 ROM set archive specified is broken and cannot be used.")];
 				[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
-						
+
 				[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
 				}];
 
 				[defaultManager removeItemAtPath:romPath error:&error];
 				return;
 			}
-
-			fex_close(fex);
 
 			[foundSets enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
 				NSString *itemPath = [romPath stringByAppendingPathComponent:obj[@"name"]];
