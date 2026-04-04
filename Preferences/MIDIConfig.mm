@@ -251,6 +251,12 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 	}
 }
 
++ (BOOL)nukedRomsInstalled {
+	NSString *_romPath = [self romPath];
+	BOOL dir = NO;
+	return [[NSFileManager defaultManager] fileExistsAtPath:_romPath isDirectory:&dir] && dir;
+}
+
 + (void)setupPlugin {
 	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 

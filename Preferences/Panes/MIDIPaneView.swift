@@ -15,7 +15,7 @@ private final class MIDIPrefs: ObservableObject {
     private var isActive = true
 
     @Published var plugin: String {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(plugin, forKey: "midiPlugin"); updateSetupButtonEnabled() }
+        didSet { guard isActive else { return }; UserDefaults.standard.set(plugin, forKey: "midiPlugin"); updateSetupButton() }
     }
     @Published var flavor: String {
         didSet { guard isActive else { return }; UserDefaults.standard.set(flavor, forKey: "midi.flavor") }
@@ -38,7 +38,10 @@ private final class MIDIPrefs: ObservableObject {
 
     deinit { isActive = false }
     @Published var plugins: [MIDIPlugin] = []
+
     @Published var setupButtonEnabled: Bool = false
+    @Published var isNukedTheSelectedPlugin: Bool = false
+    @Published var nukedRomsInstalled: Bool = false
 
     init() {
         let d = UserDefaults.standard
@@ -50,11 +53,13 @@ private final class MIDIPrefs: ObservableObject {
         synthDefaultLoopCount = d.object(forKey: "synthDefaultLoopCount") as? Int ?? 2
         synthSampleRate = d.object(forKey: "synthSampleRate") as? Int ?? 44100
         plugins = Self.buildPluginList()
-        updateSetupButtonEnabled()
+        updateSetupButton()
     }
 
-    private func updateSetupButtonEnabled() {
+    private func updateSetupButton() {
         setupButtonEnabled = plugins.first(where: { $0.id == plugin })?.configurable ?? false
+        isNukedTheSelectedPlugin = plugin == "NukeSc55"
+        nukedRomsInstalled = MIDIConfigHost.nukedRomsInstalled()
     }
 
     private static func buildPluginList() -> [MIDIPlugin] {
@@ -148,8 +153,14 @@ struct MIDIPaneView: View {
                         }
                     }
                 }
-                Button("Configure…") { configurePlugin() }
+
+                if (prefs.setupButtonEnabled) {
+                    Button(prefs.isNukedTheSelectedPlugin ? (prefs.nukedRomsInstalled ? "Remove ROM set…" : "Choose ROM set…") : "Configure…") {
+                        configurePlugin()
+                    }
                     .disabled(!prefs.setupButtonEnabled)
+                }
+
                 Picker("MIDI flavor:", selection: $prefs.flavor) {
                     ForEach(flavorOptions, id: \.1) { opt in
                         Text(opt.0).tag(opt.1)
@@ -210,8 +221,8 @@ struct MIDIPaneView: View {
     }
 
     private func configurePlugin() {
-        // Delegate configuration to the ObjC side
-		MIDIConfigHost.setupPlugin()
+        MIDIConfigHost.setupPlugin()
+        prefs.nukedRomsInstalled = MIDIConfigHost.nukedRomsInstalled()
     }
 }
 
