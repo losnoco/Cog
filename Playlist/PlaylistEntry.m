@@ -552,11 +552,11 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 @dynamic statusMessage;
 - (NSString *)statusMessage {
 	if(self.stopAfter) {
-		return @"Stopping once finished...";
+		return NSLocalizedStringFromTableInBundle(@"StatusStopAfter", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else if(self.current) {
-		return @"Playing...";
+		return NSLocalizedStringFromTableInBundle(@"StatusPlaying", nil, [NSBundle bundleForClass:[self class]], @"");
 	} else if(self.queued) {
-		return [NSString stringWithFormat:@"Queued: %lli", self.queuePosition + 1];
+		return [NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"StatusQueued", nil, [NSBundle bundleForClass:[self class]], @""), self.queuePosition + 1];
 	} else if(self.error) {
 		return self.errorMessage;
 	}
