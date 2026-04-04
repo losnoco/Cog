@@ -11,5 +11,6 @@
 @interface MIDIConfigHost : NSObject
 
 + (void)setupPlugin;
++ (BOOL)nukedRomsInstalled;
 
 @end
