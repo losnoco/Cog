@@ -68,6 +68,8 @@
 		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
 		17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E20F520F02005B6FED /* MainWindow.m */; };
 		17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E40F520F02005B6FED /* MiniWindow.m */; };
+		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
+		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
 		17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E60F520F02005B6FED /* PositionSlider.m */; };
 		17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E80F520F02005B6FED /* TimeField.m */; };
 		17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D6190F520F9F005B6FED /* VolumeButton.m */; };
@@ -877,6 +879,10 @@
 		17E0D5E20F520F02005B6FED /* MainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainWindow.m; path = Window/MainWindow.m; sourceTree = "<group>"; };
 		17E0D5E30F520F02005B6FED /* MiniWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniWindow.h; path = Window/MiniWindow.h; sourceTree = "<group>"; };
 		17E0D5E40F520F02005B6FED /* MiniWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniWindow.m; path = Window/MiniWindow.m; sourceTree = "<group>"; };
+		CCAA0001B590B10015000001 /* MiniPlayerPlusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindow.h; path = Window/MiniPlayerPlusWindow.h; sourceTree = "<group>"; };
+		CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindow.m; path = Window/MiniPlayerPlusWindow.m; sourceTree = "<group>"; };
+		CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindowController.h; path = Window/MiniPlayerPlusWindowController.h; sourceTree = "<group>"; };
+		CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindowController.m; path = Window/MiniPlayerPlusWindowController.m; sourceTree = "<group>"; };
 		17E0D5E50F520F02005B6FED /* PositionSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionSlider.h; path = Window/PositionSlider.h; sourceTree = "<group>"; };
 		17E0D5E60F520F02005B6FED /* PositionSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PositionSlider.m; path = Window/PositionSlider.m; sourceTree = "<group>"; };
 		17E0D5E70F520F02005B6FED /* TimeField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeField.h; path = Window/TimeField.h; sourceTree = "<group>"; };
@@ -1438,6 +1444,10 @@
 				17E0D5E20F520F02005B6FED /* MainWindow.m */,
 				17E0D5E30F520F02005B6FED /* MiniWindow.h */,
 				17E0D5E40F520F02005B6FED /* MiniWindow.m */,
+				CCAA0001B590B10015000001 /* MiniPlayerPlusWindow.h */,
+				CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */,
+				CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */,
+				CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */,
 				838A33792D06C14200D0D770 /* PitchSlider.h */,
 				838A337A2D06C14200D0D770 /* PitchSlider.m */,
 				1752C36A0F59E00100F85F28 /* PlaybackButtons.h */,
@@ -2716,6 +2726,8 @@
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */,
 				17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */,
+				CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */,
+				CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */,
 				17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */,
 				17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */,
 				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,

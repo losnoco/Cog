@@ -5,5 +5,6 @@
         "*.m": "objective-c"
     },
     "clang-format.executable": "/usr/local/bin/clang-format",
-    "clang-format.language.objective-c.style": "{ BasedOnStyle: Google, IndentWidth: 4, ObjCBlockIndentWidth: 4 }"
+    "clang-format.language.objective-c.style": "{ BasedOnStyle: Google, IndentWidth: 4, ObjCBlockIndentWidth: 4 }",
+    "git.ignoreLimitWarning": true
 }
