@@ -325,7 +325,7 @@ void BMPlayer::shutdown() {
 bool BMPlayer::startup() {
 	if(_stream) return true;
 
-	_stream = BASS_MIDI_StreamCreate(48, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | (bSincInterpolation ? BASS_MIDI_SINCINTER : 0), (unsigned int)uSampleRate);
+	_stream = BASS_MIDI_StreamCreate(48, BASS_SAMPLE_FLOAT | BASS_STREAM_DECODE | (bSincInterpolation ? BASS_MIDI_SINCINTER : 0), (unsigned int)round(dSampleRate));
 	if(!_stream) {
 		return false;
 	}

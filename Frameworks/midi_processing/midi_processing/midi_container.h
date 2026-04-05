@@ -77,7 +77,7 @@ class tempo_map
 
 public:
     void add_tempo( unsigned p_tempo, unsigned long p_timestamp );
-    unsigned long timestamp_to_ms( unsigned long p_timestamp, unsigned p_dtx ) const;
+    double timestamp_to_seconds( unsigned long p_timestamp, unsigned p_dtx ) const;
 
     std::size_t get_count() const;
     const tempo_entry & operator [] ( std::size_t p_index ) const;
@@ -106,22 +106,22 @@ public:
 
 struct midi_stream_event
 {
-    unsigned long m_timestamp;
+    double m_timestamp;
     uint32_t m_event;
 
     midi_stream_event() : m_timestamp(0), m_event(0) { }
-    midi_stream_event(unsigned long p_timestamp, uint32_t p_event);
+    midi_stream_event(double p_timestamp, uint32_t p_event);
 };
 
 struct midi_meta_data_item
 {
-    unsigned long m_timestamp;
+    double m_timestamp;
     std::string m_name;
     std::string m_value;
 
     midi_meta_data_item() : m_timestamp(0) { }
     midi_meta_data_item(const midi_meta_data_item & p_in);
-    midi_meta_data_item(unsigned long p_timestamp, const char * p_name, const char * p_value);
+    midi_meta_data_item(double p_timestamp, const char * p_name, const char * p_value);
 };
 
 class midi_meta_data
@@ -175,7 +175,7 @@ private:
     std::vector<unsigned long> m_timestamp_loop_start;
     std::vector<unsigned long> m_timestamp_loop_end;
 
-    unsigned long timestamp_to_ms( unsigned long p_timestamp, unsigned long p_subsong ) const;
+    double timestamp_to_seconds( unsigned long p_timestamp, unsigned long p_subsong ) const;
 
     /*
      * Normalize port numbers properly
@@ -249,7 +249,7 @@ public:
     unsigned long get_subsong_count() const;
     unsigned long get_subsong( unsigned long p_index ) const;
 
-    unsigned long get_timestamp_end(unsigned long subsong, bool ms = false) const;
+    double get_timestamp_end(unsigned long subsong, bool seconds = false) const;
 
     unsigned get_format() const;
     unsigned get_track_count() const;
@@ -258,8 +258,8 @@ public:
     unsigned get_port_mask(unsigned long subsong) const;
     static unsigned get_port_mask(const std::vector<midi_stream_event> & p_stream, const system_exclusive_table & p_sysex);
 
-    unsigned long get_timestamp_loop_start(unsigned long subsong, bool ms = false) const;
-    unsigned long get_timestamp_loop_end(unsigned long subsong, bool ms = false) const;
+    double get_timestamp_loop_start(unsigned long subsong, bool seconds = false) const;
+    double get_timestamp_loop_end(unsigned long subsong, bool seconds = false) const;
 
     void get_meta_data( unsigned long subsong, midi_meta_data & p_out );
 

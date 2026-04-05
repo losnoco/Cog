@@ -17,7 +17,7 @@ class SCPlayer : public MIDIPlayer {
 	// close, unload
 	virtual ~SCPlayer();
 	
-	static uint32_t sampleRate();
+	static double sampleRate();
 
 	void setUrl(NSURL *url);
 

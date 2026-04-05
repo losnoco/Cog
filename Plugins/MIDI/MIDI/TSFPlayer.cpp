@@ -226,7 +226,7 @@ bool TSFPlayer::startup() {
 	if(!_synth) {
 		return false;
 	}
-	tsf_set_output(_synth, TSF_STEREO_INTERLEAVED, uSampleRate, -10.0);
+	tsf_set_output(_synth, TSF_STEREO_INTERLEAVED, (unsigned int) round(dSampleRate), -10.0);
 	tsf_reset(_synth);
 
 	for (int i = 0; i < 48; ++i)
