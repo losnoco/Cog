@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83095D962F81DA0100DDA4B4 /* TSFPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83095D942F81DA0100DDA4B4 /* TSFPlayer.cpp */; };
+		83095D972F81DA0100DDA4B4 /* tsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83095D952F81DA0100DDA4B4 /* tsf.c */; };
 		831E2A8A27B4B2B2006F1C86 /* sflist.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8027B4B2B2006F1C86 /* sflist.c */; };
 		831E2A8C27B4B2B2006F1C86 /* sflist_rewrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */; };
 		831E2A9627B4B2FA006F1C86 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A9227B4B2FA006F1C86 /* json.c */; };
@@ -105,6 +107,10 @@
 
 /* Begin PBXFileReference section */
 		8307D31E28607377000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
+		83095D922F81D9F200DDA4B4 /* tsf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = tsf.h; path = tsf/tsf.h; sourceTree = "<group>"; };
+		83095D932F81DA0100DDA4B4 /* TSFPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSFPlayer.h; sourceTree = "<group>"; };
+		83095D942F81DA0100DDA4B4 /* TSFPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TSFPlayer.cpp; sourceTree = "<group>"; };
+		83095D952F81DA0100DDA4B4 /* tsf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tsf.c; sourceTree = "<group>"; };
 		831E2A7F27B4B2B2006F1C86 /* bassmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bassmidi.h; sourceTree = "<group>"; };
 		831E2A8027B4B2B2006F1C86 /* sflist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sflist.c; sourceTree = "<group>"; };
 		831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sflist_rewrite.c; sourceTree = "<group>"; };
@@ -334,6 +340,10 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				83095D932F81DA0100DDA4B4 /* TSFPlayer.h */,
+				83095D942F81DA0100DDA4B4 /* TSFPlayer.cpp */,
+				83095D952F81DA0100DDA4B4 /* tsf.c */,
+				83095D922F81D9F200DDA4B4 /* tsf.h */,
 				834A42BC287AFC7F00EB9D9B /* AudioChunk.h */,
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
 				831E2A9127B4B2FA006F1C86 /* json */,
@@ -512,6 +522,8 @@
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
 				834BE91B1DE407CB00A07DCD /* resampler.c in Sources */,
 				83A0CBC42E837AA5007C429D /* SCPlayer.mm in Sources */,
+				83095D962F81DA0100DDA4B4 /* TSFPlayer.cpp in Sources */,
+				83095D972F81DA0100DDA4B4 /* tsf.c in Sources */,
 				83A09F641CFA83F2001E7D2D /* opl3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -12,6 +12,7 @@
 #import "BMPlayer.h"
 #import "MSPlayer.h"
 #import "SCPlayer.h"
+#import "TSFPlayer.h"
 
 #import "Logging.h"
 
@@ -238,6 +239,15 @@ static OSType getOSType(const char *in_) {
 				bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
 			player = bmplayer;
+		} else if([plugin isEqualToString:@"TinySF"]) {
+			tsfplayer = new TSFPlayer;
+
+			tsfplayer->setSampleRate(sampleRate);
+
+			if([soundFontPath length])
+				tsfplayer->setFileSoundFont([soundFontPath UTF8String]);
+
+			player = tsfplayer;
 		} else if([plugin isEqualToString:@"NukeSc55"]) {
 			scplayer = new SCPlayer;
 
@@ -331,10 +341,12 @@ static OSType getOSType(const char *in_) {
 		if(!repeatone && framesRead >= localTotalFrames)
 			return 0;
 
-		if((bmplayer || auplayer) && !soundFontsAssigned) {
+		if((bmplayer || auplayer || tsfplayer) && !soundFontsAssigned) {
 			if(globalSoundFontPath != nil) {
 				if(bmplayer)
 					bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
+				else if(tsfplayer)
+					tsfplayer->setSoundFont([globalSoundFontPath UTF8String]);
 				else if(auplayer)
 					auplayer->setSoundFont([globalSoundFontPath UTF8String]);
 			}
