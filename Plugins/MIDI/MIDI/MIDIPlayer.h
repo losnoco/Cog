@@ -3,6 +3,15 @@
 
 #include <midi_processing/midi_container.h>
 
+extern const uint8_t syx_reset_gm[];
+extern const uint8_t syx_reset_gm2[];
+extern const uint8_t syx_reset_gs[];
+extern const uint8_t syx_reset_xg[];
+
+bool syx_equal(const uint8_t *a, const uint8_t *b);
+bool syx_is_reset(const uint8_t *data);
+bool syx_is_gs(const uint8_t *data, size_t size);
+
 class MIDIPlayer {
 	public:
 	enum {

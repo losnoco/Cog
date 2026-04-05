@@ -189,15 +189,63 @@ void TSFPlayer::send_event(uint32_t b) {
 	switch(command)
 	{
 		case 8: tsf_channel_note_off(_synth, channel, event[1]); break;
-		case 9: tsf_channel_note_on(_synth, channel, event[1], (float)(event[2]) / 127.0); break;
+		case 9: {
+			if (gs_mute[channel]) break;
+			tsf_channel_note_on(_synth, channel, event[1], (float)(event[2]) / 127.0);
+			break;
+		}
 		case 11: tsf_channel_midi_control(_synth, channel, event[1], event[2]); break;
-		case 12: tsf_channel_set_presetnumber(_synth, channel, event[1], channel == 9 || channel == (9 + 16) || channel == (9 + 32)); break;
+		case 12: {
+			int bank = tsf_channel_get_preset_bank(_synth, channel);
+			if(is_xg) {
+				drums[channel] = bank == (127 * 128);
+			} else if(is_gm2) {
+				drums[channel] = bank == (120 * 128);
+			}
+			tsf_channel_set_presetnumber(_synth, channel, event[1], drums[channel]);
+			break;
+		}
 		case 14: tsf_channel_set_pitchwheel(_synth, channel, (unsigned)((event[2] & 0x7F) << 7) + (unsigned)(event[1] & 0x7F)); break;
 		default: break;
 	}
 }
 
+static const uint8_t syx_gs_drum_part[] = { 0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0, 0x15, 0, 0, 0xF7 };
+
 void TSFPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
+	if(syx_is_reset(data)) {
+		reset_parameters();
+		if(syx_equal(data, syx_reset_gs)) {
+			is_gs = true;
+		} else if(syx_equal(data, syx_reset_xg)) {
+			is_xg = true;
+		} else if(syx_equal(data, syx_reset_gm2)) {
+			is_gm2 = true;
+		}
+	} else if(is_gs) {
+		if(syx_is_gs(data, size)) {
+			if((data[2] & 0xF0) == 0x10 && data[5] == 0x40 && (data[6] & 0xF0) == 0x10) {
+				unsigned int device = data[2] & 15;
+				if(device > 2) device = 0;
+				if(data[7] == 0x15) {
+					// part to rhythm
+					unsigned int part = (data[6] & 15) + device * 16;
+					if(gs_part_maps[part] < 16) {
+						unsigned int channel = gs_part_maps[part] + device * 16;
+						drums[channel] = data[8] == 2;
+					}
+				} else if(data[7] == 0x02) {
+					// mute channel
+					unsigned int part = (data[6] & 15) + device * 16;
+					unsigned int channel = gs_part_maps[part];
+					if(channel < 16) {
+						channel += device * 16;
+						gs_mute[channel] = data[8] >= 16;
+					}
+				}
+			}
+		}
+	}
 }
 
 void TSFPlayer::render(float *out, unsigned long count) {
@@ -226,14 +274,37 @@ bool TSFPlayer::startup() {
 	if(!_synth) {
 		return false;
 	}
+
+	reset_parameters();
+
+	return true;
+}
+
+void TSFPlayer::reset_parameters() {
+	static const unsigned char _gs_reverse_part_maps[16] = {
+		9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15
+	};
+	std::copy_n(_gs_reverse_part_maps, 16, gs_part_maps);
+	std::copy_n(_gs_reverse_part_maps, 16, gs_part_maps + 16);
+	std::copy_n(_gs_reverse_part_maps, 16, gs_part_maps + 32);
+
+	memset(drums, 0, sizeof(drums));
+	drums[9] = 1;
+	drums[9 + 16] = 1;
+	drums[9 + 32] = 1;
+
+	memset(gs_mute, 0, sizeof(gs_mute));
+
+	is_gs = false;
+	is_xg = false;
+	is_gm2 = false;
+
 	tsf_set_output(_synth, TSF_STEREO_INTERLEAVED, (unsigned int) round(dSampleRate), -10.0);
 	tsf_reset(_synth);
 
 	for (int i = 0; i < 48; ++i)
 	{
 		tsf_channel_midi_control(_synth, i, 121, 1);
-		tsf_channel_set_presetnumber(_synth, i, 0, i == 9 || i == (9 + 16) || i == (9 + 32));
+		tsf_channel_set_presetnumber(_synth, i, 0, drums[i]);
 	}
-
-	return true;
 }

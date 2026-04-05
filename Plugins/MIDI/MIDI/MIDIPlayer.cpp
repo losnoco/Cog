@@ -390,14 +390,14 @@ void MIDIPlayer::setFilterMode(filter_mode m, bool disable_reverb_chorus) {
 	}
 }
 
-static const uint8_t syx_reset_gm[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7 };
-static const uint8_t syx_reset_gm2[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7 };
-static const uint8_t syx_reset_gs[] = { 0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7 };
-static const uint8_t syx_reset_xg[] = { 0xF0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xF7 };
+const uint8_t syx_reset_gm[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7 };
+const uint8_t syx_reset_gm2[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7 };
+const uint8_t syx_reset_gs[] = { 0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7 };
+const uint8_t syx_reset_xg[] = { 0xF0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00, 0xF7 };
 
 static const uint8_t syx_gs_limit_bank_lsb[] = { 0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x41, 0x00, 0x03, 0x00, 0xF7 };
 
-static bool syx_equal(const uint8_t *a, const uint8_t *b) {
+bool syx_equal(const uint8_t *a, const uint8_t *b) {
 	while(*a != 0xF7 && *b != 0xF7 && *a == *b) {
 		a++;
 		b++;
@@ -406,8 +406,20 @@ static bool syx_equal(const uint8_t *a, const uint8_t *b) {
 	return *a == *b;
 }
 
-static bool syx_is_reset(const uint8_t *data) {
+bool syx_is_reset(const uint8_t *data) {
 	return syx_equal(data, &syx_reset_gm[0]) || syx_equal(data, &syx_reset_gm2[0]) || syx_equal(data, &syx_reset_gs[0]) || syx_equal(data, &syx_reset_xg[0]);
+}
+
+bool syx_is_gs(const uint8_t *data, size_t size) {
+	if(data[0] != 0xF0 || data[size - 1] != 0xF7) return false;
+	if(data[1] != 0x41 || data[3] != 0x42 || data[4] != 0x12) return false;
+	unsigned long i;
+	unsigned char checksum = 0;
+	for(i = 5; i + 1 < size && data[i + 1] != 0xF7; ++i)
+		checksum += data[i];
+	checksum = (128 - checksum) & 127;
+	if(data[i] != checksum) return false;
+	return true;
 }
 
 void MIDIPlayer::sysex_send_gs(size_t port, uint8_t *data, size_t size, unsigned int time) {
