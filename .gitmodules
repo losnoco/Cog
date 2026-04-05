@@ -25,3 +25,6 @@
 [submodule "ThirdParty/signalsmith/signalsmith-linear"]
 	path = ThirdParty/signalsmith/signalsmith-linear
 	url = https://github.com/Signalsmith-Audio/linear.git
+[submodule "Plugins/MIDI/MIDI/tsf"]
+	path = Plugins/MIDI/MIDI/tsf
+	url = https://github.com/kode54/TinySoundFont.git
