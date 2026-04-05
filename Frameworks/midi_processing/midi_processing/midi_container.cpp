@@ -131,29 +131,28 @@ void tempo_map::add_tempo( unsigned p_tempo, unsigned long p_timestamp )
     }
 }
 
-unsigned long tempo_map::timestamp_to_ms( unsigned long p_timestamp, unsigned p_dtx ) const
+double tempo_map::timestamp_to_seconds( unsigned long p_timestamp, unsigned p_dtx ) const
 {
-    unsigned long timestamp_ms = 0;
+    double timestamp_seconds = 0;
     unsigned long timestamp = 0;
     auto tempo_it = m_entries.begin();
     unsigned current_tempo = 500000;
 
-    unsigned half_dtx = p_dtx * 500;
-    p_dtx = half_dtx * 2;
+	double dtx = (double)p_dtx * 1000000.0;
 
     while ( tempo_it < m_entries.end() && timestamp + p_timestamp >= (*tempo_it).m_timestamp )
     {
         unsigned long delta = (*tempo_it).m_timestamp - timestamp;
-        timestamp_ms += ((uint64_t)current_tempo * (uint64_t)delta + half_dtx) / p_dtx;
+        timestamp_seconds += ((double)current_tempo * (double)delta) / dtx;
         current_tempo = (*tempo_it).m_tempo;
         ++tempo_it;
         timestamp += delta;
         p_timestamp -= delta;
     }
 
-    timestamp_ms += ((uint64_t)current_tempo * (uint64_t)p_timestamp + half_dtx) / p_dtx;
+    timestamp_seconds += ((double)current_tempo * (double)p_timestamp) / dtx;
 
-    return timestamp_ms;
+    return timestamp_seconds;
 }
 
 std::size_t tempo_map::get_count() const
@@ -207,7 +206,7 @@ void system_exclusive_table::get_entry( unsigned p_index, const uint8_t * & p_da
     p_port = entry.m_port;
 }
 
-midi_stream_event::midi_stream_event(unsigned long p_timestamp, unsigned p_event)
+midi_stream_event::midi_stream_event(double p_timestamp, unsigned p_event)
 {
     m_timestamp = p_timestamp;
     m_event = p_event;
@@ -220,7 +219,7 @@ midi_meta_data_item::midi_meta_data_item(const midi_meta_data_item & p_in)
     m_value = p_in.m_value;
 }
 
-midi_meta_data_item::midi_meta_data_item(unsigned long p_timestamp, const char * p_name, const char * p_value)
+midi_meta_data_item::midi_meta_data_item(double p_timestamp, const char * p_name, const char * p_value)
 {
     m_timestamp = p_timestamp;
     m_name = p_name;
@@ -288,15 +287,14 @@ void midi_container::encode_delta( std::vector<uint8_t> & p_out, unsigned long d
     p_out.push_back( (unsigned char)( delta & 0x7F ) );
 }
 
-unsigned long midi_container::timestamp_to_ms( unsigned long p_timestamp, unsigned long p_subsong ) const
+double midi_container::timestamp_to_seconds( unsigned long p_timestamp, unsigned long p_subsong ) const
 {
-    unsigned long timestamp_ms = 0;
+    double timestamp_seconds = 0;
     unsigned long timestamp = 0;
     std::size_t tempo_index = 0;
     unsigned current_tempo = 500000;
 
-    unsigned half_dtx = m_dtx * 500;
-    unsigned p_dtx = half_dtx * 2;
+	double dtx = (double)m_dtx * 1000000.0;
 
     unsigned long subsong_count = m_tempo_map.size();
 
@@ -322,7 +320,7 @@ unsigned long midi_container::timestamp_to_ms( unsigned long p_timestamp, unsign
         while ( tempo_index < tempo_count && timestamp + p_timestamp >= m_entries[ tempo_index ].m_timestamp )
         {
             unsigned long delta = m_entries[ tempo_index ].m_timestamp - timestamp;
-            timestamp_ms += ((uint64_t)current_tempo * (uint64_t)delta + half_dtx) / p_dtx;
+            timestamp_seconds += ((double)current_tempo * (double)delta) / dtx;
             current_tempo = m_entries[ tempo_index ].m_tempo;
             ++tempo_index;
             timestamp += delta;
@@ -330,9 +328,9 @@ unsigned long midi_container::timestamp_to_ms( unsigned long p_timestamp, unsign
         }
     }
 
-    timestamp_ms += ((uint64_t)current_tempo * (uint64_t)p_timestamp + half_dtx) / p_dtx;
+    timestamp_seconds += ((double)current_tempo * (double)p_timestamp) / dtx;
 
-    return timestamp_ms;
+    return timestamp_seconds;
 }
 
 void midi_container::initialize( unsigned p_form, unsigned p_dtx )
@@ -547,8 +545,8 @@ void midi_container::serialize_as_stream( unsigned long subsong,
     std::vector<std::string> device_names;
     std::size_t track_count = m_tracks.size();
 
-    unsigned long tick_loop_start = get_timestamp_loop_start(subsong);
-    unsigned long tick_loop_end = get_timestamp_loop_end(subsong);
+    unsigned long tick_loop_start = (unsigned long) get_timestamp_loop_start(subsong);
+    unsigned long tick_loop_end = (unsigned long) get_timestamp_loop_end(subsong);
     unsigned long local_loop_start = ~0UL;
     unsigned long local_loop_end = ~0UL;
 
@@ -631,7 +629,7 @@ void midi_container::serialize_as_stream( unsigned long subsong,
             if ( local_loop_end == ~0UL && event.m_timestamp > tick_loop_end )
                 local_loop_end = p_stream.size();
 
-            unsigned long timestamp_ms = timestamp_to_ms( event.m_timestamp, tempo_track );
+            double timestamp_seconds = timestamp_to_seconds( event.m_timestamp, tempo_track );
             if ( event.m_type != midi_event::extended )
             {
                 if ( device_names[ next_track ].length() )
@@ -650,7 +648,7 @@ void midi_container::serialize_as_stream( unsigned long subsong,
                 if ( event.m_data_count >= 1 ) event_code += event.m_data[ 0 ] << 8;
                 if ( event.m_data_count >= 2 ) event_code += event.m_data[ 1 ] << 16;
                 event_code += port_numbers[ next_track ] << 24;
-                p_stream.push_back( midi_stream_event( timestamp_ms, event_code ) );
+                p_stream.push_back( midi_stream_event( timestamp_seconds, event_code ) );
             }
             else
             {
@@ -674,7 +672,7 @@ void midi_container::serialize_as_stream( unsigned long subsong,
                     if ( data[ data_count - 1 ] == 0xF7 )
                     {
                         uint32_t system_exclusive_index = p_system_exclusive.add_entry( &data[0], data_count, port_numbers[ next_track ] );
-                        p_stream.push_back( midi_stream_event( timestamp_ms, system_exclusive_index | 0x80000000 ) );
+                        p_stream.push_back( midi_stream_event( timestamp_seconds, system_exclusive_index | 0x80000000 ) );
                     }
                 }
                 else if ( data_count >= 3 && event.m_data[ 0 ] == 0xFF )
@@ -711,7 +709,7 @@ void midi_container::serialize_as_stream( unsigned long subsong,
 
                     uint32_t event_code = port_numbers[ next_track ] << 24;
                     event_code += event.m_data[ 0 ];
-                    p_stream.push_back( midi_stream_event( timestamp_ms, event_code ) );
+                    p_stream.push_back( midi_stream_event( timestamp_seconds, event_code ) );
                 }
             }
         }
@@ -895,7 +893,7 @@ unsigned long midi_container::get_subsong( unsigned long p_index ) const
     return 0;
 }
 
-unsigned long midi_container::get_timestamp_end(unsigned long subsong, bool ms /* = false */) const
+double midi_container::get_timestamp_end(unsigned long subsong, bool seconds /* = false */) const
 {
     unsigned long tempo_track = 0;
     unsigned long timestamp = m_timestamp_end[ 0 ];
@@ -904,8 +902,8 @@ unsigned long midi_container::get_timestamp_end(unsigned long subsong, bool ms /
         tempo_track = subsong;
         timestamp = m_timestamp_end[ subsong ];
     }
-    if ( !ms ) return timestamp;
-    else return timestamp_to_ms( timestamp, tempo_track );
+    if ( !seconds ) return (double) timestamp;
+    else return timestamp_to_seconds( timestamp, tempo_track );
 }
 
 unsigned midi_container::get_format() const
@@ -929,7 +927,7 @@ unsigned midi_container::get_channel_count( unsigned long subsong ) const
     return count;
 }
 
-unsigned long midi_container::get_timestamp_loop_start( unsigned long subsong, bool ms /* = false */ ) const
+double midi_container::get_timestamp_loop_start( unsigned long subsong, bool seconds /* = false */ ) const
 {
     unsigned long tempo_track = 0;
     unsigned long timestamp = m_timestamp_loop_start[ 0 ];
@@ -938,12 +936,12 @@ unsigned long midi_container::get_timestamp_loop_start( unsigned long subsong, b
         tempo_track = subsong;
         timestamp = m_timestamp_loop_start[ subsong ];
     }
-    if ( !ms ) return timestamp;
-    else if ( timestamp != ~0UL ) return timestamp_to_ms( timestamp, tempo_track );
-    else return ~0UL;
+    if ( !seconds ) return (double) timestamp;
+    else if ( timestamp != ~0UL ) return timestamp_to_seconds( timestamp, tempo_track );
+    else return (double) ~0UL;
 }
 
-unsigned long midi_container::get_timestamp_loop_end( unsigned long subsong, bool ms /* = false */ ) const
+double midi_container::get_timestamp_loop_end( unsigned long subsong, bool seconds /* = false */ ) const
 {
     unsigned long tempo_track = 0;
     unsigned long timestamp = m_timestamp_loop_end[ 0 ];
@@ -952,9 +950,9 @@ unsigned long midi_container::get_timestamp_loop_end( unsigned long subsong, boo
         tempo_track = subsong;
         timestamp = m_timestamp_loop_end[ subsong ];
     }
-    if ( !ms ) return timestamp;
-    else if ( timestamp != ~0UL ) return timestamp_to_ms( timestamp, tempo_track );
-    else return ~0UL;
+    if ( !seconds ) return (double) timestamp;
+    else if ( timestamp != ~0UL ) return timestamp_to_seconds( timestamp, tempo_track );
+    else return (double) ~0UL;
 }
 
 /* TODO: Use iconv or libintl or something to probe for code pages and convert some mess to UTF-8 */
@@ -1017,7 +1015,7 @@ void midi_container::get_meta_data( unsigned long subsong, midi_meta_data & p_ou
                     {
                         type_found = true;
                         type_non_gm_found = true;
-                        p_out.add_item( midi_meta_data_item( timestamp_to_ms( event.m_timestamp, tempo_track ), "type", type ) );
+                        p_out.add_item( midi_meta_data_item( timestamp_to_seconds( event.m_timestamp, tempo_track ), "type", type ) );
                     }
                 }
                 else if ( data_count >= 2 && event.m_data[ 0 ] == 0xFF )
@@ -1030,14 +1028,14 @@ void midi_container::get_meta_data( unsigned long subsong, midi_meta_data & p_ou
                         data.resize( data_count );
                         event.copy_data( &data[0], 2, data_count );
                         convert_mess_to_utf8( ( const char * ) &data[0], data_count, convert );
-                        p_out.add_item( midi_meta_data_item( timestamp_to_ms( event.m_timestamp, tempo_track ), "track_marker", convert.c_str() ) );
+                        p_out.add_item( midi_meta_data_item( timestamp_to_seconds( event.m_timestamp, tempo_track ), "track_marker", convert.c_str() ) );
                         break;
 
                     case 2:
                         data.resize( data_count );
                         event.copy_data( &data[0], 2, data_count );
                         convert_mess_to_utf8( ( const char * ) &data[0], data_count, convert );
-                        p_out.add_item( midi_meta_data_item( timestamp_to_ms( event.m_timestamp, tempo_track ), "copyright", convert.c_str() ) );
+                        p_out.add_item( midi_meta_data_item( timestamp_to_seconds( event.m_timestamp, tempo_track ), "copyright", convert.c_str() ) );
                         break;
 
                     case 1:
@@ -1045,7 +1043,7 @@ void midi_container::get_meta_data( unsigned long subsong, midi_meta_data & p_ou
                         event.copy_data( &data[0], 2, data_count );
                         convert_mess_to_utf8( ( const char * ) &data[0], data_count, convert );
                         snprintf(temp, 31, "track_text_%02lu", i);
-                        p_out.add_item( midi_meta_data_item( timestamp_to_ms( event.m_timestamp, tempo_track ), temp, convert.c_str() ) );
+                        p_out.add_item( midi_meta_data_item( timestamp_to_seconds( event.m_timestamp, tempo_track ), temp, convert.c_str() ) );
                         break;
 
                     case 3:
@@ -1054,7 +1052,7 @@ void midi_container::get_meta_data( unsigned long subsong, midi_meta_data & p_ou
                         event.copy_data( &data[0], 2, data_count );
                         convert_mess_to_utf8( ( const char * ) &data[0], data_count, convert );
                         snprintf(temp, 31, "track_name_%02lu", i);
-                        p_out.add_item( midi_meta_data_item( timestamp_to_ms( event.m_timestamp, tempo_track ), temp, convert.c_str() ) );
+                        p_out.add_item( midi_meta_data_item( timestamp_to_seconds( event.m_timestamp, tempo_track ), temp, convert.c_str() ) );
                         break;
                     }
                 }

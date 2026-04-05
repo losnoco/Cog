@@ -36,9 +36,9 @@ class TSFPlayer;
 
 	double sampleRate;
 
-	long totalFrames;
-	long framesLength;
-	long framesFade;
+	double totalFrames;
+	double framesLength;
+	double framesFade;
 	long framesRead;
 
 	float outputBuffer[1024 * 2];

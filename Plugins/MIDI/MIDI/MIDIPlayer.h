@@ -28,7 +28,7 @@ class MIDIPlayer {
 	virtual ~MIDIPlayer(){};
 
 	// setup
-	void setSampleRate(unsigned long rate);
+	void setSampleRate(double rate);
 	void setLoopMode(unsigned int mode);
 	void setFilterMode(filter_mode m, bool disable_reverb_chorus);
 
@@ -63,7 +63,7 @@ class MIDIPlayer {
 	virtual void send_event_time(uint32_t b, unsigned int time){};
 	virtual void send_sysex_time(const uint8_t* event, size_t size, size_t port, unsigned int time){};
 
-	unsigned long uSampleRate;
+	double dSampleRate;
 	system_exclusive_table mSysexMap;
 	bool initialized;
 	filter_mode mode;
@@ -81,18 +81,18 @@ class MIDIPlayer {
 	void sysex_send_gs(size_t port, uint8_t* data, size_t size, unsigned int time);
 	void sysex_reset_sc(uint32_t port, unsigned int time);
 
-	unsigned long uSamplesRemaining;
+	double dTimeRemaining;
 
 	unsigned uLoopMode;
 
 	std::vector<midi_stream_event> mStream;
 
 	unsigned long uStreamPosition;
-	unsigned long uTimeCurrent;
-	unsigned long uTimeEnd;
+	double dTimeCurrent;
+	double dTimeEnd;
 
 	unsigned long uStreamLoopStart;
-	unsigned long uTimeLoopStart;
+	double dTimeLoopStart;
 	unsigned long uStreamEnd;
 };
 

@@ -269,7 +269,7 @@ bool AUPlayer::startup() {
 
 		{
 			AudioStreamBasicDescription stream = { 0 };
-			stream.mSampleRate = uSampleRate;
+			stream.mSampleRate = dSampleRate;
 			stream.mFormatID = kAudioFormatLinearPCM;
 			stream.mFormatFlags = kAudioFormatFlagIsFloat | kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved;
 			stream.mBytesPerPacket = 4;
@@ -324,7 +324,7 @@ bool AUPlayer::startup() {
 
 		/*Float64 sampleRateIn = 0, sampleRateOut = 0;
 		UInt32 sampleRateSize = sizeof (sampleRateIn);
-		const Float64 sr = uSampleRate;
+		const Float64 sr = dSampleRate;
 
 		AudioUnitGetProperty(samplerUnit[i], kAudioUnitProperty_SampleRate, kAudioUnitScope_Input, 0, &sampleRateIn, &sampleRateSize);
 
@@ -387,7 +387,7 @@ bool AUPlayer::startup() {
 	// Warm up
 	float *temp = (float*) malloc(sizeof(float) * BLOCK_SIZE * 2);
 	if(temp) {
-		size_t count = (uSampleRate / BLOCK_SIZE) + 1;
+		size_t count = (size_t) round(dSampleRate / BLOCK_SIZE) + 1;
 		for(size_t i = 0; i < count; ++i) {
 			render(temp, BLOCK_SIZE);
 		}

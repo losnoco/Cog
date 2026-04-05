@@ -3,34 +3,16 @@
 #include "MIDIPlayer.h"
 
 MIDIPlayer::MIDIPlayer() {
-	uSamplesRemaining = 0;
-	uSampleRate = 1000;
-	uTimeCurrent = 0;
-	uTimeEnd = 0;
-	uTimeLoopStart = 0;
+	dTimeRemaining = 0;
+	dSampleRate = 44100;
+	dTimeCurrent = 0;
+	dTimeEnd = 0;
+	dTimeLoopStart = 0;
 	initialized = false;
 }
 
-void MIDIPlayer::setSampleRate(unsigned long rate) {
-	if(mStream.size()) {
-		for(unsigned long i = 0; i < mStream.size(); i++) {
-			mStream.at(i).m_timestamp = (unsigned long)((uint64_t)mStream.at(i).m_timestamp * rate / uSampleRate);
-		}
-	}
-
-	if(uTimeCurrent) {
-		uTimeCurrent = static_cast<unsigned long>(static_cast<uint64_t>(uTimeCurrent) * rate / uSampleRate);
-	}
-
-	if(uTimeEnd) {
-		uTimeEnd = static_cast<unsigned long>(static_cast<uint64_t>(uTimeEnd) * rate / uSampleRate);
-	}
-
-	if(uTimeLoopStart) {
-		uTimeLoopStart = static_cast<unsigned long>(static_cast<uint64_t>(uTimeLoopStart) * rate / uSampleRate);
-	}
-
-	uSampleRate = rate;
+void MIDIPlayer::setSampleRate(double rate) {
+	dSampleRate = rate;
 
 	shutdown();
 }
@@ -44,24 +26,24 @@ bool MIDIPlayer::Load(const midi_container &midi_file, unsigned subsong, unsigne
 
 	if(mStream.size()) {
 		uStreamPosition = 0;
-		uTimeCurrent = 0;
+		dTimeCurrent = 0;
 
 		uLoopMode = loop_mode;
 
-		uTimeEnd = midi_file.get_timestamp_end(subsong, true) + 1000;
+		dTimeEnd = midi_file.get_timestamp_end(subsong, true) + 1.0;
 
 		if(uLoopMode & loop_mode_enable) {
-			uTimeLoopStart = midi_file.get_timestamp_loop_start(subsong, true);
-			unsigned long uTimeLoopEnd = midi_file.get_timestamp_loop_end(subsong, true);
+			dTimeLoopStart = midi_file.get_timestamp_loop_start(subsong, true);
+			double dTimeLoopEnd = midi_file.get_timestamp_loop_end(subsong, true);
 
-			if(uTimeLoopStart != ~0UL || uTimeLoopEnd != ~0UL) {
+			if(dTimeLoopStart != (double) ~0UL || dTimeLoopEnd != (double) ~0UL) {
 				uLoopMode |= loop_mode_force;
 			}
 
-			if(uTimeLoopStart == ~0UL)
-				uTimeLoopStart = 0;
-			if(uTimeLoopEnd == ~0UL)
-				uTimeLoopEnd = uTimeEnd - 1000;
+			if(dTimeLoopStart == (double) ~0UL)
+				dTimeLoopStart = 0;
+			if(dTimeLoopEnd == (double) ~0UL)
+				dTimeLoopEnd = dTimeEnd - 1.0;
 
 			if((uLoopMode & loop_mode_force)) {
 				unsigned long i;
@@ -81,26 +63,20 @@ bool MIDIPlayer::Load(const midi_container &midi_file, unsigned subsong, unsigne
 					}
 				}
 				mStream.resize(i);
-				uTimeEnd = uTimeLoopEnd - 1;
-				if(uTimeEnd < mStream.at(i - 1).m_timestamp)
-					uTimeEnd = mStream.at(i - 1).m_timestamp;
+				dTimeEnd = dTimeLoopEnd - 1.0 / dSampleRate;
+				if(dTimeEnd < mStream.at(i - 1).m_timestamp)
+					dTimeEnd = mStream.at(i - 1).m_timestamp;
 				for(unsigned long j = 0; j < 128 * 16; j++) {
 					if(note_on.at(j)) {
 						for(unsigned long k = 0; k < 8; k++) {
 							if(note_on.at(j) & (1 << k)) {
-								mStream.push_back(midi_stream_event(uTimeEnd, static_cast<uint32_t>((k << 24) + (j >> 7) + (j & 0x7F) * 0x100 + 0x90)));
+								mStream.push_back(midi_stream_event(dTimeEnd, static_cast<uint32_t>((k << 24) + (j >> 7) + (j & 0x7F) * 0x100 + 0x90)));
 							}
 						}
 					}
 				}
-				uTimeEnd = uTimeLoopEnd;
+				dTimeEnd = dTimeLoopEnd;
 			}
-		}
-
-		if(uSampleRate != 1000) {
-			unsigned long rate = static_cast<unsigned long>(uSampleRate);
-			uSampleRate = 1000;
-			setSampleRate(rate);
 		}
 
 		return true;
@@ -121,27 +97,35 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 
 	// This should be a multiple of block size, and have leftover
 
-	while(uSamplesRemaining && done < count) {
-		unsigned long todo = uSamplesRemaining;
-		if(todo > count - done) todo = count - done;
+	while(dTimeRemaining > 0.0 && done < count) {
+		unsigned long todo = (unsigned int) round(dTimeRemaining * dSampleRate);
+		if(todo > count - done) {
+			todo = count - done;
+		}
 		if(needs_block_size && todo > needs_block_size)
 			todo = needs_block_size;
 		if(todo < needs_block_size) {
-			uSamplesRemaining = 0;
+			dTimeRemaining = 0;
 			into_block = todo;
 			break;
 		}
 		render(out + done * 2, todo);
-		uSamplesRemaining -= todo;
+		dTimeRemaining -= todo;
+		if(dTimeRemaining < 0.0)
+			dTimeRemaining = 0;
 		done += todo;
-		uTimeCurrent += todo;
+		dTimeCurrent += (double)todo / dSampleRate;
 	}
 
 	while(done < count) {
-		unsigned long todo = uTimeEnd - uTimeCurrent;
-		if(todo > count - done) todo = count - done;
+		double dtodo = dTimeEnd - dTimeCurrent;
+		unsigned int todo = (unsigned int) round(dtodo * dSampleRate);
+		if(todo > count - done) {
+			todo = count - done;
+			dtodo = (double)todo / dSampleRate;
+		}
 
-		const unsigned long time_target = todo + uTimeCurrent;
+		const double time_target = dtodo + dTimeCurrent;
 		unsigned long stream_end = uStreamPosition;
 
 		while(stream_end < mStream.size() && mStream.at(stream_end).m_timestamp < time_target) stream_end++;
@@ -150,32 +134,36 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 			for(; uStreamPosition < stream_end; uStreamPosition++) {
 				const midi_stream_event &me = mStream.at(uStreamPosition);
 
-				ssize_t samples_todo = me.m_timestamp - uTimeCurrent - into_block;
-				if(samples_todo > 0) {
+				const double dinto_block = (double)into_block / dSampleRate;
+				const double seconds_todo = me.m_timestamp - dTimeCurrent - dinto_block;
+				if(seconds_todo > 0.0) {
+					unsigned int samples_todo = (unsigned int) round(seconds_todo * dSampleRate);
 					if(samples_todo > count - done) {
-						uSamplesRemaining = samples_todo - (count - done);
+						unsigned int samples_remain = samples_todo - (count - done);
+						dTimeRemaining = (double)samples_remain / dSampleRate;
 						samples_todo = count - done;
 					}
 					if(!needs_block_size && samples_todo) {
 						render(out + done * 2, samples_todo);
 						done += samples_todo;
-						uTimeCurrent += samples_todo;
+						dTimeCurrent += (double)samples_todo / dSampleRate;
 					}
 
-					if(uSamplesRemaining) {
-						uSamplesRemaining += into_block;
+					if(dTimeRemaining > 0.0) {
+						dTimeRemaining += (double)into_block / dSampleRate;
 						return done;
 					}
 				}
 
 				if(needs_block_size) {
-					if(samples_todo > 0) {
+					if(seconds_todo > 0.0) {
+						unsigned int samples_todo = (unsigned int) round(seconds_todo * dSampleRate);
 						into_block += samples_todo;
 						while(into_block >= needs_block_size) {
 							render(out + done * 2, needs_block_size);
 							done += needs_block_size;
 							into_block -= needs_block_size;
-							uTimeCurrent += needs_block_size;
+							dTimeCurrent += (double)needs_block_size / dSampleRate;
 						}
 					}
 					send_event_time_filtered(me.m_event, into_block);
@@ -185,12 +173,13 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 		}
 
 		if(done < count) {
-			unsigned long samples_todo;
+			double seconds_todo;
 			if(uStreamPosition < mStream.size())
-				samples_todo = mStream.at(uStreamPosition).m_timestamp;
+				seconds_todo = mStream.at(uStreamPosition).m_timestamp;
 			else
-				samples_todo = uTimeEnd;
-			samples_todo -= uTimeCurrent;
+				seconds_todo = dTimeEnd;
+			seconds_todo -= dTimeCurrent;
+			unsigned long samples_todo = (unsigned int) round(seconds_todo * dSampleRate);
 			if(needs_block_size)
 				into_block = samples_todo;
 			if(samples_todo > count - done)
@@ -200,16 +189,16 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 			if(samples_todo >= needs_block_size) {
 				render(out + done * 2, samples_todo);
 				done += samples_todo;
-				uTimeCurrent += samples_todo;
+				dTimeCurrent += (double)samples_todo / dSampleRate;
 				if(needs_block_size)
 					into_block -= samples_todo;
 			}
 		}
 
 		if(!needs_block_size)
-			uTimeCurrent = time_target;
+			dTimeCurrent = time_target;
 
-		if(time_target >= uTimeEnd) {
+		if(time_target >= dTimeEnd) {
 			if(uStreamPosition < mStream.size()) {
 				for(; uStreamPosition < mStream.size(); uStreamPosition++) {
 					if(needs_block_size)
@@ -222,31 +211,32 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 			if((uLoopMode & (loop_mode_enable | loop_mode_force)) == (loop_mode_enable | loop_mode_force)) {
 				if(uStreamLoopStart == ~0) {
 					uStreamPosition = 0;
-					uTimeCurrent = 0;
+					dTimeCurrent = 0;
 				} else {
 					uStreamPosition = uStreamLoopStart;
-					uTimeCurrent = uTimeLoopStart;
+					dTimeCurrent = dTimeLoopStart;
 				}
 			} else
 				break;
 		}
 	}
 
-	uSamplesRemaining = into_block;
+	dTimeRemaining = (double)into_block / dSampleRate;
 
 	return done;
 }
 
 void MIDIPlayer::Seek(unsigned long sample) {
-	if(sample >= uTimeEnd) {
+	double seconds = (double)sample / dSampleRate;
+	if(seconds >= dTimeEnd) {
 		if((uLoopMode & (loop_mode_enable | loop_mode_force)) == (loop_mode_enable | loop_mode_force)) {
-			while(sample >= uTimeEnd) sample -= uTimeEnd - uTimeLoopStart;
+			while(seconds >= dTimeEnd) seconds -= dTimeEnd - dTimeLoopStart;
 		} else {
-			sample = uTimeEnd;
+			seconds = dTimeEnd;
 		}
 	}
 
-	if(uTimeCurrent > sample) {
+	if(dTimeCurrent > seconds) {
 		uStreamPosition = 0;
 
 		shutdown();
@@ -254,19 +244,19 @@ void MIDIPlayer::Seek(unsigned long sample) {
 
 	if(!startup()) return;
 
-	uTimeCurrent = sample;
+	dTimeCurrent = seconds;
 
 	std::vector<midi_stream_event> filler;
 
 	unsigned long stream_start = uStreamPosition;
 
-	for(; uStreamPosition < mStream.size() && mStream.at(uStreamPosition).m_timestamp < uTimeCurrent; uStreamPosition++)
+	for(; uStreamPosition < mStream.size() && mStream.at(uStreamPosition).m_timestamp < dTimeCurrent; uStreamPosition++)
 		;
 
 	if(uStreamPosition == mStream.size())
-		uSamplesRemaining = uTimeEnd - uTimeCurrent;
+		dTimeRemaining = dTimeEnd - dTimeCurrent;
 	else
-		uSamplesRemaining = mStream.at(uStreamPosition).m_timestamp - uTimeCurrent;
+		dTimeRemaining = mStream.at(uStreamPosition).m_timestamp - dTimeCurrent;
 
 	if(uStreamPosition > stream_start) {
 		filler.resize(uStreamPosition - stream_start);
@@ -306,7 +296,7 @@ void MIDIPlayer::Seek(unsigned long sample) {
 				render(temp, needs_time); // flush events
 				unsigned int render_junk = 0;
 				bool timestamp_set = false;
-				unsigned last_timestamp = 0;
+				double last_timestamp = 0;
 				for(i = 0; i < stream_start; i++) {
 					if(filler[i].m_event) {
 						send_event_time_filtered(filler[i].m_event, render_junk);
@@ -331,7 +321,7 @@ void MIDIPlayer::Seek(unsigned long sample) {
 			if(temp) {
 				render(temp, 16);
 				bool timestamp_set = false;
-				unsigned last_timestamp = 0;
+				double last_timestamp = 0;
 				for(i = 0; i < stream_start; i++) {
 					if(filler[i].m_event) {
 						if(timestamp_set) {
@@ -354,9 +344,9 @@ void MIDIPlayer::Seek(unsigned long sample) {
 void MIDIPlayer::setLoopMode(unsigned int mode) {
 	if(uLoopMode != mode) {
 		if(mode & loop_mode_enable)
-			uTimeEnd -= uSampleRate;
+			dTimeEnd -= 1.0;
 		else
-			uTimeEnd += uSampleRate;
+			dTimeEnd += 1.0;
 	}
 	uLoopMode = mode;
 }
@@ -595,5 +585,5 @@ bool MIDIPlayer::GetLastError(std::string &p_out) {
 }
 
 unsigned long MIDIPlayer::Tell() const {
-	return uTimeCurrent;
+	return (unsigned long) round(dTimeCurrent * dSampleRate);
 }
