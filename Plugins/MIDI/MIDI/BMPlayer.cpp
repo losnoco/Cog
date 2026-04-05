@@ -27,9 +27,9 @@ struct Cached_SoundFont {
 	}
 };
 
-static std::mutex Cache_Lock;
+static std::mutex *Cache_Lock;
 
-static std::map<std::string, Cached_SoundFont> Cache_List;
+static std::map<std::string, Cached_SoundFont> *Cache_List;
 
 static bool Cache_Running = false;
 
@@ -38,6 +38,8 @@ static std::thread *Cache_Thread = NULL;
 static void cache_run();
 
 static void cache_init() {
+	Cache_Lock = new std::mutex;
+	Cache_List = new std::map<std::string, Cached_SoundFont>;
 	Cache_Thread = new std::thread(cache_run);
 }
 
@@ -46,20 +48,23 @@ static void cache_deinit() {
 	Cache_Thread->join();
 	delete Cache_Thread;
 
-	for(auto it = Cache_List.begin(); it != Cache_List.end(); ++it) {
+	for(auto it = Cache_List->begin(); it != Cache_List->end(); ++it) {
 		if(it->second.handle)
 			BASS_MIDI_FontFree(it->second.handle);
 		if(it->second.presetlist)
 			sflist_free(it->second.presetlist);
 	}
+
+	delete Cache_List;
+	delete Cache_Lock;
 }
 
 static HSOUNDFONT cache_open_font(const char *path) {
 	HSOUNDFONT font = NULL;
 
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	Cached_SoundFont &entry = Cache_List[path];
+	Cached_SoundFont &entry = (*Cache_List)[path];
 
 	if(!entry.handle) {
 		font = BASS_MIDI_FontInit(path, 0);
@@ -67,7 +72,7 @@ static HSOUNDFONT cache_open_font(const char *path) {
 			entry.handle = font;
 			entry.ref_count = 1;
 		} else {
-			Cache_List.erase(path);
+			Cache_List->erase(path);
 		}
 	} else {
 		font = entry.handle;
@@ -120,9 +125,9 @@ static sflist_presets *sflist_open_file(const char *path) {
 static sflist_presets *cache_open_list(const char *path) {
 	sflist_presets *presetlist = NULL;
 
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	Cached_SoundFont &entry = Cache_List[path];
+	Cached_SoundFont &entry = (*Cache_List)[path];
 
 	if(!entry.presetlist) {
 		presetlist = sflist_open_file(path);
@@ -130,7 +135,7 @@ static sflist_presets *cache_open_list(const char *path) {
 			entry.presetlist = presetlist;
 			entry.ref_count = 1;
 		} else {
-			Cache_List.erase(path);
+			Cache_List->erase(path);
 		}
 	} else {
 		presetlist = entry.presetlist;
@@ -141,9 +146,9 @@ static sflist_presets *cache_open_list(const char *path) {
 }
 
 static void cache_close_font(HSOUNDFONT handle) {
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	for(auto it = Cache_List.begin(); it != Cache_List.end(); ++it) {
+	for(auto it = Cache_List->begin(); it != Cache_List->end(); ++it) {
 		if(it->second.handle == handle) {
 			if(--it->second.ref_count == 0)
 				it->second.time_released = std::chrono::steady_clock::now();
@@ -153,9 +158,9 @@ static void cache_close_font(HSOUNDFONT handle) {
 }
 
 static void cache_close_list(sflist_presets *presetlist) {
-	std::lock_guard<std::mutex> lock(Cache_Lock);
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	for(auto it = Cache_List.begin(); it != Cache_List.end(); ++it) {
+	for(auto it = Cache_List->begin(); it != Cache_List->end(); ++it) {
 		if(it->second.presetlist == presetlist) {
 			if(--it->second.ref_count == 0)
 				it->second.time_released = std::chrono::steady_clock::now();
@@ -173,8 +178,8 @@ static void cache_run() {
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 
 		{
-			std::lock_guard<std::mutex> lock(Cache_Lock);
-			for(auto it = Cache_List.begin(); it != Cache_List.end();) {
+			std::lock_guard<std::mutex> lock(*Cache_Lock);
+			for(auto it = Cache_List->begin(); it != Cache_List->end();) {
 				if(it->second.ref_count == 0) {
 					auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_released);
 					if(elapsed.count() >= 10) {
@@ -182,7 +187,7 @@ static void cache_run() {
 							BASS_MIDI_FontFree(it->second.handle);
 						if(it->second.presetlist)
 							sflist_free(it->second.presetlist);
-						it = Cache_List.erase(it);
+						it = Cache_List->erase(it);
 						continue;
 					}
 				}
