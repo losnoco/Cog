@@ -28,8 +28,6 @@ class BMPlayer : public MIDIPlayer {
 	virtual void shutdown();
 	virtual bool startup();
 
-	void reset_parameters();
-
 	std::vector<HSOUNDFONT> _soundFonts;
 	sflist_presets* _presetList;
 	std::string sSoundFontName;
