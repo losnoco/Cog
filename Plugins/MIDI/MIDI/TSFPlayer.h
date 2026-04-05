@@ -32,6 +32,11 @@ class TSFPlayer : public MIDIPlayer {
 	struct tsf* _synth;
 	std::string sSoundFontName;
 	std::string sFileSoundFontName;
+
+	bool is_gs, is_xg, is_gm2;
+	unsigned char gs_part_maps[48];
+	unsigned char drums[48];
+	unsigned char gs_mute[48];
 };
 
 #endif
