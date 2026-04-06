@@ -29,6 +29,7 @@ class TSFPlayer : public MIDIPlayer {
 
 	void reset_parameters();
 
+	std::vector<struct tsf_soundbank *> _banks;
 	struct tsf* _synth;
 	std::string sSoundFontName;
 	std::string sFileSoundFontName;

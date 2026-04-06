@@ -17,17 +17,14 @@
 struct TSF_Cached_SoundFont {
 	unsigned long ref_count;
 	std::chrono::steady_clock::time_point time_released;
-	struct tsf *_synth;
-	std::list<struct tsf *> referenced;
-	TSF_Cached_SoundFont() : _synth(nullptr) { }
+	struct tsf_soundbank *bank;
+	TSF_Cached_SoundFont() : bank(nullptr) { }
 	TSF_Cached_SoundFont(const TSF_Cached_SoundFont &in) {
 		ref_count = in.ref_count;
 		time_released = in.time_released;
-		_synth = in._synth;
-		referenced.resize(in.referenced.size());
-		std::copy(in.referenced.begin(), in.referenced.end(), referenced.begin());
+		bank = in.bank;
 	}
-	TSF_Cached_SoundFont(struct tsf *in) : _synth(in), ref_count(1) { }
+	TSF_Cached_SoundFont(struct tsf_soundbank *in) : bank(in), ref_count(1) { }
 };
 
 static std::mutex *Cache_Lock;
@@ -52,52 +49,40 @@ static void cache_deinit() {
 	delete Cache_Thread;
 
 	for(auto it = Cache_List->begin(); it != Cache_List->end(); ++it) {
-		auto &vec = it->second.referenced;
-		for(auto itr = vec.begin(); itr != vec.end(); ++itr)
-			tsf_close(*itr);
-		if(it->second._synth)
-			tsf_close(it->second._synth);
+		if(it->second.bank)
+			tsf_soundbank_close(it->second.bank);
 	}
 	delete Cache_List;
 }
 
-static struct tsf * cache_open_font(const char *path) {
-	struct tsf *synth = nullptr;
+static struct tsf_soundbank * cache_open_font(const char *path) {
+	struct tsf_soundbank *bank = nullptr;
 
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	auto &entry = (*Cache_List)[path];
 
-	if(!entry._synth) {
-		synth = tsf_load_filename(path);
-		if(synth) {
-			entry._synth = synth;
+	if(!entry.bank) {
+		bank = tsf_soundbank_load_filename(path);
+		if(bank) {
+			entry.bank = bank;
 			entry.ref_count = 1;
-			synth = tsf_copy(synth);
 		} else {
 			Cache_List->erase(path);
 		}
 	} else {
-		synth = tsf_copy(entry._synth);
+		bank = entry.bank;
 		++(entry.ref_count);
 	}
 
-	if(synth) {
-		entry.referenced.push_back(synth);
-	}
-
-	return synth;
+	return bank;
 }
 
-static void cache_close_font(struct tsf *synth) {
+static void cache_close_font(struct tsf_soundbank *bank) {
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	for(auto it = Cache_List->begin(); it != Cache_List->end(); ++it) {
-		auto &vec = it->second.referenced;
-		auto itr = std::find(vec.begin(), vec.end(), synth);
-		if(itr != vec.end()) {
-			tsf_close(*itr);
-			vec.erase(itr);
+		if(it->second.bank == bank) {
 			if(--it->second.ref_count == 0)
 				it->second.time_released = std::chrono::steady_clock::now();
 			break;
@@ -119,8 +104,8 @@ static void cache_run() {
 				if(it->second.ref_count == 0) {
 					auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_released);
 					if(elapsed.count() >= 10) {
-						if(it->second._synth)
-							tsf_close(it->second._synth);
+						if(it->second.bank)
+							tsf_soundbank_close(it->second.bank);
 						it = Cache_List->erase(it);
 						continue;
 					}
@@ -263,17 +248,36 @@ void TSFPlayer::setFileSoundFont(const char *in) {
 }
 
 void TSFPlayer::shutdown() {
-	cache_close_font(_synth);
+	for (auto it = _banks.begin(); it != _banks.end(); ++it)
+		cache_close_font(*it);
+	_banks.resize(0);
 }
 
 bool TSFPlayer::startup() {
 	if(_synth) return true;
 
-	const auto &soundFont = sFileSoundFontName.length() ? sFileSoundFontName : sSoundFontName;
-	_synth = cache_open_font(soundFont.c_str());
+	struct tsf_soundbank* fileBank = nullptr;
+	if (sFileSoundFontName.length())
+		fileBank = cache_open_font(sFileSoundFontName.c_str());
+
+	struct tsf_soundbank* globalBank = nullptr;
+	if (sSoundFontName.length())
+		globalBank = cache_open_font(sSoundFontName.c_str());
+
+	if (!fileBank && !globalBank) {
+		return false;
+	}
+
+	if (fileBank) _banks.push_back(fileBank);
+	if (globalBank) _banks.push_back(globalBank);
+
+	_synth = tsf_init(TSF_STEREO_INTERLEAVED, (unsigned int) round(dSampleRate), -10.0);
 	if(!_synth) {
 		return false;
 	}
+
+	if (fileBank) tsf_add_soundbank(_synth, fileBank);
+	if (globalBank) tsf_add_soundbank(_synth, globalBank);
 
 	reset_parameters();
 
@@ -299,7 +303,6 @@ void TSFPlayer::reset_parameters() {
 	is_xg = false;
 	is_gm2 = false;
 
-	tsf_set_output(_synth, TSF_STEREO_INTERLEAVED, (unsigned int) round(dSampleRate), -10.0);
 	tsf_reset(_synth);
 
 	for (int i = 0; i < 48; ++i)
