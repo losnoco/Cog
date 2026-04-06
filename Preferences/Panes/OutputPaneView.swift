@@ -12,6 +12,9 @@ private final class OutputPrefs: ObservableObject {
     @Published var enableHrtf: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableHrtf, forKey: "enableHrtf") }
     }
+    @Published var enableFSurround: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(enableFSurround, forKey: "enableFSurround") }
+    }
     @Published var enableHeadTracking: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableHeadTracking, forKey: "enableHeadTracking") }
     }
@@ -36,11 +39,11 @@ private final class OutputPrefs: ObservableObject {
         resampling = d.string(forKey: "resampling") ?? "cubic"
         enableHrtf = d.bool(forKey: "enableHrtf")
         enableHeadTracking = d.bool(forKey: "enableHeadTracking")
+        enableFSurround = d.bool(forKey: "enableFSurround")
         volumeLimit = d.object(forKey: "volumeLimit") as? Bool ?? true
         suspendOutputOnPause = d.object(forKey: "suspendOutputOnPause") as? Bool ?? true
         enableHdcd = d.object(forKey: "enableHDCD") as? Bool ?? true
         halveDSDVolume = d.object(forKey: "halveDSDVolume") as? Bool ?? false
-
     }
 }
 
@@ -127,6 +130,10 @@ struct OutputPaneView: View {
             }
             Section {
                 Toggle("Enable HRTF / Binaural", isOn: $prefs.enableHrtf)
+                Toggle(
+                    "Enable FreeSurround decoder",
+                    isOn: $prefs.enableFSurround
+                )
                 if #available(macOS 14.0, *) {
                     Toggle("Enable head tracking", isOn: $prefs.enableHeadTracking)
                         .disabled(!prefs.enableHrtf)
