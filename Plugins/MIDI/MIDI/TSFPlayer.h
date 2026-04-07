@@ -1,5 +1,5 @@
-#ifndef __BMPlayer_h__
-#define __BMPlayer_h__
+#ifndef __TSFPlayer_h__
+#define __TSFPlayer_h__
 
 #include "MIDIPlayer.h"
 
@@ -7,18 +7,17 @@
 
 typedef struct sflist_presets sflist_presets;
 
-class BMPlayer : public MIDIPlayer {
+class TSFPlayer : public MIDIPlayer {
 	public:
 	// zero variables
-	BMPlayer();
+	TSFPlayer();
 
 	// close, unload
-	virtual ~BMPlayer();
+	virtual ~TSFPlayer();
 
 	// configuration
 	void setSoundFont(const char* in);
 	void setFileSoundFont(const char* in);
-	void setSincInterpolation(bool enable = true);
 
 	private:
 	virtual void send_event(uint32_t b);
@@ -28,14 +27,17 @@ class BMPlayer : public MIDIPlayer {
 	virtual void shutdown();
 	virtual bool startup();
 
-	std::vector<HSOUNDFONT> _soundFonts;
-	sflist_presets* _presetList;
+	void reset_parameters();
+
+	std::vector<struct tsf_soundbank *> _banks;
+	struct tsf* _synth;
 	std::string sSoundFontName;
 	std::string sFileSoundFontName;
 
-	HSTREAM _stream;
-
-	bool bSincInterpolation;
+	bool is_gs, is_xg, is_gm2;
+	unsigned char gs_part_maps[48];
+	unsigned char drums[48];
+	unsigned char gs_mute[48];
 };
 
 #endif

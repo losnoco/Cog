@@ -15,6 +15,13 @@ private final class AppearancePrefs: ObservableObject {
     @Published var spectrumSceneKit: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumSceneKit, forKey: "spectrumSceneKit") }
     }
+    @Published var spectrumFreqMode: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumFreqMode, forKey: "spectrumFreqMode") }
+    }
+    @Published var spectrumProjectionMode: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumProjectionMode, forKey: "spectrumProjectionMode") }
+    }
+
 
     deinit { isActive = false }
 
@@ -24,6 +31,8 @@ private final class AppearancePrefs: ObservableObject {
         colorfulDockIcons = d.bool(forKey: "colorfulDockIcons")
         customDockIconsPlaque = d.bool(forKey: "customDockIconsPlaque")
         spectrumSceneKit = d.object(forKey: "spectrumSceneKit") as? Bool ?? true
+        spectrumFreqMode = d.object(forKey: "spectrumFreqMode") as? Bool ?? false
+        spectrumProjectionMode = d.object(forKey: "spectrumProjectionMode") as? Bool ?? false
     }
 }
 
@@ -63,7 +72,10 @@ struct AppearancePaneView: View {
                 }
             }
             Section(header: Text("Spectrum").bold()) {
-                Toggle("Use SceneKit renderer", isOn: $prefs.spectrumSceneKit)
+                Toggle("Use 3D rendered spectrum", isOn: $prefs.spectrumSceneKit)
+                if (prefs.spectrumSceneKit) {
+                    Toggle("Use flat perspective in toolbar", isOn: $prefs.spectrumProjectionMode)
+                }
                 HStack {
                     Text("Bar color:")
                     Spacer()

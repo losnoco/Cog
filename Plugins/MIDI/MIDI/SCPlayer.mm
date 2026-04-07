@@ -206,7 +206,7 @@ bool SCPlayer::startup() {
 	return true;
 }
 
-uint32_t SCPlayer::sampleRate() {
+double SCPlayer::sampleRate() {
 	struct sc55_state *st = sc55_init(0, NONE, loadRom, NULL);
 	if(!st) return 0;
 
@@ -214,5 +214,5 @@ uint32_t SCPlayer::sampleRate() {
 
 	sc55_free(st);
 
-	return r;
+	return (double) r;
 }

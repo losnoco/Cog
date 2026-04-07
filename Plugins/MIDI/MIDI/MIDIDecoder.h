@@ -15,6 +15,7 @@
 class AUPlayer;
 class BMPlayer;
 class SCPlayer;
+class TSFPlayer;
 
 @interface MIDIDecoder : NSObject <CogDecoder> {
 	id<CogSource> source;
@@ -23,6 +24,7 @@ class SCPlayer;
 	BMPlayer* bmplayer;
 	AUPlayer* auplayer;
 	SCPlayer* scplayer;
+	TSFPlayer* tsfplayer;
 	MIDIPlayer* player;
 	midi_container midi_file;
 
@@ -34,9 +36,9 @@ class SCPlayer;
 
 	double sampleRate;
 
-	long totalFrames;
-	long framesLength;
-	long framesFade;
+	double totalFrames;
+	double framesLength;
+	double framesFade;
 	long framesRead;
 
 	float outputBuffer[1024 * 2];

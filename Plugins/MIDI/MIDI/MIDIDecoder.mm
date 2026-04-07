@@ -12,6 +12,7 @@
 #import "BMPlayer.h"
 #import "MSPlayer.h"
 #import "SCPlayer.h"
+#import "TSFPlayer.h"
 
 #import "Logging.h"
 
@@ -56,8 +57,8 @@ static OSType getOSType(const char *in_) {
 
 	source = s;
 
-	unsigned long loopStart = ~0;
-	unsigned long loopEnd = ~0;
+	double loopStart = (double) ~0UL;
+	double loopEnd = (double) ~0UL;
 
 	try {
 		std::vector<uint8_t> file_data;
@@ -71,7 +72,7 @@ static OSType getOSType(const char *in_) {
 		if(!midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file))
 			return NO;
 
-		if(!midi_file.get_timestamp_end(track_num))
+		if(midi_file.get_timestamp_end(track_num) <= 0.0)
 			return NO;
 
 		track_num = [[[s url] fragment] intValue]; // What if theres no fragment? Assuming we get 0.
@@ -87,8 +88,8 @@ static OSType getOSType(const char *in_) {
 		return NO;
 	}
 
-	if(loopStart == ~0UL) loopStart = 0;
-	if(loopEnd == ~0UL) loopEnd = framesLength;
+	if(loopStart == (double) ~0UL) loopStart = 0;
+	if(loopEnd == (double) ~0UL) loopEnd = framesLength;
 
 	if(loopStart != 0 || loopEnd != framesLength) {
 		// two loops and a fade
@@ -97,11 +98,11 @@ static OSType getOSType(const char *in_) {
 			defaultFade = 0.0;
 		}
 		framesLength = loopStart + (loopEnd - loopStart) * 2;
-		framesFade = (int)ceil(defaultFade * 1000.0);
+		framesFade = defaultFade;
 		isLooped = YES;
 	} else {
-		framesLength += 1000;
-		framesFade = 0;
+		framesLength += 1.0;
+		framesFade = 0.0;
 		isLooped = NO;
 	}
 
@@ -113,8 +114,8 @@ static OSType getOSType(const char *in_) {
 			return NO;
 	}
 
-	framesLength = (int)ceil(framesLength * sampleRate * 0.001);
-	framesFade = (int)ceil(framesFade * sampleRate * 0.001);
+	framesLength = round(framesLength * sampleRate);
+	framesFade = round(framesFade * sampleRate);
 
 	totalFrames = framesLength + framesFade;
 
@@ -238,6 +239,15 @@ static OSType getOSType(const char *in_) {
 				bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
 			player = bmplayer;
+		} else if([plugin isEqualToString:@"TinySF"]) {
+			tsfplayer = new TSFPlayer;
+
+			tsfplayer->setSampleRate(sampleRate);
+
+			if([soundFontPath length])
+				tsfplayer->setFileSoundFont([soundFontPath UTF8String]);
+
+			player = tsfplayer;
 		} else if([plugin isEqualToString:@"NukeSc55"]) {
 			scplayer = new SCPlayer;
 
@@ -300,7 +310,7 @@ static OSType getOSType(const char *in_) {
 
 		player->setFilterMode(mode, false);
 
-		unsigned int loop_mode = framesFade ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
+		unsigned int loop_mode = framesFade > 0.0 ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
 		unsigned int clean_flags = midi_container::clean_flag_emidi;
 
 		if(!player->Load(midi_file, track_num, loop_mode, clean_flags))
@@ -315,8 +325,8 @@ static OSType getOSType(const char *in_) {
 
 - (AudioChunk *)readAudio {
 	BOOL repeatone = IsRepeatOneSet();
-	long localFramesLength = framesLength;
-	long localTotalFrames = totalFrames;
+	long localFramesLength = (long) framesLength;
+	long localTotalFrames = (long) totalFrames;
 
 	if(!player) {
 		if(![self initDecoder])
@@ -331,10 +341,12 @@ static OSType getOSType(const char *in_) {
 		if(!repeatone && framesRead >= localTotalFrames)
 			return 0;
 
-		if((bmplayer || auplayer) && !soundFontsAssigned) {
+		if((bmplayer || auplayer || tsfplayer) && !soundFontsAssigned) {
 			if(globalSoundFontPath != nil) {
 				if(bmplayer)
 					bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
+				else if(tsfplayer)
+					tsfplayer->setSoundFont([globalSoundFontPath UTF8String]);
 				else if(auplayer)
 					auplayer->setSoundFont([globalSoundFontPath UTF8String]);
 			}
@@ -354,7 +366,7 @@ static OSType getOSType(const char *in_) {
 		frames = frames_done;
 
 		if(!repeatone && framesRead + frames > localFramesLength) {
-			if(framesFade) {
+			if(framesFade > 0.0) {
 				long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
 				long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
 				long fadePos;
@@ -362,7 +374,7 @@ static OSType getOSType(const char *in_) {
 				float *buff = outputBuffer;
 
 				float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
-				float fadeStep = 1.0 / (float)framesFade;
+				float fadeStep = 1.0 / framesFade;
 				for(fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
 					buff[0] *= fadeScale;
 					buff[1] *= fadeScale;
