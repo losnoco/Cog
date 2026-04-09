@@ -247,6 +247,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}];
 }
 
+- (void)commitPersistentStoreAsync {
+	[self.persistentContainer.viewContext performBlock:^{
+		NSError *error = nil;
+		[self.persistentContainer.viewContext save:&error];
+		if(error) {
+			ALog(@"Error committing playlist storage: %@", [error localizedDescription]);
+		}
+	}];
+}
+
 - (void)updatePlayCountForTrack:(PlaylistEntry *)pe {
 	if(!pe || pe.deLeted || pe.countAdded) return;
 	pe.countAdded = YES;
@@ -1113,19 +1123,61 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 
-	[self commitPersistentStore];
-
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
 	[playbackController playlistDidChange:self];
 
+	// Collect file URLs before dispatching to background, since PlaylistEntry
+	// is a CoreData managed object and must not be accessed off its context queue.
+	NSMutableArray<NSDictionary *> *trashWork = [NSMutableArray array];
 	for(PlaylistEntry *pe in objects) {
 		if([pe.url isFileURL]) {
-			NSURL *removed = nil;
-			NSError *error = nil;
-			[[NSFileManager defaultManager] trashItemAtURL:pe.url resultingItemURL:&removed error:&error];
-			pe.trashUrl = removed;
+			[trashWork addObject:@{
+				@"url": pe.url,
+				@"objectID": pe.objectID
+			}];
 		}
+	}
+
+	if([trashWork count] > 0) {
+		NSPersistentContainer *container = self.persistentContainer;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			NSMutableDictionary<NSManagedObjectID *, NSURL *> *trashedURLs = [NSMutableDictionary dictionary];
+
+			for(NSDictionary *item in trashWork) {
+				NSURL *fileURL = item[@"url"];
+				NSManagedObjectID *objectID = item[@"objectID"];
+				NSURL *removed = nil;
+				NSError *error = nil;
+				[[NSFileManager defaultManager] trashItemAtURL:fileURL resultingItemURL:&removed error:&error];
+				if(removed) {
+					trashedURLs[objectID] = removed;
+				}
+				if(error) {
+					ALog(@"Error trashing file %@: %@", fileURL, [error localizedDescription]);
+				}
+			}
+
+			// Update CoreData on its context queue and persist everything
+			[container.viewContext performBlock:^{
+				for(NSManagedObjectID *objectID in trashedURLs) {
+					NSError *error = nil;
+					PlaylistEntry *pe = (PlaylistEntry *)[container.viewContext existingObjectWithID:objectID error:&error];
+					if(pe && !error) {
+						pe.trashUrl = trashedURLs[objectID];
+					}
+				}
+
+				NSError *saveError = nil;
+				[container.viewContext save:&saveError];
+				if(saveError) {
+					ALog(@"Error saving trash URLs: %@", [saveError localizedDescription]);
+				}
+			}];
+		});
+	} else {
+		// No files to trash, but still need to persist the playlist changes
+		[self commitPersistentStore];
 	}
 }
 
@@ -1558,7 +1610,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(i = 0; i < [shuffleList count]; i++) {
 		[shuffleList[i] setShuffleIndex:i];
 	}
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 }
 
 - (void)addShuffledListToBack {
@@ -1580,7 +1632,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(i = ([shuffleList count] - [newList count]); i < [shuffleList count]; i++) {
 		[shuffleList[i] setShuffleIndex:(int)i];
 	}
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 }
 
 - (void)resetShuffleList {
@@ -1615,7 +1667,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			for(i = 0, j = [shuffleList count]; i < j; ++i) {
 				[shuffleList[i] setShuffleIndex:(int)i];
 			}
-			[self commitPersistentStore];
+			[self commitPersistentStoreAsync];
 		} else {
 			[shuffleList insertObject:currentEntry atIndex:0];
 			[currentEntry setShuffleIndex:0];
@@ -1631,7 +1683,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 					[shuffleList[i] setShuffleIndex:(int)i];
 				}
 			}
-			[self commitPersistentStore];
+			[self commitPersistentStoreAsync];
 		}
 	}
 }
