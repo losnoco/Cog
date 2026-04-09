@@ -59,6 +59,7 @@ static inline BOOL IsRepeatOneSet(void) {
 
 // Private Methods
 - (void)commitPersistentStore;
+- (void)commitPersistentStoreAsync;
 - (void)updateTotalTime;
 - (void)updatePlaylistIndexes;
 - (IBAction)stopAfterCurrent:(id _Nullable)sender;
