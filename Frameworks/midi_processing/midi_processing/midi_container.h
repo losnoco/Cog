@@ -170,6 +170,9 @@ private:
 
     midi_meta_data m_extra_meta_data;
 
+    uint16_t bank_offset;
+    std::vector<uint8_t> m_embedded_bank;
+
     std::vector<unsigned long> m_timestamp_end;
 
     std::vector<unsigned long> m_timestamp_loop_start;
@@ -266,6 +269,9 @@ public:
     void scan_for_loops( bool p_xmi_loops, bool p_marker_loops, bool p_rpgmaker_loops, bool p_touhou_loops );
 
     static void encode_delta( std::vector<uint8_t> & p_out, unsigned long delta );
+
+    bool get_embedded_bank( const uint8_t ** out, size_t * size, uint16_t *bank_offset );
+    void assign_embedded_bank( const uint8_t *bank, size_t size, uint16_t bank_offset );
 };
 
 #endif

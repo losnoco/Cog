@@ -12,7 +12,7 @@
 #import "BMPlayer.h"
 #import "MSPlayer.h"
 #import "SCPlayer.h"
-#import "TSFPlayer.h"
+#import "SpessaPlayer.h"
 
 #import "Logging.h"
 
@@ -149,7 +149,7 @@ static OSType getOSType(const char *in_) {
 
 	if([[source url] isFileURL]) {
 		// Let's check for a SoundFont
-		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json"];
+		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json", @"dls"];
 		NSString *filePath = [[source url] path];
 		NSString *fileNameBase = [filePath lastPathComponent];
 		filePath = [filePath stringByDeletingLastPathComponent];
@@ -223,6 +223,10 @@ static OSType getOSType(const char *in_) {
 		}
 	}
 
+	if (midi_file.get_embedded_bank(NULL, NULL, NULL)) {
+		plugin = @"Spessa";
+	}
+
 	try {
 		if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
 			bmplayer = new BMPlayer;
@@ -239,15 +243,34 @@ static OSType getOSType(const char *in_) {
 				bmplayer->setFileSoundFont([soundFontPath UTF8String]);
 
 			player = bmplayer;
-		} else if([plugin isEqualToString:@"TinySF"]) {
-			tsfplayer = new TSFPlayer;
+		} else if([plugin isEqualToString:@"Spessa"]) {
+			spessaplayer = new SpessaPlayer;
 
-			tsfplayer->setSampleRate(sampleRate);
+			SS_InterpolationType interp = SS_INTERP_LINEAR;
+			NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
+			if([resampling isEqualToString:@"none"] ||
+			   [resampling isEqualToString:@"blep"])
+				interp = SS_INTERP_NEAREST;
+			else if([resampling isEqualToString:@"cubic"] ||
+				[resampling isEqualToString:@"sinc"])
+				interp = SS_INTERP_HERMITE;
+
+			spessaplayer->setSampleRate(sampleRate);
+			spessaplayer->setInterpolation(interp);
+
+			const uint8_t *embedded_bank = NULL;
+			size_t bank_size = 0;
+			uint16_t bank_offset = 0;
+			if (midi_file.get_embedded_bank(&embedded_bank, &bank_size, &bank_offset)) {
+				if (embedded_bank && bank_size) {
+					spessaplayer->setEmbeddedBank(embedded_bank, bank_size, bank_offset);
+				}
+			}
 
 			if([soundFontPath length])
-				tsfplayer->setFileSoundFont([soundFontPath UTF8String]);
+				spessaplayer->setFileSoundFont([soundFontPath UTF8String]);
 
-			player = tsfplayer;
+			player = spessaplayer;
 		} else if([plugin isEqualToString:@"NukeSc55"]) {
 			scplayer = new SCPlayer;
 
@@ -341,12 +364,12 @@ static OSType getOSType(const char *in_) {
 		if(!repeatone && framesRead >= localTotalFrames)
 			return 0;
 
-		if((bmplayer || auplayer || tsfplayer) && !soundFontsAssigned) {
+		if((bmplayer || auplayer || spessaplayer) && !soundFontsAssigned) {
 			if(globalSoundFontPath != nil) {
 				if(bmplayer)
 					bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
-				else if(tsfplayer)
-					tsfplayer->setSoundFont([globalSoundFontPath UTF8String]);
+				else if(spessaplayer)
+					spessaplayer->setSoundFont([globalSoundFontPath UTF8String]);
 				else if(auplayer)
 					auplayer->setSoundFont([globalSoundFontPath UTF8String]);
 			}

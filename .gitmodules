@@ -28,3 +28,6 @@
 [submodule "Plugins/MIDI/MIDI/tsf"]
 	path = Plugins/MIDI/MIDI/tsf
 	url = https://github.com/kode54/TinySoundFont.git
+[submodule "Plugins/MIDI/MIDI/spessasynth_core"]
+	path = Plugins/MIDI/MIDI/spessasynth_core
+	url = https://github.com/kode54/spessasynth_core_c.git

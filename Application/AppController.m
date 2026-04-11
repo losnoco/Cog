@@ -734,7 +734,7 @@ static BOOL consentLastEnabled = NO;
 
 	[userDefaultsValuesDict setObject:@(CogStatusStopped) forKey:@"lastPlaybackStatus"];
 
-	[userDefaultsValuesDict setObject:@"BASSMIDI" forKey:@"midiPlugin"];
+	[userDefaultsValuesDict setObject:@"Spessa" forKey:@"midiPlugin"];
 
 	[userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
 
@@ -779,13 +779,14 @@ static BOOL consentLastEnabled = NO;
 	// if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"BASSMIDI"]) {
 	//	[[NSUserDefaults standardUserDefaults] setValue:@"FluidSynth" forKey:@"midiPlugin"];
 	// }
-	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"FluidSynth"]) {
-		[[NSUserDefaults standardUserDefaults] setValue:@"BASSMIDI" forKey:@"midiPlugin"];
+	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"FluidSynth"] ||
+	   [[[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"] isEqualToString:@"TinySF"]) {
+		[[NSUserDefaults standardUserDefaults] setValue:@"Spessa" forKey:@"midiPlugin"];
 	}
 
 	NSString *midiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 	if([midiPlugin length] == 8 && [[midiPlugin substringFromIndex:4] isEqualToString:@"appl"]) {
-		[[NSUserDefaults standardUserDefaults] setObject:@"BASSMIDI" forKey:@"midiPlugin"];
+		[[NSUserDefaults standardUserDefaults] setObject:@"Spessa" forKey:@"midiPlugin"];
 	}
 }
 
