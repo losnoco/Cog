@@ -371,6 +371,8 @@ bool BMPlayer::startup() {
 		}
 	}
 
+	if (!presetList.size()) return false;
+
 	BASS_MIDI_StreamSetFonts(_stream, &presetList[0], (unsigned int)presetList.size() | BASS_MIDI_FONT_EX2);
 
 	return true;
