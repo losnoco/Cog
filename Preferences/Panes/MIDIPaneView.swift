@@ -45,7 +45,7 @@ private final class MIDIPrefs: ObservableObject {
 
     init() {
         let d = UserDefaults.standard
-        plugin = d.string(forKey: "midiPlugin") ?? "BASSMIDI"
+        plugin = d.string(forKey: "midiPlugin") ?? "Spessa"
         flavor = d.string(forKey: "midi.flavor") ?? "default"
         soundFontPath = d.string(forKey: "soundFontPath") ?? ""
         synthDefaultSeconds = d.object(forKey: "synthDefaultSeconds") as? Double ?? 150.0
@@ -64,8 +64,8 @@ private final class MIDIPrefs: ObservableObject {
 
     private static func buildPluginList() -> [MIDIPlugin] {
         var list: [MIDIPlugin] = [
-            MIDIPlugin(id: "BASSMIDI",  name: "BASSMIDI",       configurable: false, builtIn: true),
-			MIDIPlugin(id: "TinySF",    name: "TinySoundFont",  configurable: false, builtIn: true),
+			MIDIPlugin(id: "Spessa",    name: "SpessaSynth",    configurable: false, builtIn: true),
+			MIDIPlugin(id: "BASSMIDI",  name: "BASSMIDI",       configurable: false, builtIn: true),
             MIDIPlugin(id: "NukeSc55",  name: "Nuked SC-55",    configurable: true,  builtIn: true),
             MIDIPlugin(id: "DOOM0000",  name: "DMX Generic",    configurable: false, builtIn: true),
             MIDIPlugin(id: "DOOM0001",  name: "DMX Doom 1",     configurable: false, builtIn: true),
@@ -213,7 +213,7 @@ struct MIDIPaneView: View {
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
         panel.isFloatingPanel = true
-        panel.allowedFileTypes = ["sf2", "sf2pack", "sflist", "sf3", "json"]  // deprecated in 12, still works
+        panel.allowedFileTypes = ["sf2", "sf2pack", "sflist", "sf3", "sf4", "json", "dls"]  // deprecated in 12, still works
         if !prefs.soundFontPath.isEmpty {
             panel.directoryURL = URL(fileURLWithPath: prefs.soundFontPath).deletingLastPathComponent()
         }
