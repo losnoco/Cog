@@ -217,7 +217,7 @@ static OSType getOSType(const char *in_) {
 
 	// Then detect if we should force the DLSMusicSynth, which has its own bank
 	BOOL sauce = plugin && [plugin isEqualToString:@"sauce"];
-	if(sauce || !plugin || [plugin isEqualToString:@"BASSMIDI"]) {
+	if(sauce || !plugin || [plugin isEqualToString:@"BASSMIDI"] || [plugin isEqualToString:@"Spessa"]) {
 		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
 			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
 		}
