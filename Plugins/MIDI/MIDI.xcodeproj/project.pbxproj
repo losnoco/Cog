@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		83095D962F81DA0100DDA4B4 /* SpessaPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */; };
+		8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B7F5BF2F86821200C57C20 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		831E2A8A27B4B2B2006F1C86 /* sflist.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8027B4B2B2006F1C86 /* sflist.c */; };
 		831E2A8C27B4B2B2006F1C86 /* sflist_rewrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */; };
 		831E2A9627B4B2FA006F1C86 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A9227B4B2FA006F1C86 /* json.c */; };
@@ -48,6 +49,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		8315D48A2F8C9F9500310505 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8346D3A92F867F4900F3F5EC;
+			remoteInfo = spessasynth_core;
+		};
 		83B7F5BE2F86821200C57C20 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */;
@@ -92,6 +100,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */,
 				83EA54232A6A6CF400CD0580 /* libbass_mpc.dylib in CopyFiles */,
 				83DFCDBC2E853402009E3DF1 /* midi_processing.framework in CopyFiles */,
 				8356BCD127B353F60074E50C /* libbass.dylib in CopyFiles */,
@@ -440,6 +449,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8315D48B2F8C9F9500310505 /* PBXTargetDependency */,
 				83DFCDB52E8533B8009E3DF1 /* PBXTargetDependency */,
 				83DFCDAD2E8533B5009E3DF1 /* PBXTargetDependency */,
 			);
@@ -559,6 +569,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		8315D48B2F8C9F9500310505 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = spessasynth_core;
+			targetProxy = 8315D48A2F8C9F9500310505 /* PBXContainerItemProxy */;
+		};
 		83DFCDAD2E8533B5009E3DF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = midi_processing;
