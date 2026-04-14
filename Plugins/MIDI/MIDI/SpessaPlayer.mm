@@ -61,19 +61,18 @@ static SS_SoundBank *cache_open_font(const char *path) {
 	auto &entry = (*Cache_List)[path];
 
 	if(!entry.bank) {
-		@autoreleasepool {
-			NSData *bankData = [NSData dataWithContentsOfFile:[NSString stringWithUTF8String:path]];
-			if (bankData) {
-				bank = ss_soundbank_load((const uint8_t *)[bankData bytes], [bankData length]);
-				if(bank) {
-					entry.bank = bank;
-					entry.ref_count = 1;
-				} else {
-					Cache_List->erase(path);
-				}
+		SS_File *bankFile = ss_file_open_from_file(path);
+		if(bankFile) {
+			bank = ss_soundbank_load(bankFile);
+			if(bank) {
+				entry.bank = bank;
+				entry.ref_count = 1;
 			} else {
 				Cache_List->erase(path);
 			}
+			ss_file_close(bankFile);
+		} else {
+			Cache_List->erase(path);
 		}
 	} else {
 		bank = entry.bank;
@@ -271,7 +270,11 @@ bool SpessaPlayer::startup() {
 
 	SS_SoundBank* _embeddedBank = NULL;
 	if (embeddedBank.size()) {
-		_embeddedBank = ss_soundbank_load(embeddedBank.data(), embeddedBank.size());
+		SS_File *embedFile = ss_file_open_from_memory(embeddedBank.data(), embeddedBank.size(), false);
+		if(embedFile) {
+			_embeddedBank = ss_soundbank_load(embedFile);
+			ss_file_close(embedFile);
+		}
 	}
 
 	if (fileBank) _banks.push_back(fileBank);
