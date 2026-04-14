@@ -117,7 +117,7 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
 
     std::vector<uint8_t> extra_buffer;
 
-    uint16_t bank_offset = 0;
+    int bank_offset = -1;
 
     while ( it != body_end )
     {
@@ -196,6 +196,9 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
             if ( chunk_size & 1 && it != body_end ) ++it;
         } else if ( it_equal( it, "RIFF", 4) ) {
             if ( found_data ) {
+				if ( bank_offset == -1 ) {
+					bank_offset = p_out.scan_for_bank_offset();
+				}
                 p_out.assign_embedded_bank( &it[0], chunk_size + 8, bank_offset );
                 found_embedded_bank = true;
             }

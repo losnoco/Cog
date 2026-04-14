@@ -1497,3 +1497,20 @@ void midi_container::assign_embedded_bank( const uint8_t *bank, size_t size, uin
     this->bank_offset = bank_offset;
     m_embedded_bank.assign(bank, bank + size);
 }
+
+uint16_t midi_container::scan_for_bank_offset( void ) {
+	int bank_offset = -1;
+	for ( auto it = m_tracks.begin(); it != m_tracks.end(); ++it ) {
+		for ( int i = 0, j = it->get_count(); i < j; ++i ) {
+			midi_event &e = (*it)[i];
+			if ( e.m_type == midi_event::control_change && e.m_data_count >= 2 ) {
+				if ( e.m_data[0] == 0 /* bank MSB */) {
+					if ( e.m_data[1] != 0 && e.m_data[1] != 127 ) {
+						return 1;
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
