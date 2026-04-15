@@ -11,11 +11,14 @@
 @class PathNode;
 @class PathWatcher;
 
-@interface FileTreeDataSource : NSObject <NSOutlineViewDataSource>
+@interface FileTreeDataSource : NSObject <NSOutlineViewDataSource, NSSearchFieldDelegate>
 
 @property(nonatomic, weak) IBOutlet NSOutlineView *outlineView;
 @property(nonatomic, weak) IBOutlet NSPathControl *pathControl;
 @property(nonatomic, weak) IBOutlet PathWatcher *watcher;
+@property(nonatomic, weak) NSSearchField *searchField;
+
+@property(nonatomic, copy) NSString *filterString;
 
 - (void)changeURL:(NSURL *)rootURL;
 
