@@ -9,6 +9,7 @@
 #import "FileTreeDataSource.h"
 
 #import "DirectoryNode.h"
+#import "FileNode.h"
 #import "PathWatcher.h"
 
 #import "Logging.h"
@@ -16,6 +17,8 @@
 #import "AppController.h"
 
 #import "SandboxBroker.h"
+
+#import "CogAudio/AudioPlayer.h"
 
 static void *kFileTreeDataSourceContext = &kFileTreeDataSourceContext;
 
@@ -44,7 +47,12 @@ static NSURL *defaultMusicDirectory(void) {
 @implementation FileTreeDataSource {
 	PathNode *rootNode;
 	const void *_sbHandle;
+	NSArray *filteredNodes;
+	NSString *_filterString;
+	id _keyEventMonitor;
 }
+
+@synthesize filterString = _filterString;
 
 + (void)initialize {
 	NSString *path = [defaultMusicDirectory() absoluteString];
@@ -61,6 +69,42 @@ static NSURL *defaultMusicDirectory(void) {
 	                                                             options:NSKeyValueObservingOptionNew |
 	                                                                     NSKeyValueObservingOptionInitial
 	                                                             context:kFileTreeDataSourceContext];
+
+	// Build search field programmatically so AppKit sets up all internal
+	// geometry (icon inset, field-editor frame, cancel button hit area) correctly.
+	NSScrollView *scrollView = [self.outlineView enclosingScrollView];
+	NSView *container = [scrollView superview];
+	NSRect scrollFrame = [scrollView frame];
+	const CGFloat searchHeight = 22.0;
+	const CGFloat newScrollHeight = scrollFrame.size.height - searchHeight;
+	[scrollView setFrame:NSMakeRect(scrollFrame.origin.x, scrollFrame.origin.y,
+	                                scrollFrame.size.width, newScrollHeight)];
+	NSRect searchFrame = NSMakeRect(scrollFrame.origin.x,
+	                                scrollFrame.origin.y + newScrollHeight,
+	                                scrollFrame.size.width, searchHeight);
+	NSSearchField *sf = [[NSSearchField alloc] initWithFrame:searchFrame];
+	[sf setPlaceholderString:NSLocalizedString(@"Search", @"File tree search placeholder")];
+	[sf setDelegate:self];
+	[sf setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
+	[container addSubview:sf];
+	self.searchField = sf;
+
+	__weak typeof(self) weakSelf = self;
+	_keyEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskKeyDown
+	                                                        handler:^NSEvent *(NSEvent *event) {
+		NSEventModifierFlags flags = event.modifierFlags &
+		    (NSEventModifierFlagCommand | NSEventModifierFlagOption |
+		     NSEventModifierFlagShift | NSEventModifierFlagControl);
+		if(flags == (NSEventModifierFlagCommand | NSEventModifierFlagOption) &&
+		   [[event charactersIgnoringModifiers] isEqualToString:@"f"]) {
+			FileTreeDataSource *s = weakSelf;
+			if(s && s.searchField && [s.searchField.window isKeyWindow]) {
+				[s.searchField.window makeFirstResponder:s.searchField];
+				return nil;
+			}
+		}
+		return event;
+	}];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -97,6 +141,77 @@ static NSURL *defaultMusicDirectory(void) {
 	return [rootNode URL];
 }
 
+- (void)setFilterString:(NSString *)filterString {
+	_filterString = [filterString copy];
+	if(!filterString.length) {
+		filteredNodes = nil;
+		[self.outlineView reloadData];
+	} else {
+		[self performSearchWithString:filterString];
+	}
+}
+
+- (void)controlTextDidChange:(NSNotification *)notification {
+	self.filterString = [(NSSearchField *)[notification object] stringValue];
+}
+
+- (void)searchFieldDidEndSearching:(NSSearchField *)sender {
+	self.filterString = @"";
+}
+
+- (void)performSearchWithString:(NSString *)searchString {
+	NSString *captured = [searchString copy];
+	NSURL *rootURL = self.rootURL;
+	if(!rootURL) return;
+
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+		NSMutableArray *results = [NSMutableArray array];
+		NSString *rootPath = [rootURL path];
+		NSString *rootPathWithSlash = [rootPath stringByAppendingString:@"/"];
+
+		NSDirectoryEnumerator<NSURL *> *enumerator =
+		    [[NSFileManager defaultManager] enumeratorAtURL:rootURL
+		                        includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey]
+		                                           options:NSDirectoryEnumerationSkipsHiddenFiles
+		                                      errorHandler:nil];
+
+		for(NSURL *url in enumerator) {
+			if(![captured isEqualToString:self->_filterString]) return;
+
+			NSString *name = [url lastPathComponent];
+			if([name rangeOfString:captured options:NSCaseInsensitiveSearch].location == NSNotFound)
+				continue;
+
+			NSNumber *isDirNum = nil;
+			[url getResourceValue:&isDirNum forKey:NSURLIsDirectoryKey error:nil];
+			BOOL isDir = [isDirNum boolValue];
+
+			if(!isDir && ![[AudioPlayer fileTypes] containsObject:[[url pathExtension] lowercaseString]])
+				continue;
+
+			NSString *fullPath = [url path];
+			NSString *relativePath = [fullPath hasPrefix:rootPathWithSlash]
+			    ? [fullPath substringFromIndex:rootPathWithSlash.length]
+			    : fullPath;
+
+			PathNode *node = isDir
+			    ? [[DirectoryNode alloc] initWithDataSource:self url:url]
+			    : [[FileNode alloc] initWithDataSource:self url:url];
+			[node setDisplay:relativePath];
+			[results addObject:node];
+
+			if(results.count >= 500) break;
+		}
+
+		dispatch_async(dispatch_get_main_queue(), ^{
+			if([captured isEqualToString:self->_filterString]) {
+				self->filteredNodes = [results copy];
+				[self.outlineView reloadData];
+			}
+		});
+	});
+}
+
 - (void)setRootURL:(NSURL *)rootURL {
 	SandboxBroker *sharedSandboxBroker = [SandboxBroker sharedSandboxBroker];
 	if(self.sbHandle) [sharedSandboxBroker endFolderAccess:self.sbHandle];
@@ -122,6 +237,7 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (void)dealloc {
+	if(_keyEventMonitor) [NSEvent removeMonitor:_keyEventMonitor];
 	if(self.sbHandle) [[SandboxBroker sharedSandboxBroker] endFolderAccess:self.sbHandle];
 }
 
@@ -174,26 +290,27 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+	if(filteredNodes)
+		return item == nil ? (NSInteger)filteredNodes.count : 0;
 	PathNode *n = (item == nil ? rootNode : item);
-
 	return (int)[[n subpaths] count];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+	if(filteredNodes) return NO;
 	PathNode *n = (item == nil ? rootNode : item);
-
 	return ![n isLeaf];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
+	if(filteredNodes)
+		return filteredNodes[(NSUInteger)index];
 	PathNode *n = (item == nil ? rootNode : item);
-
 	return [n subpaths][(NSUInteger)index];
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
 	PathNode *n = (item == nil ? rootNode : item);
-
 	return n;
 }
 
@@ -204,6 +321,7 @@ static NSURL *defaultMusicDirectory(void) {
 }
 
 - (void)reloadPathNode:(PathNode *)item {
+	if(filteredNodes) return; // filesystem changes don't update the search results view
 	if(item == rootNode) {
 		[self.outlineView reloadData];
 	} else {
