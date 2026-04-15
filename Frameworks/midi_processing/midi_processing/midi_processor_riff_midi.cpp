@@ -111,10 +111,13 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
 
     bool found_data = false;
     bool found_info = false;
+    bool found_embedded_bank = false;
 
     midi_meta_data meta_data;
 
     std::vector<uint8_t> extra_buffer;
+
+    int bank_offset = -1;
 
     while ( it != body_end )
     {
@@ -141,7 +144,7 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
             {
                 extra_buffer.resize( chunk_size - 4 + 1 );
                 std::copy( it + 12, it + 8 + chunk_size, extra_buffer.begin() );
-				extra_buffer[ chunk_size - 4 ] = '\0';
+                extra_buffer[ chunk_size - 4 ] = '\0';
                 meta_data.add_item( midi_meta_data_item( 0, "display_name", (const char *) &extra_buffer[0] ) );
             }
             it += 8 + chunk_size;
@@ -173,9 +176,15 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
                         }
                         extra_buffer.resize( field_size + 1 );
                         std::copy( it + 8, it + 8 + field_size, extra_buffer.begin() );
-						extra_buffer[ field_size ] = '\0';
+                        extra_buffer[ field_size ] = '\0';
                         it += 8 + field_size;
-                        meta_data.add_item( midi_meta_data_item( 0, field.c_str(), ( const char * ) &extra_buffer[0] ) );
+                        if ( field == "DBNK" ) {
+                            if ( field_size == 2 ) {
+                                bank_offset = extra_buffer[0] | ((uint16_t)extra_buffer[1] << 8);
+                            }
+                        } else {
+                            meta_data.add_item( midi_meta_data_item( 0, field.c_str(), ( const char * ) &extra_buffer[0] ) );
+                        }
                         if ( field_size & 1 && it != chunk_end ) ++it;
                     }
                     found_info = true;
@@ -185,14 +194,22 @@ bool midi_processor::process_riff_midi( std::vector<uint8_t> const& p_file, midi
             else return false; /* unknown LIST chunk */
             it = chunk_end;
             if ( chunk_size & 1 && it != body_end ) ++it;
-        }
-        else
-        {
+        } else if ( it_equal( it, "RIFF", 4) ) {
+            if ( found_data ) {
+				if ( bank_offset == -1 ) {
+					bank_offset = p_out.scan_for_bank_offset();
+				}
+                p_out.assign_embedded_bank( &it[0], chunk_size + 8, bank_offset );
+                found_embedded_bank = true;
+            }
+            it += chunk_size;
+            if ( chunk_size & 1 && it != body_end ) ++it;
+        } else {
             it += chunk_size;
             if ( chunk_size & 1 && it != body_end ) ++it;
         }
 
-        if ( found_data && found_info ) break;
+        if ( found_data && found_info && found_embedded_bank ) break;
     }
 
     p_out.set_extra_meta_data( meta_data );
