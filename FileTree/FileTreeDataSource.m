@@ -83,7 +83,7 @@ static NSURL *defaultMusicDirectory(void) {
 	                                scrollFrame.origin.y + newScrollHeight,
 	                                scrollFrame.size.width, searchHeight);
 	NSSearchField *sf = [[NSSearchField alloc] initWithFrame:searchFrame];
-	[sf setPlaceholderString:NSLocalizedString(@"Search", @"File tree search placeholder")];
+	[sf setPlaceholderString:NSLocalizedString(@"Tree Search", @"File tree search placeholder")];
 	[sf setDelegate:self];
 	[sf setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
 	[container addSubview:sf];
