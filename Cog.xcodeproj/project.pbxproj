@@ -218,6 +218,7 @@
 		83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */; };
 		83E9987A2F7135310017AE33 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */; };
 		83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */; };
+		83F227582F909244004CBE72 /* GeneralUserGS.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 83F227572F909244004CBE72 /* GeneralUserGS.sf3 */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 83F9FFEE2D6EB75B00026576 /* Sentry */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -1091,6 +1092,7 @@
 		83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RubberbandEngineTransformer.swift; path = Transformers/RubberbandEngineTransformer.swift; sourceTree = "<group>"; };
 		83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaybeSecureValueDataTransformer.swift; path = Transformers/MaybeSecureValueDataTransformer.swift; sourceTree = "<group>"; };
 		83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniModeMenuTitleTransformer.swift; path = Window/MiniModeMenuTitleTransformer.swift; sourceTree = "<group>"; };
+		83F227572F909244004CBE72 /* GeneralUserGS.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GeneralUserGS.sf3; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1540,6 +1542,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				83F227572F909244004CBE72 /* GeneralUserGS.sf3 */,
 				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8E75758E09F31D800080F1EE /* Icons */,
@@ -2541,6 +2544,7 @@
 			files = (
 				83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */,
 				83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */,
+				83F227582F909244004CBE72 /* GeneralUserGS.sf3 in Resources */,
 				83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */,
 				83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */,
 				83B61E2429A8296500CD0580 /* LyricsWindow.xib in Resources */,
