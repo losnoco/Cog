@@ -13,7 +13,6 @@
 #import "Plugin.h"
 
 class AUPlayer;
-class BMPlayer;
 class SCPlayer;
 class SpessaPlayer;
 
@@ -21,7 +20,6 @@ class SpessaPlayer;
 	id<CogSource> source;
 	int track_num;
 
-	BMPlayer* bmplayer;
 	AUPlayer* auplayer;
 	SCPlayer* scplayer;
 	SpessaPlayer* spessaplayer;

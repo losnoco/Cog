@@ -1,5 +1,7 @@
 #include "SpessaPlayer.h"
 
+#import "Plugin.h"
+
 #include <stdlib.h>
 
 #include <string>
@@ -11,6 +13,67 @@
 #include <list>
 
 #define _countof(arr) (sizeof(arr) / sizeof((arr)[0]))
+
+typedef struct cog_file {
+	id<CogSource> s;
+	size_t size;
+} cog_file;
+
+static void cog_file_close(void *context) {
+	cog_file *file = (cog_file *)context;
+	[file->s close];
+	delete file;
+}
+
+static bool cog_file_seek(void *context, size_t offset) {
+	cog_file *file = (cog_file *)context;
+	return [file->s seek:offset whence:SEEK_SET] == YES;
+}
+
+static size_t cog_file_size(void *context) {
+	cog_file *file = (cog_file *)context;
+	return file->size;
+}
+
+static size_t cog_file_read_bytes(void *context, uint8_t *out, size_t count) {
+	cog_file *file = (cog_file *)context;
+	return [file->s read:out amount:count];
+}
+
+static SS_File *cog_file_open(const char *path) {
+	if(!strstr(path, "://")) {
+		return ss_file_open_from_file(path);
+	}
+
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:path]];
+	id<CogSource> src = [audioSourceClass audioSourceForURL:url];
+	if(![src open:url]) {
+		return NULL;
+	}
+
+	SS_File_ReaderCallbacks cog_callbacks = {
+		.close = &cog_file_close,
+		.seek = &cog_file_seek,
+		.size = &cog_file_size,
+		.read_bytes = &cog_file_read_bytes
+	};
+
+	cog_file *file_context = new cog_file;
+	file_context->s = src;
+
+	[src seek:0 whence:SEEK_END];
+	file_context->size = [src tell];
+	[src seek:0 whence:SEEK_SET];
+
+	SS_File *file = ss_file_open_from_callbacks(&cog_callbacks, file_context);
+	if(!file) {
+		[src close];
+		delete file_context;
+	}
+
+	return file;
+}
 
 struct Spessa_Cached_SoundFont {
 	unsigned long ref_count;
@@ -61,7 +124,7 @@ static SS_SoundBank *cache_open_font(const char *path) {
 	auto &entry = (*Cache_List)[path];
 
 	if(!entry.bank) {
-		SS_File *bankFile = ss_file_open_from_file(path);
+		SS_File *bankFile = cog_file_open(path);
 		if(bankFile) {
 			bank = ss_soundbank_load(bankFile);
 			if(bank) {
@@ -159,6 +222,7 @@ static class Spessa_Initializer {
 SpessaPlayer::SpessaPlayer()
 : MIDIPlayer() {
 	_synth = nullptr;
+	interp = SS_INTERP_LINEAR;
 
 	if(!g_initializer.initialize()) throw std::runtime_error("Unable to initialize SpessaSynth");
 }
@@ -207,17 +271,7 @@ void SpessaPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port
 
 void SpessaPlayer::render(float *out, unsigned long count) {
 	const double timeAdd = (double)count / dSampleRate;
-	while (count) {
-		unsigned long blockCount = outputMax;
-		if (blockCount > count) blockCount = count;
-		count -= blockCount;
-		ss_processor_render(_synth, outputLeft, outputRight, blockCount);
-		for (unsigned long i = 0; i < blockCount; ++i)
-		{
-			*out++ = outputLeft[i];
-			*out++ = outputRight[i];
-		}
-	}
+	ss_processor_render_interleaved(_synth, out, (uint32_t)count);
 	playerTime += timeAdd;
 }
 

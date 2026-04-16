@@ -65,7 +65,6 @@ private final class MIDIPrefs: ObservableObject {
     private static func buildPluginList() -> [MIDIPlugin] {
         var list: [MIDIPlugin] = [
 			MIDIPlugin(id: "Spessa",    name: "SpessaSynth",    configurable: false, builtIn: true),
-			MIDIPlugin(id: "BASSMIDI",  name: "BASSMIDI",       configurable: false, builtIn: true),
             MIDIPlugin(id: "NukeSc55",  name: "Nuked SC-55",    configurable: true,  builtIn: true),
             MIDIPlugin(id: "DOOM0000",  name: "DMX Generic",    configurable: false, builtIn: true),
             MIDIPlugin(id: "DOOM0001",  name: "DMX Doom 1",     configurable: false, builtIn: true),

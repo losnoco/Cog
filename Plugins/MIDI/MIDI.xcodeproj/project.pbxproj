@@ -9,21 +9,9 @@
 /* Begin PBXBuildFile section */
 		83095D962F81DA0100DDA4B4 /* SpessaPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */; };
 		8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B7F5BF2F86821200C57C20 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		831E2A8A27B4B2B2006F1C86 /* sflist.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8027B4B2B2006F1C86 /* sflist.c */; };
-		831E2A8C27B4B2B2006F1C86 /* sflist_rewrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */; };
-		831E2A9627B4B2FA006F1C86 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A9227B4B2FA006F1C86 /* json.c */; };
-		831E2A9727B4B2FA006F1C86 /* json-builder.c in Sources */ = {isa = PBXBuildFile; fileRef = 831E2A9327B4B2FA006F1C86 /* json-builder.c */; };
 		8346D07C2F867D6600F3F5EC /* libFLAC.14.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8346D07B2F867D6600F3F5EC /* libFLAC.14.dylib */; };
 		834BE91B1DE407CB00A07DCD /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 834BE9191DE407CB00A07DCD /* resampler.c */; };
 		834D190C2D7F954100F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D190B2D7F954100F13B89 /* CogAudio.framework */; };
-		8356BCC627B352620074E50C /* BMPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCC427B352620074E50C /* BMPlayer.cpp */; };
-		8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCC727B353CB0074E50C /* libbass.dylib */; };
-		8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BCC827B353CB0074E50C /* libbassmidi.dylib */; };
-		8356BCD127B353F60074E50C /* libbass.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCC727B353CB0074E50C /* libbass.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8356BCD227B353F90074E50C /* libbassmidi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCC827B353CB0074E50C /* libbassmidi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8356BCD327B353FB0074E50C /* libbassflac.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCB27B353E30074E50C /* libbassflac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8356BCD427B354010074E50C /* libbassopus.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCC27B353E30074E50C /* libbassopus.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8356BCCD27B353E30074E50C /* libbasswv.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
@@ -45,7 +33,6 @@
 		83DFCDBC2E853402009E3DF1 /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DFCDB02E8533B5009E3DF1 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E83F7A2D9654470054365C /* Accelerate.framework */; };
 		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
-		83EA54232A6A6CF400CD0580 /* libbass_mpc.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83EA54212A6A6CE200CD0580 /* libbass_mpc.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,13 +88,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */,
-				83EA54232A6A6CF400CD0580 /* libbass_mpc.dylib in CopyFiles */,
 				83DFCDBC2E853402009E3DF1 /* midi_processing.framework in CopyFiles */,
-				8356BCD127B353F60074E50C /* libbass.dylib in CopyFiles */,
-				8356BCD227B353F90074E50C /* libbassmidi.dylib in CopyFiles */,
-				8356BCD327B353FB0074E50C /* libbassflac.dylib in CopyFiles */,
-				8356BCD427B354010074E50C /* libbassopus.dylib in CopyFiles */,
-				8356BCD527B354050074E50C /* libbasswv.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,16 +107,6 @@
 		8307D31E28607377000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		83095D932F81DA0100DDA4B4 /* SpessaPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpessaPlayer.h; sourceTree = "<group>"; };
 		83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SpessaPlayer.mm; sourceTree = "<group>"; };
-		831E2A7F27B4B2B2006F1C86 /* bassmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bassmidi.h; sourceTree = "<group>"; };
-		831E2A8027B4B2B2006F1C86 /* sflist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sflist.c; sourceTree = "<group>"; };
-		831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sflist_rewrite.c; sourceTree = "<group>"; };
-		831E2A8327B4B2B2006F1C86 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		831E2A8627B4B2B2006F1C86 /* bass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bass.h; sourceTree = "<group>"; };
-		831E2A8727B4B2B2006F1C86 /* sflist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sflist.h; sourceTree = "<group>"; };
-		831E2A9227B4B2FA006F1C86 /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = json.c; sourceTree = "<group>"; };
-		831E2A9327B4B2FA006F1C86 /* json-builder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "json-builder.c"; sourceTree = "<group>"; };
-		831E2A9427B4B2FA006F1C86 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
-		831E2A9527B4B2FA006F1C86 /* json-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "json-builder.h"; sourceTree = "<group>"; };
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8346D07B2F867D6600F3F5EC /* libFLAC.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.14.dylib; path = ../../ThirdParty/flac/lib/libFLAC.14.dylib; sourceTree = "<group>"; };
 		8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = spessasynth_core.xcodeproj; path = MIDI/spessasynth_core/spessasynth_core.xcodeproj; sourceTree = "<group>"; };
@@ -143,13 +114,6 @@
 		834BE9191DE407CB00A07DCD /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		834BE91A1DE407CB00A07DCD /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		834D190B2D7F954100F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8356BCC427B352620074E50C /* BMPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BMPlayer.cpp; sourceTree = "<group>"; };
-		8356BCC527B352620074E50C /* BMPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMPlayer.h; sourceTree = "<group>"; };
-		8356BCC727B353CB0074E50C /* libbass.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbass.dylib; path = ../../ThirdParty/BASS/libbass.dylib; sourceTree = "<group>"; };
-		8356BCC827B353CB0074E50C /* libbassmidi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbassmidi.dylib; path = ../../ThirdParty/BASS/libbassmidi.dylib; sourceTree = "<group>"; };
-		8356BCCB27B353E30074E50C /* libbassflac.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbassflac.dylib; path = ../../ThirdParty/BASS/libbassflac.dylib; sourceTree = "<group>"; };
-		8356BCCC27B353E30074E50C /* libbassopus.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbassopus.dylib; path = ../../ThirdParty/BASS/libbassopus.dylib; sourceTree = "<group>"; };
-		8356BCCD27B353E30074E50C /* libbasswv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbasswv.dylib; path = ../../ThirdParty/BASS/libbasswv.dylib; sourceTree = "<group>"; };
 		835F91BA1EE211820003E186 /* dmxopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmxopl.h; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
@@ -200,7 +164,6 @@
 		83E83F7A2D9654470054365C /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
 		83E973461C4378880007F413 /* AUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayer.h; sourceTree = "<group>"; };
-		83EA54212A6A6CE200CD0580 /* libbass_mpc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbass_mpc.dylib; path = ../../ThirdParty/BASS/libbass_mpc.dylib; sourceTree = "<group>"; };
 		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -215,10 +178,8 @@
 				83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */,
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
-				8356BCCA27B353CB0074E50C /* libbassmidi.dylib in Frameworks */,
 				8346D07C2F867D6600F3F5EC /* libFLAC.14.dylib in Frameworks */,
 				83DFCDBB2E853402009E3DF1 /* midi_processing.framework in Frameworks */,
-				8356BCC927B353CB0074E50C /* libbass.dylib in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,32 +187,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		831E2A7D27B4B2B2006F1C86 /* BASS */ = {
-			isa = PBXGroup;
-			children = (
-				831E2A7F27B4B2B2006F1C86 /* bassmidi.h */,
-				831E2A8027B4B2B2006F1C86 /* sflist.c */,
-				831E2A8227B4B2B2006F1C86 /* sflist_rewrite.c */,
-				831E2A8327B4B2B2006F1C86 /* README.md */,
-				831E2A8627B4B2B2006F1C86 /* bass.h */,
-				831E2A8727B4B2B2006F1C86 /* sflist.h */,
-			);
-			name = BASS;
-			path = ../../../ThirdParty/BASS;
-			sourceTree = "<group>";
-		};
-		831E2A9127B4B2FA006F1C86 /* json */ = {
-			isa = PBXGroup;
-			children = (
-				831E2A9227B4B2FA006F1C86 /* json.c */,
-				831E2A9327B4B2FA006F1C86 /* json-builder.c */,
-				831E2A9427B4B2FA006F1C86 /* json.h */,
-				831E2A9527B4B2FA006F1C86 /* json-builder.h */,
-			);
-			name = json;
-			path = ../../../ThirdParty/json;
-			sourceTree = "<group>";
-		};
 		8346D3B62F867F4A00F3F5EC /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -353,12 +288,6 @@
 		83B0668C180D5668008E3612 /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				83EA54212A6A6CE200CD0580 /* libbass_mpc.dylib */,
-				8356BCC727B353CB0074E50C /* libbass.dylib */,
-				8356BCC827B353CB0074E50C /* libbassmidi.dylib */,
-				8356BCCB27B353E30074E50C /* libbassflac.dylib */,
-				8356BCCC27B353E30074E50C /* libbassopus.dylib */,
-				8356BCCD27B353E30074E50C /* libbasswv.dylib */,
 				83B0668F180D5668008E3612 /* AppKit.framework */,
 				83B0668E180D5668008E3612 /* CoreData.framework */,
 				83B0668D180D5668008E3612 /* Foundation.framework */,
@@ -373,12 +302,8 @@
 				83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */,
 				834A42BC287AFC7F00EB9D9B /* AudioChunk.h */,
 				8307D31E28607377000FF8EB /* SandboxBroker.h */,
-				831E2A9127B4B2FA006F1C86 /* json */,
-				831E2A7D27B4B2B2006F1C86 /* BASS */,
 				83A0CBC32E837AA5007C429D /* SCPlayer.mm */,
 				83A0CBC22E837AA5007C429D /* SCPlayer.h */,
-				8356BCC427B352620074E50C /* BMPlayer.cpp */,
-				8356BCC527B352620074E50C /* BMPlayer.h */,
 				83A09F6E1CFA8D6B001E7D2D /* MSPlayer.cpp */,
 				83A09F6D1CFA8D6B001E7D2D /* MSPlayer.h */,
 				83A09F661CFA883D001E7D2D /* interface.h */,
@@ -544,18 +469,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				831E2A8C27B4B2B2006F1C86 /* sflist_rewrite.c in Sources */,
-				831E2A9627B4B2FA006F1C86 /* json.c in Sources */,
-				8356BCC627B352620074E50C /* BMPlayer.cpp in Sources */,
 				83E973471C4378880007F413 /* AUPlayer.mm in Sources */,
 				83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */,
 				83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */,
-				831E2A8A27B4B2B2006F1C86 /* sflist.c in Sources */,
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
 				83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
 				83A09F6F1CFA8D6B001E7D2D /* MSPlayer.cpp in Sources */,
-				831E2A9727B4B2FA006F1C86 /* json-builder.c in Sources */,
 				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,
 				83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */,
