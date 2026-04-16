@@ -127,13 +127,13 @@ static SS_SoundBank *cache_open_font(const char *path) {
 		SS_File *bankFile = cog_file_open(path);
 		if(bankFile) {
 			bank = ss_soundbank_load(bankFile);
+			ss_file_close(bankFile);
 			if(bank) {
 				entry.bank = bank;
 				entry.ref_count = 1;
 			} else {
 				Cache_List->erase(path);
 			}
-			ss_file_close(bankFile);
 		} else {
 			Cache_List->erase(path);
 		}
