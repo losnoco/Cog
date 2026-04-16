@@ -247,7 +247,7 @@ void SpessaPlayer::send_event_time(uint32_t b, unsigned int time) {
 	event[1] = static_cast<uint8_t>(b >> 8);
 	event[2] = static_cast<uint8_t>(b >> 16);
 	unsigned port = (b >> 24) & 0x7F;
-	if(port > 2) port = 0;
+	if(port > 3) port = 0;
 	const unsigned channel = (b & 0x0F) + port * 16;
 	const unsigned command = (b & 0xF0) >> 4;
 	switch(command)

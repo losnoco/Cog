@@ -21,13 +21,16 @@ AUPlayer::AUPlayer()
 	samplerUnit[0] = NULL;
 	samplerUnit[1] = NULL;
 	samplerUnit[2] = NULL;
+	samplerUnit[3] = NULL;
 #ifdef AUPLAYERVIEW
 	samplerUI[0] = NULL;
 	samplerUI[1] = NULL;
 	samplerUI[2] = NULL;
+	samplerUI[3] = NULL;
 	samplerUIinitialized[0] = false;
 	samplerUIinitialized[1] = false;
 	samplerUIinitialized[2] = false;
+	samplerUIinitialized[3] = false;
 #endif
 	bufferList = NULL;
 	audioBuffer = NULL;
@@ -54,7 +57,7 @@ void AUPlayer::send_event_time(uint32_t b, unsigned int time) {
 	event[1] = (unsigned char)(b >> 8);
 	event[2] = (unsigned char)(b >> 16);
 	unsigned port = (b >> 24) & 0x7F;
-	if(port > 2) port = 0;
+	if(port > 3) port = 0;
 	if(samplerUnit[port])
 		MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], time);
 #ifdef AUPLAYERVIEW
@@ -68,7 +71,7 @@ void AUPlayer::send_event_time(uint32_t b, unsigned int time) {
 }
 
 void AUPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, unsigned int time) {
-	if(port > 2) port = 0;
+	if(port > 3) port = 0;
 	if(samplerUnit[port])
 		MusicDeviceSysEx(samplerUnit[port], data, (UInt32)size);
 	if(port == 0) {
@@ -76,6 +79,8 @@ void AUPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, un
 			MusicDeviceSysEx(samplerUnit[1], data, (UInt32)size);
 		if(samplerUnit[2])
 			MusicDeviceSysEx(samplerUnit[2], data, (UInt32)size);
+		if(samplerUnit[3])
+			MusicDeviceSysEx(samplerUnit[3], data, (UInt32)size);
 	}
 #ifdef AUPLAYERVIEW
 	if(port >= 0 && samplerUnit[port] && !samplerUIinitialized[port]) {
@@ -93,7 +98,7 @@ void AUPlayer::render(float *out, unsigned long count) {
 	while(count) {
 		UInt32 numberFrames = count > BLOCK_SIZE ? BLOCK_SIZE : (UInt32)count;
 
-		for(unsigned long i = 0; i < 3; ++i) {
+		for(unsigned long i = 0; i < 4; ++i) {
 			if(!samplerUnit[i]) continue;
 
 			AudioUnitRenderActionFlags ioActionFlags = 0;
@@ -127,6 +132,18 @@ void AUPlayer::render(float *out, unsigned long count) {
 }
 
 void AUPlayer::shutdown() {
+	if(samplerUnit[3]) {
+#ifdef AUPLAYERVIEW
+		if(samplerUI[3]) {
+			delete samplerUI[3];
+			samplerUI[3] = 0;
+			samplerUIinitialized[3] = false;
+		}
+#endif
+		AudioUnitUninitialize(samplerUnit[3]);
+		AudioComponentInstanceDispose(samplerUnit[3]);
+		samplerUnit[3] = NULL;
+	}
 	if(samplerUnit[2]) {
 #ifdef AUPLAYERVIEW
 		if(samplerUI[2]) {
@@ -254,7 +271,7 @@ bool AUPlayer::startup() {
 
 	OSStatus error;
 
-	for(int i = 0; i < 3; i++) {
+	for(int i = 0; i < 4; i++) {
 		if(!(port_mask & (1 << i))) continue;
 
 		UInt32 value = 1;
@@ -403,7 +420,7 @@ void AUPlayer::loadSoundFont(const char *name) {
 	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)name, strlen(name), false);
 
 	if(url) {
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 4; i++)
 			AudioUnitSetProperty(samplerUnit[i],
 			                     kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
 			                     0,
