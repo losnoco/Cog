@@ -23,12 +23,6 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/libraries.extracting
 
 # The project will unpack these before building, if necessary
-/ThirdParty/BASS/libbass.dylib
-/ThirdParty/BASS/libbass_mpc.dylib
-/ThirdParty/BASS/libbassflac.dylib
-/ThirdParty/BASS/libbassmidi.dylib
-/ThirdParty/BASS/libbassopus.dylib
-/ThirdParty/BASS/libbasswv.dylib
 /ThirdParty/avif/lib/libdav1d.a
 /ThirdParty/avif/lib/libyuv.a
 /ThirdParty/avif/lib/libavif.a
