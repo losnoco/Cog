@@ -238,7 +238,9 @@ static OSType getOSType(const char *in_) {
 	BOOL sauce = plugin && [plugin isEqualToString:@"sauce"];
 	if(sauce || !plugin || [plugin isEqualToString:@"Spessa"]) {
 		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
-			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
+			/* Use embedded bank by default, or if no bank has been specified */
+			globalSoundFontPath = [[NSBundle mainBundle] pathForResource:@"GeneralUserGS" ofType:@"sf3"];
+			plugin = @"Spessa";
 		}
 	}
 

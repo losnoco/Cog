@@ -167,11 +167,12 @@ struct MIDIPaneView: View {
                     }
                 }
                 FormRow("SoundFont:") {
-                    Text(prefs.soundFontPath.isEmpty ? "" : URL(fileURLWithPath: prefs.soundFontPath).lastPathComponent)
+                    Text(prefs.soundFontPath.isEmpty ? "GeneralUser GS (Embedded)" : URL(fileURLWithPath: prefs.soundFontPath).lastPathComponent)
                         .lineLimit(1)
                         .truncationMode(.middle)
                         .foregroundColor(.secondary)
                     Button("Choose…") { pickSoundFont() }
+					Button("Reset") { prefs.soundFontPath = "" }
                 }
             } header: {
                 Text("MIDI").bold()
