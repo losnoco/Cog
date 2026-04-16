@@ -35,18 +35,18 @@ class SCPlayer : public MIDIPlayer {
 	static void _lcd_callback(void *context, int port, const void *state, size_t size, uint64_t timestamp);
 	void lcd_callback(int port, const void *state, size_t size, uint64_t timestamp);
 
-	uint8_t *last_lcd_state[3];
+	uint8_t *last_lcd_state[4];
 
 	NSURL *_url;
-	uint64_t lcd_timestamp[3];
-	uint64_t lcd_last_timestamp[3];
+	uint64_t lcd_timestamp[4];
+	uint64_t lcd_last_timestamp[4];
 
-	struct sc55_state *_player[3];
+	struct sc55_state *_player[4];
 
 	NSOperationQueue *_workerQueue;
 
-	short tempBuffer[3][512 * 2];
-	float ftempBuffer[3][512 * 2];
+	short tempBuffer[4][512 * 2];
+	float ftempBuffer[4][512 * 2];
 
 	MIDIVisualizationController *midiController;
 };

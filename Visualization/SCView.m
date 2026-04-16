@@ -130,7 +130,7 @@ enum { _ChainCount = 3 };
 	id<MTLCommandBuffer> _commandBuffer;
 	id<MTLRenderCommandEncoder> _rce;
 
-	Texture *mtlTexture[3];
+	Texture *mtlTexture[4];
 	id<MTLSamplerState> mtlSampler;
 
 	id<MTLLibrary> _library;
@@ -373,7 +373,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	if(!mtlCmdQueue)
 		return NO;
 
-	for(size_t i = 0; i < 3; ++i)
+	for(size_t i = 0; i < 4; ++i)
 		mtlTexture[i] = [Texture new];
 	for(size_t i = 0; i < _ChainCount; ++i)
 		_chain[i] = [[MtlBufferChain alloc] initWithDevice:self.device blockLen:65536];
@@ -395,7 +395,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	if(!mtlSampler)
 		return NO;
 
-	for(size_t i = 0; i < 3; ++i)
+	for(size_t i = 0; i < 4; ++i)
 		mtlTexture[i].sampler = mtlSampler;
 
 	_library = [self.device newDefaultLibrary];
@@ -407,7 +407,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	if(![self _initDrawState])
 		return NO;
 
-	for(uint32_t i = 0; i < 3; ++i)
+	for(uint32_t i = 0; i < 4; ++i)
 		[self renderEmptyPanel:i];
 
 	uniforms.outputSize = simd_make_float2(initFrame.size.width, initFrame.size.height);
@@ -688,7 +688,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	if(!_commandBuffer)
 		return;
 
-	BOOL rendered[3] = {NO};
+	BOOL rendered[4] = {NO};
 
 	NSURL *currentTrack = [midiController currentTrack];
 	
@@ -696,6 +696,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		[self renderEmptyPanel:0];
 		[self renderEmptyPanel:1];
 		[self renderEmptyPanel:2];
+		[self renderEmptyPanel:3];
 	}
 
 	[self updateVisListening];
@@ -706,7 +707,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 	uint64_t currentTimestamp = [midiController currentTimestamp];
 
-	BOOL present[3] = {NO};
+	BOOL present[4] = {NO};
 	events = [midiController eventsForTimestamp:currentTimestamp];
 	for(MIDIEvent *event in events) {
 		if(![event isKindOfClass:[SCVisEvent class]]) continue;
@@ -719,11 +720,15 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 		rendered[event.which] = YES;
 		if(rendered[0] == present[0] &&
 		   rendered[1] == present[1] &&
-		   rendered[2] == present[2])
+		   rendered[2] == present[2] &&
+		   rendered[3] == present[3])
 			break;
 	}
 
-	if(rendered[2] && numDisplays < 3) {
+	if(rendered[3] && numDisplays < 4) {
+		numDisplays = 4;
+		[self resizeDisplay];
+	} else if(rendered[2] && numDisplays < 3) {
 		numDisplays = 3;
 		[self resizeDisplay];
 	} else if(rendered[1] && numDisplays < 2) {
@@ -738,6 +743,8 @@ _END:
 		[self drawPanel:1];
 	if(!rendered[2])
 		[self drawPanel:2];
+	if(!rendered[3])
+		[self drawPanel:3];
 
 	[_chain[_currentChain] commitRanges];
 	if(_rce) {

@@ -27,7 +27,7 @@ void MSPlayer::set_extp(unsigned int extp) {
 }
 
 void MSPlayer::send_event(uint32_t b) {
-	synth->midi_write(b);
+	synth->midi_write(b & 0xffffff); /* Truncate the port number */
 }
 
 void MSPlayer::send_sysex(const uint8_t* data, size_t size, size_t port) {

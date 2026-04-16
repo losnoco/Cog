@@ -2,7 +2,7 @@
 //  SCPlayer.cpp
 //  MIDI
 //
-//  Created by Christopher Snowhill on 9/23/25.
+//  Created by Christopher Snowhill on 9/22/25.
 //
 
 #include "SCPlayer.h"
@@ -22,15 +22,18 @@ SCPlayer::SCPlayer()
 	lcd_timestamp[0] = 0;
 	lcd_timestamp[1] = 0;
 	lcd_timestamp[2] = 0;
+	lcd_timestamp[3] = 0;
 
 	lcd_last_timestamp[0] = 0;
 	lcd_last_timestamp[1] = 0;
 	lcd_last_timestamp[2] = 0;
+	lcd_last_timestamp[3] = 0;
 
 	size_t size = sc55_lcd_state_size();
 	last_lcd_state[0] = new uint8_t[size];
 	last_lcd_state[1] = new uint8_t[size];
 	last_lcd_state[2] = new uint8_t[size];
+	last_lcd_state[3] = new uint8_t[size];
 	
 	_workerQueue = [NSOperationQueue new];
 
@@ -42,6 +45,7 @@ SCPlayer::~SCPlayer() {
 	delete[] last_lcd_state[0];
 	delete[] last_lcd_state[1];
 	delete[] last_lcd_state[2];
+	delete[] last_lcd_state[3];
 }
 
 void SCPlayer::setUrl(NSURL *url) {
@@ -54,7 +58,7 @@ void SCPlayer::send_event(uint32_t b) {
 	event[1] = static_cast<uint8_t>(b >> 8);
 	event[2] = static_cast<uint8_t>(b >> 16);
 	unsigned port = (b >> 24) & 0x7F;
-	if(port > 2) port = 0;
+	if(port > 3) port = 0;
 	if(_player[port]) {
 		const unsigned channel = (b & 0x0F) + port * 16;
 		const unsigned command = b & 0xF0;
@@ -70,6 +74,8 @@ void SCPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
 		sc55_write_uart(_player[1], data, (uint32_t)size);
 	if(_player[2])
 		sc55_write_uart(_player[2], data, (uint32_t)size);
+	if(_player[3])
+		sc55_write_uart(_player[3], data, (uint32_t)size);
 }
 
 // These are called from threads and post messages which are handled on the same thread
@@ -79,7 +85,7 @@ void SCPlayer::_lcd_callback(void *context, int port, const void *state, size_t 
 }
 
 void SCPlayer::lcd_callback(int port, const void *state, size_t size, uint64_t timestamp) {
-	assert(port >= 0 && port <= 2);
+	assert(port >= 0 && port <= 3);
 
 	if(timestamp - lcd_last_timestamp[port] >= 5) {
 		uint64_t lastTimestamp = lcd_last_timestamp[port];
@@ -104,7 +110,7 @@ void SCPlayer::render(float *out, unsigned long count) {
 		if(countToDo > 512)
 			countToDo = 512;
 
-		for(size_t i = 0; i < 3; ++i) {
+		for(size_t i = 0; i < 4; ++i) {
 			if(!_player[i]) continue;
 
 			NSOperation *op = [NSBlockOperation blockOperationWithBlock:^{
@@ -118,7 +124,7 @@ void SCPlayer::render(float *out, unsigned long count) {
 
 		[_workerQueue waitUntilAllOperationsAreFinished];
 
-		for(size_t i = 0; i < 3; ++i) {
+		for(size_t i = 0; i < 4; ++i) {
 			if(_player[i])
 				vDSP_vadd(ftempBuffer[i], 1, out, 1, out, 1, countToDo * 2);
 		}
@@ -129,6 +135,10 @@ void SCPlayer::render(float *out, unsigned long count) {
 }
 
 void SCPlayer::shutdown() {
+	if(_player[3]) {
+		sc55_free(_player[3]);
+		_player[3] = NULL;
+	}
 	if(_player[2]) {
 		sc55_free(_player[2]);
 		_player[2] = NULL;
@@ -185,9 +195,9 @@ static int loadRom(void *context, const char *name, uint8_t *buffer, uint32_t *s
 }
 
 bool SCPlayer::startup() {
-	if(_player[0] || _player[1] || _player[2]) return true;
+	if(_player[0] || _player[1] || _player[2] || _player[3]) return true;
 
-	for(size_t i = 0; i < 3; ++i) {
+	for(size_t i = 0; i < 4; ++i) {
 		if(!(port_mask & (1 << i))) continue;
 
 		_player[i] = sc55_init(i, GS_RESET, loadRom, NULL);

@@ -412,7 +412,7 @@ void midi_container::add_track( const midi_track & p_track )
             }
 
             channel += 16 * port_number;
-            channel %= 48;
+            channel %= 64;
             if ( m_form != 2 ) m_channel_mask[ 0 ] |= 1ULL << channel;
             else
             {
@@ -920,7 +920,7 @@ unsigned midi_container::get_channel_count( unsigned long subsong ) const
 {
     unsigned count = 0;
     uint64_t j = 1;
-    for (unsigned i = 0; i < 48; ++i, j <<= 1)
+    for (unsigned i = 0; i < 64; ++i, j <<= 1)
     {
         if ( m_channel_mask[ subsong ] & j ) ++count;
     }
@@ -1470,7 +1470,7 @@ unsigned midi_container::get_port_mask(const std::vector<midi_stream_event> & st
             size_t size;
             system_exclusive.get_entry(event & 0x7fffffff, data, size, port);
         }
-        if(port > 2)
+        if(port > 3)
             port = 0;
         mask |= 1 << port;
     }
