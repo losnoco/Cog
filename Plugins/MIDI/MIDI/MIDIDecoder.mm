@@ -9,7 +9,6 @@
 #import "MIDIDecoder.h"
 
 #import "AUPlayer.h"
-#import "BMPlayer.h"
 #import "MSPlayer.h"
 #import "SCPlayer.h"
 #import "SpessaPlayer.h"
@@ -32,11 +31,16 @@ static OSType getOSType(const char *in_) {
 
 @implementation MIDIDecoder
 
-+ (NSInteger)testExtensions:(NSString *)pathMinusExtension extensions:(NSArray *)extensionsToTest {
++ (NSInteger)testExtensions:(NSURL *)urlMinusExtension extensions:(NSArray *)extensionsToTest {
 	NSInteger i = 0;
 	for(NSString *extension in extensionsToTest) {
-		if([[NSFileManager defaultManager] fileExistsAtPath:[pathMinusExtension stringByAppendingPathExtension:extension]])
+		id audioSourceClass = NSClassFromString(@"AudioSource");
+		NSURL *url = [urlMinusExtension URLByAppendingPathExtension:extension];
+		id<CogSource> src = [audioSourceClass audioSourceForURL:url];
+		if([src open:url]) {
+			[src close];
 			return i;
+		}
 		++i;
 	}
 	return -1;
@@ -150,22 +154,20 @@ static OSType getOSType(const char *in_) {
 	if([[source url] isFileURL]) {
 		// Let's check for a SoundFont
 		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json", @"dls"];
-		NSString *filePath = [[source url] path];
-		NSString *fileNameBase = [filePath lastPathComponent];
-		filePath = [filePath stringByDeletingLastPathComponent];
-		soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
+		NSURL *fileUrl = [source url];
+		NSURL *soundFontUrl = fileUrl;
 		NSInteger extFound;
-		if((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0) {
-			fileNameBase = [fileNameBase stringByDeletingPathExtension];
-			soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
-			if((extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions]) < 0) {
-				fileNameBase = [filePath lastPathComponent];
-				soundFontPath = [filePath stringByAppendingPathComponent:fileNameBase];
-				extFound = [MIDIDecoder testExtensions:soundFontPath extensions:extensions];
+		if((extFound = [MIDIDecoder testExtensions:fileUrl extensions:extensions]) < 0) {
+			soundFontUrl = [fileUrl URLByDeletingPathExtension];
+			if((extFound = [MIDIDecoder testExtensions:soundFontUrl extensions:extensions]) < 0) {
+				NSURL *urlBase = [fileUrl URLByDeletingLastPathComponent];
+				NSString *dirName = [urlBase lastPathComponent];
+				soundFontUrl = [urlBase URLByAppendingPathComponent:dirName];
+				extFound = [MIDIDecoder testExtensions:soundFontUrl extensions:extensions];
 			}
 		}
 		if(extFound >= 0) {
-			soundFontPath = [soundFontPath stringByAppendingPathExtension:[extensions objectAtIndex:extFound]];
+			soundFontPath = [[soundFontUrl URLByAppendingPathExtension:[extensions objectAtIndex:extFound]] absoluteString];
 		} else
 			soundFontPath = @"";
 	}
@@ -216,8 +218,25 @@ static OSType getOSType(const char *in_) {
 	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 
 	// Then detect if we should force the DLSMusicSynth, which has its own bank
+	BOOL bassmidi = plugin && [plugin isEqualToString:@"BASSMIDI"];
+	if(bassmidi) {
+		plugin = @"Spessa";
+		[[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
+
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			NSAlert *alert = [NSAlert new];
+			[alert setMessageText:[[NSBundle mainBundle] localizedStringForKey:@"BassNoticeTitle" value:@"MIDI Synthesizer Notice" table:nil]];
+			[alert setInformativeText:[[NSBundle mainBundle] localizedStringForKey:@"BassNoticeText" value:@"The BASSMIDI synthesizer has been replaced by SpessaSynth, an open-source SoundFont engine with support for SF2, SF3, and DLS banks. Your existing SoundFont selection has been preserved. If you experience any differences in MIDI playback, please report them via the GitHub issue tracker." table:nil]];
+
+			[alert beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSModalResponse returnCode) {
+			}];
+		});
+
+		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"midiPluginBassNoMore"];
+	}
+
 	BOOL sauce = plugin && [plugin isEqualToString:@"sauce"];
-	if(sauce || !plugin || [plugin isEqualToString:@"BASSMIDI"] || [plugin isEqualToString:@"Spessa"]) {
+	if(sauce || !plugin || [plugin isEqualToString:@"Spessa"]) {
 		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
 			plugin = @"dls appl"; // Apple DLSMusicSynth if soundfont doesn't exist
 		}
@@ -228,22 +247,7 @@ static OSType getOSType(const char *in_) {
 	}
 
 	try {
-		if(!plugin || [plugin isEqualToString:@"BASSMIDI"]) {
-			bmplayer = new BMPlayer;
-
-			bool resamplingSinc = false;
-			NSString *resampling = [[NSUserDefaults standardUserDefaults] stringForKey:@"resampling"];
-			if([resampling isEqualToString:@"sinc"])
-				resamplingSinc = true;
-
-			bmplayer->setSincInterpolation(resamplingSinc);
-			bmplayer->setSampleRate(sampleRate);
-
-			if([soundFontPath length])
-				bmplayer->setFileSoundFont([soundFontPath UTF8String]);
-
-			player = bmplayer;
-		} else if([plugin isEqualToString:@"Spessa"]) {
+		if(!plugin || [plugin isEqualToString:@"Spessa"]) {
 			spessaplayer = new SpessaPlayer;
 
 			SS_InterpolationType interp = SS_INTERP_LINEAR;
@@ -364,11 +368,9 @@ static OSType getOSType(const char *in_) {
 		if(!repeatone && framesRead >= localTotalFrames)
 			return 0;
 
-		if((bmplayer || auplayer || spessaplayer) && !soundFontsAssigned) {
+		if((auplayer || spessaplayer) && !soundFontsAssigned) {
 			if(globalSoundFontPath != nil) {
-				if(bmplayer)
-					bmplayer->setSoundFont([globalSoundFontPath UTF8String]);
-				else if(spessaplayer)
+				if(spessaplayer)
 					spessaplayer->setSoundFont([globalSoundFontPath UTF8String]);
 				else if(auplayer)
 					auplayer->setSoundFont([globalSoundFontPath UTF8String]);

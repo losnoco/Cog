@@ -43,9 +43,7 @@ class SpessaPlayer : public MIDIPlayer {
 
 	double playerTime;
 
-	enum { outputMax = 128 };
-	float outputLeft[outputMax];
-	float outputRight[outputMax];
+	enum { outputMax = 128 }; /* Renderer is optimized for this for timing purposes */
 };
 
 #endif
