@@ -257,9 +257,10 @@ static OSType getOSType(const char *in_) {
 			if([resampling isEqualToString:@"none"] ||
 			   [resampling isEqualToString:@"blep"])
 				interp = SS_INTERP_NEAREST;
-			else if([resampling isEqualToString:@"cubic"] ||
-				[resampling isEqualToString:@"sinc"])
+			else if([resampling isEqualToString:@"cubic"])
 				interp = SS_INTERP_HERMITE;
+			else if([resampling isEqualToString:@"sinc"])
+				interp = SS_INTERP_SINC;
 
 			spessaplayer->setSampleRate(sampleRate);
 			spessaplayer->setInterpolation(interp);
