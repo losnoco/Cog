@@ -16,24 +16,6 @@
             "state" : "translated",
             "value" : "Text Cell"
           }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metin Hücresi"
-          }
         }
       }
     },
@@ -51,24 +33,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ruta"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ścieżka"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Путь"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yol"
           }
         }
       }
@@ -88,24 +52,6 @@
             "state" : "translated",
             "value" : "Aplicar"
           }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apply"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Применть"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uygula"
-          }
         }
       }
     },
@@ -123,24 +69,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplicar"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apply"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Применть"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uygula"
           }
         }
       }
@@ -160,24 +88,6 @@
             "state" : "translated",
             "value" : "Permitir acceso a carpetas seleccionadas"
           }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grant access to select folders"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Предоставление доступа к выбранным папкам"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grant access to select folders"
-          }
         }
       }
     },
@@ -195,24 +105,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplicar"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apply"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Применть"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uygula"
           }
         }
       }
@@ -232,24 +124,6 @@
             "state" : "translated",
             "value" : "Activado"
           }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "włączony"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Включено"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Etkin"
-          }
         }
       }
     },
@@ -268,24 +142,6 @@
             "state" : "translated",
             "value" : "Table View Cell"
           }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tablo Görünümü Hücresi"
-          }
         }
       }
     },
@@ -298,24 +154,6 @@
             "state" : "translated",
             "value" : "w2T-DH-7x9.title"
           }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metin Hücresi"
-          }
         }
       },
       "shouldTranslate" : false
@@ -323,26 +161,6 @@
     "xFm-ed-yBb.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"xFm-ed-yBb\";",
       "extractionState" : "manual",
-      "localizations" : {
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tablo Görünümü Hücresi"
-          }
-        }
-      },
       "shouldTranslate" : false
     }
   },
