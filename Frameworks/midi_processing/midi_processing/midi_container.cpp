@@ -1499,7 +1499,6 @@ void midi_container::assign_embedded_bank( const uint8_t *bank, size_t size, uin
 }
 
 uint16_t midi_container::scan_for_bank_offset( void ) {
-	int bank_offset = -1;
 	for ( auto it = m_tracks.begin(); it != m_tracks.end(); ++it ) {
 		for ( int i = 0, j = it->get_count(); i < j; ++i ) {
 			midi_event &e = (*it)[i];
