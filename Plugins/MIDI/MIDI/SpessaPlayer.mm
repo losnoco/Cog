@@ -223,6 +223,7 @@ SpessaPlayer::SpessaPlayer()
 : MIDIPlayer() {
 	_synth = nullptr;
 	interp = SS_INTERP_LINEAR;
+	fileBankOffset = 0;
 
 	if(!g_initializer.initialize()) throw std::runtime_error("Unable to initialize SpessaSynth");
 }
@@ -278,6 +279,10 @@ void SpessaPlayer::render(float *out, unsigned long count) {
 void SpessaPlayer::setSoundFont(const char *in) {
 	sSoundFontName = in;
 	shutdown();
+}
+
+void SpessaPlayer::setFileBankOffset(uint16_t bank_offset) {
+	fileBankOffset = bank_offset;
 }
 
 void SpessaPlayer::setFileSoundFont(const char *in) {
@@ -348,7 +353,7 @@ bool SpessaPlayer::startup() {
 	if (_embeddedBank && !ss_processor_load_soundbank(_synth, _embeddedBank, "embeddedBank", bankOffset))
 		return false;
 
-	if (fileBank && !ss_processor_load_soundbank(_synth, fileBank, "fileBank", 0))
+	if (fileBank && !ss_processor_load_soundbank(_synth, fileBank, "fileBank", fileBankOffset))
 		return false;
 	if (globalBank && !ss_processor_load_soundbank(_synth, globalBank, "globalBank", 0))
 		return false;

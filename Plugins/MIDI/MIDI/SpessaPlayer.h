@@ -15,6 +15,7 @@ class SpessaPlayer : public MIDIPlayer {
 
 	// configuration
 	void setSoundFont(const char* in);
+	void setFileBankOffset(uint16_t bank_offset);
 	void setFileSoundFont(const char* in);
 	void setEmbeddedBank(const uint8_t *embedded_bank, size_t bank_size, uint16_t bank_offset);
 
@@ -34,6 +35,7 @@ class SpessaPlayer : public MIDIPlayer {
 
 	std::vector<SS_SoundBank *> _banks;
 	SS_Processor* _synth;
+	uint16_t fileBankOffset;
 	uint16_t bankOffset;
 	std::vector<uint8_t> embeddedBank;
 	std::string sSoundFontName;
