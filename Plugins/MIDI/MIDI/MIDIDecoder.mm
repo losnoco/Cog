@@ -274,8 +274,6 @@ static OSType getOSType(const char *in_) {
 				}
 			}
 
-			spessaplayer->setFileBankOffset(midi_file.scan_for_bank_offset());
-
 			if([soundFontPath length])
 				spessaplayer->setFileSoundFont([soundFontPath UTF8String]);
 
