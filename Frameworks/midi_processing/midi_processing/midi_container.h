@@ -270,9 +270,9 @@ public:
 
     static void encode_delta( std::vector<uint8_t> & p_out, unsigned long delta );
 
-    bool get_embedded_bank( const uint8_t ** out, size_t * size, uint16_t *bank_offset );
+    bool get_embedded_bank( const uint8_t ** out, size_t * size, uint16_t *bank_offset ) const;
     void assign_embedded_bank( const uint8_t *bank, size_t size, uint16_t bank_offset );
-	uint16_t scan_for_bank_offset( void );
+    uint16_t scan_for_bank_offset( void ) const;
 };
 
 #endif
