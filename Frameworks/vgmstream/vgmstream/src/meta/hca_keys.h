@@ -1658,6 +1658,8 @@ static const hcakey_info hcakey_list[] = {
     // Outrankers (Android)
     {8681634889512614279},      // 787B5CEF4B097987
 
+    // Nekopara Sekai Connect (Android)
+    {1624839752127897451},      // 168C972552845F00
 };
 
 #endif
