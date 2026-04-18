@@ -383,7 +383,7 @@ static const char* extension_list[] = {
     "mps", //txth/reserved [Scandal (PS2)]
     "ms",
     "msa",
-    "msb",
+    "msh",
     "msd",
     "mse",
     "msf",

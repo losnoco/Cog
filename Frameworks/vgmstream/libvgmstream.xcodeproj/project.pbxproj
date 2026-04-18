@@ -20,6 +20,10 @@
 		83031EDB243C510500C3F3E0 /* xnb_lz4mg.h in Headers */ = {isa = PBXBuildFile; fileRef = 83031ED6243C510400C3F3E0 /* xnb_lz4mg.h */; };
 		83031EDC243C510500C3F3E0 /* vid1.c in Sources */ = {isa = PBXBuildFile; fileRef = 83031ED7243C510400C3F3E0 /* vid1.c */; };
 		83031EDD243C510500C3F3E0 /* xnb_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83031ED8243C510500C3F3E0 /* xnb_streamfile.h */; };
+		8304965F2F930C67001901ED /* play_state.h in Headers */ = {isa = PBXBuildFile; fileRef = 8304965D2F930C67001901ED /* play_state.h */; };
+		830496602F930C67001901ED /* play_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 8304965C2F930C67001901ED /* play_config.h */; };
+		830496612F930C67001901ED /* tags.h in Headers */ = {isa = PBXBuildFile; fileRef = 8304965E2F930C67001901ED /* tags.h */; };
+		830496632F930CDD001901ED /* plug.c in Sources */ = {isa = PBXBuildFile; fileRef = 830496622F930CDD001901ED /* plug.c */; };
 		8306B0A320984552000302D4 /* blocked_ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 8306B0882098454C000302D4 /* blocked_ast.c */; };
 		8306B0A420984552000302D4 /* segmented.c in Sources */ = {isa = PBXBuildFile; fileRef = 8306B0892098454D000302D4 /* segmented.c */; };
 		8306B0A520984552000302D4 /* blocked_ea_wve_au00.c in Sources */ = {isa = PBXBuildFile; fileRef = 8306B08A2098454D000302D4 /* blocked_ea_wve_au00.c */; };
@@ -973,6 +977,10 @@
 		83031ED6243C510400C3F3E0 /* xnb_lz4mg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xnb_lz4mg.h; sourceTree = "<group>"; };
 		83031ED7243C510400C3F3E0 /* vid1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vid1.c; sourceTree = "<group>"; };
 		83031ED8243C510500C3F3E0 /* xnb_streamfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xnb_streamfile.h; sourceTree = "<group>"; };
+		8304965C2F930C67001901ED /* play_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = play_config.h; sourceTree = "<group>"; };
+		8304965D2F930C67001901ED /* play_state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = play_state.h; sourceTree = "<group>"; };
+		8304965E2F930C67001901ED /* tags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tags.h; sourceTree = "<group>"; };
+		830496622F930CDD001901ED /* plug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = plug.c; sourceTree = "<group>"; };
 		8306B0882098454C000302D4 /* blocked_ast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_ast.c; sourceTree = "<group>"; };
 		8306B0892098454D000302D4 /* segmented.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = segmented.c; sourceTree = "<group>"; };
 		8306B08A2098454D000302D4 /* blocked_ea_wve_au00.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocked_ea_wve_au00.c; sourceTree = "<group>"; };
@@ -2068,7 +2076,9 @@
 				834F7EAF2C70A786003AC386 /* mixing.c */,
 				834F7EAD2C70A786003AC386 /* mixing_commands.c */,
 				834F7EAE2C70A786003AC386 /* mixing_macros.c */,
+				8304965C2F930C67001901ED /* play_config.h */,
 				834F7EA42C70A786003AC386 /* play_config.c */,
+				8304965D2F930C67001901ED /* play_state.h */,
 				835DF7042C79AED70008814A /* play_state.c */,
 				834F7EB22C70A786003AC386 /* plugins.h */,
 				834F7EB12C70A786003AC386 /* plugins.c */,
@@ -2089,6 +2099,7 @@
 				834F7EBC2C70A786003AC386 /* streamfile_multifile.c */,
 				834F7EBD2C70A786003AC386 /* streamfile_stdio.c */,
 				834F7EBE2C70A786003AC386 /* streamfile_wrap.c */,
+				8304965E2F930C67001901ED /* tags.h */,
 				834F7EBF2C70A786003AC386 /* tags.c */,
 			);
 			path = base;
@@ -2558,6 +2569,7 @@
 				83D20076248DDB770048BD24 /* pcm_success.c */,
 				836F6E7918BDC2180095E648 /* pdt.c */,
 				834FBCE926BBC7E50095647F /* piff_tpcm.c */,
+				830496622F930CDD001901ED /* plug.c */,
 				836F6E8B18BDC2180095E648 /* pona.c */,
 				836F6E8C18BDC2180095E648 /* pos.c */,
 				83CBF53A2D46314900AA2D75 /* pphd.c */,
@@ -2897,6 +2909,9 @@
 				83CBF5372D46309100AA2D75 /* ka1a_dec_data.h in Headers */,
 				833E82CF2A2856B200CD0580 /* reader_get_nibbles.h in Headers */,
 				833E82D12A2856B200CD0580 /* reader_put.h in Headers */,
+				8304965F2F930C67001901ED /* play_state.h in Headers */,
+				830496602F930C67001901ED /* play_config.h in Headers */,
+				830496612F930C67001901ED /* tags.h in Headers */,
 				833E82D62A2856E500CD0580 /* vgmstream_types.h in Headers */,
 				834F7ED92C70A786003AC386 /* sbuf.h in Headers */,
 				834F7ED82C70A786003AC386 /* render.h in Headers */,
@@ -3481,6 +3496,7 @@
 				834FE10D215C79ED000A5D3D /* vag.c in Sources */,
 				834F7EE02C70A786003AC386 /* streamfile_multifile.c in Sources */,
 				834F7D0C2C7085EB003AC386 /* ea_eaac_sbr_harmony.c in Sources */,
+				830496632F930CDD001901ED /* plug.c in Sources */,
 				8350C0551E071881009E0A93 /* xma.c in Sources */,
 				837CEAF523487F2C00E62A4A /* ubi_hx.c in Sources */,
 				836F704218BDC2190095E648 /* sts.c in Sources */,

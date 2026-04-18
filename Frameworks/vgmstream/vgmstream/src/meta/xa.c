@@ -41,8 +41,9 @@ VGMSTREAM* init_vgmstream_xa(STREAMFILE* sf) {
      * .no: Incredible Crisis (PS1)
      * (extensionless): bigfiles [Castlevania: Symphony of the Night (PS1)]
      * .xai: Quake II (PS1)
-     * .ixa: Wild Arms (PS1) */
-    if (!check_extensions(sf,"xa,str,pxa,grn,an2,no,,xai,ixa"))
+     * .ixa: Wild Arms (PS1)
+     * .xap: Digimon Rumble Arena (PS1) */
+    if (!check_extensions(sf,"xa,str,pxa,grn,an2,no,,xai,ixa,xap"))
         return NULL;
 
     /* Proper XA comes in raw (BIN 2352 mode2/form2) CD sectors, that contain XA subheaders.
@@ -216,7 +217,7 @@ fail:
 }
 
 
-#define XA_MAX_CHANNELS 32 /* usually 08-16, seen ~24 in Langrisser V (PS1) */
+#define XA_MAX_CHANNELS 128 /* usually 08-16, seen ~120 in Digimon Rumble Arena (PS1) */
 
 typedef struct {
    uint32_t info;
@@ -282,6 +283,12 @@ static int xa_read_subsongs(STREAMFILE* sf, int target_subsong, uint32_t start, 
         bool is_audio = !(xa_submode & 0x08) && (xa_submode & 0x04) && !(xa_submode & 0x02);
         bool is_eof = (xa_submode & 0x80);
         bool is_target = false;
+
+        // padding/silent sectors [Yu-Gi-Oh! Forbidden Memories (PS1)]
+        if (xa_chan == 0xFF) {
+            offset += sector_size;
+            continue;
+        }
 
         if (xa_chan >= XA_MAX_CHANNELS) {
             VGM_LOG("XA: too many channels: %x\n", xa_chan);
