@@ -249,8 +249,14 @@ void SpessaPlayer::send_event_time(uint32_t b, unsigned int time) {
 	event[2] = static_cast<uint8_t>(b >> 16);
 	unsigned port = (b >> 24) & 0x7F;
 	if(port > 3) port = 0;
-	const unsigned channel = (b & 0x0F) + port * 16;
+	const unsigned channel = (b & 0x0F);
 	const unsigned command = (b & 0xF0) >> 4;
+	{
+		uint8_t syx[2];
+		syx[0] = 0xf5;
+		syx[1] = (uint8_t)port + 1;
+		ss_processor_sysex(_synth, syx, 2, t);
+	}
 	switch(command)
 	{
 		case 8: ss_processor_note_off(_synth, channel, event[1], t); break;
@@ -267,6 +273,10 @@ void SpessaPlayer::send_event_time(uint32_t b, unsigned int time) {
 void SpessaPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, unsigned int time) {
 	if (size < 2 || data[0] != 0xF0 || data[size - 1] != 0xF7) return;
 	double t = playerTime + ((double)time) / dSampleRate;
+	uint8_t syx[2];
+	syx[0] = 0xf5;
+	syx[1] = (uint8_t)port + 1;
+	ss_processor_sysex(_synth, syx, 2, t);
 	ss_processor_sysex(_synth, data + 1, size - 2, t);
 }
 
