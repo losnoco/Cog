@@ -18,6 +18,7 @@ SCPlayer::SCPlayer()
 	_player[0] = NULL;
 	_player[1] = NULL;
 	_player[2] = NULL;
+	_player[3] = NULL;
 
 	lcd_timestamp[0] = 0;
 	lcd_timestamp[1] = 0;
