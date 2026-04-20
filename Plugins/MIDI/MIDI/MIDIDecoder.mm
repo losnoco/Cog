@@ -15,13 +15,17 @@
 
 #import "Logging.h"
 
-#import <midi_processing/midi_processor.h>
+#import <spessasynth_core/file.h>
+#import <spessasynth_core/midi.h>
 
 #import "PlaylistController.h"
 
 #import "SandboxBroker.h"
 
 #import <dlfcn.h>
+
+#import <cmath>
+#import <vector>
 
 static OSType getOSType(const char *in_) {
 	const unsigned char *in = (const unsigned char *)in_;
@@ -46,8 +50,25 @@ static OSType getOSType(const char *in_) {
 	return -1;
 }
 
+static double subsong_start_seconds(const SS_MIDIFile *midi, size_t subsong) {
+	if(!midi || midi->format != 2 || subsong == 0) return 0.0;
+	if(subsong >= midi->track_count) return 0.0;
+	const SS_MIDITrack *prev = &midi->tracks[subsong - 1];
+	if(prev->event_count == 0) return 0.0;
+	return ss_midi_ticks_to_seconds(midi, prev->events[prev->event_count - 1].ticks);
+}
+
+static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
+	if(!midi) return 0.0;
+	if(midi->format != 2)
+		return midi->duration;
+	if(subsong >= midi->track_count) return midi->duration;
+	const SS_MIDITrack *tr = &midi->tracks[subsong];
+	if(tr->event_count == 0) return subsong_start_seconds(midi, subsong);
+	return ss_midi_ticks_to_seconds(midi, tr->events[tr->event_count - 1].ticks);
+}
+
 - (BOOL)open:(id<CogSource>)s {
-	// We need file-size to use midi_processing
 	if(![s seekable]) {
 		return NO;
 	}
@@ -61,8 +82,8 @@ static OSType getOSType(const char *in_) {
 
 	source = s;
 
-	double loopStart = (double) ~0UL;
-	double loopEnd = (double) ~0UL;
+	double loopStart = (double)~0UL;
+	double loopEnd = (double)~0UL;
 
 	try {
 		std::vector<uint8_t> file_data;
@@ -71,32 +92,52 @@ static OSType getOSType(const char *in_) {
 		size_t size = [s tell];
 		[s seek:0 whence:SEEK_SET];
 		file_data.resize(size);
-		[s read:&file_data[0] amount:size];
-
-		if(!midi_processor::process_file(file_data, [[[s url] pathExtension] UTF8String], midi_file))
+		if([s read:file_data.data() amount:size] != (long)size)
 			return NO;
 
-		if(midi_file.get_timestamp_end(track_num) <= 0.0)
+		SS_File *file = ss_file_open_from_memory(file_data.data(), file_data.size(), false);
+		if(!file)
 			return NO;
 
-		track_num = [[[s url] fragment] intValue]; // What if theres no fragment? Assuming we get 0.
+		midi_file = ss_midi_load(file, [[[s url] lastPathComponent] UTF8String]);
+		ss_file_close(file);
+		if(!midi_file)
+			return NO;
 
-		midi_file.scan_for_loops(true, true, true, true);
+		if(midi_file->duration <= 0.0) {
+			ss_midi_free(midi_file);
+			midi_file = NULL;
+			return NO;
+		}
 
-		framesLength = midi_file.get_timestamp_end(track_num, true);
+		track_num = [[[s url] fragment] intValue]; /* 0 when absent */
 
-		loopStart = midi_file.get_timestamp_loop_start(track_num, true);
-		loopEnd = midi_file.get_timestamp_loop_end(track_num, true);
+		double subsong_begin = subsong_start_seconds(midi_file, (size_t)track_num);
+		double subsong_end = subsong_end_seconds(midi_file, (size_t)track_num);
+		framesLength = subsong_end - subsong_begin;
+
+		if(midi_file->loop.end > 0) {
+			loopStart = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.start);
+			loopEnd = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.end);
+			/* Express loop boundaries relative to subsong start. */
+			loopStart -= subsong_begin;
+			loopEnd -= subsong_begin;
+			if(loopStart < 0.0) loopStart = 0.0;
+			if(loopEnd < 0.0) loopEnd = 0.0;
+		}
 	} catch (std::exception &e) {
 		ALog(@"Exception caught while reading MIDI file: %s", e.what());
+		if(midi_file) {
+			ss_midi_free(midi_file);
+			midi_file = NULL;
+		}
 		return NO;
 	}
 
-	if(loopStart == (double) ~0UL) loopStart = 0;
-	if(loopEnd == (double) ~0UL) loopEnd = framesLength;
+	if(loopStart == (double)~0UL) loopStart = 0;
+	if(loopEnd == (double)~0UL) loopEnd = framesLength;
 
 	if(loopStart != 0 || loopEnd != framesLength) {
-		// two loops and a fade
 		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 		if(defaultFade < 0.0) {
 			defaultFade = 0.0;
@@ -110,7 +151,6 @@ static OSType getOSType(const char *in_) {
 		isLooped = NO;
 	}
 
-	// This plugin overrides the sample rate, and this requires loading the ROM set
 	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 	if([plugin isEqualToString:@"NukeSc55"]) {
 		sampleRate = SCPlayer::sampleRate();
@@ -152,7 +192,6 @@ static OSType getOSType(const char *in_) {
 	NSString *soundFontPath = @"";
 
 	if([[source url] isFileURL]) {
-		// Let's check for a SoundFont
 		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json", @"dls"];
 		NSURL *fileUrl = [source url];
 		NSURL *soundFontUrl = fileUrl;
@@ -209,7 +248,6 @@ static OSType getOSType(const char *in_) {
 		sbHandle = NULL;
 	}
 
-	// First detect if soundfont has gone AWOL
 	if(![[NSFileManager defaultManager] fileExistsAtPath:globalSoundFontPath]) {
 		globalSoundFontPath = nil;
 		[[NSUserDefaults standardUserDefaults] setValue:globalSoundFontPath forKey:@"soundFontPath"];
@@ -217,7 +255,6 @@ static OSType getOSType(const char *in_) {
 
 	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
 
-	// Then detect if we should force the DLSMusicSynth, which has its own bank
 	BOOL bassmidi = plugin && [plugin isEqualToString:@"BASSMIDI"];
 	if(bassmidi) {
 		plugin = @"Spessa";
@@ -238,13 +275,12 @@ static OSType getOSType(const char *in_) {
 	BOOL sauce = plugin && [plugin isEqualToString:@"sauce"];
 	if(sauce || !plugin || [plugin isEqualToString:@"Spessa"]) {
 		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
-			/* Use embedded bank by default, or if no bank has been specified */
 			globalSoundFontPath = [[NSBundle mainBundle] pathForResource:@"GeneralUserGS" ofType:@"sf3"];
 			plugin = @"Spessa";
 		}
 	}
 
-	if (midi_file.get_embedded_bank(NULL, NULL, NULL)) {
+	if(midi_file && midi_file->embedded_soundbank && midi_file->embedded_soundbank_size > 0) {
 		plugin = @"Spessa";
 	}
 
@@ -264,15 +300,6 @@ static OSType getOSType(const char *in_) {
 
 			spessaplayer->setSampleRate(sampleRate);
 			spessaplayer->setInterpolation(interp);
-
-			const uint8_t *embedded_bank = NULL;
-			size_t bank_size = 0;
-			uint16_t bank_offset = 0;
-			if (midi_file.get_embedded_bank(&embedded_bank, &bank_size, &bank_offset)) {
-				if (embedded_bank && bank_size) {
-					spessaplayer->setEmbeddedBank(embedded_bank, bank_size, bank_offset);
-				}
-			}
 
 			if([soundFontPath length])
 				spessaplayer->setFileSoundFont([soundFontPath UTF8String]);
@@ -341,10 +368,11 @@ static OSType getOSType(const char *in_) {
 		player->setFilterMode(mode, false);
 
 		unsigned int loop_mode = framesFade > 0.0 ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
-		unsigned int clean_flags = midi_container::clean_flag_emidi;
 
-		if(!player->Load(midi_file, track_num, loop_mode, clean_flags))
+		if(!player->Load(midi_file, (unsigned)track_num, loop_mode))
 			return NO;
+
+		midi_file = NULL; /* Sequencer will free it */
 	} catch (std::exception &e) {
 		ALog(@"Exception caught while loading MIDI file into player: %s", e.what());
 		return NO;
@@ -355,14 +383,14 @@ static OSType getOSType(const char *in_) {
 
 - (AudioChunk *)readAudio {
 	BOOL repeatone = IsRepeatOneSet();
-	long localFramesLength = (long) framesLength;
-	long localTotalFrames = (long) totalFrames;
+	long localFramesLength = (long)framesLength;
+	long localTotalFrames = (long)totalFrames;
 
 	if(!player) {
 		if(![self initDecoder])
 			return nil;
 	}
-	
+
 	double streamTimestamp = 0.0;
 
 	try {
@@ -459,6 +487,14 @@ static OSType getOSType(const char *in_) {
 - (void)close {
 	delete player;
 	player = NULL;
+	auplayer = NULL;
+	scplayer = NULL;
+	spessaplayer = NULL;
+
+	if(midi_file) {
+		ss_midi_free(midi_file);
+		midi_file = NULL;
+	}
 
 	if(sbHandle) {
 		id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");

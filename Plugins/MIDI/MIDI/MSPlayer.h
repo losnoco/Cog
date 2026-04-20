@@ -9,33 +9,33 @@ class midisynth;
 
 class MSPlayer : public MIDIPlayer {
 	public:
-	// zero variables
 	MSPlayer();
 
-	// close, unload
 	virtual ~MSPlayer();
 
 	void set_synth(unsigned int synth);
 	void set_bank(unsigned int bank);
 	void set_extp(unsigned int extp);
 
-	typedef void (*enum_callback)(unsigned int synth, unsigned int bank, const char* name);
+	typedef void (*enum_callback)(unsigned int synth, unsigned int bank, const char *name);
 
 	void enum_synthesizers(enum_callback callback);
 
 	protected:
-	virtual void send_event(uint32_t b);
-	virtual void send_sysex(const uint8_t* data, size_t size, size_t port);
-	virtual void render(float* out, unsigned long count);
-
-	virtual void shutdown();
 	virtual bool startup();
+	virtual void shutdown();
+	virtual void renderChunk(float *out, uint32_t sample_count);
+	virtual void dispatchMidi(const uint8_t *data, size_t length,
+	                          uint32_t sample_offset, unsigned port);
+	virtual uint32_t getChunkSize() const {
+		return 256;
+	}
 
 	private:
 	unsigned int synth_id;
 	unsigned int bank_id;
 	unsigned int extp;
-	midisynth* synth;
+	midisynth *synth;
 };
 
 #endif

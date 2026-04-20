@@ -7,10 +7,11 @@
 #include <string>
 
 #include <chrono>
+#include <cmath>
+#include <list>
 #include <map>
 #include <mutex>
 #include <thread>
-#include <list>
 
 #define _countof(arr) (sizeof(arr) / sizeof((arr)[0]))
 
@@ -79,13 +80,17 @@ struct Spessa_Cached_SoundFont {
 	unsigned long ref_count;
 	std::chrono::steady_clock::time_point time_released;
 	SS_SoundBank *bank;
-	Spessa_Cached_SoundFont() : bank(nullptr) { }
+	Spessa_Cached_SoundFont()
+	: bank(nullptr) {
+	}
 	Spessa_Cached_SoundFont(const Spessa_Cached_SoundFont &in) {
 		ref_count = in.ref_count;
 		time_released = in.time_released;
 		bank = in.bank;
 	}
-	Spessa_Cached_SoundFont(SS_SoundBank *in) : bank(in), ref_count(1) { }
+	Spessa_Cached_SoundFont(SS_SoundBank *in)
+	: bank(in), ref_count(1) {
+	}
 };
 
 static std::mutex *Cache_Lock;
@@ -232,60 +237,6 @@ SpessaPlayer::~SpessaPlayer() {
 	shutdown();
 }
 
-
-void SpessaPlayer::send_event(uint32_t b) {
-	send_event_time(b, 0);
-}
-
-void SpessaPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
-	send_sysex_time(data, size, port, 0);
-}
-
-void SpessaPlayer::send_event_time(uint32_t b, unsigned int time) {
-	double t = playerTime + ((double)time) / dSampleRate;
-	uint8_t event[3];
-	event[0] = static_cast<uint8_t>(b);
-	event[1] = static_cast<uint8_t>(b >> 8);
-	event[2] = static_cast<uint8_t>(b >> 16);
-	unsigned port = (b >> 24) & 0x7F;
-	if(port > 3) port = 0;
-	const unsigned channel = (b & 0x0F);
-	const unsigned command = (b & 0xF0) >> 4;
-	{
-		uint8_t syx[2];
-		syx[0] = 0xf5;
-		syx[1] = (uint8_t)port + 1;
-		ss_processor_sysex(_synth, syx, 2, t);
-	}
-	switch(command)
-	{
-		case 8: ss_processor_note_off(_synth, channel, event[1], t); break;
-		case 9: ss_processor_note_on(_synth, channel, event[1], event[2], t); break;
-		case 10: ss_processor_poly_pressure(_synth, channel, event[1], event[2], t); break;
-		case 11: ss_processor_control_change(_synth, channel, event[1], event[2], t); break;
-		case 12: ss_processor_program_change(_synth, channel, event[1], t); break;
-		case 13: ss_processor_channel_pressure(_synth, channel, event[1], t); break;
-		case 14: ss_processor_pitch_wheel(_synth, channel, ((unsigned)(event[2] & 0x7F) << 7) + (unsigned)(event[1] & 0x7F), -1, t); break;
-		default: break;
-	}
-}
-
-void SpessaPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, unsigned int time) {
-	if (size < 2 || data[0] != 0xF0 || data[size - 1] != 0xF7) return;
-	double t = playerTime + ((double)time) / dSampleRate;
-	uint8_t syx[2];
-	syx[0] = 0xf5;
-	syx[1] = (uint8_t)port + 1;
-	ss_processor_sysex(_synth, syx, 2, t);
-	ss_processor_sysex(_synth, data + 1, size - 2, t);
-}
-
-void SpessaPlayer::render(float *out, unsigned long count) {
-	const double timeAdd = (double)count / dSampleRate;
-	ss_processor_render_interleaved(_synth, out, (uint32_t)count);
-	playerTime += timeAdd;
-}
-
 void SpessaPlayer::setSoundFont(const char *in) {
 	sSoundFontName = in;
 	shutdown();
@@ -300,79 +251,67 @@ void SpessaPlayer::setFileSoundFont(const char *in) {
 	shutdown();
 }
 
-void SpessaPlayer::setEmbeddedBank(const uint8_t *embedded_bank, size_t bank_size, uint16_t bank_offset) {
-	embeddedBank.assign(embedded_bank, embedded_bank + bank_size);
-	bankOffset = bank_offset;
-}
-
-void SpessaPlayer::setInterpolation(SS_InterpolationType interp)
-{
+void SpessaPlayer::setInterpolation(SS_InterpolationType interp) {
 	this->interp = interp;
 	shutdown();
 }
 
 void SpessaPlayer::shutdown() {
-	if (_synth) {
+	if(_synth) {
 		ss_processor_remove_soundbank(_synth, "fileBank", true);
 		ss_processor_remove_soundbank(_synth, "globalBank", true);
-		ss_processor_free(_synth); _synth = nullptr;
+		ss_processor_free(_synth);
+		_synth = nullptr;
 	}
-	for (auto it = _banks.begin(); it != _banks.end(); ++it)
+	for(auto it = _banks.begin(); it != _banks.end(); ++it)
 		cache_close_font(*it);
 	_banks.resize(0);
+	initialized = false;
 }
 
 bool SpessaPlayer::startup() {
 	if(_synth) return true;
 
-	SS_SoundBank* fileBank = nullptr;
-	if (sFileSoundFontName.length())
+	SS_SoundBank *fileBank = nullptr;
+	if(sFileSoundFontName.length())
 		fileBank = cache_open_font(sFileSoundFontName.c_str());
 
-	SS_SoundBank* globalBank = nullptr;
-	if (sSoundFontName.length())
+	SS_SoundBank *globalBank = nullptr;
+	if(sSoundFontName.length())
 		globalBank = cache_open_font(sSoundFontName.c_str());
 
-	if (!fileBank && !globalBank) {
+	const bool has_embedded = midi_file && midi_file->embedded_soundbank &&
+	                          midi_file->embedded_soundbank_size > 0;
+
+	if(!fileBank && !globalBank && !has_embedded) {
 		return false;
 	}
 
-	SS_SoundBank* _embeddedBank = NULL;
-	if (embeddedBank.size()) {
-		SS_File *embedFile = ss_file_open_from_memory(embeddedBank.data(), embeddedBank.size(), false);
-		if(embedFile) {
-			_embeddedBank = ss_soundbank_load(embedFile);
-			ss_file_close(embedFile);
-		}
-	}
-
-	if (fileBank) _banks.push_back(fileBank);
-	if (globalBank) _banks.push_back(globalBank);
+	if(fileBank) _banks.push_back(fileBank);
+	if(globalBank) _banks.push_back(globalBank);
 
 	SS_ProcessorOptions opts;
 	opts.enable_effects = true;
 	opts.voice_cap = 512;
 	opts.interpolation = interp;
 
-	_synth = ss_processor_create(round(dSampleRate), &opts);
+	_synth = ss_processor_create((uint32_t)std::lround(dSampleRate), &opts);
 	if(!_synth) {
 		return false;
 	}
 
-	/* This bank will be owned */
-	if (_embeddedBank && !ss_processor_load_soundbank(_synth, _embeddedBank, "embeddedBank", bankOffset))
+	if(fileBank && !ss_processor_load_soundbank(_synth, fileBank, "fileBank", fileBankOffset, false))
+		return false;
+	if(globalBank && !ss_processor_load_soundbank(_synth, globalBank, "globalBank", 0, false))
 		return false;
 
-	if (fileBank && !ss_processor_load_soundbank(_synth, fileBank, "fileBank", fileBankOffset))
-		return false;
-	if (globalBank && !ss_processor_load_soundbank(_synth, globalBank, "globalBank", 0))
-		return false;
+	/* Embedded RMID soundbank is auto-loaded by ss_sequencer_load_midi. */
 
-	playerTime = 0;
-
+	initialized = true;
 	return true;
 }
 
-unsigned int SpessaPlayer::send_event_needs_time() {
-	return outputMax;
+void SpessaPlayer::renderChunk(float *out, uint32_t sample_count) {
+	if(!_synth) return;
+	ss_processor_render_interleaved(_synth, out, sample_count);
 }

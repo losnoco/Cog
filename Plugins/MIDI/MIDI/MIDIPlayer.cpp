@@ -1,394 +1,9 @@
-#include <assert.h>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstring>
 
 #include "MIDIPlayer.h"
-
-MIDIPlayer::MIDIPlayer() {
-	dTimeRemaining = 0;
-	dSampleRate = 44100;
-	dTimeCurrent = 0;
-	dTimeEnd = 0;
-	dTimeLoopStart = 0;
-	initialized = false;
-}
-
-void MIDIPlayer::setSampleRate(double rate) {
-	dSampleRate = rate;
-
-	shutdown();
-}
-
-bool MIDIPlayer::Load(const midi_container &midi_file, unsigned subsong, unsigned loop_mode, unsigned clean_flags) {
-	assert(!mStream.size());
-
-	midi_file.serialize_as_stream(subsong, mStream, mSysexMap, uStreamLoopStart, uStreamEnd, clean_flags);
-
-	port_mask = midi_container::get_port_mask(mStream, mSysexMap);
-
-	if(mStream.size()) {
-		uStreamPosition = 0;
-		dTimeCurrent = 0;
-
-		uLoopMode = loop_mode;
-
-		dTimeEnd = midi_file.get_timestamp_end(subsong, true) + 1.0;
-
-		if(uLoopMode & loop_mode_enable) {
-			dTimeLoopStart = midi_file.get_timestamp_loop_start(subsong, true);
-			double dTimeLoopEnd = midi_file.get_timestamp_loop_end(subsong, true);
-
-			if(dTimeLoopStart != (double) ~0UL || dTimeLoopEnd != (double) ~0UL) {
-				uLoopMode |= loop_mode_force;
-			}
-
-			if(dTimeLoopStart == (double) ~0UL)
-				dTimeLoopStart = 0;
-			if(dTimeLoopEnd == (double) ~0UL)
-				dTimeLoopEnd = dTimeEnd - 1.0;
-
-			if((uLoopMode & loop_mode_force)) {
-				unsigned long i;
-				uint8_t nullByte = 0;
-				std::vector<uint8_t> note_on;
-				note_on.resize(128 * 16, nullByte);
-				memset(&note_on[0], 0, sizeof(note_on));
-				for(i = 0; i < mStream.size() && i < uStreamEnd; i++) {
-					uint32_t ev = mStream.at(i).m_event & 0x800000F0;
-					if(ev == 0x90 || ev == 0x80) {
-						const unsigned long port = (mStream.at(i).m_event & 0x7F000000) >> 24;
-						const unsigned long ch = mStream.at(i).m_event & 0x0F;
-						const unsigned long note = (mStream.at(i).m_event >> 8) & 0x7F;
-						const bool on = (ev == 0x90) && (mStream.at(i).m_event & 0xFF0000);
-						const unsigned long bit = 1 << port;
-						note_on.at(ch * 128 + note) = (note_on.at(ch * 128 + note) & ~bit) | (bit * on);
-					}
-				}
-				mStream.resize(i);
-				dTimeEnd = dTimeLoopEnd - 1.0 / dSampleRate;
-				if(dTimeEnd < mStream.at(i - 1).m_timestamp)
-					dTimeEnd = mStream.at(i - 1).m_timestamp;
-				for(unsigned long j = 0; j < 128 * 16; j++) {
-					if(note_on.at(j)) {
-						for(unsigned long k = 0; k < 8; k++) {
-							if(note_on.at(j) & (1 << k)) {
-								mStream.push_back(midi_stream_event(dTimeEnd, static_cast<uint32_t>((k << 24) + (j >> 7) + (j & 0x7F) * 0x100 + 0x90)));
-							}
-						}
-					}
-				}
-				dTimeEnd = dTimeLoopEnd;
-			}
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
-	assert(mStream.size());
-
-	if(!startup()) return 0;
-
-	unsigned long done = 0;
-
-	const unsigned int needs_block_size = send_event_needs_time();
-	unsigned int into_block = 0;
-
-	// This should be a multiple of block size, and have leftover
-
-	while(dTimeRemaining > 0.0 && done < count) {
-		unsigned long todo = (unsigned int) round(dTimeRemaining * dSampleRate);
-		if(todo > count - done) {
-			todo = count - done;
-		}
-		if(needs_block_size && todo > needs_block_size)
-			todo = needs_block_size;
-		if(todo < needs_block_size) {
-			dTimeRemaining = 0;
-			into_block = todo;
-			break;
-		}
-		render(out + done * 2, todo);
-		dTimeRemaining -= todo;
-		if(dTimeRemaining < 0.0)
-			dTimeRemaining = 0;
-		done += todo;
-		dTimeCurrent += (double)todo / dSampleRate;
-	}
-
-	while(done < count) {
-		double dtodo = dTimeEnd - dTimeCurrent;
-		unsigned int todo = (unsigned int) round(dtodo * dSampleRate);
-		if(todo > count - done) {
-			todo = count - done;
-			dtodo = (double)todo / dSampleRate;
-		}
-
-		const double time_target = dtodo + dTimeCurrent;
-		unsigned long stream_end = uStreamPosition;
-
-		while(stream_end < mStream.size() && mStream.at(stream_end).m_timestamp < time_target) stream_end++;
-
-		if(stream_end > uStreamPosition) {
-			for(; uStreamPosition < stream_end; uStreamPosition++) {
-				const midi_stream_event &me = mStream.at(uStreamPosition);
-
-				const double dinto_block = (double)into_block / dSampleRate;
-				const double seconds_todo = me.m_timestamp - dTimeCurrent - dinto_block;
-				if(seconds_todo > 0.0) {
-					unsigned int samples_todo = (unsigned int) round(seconds_todo * dSampleRate);
-					if(samples_todo > count - done) {
-						unsigned int samples_remain = samples_todo - (count - done);
-						dTimeRemaining = (double)samples_remain / dSampleRate;
-						samples_todo = count - done;
-					}
-					if(!needs_block_size && samples_todo) {
-						render(out + done * 2, samples_todo);
-						done += samples_todo;
-						dTimeCurrent += (double)samples_todo / dSampleRate;
-					}
-
-					if(dTimeRemaining > 0.0) {
-						dTimeRemaining += (double)into_block / dSampleRate;
-						return done;
-					}
-				}
-
-				if(needs_block_size) {
-					if(seconds_todo > 0.0) {
-						unsigned int samples_todo = (unsigned int) round(seconds_todo * dSampleRate);
-						into_block += samples_todo;
-						while(into_block >= needs_block_size) {
-							render(out + done * 2, needs_block_size);
-							done += needs_block_size;
-							into_block -= needs_block_size;
-							dTimeCurrent += (double)needs_block_size / dSampleRate;
-						}
-					}
-					send_event_time_filtered(me.m_event, into_block);
-				} else
-					send_event_filtered(me.m_event);
-			}
-		}
-
-		if(done < count) {
-			double seconds_todo;
-			if(uStreamPosition < mStream.size())
-				seconds_todo = mStream.at(uStreamPosition).m_timestamp;
-			else
-				seconds_todo = dTimeEnd;
-			seconds_todo -= dTimeCurrent;
-			unsigned long samples_todo = (unsigned int) round(seconds_todo * dSampleRate);
-			if(needs_block_size)
-				into_block = samples_todo;
-			if(samples_todo > count - done)
-				samples_todo = count - done;
-			if(needs_block_size && samples_todo > needs_block_size)
-				samples_todo = needs_block_size;
-			if(samples_todo >= needs_block_size) {
-				render(out + done * 2, samples_todo);
-				done += samples_todo;
-				dTimeCurrent += (double)samples_todo / dSampleRate;
-				if(needs_block_size)
-					into_block -= samples_todo;
-			}
-		}
-
-		if(!needs_block_size)
-			dTimeCurrent = time_target;
-
-		if(time_target >= dTimeEnd) {
-			if(uStreamPosition < mStream.size()) {
-				for(; uStreamPosition < mStream.size(); uStreamPosition++) {
-					if(needs_block_size)
-						send_event_time_filtered(mStream.at(uStreamPosition).m_event, into_block);
-					else
-						send_event_filtered(mStream.at(uStreamPosition).m_event);
-				}
-			}
-
-			if((uLoopMode & (loop_mode_enable | loop_mode_force)) == (loop_mode_enable | loop_mode_force)) {
-				if(uStreamLoopStart == ~0) {
-					uStreamPosition = 0;
-					dTimeCurrent = 0;
-				} else {
-					uStreamPosition = uStreamLoopStart;
-					dTimeCurrent = dTimeLoopStart;
-				}
-			} else
-				break;
-		}
-	}
-
-	dTimeRemaining = (double)into_block / dSampleRate;
-
-	return done;
-}
-
-void MIDIPlayer::Seek(unsigned long sample) {
-	double seconds = (double)sample / dSampleRate;
-	if(seconds >= dTimeEnd) {
-		if((uLoopMode & (loop_mode_enable | loop_mode_force)) == (loop_mode_enable | loop_mode_force)) {
-			while(seconds >= dTimeEnd) seconds -= dTimeEnd - dTimeLoopStart;
-		} else {
-			seconds = dTimeEnd;
-		}
-	}
-
-	if(dTimeCurrent > seconds) {
-		uStreamPosition = 0;
-
-		shutdown();
-	}
-
-	if(!startup()) return;
-
-	dTimeCurrent = seconds;
-
-	std::vector<midi_stream_event> filler;
-
-	unsigned long stream_start = uStreamPosition;
-
-	for(; uStreamPosition < mStream.size() && mStream.at(uStreamPosition).m_timestamp < dTimeCurrent; uStreamPosition++)
-		;
-
-	if(uStreamPosition == mStream.size())
-		dTimeRemaining = dTimeEnd - dTimeCurrent;
-	else
-		dTimeRemaining = mStream.at(uStreamPosition).m_timestamp - dTimeCurrent;
-
-	if(uStreamPosition > stream_start) {
-		filler.resize(uStreamPosition - stream_start);
-		filler.assign(mStream.begin() + stream_start, mStream.begin() + uStreamPosition);
-
-		unsigned long i, j;
-
-		for(i = 0, stream_start = uStreamPosition - stream_start; i < stream_start; i++) {
-			midi_stream_event &e = filler.at(i);
-			if((e.m_event & 0x800000F0) == 0x90 && (e.m_event & 0xFF0000)) // note on
-			{
-				if((e.m_event & 0x0F) == 9) // hax
-				{
-					e.m_event = 0;
-					continue;
-				}
-				const uint32_t m = (e.m_event & 0x7F00FF0F) | 0x80; // note off
-				const uint32_t m2 = (e.m_event & 0x7F00FFFF); // also note off
-				for(j = i + 1; j < stream_start; j++) {
-					midi_stream_event &e2 = filler.at(j);
-					if((e2.m_event & 0xFF00FFFF) == m || e2.m_event == m2) {
-						// kill 'em
-						e.m_event = 0;
-						e2.m_event = 0;
-						break;
-					}
-				}
-			}
-		}
-
-		float *temp;
-		const unsigned int needs_time = send_event_needs_time();
-
-		if(needs_time) {
-			temp = new float[needs_time * 2];
-			if(temp) {
-				render(temp, needs_time); // flush events
-				unsigned int render_junk = 0;
-				bool timestamp_set = false;
-				double last_timestamp = 0;
-				for(i = 0; i < stream_start; i++) {
-					if(filler[i].m_event) {
-						send_event_time_filtered(filler[i].m_event, render_junk);
-						if(timestamp_set) {
-							if(filler[i].m_timestamp != last_timestamp) {
-								render_junk += 16;
-							}
-						}
-						last_timestamp = filler[i].m_timestamp;
-						timestamp_set = true;
-						if(render_junk >= needs_time) {
-							render(temp, needs_time);
-							render_junk -= needs_time;
-						}
-					}
-				}
-				render(temp, needs_time);
-				delete[] temp;
-			}
-		} else {
-			temp = new float[16 * 2];
-			if(temp) {
-				render(temp, 16);
-				bool timestamp_set = false;
-				double last_timestamp = 0;
-				for(i = 0; i < stream_start; i++) {
-					if(filler[i].m_event) {
-						if(timestamp_set) {
-							if(filler[i].m_timestamp != last_timestamp) {
-								render(temp, 16);
-							}
-						}
-						last_timestamp = filler[i].m_timestamp;
-						timestamp_set = true;
-						send_event_filtered(filler[i].m_event);
-					}
-				}
-				render(temp, 16);
-				delete[] temp;
-			}
-		}
-	}
-}
-
-void MIDIPlayer::setLoopMode(unsigned int mode) {
-	if(uLoopMode != mode) {
-		if(mode & loop_mode_enable)
-			dTimeEnd -= 1.0;
-		else
-			dTimeEnd += 1.0;
-	}
-	uLoopMode = mode;
-}
-
-void MIDIPlayer::send_event_filtered(uint32_t b) {
-	if(!(b & 0x80000000u)) {
-		send_event(b);
-	} else {
-		const unsigned int p_index = b & 0xffffff;
-		const uint8_t *p_data;
-		size_t p_size, p_port;
-		mSysexMap.get_entry(p_index, p_data, p_size, p_port);
-		send_sysex_filtered(p_data, p_size, p_port);
-	}
-}
-
-void MIDIPlayer::send_event_time_filtered(uint32_t b, unsigned int time) {
-	if(!(b & 0x80000000u)) {
-		if(reverb_chorus_disabled) {
-			const uint32_t _b = b & 0x7FF0;
-			if(_b == 0x5BB0 || _b == 0x5DB0)
-				return;
-		}
-		send_event_time(b, time);
-	} else {
-		const unsigned int p_index = b & 0xffffff;
-		const uint8_t *p_data;
-		size_t p_size, p_port;
-		mSysexMap.get_entry(p_index, p_data, p_size, p_port);
-		send_sysex_time_filtered(p_data, p_size, p_port, time);
-	}
-}
-
-void MIDIPlayer::setFilterMode(filter_mode m, bool disable_reverb_chorus) {
-	mode = m;
-	reverb_chorus_disabled = disable_reverb_chorus;
-	if(initialized) {
-		sysex_reset(0, 0);
-		sysex_reset(1, 0);
-		sysex_reset(2, 0);
-	}
-}
 
 const uint8_t syx_reset_gm[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x01, 0xF7 };
 const uint8_t syx_reset_gm2[] = { 0xF0, 0x7E, 0x7F, 0x09, 0x03, 0xF7 };
@@ -402,12 +17,12 @@ bool syx_equal(const uint8_t *a, const uint8_t *b) {
 		a++;
 		b++;
 	}
-
 	return *a == *b;
 }
 
 bool syx_is_reset(const uint8_t *data) {
-	return syx_equal(data, &syx_reset_gm[0]) || syx_equal(data, &syx_reset_gm2[0]) || syx_equal(data, &syx_reset_gs[0]) || syx_equal(data, &syx_reset_xg[0]);
+	return syx_equal(data, &syx_reset_gm[0]) || syx_equal(data, &syx_reset_gm2[0]) ||
+	       syx_equal(data, &syx_reset_gs[0]) || syx_equal(data, &syx_reset_xg[0]);
 }
 
 bool syx_is_gs(const uint8_t *data, size_t size) {
@@ -422,180 +37,422 @@ bool syx_is_gs(const uint8_t *data, size_t size) {
 	return true;
 }
 
-void MIDIPlayer::sysex_send_gs(size_t port, uint8_t *data, size_t size, unsigned int time) {
-	unsigned long i;
-	unsigned char checksum = 0;
-	for(i = 5; i + 1 < size && data[i + 1] != 0xF7; ++i)
-		checksum += data[i];
-	checksum = (128 - checksum) & 127;
-	data[i] = checksum;
-	if(time)
-		send_sysex_time(data, size, port, time);
-	else
-		send_sysex(data, size, port);
+/* ── MIDIPlayer ──────────────────────────────────────────────────────────── */
+
+MIDIPlayer::MIDIPlayer() {
+	dSampleRate = 44100;
+	port_mask = 1;
+	mode = filter_default;
+	reverb_chorus_disabled = false;
+	initialized = false;
+	master_volume = 1.0f;
+	midi_file = nullptr;
+	sequencer = nullptr;
+	subsong_start_seconds = 0.0;
+	subsong_end_seconds = 0.0;
+	duration_seconds = 0.0;
+	loop_mode_flags = 0;
+	samples_rendered = 0;
+	samples_total = 0;
 }
 
-void MIDIPlayer::sysex_reset_sc(uint32_t port, unsigned int time) {
-	unsigned int i;
-	uint8_t message[11];
+MIDIPlayer::~MIDIPlayer() {
+	teardownSequencer();
+}
 
-	memcpy(&message[0], &syx_gs_limit_bank_lsb[0], sizeof(message));
+void MIDIPlayer::setSampleRate(double rate) {
+	dSampleRate = rate;
+	teardownSequencer();
+	shutdown();
+}
 
-	message[7] = 1;
+void MIDIPlayer::setLoopMode(unsigned int mode) {
+	loop_mode_flags = mode;
+	if(sequencer) {
+		int loop_count = (mode & loop_mode_enable) ? -1 : 1;
+		ss_sequencer_set_loop_count(sequencer, loop_count);
+	}
+}
 
+void MIDIPlayer::setFilterMode(filter_mode m, bool disable_rc) {
+	mode = m;
+	reverb_chorus_disabled = disable_rc;
+	if(initialized) {
+		/* Apply filter reset immediately at t=0 equivalent (sample offset 0). */
+		for(unsigned p = 0; p < 4; ++p) {
+			if(port_mask & (1u << p))
+				dispatchFilterReset(p, 0);
+		}
+	}
+}
+
+/* ── port mask derivation ────────────────────────────────────────────────── */
+
+static unsigned derive_port_mask(const SS_MIDIFile *midi) {
+	unsigned mask = 1u;
+	if(!midi) return mask;
+	for(size_t ti = 0; ti < midi->track_count; ++ti) {
+		int p = midi->tracks[ti].port;
+		if(p >= 0 && p < 32)
+			mask |= (1u << p);
+	}
+	return mask;
+}
+
+/* ── Subsong window helpers ──────────────────────────────────────────────── */
+
+static double subsong_start_ticks(const SS_MIDIFile *midi, size_t subsong) {
+	if(!midi || midi->format != 2 || subsong == 0) return 0.0;
+	if(subsong >= midi->track_count) return 0.0;
+	const SS_MIDITrack *prev = &midi->tracks[subsong - 1];
+	if(prev->event_count == 0) return 0.0;
+	return (double)prev->events[prev->event_count - 1].ticks;
+}
+
+static double subsong_end_ticks(const SS_MIDIFile *midi, size_t subsong) {
+	if(!midi || midi->format != 2) return (double)midi->last_voice_event_tick;
+	if(subsong >= midi->track_count) return (double)midi->last_voice_event_tick;
+	const SS_MIDITrack *tr = &midi->tracks[subsong];
+	if(tr->event_count == 0) return subsong_start_ticks(midi, subsong);
+	return (double)tr->events[tr->event_count - 1].ticks;
+}
+
+/* ── Load / sequencer lifecycle ──────────────────────────────────────────── */
+
+bool MIDIPlayer::Load(SS_MIDIFile *in_midi, unsigned subsong, unsigned loop_mode) {
+	teardownSequencer();
+
+	if(!in_midi) return false;
+	midi_file = in_midi;
+	loop_mode_flags = loop_mode;
+	port_mask = derive_port_mask(midi_file);
+
+	/* Compute subsong time window (format-2 only; single-song otherwise). */
+	double start_ticks = subsong_start_ticks(midi_file, subsong);
+	double end_ticks = subsong_end_ticks(midi_file, subsong);
+	subsong_start_seconds = ss_midi_ticks_to_seconds(midi_file, (size_t)start_ticks);
+	subsong_end_seconds = ss_midi_ticks_to_seconds(midi_file, (size_t)end_ticks);
+	duration_seconds = subsong_end_seconds - subsong_start_seconds;
+	if(duration_seconds < 0.0) duration_seconds = 0.0;
+
+	samples_rendered = 0;
+	samples_total = (long)std::llround(duration_seconds * dSampleRate);
+
+	return true;
+}
+
+bool MIDIPlayer::buildSequencer() {
+	if(sequencer) return true;
+	if(!midi_file) return false;
+
+	if(!startup()) return false;
+
+	SS_Processor *proc = getProcessor();
+	if(proc) {
+		sequencer = ss_sequencer_create(proc);
+	} else {
+		SS_SequencerCallbacks cb;
+		memset(&cb, 0, sizeof(cb));
+		cb.sample_rate = (uint32_t)std::lround(dSampleRate);
+		cb.midi_command = &MIDIPlayer::midi_command_cb;
+		cb.set_master_volume = &MIDIPlayer::master_volume_cb;
+		cb.context = this;
+		sequencer = ss_sequencer_create_callbacks(&cb);
+	}
+	if(!sequencer) return false;
+
+	if(!ss_sequencer_load_midi(sequencer, midi_file)) {
+		ss_sequencer_free(sequencer);
+		sequencer = nullptr;
+		return false;
+	}
+
+	int loop_count = (loop_mode_flags & loop_mode_enable) ? -1 : 1;
+	ss_sequencer_set_loop_count(sequencer, loop_count);
+	ss_sequencer_set_fade_seconds(sequencer, 0.0);
+
+	/* Initial filter reset before any MIDI events. */
+	for(unsigned p = 0; p < 4; ++p) {
+		if(port_mask & (1u << p))
+			dispatchFilterReset(p, 0);
+	}
+
+	/* Seek to subsong start time, if any (format-2). */
+	if(subsong_start_seconds > 0.0)
+		ss_sequencer_set_time(sequencer, subsong_start_seconds);
+
+	ss_sequencer_play(sequencer);
+	master_volume = 1.0f;
+	return true;
+}
+
+void MIDIPlayer::teardownSequencer() {
+	if(sequencer) {
+		/* Clear the processor if necessary */
+		ss_sequencer_set_synthesizer(sequencer, getProcessor());
+		ss_sequencer_free(sequencer);
+		sequencer = nullptr;
+	}
+}
+
+/* ── Callback trampolines ────────────────────────────────────────────────── */
+
+void MIDIPlayer::midi_command_cb(void *ctx, const uint8_t *data, size_t length, double timestamp) {
+	static_cast<MIDIPlayer *>(ctx)->queueMidi(data, length, timestamp);
+}
+
+void MIDIPlayer::master_volume_cb(void *ctx, float value) {
+	static_cast<MIDIPlayer *>(ctx)->handleMasterVolume(value);
+}
+
+void MIDIPlayer::queueMidi(const uint8_t *data, size_t length, double timestamp) {
+	if(!data || length == 0) return;
+	PendingEvent ev;
+	ev.data.assign(data, data + length);
+	ev.timestamp = timestamp;
+	pending_events.push_back(std::move(ev));
+}
+
+void MIDIPlayer::inject(std::vector<uint8_t> bytes, double timestamp) {
+	PendingEvent ev;
+	ev.data = std::move(bytes);
+	ev.timestamp = timestamp;
+	pending_events.push_back(std::move(ev));
+}
+
+/* ── Filter reset injection ──────────────────────────────────────────────── */
+
+static inline std::vector<uint8_t> make_port_select(unsigned port) {
+	std::vector<uint8_t> v = { 0xF5, (uint8_t)((port & 0x0F) + 1) };
+	return v;
+}
+
+static inline std::vector<uint8_t> make_sysex(const uint8_t *raw, size_t len) {
+	return std::vector<uint8_t>(raw, raw + len);
+}
+
+static inline std::vector<uint8_t> make_cc(unsigned channel, unsigned cc, unsigned value) {
+	std::vector<uint8_t> v = { (uint8_t)(0xB0 | (channel & 0x0F)), (uint8_t)cc, (uint8_t)value };
+	return v;
+}
+
+static inline std::vector<uint8_t> make_pc(unsigned channel, unsigned program) {
+	std::vector<uint8_t> v = { (uint8_t)(0xC0 | (channel & 0x0F)), (uint8_t)program };
+	return v;
+}
+
+static std::vector<uint8_t> gs_bank_lsb_sysex(unsigned part, unsigned map_id) {
+	std::vector<uint8_t> v(syx_gs_limit_bank_lsb,
+	                       syx_gs_limit_bank_lsb + sizeof(syx_gs_limit_bank_lsb));
+	v[6] = (uint8_t)part;
+	v[8] = (uint8_t)map_id;
+	unsigned checksum = 0;
+	for(size_t i = 5; i + 1 < v.size() && v[i + 1] != 0xF7; ++i)
+		checksum += v[i];
+	checksum = (128 - checksum) & 127;
+	for(size_t i = 5; i + 1 < v.size(); ++i) {
+		if(v[i + 1] == 0xF7) {
+			v[i] = (uint8_t)checksum;
+			break;
+		}
+	}
+	return v;
+}
+
+void MIDIPlayer::dispatchFilterReset(size_t port, uint32_t sample_offset) {
+	if(mode == filter_default) return;
+
+	/* Time at the start of the current block; events landing at this time
+	 * will be dispatched with sample offset 0 (or whatever we pass). */
+	double base_time = sequencer ? ss_sequencer_get_time(sequencer) : 0.0;
+	(void)sample_offset;
+
+	/* All filter mode resets begin with the general resets. */
+	inject(make_port_select((unsigned)port), base_time);
+	inject(make_sysex(syx_reset_xg, sizeof(syx_reset_xg)), base_time);
+	inject(make_sysex(syx_reset_gm2, sizeof(syx_reset_gm2)), base_time);
+	inject(make_sysex(syx_reset_gm, sizeof(syx_reset_gm)), base_time);
+
+	unsigned map_id = 0;
 	switch(mode) {
-		default:
+		case filter_gm:
+			/* GM-only: no follow-up reset */
 			break;
-
+		case filter_gm2:
+			inject(make_sysex(syx_reset_gm2, sizeof(syx_reset_gm2)), base_time);
+			break;
 		case filter_sc55:
-			message[8] = 1;
-			break;
-
+			map_id = 1; goto gs_path;
 		case filter_sc88:
-			message[8] = 2;
-			break;
-
+			map_id = 2; goto gs_path;
 		case filter_sc88pro:
-			message[8] = 3;
-			break;
-
+			map_id = 3; goto gs_path;
 		case filter_sc8850:
 		case filter_default:
-			message[8] = 4;
+			map_id = 4;
+		gs_path:
+			inject(make_sysex(syx_reset_gs, sizeof(syx_reset_gs)), base_time);
+			for(unsigned i = 0x41; i <= 0x49; ++i)
+				inject(gs_bank_lsb_sysex(i, map_id), base_time);
+			inject(gs_bank_lsb_sysex(0x40, map_id), base_time);
+			for(unsigned i = 0x4A; i <= 0x4F; ++i)
+				inject(gs_bank_lsb_sysex(i, map_id), base_time);
+			break;
+		case filter_xg:
+			inject(make_sysex(syx_reset_xg, sizeof(syx_reset_xg)), base_time);
 			break;
 	}
 
-	for(i = 0x41; i <= 0x49; ++i) {
-		message[6] = i;
-		sysex_send_gs(port, &message[0], sizeof(message), time);
+	for(unsigned ch = 0; ch < 16; ++ch) {
+		inject(make_port_select((unsigned)port), base_time);
+		inject(make_cc(ch, 0x78, 0), base_time); /* all sound off */
+		inject(make_cc(ch, 0x79, 0), base_time); /* reset all controllers */
+		if(mode != filter_xg || ch != 9) {
+			inject(make_cc(ch, 0x20, 0), base_time); /* bank LSB */
+			inject(make_cc(ch, 0x00, 0), base_time); /* bank MSB */
+			inject(make_pc(ch, 0), base_time); /* program 0 */
+		}
 	}
-	message[6] = 0x40;
-	sysex_send_gs(port, &message[0], sizeof(message), time);
-	for(i = 0x4A; i <= 0x4F; ++i) {
-		message[6] = i;
-		sysex_send_gs(port, &message[0], sizeof(message), time);
+
+	if(mode == filter_xg) {
+		inject(make_port_select((unsigned)port), base_time);
+		inject(make_cc(9, 0x20, 0), base_time);
+		inject(make_cc(9, 0x00, 0x7F), base_time);
+		inject(make_pc(9, 0), base_time);
 	}
-}
 
-void MIDIPlayer::sysex_reset(size_t port, unsigned int time) {
-	if(initialized) {
-		if(time) {
-			send_sysex_time(&syx_reset_xg[0], sizeof(syx_reset_xg), port, time);
-			send_sysex_time(&syx_reset_gm2[0], sizeof(syx_reset_gm2), port, time);
-			send_sysex_time(&syx_reset_gm[0], sizeof(syx_reset_gm), port, time);
-		} else {
-			send_sysex(&syx_reset_xg[0], sizeof(syx_reset_xg), port);
-			send_sysex(&syx_reset_gm2[0], sizeof(syx_reset_gm2), port);
-			send_sysex(&syx_reset_gm[0], sizeof(syx_reset_gm), port);
-		}
-
-		switch(mode) {
-			case filter_gm:
-				/*
-				if (time)
-				    send_sysex_time(syx_reset_gm, sizeof(syx_reset_gm), port, time);
-				else
-				    send_sysex(syx_reset_gm, sizeof(syx_reset_gm), port);
-				 */
-				break;
-
-			case filter_gm2:
-				if(time)
-					send_sysex_time(&syx_reset_gm2[0], sizeof(syx_reset_gm2), port, time);
-				else
-					send_sysex(&syx_reset_gm2[0], sizeof(syx_reset_gm2), port);
-				break;
-
-			case filter_sc55:
-			case filter_sc88:
-			case filter_sc88pro:
-			case filter_sc8850:
-			case filter_default:
-				if(time)
-					send_sysex_time(&syx_reset_gs[0], sizeof(syx_reset_gs), port, time);
-				else
-					send_sysex(&syx_reset_gs[0], sizeof(syx_reset_gs), port);
-				sysex_reset_sc(port, time);
-				break;
-
-			case filter_xg:
-				if(time)
-					send_sysex_time(&syx_reset_xg[0], sizeof(syx_reset_xg), port, time);
-				else
-					send_sysex(&syx_reset_xg[0], sizeof(syx_reset_xg), port);
-				break;
-		}
-
-		{
-			unsigned int i;
-			for(i = 0; i < 16; ++i) {
-				if(time) {
-					send_event_time(0x78B0 + i + (port << 24), time);
-					send_event_time(0x79B0 + i + (port << 24), time);
-					if(mode != filter_xg || i != 9) {
-						send_event_time(0x20B0 + i + (port << 24), time);
-						send_event_time(0x00B0 + i + (port << 24), time);
-						send_event_time(0xC0 + i + (port << 24), time);
-					}
-				} else {
-					send_event(0x78B0 + i + (port << 24));
-					send_event(0x79B0 + i + (port << 24));
-					if(mode != filter_xg || i != 9) {
-						send_event(0x20B0 + i + (port << 24));
-						send_event(0x00B0 + i + (port << 24));
-						send_event(0xC0 + i + (port << 24));
-					}
-				}
-			}
-		}
-
-		if(mode == filter_xg) {
-			if(time) {
-				send_event_time(0x20B9 + (port << 24), time);
-				send_event_time(0x7F00B9 + (port << 24), time);
-				send_event_time(0xC9 + (port << 24), time);
-			} else {
-				send_event(0x20B9 + (port << 24));
-				send_event(0x7F00B9 + (port << 24));
-				send_event(0xC9 + (port << 24));
-			}
-		}
-
-		if(reverb_chorus_disabled) {
-			unsigned int i;
-			if(time) {
-				for(i = 0; i < 16; ++i) {
-					send_event_time(0x5BB0 + i + (port << 24), time);
-					send_event_time(0x5DB0 + i + (port << 24), time);
-				}
-			} else {
-				for(i = 0; i < 16; ++i) {
-					send_event(0x5BB0 + i + (port << 24));
-					send_event(0x5DB0 + i + (port << 24));
-				}
-			}
+	if(reverb_chorus_disabled) {
+		for(unsigned ch = 0; ch < 16; ++ch) {
+			inject(make_port_select((unsigned)port), base_time);
+			inject(make_cc(ch, 0x5B, 0), base_time);
+			inject(make_cc(ch, 0x5D, 0), base_time);
 		}
 	}
 }
 
-void MIDIPlayer::send_sysex_filtered(const uint8_t *data, size_t size, size_t port) {
-	send_sysex(data, size, port);
-	if(syx_is_reset(data) && mode != filter_default) {
-		sysex_reset(port, 0);
-	}
+void MIDIPlayer::sysex_reset(size_t port, uint32_t sample_offset) {
+	dispatchFilterReset(port, sample_offset);
 }
 
-void MIDIPlayer::send_sysex_time_filtered(const uint8_t *data, size_t size, size_t port, unsigned int time) {
-	send_sysex_time(data, size, port, time);
-	if(syx_is_reset(data) && mode != filter_default) {
-		sysex_reset(port, time);
+/* ── Play ────────────────────────────────────────────────────────────────── */
+
+unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
+	if(!midi_file) return 0;
+	if(!sequencer && !buildSequencer()) return 0;
+
+	unsigned long done = 0;
+	const uint32_t chunk_max = std::max<uint32_t>(1, getChunkSize());
+	const bool has_processor = getProcessor() != nullptr;
+	const bool is_looping = (loop_mode_flags & loop_mode_enable) != 0;
+
+	while(done < count) {
+		uint32_t chunk = chunk_max;
+		if(chunk > (uint32_t)(count - done)) chunk = (uint32_t)(count - done);
+		if(!is_looping && samples_total > 0 &&
+		   samples_rendered + (long)chunk > samples_total) {
+			long remaining = samples_total - samples_rendered;
+			if(remaining <= 0) break;
+			chunk = (uint32_t)remaining;
+		}
+		if(chunk == 0) break;
+
+		pending_events.clear();
+
+		double block_start = ss_sequencer_get_time(sequencer);
+		ss_sequencer_tick(sequencer, chunk);
+
+		/* For callback-mode, dispatch queued events to backend with sample
+		 * offsets within this chunk.  Track the current port from 0xF5. */
+		if(!has_processor) {
+			unsigned current_port = 0;
+			for(auto &e : pending_events) {
+				if(e.data.empty()) continue;
+				double offset_seconds = e.timestamp - block_start;
+				if(offset_seconds < 0.0) offset_seconds = 0.0;
+				long offset = std::lround(offset_seconds * dSampleRate);
+				if(offset < 0) offset = 0;
+				if(offset >= (long)chunk) offset = (long)chunk - 1;
+
+				if(e.data[0] == 0xF5 && e.data.size() >= 2) {
+					current_port = e.data[1] ? (unsigned)(e.data[1] - 1) : 0u;
+					continue;
+				}
+				dispatchMidi(e.data.data(), e.data.size(), (uint32_t)offset, current_port);
+			}
+		}
+
+		renderChunk(out + done * 2, chunk);
+
+		/* Apply master_volume externally when the backend can't do it for us
+		 * (callback-mode synths).  Processor-mode players no-op this via
+		 * their handleMasterVolume override. */
+		if(!has_processor && master_volume != 1.0f) {
+			float *p = out + done * 2;
+			float scale = master_volume;
+			for(uint32_t i = 0; i < chunk; ++i) {
+				p[0] *= scale;
+				p[1] *= scale;
+				p += 2;
+			}
+		}
+
+		done += chunk;
+		samples_rendered += chunk;
+
+		if(ss_sequencer_is_finished(sequencer))
+			break;
 	}
+
+	return done;
+}
+
+void MIDIPlayer::Seek(unsigned long sample) {
+	if(!midi_file) return;
+	if(!sequencer && !buildSequencer()) return;
+
+	double target_seconds = subsong_start_seconds + (double)sample / dSampleRate;
+
+	/* For callback-mode backends, reset the synthesizer state before
+	 * replaying filler events, so we don't leave stuck notes.  Processor-
+	 * mode Seek is handled internally by ss_sequencer_set_time. */
+	if(!getProcessor()) {
+		shutdown();
+		if(!startup()) return;
+		for(unsigned p = 0; p < 4; ++p) {
+			if(port_mask & (1u << p))
+				dispatchFilterReset(p, 0);
+		}
+		/* Flush any synth-bound reset events before seek-replay. */
+		pending_events.clear();
+	}
+
+	ss_sequencer_set_time(sequencer, target_seconds);
+
+	/* For callback mode, set_time dispatched non-note filler events via
+	 * callback.  Replay them to the backend now so state is correct. */
+	if(!getProcessor() && !pending_events.empty()) {
+		unsigned current_port = 0;
+		for(auto &e : pending_events) {
+			if(e.data.empty()) continue;
+			if(e.data[0] == 0xF5 && e.data.size() >= 2) {
+				current_port = e.data[1] ? (unsigned)(e.data[1] - 1) : 0u;
+				continue;
+			}
+			dispatchMidi(e.data.data(), e.data.size(), 0u, current_port);
+		}
+		pending_events.clear();
+	}
+
+	samples_rendered = (long)sample;
+}
+
+unsigned long MIDIPlayer::Tell() const {
+	if(!sequencer) return 0;
+	double t = ss_sequencer_get_time(sequencer) - subsong_start_seconds;
+	if(t < 0.0) t = 0.0;
+	return (unsigned long)std::lround(t * dSampleRate);
 }
 
 bool MIDIPlayer::GetLastError(std::string &p_out) {
 	return get_last_error(p_out);
-}
-
-unsigned long MIDIPlayer::Tell() const {
-	return (unsigned long) round(dTimeCurrent * dSampleRate);
 }

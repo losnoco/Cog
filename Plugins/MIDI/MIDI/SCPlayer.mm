@@ -35,7 +35,7 @@ SCPlayer::SCPlayer()
 	last_lcd_state[1] = new uint8_t[size];
 	last_lcd_state[2] = new uint8_t[size];
 	last_lcd_state[3] = new uint8_t[size];
-	
+
 	_workerQueue = [NSOperationQueue new];
 
 	midiController = [NSClassFromString(@"VisualizationController") sharedMIDIController];
@@ -53,33 +53,33 @@ void SCPlayer::setUrl(NSURL *url) {
 	_url = url;
 }
 
-void SCPlayer::send_event(uint32_t b) {
-	uint8_t event[3];
-	event[0] = static_cast<uint8_t>(b);
-	event[1] = static_cast<uint8_t>(b >> 8);
-	event[2] = static_cast<uint8_t>(b >> 16);
-	unsigned port = (b >> 24) & 0x7F;
+void SCPlayer::dispatchMidi(const uint8_t *data, size_t length,
+                            uint32_t sample_offset, unsigned port) {
+	if(!length) return;
+	(void)sample_offset;
 	if(port > 3) port = 0;
-	if(_player[port]) {
-		const unsigned channel = (b & 0x0F) + port * 16;
-		const unsigned command = b & 0xF0;
-		const unsigned event_length = (command >= 0xF8 && command <= 0xFF) ? 1 : ((command == 0xC0 || command == 0xD0) ? 2 : 3);
-		sc55_write_uart(_player[port], event, event_length);
+
+	uint8_t sb = data[0];
+
+	if(sb == 0xF0) {
+		/* SysEx goes to every active port so the global state stays consistent
+		 * across all SC-55 instances.  Matches the prior send_sysex behavior. */
+		for(unsigned p = 0; p < 4; ++p) {
+			if(_player[p])
+				sc55_write_uart(_player[p], data, (uint32_t)length);
+		}
+		return;
 	}
+	if(sb >= 0xF1) {
+		if(_player[port])
+			sc55_write_uart(_player[port], data, (uint32_t)length);
+		return;
+	}
+
+	if(_player[port])
+		sc55_write_uart(_player[port], data, (uint32_t)length);
 }
 
-void SCPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
-	if(_player[0])
-		sc55_write_uart(_player[0], data, (uint32_t)size);
-	if(_player[1])
-		sc55_write_uart(_player[1], data, (uint32_t)size);
-	if(_player[2])
-		sc55_write_uart(_player[2], data, (uint32_t)size);
-	if(_player[3])
-		sc55_write_uart(_player[3], data, (uint32_t)size);
-}
-
-// These are called from threads and post messages which are handled on the same thread
 void SCPlayer::_lcd_callback(void *context, int port, const void *state, size_t size, uint64_t timestamp) {
 	SCPlayer *_this = (SCPlayer *)context;
 	_this->lcd_callback(port, state, size, timestamp);
@@ -104,10 +104,10 @@ void SCPlayer::flushOnSeek() {
 	[midiController flushEvents];
 }
 
-void SCPlayer::render(float *out, unsigned long count) {
+void SCPlayer::renderChunk(float *out, uint32_t count) {
 	bzero(out, sizeof(float) * count * 2);
 	while(count > 0) {
-		unsigned long countToDo = count;
+		uint32_t countToDo = count;
 		if(countToDo > 512)
 			countToDo = 512;
 
@@ -152,6 +152,7 @@ void SCPlayer::shutdown() {
 		sc55_free(_player[0]);
 		_player[0] = NULL;
 	}
+	initialized = false;
 }
 
 static NSString *getRomName(NSString *baseName) {
@@ -183,10 +184,10 @@ static int loadRom(void *context, const char *name, uint8_t *buffer, uint32_t *s
 			if(!fileData)
 				return -1;
 			if([fileData length] > *size) {
-				*size = (uint32_t) [fileData length];
+				*size = (uint32_t)[fileData length];
 				return -1;
 			}
-			*size = (uint32_t) [fileData length];
+			*size = (uint32_t)[fileData length];
 			if(buffer) {
 				memcpy(buffer, [fileData bytes], *size);
 			}
@@ -199,9 +200,9 @@ bool SCPlayer::startup() {
 	if(_player[0] || _player[1] || _player[2] || _player[3]) return true;
 
 	for(size_t i = 0; i < 4; ++i) {
-		if(!(port_mask & (1 << i))) continue;
+		if(!(port_mask & (1u << i))) continue;
 
-		_player[i] = sc55_init(i, GS_RESET, loadRom, NULL);
+		_player[i] = sc55_init((int)i, GS_RESET, loadRom, NULL);
 		if(!_player[i]) {
 			return false;
 		}
@@ -214,6 +215,7 @@ bool SCPlayer::startup() {
 
 	[_workerQueue waitUntilAllOperationsAreFinished];
 
+	initialized = true;
 	return true;
 }
 
@@ -225,5 +227,5 @@ double SCPlayer::sampleRate() {
 
 	sc55_free(st);
 
-	return (double) r;
+	return (double)r;
 }
