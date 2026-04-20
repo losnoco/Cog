@@ -43,6 +43,7 @@ class MIDIPlayer {
 
 	void setSampleRate(double rate);
 	void setLoopMode(unsigned int mode);
+	void setLoopCount(unsigned int jumpCount);
 	void setFilterMode(filter_mode m, bool disable_reverb_chorus);
 
 	/* Non-owning SS_MIDIFile; must remain valid for the player's lifetime. */
@@ -116,6 +117,7 @@ class MIDIPlayer {
 	double fade_seconds;
 
 	unsigned loop_mode_flags;
+	unsigned loop_count;
 
 	long samples_rendered;
 	long samples_total;

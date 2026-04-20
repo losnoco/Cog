@@ -377,6 +377,11 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		return NO;
 	}
 
+	NSInteger loopCount = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] integerForKey:@"synthDefaultLoopCount"];
+	if(loopCount >= 2) {
+		player->setLoopCount(loopCount - 1);
+	}
+
 	return YES;
 }
 
@@ -393,10 +398,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	double streamTimestamp = 0.0;
 
 	try {
-		player->setLoopMode((repeatone || isLooped) ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
-
-		if(!repeatone && framesRead >= localTotalFrames)
-			return 0;
+		player->setLoopMode(repeatone ? (MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force) : 0);
 
 		if((auplayer || spessaplayer) && !soundFontsAssigned) {
 			if(globalSoundFontPath != nil) {
@@ -419,33 +421,6 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 			return 0;
 
 		frames = frames_done;
-
-		if(!repeatone && framesRead + frames > localFramesLength) {
-			if(framesFade > 0.0) {
-				long fadeStart = (localFramesLength > framesRead) ? localFramesLength : framesRead;
-				long fadeEnd = (framesRead + frames > localTotalFrames) ? localTotalFrames : (framesRead + frames);
-				long fadePos;
-
-				float *buff = outputBuffer;
-
-				float fadeScale = (float)(framesFade - (fadeStart - localFramesLength)) / framesFade;
-				float fadeStep = 1.0 / framesFade;
-				for(fadePos = fadeStart; fadePos < fadeEnd; ++fadePos) {
-					buff[0] *= fadeScale;
-					buff[1] *= fadeScale;
-					buff += 2;
-					fadeScale -= fadeStep;
-					if(fadeScale < 0) {
-						fadeScale = 0;
-						fadeStep = 0;
-					}
-				}
-
-				frames = (int)(fadeEnd - framesRead);
-			} else {
-				frames = (int)(localTotalFrames - framesRead);
-			}
-		}
 
 		framesRead += frames;
 
