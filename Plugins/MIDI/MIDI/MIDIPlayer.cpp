@@ -52,6 +52,7 @@ MIDIPlayer::MIDIPlayer() {
 	subsong_end_seconds = 0.0;
 	duration_seconds = 0.0;
 	loop_mode_flags = 0;
+	loop_count = 1;
 	samples_rendered = 0;
 	samples_total = 0;
 }
@@ -69,9 +70,14 @@ void MIDIPlayer::setSampleRate(double rate) {
 void MIDIPlayer::setLoopMode(unsigned int mode) {
 	loop_mode_flags = mode;
 	if(sequencer) {
-		int loop_count = (mode & loop_mode_enable) ? -1 : 1;
+		int loop_count = (mode & loop_mode_enable) ? -1 : this->loop_count;
 		ss_sequencer_set_loop_count(sequencer, loop_count);
 	}
+}
+
+void MIDIPlayer::setLoopCount(unsigned int jumpCount) {
+	loop_count = jumpCount;
+	setLoopMode(loop_mode_flags);
 }
 
 void MIDIPlayer::setFilterMode(filter_mode m, bool disable_rc) {
@@ -168,7 +174,7 @@ bool MIDIPlayer::buildSequencer() {
 		return false;
 	}
 
-	int loop_count = (loop_mode_flags & loop_mode_enable) ? -1 : 1;
+	int loop_count = (loop_mode_flags & loop_mode_enable) ? -1 : this->loop_count;
 	ss_sequencer_set_loop_count(sequencer, loop_count);
 	ss_sequencer_set_fade_seconds(sequencer, fade_seconds);
 
@@ -345,17 +351,10 @@ unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 	unsigned long done = 0;
 	const uint32_t chunk_max = std::max<uint32_t>(1, getChunkSize());
 	const bool has_processor = getProcessor() != nullptr;
-	const bool is_looping = (loop_mode_flags & loop_mode_enable) != 0;
 
 	while(done < count) {
 		uint32_t chunk = chunk_max;
 		if(chunk > (uint32_t)(count - done)) chunk = (uint32_t)(count - done);
-		if(!is_looping && samples_total > 0 &&
-		   samples_rendered + (long)chunk > samples_total) {
-			long remaining = samples_total - samples_rendered;
-			if(remaining <= 0) break;
-			chunk = (uint32_t)remaining;
-		}
 		if(chunk == 0) break;
 
 		pending_events.clear();
