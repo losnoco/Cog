@@ -82,8 +82,8 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 
 	source = s;
 
-	double loopStart = (double)~0UL;
-	double loopEnd = (double)~0UL;
+	double loopStart = -1;
+	double loopEnd = -1;
 
 	try {
 		std::vector<uint8_t> file_data;
@@ -134,7 +134,8 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		return NO;
 	}
 
-	if(loopEnd == 0.0) loopEnd = framesLength;
+	if(loopStart == -1) loopStart = 0;
+	if(loopEnd == -1) loopEnd = framesLength;
 
 	if(loopStart != 0 || loopEnd != framesLength) {
 		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
@@ -370,8 +371,6 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 
 		if(!player->Load(midi_file, (unsigned)track_num, loop_mode, secondsFade))
 			return NO;
-
-		midi_file = NULL; /* Sequencer will free it */
 	} catch (std::exception &e) {
 		ALog(@"Exception caught while loading MIDI file into player: %s", e.what());
 		return NO;
