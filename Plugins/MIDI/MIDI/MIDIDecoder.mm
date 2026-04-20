@@ -150,7 +150,6 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		secondsFade = defaultFade;
 		isLooped = YES;
 	} else {
-		framesLength += 1.0;
 		secondsFade = 0.0;
 		isLooped = NO;
 	}
