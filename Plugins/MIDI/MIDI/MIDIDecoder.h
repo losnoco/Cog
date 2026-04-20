@@ -20,15 +20,15 @@ class SpessaPlayer;
 	id<CogSource> source;
 	int track_num;
 
-	AUPlayer* auplayer;
-	SCPlayer* scplayer;
-	SpessaPlayer* spessaplayer;
-	MIDIPlayer* player;
-	midi_container midi_file;
+	AUPlayer *auplayer;
+	SCPlayer *scplayer;
+	SpessaPlayer *spessaplayer;
+	MIDIPlayer *player;
+	SS_MIDIFile *midi_file;
 
-	const void* sbHandle;
+	const void *sbHandle;
 
-	NSString* globalSoundFontPath;
+	NSString *globalSoundFontPath;
 	BOOL soundFontsAssigned;
 	BOOL isLooped;
 

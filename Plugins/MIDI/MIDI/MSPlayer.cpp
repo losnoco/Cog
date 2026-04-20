@@ -1,3 +1,4 @@
+#include <cmath>
 #include <stdlib.h>
 #include <string.h>
 
@@ -5,6 +6,9 @@
 
 MSPlayer::MSPlayer() {
 	synth = 0;
+	synth_id = 0;
+	bank_id = 0;
+	extp = 0;
 }
 
 MSPlayer::~MSPlayer() {
@@ -26,20 +30,34 @@ void MSPlayer::set_extp(unsigned int extp) {
 	this->extp = extp;
 }
 
-void MSPlayer::send_event(uint32_t b) {
-	synth->midi_write(b & 0xffffff); /* Truncate the port number */
+void MSPlayer::dispatchMidi(const uint8_t *data, size_t length,
+                            uint32_t sample_offset, unsigned port) {
+	if(!synth || !length || port != 0) return;
+	(void)sample_offset;
+
+	uint8_t sb = data[0];
+	if(sb >= 0xF0) {
+		/* Legacy midisynth engines have no SysEx path; drop. */
+		return;
+	}
+
+	uint32_t packed = sb;
+	if(length >= 2) packed |= (uint32_t)data[1] << 8;
+	if(length >= 3) packed |= (uint32_t)data[2] << 16;
+	synth->midi_write(packed);
 }
 
-void MSPlayer::send_sysex(const uint8_t* data, size_t size, size_t port) {
-}
-
-void MSPlayer::render(float* out, unsigned long count) {
+void MSPlayer::renderChunk(float *out, uint32_t count) {
+	if(!synth) {
+		bzero(out, sizeof(float) * count * 2);
+		return;
+	}
 	float const scaler = 1.0f / 8192.0f;
 	short buffer[512];
 	while(count) {
-		unsigned long todo = count > 256 ? 256 : count;
-		synth->midi_generate(buffer, (unsigned int)todo);
-		for(unsigned long i = 0; i < todo; ++i) {
+		uint32_t todo = count > 256 ? 256 : count;
+		synth->midi_generate(buffer, todo);
+		for(uint32_t i = 0; i < todo; ++i) {
 			*out++ = buffer[i * 2 + 0] * scaler;
 			*out++ = buffer[i * 2 + 1] * scaler;
 		}
@@ -69,21 +87,18 @@ bool MSPlayer::startup() {
 
 	if(!synth) return false;
 
-	if(!synth->midi_init((unsigned int) round(dSampleRate), bank_id, extp))
+	if(!synth->midi_init((unsigned int)std::lround(dSampleRate), bank_id, extp))
 		return false;
 
 	initialized = true;
-
-	setFilterMode(mode, reverb_chorus_disabled);
-
 	return true;
 }
 
 void MSPlayer::enum_synthesizers(enum_callback callback) {
 	char buffer[512];
-	const char* synth_name;
+	const char *synth_name;
 
-	midisynth* synth = getsynth_doom();
+	midisynth *synth = getsynth_doom();
 
 	synth_name = synth->midi_synth_name();
 

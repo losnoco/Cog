@@ -3,8 +3,6 @@
 
 #include "MIDIPlayer.h"
 
-//#include <string>
-
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <CoreAudio/CoreAudioTypes.h>
@@ -13,16 +11,11 @@ class AUPluginUI;
 
 class AUPlayer : public MIDIPlayer {
 	public:
-	// zero variables
 	AUPlayer();
 
-	// close, unload
 	virtual ~AUPlayer();
 
-	// configuration
 	void setSoundFont(const char *in);
-	/*void setFileSoundFont( const char * in );*/
-	// void showDialog();
 
 	typedef void (*callback)(OSType uSubType, OSType uManufacturer, const char *name);
 	static void enumComponents(callback cbEnum);
@@ -31,29 +24,25 @@ class AUPlayer : public MIDIPlayer {
 	void setPreset(NSDictionary *preset);
 
 	protected:
-	virtual unsigned int send_event_needs_time();
-	virtual void send_event(uint32_t b);
-	virtual void send_sysex(const uint8_t *data, size_t size, size_t port);
-	virtual void render(float *out, unsigned long count);
-
-	virtual void shutdown();
 	virtual bool startup();
-
-	virtual void send_event_time(uint32_t b, unsigned int time);
-	virtual void send_sysex_time(const uint8_t *data, size_t size, size_t port, unsigned int time);
+	virtual void shutdown();
+	virtual void renderChunk(float *out, uint32_t sample_count);
+	virtual void dispatchMidi(const uint8_t *data, size_t length,
+	                          uint32_t sample_offset, unsigned port);
+	virtual uint32_t getChunkSize() const {
+		return 512;
+	}
 
 	private:
 	void loadSoundFont(const char *name);
+	void sendEventTime(uint32_t b, uint32_t time, unsigned port);
+	void sendSysexTime(const uint8_t *data, size_t size, unsigned port, uint32_t time);
 
 	std::string sSoundFontName;
-	/*std::string        sFileSoundFontName;*/
 
 	AudioTimeStamp mTimeStamp;
 
-	AudioUnit samplerUnit[3];
-
-	bool samplerUIinitialized[3];
-	AUPluginUI *samplerUI[3];
+	AudioUnit samplerUnit[4];
 
 	AudioBufferList *bufferList;
 

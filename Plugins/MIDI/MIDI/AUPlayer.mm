@@ -6,12 +6,6 @@
 
 #define SF2PACK
 
-// #define AUPLAYERVIEW
-
-#ifdef AUPLAYERVIEW
-#import "AUPlayerView.h"
-#endif
-
 #define _countof(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #define BLOCK_SIZE (512)
@@ -22,16 +16,6 @@ AUPlayer::AUPlayer()
 	samplerUnit[1] = NULL;
 	samplerUnit[2] = NULL;
 	samplerUnit[3] = NULL;
-#ifdef AUPLAYERVIEW
-	samplerUI[0] = NULL;
-	samplerUI[1] = NULL;
-	samplerUI[2] = NULL;
-	samplerUI[3] = NULL;
-	samplerUIinitialized[0] = false;
-	samplerUIinitialized[1] = false;
-	samplerUIinitialized[2] = false;
-	samplerUIinitialized[3] = false;
-#endif
 	bufferList = NULL;
 	audioBuffer = NULL;
 
@@ -43,34 +27,17 @@ AUPlayer::~AUPlayer() {
 	shutdown();
 }
 
-void AUPlayer::send_event(uint32_t b) {
-	send_event_time(b, 0);
-}
-
-void AUPlayer::send_sysex(const uint8_t *data, size_t size, size_t port) {
-	send_sysex_time(data, size, port, 0);
-}
-
-void AUPlayer::send_event_time(uint32_t b, unsigned int time) {
+void AUPlayer::sendEventTime(uint32_t b, uint32_t time, unsigned port) {
 	unsigned char event[3];
 	event[0] = (unsigned char)b;
 	event[1] = (unsigned char)(b >> 8);
 	event[2] = (unsigned char)(b >> 16);
-	unsigned port = (b >> 24) & 0x7F;
 	if(port > 3) port = 0;
 	if(samplerUnit[port])
 		MusicDeviceMIDIEvent(samplerUnit[port], event[0], event[1], event[2], time);
-#ifdef AUPLAYERVIEW
-	if(port >= 0 && samplerUnit[port] && !samplerUIinitialized[port]) {
-		samplerUIinitialized[port] = true;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			samplerUI[port] = new AUPluginUI(samplerUnit[port]);
-		});
-	}
-#endif
 }
 
-void AUPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, unsigned int time) {
+void AUPlayer::sendSysexTime(const uint8_t *data, size_t size, unsigned port, uint32_t time) {
 	if(port > 3) port = 0;
 	if(samplerUnit[port])
 		MusicDeviceSysEx(samplerUnit[port], data, (UInt32)size);
@@ -82,17 +49,30 @@ void AUPlayer::send_sysex_time(const uint8_t *data, size_t size, size_t port, un
 		if(samplerUnit[3])
 			MusicDeviceSysEx(samplerUnit[3], data, (UInt32)size);
 	}
-#ifdef AUPLAYERVIEW
-	if(port >= 0 && samplerUnit[port] && !samplerUIinitialized[port]) {
-		samplerUIinitialized[port] = true;
-		dispatch_async(dispatch_get_main_queue(), ^{
-			samplerUI[port] = new AUPluginUI(samplerUnit[port]);
-		});
-	}
-#endif
 }
 
-void AUPlayer::render(float *out, unsigned long count) {
+void AUPlayer::dispatchMidi(const uint8_t *data, size_t length,
+                            uint32_t sample_offset, unsigned port) {
+	if(!length) return;
+	uint8_t sb = data[0];
+
+	if(sb == 0xF0) {
+		sendSysexTime(data, length, port, sample_offset);
+		return;
+	}
+	if(sb >= 0xF1) {
+		/* System-common (e.g. tuning request) — route as sysex. */
+		sendSysexTime(data, length, port, sample_offset);
+		return;
+	}
+
+	uint32_t packed = sb;
+	if(length >= 2) packed |= (uint32_t)data[1] << 8;
+	if(length >= 3) packed |= (uint32_t)data[2] << 16;
+	sendEventTime(packed, sample_offset, port);
+}
+
+void AUPlayer::renderChunk(float *out, uint32_t count) {
 	const float *ptrL, *ptrR;
 	bzero(out, count * sizeof(float) * 2);
 	while(count) {
@@ -132,53 +112,12 @@ void AUPlayer::render(float *out, unsigned long count) {
 }
 
 void AUPlayer::shutdown() {
-	if(samplerUnit[3]) {
-#ifdef AUPLAYERVIEW
-		if(samplerUI[3]) {
-			delete samplerUI[3];
-			samplerUI[3] = 0;
-			samplerUIinitialized[3] = false;
+	for(int i = 3; i >= 0; --i) {
+		if(samplerUnit[i]) {
+			AudioUnitUninitialize(samplerUnit[i]);
+			AudioComponentInstanceDispose(samplerUnit[i]);
+			samplerUnit[i] = NULL;
 		}
-#endif
-		AudioUnitUninitialize(samplerUnit[3]);
-		AudioComponentInstanceDispose(samplerUnit[3]);
-		samplerUnit[3] = NULL;
-	}
-	if(samplerUnit[2]) {
-#ifdef AUPLAYERVIEW
-		if(samplerUI[2]) {
-			delete samplerUI[2];
-			samplerUI[2] = 0;
-			samplerUIinitialized[2] = false;
-		}
-#endif
-		AudioUnitUninitialize(samplerUnit[2]);
-		AudioComponentInstanceDispose(samplerUnit[2]);
-		samplerUnit[2] = NULL;
-	}
-	if(samplerUnit[1]) {
-#ifdef AUPLAYERVIEW
-		if(samplerUI[1]) {
-			delete samplerUI[1];
-			samplerUI[1] = 0;
-			samplerUIinitialized[1] = false;
-		}
-#endif
-		AudioUnitUninitialize(samplerUnit[1]);
-		AudioComponentInstanceDispose(samplerUnit[1]);
-		samplerUnit[1] = NULL;
-	}
-	if(samplerUnit[0]) {
-#ifdef AUPLAYERVIEW
-		if(samplerUI[0]) {
-			delete samplerUI[0];
-			samplerUI[0] = 0;
-			samplerUIinitialized[0] = false;
-		}
-#endif
-		AudioUnitUninitialize(samplerUnit[0]);
-		AudioComponentInstanceDispose(samplerUnit[0]);
-		samplerUnit[0] = NULL;
 	}
 	if(audioBuffer) {
 		free(audioBuffer);
@@ -235,12 +174,6 @@ void AUPlayer::setPreset(NSDictionary *preset) {
 	this->preset = preset;
 }
 
-/*void AUPlayer::setFileSoundFont( const char * in )
-{
-    sFileSoundFontName = in;
-    shutdown();
-}*/
-
 static OSStatus renderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData) {
 	if(inNumberFrames && ioData) {
 		for(int i = 0, j = ioData->mNumberBuffers; i < j; ++i) {
@@ -272,7 +205,7 @@ bool AUPlayer::startup() {
 	OSStatus error;
 
 	for(int i = 0; i < 4; i++) {
-		if(!(port_mask & (1 << i))) continue;
+		if(!(port_mask & (1u << i))) continue;
 
 		UInt32 value = 1;
 		UInt32 size = sizeof(value);
@@ -339,20 +272,6 @@ bool AUPlayer::startup() {
 			                     kAudioUnitScope_Input, 0, &callbackStruct, sizeof(callbackStruct));
 		}
 
-		/*Float64 sampleRateIn = 0, sampleRateOut = 0;
-		UInt32 sampleRateSize = sizeof (sampleRateIn);
-		const Float64 sr = dSampleRate;
-
-		AudioUnitGetProperty(samplerUnit[i], kAudioUnitProperty_SampleRate, kAudioUnitScope_Input, 0, &sampleRateIn, &sampleRateSize);
-
-		if (sampleRateIn != sr)
-		    AudioUnitSetProperty(samplerUnit[i], kAudioUnitProperty_SampleRate, kAudioUnitScope_Input, 0, &sr, sizeof (sr));
-
-		AudioUnitGetProperty (samplerUnit[i], kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, 0, &sampleRateOut, &sampleRateSize);
-
-		if (sampleRateOut != sr)
-		    AudioUnitSetProperty (samplerUnit[i], kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, i, &sr, sizeof (sr));*/
-
 		if(needsInput) {
 			AudioUnitReset(samplerUnit[i], kAudioUnitScope_Input, 0);
 		}
@@ -374,15 +293,9 @@ bool AUPlayer::startup() {
 			return false;
 	}
 
-	// Now load instruments
 	if(sSoundFontName.length()) {
 		loadSoundFont(sSoundFontName.c_str());
 	}
-
-	/*if ( sFileSoundFontName.length() )
-	{
-	    loadSoundFont( sFileSoundFontName.c_str() );
-	}*/
 
 	bufferList = (AudioBufferList *)calloc(1, sizeof(AudioBufferList) + sizeof(AudioBuffer));
 	if(!bufferList)
@@ -399,14 +312,12 @@ bool AUPlayer::startup() {
 
 	initialized = true;
 
-	setFilterMode(mode, reverb_chorus_disabled);
-
-	// Warm up
-	float *temp = (float*) malloc(sizeof(float) * BLOCK_SIZE * 2);
+	/* Warm up */
+	float *temp = (float *)malloc(sizeof(float) * BLOCK_SIZE * 2);
 	if(temp) {
-		size_t count = (size_t) round(dSampleRate / BLOCK_SIZE) + 1;
+		size_t count = (size_t)round(dSampleRate / BLOCK_SIZE) + 1;
 		for(size_t i = 0; i < count; ++i) {
-			render(temp, BLOCK_SIZE);
+			renderChunk(temp, BLOCK_SIZE);
 		}
 		free(temp);
 	}
@@ -415,8 +326,6 @@ bool AUPlayer::startup() {
 }
 
 void AUPlayer::loadSoundFont(const char *name) {
-	// kMusicDeviceProperty_SoundBankURL was added in 10.5 as a replacement
-	// In addition, the File Manager API became deprecated starting in 10.8
 	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)name, strlen(name), false);
 
 	if(url) {
@@ -428,8 +337,4 @@ void AUPlayer::loadSoundFont(const char *name) {
 
 		CFRelease(url);
 	}
-}
-
-unsigned int AUPlayer::send_event_needs_time() {
-	return BLOCK_SIZE;
 }
