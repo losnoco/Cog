@@ -29,8 +29,6 @@
 		83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35700180EDB74007E9DF0 /* MIDIContainer.mm */; };
 		83C35705180EDD1C007E9DF0 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */; };
 		83DFCDBA2E8533DC009E3DF1 /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DFCDB82E8533B8009E3DF1 /* nuked_sc55.framework */; };
-		83DFCDBB2E853402009E3DF1 /* midi_processing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DFCDB02E8533B5009E3DF1 /* midi_processing.framework */; };
-		83DFCDBC2E853402009E3DF1 /* midi_processing.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83DFCDB02E8533B5009E3DF1 /* midi_processing.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E83F7A2D9654470054365C /* Accelerate.framework */; };
 		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
 /* End PBXBuildFile section */
@@ -49,20 +47,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8346D3AA2F867F4900F3F5EC;
 			remoteInfo = spessasynth_core;
-		};
-		83DFCDAC2E8533B5009E3DF1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83DFCDA92E8533B5009E3DF1 /* midi_processing.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 83B066AB180D56B9008E3612;
-			remoteInfo = midi_processing;
-		};
-		83DFCDAF2E8533B5009E3DF1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83DFCDA92E8533B5009E3DF1 /* midi_processing.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 83B066AC180D56B9008E3612;
-			remoteInfo = midi_processing;
 		};
 		83DFCDB42E8533B8009E3DF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -88,7 +72,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */,
-				83DFCDBC2E853402009E3DF1 /* midi_processing.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,7 +142,6 @@
 		83C35701180EDB74007E9DF0 /* MIDIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIContainer.h; sourceTree = "<group>"; };
 		83C35703180EDD1C007E9DF0 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIDIMetadataReader.mm; sourceTree = "<group>"; };
 		83C35704180EDD1C007E9DF0 /* MIDIMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIDIMetadataReader.h; sourceTree = "<group>"; };
-		83DFCDA92E8533B5009E3DF1 /* midi_processing.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = midi_processing.xcodeproj; path = ../../Frameworks/midi_processing/midi_processing.xcodeproj; sourceTree = "<group>"; };
 		83DFCDB12E8533B8009E3DF1 /* nuked-sc55.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "nuked-sc55.xcodeproj"; path = "../../Frameworks/nuked-sc55/nuked-sc55.xcodeproj"; sourceTree = "<group>"; };
 		83E83F7A2D9654470054365C /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
@@ -179,7 +161,6 @@
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
 				8346D07C2F867D6600F3F5EC /* libFLAC.14.dylib in Frameworks */,
-				83DFCDBB2E853402009E3DF1 /* midi_processing.framework in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -279,7 +260,6 @@
 				8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */,
 				83B0668A180D5668008E3612 /* Cocoa.framework */,
 				83B0668C180D5668008E3612 /* Other Frameworks */,
-				83DFCDA92E8533B5009E3DF1 /* midi_processing.xcodeproj */,
 				83DFCDB12E8533B8009E3DF1 /* nuked-sc55.xcodeproj */,
 			);
 			name = Frameworks;
@@ -342,14 +322,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		83DFCDAA2E8533B5009E3DF1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				83DFCDB02E8533B5009E3DF1 /* midi_processing.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		83DFCDB22E8533B8009E3DF1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -376,7 +348,6 @@
 			dependencies = (
 				8315D48B2F8C9F9500310505 /* PBXTargetDependency */,
 				83DFCDB52E8533B8009E3DF1 /* PBXTargetDependency */,
-				83DFCDAD2E8533B5009E3DF1 /* PBXTargetDependency */,
 			);
 			name = MIDI;
 			productName = MIDI;
@@ -410,10 +381,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 83DFCDAA2E8533B5009E3DF1 /* Products */;
-					ProjectRef = 83DFCDA92E8533B5009E3DF1 /* midi_processing.xcodeproj */;
-				},
-				{
 					ProductGroup = 83DFCDB22E8533B8009E3DF1 /* Products */;
 					ProjectRef = 83DFCDB12E8533B8009E3DF1 /* nuked-sc55.xcodeproj */;
 				},
@@ -435,13 +402,6 @@
 			fileType = wrapper.framework;
 			path = spessasynth_core.framework;
 			remoteRef = 83B7F5BE2F86821200C57C20 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		83DFCDB02E8533B5009E3DF1 /* midi_processing.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = midi_processing.framework;
-			remoteRef = 83DFCDAF2E8533B5009E3DF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83DFCDB82E8533B8009E3DF1 /* nuked_sc55.framework */ = {
@@ -493,11 +453,6 @@
 			isa = PBXTargetDependency;
 			name = spessasynth_core;
 			targetProxy = 8315D48A2F8C9F9500310505 /* PBXContainerItemProxy */;
-		};
-		83DFCDAD2E8533B5009E3DF1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = midi_processing;
-			targetProxy = 83DFCDAC2E8533B5009E3DF1 /* PBXContainerItemProxy */;
 		};
 		83DFCDB52E8533B8009E3DF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
