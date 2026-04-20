@@ -104,6 +104,10 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		if(!midi_file)
 			return NO;
 
+		if(ss_midi_has_emidi(midi_file)) {
+			ss_midi_remove_emidi_non_gm(midi_file);
+		}
+
 		if(midi_file->duration <= 0.0) {
 			ss_midi_free(midi_file);
 			midi_file = NULL;
