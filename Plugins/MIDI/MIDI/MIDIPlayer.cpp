@@ -119,7 +119,7 @@ static double subsong_end_ticks(const SS_MIDIFile *midi, size_t subsong) {
 
 /* ── Load / sequencer lifecycle ──────────────────────────────────────────── */
 
-bool MIDIPlayer::Load(SS_MIDIFile *in_midi, unsigned subsong, unsigned loop_mode) {
+bool MIDIPlayer::Load(SS_MIDIFile *in_midi, unsigned subsong, unsigned loop_mode, double fade_seconds) {
 	teardownSequencer();
 
 	if(!in_midi) return false;
@@ -134,6 +134,7 @@ bool MIDIPlayer::Load(SS_MIDIFile *in_midi, unsigned subsong, unsigned loop_mode
 	subsong_end_seconds = ss_midi_ticks_to_seconds(midi_file, (size_t)end_ticks);
 	duration_seconds = subsong_end_seconds - subsong_start_seconds;
 	if(duration_seconds < 0.0) duration_seconds = 0.0;
+	this->fade_seconds = fade_seconds;
 
 	samples_rendered = 0;
 	samples_total = (long)std::llround(duration_seconds * dSampleRate);
@@ -169,7 +170,7 @@ bool MIDIPlayer::buildSequencer() {
 
 	int loop_count = (loop_mode_flags & loop_mode_enable) ? -1 : 1;
 	ss_sequencer_set_loop_count(sequencer, loop_count);
-	ss_sequencer_set_fade_seconds(sequencer, 0.0);
+	ss_sequencer_set_fade_seconds(sequencer, fade_seconds);
 
 	/* Initial filter reset before any MIDI events. */
 	for(unsigned p = 0; p < 4; ++p) {
@@ -339,6 +340,7 @@ void MIDIPlayer::sysex_reset(size_t port, uint32_t sample_offset) {
 unsigned long MIDIPlayer::Play(float *out, unsigned long count) {
 	if(!midi_file) return 0;
 	if(!sequencer && !buildSequencer()) return 0;
+	if(ss_sequencer_is_finished(sequencer)) return 0;
 
 	unsigned long done = 0;
 	const uint32_t chunk_max = std::max<uint32_t>(1, getChunkSize());

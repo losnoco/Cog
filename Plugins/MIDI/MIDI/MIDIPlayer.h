@@ -46,7 +46,7 @@ class MIDIPlayer {
 	void setFilterMode(filter_mode m, bool disable_reverb_chorus);
 
 	/* Non-owning SS_MIDIFile; must remain valid for the player's lifetime. */
-	bool Load(SS_MIDIFile *midi_file, unsigned subsong, unsigned loop_mode);
+	bool Load(SS_MIDIFile *midi_file, unsigned subsong, unsigned loop_mode, double fade_seconds);
 	unsigned long Play(float *out, unsigned long count);
 	void Seek(unsigned long sample);
 	unsigned long Tell() const;
@@ -113,6 +113,7 @@ class MIDIPlayer {
 	double subsong_start_seconds;
 	double subsong_end_seconds;
 	double duration_seconds;
+	double fade_seconds;
 
 	unsigned loop_mode_flags;
 

@@ -36,6 +36,7 @@ class SpessaPlayer;
 
 	double totalFrames;
 	double framesLength;
+	double secondsFade;
 	double framesFade;
 	long framesRead;
 

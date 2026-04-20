@@ -134,8 +134,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		return NO;
 	}
 
-	if(loopStart == (double)~0UL) loopStart = 0;
-	if(loopEnd == (double)~0UL) loopEnd = framesLength;
+	if(loopEnd == 0.0) loopEnd = framesLength;
 
 	if(loopStart != 0 || loopEnd != framesLength) {
 		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
@@ -143,11 +142,11 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 			defaultFade = 0.0;
 		}
 		framesLength = loopStart + (loopEnd - loopStart) * 2;
-		framesFade = defaultFade;
+		secondsFade = defaultFade;
 		isLooped = YES;
 	} else {
 		framesLength += 1.0;
-		framesFade = 0.0;
+		secondsFade = 0.0;
 		isLooped = NO;
 	}
 
@@ -159,7 +158,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	}
 
 	framesLength = round(framesLength * sampleRate);
-	framesFade = round(framesFade * sampleRate);
+	framesFade = round(secondsFade * sampleRate);
 
 	totalFrames = framesLength + framesFade;
 
@@ -369,7 +368,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 
 		unsigned int loop_mode = framesFade > 0.0 ? MIDIPlayer::loop_mode_enable | MIDIPlayer::loop_mode_force : 0;
 
-		if(!player->Load(midi_file, (unsigned)track_num, loop_mode))
+		if(!player->Load(midi_file, (unsigned)track_num, loop_mode, secondsFade))
 			return NO;
 
 		midi_file = NULL; /* Sequencer will free it */
