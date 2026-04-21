@@ -6,6 +6,7 @@
 #import "MiniPlayerPlusWindowController.h"
 #import "AppController.h"
 #import "PlaylistEntry.h"
+#import "PlaybackController.h"
 
 // Padding constants
 static const CGFloat kSidePad = 16.0;
@@ -43,7 +44,23 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
                              forKeyPath:@"content"
                                 options:NSKeyValueObservingOptionNew
                                 context:kMiniPlayerPlusContext];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(playbackDidBegin:)
+												 name:CogPlaybackDidBeginNotificiation
+											   object:nil];
     [self rebuildContent];
+}
+
+- (void)dealloc {
+	[playlistSelectionController removeObserver:self
+									 forKeyPath:@"selection"
+										context:kMiniPlayerPlusContext];
+	[currentEntryController removeObserver:self
+								forKeyPath:@"content"
+								   context:kMiniPlayerPlusContext];
+	[[NSNotificationCenter defaultCenter] removeObserver:self
+													name:CogPlaybackDidBeginNotificiation
+												  object:nil];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -57,6 +74,16 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)playbackDidBegin:(NSNotification *)notification {
+	PlaylistEntry *currentSelection = [[playlistSelectionController selectedObjects] firstObject];
+	if(currentSelection != nil) {
+		[self setValueToDisplay:currentSelection];
+	} else {
+		[self setValueToDisplay:[currentEntryController content]];
+	}
+	[self rebuildContent];
 }
 
 - (void)setValueToDisplay:(id)newValue {
