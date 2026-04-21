@@ -160,23 +160,23 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
     NSString *trackText = [entry trackText];
     NSString *lengthText = [entry lengthText];
     if(trackText.length > 0 && ![trackText isEqualToString:@"0"]) {
-        curY = [self addRow:@"Track" value:trackText toView:flipped atY:curY width:width];
+        curY = [self addRow:NSLocalizedString(@"Track", @"Track title") value:trackText toView:flipped atY:curY width:width];
     }
     if(lengthText.length > 0) {
-        curY = [self addRow:@"Length" value:lengthText toView:flipped atY:curY width:width];
+        curY = [self addRow:NSLocalizedString(@"Length", @"Length title") value:lengthText toView:flipped atY:curY width:width];
     }
 
     NSString *genre = [entry genre];
-    if(genre.length) curY = [self addRow:@"Genre" value:genre toView:flipped atY:curY width:width];
+    if(genre.length) curY = [self addRow:NSLocalizedString(@"Genre", @"Genre title") value:genre toView:flipped atY:curY width:width];
 
     NSString *composer = [entry composer];
-    if(composer.length) curY = [self addRow:@"Composer" value:composer toView:flipped atY:curY width:width];
+    if(composer.length) curY = [self addRow:NSLocalizedString(@"Composer", @"Composer title") value:composer toView:flipped atY:curY width:width];
 
     NSString *date = [entry date];
-    if(date.length) curY = [self addRow:@"Date" value:date toView:flipped atY:curY width:width];
+    if(date.length) curY = [self addRow:NSLocalizedString(@"Date", @"Date title") value:date toView:flipped atY:curY width:width];
 
     NSString *comment = [entry comment];
-    if(comment.length) curY = [self addRow:@"Comment" value:comment toView:flipped atY:curY width:width];
+    if(comment.length) curY = [self addRow:NSLocalizedString(@"Comment", @"Comment title") value:comment toView:flipped atY:curY width:width];
 
     // Technical separator
     NSBox *sep2 = [[NSBox alloc] initWithFrame:NSMakeRect(kSidePad, curY, width - 2*kSidePad, 1)];
@@ -188,33 +188,33 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
     if(sr > 0) {
         NSValueTransformer *t = [NSValueTransformer valueTransformerForName:@"NumberHertzToStringTransformer"];
         NSString *srStr = t ? [t transformedValue:@(sr)] : [NSString stringWithFormat:@"%.0f Hz", sr];
-        curY = [self addRow:@"Sample Rate" value:srStr toView:flipped atY:curY width:width];
+        curY = [self addRow:NSLocalizedString(@"Sample Rate", @"Sample Rate title") value:srStr toView:flipped atY:curY width:width];
     }
     int ch = [entry channels];
-    if(ch > 0) curY = [self addRow:@"Channels" value:@(ch).stringValue toView:flipped atY:curY width:width];
+    if(ch > 0) curY = [self addRow:NSLocalizedString(@"Channels", @"Channels title") value:@(ch).stringValue toView:flipped atY:curY width:width];
     int bps = [entry bitsPerSample];
-    if(bps > 0) curY = [self addRow:@"Bits/Sample" value:@(bps).stringValue toView:flipped atY:curY width:width];
+    if(bps > 0) curY = [self addRow:NSLocalizedString(@"Bits/Sample", @"Bits per sample title") value:@(bps).stringValue toView:flipped atY:curY width:width];
     int br = [entry bitrate];
-    if(br > 0) curY = [self addRow:@"Bitrate" value:[NSString stringWithFormat:@"%d kbps", br] toView:flipped atY:curY width:width];
+    if(br > 0) curY = [self addRow:NSLocalizedString(@"Bitrate", @"Bitrate title") value:[NSString stringWithFormat:@"%d kbps", br] toView:flipped atY:curY width:width];
     NSString *codec = [entry codec];
-    if(codec.length) curY = [self addRow:@"Codec" value:codec toView:flipped atY:curY width:width];
+    if(codec.length) curY = [self addRow:NSLocalizedString(@"Codec", @"Codec title") value:codec toView:flipped atY:curY width:width];
     NSString *encoding = [entry encoding];
-    if(encoding.length) curY = [self addRow:@"Encoding" value:encoding toView:flipped atY:curY width:width];
+    if(encoding.length) curY = [self addRow:NSLocalizedString(@"Encoding", @"Encoding title") value:encoding toView:flipped atY:curY width:width];
 
     // Only show ReplayGain if there is actual gain data applied
     if(entry.replayGainAlbumGain != 0 || entry.replayGainTrackGain != 0 ||
        (entry.soundcheck && entry.soundcheck.length) || (entry.volume != 0 && entry.volume != 1.0)) {
         NSString *replayGain = [entry gainCorrection];
         if(replayGain.length) {
-            curY = [self addRow:@"ReplayGain" value:replayGain toView:flipped atY:curY width:width];
+            curY = [self addRow:NSLocalizedString(@"ReplayGain", @"ReplayGain title") value:replayGain toView:flipped atY:curY width:width];
         }
     }
     NSString *playCount = [entry playCount];
     if(playCount.length && ![playCount isEqualToString:@"0"]) {
-        curY = [self addRow:@"Play Count" value:playCount toView:flipped atY:curY width:width];
+        curY = [self addRow:NSLocalizedString(@"Play Count", @"Play Count title") value:playCount toView:flipped atY:curY width:width];
     }
     NSString *filename = [entry filename];
-    if(filename.length) curY = [self addRow:@"File" value:filename toView:flipped atY:curY width:width];
+    if(filename.length) curY = [self addRow:NSLocalizedString(@"File", @"File title") value:filename toView:flipped atY:curY width:width];
 
     curY += kTopPad;
 
