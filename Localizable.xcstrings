@@ -3307,6 +3307,17 @@
         }
       }
     },
+    "Tree Search" : {
+      "comment" : "File tree search placeholder",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar en árbol"
+          }
+        }
+      }
+    },
     "Use 3D rendered spectrum" : {
       "localizations" : {
         "es" : {
