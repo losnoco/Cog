@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		83095D962F81DA0100DDA4B4 /* SpessaPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */; };
 		8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B7F5BF2F86821200C57C20 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8346D07C2F867D6600F3F5EC /* libFLAC.14.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8346D07B2F867D6600F3F5EC /* libFLAC.14.dylib */; };
 		834BE91B1DE407CB00A07DCD /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 834BE9191DE407CB00A07DCD /* resampler.c */; };
 		834D190C2D7F954100F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D190B2D7F954100F13B89 /* CogAudio.framework */; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
@@ -91,7 +90,6 @@
 		83095D932F81DA0100DDA4B4 /* SpessaPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpessaPlayer.h; sourceTree = "<group>"; };
 		83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SpessaPlayer.mm; sourceTree = "<group>"; };
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		8346D07B2F867D6600F3F5EC /* libFLAC.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.14.dylib; path = ../../ThirdParty/flac/lib/libFLAC.14.dylib; sourceTree = "<group>"; };
 		8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = spessasynth_core.xcodeproj; path = MIDI/spessasynth_core/spessasynth_core.xcodeproj; sourceTree = "<group>"; };
 		834A42BC287AFC7F00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		834BE9191DE407CB00A07DCD /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */,
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
 				83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */,
-				8346D07C2F867D6600F3F5EC /* libFLAC.14.dylib in Frameworks */,
 				83B0668B180D5668008E3612 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -252,7 +249,6 @@
 			isa = PBXGroup;
 			children = (
 				8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */,
-				8346D07B2F867D6600F3F5EC /* libFLAC.14.dylib */,
 				83E83F7A2D9654470054365C /* Accelerate.framework */,
 				834D190B2D7F954100F13B89 /* CogAudio.framework */,
 				83686AB01C5C783000671C7A /* CoreAudioKit.framework */,
@@ -594,6 +590,7 @@
 		83B0669A180D5668008E3612 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -620,6 +617,7 @@
 		83B0669B180D5668008E3612 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

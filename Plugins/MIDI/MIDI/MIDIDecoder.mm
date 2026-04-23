@@ -195,7 +195,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	NSString *soundFontPath = @"";
 
 	if([[source url] isFileURL]) {
-		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json", @"dls"];
+		NSArray *extensions = @[@"sflist", @"sf2pack", @"sf2", @"sf3", @"json", @"dls", @"sflist", @"json"];
 		NSURL *fileUrl = [source url];
 		NSURL *soundFontUrl = fileUrl;
 		NSInteger extFound;
