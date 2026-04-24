@@ -255,10 +255,12 @@ bool SpessaPlayer::startup() {
 	if(filteredFileBank) _filteredBanks.push_back(filteredFileBank);
 	if(filteredGlobalBank) _filteredBanks.push_back(filteredGlobalBank);
 
-	SS_ProcessorOptions opts;
-	opts.enable_effects = true;
-	opts.voice_cap = 512;
-	opts.interpolation = interp;
+	SS_ProcessorOptions opts = {
+		.enable_effects = true,
+		.voice_cap = 512,
+		.interpolation = interp,
+		.preload_samples = false
+	};
 
 	_synth = ss_processor_create((uint32_t)std::lround(dSampleRate), &opts);
 	if(!_synth) {
