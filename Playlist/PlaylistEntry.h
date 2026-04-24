@@ -116,6 +116,6 @@
 
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
-- (AudioScrobblerTrack *)audioScrobblerTrack;
+- (AudioScrobblerTrack *_Nonnull)audioScrobblerTrack;
 
 @end
