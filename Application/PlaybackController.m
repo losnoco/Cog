@@ -1009,7 +1009,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 		lastPosition = p;
 
-		[playlistController commitPersistentStore];
+		[playlistController commitPersistentStoreAsync];
 	}
 }
 

@@ -289,7 +289,7 @@ static BOOL consentLastEnabled = NO;
 					entry.current = NO;
 					entry.stopAfter = NO;
 				}
-				[playlistController commitPersistentStore];
+				[playlistController commitPersistentStoreAsync];
 				[playlistView reloadData];
 			}
 			// Bug fix
@@ -298,7 +298,7 @@ static BOOL consentLastEnabled = NO;
 					PlaylistEntry *pe = results[i];
 					[pe setCurrent:NO];
 				}
-				[playlistController commitPersistentStore];
+				[playlistController commitPersistentStoreAsync];
 			}
 		}
 	}
@@ -586,7 +586,7 @@ static BOOL consentLastEnabled = NO;
 		}
 	}
 
-	[playlistController commitPersistentStore];
+	[playlistController commitPersistentStoreAsync];
 
 	if([SQLiteStore databaseStarted]) {
 		[[SQLiteStore sharedStore] shutdown];
