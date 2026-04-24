@@ -800,12 +800,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		if([arrayRest count])
 			[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:arrayRest];
-		else {
-			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-				[self->playlistController commitPersistentStore];
-			});
-			[self completeProgress];
-		}
+		else
+			[self->playlistController commitPersistentStoreAsync];
+
 		return entries;
 	}
 }
@@ -1015,9 +1012,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		});
 	}
 
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playlistController commitPersistentStore];
-	});
+	[self->playlistController commitPersistentStoreAsync];
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 
@@ -1181,7 +1176,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		}
 
 		if([pruneSet count] || !dataMigrated) {
-			[playlistController commitPersistentStore];
+			[playlistController commitPersistentStoreAsync];
 		}
 
 		results = [NSArray arrayWithArray:resultsCopy];

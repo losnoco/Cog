@@ -280,7 +280,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}];
 	}
 	
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 	
 	NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
 	NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
@@ -329,7 +329,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			pc.rating = rating;
 		}];
 
-		[self commitPersistentStore];
+		[self commitPersistentStoreAsync];
 
 		NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
 		NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
@@ -370,7 +370,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}
 	}
 	if(updated) {
-		[self commitPersistentStore];
+		[self commitPersistentStoreAsync];
 	}
 }
 
@@ -1004,7 +1004,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}
 	}
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -1027,7 +1027,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
@@ -1086,7 +1086,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[super removeObjectsAtArrangedObjectIndexes:indexes];
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
@@ -1177,7 +1177,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		});
 	} else {
 		// No files to trash, but still need to persist the playlist changes
-		[self commitPersistentStore];
+		[self commitPersistentStoreAsync];
 	}
 }
 
@@ -1382,7 +1382,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			[queueItem setQueuePosition:i];
 		}
 
-		[self commitPersistentStore];
+		[self commitPersistentStoreAsync];
 
 		if(selectionFollows) {
 			[appController selectTrack:pe];
@@ -1702,7 +1702,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		pe.current = YES;
 	}
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
@@ -1807,7 +1807,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[queueList removeAllObjects];
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
@@ -1845,7 +1845,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		cur.queuePosition = i++;
 	}
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
@@ -1873,7 +1873,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		cur.queuePosition = i++;
 	}
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
@@ -1899,7 +1899,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		cur.queuePosition = i++;
 	}
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
@@ -1908,7 +1908,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (IBAction)stopAfterCurrent:(id)sender {
 	currentEntry.stopAfter = !currentEntry.stopAfter;
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	NSIndexSet *refreshSet = [NSIndexSet indexSetWithIndex:[currentEntry index]];
 
@@ -1925,7 +1925,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		[refreshSet addIndex:pe.index];
 	}
 
-	[self commitPersistentStore];
+	[self commitPersistentStoreAsync];
 
 	// Refresh entire row of all affected items to update tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
@@ -2099,7 +2099,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				[refreshRows addIndex:pe.index];
 			}
 		}
-		[self commitPersistentStore];
+		[self commitPersistentStoreAsync];
 
 		NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
 
@@ -2113,7 +2113,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		for(PlaylistEntry *pe in selectedobjects) {
 			[self removeRatingForTrack:pe];
 		}
-		[self commitPersistentStore];
+		[self commitPersistentStoreAsync];
 
 		NSMutableIndexSet *refreshRows = [NSMutableIndexSet new];
 
