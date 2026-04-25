@@ -259,7 +259,8 @@ bool SpessaPlayer::startup() {
 		.enable_effects = true,
 		.voice_cap = 512,
 		.interpolation = interp,
-		.preload_samples = false
+		.preload_all_samples = false,
+		.preload_instruments = false
 	};
 
 	_synth = ss_processor_create((uint32_t)std::lround(dSampleRate), &opts);
