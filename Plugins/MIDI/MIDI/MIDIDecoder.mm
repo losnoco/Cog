@@ -486,11 +486,11 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 }
 
 + (NSArray *)fileTypes {
-	return @[@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"hmq", @"mus", @"xmi", @"lds"];
+	return @[@"mid", @"midi", @"kar", @"rmi", @"mids", @"mds", @"hmi", @"hmp", @"hmq", @"mus", @"xmi", @"lds", @"xmf", @"mxmf"];
 }
 
 + (NSArray *)mimeTypes {
-	return @[@"audio/midi", @"audio/x-midi"];
+	return @[@"audio/midi", @"audio/x-midi", @"audio/xmf", @"audio/mobile-xmf", @"audio/vnd.nokia.mobile-xmf"];
 }
 
 + (float)priority {
@@ -505,7 +505,9 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		@[@"HMI MIDI File", @"song.icns", @"hmi", @"hmp", @"hmq"],
 		@[@"id Software MUS MIDI File", @"song.icns", @"mus"],
 		@[@"XMI MIDI File", @"song.icns", @"xmi"],
-		@[@"Loudness MIDI File", @"song.icns", @"lds"]
+		@[@"Loudness MIDI File", @"song.icns", @"lds"],
+		@[@"Extensible Music File", @"song.icns", @"xmf"],
+		@[@"Mobile Extensible Music File", @"song.icns", @"mxmf"]
 	];
 }
 
