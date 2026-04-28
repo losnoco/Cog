@@ -278,7 +278,10 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	BOOL sauce = plugin && [plugin isEqualToString:@"sauce"];
 	if(sauce || !plugin || [plugin isEqualToString:@"Spessa"]) {
 		if(sauce || !globalSoundFontPath || [globalSoundFontPath isEqualToString:@""]) {
-			globalSoundFontPath = [[NSBundle mainBundle] pathForResource:@"GeneralUserGS" ofType:@"sf3"];
+			if(midi_file && ss_midi_has_gs(midi_file))
+				globalSoundFontPath = [[NSBundle mainBundle] pathForResource:@"tg300b.sflist" ofType:@"json"];
+			else
+				globalSoundFontPath = [[NSBundle mainBundle] pathForResource:@"GeneralUserXG-SFeTest" ofType:@"sf3"];
 			plugin = @"Spessa";
 		}
 	}
