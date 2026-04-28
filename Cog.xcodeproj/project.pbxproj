@@ -68,8 +68,6 @@
 		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
 		17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E20F520F02005B6FED /* MainWindow.m */; };
 		17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E40F520F02005B6FED /* MiniWindow.m */; };
-		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
-		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
 		17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E60F520F02005B6FED /* PositionSlider.m */; };
 		17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E80F520F02005B6FED /* TimeField.m */; };
 		17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D6190F520F9F005B6FED /* VolumeButton.m */; };
@@ -123,6 +121,8 @@
 		8325F5A32F71497F00400A88 /* ToggleQueueTitleTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F5A22F71497F00400A88 /* ToggleQueueTitleTransformer.swift */; };
 		8327DBA9293CAD2400CD0580 /* Organya.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8327DB94293C923500CD0580 /* Organya.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
+		832AE3B32FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */; };
+		832AE3B52FA063E000AFAB72 /* tg300b.sflist.json in Resources */ = {isa = PBXBuildFile; fileRef = 832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
 		8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 833125092E817A63005C8895 /* InfoPlist.xcstrings */; };
 		8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8331250B2E817A63005C8895 /* Localizable.xcstrings */; };
@@ -220,7 +220,6 @@
 		83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */; };
 		83E9987A2F7135310017AE33 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */; };
 		83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */; };
-		83F227582F909244004CBE72 /* GeneralUserGS.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 83F227572F909244004CBE72 /* GeneralUserGS.sf3 */; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 83F9FFEE2D6EB75B00026576 /* Sentry */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -236,6 +235,8 @@
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56961334CC939A7158B7470 /* KeychainHelper.swift */; };
 		B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */; };
+		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
+		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
 		E20C8ADB5FA449AD83F40538 /* PreferencesRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */; };
 		ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; };
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -884,10 +885,6 @@
 		17E0D5E20F520F02005B6FED /* MainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainWindow.m; path = Window/MainWindow.m; sourceTree = "<group>"; };
 		17E0D5E30F520F02005B6FED /* MiniWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniWindow.h; path = Window/MiniWindow.h; sourceTree = "<group>"; };
 		17E0D5E40F520F02005B6FED /* MiniWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniWindow.m; path = Window/MiniWindow.m; sourceTree = "<group>"; };
-		CCAA0001B590B10015000001 /* MiniPlayerPlusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindow.h; path = Window/MiniPlayerPlusWindow.h; sourceTree = "<group>"; };
-		CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindow.m; path = Window/MiniPlayerPlusWindow.m; sourceTree = "<group>"; };
-		CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindowController.h; path = Window/MiniPlayerPlusWindowController.h; sourceTree = "<group>"; };
-		CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindowController.m; path = Window/MiniPlayerPlusWindowController.m; sourceTree = "<group>"; };
 		17E0D5E50F520F02005B6FED /* PositionSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionSlider.h; path = Window/PositionSlider.h; sourceTree = "<group>"; };
 		17E0D5E60F520F02005B6FED /* PositionSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PositionSlider.m; path = Window/PositionSlider.m; sourceTree = "<group>"; };
 		17E0D5E70F520F02005B6FED /* TimeField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeField.h; path = Window/TimeField.h; sourceTree = "<group>"; };
@@ -963,6 +960,8 @@
 		8325F5A22F71497F00400A88 /* ToggleQueueTitleTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleQueueTitleTransformer.swift; sourceTree = "<group>"; };
 		8327DB8F293C923500CD0580 /* Organya.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Organya.xcodeproj; path = Plugins/Organya/Organya.xcodeproj; sourceTree = "<group>"; };
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
+		832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeneralUserXG-SFeTest.sf3"; sourceTree = "<group>"; };
+		832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = tg300b.sflist.json; sourceTree = "<group>"; };
 		832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+Visibility.m"; sourceTree = "<group>"; };
 		832CFC532851AA37002AC26F /* NSView+Visibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+Visibility.h"; sourceTree = "<group>"; };
 		833125012E817A62005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Equalizer.xcstrings; sourceTree = "<group>"; };
@@ -1098,7 +1097,6 @@
 		83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RubberbandEngineTransformer.swift; path = Transformers/RubberbandEngineTransformer.swift; sourceTree = "<group>"; };
 		83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaybeSecureValueDataTransformer.swift; path = Transformers/MaybeSecureValueDataTransformer.swift; sourceTree = "<group>"; };
 		83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniModeMenuTitleTransformer.swift; path = Window/MiniModeMenuTitleTransformer.swift; sourceTree = "<group>"; };
-		83F227572F909244004CBE72 /* GeneralUserGS.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GeneralUserGS.sf3; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
@@ -1119,6 +1117,10 @@
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFMPEG.xcodeproj; path = Plugins/FFMPEG/FFMPEG.xcodeproj; sourceTree = "<group>"; };
 		C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesModel.swift; path = Preferences/PreferencesModel.swift; sourceTree = "<group>"; };
+		CCAA0001B590B10015000001 /* MiniPlayerPlusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindow.h; path = Window/MiniPlayerPlusWindow.h; sourceTree = "<group>"; };
+		CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindow.m; path = Window/MiniPlayerPlusWindow.m; sourceTree = "<group>"; };
+		CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindowController.h; path = Window/MiniPlayerPlusWindowController.h; sourceTree = "<group>"; };
+		CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindowController.m; path = Window/MiniPlayerPlusWindowController.m; sourceTree = "<group>"; };
 		DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesWindow.swift; path = Preferences/PreferencesWindow.swift; sourceTree = "<group>"; };
 		ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
 		EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSliderToolbarItem.swift; path = Window/PositionSliderToolbarItem.swift; sourceTree = "<group>"; };
@@ -1552,7 +1554,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				83F227572F909244004CBE72 /* GeneralUserGS.sf3 */,
+				832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */,
+				832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */,
 				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8E75758E09F31D800080F1EE /* Icons */,
@@ -2554,7 +2557,6 @@
 			files = (
 				83BC5AC420E4CE9000631CD4 /* Feedback.xib in Resources */,
 				83BC5AC320E4CE8D00631CD4 /* SpotlightPanel.xib in Resources */,
-				83F227582F909244004CBE72 /* GeneralUserGS.sf3 in Resources */,
 				83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */,
 				83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */,
 				83B61E2429A8296500CD0580 /* LyricsWindow.xib in Resources */,
@@ -2582,11 +2584,13 @@
 				17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */,
 				83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */,
 				8384914018083E4E00E7332D /* filetype.icns in Resources */,
+				832AE3B52FA063E000AFAB72 /* tg300b.sflist.json in Resources */,
 				17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */,
 				17D1B2800CF8B2830028F5B5 /* s3m.icns in Resources */,
 				8399AFC62F6BAAE4005F4A39 /* PathSuggester.xib in Resources */,
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
 				8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */,
+				832AE3B32FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 in Resources */,
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
@@ -3225,6 +3229,7 @@
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3274,6 +3279,7 @@
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
