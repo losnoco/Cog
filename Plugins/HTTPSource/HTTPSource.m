@@ -474,6 +474,18 @@ static void http_stream_reset(HTTPSource *fp) {
 		int status;
 
 		DLog(@"curl: started loading data %@", URL);
+
+		CFURLRef urlref = (__bridge CFURLRef)URL;
+		CFDictionaryRef cfproxysettings = CFNetworkCopySystemProxySettings();
+		CFArrayRef cfproxylist = CFNetworkCopyProxiesForURL(urlref, cfproxysettings);
+		CFRelease(cfproxysettings);
+		NSArray *proxylist = (__bridge NSArray *)cfproxylist;
+		CFRelease(cfproxylist);
+
+		size_t tryproxy = 0;
+		size_t proxycount = [proxylist count];
+		BOOL lastTriedSocks5 = NO;
+
 		for(;;) {
 			struct curl_slist *headers = NULL;
 			struct curl_slist *ok_aliases = curl_slist_append(NULL, "ICY 200 OK");
@@ -510,6 +522,54 @@ static void http_stream_reset(HTTPSource *fp) {
 			}
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, (long)sslVerify);
 			//        fp->status = STATUS_INITIAL;
+
+			// Do the proxies
+			if(proxycount) {
+				if(tryproxy >= proxycount) {
+					/* Ran out of proxies, aborting. */
+					self->status = STATUS_ABORTED;
+					return;
+				}
+				NSDictionary *proxy = proxylist[tryproxy++];
+				NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
+				if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeNone]) {
+					tryproxy--;
+				} else {
+					NSString *proto = nil;
+					if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTP]) {
+						proto = @"http";
+					} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTPS]) {
+						proto = @"https";
+					} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeSOCKS]) {
+						if(lastTriedSocks5) {
+							proto = @"socks";
+							lastTriedSocks5 = NO;
+						} else {
+							proto = @"socks5";
+							tryproxy--;
+							lastTriedSocks5 = YES;
+						}
+					} else {
+						self->status = STATUS_ABORTED;
+						return;
+					}
+					NSString *username = proxy[(__bridge id)kCFProxyUsernameKey];
+					NSString *password = proxy[(__bridge id)kCFProxyPasswordKey];
+					NSString *authfield = @"";
+					if(username && [username length]) {
+						if(password && [password length]) {
+							authfield = [NSString stringWithFormat:@"%@:%@@", username, password];
+						} else {
+							authfield = [NSString stringWithFormat:@"%@@", username];
+						}
+					}
+					NSString *host = proxy[(__bridge id)kCFProxyHostNameKey];
+					NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
+					NSString *proxyurl = [NSString stringWithFormat:@"%@://%@%@:%@", proto, authfield, host, port];
+					curl_easy_setopt(curl, CURLOPT_PROXY, [proxyurl UTF8String]);
+				}
+			}
+
 			DLog(@"curl: calling curl_easy_perform (status=%d)...\n", self->status);
 			gettimeofday(&last_read_time, NULL);
 			status = curl_easy_perform(curl);
