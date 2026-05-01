@@ -5,6 +5,9 @@
 
 #include <spessasynth_core/synth.h>
 
+extern SS_File *cog_file_open(const char *path);
+extern SS_File *cog_file_open_handle(id source);
+
 class SpessaPlayer : public MIDIPlayer {
 	public:
 	SpessaPlayer();

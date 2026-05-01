@@ -23,28 +23,100 @@ typedef struct cog_file {
 	size_t size;
 } cog_file;
 
-static void cog_file_close(void *context) {
+void cog_file_close(void *context) {
 	cog_file *file = (cog_file *)context;
 	[file->s close];
 	delete file;
 }
 
-static bool cog_file_seek(void *context, size_t offset) {
+void cog_file_close_handle(void *context) {
+	cog_file *file = (cog_file *)context;
+	delete file;
+}
+
+bool cog_file_seek(void *context, size_t offset) {
 	cog_file *file = (cog_file *)context;
 	return [file->s seek:offset whence:SEEK_SET] == YES;
 }
 
-static size_t cog_file_size(void *context) {
+size_t cog_file_size(void *context) {
 	cog_file *file = (cog_file *)context;
 	return file->size;
 }
 
-static size_t cog_file_read_bytes(void *context, uint8_t *out, size_t count) {
+size_t cog_file_read_bytes(void *context, uint8_t *out, size_t count) {
 	cog_file *file = (cog_file *)context;
 	return [file->s read:out amount:count];
 }
 
-static SS_File *cog_file_open(const char *path) {
+bool has_ext_ci(const char *path, const char *ext) {
+	size_t plen = strlen(path);
+	size_t elen = strlen(ext);
+	if(plen < elen) return false;
+	const char *tail = path + plen - elen;
+	for(size_t i = 0; i < elen; i++) {
+		char a = tail[i], b = ext[i];
+		if(a >= 'A' && a <= 'Z') a = (char)(a - 'A' + 'a');
+		if(b >= 'A' && b <= 'Z') b = (char)(b - 'A' + 'a');
+		if(a != b) return false;
+	}
+	return true;
+}
+
+SS_File *cog_file_open_ctx(void *context, const char *path) {
+	(void)context;
+	return cog_file_open(path);
+}
+
+SS_FilteredBanks *open_sflist(const char *path) {
+	char base_path[4096];
+
+	const char *slash = strrchr(path, '/');
+	const char *pipe = strrchr(path, '|');
+	if(pipe > slash) {
+		slash = pipe;
+	}
+	if(slash) {
+		size_t n = (size_t)(slash - path);
+		if(n >= sizeof(base_path)) n = sizeof(base_path) - 1;
+		memcpy(base_path, path, n);
+		base_path[n] = '\0';
+	} else {
+		strcpy(base_path, ".");
+	}
+
+	SS_File *sflistFile = cog_file_open(path);
+	if(sflistFile) {
+		size_t sflistSize = ss_file_size(sflistFile);
+		char *sflist = (char *)malloc(sflistSize);
+		if(sflist && sflistSize) {
+			ss_file_read_bytes(sflistFile, 0, (uint8_t *)sflist, sflistSize);
+			ss_file_close(sflistFile);
+
+			char err[sflist_max_error] = "";
+			SS_FilteredBanks *banks = sflist_load_callback(sflist, sflistSize, base_path, err, &cog_file_open_ctx, NULL);
+			free(sflist);
+
+			return banks;
+		}
+		ss_file_close(sflistFile);
+	}
+
+	return nullptr;
+}
+
+static SS_SoundBank *open_font(const char *path) {
+	SS_File *bankFile = cog_file_open(path);
+	if(bankFile) {
+		SS_SoundBank *bank = ss_soundbank_load(bankFile);
+		ss_file_close(bankFile);
+		return bank;
+	}
+	return nullptr;
+}
+}
+
+SS_File *cog_file_open(const char *path) {
 	if(!strstr(path, "://")) {
 		return ss_file_open_from_file(path);
 	}
@@ -79,63 +151,29 @@ static SS_File *cog_file_open(const char *path) {
 	return file;
 }
 
-bool has_ext_ci(const char *path, const char *ext) {
-	size_t plen = strlen(path);
-	size_t elen = strlen(ext);
-	if(plen < elen) return false;
-	const char *tail = path + plen - elen;
-	for(size_t i = 0; i < elen; i++) {
-		char a = tail[i], b = ext[i];
-		if(a >= 'A' && a <= 'Z') a = (char)(a - 'A' + 'a');
-		if(b >= 'A' && b <= 'Z') b = (char)(b - 'A' + 'a');
-		if(a != b) return false;
-	}
-	return true;
-}
+SS_File *cog_file_open_handle(id source) {
+	SS_File_ReaderCallbacks cog_callbacks = {
+		.close = &cog_file_close_handle,
+		.seek = &cog_file_seek,
+		.size = &cog_file_size,
+		.read_bytes = &cog_file_read_bytes
+	};
 
-SS_FilteredBanks *open_sflist(const char *path) {
-	char base_path[4096];
+	cog_file *file_context = new cog_file;
+	file_context->s = source;
 
-	const char *slash = strrchr(path, '/');
-	if(slash) {
-		size_t n = (size_t)(slash - path);
-		if(n >= sizeof(base_path)) n = sizeof(base_path) - 1;
-		memcpy(base_path, path, n);
-		base_path[n] = '\0';
-	} else {
-		strcpy(base_path, ".");
+	[source seek:0 whence:SEEK_END];
+	file_context->size = [source tell];
+	[source seek:0 whence:SEEK_SET];
+
+	SS_File *file = ss_file_open_from_callbacks(&cog_callbacks, file_context);
+	if(!file) {
+		delete file_context;
 	}
 
-	SS_File *sflistFile = ss_file_open_from_file(path);
-	if(sflistFile) {
-		size_t sflistSize = ss_file_size(sflistFile);
-		char *sflist = (char *)malloc(sflistSize);
-		if(sflist && sflistSize) {
-			ss_file_read_bytes(sflistFile, 0, (uint8_t *)sflist, sflistSize);
-			ss_file_close(sflistFile);
-
-			char err[sflist_max_error] = "";
-			SS_FilteredBanks *banks = sflist_load(sflist, sflistSize, base_path, err);
-			free(sflist);
-
-			return banks;
-		}
-		ss_file_close(sflistFile);
-	}
-
-	return nullptr;
+	return file;
 }
 
-static SS_SoundBank *open_font(const char *path) {
-	SS_File *bankFile = cog_file_open(path);
-	if(bankFile) {
-		SS_SoundBank *bank = ss_soundbank_load(bankFile);
-		ss_file_close(bankFile);
-		return bank;
-	}
-	return nullptr;
-}
-}
 
 static class Spessa_Initializer {
 	std::mutex lock;
