@@ -84,58 +84,39 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 
 	double loopStart = -1;
 	double loopEnd = -1;
-
-	try {
-		std::vector<uint8_t> file_data;
-
-		[s seek:0 whence:SEEK_END];
-		size_t size = [s tell];
-		[s seek:0 whence:SEEK_SET];
-		file_data.resize(size);
-		if([s read:file_data.data() amount:size] != (long)size)
-			return NO;
-
-		SS_File *file = ss_file_open_from_memory(file_data.data(), file_data.size(), false);
-		if(!file)
-			return NO;
-
-		midi_file = ss_midi_load(file, [[[s url] lastPathComponent] UTF8String]);
-		ss_file_close(file);
-		if(!midi_file)
-			return NO;
-
-		if(ss_midi_has_emidi(midi_file)) {
-			ss_midi_remove_emidi_non_gm(midi_file);
-		}
-
-		if(midi_file->duration <= 0.0) {
-			ss_midi_free(midi_file);
-			midi_file = NULL;
-			return NO;
-		}
-
-		track_num = [[[s url] fragment] intValue]; /* 0 when absent */
-
-		double subsong_begin = subsong_start_seconds(midi_file, (size_t)track_num);
-		double subsong_end = subsong_end_seconds(midi_file, (size_t)track_num);
-		framesLength = subsong_end - subsong_begin;
-
-		if(midi_file->loop.end > 0) {
-			loopStart = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.start);
-			loopEnd = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.end);
-			/* Express loop boundaries relative to subsong start. */
-			loopStart -= subsong_begin;
-			loopEnd -= subsong_begin;
-			if(loopStart < 0.0) loopStart = 0.0;
-			if(loopEnd < 0.0) loopEnd = 0.0;
-		}
-	} catch (std::exception &e) {
-		ALog(@"Exception caught while reading MIDI file: %s", e.what());
-		if(midi_file) {
-			ss_midi_free(midi_file);
-			midi_file = NULL;
-		}
+	SS_File *file = cog_file_open_handle(s);
+	if(!file)
 		return NO;
+
+	midi_file = ss_midi_load(file, [[[s url] lastPathComponent] UTF8String]);
+	ss_file_close(file);
+	if(!midi_file)
+		return NO;
+
+	if(ss_midi_has_emidi(midi_file)) {
+		ss_midi_remove_emidi_non_gm(midi_file);
+	}
+
+	if(midi_file->duration <= 0.0) {
+		ss_midi_free(midi_file);
+		midi_file = NULL;
+		return NO;
+	}
+
+	track_num = [[[s url] fragment] intValue]; /* 0 when absent */
+
+	double subsong_begin = subsong_start_seconds(midi_file, (size_t)track_num);
+	double subsong_end = subsong_end_seconds(midi_file, (size_t)track_num);
+	framesLength = subsong_end - subsong_begin;
+
+	if(midi_file->loop.end > 0) {
+		loopStart = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.start);
+		loopEnd = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.end);
+		/* Express loop boundaries relative to subsong start. */
+		loopStart -= subsong_begin;
+		loopEnd -= subsong_begin;
+		if(loopStart < 0.0) loopStart = 0.0;
+		if(loopEnd < 0.0) loopEnd = 0.0;
 	}
 
 	if(loopStart == -1) loopStart = 0;
