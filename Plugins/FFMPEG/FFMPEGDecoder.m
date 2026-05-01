@@ -19,6 +19,44 @@
 
 #define ST_BUFF 2048
 
+void FFMPEG_Register_Proxy_Server(NSURL *url) {
+	CFURLRef urlref = (__bridge CFURLRef)url;
+	CFDictionaryRef cfproxysettings = CFNetworkCopySystemProxySettings();
+	CFArrayRef cfproxylist = CFNetworkCopyProxiesForURL(urlref, cfproxysettings);
+	CFRelease(cfproxysettings);
+	NSArray *proxylist = (__bridge NSArray *)cfproxylist;
+	CFRelease(cfproxylist);
+
+	if(![proxylist count]) return;
+	
+	NSDictionary *proxy = proxylist[0];
+	NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
+	if(![proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeNone]) {
+		NSString *proto = nil;
+		if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTP]) {
+			proto = @"http";
+		} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTPS]) {
+			proto = @"https";
+		} else {
+			return;
+		}
+		NSString *username = proxy[(__bridge id)kCFProxyUsernameKey];
+		NSString *password = proxy[(__bridge id)kCFProxyPasswordKey];
+		NSString *authfield = @"";
+		if(username && [username length]) {
+			if(password && [password length]) {
+				authfield = [NSString stringWithFormat:@"%@:%@@", username, password];
+			} else {
+				authfield = [NSString stringWithFormat:@"%@@", username];
+			}
+		}
+		NSString *host = proxy[(__bridge id)kCFProxyHostNameKey];
+		NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
+		NSString *proxyurl = [NSString stringWithFormat:@"%@://%@%@:%@", proto, authfield, host, port];
+		setenv("http_proxy", [proxyurl UTF8String], 1);
+	}
+}
+
 @implementation FFMPEGReader
 
 - (id)initWithFile:(id<CogSource>)f {
@@ -166,6 +204,8 @@ static uint8_t reverse_bits[0x100];
 			ALog(@"Unable to allocate AVFormat context");
 			return NO;
 		}
+
+		FFMPEG_Register_Proxy_Server(url);
 
 		NSString *urlString = [url absoluteString];
 		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
