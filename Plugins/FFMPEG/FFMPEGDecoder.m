@@ -33,25 +33,43 @@ void FFMPEG_Register_Proxy_Server(NSURL *url) {
 	NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
 	if(![proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeNone]) {
 		NSString *proto = nil;
+		SecProtocolType secType;
 		if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTP]) {
 			proto = @"http";
+			secType = kSecProtocolTypeHTTP;
 		} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTPS]) {
 			proto = @"https";
+			secType = kSecProtocolTypeHTTPS;
 		} else {
 			return;
 		}
 		NSString *username = proxy[(__bridge id)kCFProxyUsernameKey];
-		NSString *password = proxy[(__bridge id)kCFProxyPasswordKey];
-		NSString *authfield = @"";
-		if(username && [username length]) {
-			if(password && [password length]) {
-				authfield = [NSString stringWithFormat:@"%@:%@@", username, password];
-			} else {
-				authfield = [NSString stringWithFormat:@"%@@", username];
-			}
-		}
 		NSString *host = proxy[(__bridge id)kCFProxyHostNameKey];
 		NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
+		NSString *authfield = @"";
+		if(username && [username length]) {
+			NSDictionary *query = @{(__bridge NSString *)kSecClass: (__bridge NSString *)kSecClassInternetPassword,
+									(__bridge NSString *)kSecAttrServer: host,
+									(__bridge NSString *)kSecAttrProtocol: @(secType),
+									(__bridge NSString *)kSecAttrPort: port,
+									(__bridge NSString *)kSecReturnData: @YES,
+									(__bridge NSString *)kSecMatchLimit: (__bridge NSString *)kSecMatchLimitOne};
+
+			CFTypeRef result = NULL;
+			OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
+			NSString *password = nil;
+
+			if(status == noErr) {
+				NSData *passwordData = (__bridge_transfer NSData *)result;
+				password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
+			}
+
+			if(password && [password length]) {
+				authfield = [NSString stringWithFormat:@"%@:%@@", [username stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLUserAllowedCharacterSet]], [password stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPasswordAllowedCharacterSet]]];
+			} else {
+				authfield = [NSString stringWithFormat:@"%@@", [username stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLUserAllowedCharacterSet]]];
+			}
+		}
 		NSString *proxyurl = [NSString stringWithFormat:@"%@://%@%@:%@", proto, authfield, host, port];
 		setenv("http_proxy", [proxyurl UTF8String], 1);
 	}
