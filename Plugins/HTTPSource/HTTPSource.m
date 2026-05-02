@@ -536,10 +536,13 @@ static void http_stream_reset(HTTPSource *fp) {
 					tryproxy--;
 				} else {
 					NSString *proto = nil;
+					SecProtocolType secType;
 					if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTP]) {
 						proto = @"http";
+						secType = kSecProtocolTypeHTTP;
 					} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTPS]) {
 						proto = @"https";
+						secType = kSecProtocolTypeHTTPS;
 					} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeSOCKS]) {
 						if(lastTriedSocks5) {
 							proto = @"socks";
@@ -549,23 +552,37 @@ static void http_stream_reset(HTTPSource *fp) {
 							tryproxy--;
 							lastTriedSocks5 = YES;
 						}
+						secType = kSecProtocolTypeSOCKS;
 					} else {
 						self->status = STATUS_ABORTED;
 						return;
 					}
 					NSString *username = proxy[(__bridge id)kCFProxyUsernameKey];
-					NSString *password = proxy[(__bridge id)kCFProxyPasswordKey];
-					NSString *authfield = @"";
-					if(username && [username length]) {
-						if(password && [password length]) {
-							authfield = [NSString stringWithFormat:@"%@:%@@", username, password];
-						} else {
-							authfield = [NSString stringWithFormat:@"%@@", username];
-						}
-					}
 					NSString *host = proxy[(__bridge id)kCFProxyHostNameKey];
 					NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
-					NSString *proxyurl = [NSString stringWithFormat:@"%@://%@%@:%@", proto, authfield, host, port];
+					NSString *proxyurl = [NSString stringWithFormat:@"%@://%@:%@", proto, host, port];
+					if(username && [username length]) {
+						curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, [username UTF8String]);
+
+						NSDictionary *query = @{(__bridge NSString *)kSecClass: (__bridge NSString *)kSecClassInternetPassword,
+												(__bridge NSString *)kSecAttrServer: host,
+												(__bridge NSString *)kSecAttrProtocol: @(secType),
+												(__bridge NSString *)kSecAttrPort: port,
+												(__bridge NSString *)kSecReturnData: @YES,
+												(__bridge NSString *)kSecMatchLimit: (__bridge NSString *)kSecMatchLimitOne};
+
+						CFTypeRef result = NULL;
+						OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
+						if(status == noErr) {
+							NSData *passwordData = (__bridge_transfer NSData *)result;
+							NSUInteger passwordLength = [passwordData length];
+							char *password = (char *)malloc(passwordLength + 1);
+							memcpy(password, [passwordData bytes], passwordLength);
+							password[passwordLength] = '\0';
+							curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, password);
+							free(password);
+						}
+					}
 					curl_easy_setopt(curl, CURLOPT_PROXY, [proxyurl UTF8String]);
 				}
 			}
