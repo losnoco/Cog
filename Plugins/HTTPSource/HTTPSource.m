@@ -494,7 +494,7 @@ static void http_stream_reset(HTTPSource *fp) {
 
 			curl_easy_reset(curl);
 			curl_easy_setopt(curl, CURLOPT_URL, [[URL absoluteString] UTF8String]);
-			NSString *ua = [NSString stringWithFormat:@"Cog/%@", [[[NSBundle mainBundle] infoDictionary] valueForKey:(__bridge NSString *)kCFBundleVersionKey]];
+			NSString *ua = [NSString stringWithFormat:@"Cog/%@", [[[NSBundle mainBundle] infoDictionary] valueForKey:(__bridge id)kCFBundleVersionKey]];
 			curl_easy_setopt(curl, CURLOPT_USERAGENT, [ua UTF8String]);
 			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, http_curl_write);
@@ -532,18 +532,18 @@ static void http_stream_reset(HTTPSource *fp) {
 				}
 				NSDictionary *proxy = proxylist[tryproxy++];
 				NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
-				if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeNone]) {
+				if([proxyType isEqualTo:(__bridge id)kCFProxyTypeNone]) {
 					tryproxy--;
 				} else {
 					NSString *proto = nil;
 					SecProtocolType secType;
-					if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTP]) {
+					if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTP]) {
 						proto = @"http";
 						secType = kSecProtocolTypeHTTP;
-					} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTPS]) {
+					} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTPS]) {
 						proto = @"https";
 						secType = kSecProtocolTypeHTTPS;
-					} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeSOCKS]) {
+					} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeSOCKS]) {
 						if(lastTriedSocks5) {
 							proto = @"socks";
 							lastTriedSocks5 = NO;
@@ -564,12 +564,12 @@ static void http_stream_reset(HTTPSource *fp) {
 					if(username && [username length]) {
 						curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, [username UTF8String]);
 
-						NSDictionary *query = @{(__bridge NSString *)kSecClass: (__bridge NSString *)kSecClassInternetPassword,
-												(__bridge NSString *)kSecAttrServer: host,
-												(__bridge NSString *)kSecAttrProtocol: @(secType),
-												(__bridge NSString *)kSecAttrPort: port,
-												(__bridge NSString *)kSecReturnData: @YES,
-												(__bridge NSString *)kSecMatchLimit: (__bridge NSString *)kSecMatchLimitOne};
+						NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassInternetPassword,
+												(__bridge id)kSecAttrServer: host,
+												(__bridge id)kSecAttrProtocol: (__bridge id)secType,
+												(__bridge id)kSecAttrPort: port,
+												(__bridge id)kSecReturnData: @YES,
+												(__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne};
 
 						CFTypeRef result = NULL;
 						OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
