@@ -33,13 +33,13 @@ void FFMPEG_Register_Proxy_Server(NSURL *url) {
 	NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
 	if(![proxyType isEqualTo:(__bridge id)kCFProxyTypeNone]) {
 		NSString *proto = nil;
-		SecProtocolType secType;
+		CFStringRef secType;
 		if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTP]) {
 			proto = @"http";
-			secType = kSecProtocolTypeHTTP;
+			secType = kSecAttrProtocolHTTP;
 		} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTPS]) {
 			proto = @"https";
-			secType = kSecProtocolTypeHTTPS;
+			secType = kSecAttrProtocolHTTPS;
 		} else {
 			return;
 		}
