@@ -50,6 +50,7 @@ void FFMPEG_Register_Proxy_Server(NSURL *url) {
 		if(username && [username length]) {
 			NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassInternetPassword,
 									(__bridge id)kSecAttrServer: host,
+									(__bridge id)kSecAttrAccount: username,
 									(__bridge id)kSecAttrProtocol: (__bridge id)secType,
 									(__bridge id)kSecAttrPort: port,
 									(__bridge id)kSecReturnData: @YES,
