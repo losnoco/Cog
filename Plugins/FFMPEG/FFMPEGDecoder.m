@@ -31,13 +31,13 @@ void FFMPEG_Register_Proxy_Server(NSURL *url) {
 	
 	NSDictionary *proxy = proxylist[0];
 	NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
-	if(![proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeNone]) {
+	if(![proxyType isEqualTo:(__bridge id)kCFProxyTypeNone]) {
 		NSString *proto = nil;
 		SecProtocolType secType;
-		if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTP]) {
+		if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTP]) {
 			proto = @"http";
 			secType = kSecProtocolTypeHTTP;
-		} else if([proxyType isEqualTo:(__bridge NSString *)kCFProxyTypeHTTPS]) {
+		} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTPS]) {
 			proto = @"https";
 			secType = kSecProtocolTypeHTTPS;
 		} else {
@@ -48,12 +48,12 @@ void FFMPEG_Register_Proxy_Server(NSURL *url) {
 		NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
 		NSString *authfield = @"";
 		if(username && [username length]) {
-			NSDictionary *query = @{(__bridge NSString *)kSecClass: (__bridge NSString *)kSecClassInternetPassword,
-									(__bridge NSString *)kSecAttrServer: host,
-									(__bridge NSString *)kSecAttrProtocol: @(secType),
-									(__bridge NSString *)kSecAttrPort: port,
-									(__bridge NSString *)kSecReturnData: @YES,
-									(__bridge NSString *)kSecMatchLimit: (__bridge NSString *)kSecMatchLimitOne};
+			NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassInternetPassword,
+									(__bridge id)kSecAttrServer: host,
+									(__bridge id)kSecAttrProtocol: (__bridge id)secType,
+									(__bridge id)kSecAttrPort: port,
+									(__bridge id)kSecReturnData: @YES,
+									(__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne};
 
 			CFTypeRef result = NULL;
 			OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
