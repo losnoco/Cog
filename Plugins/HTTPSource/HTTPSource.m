@@ -536,13 +536,13 @@ static void http_stream_reset(HTTPSource *fp) {
 					tryproxy--;
 				} else {
 					NSString *proto = nil;
-					SecProtocolType secType;
+					CFStringRef secType;
 					if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTP]) {
 						proto = @"http";
-						secType = kSecProtocolTypeHTTP;
+						secType = kSecAttrProtocolHTTP;
 					} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTPS]) {
 						proto = @"https";
-						secType = kSecProtocolTypeHTTPS;
+						secType = kSecAttrProtocolHTTPS;
 					} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeSOCKS]) {
 						if(lastTriedSocks5) {
 							proto = @"socks";
@@ -552,7 +552,7 @@ static void http_stream_reset(HTTPSource *fp) {
 							tryproxy--;
 							lastTriedSocks5 = YES;
 						}
-						secType = kSecProtocolTypeSOCKS;
+						secType = kSecAttrProtocolSOCKS;
 					} else {
 						self->status = STATUS_ABORTED;
 						return;
