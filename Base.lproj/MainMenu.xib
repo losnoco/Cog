@@ -2151,21 +2151,6 @@ CA
                                     </binding>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Move to Trash" secondaryImage="trash" catalog="system" id="mhx-dQ-Kwx">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="trash:" target="218" id="yed-1d-jqe"/>
-                                    <binding destination="2020" name="enabled" keyPath="selection" id="Cw2-fK-mzE">
-                                        <dictionary key="options">
-                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
-                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
-                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
-                                            <integer key="NSNullPlaceholder" value="0"/>
-                                            <string key="NSValueTransformerName">NSIsNotNil</string>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
-                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1863">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -2743,17 +2728,6 @@ Gw
                         </binding>
                     </connections>
                 </menuItem>
-                <menuItem title="Move to Trash" id="qlT-UX-x72">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="trash:" target="218" id="7Vd-Vf-Ym1"/>
-                        <binding destination="2020" name="enabled" keyPath="selection" id="Knx-iC-hoo">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">NSIsNotNil</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </menuItem>
                 <menuItem isSeparatorItem="YES" id="qqX-IU-KHm"/>
                 <menuItem title="Properties" id="Eds-my-DQr" userLabel="Menu Item - Properties">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -3195,7 +3169,6 @@ yw
         <image name="text.line.first.and.arrowtriangle.forward" catalog="system" width="19" height="15"/>
         <image name="textformat.size.larger" catalog="system" width="11" height="12"/>
         <image name="textformat.size.smaller" catalog="system" width="9" height="9"/>
-        <image name="trash" catalog="system" width="15" height="17"/>
         <image name="volume3Template" width="17" height="16"/>
     </resources>
 </document>

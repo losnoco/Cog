@@ -4781,24 +4781,6 @@
         }
       }
     },
-    "mhx-dQ-Kwx.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Move to Trash\"; ObjectID = \"mhx-dQ-Kwx\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move to Trash"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover al Basurero"
-          }
-        }
-      }
-    },
     "moV-3G-GpB.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"moV-3G-GpB\";",
       "extractionState" : "manual",
@@ -4993,24 +4975,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selección sigue la reproducción"
-          }
-        }
-      }
-    },
-    "qlT-UX-x72.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Move to Trash\"; ObjectID = \"qlT-UX-x72\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move to Trash"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover al Basurero"
           }
         }
       }
