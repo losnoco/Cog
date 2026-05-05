@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25A362" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24837" systemVersion="25E253" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AlbumArtwork" representedClassName="AlbumArtwork" syncable="YES" codeGenerationType="class">
         <attribute name="artData" optional="YES" attributeType="Binary"/>
         <attribute name="artHash" optional="YES" attributeType="String"/>
@@ -51,7 +51,6 @@
         <attribute name="spotlightTrack" optional="YES" attributeType="String"/>
         <attribute name="stopAfter" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="totalFrames" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="trashUrlString" optional="YES" attributeType="String"/>
         <attribute name="unSigned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="urlString" optional="YES" attributeType="String"/>
         <attribute name="volume" optional="YES" attributeType="Float" defaultValueString="1" usesScalarValueType="YES"/>

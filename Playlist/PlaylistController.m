@@ -947,12 +947,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 	[self insertObjects:objects atArrangedObjectIndexes:indexes];
 }
 
-- (void)untrashObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes {
-	[self clearFilterPredicate:self];
-	[self untrashObjects:objects atArrangedObjectIndexes:indexes];
-	[self rearrangeObjects];
-}
-
 - (void)insertObjectsUnsynced:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
 	[self rearrangeObjects];
@@ -1009,35 +1003,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 }
 
-- (void)untrashObjects:(NSArray *)objects atArrangedObjectIndexes:(NSIndexSet *)indexes {
-	[[[self undoManager] prepareWithInvocationTarget:self]
-	trashObjectsAtIndexes:[self disarrangeIndexes:indexes]];
-	NSString *actionName =
-	[NSString stringWithFormat:@"Restoring %lu entries from trash", (unsigned long)[objects count]];
-	[[self undoManager] setActionName:actionName];
-
-	for(PlaylistEntry *pe in objects) {
-		if(pe.deLeted && pe.trashUrl) {
-			NSError *error = nil;
-			[[NSFileManager defaultManager] moveItemAtURL:pe.trashUrl toURL:pe.url error:&error];
-		}
-		pe.deLeted = NO;
-		pe.trashUrl = nil;
-	}
-
-	[super insertObjects:objects atArrangedObjectIndexes:indexes];
-
-	[self commitPersistentStoreAsync];
-
-	if([self shuffle] != ShuffleOff) [self resetShuffleList];
-}
-
 - (void)removeObjectsAtIndexes:(NSIndexSet *)indexes {
 	[self removeObjectsAtArrangedObjectIndexes:[self rearrangeIndexes:indexes]];
-}
-
-- (void)trashObjectsAtIndexes:(NSIndexSet *)indexes {
-	[self trashObjectsAtArrangedObjectIndexes:[self rearrangeIndexes:indexes]];
 }
 
 - (void)removeObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes {
@@ -1091,94 +1058,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
 
 	[playbackController playlistDidChange:self];
-}
-
-- (void)trashObjectsAtArrangedObjectIndexes:(NSIndexSet *)indexes {
-	NSArray *objects = [[self arrangedObjects] objectsAtIndexes:indexes];
-	[[[self undoManager] prepareWithInvocationTarget:self]
-	untrashObjects:[self disarrangeObjects:objects]
-	     atIndexes:[self disarrangeIndexes:indexes]];
-	NSString *actionName =
-	[NSString stringWithFormat:@"Trashing %lu entries", (unsigned long)[indexes count]];
-	[[self undoManager] setActionName:actionName];
-
-	DLog(@"Trashing indexes: %@", indexes);
-	DLog(@"Current index: %lli", currentEntry.index);
-
-	NSMutableIndexSet *unarrangedIndexes = [NSMutableIndexSet new];
-	for(PlaylistEntry *pe in objects) {
-		[unarrangedIndexes addIndex:[pe index]];
-		pe.deLeted = YES;
-	}
-
-	if([indexes containsIndex:currentEntry.index]) {
-		[self updateNextAfterDeleted:currentEntry withDeleteIndexes:indexes];
-		if(nextEntryAfterDeleted) {
-			[playbackController playEntry:nextEntryAfterDeleted];
-			nextEntryAfterDeleted = nil;
-		} else {
-			[playbackController stop:nil];
-		}
-	}
-
-	[super removeObjectsAtArrangedObjectIndexes:indexes];
-
-	if([self shuffle] != ShuffleOff) [self resetShuffleList];
-
-	[playbackController playlistDidChange:self];
-
-	// Collect file URLs before dispatching to background, since PlaylistEntry
-	// is a CoreData managed object and must not be accessed off its context queue.
-	NSMutableArray<NSDictionary *> *trashWork = [NSMutableArray array];
-	for(PlaylistEntry *pe in objects) {
-		if([pe.url isFileURL]) {
-			[trashWork addObject:@{
-				@"url": pe.url,
-				@"objectID": pe.objectID
-			}];
-		}
-	}
-
-	if([trashWork count] > 0) {
-		NSPersistentContainer *container = self.persistentContainer;
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-			NSMutableDictionary<NSManagedObjectID *, NSURL *> *trashedURLs = [NSMutableDictionary dictionary];
-
-			for(NSDictionary *item in trashWork) {
-				NSURL *fileURL = item[@"url"];
-				NSManagedObjectID *objectID = item[@"objectID"];
-				NSURL *removed = nil;
-				NSError *error = nil;
-				[[NSFileManager defaultManager] trashItemAtURL:fileURL resultingItemURL:&removed error:&error];
-				if(removed) {
-					trashedURLs[objectID] = removed;
-				}
-				if(error) {
-					ALog(@"Error trashing file %@: %@", fileURL, [error localizedDescription]);
-				}
-			}
-
-			// Update CoreData on its context queue and persist everything
-			[container.viewContext performBlock:^{
-				for(NSManagedObjectID *objectID in trashedURLs) {
-					NSError *error = nil;
-					PlaylistEntry *pe = (PlaylistEntry *)[container.viewContext existingObjectWithID:objectID error:&error];
-					if(pe && !error) {
-						pe.trashUrl = trashedURLs[objectID];
-					}
-				}
-
-				NSError *saveError = nil;
-				[container.viewContext save:&saveError];
-				if(saveError) {
-					ALog(@"Error saving trash URLs: %@", [saveError localizedDescription]);
-				}
-			}];
-		});
-	} else {
-		// No files to trash, but still need to persist the playlist changes
-		[self commitPersistentStoreAsync];
-	}
 }
 
 - (void)setSortDescriptors:(NSArray *)sortDescriptors {
@@ -1271,16 +1150,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSIndexSet *selected = [self selectionIndexes];
 	if([selected count] > 0) {
 		[self removeObjectsAtArrangedObjectIndexes:selected];
-	}
-}
-
-- (IBAction)trash:(id)sender {
-	// Someone asked for this, so they're getting it.
-	// Trash the selection, and advance playback to the next untrashed file if necessary.
-
-	NSIndexSet *selected = [self selectionIndexes];
-	if([selected count] > 0) {
-		[self trashObjectsAtArrangedObjectIndexes:selected];
 	}
 }
 

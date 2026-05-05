@@ -87,7 +87,6 @@ static inline BOOL IsRepeatOneSet(void) {
 - (IBAction)removeDeadItems:(id _Nullable)sender;
 
 - (IBAction)remove:(id _Nullable)sender;
-- (IBAction)trash:(id _Nullable)sender;
 
 - (IBAction)showEntryInFinder:(id _Nullable)sender;
 - (IBAction)clearFilterPredicate:(id _Nullable)sender;
