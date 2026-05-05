@@ -11,8 +11,6 @@
 
 #import "Logging.h"
 
-extern void FFMPEG_Register_Proxy_Server(NSURL *url);
-
 @implementation FFMPEGContainer
 
 + (NSArray *)fileTypes {
@@ -66,8 +64,6 @@ extern void FFMPEG_Register_Proxy_Server(NSURL *url);
 			ALog(@"Unable to allocate AVFormat context");
 			goto exit;
 		}
-
-		FFMPEG_Register_Proxy_Server(url);
 
 		NSString *urlString = [url absoluteString];
 		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
