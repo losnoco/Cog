@@ -12,7 +12,7 @@
  * Some info: https://www.audiokinetic.com/en/library/edge/
  * .bnk (dynamic music/loop) info: https://github.com/bnnm/wwiser
  */
-typedef enum { PCM, IMA, VORBIS, DSP, XMA2, XWMA, AAC, HEVAG, ATRAC9, OPUSNX, OPUS, OPUSCPR, OPUSWW, PTADPCM } wwise_codec;
+typedef enum { PCM, IMA, VORBIS, DSP, XMA2, XWMA, AAC, HEVAG, ATRAC9, OPUSNX, OPUS, OPUSCPR, OPUSWW, PTADPCM } wwise_codec_t;
 typedef struct {
     bool big_endian;
     uint32_t file_size;
@@ -39,14 +39,14 @@ typedef struct {
     uint32_t meta_size;
 
     /* standard fmt stuff */
-    wwise_codec codec;
+    wwise_codec_t codec;
     int format;
     int channels;
     int sample_rate;
     int block_size;
     int avg_bitrate;
     int bits_per_sample;
-    uint8_t channel_type;
+    uint8_t channel_type; // 0=none, 1=standard, 2=ambisonic
     uint32_t channel_layout;
     uint16_t extra_size;
 
@@ -515,40 +515,40 @@ VGMSTREAM* init_vgmstream_wwise_bnk(STREAMFILE* sf, int* p_prefetch) {
         }
 
         case OPUSWW: { /* updated Opus [Assassin's Creed Valhalla (PC)] */
-            int i, mapping;
+            int mapping;
             opus_config cfg = {0};
 
             if (ww.block_size != 0 || ww.bits_per_sample != 0) goto fail;
             if (!ww.seek_offset) goto fail;
-            if (ww.channels > 255) goto fail; /* opus limit */
+            if (ww.channels > 255) goto fail; // opus limit
 
             cfg.channels = ww.channels;
             cfg.table_offset = ww.seek_offset;
 
-            vgmstream->sample_rate = 48000; /* fixed in AK's code */
+            vgmstream->sample_rate = 48000; // fixed in AK's code
 
-            /* extra: size 0x10 (though last 2 fields are beyond, AK plz) */
-            /* 0x12: samples per frame */
+            // extra: size 0x10 (though last 2 fields are beyond, AK plz)
+            // 0x12: samples per frame
             vgmstream->num_samples = read_s32(ww.fmt_offset + 0x18, sf);
-            cfg.table_count = read_u32(ww.fmt_offset + 0x1c, sf); /* same as seek size / 2 */
+            cfg.table_count = read_u32(ww.fmt_offset + 0x1c, sf); // same as seek size / 2
             cfg.skip = read_u16(ww.fmt_offset + 0x20, sf);
-            /* 0x22: codec version */
+            // 0x22: codec version
             mapping = read_u8(ww.fmt_offset + 0x23, sf);
-            if (mapping == 1 && ww.channels > 8) goto fail; /* mapping not defined */
+            if (mapping == 1 && ww.channels > 8) goto fail; // mapping not defined
 
             if (read_u8(ww.fmt_offset + 0x22, sf) != 1)
                 goto fail;
 
-            /* OPUS is VBR so this is very approximate percent, meh */
+            // OPUS is VBR so this is very approximate percent, meh
             if (ww.prefetch) {
                 vgmstream->num_samples = (int32_t)(vgmstream->num_samples *
                         (double)(ww.file_size - start_offset) / (double)ww.data_size);
                 ww.data_size = ww.file_size - start_offset;
             }
 
-            /* AK does some wonky implicit config for multichannel (only accepted channel type is 1) */
+            // AK does some wonky implicit config for multichannel
             if (ww.channel_type == 1 && mapping == 1) {
-                static const int8_t mapping_matrix[8][8] = { /* (DeinterleaveAndRemap)*/
+                static const int8_t mapping_matrix[8][8] = { // 'DeinterleaveAndRemap'
                     { 0, 0, 0, 0, 0, 0, 0, 0, },
                     { 0, 1, 0, 0, 0, 0, 0, 0, },
                     { 0, 2, 1, 0, 0, 0, 0, 0, },
@@ -560,45 +560,49 @@ VGMSTREAM* init_vgmstream_wwise_bnk(STREAMFILE* sf, int* p_prefetch) {
                 };
 
                 if (ww.channels > 8)
-                    goto fail; /* matrix limit */
+                    goto fail; // matrix limit
 
-                /* find coupled (stereo) OPUS streams (simplification of ChannelConfigToMapping) */
+                // find coupled (stereo) OPUS streams (simplification of ChannelConfigToMapping)
                 switch(ww.channel_layout) {
-                    case mapping_7POINT1_surround:  cfg.coupled_count = 3; break;   /* 2ch+2ch+2ch+1ch+1ch, 5 streams */
-                    case mapping_5POINT1_surround:                                  /* 2ch+2ch+1ch+1ch, 4 streams */
-                    case mapping_5POINT0_surround:                                  /* 2ch+2ch+1ch, 3 streams [Bayonetta 3 (Switch)] */
-                    case mapping_QUAD_side:         cfg.coupled_count = 2; break;   /* 2ch+2ch, 2 streams */
-                    case mapping_2POINT1_xiph:                                      /* 2ch+1ch, 2 streams */
-                    case mapping_STEREO:            cfg.coupled_count = 1; break;   /* 2ch, 1 stream */
-                    default:                        cfg.coupled_count = 0; break;   /* 1ch, 1 stream */
+                    case mapping_7POINT1_surround:  cfg.coupled_count = 3; break;   // 2ch+2ch+2ch+1ch+1ch, 5 streams
+                    case mapping_5POINT1_surround:                                  // 2ch+2ch+1ch+1ch, 4 streams
+                    case mapping_5POINT0_surround:                                  // 2ch+2ch+1ch, 3 streams [Bayonetta 3 (Switch)]
+                    case mapping_QUAD_side:         cfg.coupled_count = 2; break;   // 2ch+2ch, 2 streams
+                    case mapping_2POINT1_xiph:                                      // 2ch+1ch, 2 streams
+                    case mapping_STEREO:            cfg.coupled_count = 1; break;   // 2ch, 1 stream
+                    default:                        cfg.coupled_count = 0; break;   // 1ch, 1 stream
                     //TODO: AK OPUS doesn't seem to handle others mappings, though AK's .h imply they exist (uses 0 coupleds?)
                 }
 
-                /* total number internal OPUS streams (should be >0) */
+                // total number internal OPUS streams (should be >0)
                 cfg.stream_count = ww.channels - cfg.coupled_count;
 
-                /* channel order */
-                for (i = 0; i < ww.channels; i++) {
+                // channel order
+                for (int i = 0; i < ww.channels; i++) {
                     cfg.channel_mapping[i] = mapping_matrix[ww.channels - 1][i];
                 }
             }
-            else if (ww.channel_type == 1 && mapping == 255) { /* Overwatch 2 (PC) */
+            else if (ww.channel_type != 0 && mapping == 255) {
+                /* Overwatch 2 (PC): type=1 12ch; Hello Neighbor 3 (PC): type=2 8ch */
 
-                /* only seen 12ch, but seems to be what ChannelConfigToMapping would output with > 8 */
+                // seems to be what ChannelConfigToMapping would output with > 8
                 cfg.coupled_count = 0;
 
                 cfg.stream_count = ww.channels - cfg.coupled_count;
 
                 //TODO: mapping seems to be 0x2d63f / FL FR FC LFE BL BR SL SR TFL TFR TBL TBR
                 // while output order seems to swap FC and LFE? (not set in passed channel mapping but reordered later)
-                for (i = 0; i < ww.channels; i++) {
+                for (int i = 0; i < ww.channels; i++) {
                     cfg.channel_mapping[i] = i;
                 }
             }
             else {
-                /* mapping 0: standard opus (implicit mono/stereo)  */
-                if (ww.channels > 2)
+                /* mapping 0: standard opus (implicit mono/stereo) */
+
+                if (ww.channels > 2) {
+                    vgm_logi("WWISE: unknown mapping, channels=%i, type=%i, mapping=%i\n", ww.channels, ww.channel_type, mapping);
                     goto fail;
+                }
             }
 
             /* Wwise Opus saves all frame sizes in the seek table */

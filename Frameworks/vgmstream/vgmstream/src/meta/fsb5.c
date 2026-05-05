@@ -84,7 +84,8 @@ VGMSTREAM* init_vgmstream_fsb5(STREAMFILE* sf) {
     }
 
     if ((fsb5.sample_header_size + fsb5.name_table_size + fsb5.sample_data_size + fsb5.base_header_size) != get_streamfile_size(sf)) {
-        vgm_logi("FSB5: wrong size, expected %x + %x + %x + %x vs %x (re-rip)\n", fsb5.sample_header_size, fsb5.name_table_size, fsb5.sample_data_size, fsb5.base_header_size, (uint32_t)get_streamfile_size(sf));
+        uint32_t expected_size = fsb5.sample_header_size + fsb5.name_table_size + fsb5.sample_data_size + fsb5.base_header_size;
+        vgm_logi("FSB5: wrong size, expected %x + %x + %x + %x = %x vs %x (re-rip)\n", fsb5.sample_header_size, fsb5.name_table_size, fsb5.sample_data_size, fsb5.base_header_size, expected_size, (uint32_t)get_streamfile_size(sf));
         return NULL;
     }
 

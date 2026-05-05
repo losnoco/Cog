@@ -3,12 +3,16 @@
 #include "meta.h"
 #include "../util/companion_files.h"
 
-#define XSB_XACT1_0_MAX 5    // 0x05 // Unreal Championship (Xbox)
-#define XSB_XACT1_1_MAX 8    // 0x08 // Die Hard: Vendetta (Xbox)
-#define XSB_XACT1_2_MAX 11   // 0x0B // other Xbox games
-#define XSB_XACT2_0_MAX 34   // 0x22 // Table Tennis (v34)
-//#define XSB_XACT2_1_MAX 38 // 0x26 // Prey (v38) // v39 too?
-#define XSB_XACT2_2_MAX 41   // 0x29 // other PC/X360 games
+#define XSB_XACT1_0_MAX     5   // 0x05 // Unreal Championship (Xbox)
+#define XSB_XACT1_1_MAX     8   // 0x08 // The Sims 2 (Xbox)-v6, Die Hard: Vendetta (Xbox)-v8
+#define XSB_XACT1_2_MAX     11  // 0x0B // other Xbox games
+//#define XSB_XACT2_0_MAX   14  // 0x0E // XeDK 2.0.0530.0-v12, XeDK 2.0.0634.0-v14
+//#define XSB_XACT2_1_MAX   22  // 0x16 // XeDK 2.0.1141.0-v22
+//#define XSB_XACT2_2_MAX   25  // 0x19 // XeDK 2.0.1332.0-v25
+#define XSB_XACT2_3_MAX     28  // 0x1C // XeDK 2.0.1434.0, Full Auto (X360, 2005-04-27)-v27, XeDK 2.0.1538.0-v28
+#define XSB_XACT2_4_MAX     34  // 0x22 // Amped 3-v31, Table Tennis-v34
+//#define XSB_XACT25_MAX    38  // 0x26 // Prey (v38) // v39 too?
+#define XSB_XACT2_6_MAX     41  // 0x29 // other PC/X360 games
 
 
 typedef struct {
@@ -336,7 +340,7 @@ static int parse_xsb_clip(xsb_header* xsb, off_t offset, off_t name_offset, STRE
         switch (flags & 0x1F) { /* event ID */
 
             case 0x01: /* playwave event */
-                if (xsb->version <= XSB_XACT2_0_MAX) { /* v34 (Table Tennis) */
+                if (xsb->version <= XSB_XACT2_4_MAX) { /* v34 (Table Tennis) */
                     /* 00(1): unknown */
                     stream_index    = read_s16(offset + 0x01, sf);
                     wavebank_index  = read_s8 (offset + 0x03, sf);
@@ -434,7 +438,7 @@ static int parse_xsb_clip(xsb_header* xsb, off_t offset, off_t name_offset, STRE
                 /* 1e(1): variation flags? */
                 variation_header = read_u32(offset + 0x1f, sf);
                 /* 23(4): unknown 3 (-1?) */
-                
+
                 track_count = variation_header & 0xFFFF;
                 //unknown? = (variance_header >> 24) & 0xFF; //2
                 //flags? = (variance_header >> 16) & 0xFF;
@@ -718,8 +722,8 @@ static int parse_xsb_cues(xsb_header* xsb, STREAMFILE* sf) {
 static bool parse_xsb(xsb_header* xsb, STREAMFILE* sf, char* xwb_wavebank_name) {
 
     /* check header */
-    if (!is_id32be(0x00,sf, "SDBK") &&    // LE
-        !is_id32be(0x00,sf, "KBDS"))       // BE
+    if (!is_id32be(0x00,sf, "SDBK") &&  // LE
+        !is_id32be(0x00,sf, "KBDS"))    // BE
         return false;
 
     xsb->big_endian = (is_id32be(0x00,sf, "KBDS"));
@@ -787,8 +791,38 @@ static bool parse_xsb(xsb_header* xsb, STREAMFILE* sf, char* xwb_wavebank_name) 
         xsb->index_size             = 0x14;
         xsb->entry_size             = 0x14;
     }
-    else if (xsb->version <= XSB_XACT2_2_MAX) {
-        /* 06(2): CRC-16/IBM-SDLC of data starting from 0x08 (always LE) */
+    // TOD), although not much of a point since these XACT builds
+    // strictly force XWB stream names to be always enabled
+    //else if (xsb->version <= XSB_XACT2_0_MAX) {}
+    //else if (xsb->version <= XSB_XACT2_1_MAX) {}
+    //else if (xsb->version <= XSB_XACT2_2_MAX) {}
+    else if (xsb->version <= XSB_XACT2_3_MAX) {
+        /* 06(2): 0000 (reserved CRC-16/IBM-SDLC) */
+        /* 08(1): platform? (3=X360) */
+        xsb->simple_cues_count      = read_s16(0x09, sf);
+        xsb->complex_cues_count     = read_s16(0x0B, sf);
+        xsb->wavebanks_count        = read_s8 (0x15, sf);
+        xsb->sounds_count           = read_s16(0x16, sf);
+        /* 18(2): unknown */
+        xsb->cue_names_size         = read_s32(0x1a, sf);
+        xsb->simple_cues_offset     = read_s32(0x1e, sf);
+        xsb->complex_cues_offset    = read_s32(0x22, sf);
+        xsb->cue_names_offset       = read_s32(0x26, sf);
+        /* 2a(4): unknown */
+        /* 2e(4): unknown */
+        /* 32(4): unknown */
+        xsb->wavebanks_offset       = read_s32(0x36, sf);
+        /* 3a(4): cue name hash table offset? */
+        xsb->nameoffsets_offset     = read_s32(0x3e, sf);
+        xsb->sounds_offset          = read_s32(0x42, sf);
+        /* 46(4): unknown */
+        /* 4a(4): unknown */
+        /* 4e(64): xsb name */
+
+        xsb->wavebanks_name_size    = 0x40;
+    }
+    else if (xsb->version <= XSB_XACT2_6_MAX) {
+        /* 06(2): 0000 or CRC-16/IBM-SDLC of data starting from 0x08 (always LE) */
         /* 08(1): platform? (3=X360) */
         xsb->simple_cues_count      = read_s16(0x09, sf);
         xsb->complex_cues_count     = read_s16(0x0B, sf);

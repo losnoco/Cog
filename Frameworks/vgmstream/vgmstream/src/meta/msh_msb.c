@@ -27,7 +27,7 @@ VGMSTREAM* init_vgmstream_msh_msb(STREAMFILE* sf) {
         if (target_subsong == 0) target_subsong = 1;
 
         for (int i = 0; i < entries; i++) {
-            if (read_u32le(0x0c + 0x10*i, sf) == 0) /* size 0 = empty entry */
+            if (read_u32le(0x0c + 0x10*i + 0x00, sf) == 0 || read_u32le(0x0c + 0x10*i + 0x0c, sf)== 0) // empty entry
                 continue;
 
             total_subsongs++;

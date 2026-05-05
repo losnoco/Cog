@@ -340,6 +340,14 @@ static bool read_fmt(bool big_endian, STREAMFILE* sf, off_t offset, riff_fmt_chu
             fmt->interleave = 0x12;
             break;
 
+        case 0x0917:  /* IMA ADPCM [Splash Studios: Piper (PC)] (unofficial) */
+            if (fmt->bps != 4) goto fail;
+            if (fmt->block_size != 0x0200 * fmt->channels) goto fail;
+            if (fmt->size != 0x14) goto fail;
+            if (fmt->channels != 1) goto fail;
+            fmt->coding_type = coding_MS_IMA;
+            break;
+
 #ifdef VGM_USE_VORBIS
       //case 0x674f: // WAVE_FORMAT_OGG_VORBIS_MODE_1
       //case 0x6750: // WAVE_FORMAT_OGG_VORBIS_MODE_2
