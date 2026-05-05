@@ -1116,6 +1116,11 @@ static bool parse_fev(fev_header_t* fev, STREAMFILE* sf) {
 static STREAMFILE* open_fev_filename_pair(STREAMFILE* sf_fsb) {
     STREAMFILE* sf_fev = NULL;
 
+    /*static const char* const filename_pairs[][2] = {
+        {"*_bank00.fsb", "*.fev"},
+        {"*.fsb", "*.fev"},
+    };*/
+
     // try parsing TXTM if present
     sf_fev = read_filemap_file(sf_fsb, 0);
     if (sf_fev) return sf_fev;

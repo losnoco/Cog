@@ -383,6 +383,7 @@ static const char* extension_list[] = {
     "mps", //txth/reserved [Scandal (PS2)]
     "ms",
     "msa",
+    "msb", // unrelated to .msh, EA Redwood Shores MPF+MUS variant
     "msh",
     "msd",
     "mse",

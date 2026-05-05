@@ -23,7 +23,7 @@ VGMSTREAM* init_vgmstream_xwma_konami(STREAMFILE* sf) {
     int codec           = read_s32(0x04,sf);
     int channels        = read_s32(0x08,sf);
     int sample_rate     = read_s32(0x0c,sf);
-    uint32_t data_size  = read_u32(0x10,sf); // without padding
+    uint32_t data_size  = read_u32(0x10,sf); // without block padding
     int avg_bps         = read_s32(0x14,sf);
     int block_align     = read_s32(0x18,sf);
     // 0x1c: empty
@@ -38,7 +38,7 @@ VGMSTREAM* init_vgmstream_xwma_konami(STREAMFILE* sf) {
         int seek_entries = read_s32(0x32, sf);
         // 0x36: entries
 
-        uint32_t last_entry = read_u32(0x26 + 0x04 * (seek_entries - 1), sf); //last dpds entry = total bytes
+        uint32_t last_entry = read_u32(0x36 + 0x04 * (seek_entries - 1), sf); //last dpds entry = total bytes
         num_samples = pcm16_bytes_to_samples(last_entry, channels);
 
         // after entries sometimes there are garbage(?) bytes in the padding
@@ -57,7 +57,9 @@ VGMSTREAM* init_vgmstream_xwma_konami(STREAMFILE* sf) {
 
 #ifdef VGM_USE_FFMPEG
     {
-        // XWMA blocks are padded to 0x10 (unrelated to KCEJ blocks)
+        // XWMA blocks are padded to 0x10 (seemingly unrelated to KCEJ blocks)
+        // TO-DO: improve padding detection. Probably sdt block's payload should be extracted without padding
+        // (thus matching data_size) but not clear.
         temp_sf = setup_xwma_konami_streamfile(sf, start_offset, block_align);
         if (!temp_sf) goto fail;
 
