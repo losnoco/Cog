@@ -10,10 +10,9 @@
 
 #import "Plugin.h"
 
-#include <curl/curl.h>
 
-#define BUFFER_SIZE 0x10000
-#define BUFFER_MASK 0xffff
+#define BUFFER_SIZE 0x40000
+#define BUFFER_MASK 0x3ffff
 
 #define MAX_METADATA 4096
 
@@ -28,8 +27,10 @@ enum {
 	STATUS_SEEK = 5,
 };
 
-@interface HTTPSource : NSObject <CogSource> {
+@interface HTTPSource : NSObject <CogSource, NSURLSessionDelegate> {
 	NSURL *URL;
+
+	int redirectsRemaining;
 
 	int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
 	int64_t length;
@@ -41,8 +42,9 @@ enum {
 
 	uint8_t nheaderpackets;
 	NSString *content_type;
-	CURL *curl;
-	struct timeval last_read_time;
+	NSURLSession *session;
+	NSURLSessionDataTask *dataTask;
+	NSDate *last_read_time;
 	uint8_t status;
 	int icy_metaint;
 	int wait_meta;
@@ -50,8 +52,6 @@ enum {
 	char metadata[MAX_METADATA];
 	size_t metadata_size; // size of metadata in stream
 	size_t metadata_have_size; // amount which is already in metadata buffer
-
-	char http_err[CURL_ERROR_SIZE];
 
 	BOOL need_abort;
 
