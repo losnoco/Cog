@@ -18,18 +18,18 @@
 
 @implementation HTTPSource
 
-static size_t http_curl_write_wrapper(HTTPSource *fp, void *ptr, size_t size) {
+static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
 	size_t avail = size;
 	while(avail > 0) {
 		[fp->mutex lock];
 		if(fp->status == STATUS_SEEK) {
-			DLog(@"curl seek request, aborting current request");
+			DLog(@"urlsession seek request, aborting current request");
 			[fp->mutex unlock];
 			return 0;
 		}
 		if(fp->need_abort) {
 			fp->status = STATUS_ABORTED;
-			DLog(@"curl STATUS_ABORTED in the middle of packet");
+			DLog(@"urlsession STATUS_ABORTED in the middle of packet");
 			[fp->mutex unlock];
 			break;
 		}
@@ -245,35 +245,43 @@ static size_t http_content_header_handler_int(void *ptr, size_t size, void *stre
 	return p - (uint8_t *)ptr;
 }
 
-static size_t handle_icy_headers(size_t avail, HTTPSource *fp, char *ptr) {
-	size_t size = avail;
+static size_t handle_icy_headers(NSData *httpResponseData, HTTPSource *fp) {
+	size_t avail = httpResponseData.length;
+	if(avail == 0) return 0;
 
-	// check if that's ICY
+	const char *ptr = (const char *)httpResponseData.bytes;
+	size_t consumed = 0;
+
+	// Check if that's ICY
 	if(!fp->icyheader && avail >= 10 && !memcmp(ptr, "ICY 200 OK", 10)) {
-		DLog(@"icy headers in the stream");
+		DLog(@"icy headers in the response");
 		ptr += 10;
 		avail -= 10;
+		consumed += 10;
 
 		fp->icyheader = 1;
 
-		// check for termination marker
+		// Check for termination marker
 		if(avail >= 4 && !memcmp(ptr, "\r\n\r\n", 4)) {
 			avail -= 4;
 			ptr += 4;
+			consumed += 4;
 			fp->gotheader = 1;
 
-			return size - avail;
+			return consumed;
 		}
 
-		// skip remaining linebreaks
+		// Skip remaining linebreaks
 		while(avail > 0 && (*ptr == '\r' || *ptr == '\n')) {
 			avail--;
 			ptr++;
+			consumed++;
 		}
 	}
+
 	if(fp->icyheader) {
 		if(fp->nheaderpackets > 10) {
-			DLog(@"curl: warning: seems like stream has unterminated ICY headers");
+			DLog(@"urlsession: warning: seems like stream has unterminated ICY headers");
 			fp->icy_metaint = 0;
 			fp->wait_meta = 0;
 			fp->gotheader = 1;
@@ -281,19 +289,17 @@ static size_t handle_icy_headers(size_t avail, HTTPSource *fp, char *ptr) {
 			fp->nheaderpackets++;
 
 			int end = 0;
-			size_t consumed = http_content_header_handler_int(ptr, avail, (__bridge void *)fp, &end);
-			avail -= consumed;
-			ptr += consumed;
+			size_t header_consumed = http_content_header_handler_int((void *)ptr, avail, (__bridge void *)fp, &end);
+			avail -= header_consumed;
+			ptr += header_consumed;
+			consumed += header_consumed;
 			fp->gotheader = end || (avail != 0);
 		}
 	} else {
 		fp->gotheader = 1;
 	}
-	if(!avail) {
-		return size;
-	}
 
-	return size - avail;
+	return consumed;
 }
 
 static size_t _handle_icy_metadata(size_t avail, HTTPSource *fp, char *ptr, int *error) {
@@ -328,7 +334,7 @@ static size_t _handle_icy_metadata(size_t avail, HTTPSource *fp, char *ptr, int 
 		}
 		if(fp->wait_meta < avail) {
 			// read bytes remaining until metadata block
-			size_t res1 = http_curl_write_wrapper(fp, ptr, fp->wait_meta);
+			size_t res1 = http_data_write_wrapper(fp, ptr, fp->wait_meta);
 			if(res1 != fp->wait_meta) {
 				*error = 1;
 				return 0;
@@ -359,7 +365,7 @@ static size_t _handle_icy_metadata(size_t avail, HTTPSource *fp, char *ptr, int 
 			break;
 		}
 		if(avail < 0) {
-			DLog(@"curl: something bad happened in metadata parser. can't continue streaming.\n");
+			DLog(@"urlsession: something bad happened in metadata parser. can't continue streaming.\n");
 			*error = 1;
 			return 0;
 		}
@@ -367,26 +373,28 @@ static size_t _handle_icy_metadata(size_t avail, HTTPSource *fp, char *ptr, int 
 	return size - avail;
 }
 
-static size_t http_curl_write(void *_ptr, size_t size, size_t nmemb, void *stream) {
-	char *ptr = _ptr;
-	size_t avail = size * nmemb;
-	HTTPSource *fp = (__bridge HTTPSource *)stream;
+static size_t http_data_write(NSData *data, HTTPSource *fp) {
+	size_t size = data.length;
+	const char *ptr = (const char *)data.bytes;
+	size_t avail = size;
 
-	//    DLog(@"http_curl_write %d bytes, wait_meta=%d\n", size * nmemb, fp->wait_meta);
-	gettimeofday(&fp->last_read_time, NULL);
+	// DLog(@"http_data_write %d bytes, wait_meta=%d\n", (int)size, fp->wait_meta);
+	fp->last_read_time = [NSDate date];
+
+	// Check for abort
 	if(fp->need_abort) {
 		fp->status = STATUS_ABORTED;
-		DLog(@"curl STATUS_ABORTED at start of packet");
+		DLog(@"urlsession STATUS_ABORTED at start of packet");
 		return 0;
 	}
 
-	// process the in-stream headers, if present
+	// Process the in-stream headers, if present
 	if(!fp->gotheader) {
-		size_t consumed = handle_icy_headers(avail, fp, ptr);
+		size_t consumed = handle_icy_headers(data, fp);
 		avail -= consumed;
 		ptr += consumed;
 		if(!avail) {
-			return nmemb * size;
+			return size;
 		}
 	}
 
@@ -397,57 +405,21 @@ static size_t http_curl_write(void *_ptr, size_t size, size_t nmemb, void *strea
 	[fp->mutex unlock];
 
 	int error = 0;
-	size_t consumed = _handle_icy_metadata(avail, fp, ptr, &error);
+	size_t consumed = _handle_icy_metadata(avail, fp, (char *)ptr, &error);
 	if(error) {
 		return 0;
 	}
 	avail -= consumed;
 	ptr += consumed;
 
-	// the remaining bytes are the normal stream, without metadata or headers
+	// The remaining bytes are the normal stream, without metadata or headers
 	if(avail) {
-		//        DLog(@"http_curl_write_wrapper [2] %d\n", avail);
-		size_t res = http_curl_write_wrapper(fp, ptr, avail);
+		// DLog(@"http_data_write_wrapper [2] %d\n", (int)avail);
+		size_t res = http_data_write_wrapper(fp, (char *)ptr, avail);
 		avail -= res;
 		fp->wait_meta -= res;
 	}
-	return nmemb * size - avail;
-}
-
-static size_t http_content_header_handler(void *ptr, size_t size, size_t nmemb, void *stream) {
-	int end = 0;
-	return http_content_header_handler_int(ptr, size * nmemb, stream, &end);
-}
-
-static int http_curl_control(void *stream, double dltotal, double dlnow, double ultotal, double ulnow) {
-	HTTPSource *fp = (__bridge HTTPSource *)stream;
-
-	[fp->mutex lock];
-
-	struct timeval tm;
-	gettimeofday(&tm, NULL);
-	float sec = tm.tv_sec - fp->last_read_time.tv_sec;
-	long response;
-	curl_easy_getinfo(fp->curl, CURLINFO_RESPONSE_CODE, &response);
-	// DLog ("http_curl_control: status = %d, response = %d, interval: %f seconds\n", fp ? fp->status : -1, (int)response, sec);
-	if(fp->status == STATUS_READING && sec > TIMEOUT) {
-		DLog(@"http_curl_control: timed out, restarting read");
-		memcpy(&fp->last_read_time, &tm, sizeof(struct timeval));
-		http_stream_reset(fp);
-		fp->status = STATUS_SEEK;
-	} else if(fp->status == STATUS_SEEK) {
-		DLog(@"curl STATUS_SEEK in progress callback");
-		[fp->mutex unlock];
-		return -1;
-	}
-	if(fp->need_abort) {
-		fp->status = STATUS_ABORTED;
-		DLog(@"curl STATUS_ABORTED in progress callback");
-		[fp->mutex unlock];
-		return -1;
-	}
-	[fp->mutex unlock];
-	return 0;
+	return size - avail;
 }
 
 static void http_stream_reset(HTTPSource *fp) {
@@ -463,148 +435,38 @@ static void http_stream_reset(HTTPSource *fp) {
 	fp->wait_meta = 0;
 }
 
-- (void)threadEntry:(id)info {
+- (void)urlSessionThreadEntry:(id)info {
 	@autoreleasepool {
-		CURL *curl;
-		curl = curl_easy_init();
+		// Create URLSession configuration
+		NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+		config.timeoutIntervalForRequest = 10;
+		config.requestCachePolicy = NSURLRequestReloadIgnoringLocalCacheData;
+
+		// Create delegate queue
+		NSOperationQueue *delegateQueue = [NSOperationQueue new];
+		delegateQueue.name = @"org.cogx.cog.httpsource";
+		delegateQueue.maxConcurrentOperationCount = 1; // Ensure serial operation
+		delegateQueue.qualityOfService = NSQualityOfServiceUserInitiated;
+
+		// Create session with self as delegate
+		session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:delegateQueue];
+
 		length = -1;
-		self->curl = curl;
 		self->status = STATUS_INITIAL;
 
-		int status;
+		DLog(@"urlsession: started loading data %@", URL);
 
-		DLog(@"curl: started loading data %@", URL);
+		// Start initial request
+		[self startRequest];
 
-		CFURLRef urlref = (__bridge CFURLRef)URL;
-		CFDictionaryRef cfproxysettings = CFNetworkCopySystemProxySettings();
-		CFArrayRef cfproxylist = CFNetworkCopyProxiesForURL(urlref, cfproxysettings);
-		CFRelease(cfproxysettings);
-		NSArray *proxylist = (__bridge NSArray *)cfproxylist;
-		CFRelease(cfproxylist);
-
-		size_t tryproxy = 0;
-		size_t proxycount = [proxylist count];
-		BOOL lastTriedSocks5 = NO;
-
+		// Run the thread loop to handle seeks and retries
 		for(;;) {
-			struct curl_slist *headers = NULL;
-			struct curl_slist *ok_aliases = curl_slist_append(NULL, "ICY 200 OK");
-
-			BOOL sslVerify = ![[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"allowInsecureSSL"];
-
-			curl_easy_reset(curl);
-			curl_easy_setopt(curl, CURLOPT_URL, [[URL absoluteString] UTF8String]);
-			NSString *ua = [NSString stringWithFormat:@"Cog/%@", [[[NSBundle mainBundle] infoDictionary] valueForKey:(__bridge id)kCFBundleVersionKey]];
-			curl_easy_setopt(curl, CURLOPT_USERAGENT, [ua UTF8String]);
-			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, http_curl_write);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (__bridge void *)self);
-			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, http_err);
-			curl_easy_setopt(curl, CURLOPT_BUFFERSIZE, BUFFER_SIZE / 2);
-			curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-			curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, http_content_header_handler);
-			curl_easy_setopt(curl, CURLOPT_HEADERDATA, (__bridge void *)self);
-			curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-			curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, http_curl_control);
-			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
-			curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, (__bridge void *)self);
-			// enable up to 10 redirects
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-			curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 10);
-
-			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10);
-
-			headers = curl_slist_append(headers, "Icy-Metadata:1");
-			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-			curl_easy_setopt(curl, CURLOPT_HTTP200ALIASES, ok_aliases);
-			if(pos > 0 && length >= 0) {
-				curl_easy_setopt(curl, CURLOPT_RESUME_FROM, (long)pos);
-			}
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, (long)sslVerify);
-			//        fp->status = STATUS_INITIAL;
-
-			// Do the proxies
-			if(proxycount) {
-				if(tryproxy >= proxycount) {
-					/* Ran out of proxies, aborting. */
-					self->status = STATUS_ABORTED;
-					return;
-				}
-				NSDictionary *proxy = proxylist[tryproxy++];
-				NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
-				if([proxyType isEqualTo:(__bridge id)kCFProxyTypeNone]) {
-					tryproxy--;
-				} else {
-					NSString *proto = nil;
-					CFStringRef secType;
-					if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTP]) {
-						proto = @"http";
-						secType = kSecAttrProtocolHTTP;
-					} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTPS]) {
-						proto = @"https";
-						secType = kSecAttrProtocolHTTPS;
-					} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeSOCKS]) {
-						if(lastTriedSocks5) {
-							proto = @"socks";
-							lastTriedSocks5 = NO;
-						} else {
-							proto = @"socks5";
-							tryproxy--;
-							lastTriedSocks5 = YES;
-						}
-						secType = kSecAttrProtocolSOCKS;
-					} else {
-						self->status = STATUS_ABORTED;
-						return;
-					}
-					NSString *username = proxy[(__bridge id)kCFProxyUsernameKey];
-					NSString *host = proxy[(__bridge id)kCFProxyHostNameKey];
-					NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
-					NSString *proxyurl = [NSString stringWithFormat:@"%@://%@:%@", proto, host, port];
-					if(username && [username length]) {
-						curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, [username UTF8String]);
-
-						NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassInternetPassword,
-												(__bridge id)kSecAttrServer: host,
-												(__bridge id)kSecAttrAccount: username,
-												(__bridge id)kSecAttrProtocol: (__bridge id)secType,
-												(__bridge id)kSecAttrPort: port,
-												(__bridge id)kSecReturnData: @YES,
-												(__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne};
-
-						CFTypeRef result = NULL;
-						OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
-						if(status == noErr) {
-							NSData *passwordData = (__bridge_transfer NSData *)result;
-							NSUInteger passwordLength = [passwordData length];
-							char *password = (char *)malloc(passwordLength + 1);
-							memcpy(password, [passwordData bytes], passwordLength);
-							password[passwordLength] = '\0';
-							curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, password);
-							free(password);
-						}
-					}
-					curl_easy_setopt(curl, CURLOPT_PROXY, [proxyurl UTF8String]);
-				}
-			}
-
-			DLog(@"curl: calling curl_easy_perform (status=%d)...\n", self->status);
-			gettimeofday(&last_read_time, NULL);
-			status = curl_easy_perform(curl);
-			DLog(@"curl: curl_easy_perform retval=%d\n", status);
-			if(status != 0) {
-				DLog(@"curl error:\n%s\n", http_err);
-			}
 			[mutex lock];
-			if(self->status != STATUS_SEEK) {
-				DLog(@"curl: break loop\n");
-				[mutex unlock];
-				break;
-			} else {
-				DLog(@"curl: restart loop\n");
+			if(self->status == STATUS_SEEK) {
+				DLog(@"urlsession: restarting for seek to %lld\n", pos);
 				skipbytes = 0;
 				self->status = STATUS_INITIAL;
-				DLog(@"seeking to %lld\n", pos);
+
 				if(length < 0) {
 					// icy -- need full restart
 					pos = 0;
@@ -616,22 +478,203 @@ static void http_stream_reset(HTTPSource *fp) {
 					wait_meta = 0;
 					icy_metaint = 0;
 				}
+
+				[self startRequest];
+			}
+
+			if(self->status == STATUS_FINISHED || self->status == STATUS_ABORTED) {
+				[mutex unlock];
+				break;
 			}
 			[mutex unlock];
-			curl_slist_free_all(headers);
-			curl_slist_free_all(ok_aliases);
+
+			usleep(10000); // 10ms sleep to reduce CPU usage
 		}
-		curl_easy_cleanup(curl);
+
+		[session finishTasksAndInvalidate];
 
 		[mutex lock];
 		if(self->status == STATUS_ABORTED) {
-			DLog(@"curl: thread ended due to abort signal");
-			self->curl = NULL;
+			DLog(@"urlsession: thread ended due to abort signal");
 		} else {
-			DLog(@"curl: thread ended normally");
-			self->status = STATUS_FINISHED;
+			DLog(@"urlsession: thread ended normally");
 		}
 		[mutex unlock];
+	}
+}
+
+- (void)startRequest {
+	@autoreleasepool {
+		redirectsRemaining = 10;
+
+		NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
+		[request setHTTPMethod:@"GET"];
+
+		// Add ICY metadata request header
+		[request setValue:@"1" forHTTPHeaderField:@"Icy-Metadata"];
+
+		// Set User-Agent
+		NSString *ua = [NSString stringWithFormat:@"Cog/%@", [[[NSBundle mainBundle] infoDictionary] valueForKey:(__bridge id)kCFBundleVersionKey]];
+		[request setValue:ua forHTTPHeaderField:@"User-Agent"];
+
+		// Set timeout
+		request.timeoutInterval = 10;
+
+		// Add Range header if seeking and we have content length
+		if(pos > 0 && length > 0) {
+			NSString *rangeHeader = [NSString stringWithFormat:@"bytes=%lld-", pos];
+			[request setValue:rangeHeader forHTTPHeaderField:@"Range"];
+		}
+
+		// Cancel existing task if any
+		if(dataTask) {
+			[dataTask cancel];
+		}
+
+		// Create and start new task
+		dataTask = [session dataTaskWithRequest:request];
+		[dataTask resume];
+
+		// Update last read time
+		last_read_time = [NSDate date];
+
+		DLog(@"urlsession: started request (status=%d)\n", self->status);
+	}
+}
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response
+  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
+	[mutex lock];
+
+	DLog(@"urlsession: received response");
+
+	NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+	NSDictionary *headers = httpResponse.allHeaderFields;
+
+	// Check for ICY response
+	NSString *contentType = httpResponse.MIMEType;
+	if(contentType && ([contentType hasPrefix:@"audio/x-scpls"] ||
+					   [contentType hasPrefix:@"audio/mpegurl"] ||
+					   [contentType hasPrefix:@"application/x-scpls"])) {
+		// Likely ICY stream, handle specially
+		[mutex unlock];
+		completionHandler(NSURLSessionResponseAllow);
+		return;
+	}
+
+	// Process HTTP headers using existing logic
+	NSMutableData *headerBlock = [NSMutableData new];
+
+	for (NSString *key in headers) {
+		NSString *value = headers[key];
+
+		const char *key_c = [key UTF8String];
+		const char *value_c = [value UTF8String];
+
+		[headerBlock appendBytes:key_c length:strlen(key_c)];
+		[headerBlock appendBytes:": " length:2];
+		[headerBlock appendBytes:value_c length:strlen(value_c)];
+		[headerBlock appendBytes:"\r\n" length:2];
+	}
+
+	[headerBlock appendBytes:"\r\n" length:2];
+
+	// Process the header block
+	int end = 0;
+	http_content_header_handler_int((void *)[headerBlock bytes], [headerBlock length], (__bridge void *)self, &end);
+
+	self->gotheader = 1;
+	if(self->status == STATUS_INITIAL) {
+		self->status = STATUS_READING;
+	}
+
+	[mutex unlock];
+
+	completionHandler(NSURLSessionResponseAllow);
+}
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
+	HTTPSource *fp = self;
+
+	// Call the new NSData-based write function
+	http_data_write(data, fp);
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
+	[mutex lock];
+
+	if(error) {
+		if(error.code == NSURLErrorCancelled) {
+			DLog(@"urlsession: task cancelled");
+		} else {
+			DLog(@"urlsession: task completed with error: %@", error.localizedDescription);
+			self->status = STATUS_ABORTED;
+		}
+	} else {
+		DLog(@"urlsession: task completed successfully");
+		if(self->status == STATUS_READING || self->status == STATUS_INITIAL) {
+			self->status = STATUS_FINISHED;
+		}
+	}
+
+	self->dataTask = nil;
+
+	[mutex unlock];
+}
+
+- (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void
+ (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
+	if([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+		BOOL sslVerify = ![[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"allowInsecureSSL"];
+
+		if(!sslVerify) {
+			// Allow insecure SSL
+			NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+			completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+			DLog(@"urlsession: allowing insecure SSL");
+			return;
+		} else {
+			// Verify SSL properly
+			SecTrustRef serverTrust = challenge.protectionSpace.serverTrust;
+			SecTrustResultType result = kSecTrustResultInvalid;
+			CFErrorRef error = nil;
+			if(serverTrust) {
+				CFDataRef exceptions = SecTrustCopyExceptions(serverTrust);
+				if(exceptions) {
+					SecTrustSetExceptions(serverTrust, exceptions);
+					CFRelease(exceptions);
+				}
+				if(SecTrustEvaluateWithError(serverTrust, &error)) {
+					result = kSecTrustResultProceed;
+				} else {
+					result = kSecTrustResultOtherError;
+					CFRelease(error);
+				}
+			}
+
+			if(result == kSecTrustResultProceed || result == kSecTrustResultUnspecified) {
+				NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
+				completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+				DLog(@"urlsession: SSL verified");
+				return;
+			} else {
+				completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+				DLog(@"urlsession: SSL verification failed");
+				return;
+			}
+		}
+	}
+
+	// Default handling for other authentication types
+	completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+}
+
+- (void) URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler {
+	if(redirectsRemaining > 0) {
+		--redirectsRemaining;
+		completionHandler(request);
+	} else {
+		completionHandler(NULL);
 	}
 }
 
@@ -652,16 +695,15 @@ static void http_stream_reset(HTTPSource *fp) {
 
 	nheaderpackets = 0;
 	content_type = nil;
-	curl = NULL;
-	memset(&last_read_time, 0, sizeof(last_read_time));
+	session = nil;
+	dataTask = nil;
+	last_read_time = nil;
 	icy_metaint = 0;
 	wait_meta = 0;
 
 	memset(&metadata, 0, sizeof(metadata));
 	metadata_size = 0;
 	metadata_have_size = 0;
-
-	memset(&http_err, 0, sizeof(http_err));
 
 	need_abort = NO;
 
@@ -676,7 +718,7 @@ static void http_stream_reset(HTTPSource *fp) {
 	icyheader = 0;
 	gotsomeheader = 0;
 
-	[NSThread detachNewThreadSelector:@selector(threadEntry:) toTarget:self withObject:nil];
+	[NSThread detachNewThreadSelector:@selector(urlSessionThreadEntry:) toTarget:self withObject:nil];
 
 	// Wait for transfer to at least start
 	while(status == STATUS_UNSTARTED) {
@@ -686,11 +728,18 @@ static void http_stream_reset(HTTPSource *fp) {
 	// Now wait for it to either begin streaming, or complete if file is small enough to fit in the buffer
 	while(status != STATUS_READING &&
 	      status != STATUS_FINISHED &&
-	      curl) {
+	      !dataTask) {
 		usleep(3000);
 	}
 
-	if(!curl)
+	// Wait for the headers
+	while(status != STATUS_FINISHED &&
+		  status != STATUS_ABORTED &&
+		  !gotheader) {
+		usleep(3000);
+	}
+
+	if(!dataTask && status != STATUS_FINISHED)
 		return NO;
 
 	return YES;
@@ -734,7 +783,7 @@ static void http_stream_reset(HTTPSource *fp) {
 			seektoend = 1;
 			return YES;
 		}
-		DLog(@"curl: can't seek in curl stream relative to EOF");
+		DLog(@"urlsession: can't seek in stream relative to EOF");
 		return NO;
 	}
 	[mutex lock];
@@ -759,10 +808,16 @@ static void http_stream_reset(HTTPSource *fp) {
 			return YES;
 		}
 	}
-	// reset stream, and start over
+	// Reset stream and start over
 	http_stream_reset(self);
 	pos = position;
 	status = STATUS_SEEK;
+
+	// Cancel current data task to force restart with new position
+	if(dataTask) {
+		[dataTask cancel];
+	}
+
 	[mutex unlock];
 	return YES;
 }
@@ -779,15 +834,13 @@ static void http_stream_reset(HTTPSource *fp) {
 	while((remaining > 0 || (status != STATUS_FINISHED && status != STATUS_ABORTED)) && sz > 0) {
 		// wait until data is available
 		while((remaining == 0 || skipbytes > 0) && status != STATUS_FINISHED && status != STATUS_ABORTED) {
-			//            DLog(@"curl: readwait, status: %d..\n", status);
+			//            DLog(@"urlsession: readwait, status: %d..\n", status);
 			[mutex lock];
 			if(status == STATUS_READING) {
-				struct timeval tm;
-				gettimeofday(&tm, NULL);
-				float sec = tm.tv_sec - last_read_time.tv_sec;
+				NSTimeInterval sec = [[NSDate date] timeIntervalSinceDate:last_read_time];
 				if(sec > TIMEOUT) {
-					DLog(@"http_read: timed out, restarting read");
-					memcpy(&last_read_time, &tm, sizeof(struct timeval));
+					DLog(@"urlsession: timed out, restarting read");
+					last_read_time = [NSDate date];
 					http_stream_reset(self);
 					status = STATUS_SEEK;
 					[mutex unlock];
@@ -840,7 +893,10 @@ static void http_stream_reset(HTTPSource *fp) {
 - (void)close {
 	need_abort = YES;
 	content_type = nil;
-	while(curl != NULL && status != STATUS_FINISHED) {
+	if(dataTask) {
+		[dataTask cancel];
+	}
+	while(dataTask != nil && status != STATUS_FINISHED) {
 		usleep(3000);
 	}
 }

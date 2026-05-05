@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1716093A0F627F02008FA424 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 171609390F627F02008FA424 /* HTTPSource.m */; };
+		833286352FA9D7F9009CC4CE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833286342FA9D7F9009CC4CE /* Foundation.framework */; };
 		834D19082D7F94EF00F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19072D7F94EF00F13B89 /* CogAudio.framework */; };
-		8356BD1827B3B7340074E50C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8356BD1727B3B7340074E50C /* libcurl.tbd */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +33,7 @@
 		17ADB60C0B97A74800257CA2 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTTPSource.h; sourceTree = "<group>"; };
 		17ADB6340B97A8B400257CA2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		32DBCF630370AF2F00C91783 /* HTTPSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPSource_Prefix.pch; sourceTree = "<group>"; };
+		833286342FA9D7F9009CC4CE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		834A42B9287AFAB500EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
 		834D19072D7F94EF00F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8356BD1727B3B7340074E50C /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
@@ -50,7 +51,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				834D19082D7F94EF00F13B89 /* CogAudio.framework in Frameworks */,
-				8356BD1827B3B7340074E50C /* libcurl.tbd in Frameworks */,
+				833286352FA9D7F9009CC4CE /* Foundation.framework in Frameworks */,
 				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -139,6 +140,7 @@
 		8356BD1627B3B7340074E50C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				833286342FA9D7F9009CC4CE /* Foundation.framework */,
 				834D19072D7F94EF00F13B89 /* CogAudio.framework */,
 				8356BD1727B3B7340074E50C /* libcurl.tbd */,
 			);
