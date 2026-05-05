@@ -19,63 +19,6 @@
 
 #define ST_BUFF 2048
 
-void FFMPEG_Register_Proxy_Server(NSURL *url) {
-	CFURLRef urlref = (__bridge CFURLRef)url;
-	CFDictionaryRef cfproxysettings = CFNetworkCopySystemProxySettings();
-	CFArrayRef cfproxylist = CFNetworkCopyProxiesForURL(urlref, cfproxysettings);
-	CFRelease(cfproxysettings);
-	NSArray *proxylist = (__bridge NSArray *)cfproxylist;
-	CFRelease(cfproxylist);
-
-	if(![proxylist count]) return;
-	
-	NSDictionary *proxy = proxylist[0];
-	NSString *proxyType = proxy[(__bridge id)kCFProxyTypeKey];
-	if(![proxyType isEqualTo:(__bridge id)kCFProxyTypeNone]) {
-		NSString *proto = nil;
-		CFStringRef secType;
-		if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTP]) {
-			proto = @"http";
-			secType = kSecAttrProtocolHTTP;
-		} else if([proxyType isEqualTo:(__bridge id)kCFProxyTypeHTTPS]) {
-			proto = @"https";
-			secType = kSecAttrProtocolHTTPS;
-		} else {
-			return;
-		}
-		NSString *username = proxy[(__bridge id)kCFProxyUsernameKey];
-		NSString *host = proxy[(__bridge id)kCFProxyHostNameKey];
-		NSNumber *port = proxy[(__bridge id)kCFProxyPortNumberKey];
-		NSString *authfield = @"";
-		if(username && [username length]) {
-			NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassInternetPassword,
-									(__bridge id)kSecAttrServer: host,
-									(__bridge id)kSecAttrAccount: username,
-									(__bridge id)kSecAttrProtocol: (__bridge id)secType,
-									(__bridge id)kSecAttrPort: port,
-									(__bridge id)kSecReturnData: @YES,
-									(__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne};
-
-			CFTypeRef result = NULL;
-			OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
-			NSString *password = nil;
-
-			if(status == noErr) {
-				NSData *passwordData = (__bridge_transfer NSData *)result;
-				password = [[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding];
-			}
-
-			if(password && [password length]) {
-				authfield = [NSString stringWithFormat:@"%@:%@@", [username stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLUserAllowedCharacterSet]], [password stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLPasswordAllowedCharacterSet]]];
-			} else {
-				authfield = [NSString stringWithFormat:@"%@@", [username stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLUserAllowedCharacterSet]]];
-			}
-		}
-		NSString *proxyurl = [NSString stringWithFormat:@"%@://%@%@:%@", proto, authfield, host, port];
-		setenv("http_proxy", [proxyurl UTF8String], 1);
-	}
-}
-
 @implementation FFMPEGReader
 
 - (id)initWithFile:(id<CogSource>)f {
@@ -223,8 +166,6 @@ static uint8_t reverse_bits[0x100];
 			ALog(@"Unable to allocate AVFormat context");
 			return NO;
 		}
-
-		FFMPEG_Register_Proxy_Server(url);
 
 		NSString *urlString = [url absoluteString];
 		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
