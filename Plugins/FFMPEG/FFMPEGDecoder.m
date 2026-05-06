@@ -732,6 +732,12 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		}
 	}
 
+	/* Meh */
+	NSString *ignoreKey = @"id3v2_priv․com․apple․streaming․transportstreamtimestamp";
+	if(_metaDict[ignoreKey]) {
+		[_metaDict removeObjectForKey:ignoreKey];
+	}
+
 	if(![_metaDict isEqualToDictionary:metaDict]) {
 		@autoreleasepool {
 			metaDict = _metaDict;
