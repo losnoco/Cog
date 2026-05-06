@@ -182,7 +182,7 @@ static uint8_t reverse_bits[0x100];
 
 		reader = [[FFMPEGReader alloc] initWithFile:source];
 
-		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, ffmpeg_seek);
+		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, [source seekable] ? ffmpeg_seek : NULL);
 		if(!ioCtx) {
 			ALog(@"Unable to create AVIO context");
 			return NO;
