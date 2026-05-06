@@ -63,6 +63,11 @@
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url {
+	if([[url scheme] isEqualToString:@"http"] ||
+	   [[url scheme] isEqualToString:@"https"]) {
+		return @[url];
+	}
+
 	char *filecontents = nil;
 
 	{
