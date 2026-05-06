@@ -1,0 +1,6 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleName = "HLS";
+CFBundleDisplayName = "HTTP Live Streaming";
+CFBundleGetInfoString = "HTTP Live Streaming Plugin version 1.0, Copyright 2026";
+NSHumanReadableCopyright = "Copyright 2026";

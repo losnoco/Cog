@@ -140,8 +140,6 @@ static uint8_t reverse_bits[0x100];
 
 	rawDSD = NO;
 
-	isHLS = NO;
-
 	// register all available codecs
 
 	if([[source.url fragment] length] == 0)
@@ -151,57 +149,31 @@ static uint8_t reverse_bits[0x100];
 
 	NSURL *url = [s url];
 
-	BOOL isHTTP = [[url scheme] isEqualToString:@"http"] ||
-				  [[url scheme] isEqualToString:@"https"];
-	BOOL isM3U = [[url pathExtension] isEqualToString:@"m3u8"];
+	buffer = av_malloc(32 * 1024);
+	if(!buffer) {
+		ALog(@"Out of memory!");
+		return NO;
+	}
 
-	if(isHTTP && isM3U) {
-		source = nil;
-		[s close];
+	reader = [[FFMPEGReader alloc] initWithFile:source];
 
-		isHLS = YES;
+	ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, [source seekable] ? ffmpeg_seek : NULL);
+	if(!ioCtx) {
+		ALog(@"Unable to create AVIO context");
+		return NO;
+	}
 
-		formatCtx = avformat_alloc_context();
-		if(!formatCtx) {
-			ALog(@"Unable to allocate AVFormat context");
-			return NO;
-		}
+	formatCtx = avformat_alloc_context();
+	if(!formatCtx) {
+		ALog(@"Unable to allocate AVFormat context");
+		return NO;
+	}
 
-		NSString *urlString = [url absoluteString];
-		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
-			av_strerror(errcode, errDescr, 4096);
-			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
-			return NO;
-		}
-	} else if(!isM3U) {
-		buffer = av_malloc(32 * 1024);
-		if(!buffer) {
-			ALog(@"Out of memory!");
-			return NO;
-		}
+	formatCtx->pb = ioCtx;
 
-		reader = [[FFMPEGReader alloc] initWithFile:source];
-
-		ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, [source seekable] ? ffmpeg_seek : NULL);
-		if(!ioCtx) {
-			ALog(@"Unable to create AVIO context");
-			return NO;
-		}
-
-		formatCtx = avformat_alloc_context();
-		if(!formatCtx) {
-			ALog(@"Unable to allocate AVFormat context");
-			return NO;
-		}
-
-		formatCtx->pb = ioCtx;
-
-		if((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0) {
-			av_strerror(errcode, errDescr, 4096);
-			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
-			return NO;
-		}
-	} else {
+	if((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0) {
+		av_strerror(errcode, errDescr, 4096);
+		ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 		return NO;
 	}
 
@@ -320,21 +292,6 @@ static uint8_t reverse_bits[0x100];
 
 	if(!codec && !rawDSD)
 		codec = avcodec_find_decoder(codec_id);
-
-	if(@available(macOS 10.15, *)) {
-	} else {
-		if(codec && codec->name) {
-			const char *name = codec->name;
-			size_t name_len = strlen(name);
-			if(name_len > 3) {
-				name += name_len - 3;
-				if(!strcmp(name, "_at")) {
-					ALog(@"AudioToolbox decoder picked on old macOS, disabling: %s", codec->name);
-					codec = NULL; // Disable AudioToolbox codecs on Mojave and older
-				}
-			}
-		}
-	}
 
 	if(!codec && !rawDSD) {
 		ALog(@"codec not found");

@@ -218,6 +218,7 @@
 		83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */; };
 		83E9987A2F7135310017AE33 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */; };
 		83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */; };
+		83F759E42FAB0706009DB584 /* HLS.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F759E32FAB0706009DB584 /* HLS.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 83F9FFEE2D6EB75B00026576 /* Sentry */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -509,6 +510,13 @@
 			remoteGlobalIDString = 8359FF1717FEF35C0060F3ED;
 			remoteInfo = ArchiveSource;
 		};
+		835DBDD72FAB062F00FAD80F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 835DBDD42FAB062F00FAD80F /* HLS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
+			remoteInfo = HLS;
+		};
 		8360EF0417F92B24005208A4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */;
@@ -628,6 +636,13 @@
 			remoteGlobalIDString = 83CB82E22E82D70500CA63C6;
 			remoteInfo = "nuked-sc55";
 		};
+		83F759E22FAB0706009DB584 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 835DBDD42FAB062F00FAD80F /* HLS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
+			remoteInfo = HLS;
+		};
 		83F9D7F51A884B46007ABEC2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */;
@@ -724,6 +739,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				83F759E42FAB0706009DB584 /* HLS.bundle in CopyFiles */,
 				8389FCC42E76D51D004FAB82 /* Syntrax.bundle in CopyFiles */,
 				83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */,
 				8327DBA9293CAD2400CD0580 /* Organya.bundle in CopyFiles */,
@@ -983,6 +999,7 @@
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
 		835A8FC627957310005B3C39 /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = json.c; sourceTree = "<group>"; };
 		835A8FC827957310005B3C39 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
+		835DBDD42FAB062F00FAD80F /* HLS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HLS.xcodeproj; path = Plugins/HLS/HLS.xcodeproj; sourceTree = "<group>"; };
 		835F00B4279BD1CD00055FCF /* SecondsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondsFormatter.h; sourceTree = "<group>"; };
 		835F00B8279BD1CD00055FCF /* SecondsFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondsFormatter.m; sourceTree = "<group>"; };
 		835FAC7227BCDF2A00BA8562 /* avif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avif.h; sourceTree = "<group>"; };
@@ -1334,6 +1351,7 @@
 				17C8F3C80CBED663008D969D /* GME.xcodeproj */,
 				8360EF0017F92B23005208A4 /* HighlyComplete.xcodeproj */,
 				836FB5421820538700B3AD2D /* Hively.xcodeproj */,
+				835DBDD42FAB062F00FAD80F /* HLS.xcodeproj */,
 				17C808830C3BD181005707C4 /* HTTPSource.xcodeproj */,
 				83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */,
 				8E8D40820CBB036600135C1B /* M3u.xcodeproj */,
@@ -1792,6 +1810,14 @@
 			path = json;
 			sourceTree = "<group>";
 		};
+		835DBDD52FAB062F00FAD80F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				83F759E32FAB0706009DB584 /* HLS.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		835F00B3279BD1CD00055FCF /* Formatters */ = {
 			isa = PBXGroup;
 			children = (
@@ -2089,6 +2115,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				835DBDD82FAB062F00FAD80F /* PBXTargetDependency */,
 				8389FCC02E76D4FB004FAB82 /* PBXTargetDependency */,
 				83B73B642D8FD74000A57F08 /* PBXTargetDependency */,
 				8327DBA8293CAD0A00CD0580 /* PBXTargetDependency */,
@@ -2207,6 +2234,10 @@
 				{
 					ProductGroup = 836FB5431820538700B3AD2D /* Products */;
 					ProjectRef = 836FB5421820538700B3AD2D /* Hively.xcodeproj */;
+				},
+				{
+					ProductGroup = 835DBDD52FAB062F00FAD80F /* Products */;
+					ProjectRef = 835DBDD42FAB062F00FAD80F /* HLS.xcodeproj */;
 				},
 				{
 					ProductGroup = 17C808840C3BD181005707C4 /* Products */;
@@ -2491,6 +2522,13 @@
 			fileType = wrapper.framework;
 			path = nuked_sc55.framework;
 			remoteRef = 83DFCD9F2E8532C1009E3DF1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		83F759E32FAB0706009DB584 /* HLS.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = HLS.bundle;
+			remoteRef = 83F759E22FAB0706009DB584 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */ = {
@@ -2886,6 +2924,11 @@
 			isa = PBXTargetDependency;
 			name = "vgmstream Plugin";
 			targetProxy = 834F7F4120E4E4CD00228DAB /* PBXContainerItemProxy */;
+		};
+		835DBDD82FAB062F00FAD80F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HLS;
+			targetProxy = 835DBDD72FAB062F00FAD80F /* PBXContainerItemProxy */;
 		};
 		836F5BEE1A3579F5002730CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
