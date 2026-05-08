@@ -8,10 +8,6 @@
 */
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #define MINIMP3_MAX_SAMPLES_PER_FRAME (1152*2)
 
 typedef struct
@@ -25,6 +21,10 @@ typedef struct
     int reserv, free_format_bytes;
     unsigned char header[4], reserv_buf[511];
 } mp3dec_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 void mp3dec_init(mp3dec_t *dec);
 #ifndef MINIMP3_FLOAT_OUTPUT
@@ -941,8 +941,7 @@ static void L3_stereo_top_band(const float *right, const uint8_t *sfb, int nband
 static void L3_stereo_process(float *left, const uint8_t *ist_pos, const uint8_t *sfb, const uint8_t *hdr, int max_band[3], int mpeg2_sh)
 {
     static const float g_pan[7*2] = { 0,1,0.21132487f,0.78867513f,0.36602540f,0.63397460f,0.5f,0.5f,0.63397460f,0.36602540f,0.78867513f,0.21132487f,1,0 };
-    const uint8_t mpeg1 = HDR_TEST_MPEG1(hdr);
-    unsigned i, max_pos = mpeg1 ? 7 : 64;
+    unsigned i, max_pos = HDR_TEST_MPEG1(hdr) ? 7 : 64;
 
     for (i = 0; sfb[i]; i++)
     {
@@ -950,7 +949,7 @@ static void L3_stereo_process(float *left, const uint8_t *ist_pos, const uint8_t
         if ((int)i > max_band[i % 3] && ipos < max_pos)
         {
             float kl, kr, s = HDR_TEST_MS_STEREO(hdr) ? 1.41421356f : 1;
-            if (mpeg1)
+            if (HDR_TEST_MPEG1(hdr))
             {
                 kl = g_pan[2*ipos];
                 kr = g_pan[2*ipos + 1];
