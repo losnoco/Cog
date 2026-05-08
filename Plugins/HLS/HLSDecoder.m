@@ -189,15 +189,7 @@ static void *kHLSDecoderContext = &kHLSDecoderContext;
 		ALog(@"HLS: FFMPEGDecoder class not available");
 		return NO;
 	}
-	decoder = [[ffmpegClass alloc] init];
-
-	// FFMPEGDecoder branches on its `isHLS` ivar to skip duration /
-	// start_time computation that doesn't make sense for streamed data.
-	@try {
-		[(NSObject *)decoder setValue:@YES forKey:@"isHLS"];
-	} @catch(NSException *e) {
-		DLog(@"HLS: couldn't set isHLS on decoder: %@", e);
-	}
+	decoder = [ffmpegClass new];
 
 	if(![decoder open:memorySource]) {
 		ALog(@"HLS: FFmpeg failed to open memory source");
@@ -366,11 +358,7 @@ static void *kHLSDecoderContext = &kHLSDecoderContext;
 
 	// Reopen FFmpeg against the freshly-primed memory source.
 	Class ffmpegClass = NSClassFromString(@"FFMPEGDecoder");
-	decoder = [[ffmpegClass alloc] init];
-	@try {
-		[(NSObject *)decoder setValue:@YES forKey:@"isHLS"];
-	} @catch(NSException *e) {
-	}
+	decoder = [ffmpegClass new];
 	if(![decoder open:memorySource]) {
 		ALog(@"HLS: FFmpeg reopen after seek failed");
 		[stateLock unlock];
