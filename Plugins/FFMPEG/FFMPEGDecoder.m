@@ -156,8 +156,9 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	reader = [[FFMPEGReader alloc] initWithFile:source];
+	seekable = [source seekable];
 
-	ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, [source seekable] ? ffmpeg_seek : NULL);
+	ioCtx = avio_alloc_context(buffer, 32 * 1024, 0, (__bridge void *)reader, ffmpeg_read, ffmpeg_write, seekable ? ffmpeg_seek : NULL);
 	if(!ioCtx) {
 		ALog(@"Unable to create AVIO context");
 		return NO;
@@ -462,7 +463,7 @@ static uint8_t reverse_bits[0x100];
 
 	// totalFrames = codecCtx->sample_rate * ((float)formatCtx->duration/AV_TIME_BASE);
 	AVRational tb = { .num = 1, .den = codecCtx->sample_rate };
-	totalFrames = isHLS ? 0 : av_rescale_q(formatCtx->duration, AV_TIME_BASE_Q, tb);
+	totalFrames = seekable ? av_rescale_q(formatCtx->duration, AV_TIME_BASE_Q, tb) : 0;
 	bitrate = (int)((codecCtx->bit_rate) / 1000);
 	framesRead = 0;
 	endOfStream = NO;
@@ -483,7 +484,7 @@ static uint8_t reverse_bits[0x100];
 		totalFrames *= 8;
 	}
 
-	if(!isHLS) {
+	if(seekable) {
 		if(stream->start_time && stream->start_time != AV_NOPTS_VALUE)
 			skipSamples = av_rescale_q(stream->start_time, stream->time_base, tb);
 		if(skipSamples < 0)
@@ -504,8 +505,6 @@ static uint8_t reverse_bits[0x100];
 
 	if(totalFrames < 0)
 		totalFrames = 0;
-
-	seekable = !isHLS && [s seekable];
 
 	seekedToStart = !seekable;
 
