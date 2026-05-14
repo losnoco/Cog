@@ -126,6 +126,7 @@
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
 		8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 833125092E817A63005C8895 /* InfoPlist.xcstrings */; };
 		8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8331250B2E817A63005C8895 /* Localizable.xcstrings */; };
+		833A70D02FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
 		83489C6B2782F78700BDCEA2 /* libvgmPlayer.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83489C542782F2DF00BDCEA2 /* libvgmPlayer.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834D793F20E4EFEA00C4A5CC /* OpusPlugin.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 830B62B320E4EF89004A74B2 /* OpusPlugin.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -991,6 +992,7 @@
 		8331250F2E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/InfoInspector.xcstrings; sourceTree = "<group>"; };
 		833125102E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/OpenURLPanel.xcstrings; sourceTree = "<group>"; };
 		833125112E817A64005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Feedback.xcstrings; sourceTree = "<group>"; };
+		833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeneralUserGS-Drums.sf3"; sourceTree = "<group>"; };
 		833D0C2027C4ABA00060E16A /* ScriptAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptAdditions.h; sourceTree = "<group>"; };
 		833D0C2427C4ABB80060E16A /* ScriptAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptAdditions.m; sourceTree = "<group>"; };
 		833F68251CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = es; path = es.lproj/Credits.html; sourceTree = "<group>"; };
@@ -1573,6 +1575,7 @@
 			isa = PBXGroup;
 			children = (
 				832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */,
+				833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */,
 				832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */,
 				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
@@ -2619,6 +2622,7 @@
 				17818A9A0C0B27AC001C4916 /* wav.icns in Resources */,
 				17818A9B0C0B27AC001C4916 /* wv.icns in Resources */,
 				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
+				833A70D02FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 in Resources */,
 				17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */,
 				83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */,
 				8384914018083E4E00E7332D /* filetype.icns in Resources */,
