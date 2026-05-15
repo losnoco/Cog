@@ -2,6 +2,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class SPUStandardUpdaterController;
+
+@interface SparkleBridge : NSObject
++ (SPUStandardUpdaterController *)sharedStandardUpdaterController;
+@end
+
 @class FileTreeViewController;
 @class PlaybackController;
 @class PlaylistController;

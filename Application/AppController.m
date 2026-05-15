@@ -36,10 +36,6 @@ BOOL kAppControllerShuttingDown = NO;
 
 static AppController *kAppController = nil;
 
-@interface SparkleBridge : NSObject
-+ (SPUStandardUpdaterController *)sharedStandardUpdaterController;
-@end
-
 @implementation SparkleBridge
 
 + (SPUStandardUpdaterController *)sharedStandardUpdaterController {
