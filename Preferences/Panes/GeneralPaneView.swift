@@ -1,4 +1,5 @@
 import SwiftUI
+import Sparkle
 
 struct SandboxPathEntry: Identifiable {
     let id: Int
@@ -7,6 +8,7 @@ struct SandboxPathEntry: Identifiable {
     let token: AnyObject?
 }
 
+@MainActor
 private final class GeneralPrefs: ObservableObject {
     private var isActive = true
 
@@ -17,8 +19,8 @@ private final class GeneralPrefs: ObservableObject {
         didSet { guard isActive else { return }; UserDefaults.standard.set(sentryConsented, forKey: "sentryConsented") }
     }
 
-    @Published var suCheckAtStartup: Bool {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(suCheckAtStartup, forKey: "SUCheckAtStartup") }
+    @Published var automaticallyChecksForUpdates: Bool {
+        didSet { guard isActive else { return }; SparkleBridge.sharedStandardUpdaterController()?.updater.automaticallyChecksForUpdates = automaticallyChecksForUpdates }
     }
 
     deinit { isActive = false }
@@ -27,7 +29,7 @@ private final class GeneralPrefs: ObservableObject {
         let d = UserDefaults.standard
         allowInsecureSSL = d.bool(forKey: "allowInsecureSSL")
         sentryConsented = d.bool(forKey: "sentryConsented")
-        suCheckAtStartup = d.bool(forKey: "SUCheckAtStartup")
+        automaticallyChecksForUpdates = SparkleBridge.sharedStandardUpdaterController()?.updater.automaticallyChecksForUpdates ?? false
     }
 }
 
@@ -119,8 +121,8 @@ struct GeneralPaneView: View {
             }
             Section {
                 Toggle(
-                    "Check for updates on startup",
-                    isOn: $prefs.suCheckAtStartup
+                    "Check for updates automatically",
+                    isOn: $prefs.automaticallyChecksForUpdates
                 )
             }
         }
