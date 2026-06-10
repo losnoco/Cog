@@ -9,7 +9,6 @@
         <customObject id="-2" userLabel="File's Owner" customClass="FileTreeViewController">
             <connections>
                 <outlet property="fileTreeOutlineView" destination="69" id="141"/>
-                <outlet property="firstResponder" destination="69" id="140"/>
                 <outlet property="view" destination="55" id="103"/>
             </connections>
         </customObject>
@@ -58,7 +57,7 @@
                     <color key="fillColor" name="textColor" catalog="System" colorSpace="catalog"/>
                     <font key="titleFont" metaFont="system"/>
                 </box>
-                <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="23" horizontalPageScroll="10" verticalLineScroll="23" verticalPageScroll="10" usesPredominantAxisScrolling="YES" translatesAutoresizingMaskIntoConstraints="NO" id="64">
+                <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="23" horizontalPageScroll="10" verticalLineScroll="23" verticalPageScroll="10" usesPredominantAxisScrolling="YES" drawsBackground="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64">
                     <rect key="frame" x="0.0" y="0.0" width="300" height="373"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="OYe-Aa-Spw">

@@ -9,9 +9,9 @@
 #import "FileTreeDataSource.h"
 #import <Cocoa/Cocoa.h>
 
-@class SideViewController;
+@class FileTreeViewController;
 @interface FileTreeController : NSObject {
-	IBOutlet SideViewController *controller;
+	IBOutlet FileTreeViewController *controller;
 	IBOutlet NSOutlineView *outlineView;
 	IBOutlet FileTreeDataSource *dataSource;
 }

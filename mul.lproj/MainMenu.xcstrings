@@ -3111,7 +3111,7 @@
     },
     "2160.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Toggle File Tree Orientation\"; ObjectID = \"2160\";",
-      "extractionState" : "extracted_with_value",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
