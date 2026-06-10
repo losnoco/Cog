@@ -9,6 +9,7 @@
 @end
 
 @class FileTreeViewController;
+@class MainSplitViewController;
 @class PlaybackController;
 @class PlaylistController;
 @class PlaylistView;
@@ -28,7 +29,6 @@
 	IBOutlet NSWindow *miniWindow;
 	IBOutlet NSWindow *miniPlusWindow;
 	IBOutlet MiniPlayerPlusWindowController *miniPlayerPlusWindowController;
-	IBOutlet NSSplitView *mainView;
 
 	IBOutlet NSSegmentedControl *playbackButtons;
 	IBOutlet NSButton *fileButton;
@@ -57,6 +57,8 @@
 	IBOutlet NSWindowController *spotlightWindowController;
 
 	IBOutlet FileTreeViewController *fileTreeViewController;
+
+	MainSplitViewController *mainSplitViewController;
 
 	IBOutlet PreferencesController *preferencesController;
 

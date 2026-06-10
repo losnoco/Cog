@@ -76,12 +76,15 @@ static NSURL *defaultMusicDirectory(void) {
 	NSView *container = [scrollView superview];
 	NSRect scrollFrame = [scrollView frame];
 	const CGFloat searchHeight = 22.0;
-	const CGFloat newScrollHeight = scrollFrame.size.height - searchHeight;
+	const CGFloat searchPadX = 8.0;
+	const CGFloat searchPadTop = 5.0;
+	const CGFloat searchPadBottom = 6.0;
+	const CGFloat newScrollHeight = scrollFrame.size.height - searchHeight - searchPadTop - searchPadBottom;
 	[scrollView setFrame:NSMakeRect(scrollFrame.origin.x, scrollFrame.origin.y,
 	                                scrollFrame.size.width, newScrollHeight)];
-	NSRect searchFrame = NSMakeRect(scrollFrame.origin.x,
-	                                scrollFrame.origin.y + newScrollHeight,
-	                                scrollFrame.size.width, searchHeight);
+	NSRect searchFrame = NSMakeRect(scrollFrame.origin.x + searchPadX,
+	                                scrollFrame.origin.y + newScrollHeight + searchPadBottom,
+	                                scrollFrame.size.width - searchPadX * 2.0, searchHeight);
 	NSSearchField *sf = [[NSSearchField alloc] initWithFrame:searchFrame];
 	[sf setPlaceholderString:NSLocalizedString(@"Tree Search", @"File tree search placeholder")];
 	[sf setDelegate:self];
