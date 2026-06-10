@@ -1,5 +1,5 @@
 //
-//  SplitViewController.m
+//  FileTreeViewController.m
 //  Cog
 //
 //  Created by Vincent Spader on 6/20/08.
@@ -7,14 +7,77 @@
 //
 
 #import "FileTreeViewController.h"
+#import "FileTreeOutlineView.h"
 #import "PlaybackController.h"
 #import "PlaylistLoader.h"
 #import "SandboxBroker.h"
 
-@implementation FileTreeViewController
+@implementation FileTreeViewController {
+	CGFloat appliedSafeAreaTopInset;
+}
 
 - (id)init {
-	return [super initWithNibName:@"FileTree" bundle:[NSBundle mainBundle]];
+	self = [super initWithNibName:@"FileTree" bundle:[NSBundle mainBundle]];
+	if(self) {
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"FileTreeShowSideView": @(NO) }];
+	}
+	return self;
+}
+
+- (void)viewDidLoad {
+	[super viewDidLoad];
+
+	if(@available(macOS 11.0, *)) {
+		fileTreeOutlineView.style = NSTableViewStyleSourceList;
+	}
+}
+
+// The view is laid out with autoresizing masks, so when the sidebar extends
+// into the titlebar (full-height layout) the top controls must be shifted
+// down by the safe area inset manually. The inset changes when the toolbar
+// style is toggled at runtime, hence the delta-based adjustment.
+- (void)viewWillLayout {
+	[super viewWillLayout];
+
+	if(@available(macOS 11.0, *)) {
+		CGFloat topInset = self.view.safeAreaInsets.top;
+		CGFloat delta = topInset - appliedSafeAreaTopInset;
+		if(delta != 0) {
+			for(NSView *subview in self.view.subviews) {
+				NSRect frame = subview.frame;
+				if(subview.autoresizingMask & NSViewHeightSizable) {
+					frame.size.height -= delta;
+				} else {
+					frame.origin.y -= delta;
+				}
+				subview.frame = frame;
+			}
+			appliedSafeAreaTopInset = topInset;
+		}
+	}
+}
+
+- (NSSplitViewItem *)sidebarItem {
+	NSViewController *parent = self.parentViewController;
+	if([parent isKindOfClass:[NSSplitViewController class]]) {
+		return [(NSSplitViewController *)parent splitViewItemForViewController:self];
+	}
+	return nil;
+}
+
+- (IBAction)toggleSideView:(id)sender {
+	NSViewController *parent = self.parentViewController;
+	if([parent isKindOfClass:[NSSplitViewController class]]) {
+		[(NSSplitViewController *)parent toggleSidebar:sender];
+	}
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+	if([menuItem action] == @selector(toggleSideView:)) {
+		NSSplitViewItem *sidebarItem = [self sidebarItem];
+		[menuItem setState:(sidebarItem && !sidebarItem.isCollapsed) ? NSControlStateValueOn : NSControlStateValueOff];
+	}
+	return YES;
 }
 
 - (void)addToPlaylistInternal:(NSArray *)urls {

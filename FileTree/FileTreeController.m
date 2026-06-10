@@ -8,7 +8,7 @@
 
 #import "FileTreeController.h"
 #import "PlaylistController.h"
-#import "SideViewController.h"
+#import "FileTreeViewController.h"
 
 @implementation FileTreeController
 

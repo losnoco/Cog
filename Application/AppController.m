@@ -3,6 +3,7 @@
 #import "FileTreeController.h"
 #import "FileTreeOutlineView.h"
 #import "FileTreeViewController.h"
+#import "MainSplitViewController.h"
 #import "OpenURLPanel.h"
 #import "PathNode.h"
 #import "PlaybackController.h"
@@ -178,6 +179,28 @@ static BOOL consentLastEnabled = NO;
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
 
+	// Wrap the xib-defined window content in an NSSplitViewController so the
+	// file tree becomes a native sidebar split view item
+	{
+		NSRect savedFrame = mainWindow.frame;
+		NSView *playlistRoot = mainWindow.contentView;
+		mainWindow.contentView = [[NSView alloc] init];
+
+		NSViewController *contentViewController = [[NSViewController alloc] init];
+		contentViewController.view = playlistRoot;
+
+		mainSplitViewController = [[MainSplitViewController alloc] init];
+		[mainSplitViewController setupWithSidebarViewController:fileTreeViewController
+		                                  contentViewController:contentViewController];
+		if(@available(macOS 11.0, *)) {
+			// Required alongside allowsFullHeightLayout for the full-height sidebar look
+			mainWindow.styleMask |= NSWindowStyleMaskFullSizeContentView;
+		}
+		mainWindow.contentViewController = mainSplitViewController;
+		// Setting contentViewController resizes the window; restore the saved frame
+		[mainWindow setFrame:savedFrame display:NO];
+	}
+
 	[[totalTimeField cell] setBackgroundStyle:NSBackgroundStyleRaised];
 
 	[self.infoButton setToolTip:NSLocalizedString(@"InfoButtonTooltip", @"")];
@@ -300,6 +323,8 @@ static BOOL consentLastEnabled = NO;
 	[fileTreeViewController view];
 
 	FileTreeOutlineView *outlineView = [fileTreeViewController outlineView];
+	mainSplitViewController.sidebarFirstResponder = outlineView;
+	mainSplitViewController.contentFirstResponder = playlistView;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeExpanded:) name:NSOutlineViewItemDidExpandNotification object:outlineView];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nodeCollapsed:) name:NSOutlineViewItemDidCollapseNotification object:outlineView];
 
