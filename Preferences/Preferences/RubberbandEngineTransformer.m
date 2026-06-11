@@ -18,18 +18,18 @@
 }
 
 - (id)transformedValue:(id)value {
-	if(value == nil) return @(YES);
+	if(value == nil) return @YES;
 
 	if([value isKindOfClass:[NSString class]]) {
 		NSString *stringValue = value;
 		if([stringValue isEqualToString:@"disabled"] ||
 		   [stringValue isEqualToString:@"signalsmith"] ||
 		   [stringValue isEqualToString:@"finer"]) {
-			return @(NO);
+			return @NO;
 		}
 	}
 
-	return @(YES);
+	return @YES;
 }
 
 @end
@@ -43,17 +43,17 @@
 }
 
 - (id)transformedValue:(id)value {
-	if(value == nil) return @(YES);
+	if(value == nil) return @YES;
 
 	if([value isKindOfClass:[NSString class]]) {
 		NSString *stringValue = value;
 		if([stringValue isEqualToString:@"disabled"] ||
 		   [stringValue isEqualToString:@"signalsmith"]) {
-			return @(NO);
+			return @NO;
 		}
 	}
 
-	return @(YES);
+	return @YES;
 }
 
 @end
@@ -67,16 +67,16 @@
 }
 
 - (id)transformedValue:(id)value {
-	if(value == nil) return @(YES);
+	if(value == nil) return @YES;
 
 	if([value isKindOfClass:[NSString class]]) {
 		NSString *stringValue = value;
 		if([stringValue isEqualToString:@"disabled"]) {
-			return @(NO);
+			return @NO;
 		}
 	}
 
-	return @(YES);
+	return @YES;
 }
 
 @end

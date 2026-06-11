@@ -496,7 +496,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 		NSDictionary *loadEntriesData = @{ @"entries": acceptedURLs,
 			                               @"index": @(row),
-			                               @"sort": @(NO),
+			                               @"sort": @NO,
 			                               @"origin": @(URLOriginInternal) };
 
 		[playlistController performSelectorInBackground:@selector(insertURLsInBackground:) withObject:loadEntriesData];

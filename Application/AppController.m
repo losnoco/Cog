@@ -119,7 +119,7 @@ static AppController *kAppController = nil;
 	          completionHandler:^(NSInteger result) {
 		          if(result == NSModalResponseOK) {
 			          NSDictionary *loadEntryData = @{@"entries": [p URLs],
-				                                      @"sort": @(YES),
+				                                      @"sort": @YES,
 				                                      @"origin": @(URLOriginExternal)};
 			          [self->playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
 		          } else {
@@ -167,7 +167,7 @@ static AppController *kAppController = nil;
 - (void)openURLPanelDidEnd:(OpenURLPanel *)panel returnCode:(int)returnCode contextInfo:(void *)contextInfo {
 	if(returnCode == NSModalResponseOK) {
 		NSDictionary *loadEntriesData = @{ @"entries": @[[panel url]],
-			                               @"sort": @(NO),
+			                               @"sort": @NO,
 			                               @"origin": @(URLOriginExternal) };
 		[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
 	}
@@ -188,8 +188,8 @@ static AppController *kAppController = nil;
 static BOOL consentLastEnabled = NO;
 
 - (void)awakeFromNib {
-	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @(NO),
-															   @"sentryAskedConsent": @(NO) }];
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @NO,
+															   @"sentryAskedConsent": @NO }];
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
 
@@ -651,7 +651,7 @@ static BOOL consentLastEnabled = NO;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
 	NSArray *urls = @[[NSURL fileURLWithPath:filename]];
 	NSDictionary *loadEntriesData = @{ @"entries": urls,
-		                               @"sort": @(NO),
+		                               @"sort": @NO,
 		                               @"origin": @(URLOriginExternal) };
 	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
 	return YES;
@@ -696,7 +696,7 @@ static BOOL consentLastEnabled = NO;
 	}
 
 	NSDictionary *loadEntriesData = @{ @"entries": urls,
-		                               @"sort": @(YES),
+		                               @"sort": @YES,
 		                               @"origin": @(URLOriginExternal) };
 
 	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
@@ -764,21 +764,21 @@ static BOOL consentLastEnabled = NO;
 
 	[userDefaultsValuesDict setObject:@"default" forKey:@"midi.flavor"];
 
-	[userDefaultsValuesDict setObject:@(NO) forKey:@"resumePlaybackOnStartup"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"resumePlaybackOnStartup"];
 
-	[userDefaultsValuesDict setObject:@(NO) forKey:@"resetPlaylistOnQuit"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"resetPlaylistOnQuit"];
 
-	[userDefaultsValuesDict setObject:@(NO) forKey:@"quitOnNaturalStop"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"quitOnNaturalStop"];
 
-	[userDefaultsValuesDict setObject:@(NO) forKey:@"spectrumFreqMode"];
-	[userDefaultsValuesDict setObject:@(YES) forKey:@"spectrumProjectionMode"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"spectrumFreqMode"];
+	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumProjectionMode"];
 
 	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
 
 	NSData *barColor = [colorToValueTransformer reverseTransformedValue:[NSColor colorWithSRGBRed:1.0 green:0.5 blue:0 alpha:1.0]];
 	NSData *dotColor = [colorToValueTransformer reverseTransformedValue:[NSColor systemRedColor]];
 
-	[userDefaultsValuesDict setObject:@(YES) forKey:@"spectrumSceneKit"];
+	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumSceneKit"];
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 

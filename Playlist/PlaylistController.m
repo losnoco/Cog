@@ -891,7 +891,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 		NSDictionary *loadEntriesData = @{ @"entries": acceptedURLs,
 			                               @"index": @(row),
-			                               @"sort": @(YES),
+			                               @"sort": @YES,
 			                               @"origin": @(URLOriginInternal) };
 
 		[self performSelectorInBackground:@selector(insertURLsInBackground:) withObject:loadEntriesData];

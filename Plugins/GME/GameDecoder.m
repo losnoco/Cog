@@ -165,7 +165,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		      @"totalFrames": @((long)(length * (sampleRate * 0.001))),
 		      @"bitsPerSample": @(sizeof(short) * 8), // Samples are short
 		      @"channels": @(2), // output from gme_play is in stereo
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
 }

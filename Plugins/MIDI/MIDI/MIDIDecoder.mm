@@ -160,9 +160,9 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
 		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"channels": @(2),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"codec": @"MIDI",
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };

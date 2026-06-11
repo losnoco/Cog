@@ -98,9 +98,9 @@ static void oneTimeInit(void) {
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
 		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"channels": @(2),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
 }

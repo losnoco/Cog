@@ -288,9 +288,9 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(16),
-		      @"floatingPoint": @(NO),
+		      @"floatingPoint": @NO,
 		      @"channels": @(n_channels),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
 }

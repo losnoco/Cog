@@ -196,7 +196,7 @@ mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 		      @"sampleRate": @(frequency),
 		      @"totalFrames": @(totalFrames),
 		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"channels": @(2),
 		      @"seekable": @([source seekable]),
 		      @"codec": @"Musepack",

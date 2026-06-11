@@ -105,9 +105,9 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"channels": @(2),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
 }

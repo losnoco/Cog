@@ -153,7 +153,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 								  @"bitsPerSample": @(bps),
 		                          @"floatingPoint": @(formatFloat),
 		                          @"channels": @(channels),
-		                          @"seekable": @(YES),
+		                          @"seekable": @YES,
 		                          @"replaygain_album_gain": rgAlbumGain,
 		                          @"replaygain_album_peak": rgAlbumPeak,
 		                          @"replaygain_track_gain": rgTrackGain,
@@ -305,7 +305,7 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 			  @"bitsPerSample": @(bps),
 		      @"floatingPoint": @(formatFloat),
 		      @"channels": @(channels),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"lossy/lossless" };
 }
