@@ -204,12 +204,12 @@ static BOOL consentLastEnabled = NO;
 	{
 		NSRect savedFrame = mainWindow.frame;
 		NSView *playlistRoot = mainWindow.contentView;
-		mainWindow.contentView = [[NSView alloc] init];
+		mainWindow.contentView = [NSView new];
 
-		NSViewController *contentViewController = [[NSViewController alloc] init];
+		NSViewController *contentViewController = [NSViewController new];
 		contentViewController.view = playlistRoot;
 
-		mainSplitViewController = [[MainSplitViewController alloc] init];
+		mainSplitViewController = [MainSplitViewController new];
 		[mainSplitViewController setupWithSidebarViewController:fileTreeViewController
 		                                  contentViewController:contentViewController];
 		if(@available(macOS 11.0, *)) {
