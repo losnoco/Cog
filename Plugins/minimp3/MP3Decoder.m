@@ -368,7 +368,7 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 	return @{ @"channels": @(channels),
 		      @"bitsPerSample": @(32),
 		      @"sampleRate": @(sampleRate),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"bitrate": @(bitrate),
 		      @"totalFrames": @(totalFrames),
 		      @"seekable": @(seekable),

@@ -46,9 +46,9 @@ enum { channels = 2 };
 		      @"sampleRate": @(sample_rate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"channels": @(channels),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
 }

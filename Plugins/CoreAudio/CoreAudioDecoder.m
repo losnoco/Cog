@@ -412,7 +412,7 @@ static SInt64 getSizeProc(void *clientData) {
 		      @"bitrate": @(bitrate),
 		      @"sampleRate": @(frequency),
 		      @"totalFrames": @(totalFrames),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"codec": codec,
 		      @"endian": floatingPoint ? @"host" : @"big",
 		      @"encoding": _audioFile_is_lossy ? @"lossy" : @"lossless" };

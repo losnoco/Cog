@@ -62,7 +62,7 @@ static void *kHLSDecoderContext = &kHLSDecoderContext;
 
 	// Live streams can't be seeked; tell Cog so the UI disables seek.
 	if(isLiveStream) {
-		properties[@"seekable"] = @(NO);
+		properties[@"seekable"] = @NO;
 	}
 
 	return [properties copy];
