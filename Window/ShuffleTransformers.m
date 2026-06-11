@@ -67,10 +67,10 @@
 	ShuffleMode mode = (ShuffleMode)[value integerValue];
 
 	if(shuffleMode == mode) {
-		return @(YES);
+		return @YES;
 	}
 
-	return @(NO);
+	return @NO;
 }
 
 - (id)reverseTransformedValue:(id)value {

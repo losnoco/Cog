@@ -385,9 +385,9 @@ namespace Organya {
 			  @"sampleRate": @(sampleRate),
 			  @"totalFrames": @(lengthWithFade),
 			  @"bitsPerSample": @(32),
-			  @"floatingPoint": @(YES),
+			  @"floatingPoint": @YES,
 			  @"channels": @(2),
-			  @"seekable": @(YES),
+			  @"seekable": @YES,
 			  @"endian": @"host",
 			  @"encoding": @"synthesized" };
 }

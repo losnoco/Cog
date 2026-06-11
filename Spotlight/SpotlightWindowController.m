@@ -244,7 +244,7 @@ static NSPredicate *musicOnlyPredicate = nil;
 		tracks = playlistController.arrangedObjects;
 
 	NSDictionary *loadEntryData = @{ @"entries": [tracks valueForKey:@"url"],
-		                             @"sort": @(NO),
+		                             @"sort": @NO,
 		                             @"origin": @(URLOriginExternal) };
 
 	[playlistLoader performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];

@@ -211,7 +211,7 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(numBitsPerSample),
 		      @"channels": @(numChannels),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };
 }

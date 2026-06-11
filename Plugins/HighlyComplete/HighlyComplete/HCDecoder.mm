@@ -1860,7 +1860,7 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(totalFrames),
 		      @"bitrate": @(0),
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"codec": codec,
 		      @"endian": @"host",
 		      @"encoding": @"synthesized" };

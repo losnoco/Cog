@@ -19,7 +19,7 @@
 - (id)init {
 	self = [super initWithNibName:@"FileTree" bundle:[NSBundle mainBundle]];
 	if(self) {
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"FileTreeShowSideView": @(NO) }];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"FileTreeShowSideView": @NO }];
 	}
 	return self;
 }
@@ -90,7 +90,7 @@
 
 - (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin {
 	NSDictionary *loadEntryData = @{ @"entries": urls,
-		                             @"sort": @(YES),
+		                             @"sort": @YES,
 		                             @"origin": @(origin) };
 	[playlistLoader performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
 }

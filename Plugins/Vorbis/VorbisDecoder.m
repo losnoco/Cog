@@ -289,7 +289,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 - (NSDictionary *)properties {
 	return @{ @"channels": @(channels),
 		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @(YES),
+		      @"floatingPoint": @YES,
 		      @"sampleRate": @(frequency),
 		      @"totalFrames": @(totalFrames),
 		      @"bitrate": @(bitrate),

@@ -91,9 +91,9 @@ static CAdPlugDatabase *g_database = NULL;
 		      @"sampleRate": @(sampleRate),
 		      @"totalFrames": @(length),
 		      @"bitsPerSample": @(16), // Samples are short
-		      @"floatingPoint": @(NO),
+		      @"floatingPoint": @NO,
 		      @"channels": @(2), // output from gme_play is in stereo
-		      @"seekable": @(YES),
+		      @"seekable": @YES,
 		      @"codec": guess_encoding_of_string(m_player->gettype().c_str()),
 		      @"encoding": @"synthesized",
 		      @"endian": @"host" };

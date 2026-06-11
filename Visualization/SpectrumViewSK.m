@@ -83,7 +83,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	NSDictionary *sceneOptions = @{
 		SCNPreferredRenderingAPIKey: @(SCNRenderingAPIMetal),
 		SCNPreferredDeviceKey: device,
-		SCNPreferLowPowerDeviceKey: @(NO)
+		SCNPreferLowPowerDeviceKey: @NO
 	};
 
 	self = [super initWithFrame:frame options:sceneOptions];
