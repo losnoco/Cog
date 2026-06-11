@@ -640,6 +640,10 @@ struct twosf_loader_state {
 
 	int initial_frames;
 	int sync_type;
+	
+	twosf_loader_state()
+	: rom_size(0), state_size(0),
+	initial_frames(-1), sync_type(0) { }
 };
 
 static int load_twosf_map(struct twosf_loader_state *state, int issave, const unsigned char *udata, unsigned usize) {
@@ -937,50 +941,77 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 	if(type == 1) {
 		emulatorCore = (uint8_t *)malloc(psx_get_state_size(1));
+		if(!emulatorCore)
+			return NO;
 
 		psx_clear_state(emulatorCore, 1);
 
-		struct psf1_load_state state;
-
-		state.emu = emulatorCore;
-		state.first = true;
-		state.refresh = 0;
-
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 1, psf1_loader, &state, psf1_info, &state, 1) <= 0)
+		struct psf1_load_state *state = (struct psf1_load_state *) calloc(1, sizeof(*state));
+		if(!state)
 			return NO;
 
-		if(state.refresh)
-			psx_set_refresh(emulatorCore, state.refresh);
+		state->emu = emulatorCore;
+		state->first = true;
+		state->refresh = 0;
+
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 1, psf1_loader, state, psf1_info, state, 1) <= 0) {
+			free(state);
+			return NO;
+		}
+
+		if(state->refresh)
+			psx_set_refresh(emulatorCore, state->refresh);
+
+		free(state);
 
 		silenceSeconds = 30;
 	} else if(type == 2) {
 		emulatorExtra = psf2fs_create();
-
-		struct psf1_load_state state;
-
-		state.refresh = 0;
-
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, &state, 1) <= 0)
+		if(!emulatorExtra)
 			return NO;
 
+		struct psf1_load_state *state = (struct psf1_load_state *) calloc(1, sizeof(*state));
+		if(!state)
+			return NO;
+
+		state->refresh = 0;
+
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 2, psf2fs_load_callback, emulatorExtra, psf1_info, state, 1) <= 0) {
+			free(state);
+			return NO;
+		}
+
 		emulatorCore = (uint8_t *)malloc(psx_get_state_size(2));
+		if(!emulatorCore) {
+			free(state);
+			return NO;
+		}
 
 		psx_clear_state(emulatorCore, 2);
 
-		if(state.refresh)
-			psx_set_refresh(emulatorCore, state.refresh);
+		if(state->refresh)
+			psx_set_refresh(emulatorCore, state->refresh);
+
+		free(state);
 
 		psx_set_readfile(emulatorCore, virtual_readfile, emulatorExtra);
 
 		silenceSeconds = 30;
 	} else if(type == 0x11 || type == 0x12) {
-		struct sdsf_loader_state state;
-		memset(&state, 0, sizeof(state));
-
-		if(psf_load([currentUrl UTF8String], &source_callbacks, type, sdsf_loader, &state, 0, 0, 0) <= 0)
+		struct sdsf_loader_state *state = (struct sdsf_loader_state *) calloc(1, sizeof(*state));
+		if(!state)
 			return NO;
 
+		if(psf_load([currentUrl UTF8String], &source_callbacks, type, sdsf_loader, state, 0, 0, 0) <= 0) {
+			free(state);
+			return NO;
+		}
+
 		emulatorCore = (uint8_t *)malloc(sega_get_state_size(type - 0x10));
+		if(!emulatorCore) {
+			free(state);
+			return NO;
+		}
 
 		sega_clear_state(emulatorCore, type - 0x10);
 
@@ -989,72 +1020,87 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 		sega_enable_dsp_dynarec(emulatorCore, 0);
 
-		uint32_t start = *(uint32_t *)state.data;
-		size_t length = state.data_size;
+		uint32_t start = get_le32(state->data);
+		size_t length = state->data_size;
 		const size_t max_length = (type == 0x12) ? 0x800000 : 0x80000;
 		if((start + (length - 4)) > max_length) {
 			length = max_length - start + 4;
 		}
-		sega_upload_program(emulatorCore, state.data, (uint32_t)length);
+		sega_upload_program(emulatorCore, state->data, (uint32_t)length);
 
-		free(state.data);
+		free(state->data);
+		free(state);
 	} else if(type == 0x21) {
-		struct usf_loader_state state;
-		memset(&state, 0, sizeof(state));
-
-		state.emu_state = malloc(usf_get_state_size());
-		if(!state.emu_state)
+		struct usf_loader_state *state = (struct usf_loader_state *) calloc(1, sizeof(*state));
+		if(!state)
 			return NO;
 
-		usf_clear(state.emu_state);
-
-		usf_set_hle_audio(state.emu_state, 1);
-
-		emulatorCore = (uint8_t *)state.emu_state;
-
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, &state, usf_info, &state, 1) <= 0)
+		state->emu_state = malloc(usf_get_state_size());
+		if(!state->emu_state) {
+			free(state);
 			return NO;
+		}
 
-		usf_set_compare(state.emu_state, state.enablecompare);
-		usf_set_fifo_full(state.emu_state, state.enablefifofull);
+		usf_clear(state->emu_state);
+
+		usf_set_hle_audio(state->emu_state, 1);
+
+		emulatorCore = (uint8_t *)state->emu_state;
+
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x21, usf_loader, state, usf_info, state, 1) <= 0) {
+			// usf_clear(state->emu_state); // Implied by leaving emulatorCore intact
+			free(state);
+			return NO;
+		}
+
+		usf_set_compare(state->emu_state, state->enablecompare);
+		usf_set_fifo_full(state->emu_state, state->enablefifofull);
+
+		free(state);
 
 		usfRemoveSilence = YES;
 
 		silenceSeconds = 10;
 	} else if(type == 0x22) {
-		struct gsf_loader_state state;
-		memset(&state, 0, sizeof(state));
+		struct gsf_loader_state *state = (struct gsf_loader_state *) calloc(1, sizeof(*state));
 
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x22, gsf_loader, &state, 0, 0, 0) <= 0)
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x22, gsf_loader, state, 0, 0, 0) <= 0) {
+			free(state);
 			return NO;
+		}
 
-		if(state.data_size > UINT_MAX)
+		if(state->data_size > UINT_MAX)
 			return NO;
 
 		/*FILE * f = fopen("/tmp/rom.gba", "wb");
 		fwrite(state.data, 1, state.data_size, f);
 		fclose(f);*/
 
-		struct VFile *rom = VFileFromConstMemory(state.data, state.data_size);
+		struct VFile *rom = VFileFromConstMemory(state->data, state->data_size);
 		if(!rom) {
-			free(state.data);
+			free(state->data);
+			free(state);
 			return NO;
 		}
 
 		struct mCore *core = mCoreFindVF(rom);
 		if(!core) {
-			free(state.data);
+			free(state->data);
+			free(state);
 			return NO;
 		}
 
 		struct gsf_running_state *rstate = (struct gsf_running_state *)calloc(1, sizeof(*rstate));
 		if(!rstate) {
 			core->deinit(core);
-			free(state.data);
+			free(state->data);
+			free(state);
 			return NO;
 		}
 
-		rstate->rom = state.data;
+		rstate->rom = state->data;
+
+		free(state);
 
 		core->init(core);
 		core->setAVStream(core, &rstate->stream);
@@ -1063,10 +1109,10 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		core->setAudioBufferSize(core, 2048);
 
 		struct mCoreOptions opts = {
-			.useBios = false,
 			.skipBios = true,
-			.volume = 0x100,
+			.useBios = false,
 			.sampleRate = 32768,
+			.volume = 0x100,
 		};
 
 		mCoreConfigLoadDefaults(&core->config, &opts);
@@ -1079,13 +1125,17 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 		sampleRate = 65536; // XXX
 	} else if(type == 0x23) {
-		s9x_loaderwork loaderwork;
+		s9x_loaderwork *loaderwork = new s9x_loaderwork;
 
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x23, MapSNSF, &loaderwork, 0, 0, 0) <= 0)
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x23, MapSNSF, loaderwork, 0, 0, 0) <= 0) {
+			delete loaderwork;
 			return NO;
+		}
 
-		if(loaderwork.rom.empty())
+		if(loaderwork->rom.empty()) {
+			delete loaderwork;
 			return NO;
+		}
 
 		s9x_BUFFER *buffer = new s9x_BUFFER;
 
@@ -1096,8 +1146,11 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		st->Settings.SoundPlaybackRate = 32000;
 		st->Settings.InterpolationMethod = 2; // Gaussian
 
-		if(!st->Memory.Init(st))
+		if(!st->Memory.Init(st)) {
+			delete buffer;
+			delete loaderwork;
 			return NO;
+		}
 
 		S9xInitAPU(st);
 		S9xInitSound(st, 10);
@@ -1107,30 +1160,34 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			st->Memory.Deinit();
 			S9xDeinitAPU(st);
 			delete buffer;
+			delete loaderwork;
 			return NO;
 		}
 
-		if (!st->Memory.LoadROMSNSF(&loaderwork.rom[0], (int32_t) loaderwork.rom.size(), !loaderwork.sram.empty() ? &loaderwork.sram[0] : nullptr, (int32_t) loaderwork.sram.size())) {
+		if (!st->Memory.LoadROMSNSF(&loaderwork->rom[0], (int32_t) loaderwork->rom.size(), !loaderwork->sram.empty() ? &loaderwork->sram[0] : nullptr, (int32_t) loaderwork->sram.size())) {
 			S9xReset(st);
 			st->Memory.Deinit();
 			S9xDeinitAPU(st);
 			delete buffer;
+			delete loaderwork;
 			return NO;
 		}
 
 		S9xSetSoundMute(st, false);
 
 		emulatorCore = (uint8_t *) buffer;
-	} else if(type == 0x24) {
-		struct twosf_loader_state state;
-		memset(&state, 0, sizeof(state));
-		state.initial_frames = -1;
 
-		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x24, twosf_loader, &state, twosf_info, &state, 1) <= 0) {
+		delete loaderwork;
+	} else if(type == 0x24) {
+		struct twosf_loader_state *state = new twosf_loader_state;
+
+		if(psf_load([currentUrl UTF8String], &source_callbacks, 0x24, twosf_loader, state, twosf_info, state, 1) <= 0) {
+			delete state;
 			return NO;
 		}
 
-		if(state.rom_size > UINT_MAX || state.state_size > UINT_MAX) {
+		if(state->rom_size > UINT_MAX || state->state_size > UINT_MAX) {
+			delete state;
 			return NO;
 		}
 
@@ -1140,15 +1197,18 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 		auto arm9bios = std::make_unique<melonDS::ARM9BIOSImage>(melonDS::FreeBIOSGetNtrArm9());
 		if (!arm9bios) {
+			delete state;
 			return NO;
 		}
 		auto arm7bios = std::make_unique<melonDS::ARM7BIOSImage>(melonDS::FreeBIOSGetNtrArm7());
 		if (!arm7bios) {
+			delete state;
 			return NO;
 		}
 		melonDS::Firmware _firmware = melonDS::Firmware(0);
 		auto firmware = std::make_optional(_firmware);
 		if (!firmware) {
+			delete state;
 			return NO;
 		}
 
@@ -1190,10 +1250,11 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 		melonDS::NDS *nds = new melonDS::NDS(std::move(ndsargs), NULL);
 		if(!nds) {
+			delete state;
 			return NO;
 		}
 
-		auto cart = melonDS::NDSCart::ParseROM(std::move(state.rom), (uint32_t) state.rom_size);
+		auto cart = melonDS::NDSCart::ParseROM(std::move(state->rom), (uint32_t) state->rom_size);
 		nds->SetNDSCart(std::move(cart));
 		nds->SetGBACart(nullptr);
 
@@ -1205,8 +1266,8 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 		nds->Start();
 
-		if(state.initial_frames > 0) {
-			int frames = state.initial_frames;
+		if(state->initial_frames > 0) {
+			int frames = state->initial_frames;
 			while(frames > 0) {
 				nds->RunFrame();
 				nds->SPU.DrainOutput();
@@ -1215,6 +1276,8 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		}
 
 		emulatorCore = (uint8_t *)nds;
+
+		delete state;
 	} else if(type == 0x25) {
 		struct ncsf_loader_state *state = NULL;
 		Player *player = NULL;
@@ -1231,10 +1294,10 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 			player->interpolation = INTERPOLATION_SINC;
 
-			PseudoFile file;
-			file.data = &state->sdatData;
+			PseudoFile *file = new PseudoFile;
+			file->data = &state->sdatData;
 
-			state->sdat.reset(new SDAT(file, state->sseq));
+			state->sdat.reset(new SDAT(*file, state->sseq));
 
 			auto *sseqToPlay = state->sdat->sseq.get();
 
@@ -1246,6 +1309,8 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 
 			emulatorCore = (uint8_t *)player;
 			emulatorExtra = state;
+
+			delete file;
 		} catch (std::exception &e) {
 			ALog(@"Exception caught creating NCSF player: %s", e.what());
 			emulatorCore = NULL;
@@ -1255,7 +1320,9 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			return NO;
 		}
 	} else if(type == 0x41) {
-		struct qsf_loader_state *state = (struct qsf_loader_state *)calloc(1, sizeof(*state));
+		struct qsf_loader_state *state = (struct qsf_loader_state *) calloc(1, sizeof(*state));
+		if(!state)
+			return NO;
 
 		emulatorExtra = state;
 
@@ -1263,6 +1330,8 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			return NO;
 
 		emulatorCore = (uint8_t *)malloc(qsound_get_state_size());
+		if(!emulatorCore)
+			return NO;
 
 		qsound_clear_state(emulatorCore);
 

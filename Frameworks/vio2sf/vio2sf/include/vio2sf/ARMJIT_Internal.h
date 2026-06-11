@@ -19,7 +19,7 @@
 #ifndef ARMJIT_INTERNAL_H
 #define ARMJIT_INTERNAL_H
 
-#include "types.h"
+#include <vio2sf/types.h>
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>

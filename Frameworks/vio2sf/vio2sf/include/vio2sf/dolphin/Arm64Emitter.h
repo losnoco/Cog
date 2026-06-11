@@ -8,9 +8,9 @@
 #include <functional>
 #include <stdint.h>
 
-#include "ArmCommon.h"
-#include "BitSet.h"
-#include "Compat.h"
+#include <vio2sf/ArmCommon.h>
+#include <vio2sf/BitSet.h>
+#include <vio2sf/Compat.h>
 
 namespace Arm64Gen
 {
