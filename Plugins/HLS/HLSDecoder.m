@@ -78,7 +78,7 @@ static void *kHLSDecoderContext = &kHLSDecoderContext;
 - (BOOL)open:(id<CogSource>)s {
 	source = s;
 	sourceURL = [s url];
-	stateLock = [[NSLock alloc] init];
+	stateLock = [NSLock new];
 
 	NSString *scheme = [sourceURL scheme];
 	if(![scheme isEqualToString:@"http"] && ![scheme isEqualToString:@"https"]) {

@@ -260,7 +260,7 @@ static OSStatus eqRenderCallback(void *inRefCon, AudioUnitRenderActionFlags *ioA
 
 		secondsHdcdSustained = 0;
 
-		currentPtsLock = [[NSLock alloc] init];
+		currentPtsLock = [NSLock new];
 
 #ifdef OUTPUT_LOG
 		NSString *logName = [NSTemporaryDirectory() stringByAppendingPathComponent:@"CogAudioLog.raw"];
@@ -981,8 +981,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		desc.componentFlags = 0;
 		desc.componentFlagsMask = 0;
 
-		audioRenderer = [[AVSampleBufferAudioRenderer alloc] init];
-		renderSynchronizer = [[AVSampleBufferRenderSynchronizer alloc] init];
+		audioRenderer = [AVSampleBufferAudioRenderer new];
+		renderSynchronizer = [AVSampleBufferRenderSynchronizer new];
 
 		if(audioRenderer == nil || renderSynchronizer == nil)
 			return NO;

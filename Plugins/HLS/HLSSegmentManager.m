@@ -55,7 +55,7 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 	if(self) {
 		_playlist = playlist;
 		_bufferSize = 5;
-		_cond = [[NSCondition alloc] init];
+		_cond = [NSCondition new];
 		_nextFetchIndex = 0;
 		_stopRequested = NO;
 		_running = NO;

@@ -95,7 +95,7 @@ int scanCallback(void *data, int startOrder, long length) {
 		dumbfile_close(df);
 
 		if(duh) {
-			DumbCallbackData *data = [[DumbCallbackData alloc] init];
+			DumbCallbackData *data = [DumbCallbackData new];
 			data->baseUrl = [url absoluteString];
 			data->tracks = tracks;
 

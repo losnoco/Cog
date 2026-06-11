@@ -191,7 +191,7 @@ NSString *const HLSParserErrorDomain = @"HLSParserErrorDomain";
 + (HLSPlaylist *)parsePlaylistString:(NSString *)playlistString
                              baseURL:(NSURL *)baseURL
                                error:(NSError **)error {
-	HLSPlaylist *playlist = [[HLSPlaylist alloc] init];
+	HLSPlaylist *playlist = [HLSPlaylist new];
 	playlist.url = baseURL;
 
 	NSMutableArray<HLSSegment *> *segments = [NSMutableArray array];
@@ -310,7 +310,7 @@ NSString *const HLSParserErrorDomain = @"HLSParserErrorDomain";
 			playlist.isLiveStream = NO;
 		} else if([tag isEqualToString:@"#EXTINF"]) {
 			// "#EXTINF:duration[,title]"
-			pendingSegment = [[HLSSegment alloc] init];
+			pendingSegment = [HLSSegment new];
 			NSRange comma = [value rangeOfString:@","];
 			NSString *durationStr = (comma.location == NSNotFound) ? value
 			                                                       : [value substringToIndex:comma.location];
@@ -342,7 +342,7 @@ NSString *const HLSParserErrorDomain = @"HLSParserErrorDomain";
 			NSString *uri = attrs[@"URI"];
 			currentMapURL = uri ? [self resolveURL:uri againstBaseURL:baseURL] : nil;
 		} else if([tag isEqualToString:@"#EXT-X-STREAM-INF"]) {
-			pendingVariant = [[HLSVariant alloc] init];
+			pendingVariant = [HLSVariant new];
 			pendingVariant.playlistURL = baseURL;
 			NSDictionary<NSString *, NSString *> *attrs = [self parseAttributeList:value];
 			pendingVariant.bandwidth = [attrs[@"BANDWIDTH"] integerValue];
