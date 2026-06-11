@@ -231,7 +231,7 @@ public:
 
     u32 SubEntryOffset(JitBlockEntry entry)
     {
-        return (u8*)entry - GetRXBase();
+        return (u32)((u8*)entry - GetRXBase());
     }
 
     bool IsJITFault(const u8* pc);
