@@ -13,7 +13,7 @@
 
 - (void)initWindow {
 	if(nil == window) {
-		window = [[PreferencesWindow alloc] init];
+		window = [PreferencesWindow new];
 	}
 }
 

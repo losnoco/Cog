@@ -32,7 +32,7 @@
 		_position = 0;
 		_eof = NO;
 		_closed = NO;
-		_cond = [[NSCondition alloc] init];
+		_cond = [NSCondition new];
 		_url = url;
 		_mimeType = [mimeType copy];
 	}
