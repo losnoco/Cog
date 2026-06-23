@@ -27,9 +27,7 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 
-	if(@available(macOS 11.0, *)) {
-		fileTreeOutlineView.style = NSTableViewStyleSourceList;
-	}
+	fileTreeOutlineView.style = NSTableViewStyleSourceList;
 }
 
 // The view is laid out with autoresizing masks, so when the sidebar extends
@@ -39,7 +37,7 @@
 - (void)viewWillLayout {
 	[super viewWillLayout];
 
-	if(@available(macOS 11.0, *)) {
+	{
 		CGFloat topInset = self.view.safeAreaInsets.top;
 		CGFloat delta = topInset - appliedSafeAreaTopInset;
 		if(delta != 0) {

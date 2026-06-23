@@ -116,10 +116,8 @@ struct PreferencePaneDescriptor: Identifiable {
     }
 
     private static func paneIcon(system: String, legacy: String) -> NSImage {
-        if #available(macOS 11.0, *) {
-            if let img = NSImage(systemSymbolName: system, accessibilityDescription: nil) {
-                return img
-            }
+        if let img = NSImage(systemSymbolName: system, accessibilityDescription: nil) {
+            return img
         }
         if let img = Bundle.main.image(forResource: legacy) {
             return img

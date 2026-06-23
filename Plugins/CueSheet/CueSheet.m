@@ -70,13 +70,7 @@
 	NSData *data = nil;
 	NSString *contents = nil;
 	if(file) {
-		if(@available(macOS 10.15, *)) {
-			data = [file readDataToEndOfFileAndReturnError:&error];
-		} else {
-			data = [file readDataToEndOfFile];
-			if(!data)
-				error = [NSError errorWithDomain:NSPOSIXErrorDomain code:EIO userInfo:nil];
-		}
+		data = [file readDataToEndOfFileAndReturnError:&error];
 	} else {
 		error = [NSError errorWithDomain:NSPOSIXErrorDomain code:ENOENT userInfo:nil];
 	}

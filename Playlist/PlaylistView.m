@@ -446,16 +446,9 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		NSError *error;
 		NSData *data = [pboard dataForType:CogUrlsPboardType];
 		NSArray *urls;
-		if(@available(macOS 11.0, *)) {
-			urls = [NSKeyedUnarchiver unarchivedArrayOfObjectsOfClass:[NSURL class]
-			                                                 fromData:data
-			                                                    error:&error];
-		} else {
-			NSSet *allowed = [NSSet setWithArray:@[[NSArray class], [NSURL class]]];
-			urls = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowed
-			                                           fromData:data
-			                                              error:&error];
-		}
+		urls = [NSKeyedUnarchiver unarchivedArrayOfObjectsOfClass:[NSURL class]
+		                                                 fromData:data
+		                                                    error:&error];
 		if(!urls) {
 			DLog(@"%@", error);
 		} else {

@@ -2351,7 +2351,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2630;
+				LastUpgradeCheck = 2700;
 				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 83E5EFB71FFEF7CC00659F0F /* Build configuration list for PBXProject "libOpenMPT" */;
@@ -2610,7 +2610,7 @@
 					OpenMPT/src,
 					OpenMPT/build/svn_version,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
@@ -2686,7 +2686,7 @@
 					OpenMPT/src,
 					OpenMPT/build/svn_version,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";

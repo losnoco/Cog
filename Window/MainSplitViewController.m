@@ -23,10 +23,8 @@ static void *kMainSplitViewControllerContext = &kMainSplitViewControllerContext;
 	sidebarItem.maximumThickness = 400;
 	sidebarItem.canCollapse = YES;
 	sidebarItem.holdingPriority = NSLayoutPriorityDefaultLow + 10;
-	if(@available(macOS 11.0, *)) {
-		sidebarItem.allowsFullHeightLayout = YES;
-		sidebarItem.titlebarSeparatorStyle = NSTitlebarSeparatorStyleAutomatic;
-	}
+	sidebarItem.allowsFullHeightLayout = YES;
+	sidebarItem.titlebarSeparatorStyle = NSTitlebarSeparatorStyleAutomatic;
 
 	NSSplitViewItem *contentItem = [NSSplitViewItem splitViewItemWithViewController:contentViewController];
 	contentItem.minimumThickness = 400;

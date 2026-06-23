@@ -60,16 +60,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	if (![NSUserDefaults.standardUserDefaults boolForKey:@"spectrumSceneKit"])
 		return nil;
 
-	do {
-		if(@available(macOS 11.0, *)) {
-			// macOS 11 and newer seems to be safe
-			break;
-		} else {
-			// macOS 10.15.7 has a SceneKit bug with PBR noise
-			return nil;
-		}
-	} while(0);
-
 	return [[self alloc] initWithFrame:frame];
 }
 
