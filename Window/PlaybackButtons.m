@@ -24,18 +24,12 @@ static NSString *PlaybackButtonsPlaybackStatusObservationContext = @"PlaybackBut
 - (void)awakeFromNib {
 	[self startObserving];
 
-	if(@available(macOS 11.0, *)) {
+	{
 		playImage = [NSImage imageWithSystemSymbolName:@"play.fill" accessibilityDescription:NSLocalizedString(@"PlayButtonTooltip", @"")];
 		pauseImage = [NSImage imageWithSystemSymbolName:@"pause.fill" accessibilityDescription:NSLocalizedString(@"PauseButtonTooltip", @"")];
 		stopImage = [NSImage imageWithSystemSymbolName:@"stop.fill" accessibilityDescription:NSLocalizedString(@"StopButtonTooltip", @"")];
 		prevImage = [NSImage imageWithSystemSymbolName:@"backward.fill" accessibilityDescription:NSLocalizedString(@"PrevButtonTooltip", @"")];
 		nextImage = [NSImage imageWithSystemSymbolName:@"forward.fill" accessibilityDescription:NSLocalizedString(@"NextButtonTooltip", @"")];
-	} else {
-		playImage = [NSImage imageNamed:@"playTemplate"];
-		pauseImage = [NSImage imageNamed:@"pauseTemplate"];
-		stopImage = [NSImage imageNamed:@"stopTemplate"];
-		prevImage = [NSImage imageNamed:@"previousTemplate"];
-		nextImage = [NSImage imageNamed:@"nextTemplate"];
 	}
 
 	[self setImage:prevImage forSegment:0];

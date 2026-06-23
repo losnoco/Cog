@@ -33,14 +33,10 @@ struct AboutView: View {
                         pasteboard.clearContents() // Essential for macOS
                         pasteboard.setString(appFullVersion, forType: .string)
                     } label: {
-                        if #available(macOS 11.0, *) {
-                            Label(
-                                "Copy Version",
-                                systemImage: "doc.on.clipboard"
-                            )
-                        } else {
-                            Text("Copy Version")
-                        }
+                        Label(
+                            "Copy Version",
+                            systemImage: "doc.on.clipboard"
+                        )
                     }
                 }
 

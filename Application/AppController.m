@@ -197,10 +197,8 @@ static BOOL consentLastEnabled = NO;
 		mainSplitViewController = [MainSplitViewController new];
 		[mainSplitViewController setupWithSidebarViewController:fileTreeViewController
 		                                  contentViewController:contentViewController];
-		if(@available(macOS 11.0, *)) {
-			// Required alongside allowsFullHeightLayout for the full-height sidebar look
-			mainWindow.styleMask |= NSWindowStyleMaskFullSizeContentView;
-		}
+		// Required alongside allowsFullHeightLayout for the full-height sidebar look
+		mainWindow.styleMask |= NSWindowStyleMaskFullSizeContentView;
 		mainWindow.contentViewController = mainSplitViewController;
 		// Setting contentViewController resizes the window; restore the saved frame
 		[mainWindow setFrame:savedFrame display:NO];
@@ -427,10 +425,8 @@ static BOOL consentLastEnabled = NO;
 		if(!entry) {
 			miniWindow.title = appTitle;
 			mainWindow.title = appTitle;
-			if(@available(macOS 11.0, *)) {
-				miniWindow.subtitle = @"";
-				mainWindow.subtitle = @"";
-			}
+			miniWindow.subtitle = @"";
+			mainWindow.subtitle = @"";
 
 			self.infoButton.imageScaling = NSImageScaleNone;
 			self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
@@ -474,7 +470,7 @@ static BOOL consentLastEnabled = NO;
 			self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
 		}
 
-		if(@available(macOS 11.0, *)) {
+		{
 			NSString *title = appTitle;
 			if(entry.title) {
 				title = entry.title;
@@ -497,13 +493,6 @@ static BOOL consentLastEnabled = NO;
 
 			miniWindow.subtitle = subtitle;
 			mainWindow.subtitle = subtitle;
-		} else {
-			NSString *title = appTitle;
-			if(entry.display) {
-				title = entry.display;
-			}
-			miniWindow.title = title;
-			mainWindow.title = title;
 		}
 	} else if([keyPath isEqualToString:@"finished"]) {
 		NSProgress *progress = (NSProgress *)object;
@@ -1043,17 +1032,12 @@ static NSDictionary *shortcutDefaults = nil;
 	[[NSUserDefaults standardUserDefaults] setBool:full forKey:@"toolbarStyleFull"];
 	DLog("Changed toolbar style: %@", (full ? @"full" : @"compact"));
 
-	if(@available(macOS 11.0, *)) {
+	{
 		NSWindowToolbarStyle style =
 		full ? NSWindowToolbarStyleExpanded : NSWindowToolbarStyleUnified;
 		mainWindow.toolbarStyle = style;
 		miniWindow.toolbarStyle = style;
 		miniPlusWindow.toolbarStyle = style;
-	} else {
-		NSWindowTitleVisibility titleVisibility = full ? NSWindowTitleVisible : NSWindowTitleHidden;
-		mainWindow.titleVisibility = titleVisibility;
-		miniWindow.titleVisibility = titleVisibility;
-		miniPlusWindow.titleVisibility = titleVisibility;
 	}
 
 	// Fix empty area after changing toolbar style in mini window as it has no content view
