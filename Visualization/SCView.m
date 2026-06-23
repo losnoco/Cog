@@ -351,16 +351,10 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 
 	pixelFormat = MTLPixelFormatBGRA8Unorm;
 	CFStringRef colorSpaceName = kCGColorSpaceITUR_709;
-	if(@available(macOS 10.15.4, *)) {
-		if(EDR) {
-			[self metalLayer].wantsExtendedDynamicRangeContent = YES;
-			pixelFormat = MTLPixelFormatBGR10A2Unorm;
-			if(@available(macOS 11, *)) {
-				colorSpaceName = kCGColorSpaceITUR_2100_PQ;
-			} else {
-				colorSpaceName = kCGColorSpaceITUR_2020_PQ_EOTF;
-			}
-		}
+	if(EDR) {
+		[self metalLayer].wantsExtendedDynamicRangeContent = YES;
+		pixelFormat = MTLPixelFormatBGR10A2Unorm;
+		colorSpaceName = kCGColorSpaceITUR_2100_PQ;
 	}
 	CGColorSpaceRef colorspace = CGColorSpaceCreateWithName(colorSpaceName);
 

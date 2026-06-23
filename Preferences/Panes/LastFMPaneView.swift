@@ -134,7 +134,7 @@ struct LastFMPaneView: View {
                 }
                 .disabled(prefs.username.isEmpty || prefs.password.isEmpty || prefs.isAuthenticating)
 
-                if #available(macOS 11.0, *), prefs.isAuthenticating {
+                if prefs.isAuthenticating {
                     ProgressView()
                         .controlSize(.small)
                 }
