@@ -136,13 +136,7 @@ static void loadPresets(void) {
 	NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:[url path]];
 	if(fileHandle) {
 		NSError *err;
-		NSData *data;
-		if(@available(macOS 10.15, *)) {
-			data = [fileHandle readDataToEndOfFileAndReturnError:&err];
-		} else {
-			data = [fileHandle readDataToEndOfFile];
-			err = nil;
-		}
+		NSData *data = [fileHandle readDataToEndOfFileAndReturnError:&err];
 		if(!err && data) {
 			equalizer_presets = json_parse(data.bytes, data.length);
 

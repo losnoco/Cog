@@ -18,17 +18,10 @@ class StatusImageTransformer: ValueTransformer {
 
     override init() {
         super.init()
-        if #available(macOS 11.0, *) {
-            self.playImage = NSImage(systemSymbolName: "play.fill", accessibilityDescription: NSLocalizedString("PlayingTrackTooltip", comment: ""))
-            self.queueImage = NSImage(systemSymbolName: "plus", accessibilityDescription: NSLocalizedString("QueuedTrackTooltip", comment: ""))
-            self.errorImage = NSImage(systemSymbolName: "nosign", accessibilityDescription: NSLocalizedString("ErrorTrackTooltip", comment: ""))
-            self.stopAfterImage = NSImage(systemSymbolName: "stop.fill", accessibilityDescription: NSLocalizedString("StopAfterTrackTooltip", comment: ""))
-        } else {
-            self.playImage = NSImage(named: "playTemplate")
-            self.queueImage = NSImage(named: "NSAddTemplate")
-            self.errorImage = NSImage(named: "NSStopProgressTemplate")
-            self.stopAfterImage = NSImage(named: "stopTemplate")
-        }
+        self.playImage = NSImage(systemSymbolName: "play.fill", accessibilityDescription: NSLocalizedString("PlayingTrackTooltip", comment: ""))
+        self.queueImage = NSImage(systemSymbolName: "plus", accessibilityDescription: NSLocalizedString("QueuedTrackTooltip", comment: ""))
+        self.errorImage = NSImage(systemSymbolName: "nosign", accessibilityDescription: NSLocalizedString("ErrorTrackTooltip", comment: ""))
+        self.stopAfterImage = NSImage(systemSymbolName: "stop.fill", accessibilityDescription: NSLocalizedString("StopAfterTrackTooltip", comment: ""))
     }
 
     // Convert from string to image
