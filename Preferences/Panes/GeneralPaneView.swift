@@ -59,11 +59,7 @@ struct GeneralPaneView: View {
                 .font(.headline)
                 .padding([.horizontal, .top])
 
-            if #available(macOS 12.0, *) {
-                pathTable
-            } else {
-                pathList
-            }
+            pathTable
 
             actionBar
 
@@ -82,7 +78,6 @@ struct GeneralPaneView: View {
         }
     }
 
-    @available(macOS 12.0, *)
     private var pathTable: some View {
         Table(pathEntries, selection: $selectedIndices) {
             TableColumn("Path") { entry in
