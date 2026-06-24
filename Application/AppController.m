@@ -776,7 +776,7 @@ static BOOL consentLastEnabled = NO;
 	NSValueTransformer *colorToValueTransformer = [NSValueTransformer valueTransformerForName:@"ColorToValueTransformer"];
 
 	NSData *barColor = [colorToValueTransformer reverseTransformedValue:[NSColor colorWithSRGBRed:1.0 green:0.5 blue:0 alpha:1.0]];
-	NSData *dotColor = [colorToValueTransformer reverseTransformedValue:[NSColor systemRedColor]];
+	NSData *dotColor = [colorToValueTransformer reverseTransformedValue:[NSColor colorWithSRGBRed:1.0 green:0 blue:0 alpha:1.0]];
 
 	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumSceneKit"];
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
