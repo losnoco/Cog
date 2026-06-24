@@ -45,7 +45,7 @@ class LastFMAPI {
         self.apiSecret = apiSecret
     }
 
-    func authenticateMobile(username: String, password: String, completion: @escaping (Result<(sessionKey: String, username: String), Error>) -> Void) {
+    func authenticateMobile(username: String, password: String, completion: @escaping @Sendable (Result<(sessionKey: String, username: String), Error>) -> Void) {
         let params = [
             "username": username,
             "password": password,
@@ -65,8 +65,8 @@ class LastFMAPI {
     }
 
     // TODO: parse response, async/await is only available in 10.15
-    func parsedRequest<T: Decodable>(_ method: String, httpMethod: String = "POST", params: [String: String] = [:], callback: ((Result<T?, Error>) -> Void)? = nil) {
-        self.apiRequest(method, httpMethod: httpMethod, params: params) { result in
+    func parsedRequest<T: Decodable & SendableMetatype>(_ method: String, httpMethod: String = "POST", params: [String: String] = [:], callback: (@Sendable (Result<T?, Error>) -> Void)? = nil) {
+        self.apiRequest(method, httpMethod: httpMethod, params: params) { @Sendable result in
             switch result {
             case .success(let data):
                 guard let data = data else {
@@ -86,7 +86,7 @@ class LastFMAPI {
     }
 
     // No response parsing needed
-    func request(_ method: String, httpMethod: String = "POST", params: [String: String] = [:], callback: ((Error?) -> Void)? = nil) {
+    func request(_ method: String, httpMethod: String = "POST", params: [String: String] = [:], callback: (@Sendable (Error?) -> Void)? = nil) {
         self.apiRequest(method, httpMethod: httpMethod, params: params) { result in
             switch result {
             case .success:
@@ -97,7 +97,7 @@ class LastFMAPI {
         }
     }
 
-    private func apiRequest(_ method: String, httpMethod: String, params: [String: String], callback: ((Result<Data?, Error>) -> Void)? = nil) {
+    private func apiRequest(_ method: String, httpMethod: String, params: [String: String], callback: (@Sendable (Result<Data?, Error>) -> Void)? = nil) {
         var requestParams: [String: String?] = params //.mapValues({ $0.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) })
         requestParams["method"] = method
         requestParams["api_key"] = apiKey
@@ -141,7 +141,7 @@ class LastFMAPI {
             request.httpBody = postString.data(using: .utf8)
         }
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { @Sendable data, response, error in
             if let error {
                 callback?(.failure(error))
                 return
