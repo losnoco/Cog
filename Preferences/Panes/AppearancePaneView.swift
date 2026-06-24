@@ -21,6 +21,12 @@ private final class AppearancePrefs: ObservableObject {
     @Published var spectrumProjectionMode: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumProjectionMode, forKey: "spectrumProjectionMode") }
     }
+    @Published var spectrumBarColor: Color {
+		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: spectrumBarColor) ?? NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "spectrumBarColor") } }
+    }
+    @Published var spectrumDotColor: Color {
+		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: spectrumDotColor) ?? NSColor(srgbRed: 1.0, green: 0, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "spectrumDotColor") } }
+    }
 
 
     deinit { isActive = false }
@@ -33,6 +39,13 @@ private final class AppearancePrefs: ObservableObject {
         spectrumSceneKit = d.object(forKey: "spectrumSceneKit") as? Bool ?? true
         spectrumFreqMode = d.object(forKey: "spectrumFreqMode") as? Bool ?? false
         spectrumProjectionMode = d.object(forKey: "spectrumProjectionMode") as? Bool ?? false
+		spectrumBarColor = Self.defaultColor(forKey: "spectrumBarColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)))
+		spectrumDotColor = Self.defaultColor(forKey: "spectrumDotColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0, blue: 0, alpha: 1.0)))
+    }
+
+    private static func defaultColor(forKey key: String, default defaultColor: Color) -> Color {
+        let data = UserDefaults.standard.data(forKey: key)
+        return colorFromArchivedData(data) ?? defaultColor
     }
 }
 
@@ -79,20 +92,14 @@ struct AppearancePaneView: View {
                 HStack {
                     Text("Bar color:")
                     Spacer()
-                    ColorWellView(
-                        key: "spectrumBarColor",
-                        defaultColor: NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)
-                    )
-                    .frame(width: 44, height: 22)
+                    ColorPicker("", selection: $prefs.spectrumBarColor)
+                        .labelsHidden()
                 }
                 HStack {
                     Text("Dot color:")
                     Spacer()
-                    ColorWellView(
-                        key: "spectrumDotColor",
-                        defaultColor: .systemRed
-                    )
-                    .frame(width: 44, height: 22)
+                    ColorPicker("", selection: $prefs.spectrumDotColor)
+                        .labelsHidden()
                 }
             }
         }
@@ -130,4 +137,60 @@ struct AppearancePaneView: View {
             )
         }
     }
+}
+
+// MARK: - Color <-> NSColor conversion helpers
+
+extension Color {
+    init(nsColor: NSColor) {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        nsColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        self.init(.sRGB, red: red, green: green, blue: blue, opacity: alpha)
+    }
+}
+
+func nsColor(from color: Color) -> NSColor? {
+    guard let components = color.nsColorComponents else { return nil }
+    return NSColor(srgbRed: components.red, green: components.green, blue: components.blue, alpha: components.alpha)
+}
+
+private extension Color {
+    var nsColorComponents: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        // Try to extract sRGB components
+        if #available(macOS 11.0, *) {
+            if let cgColor = self.cgColor {
+                let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
+                if let converted = cgColor.converted(to: colorSpace!, intent: .defaultIntent, options: nil) {
+                    let components = converted.components
+                    if let components = components, components.count >= 4 {
+                        return (components[0], components[1], components[2], components[3])
+                    } else if let components = components, components.count == 1 {
+                        // Grayscale
+                        return (components[0], components[0], components[0], components[0])
+                    }
+                }
+            }
+        }
+        return nil
+    }
+}
+
+// MARK: - Archiving helpers (same as ColorWellView)
+
+func dataFromArchivedColor(_ color: NSColor) -> Data? {
+    try? NSKeyedArchiver.archivedData(withRootObject: color, requiringSecureCoding: true)
+}
+
+func colorFromArchivedData(_ data: Data?) -> Color? {
+    guard let data = data else { return nil }
+    guard let nsColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data) else { return nil }
+    return Color(nsColor: nsColor)
 }

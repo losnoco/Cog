@@ -88,7 +88,6 @@
 		515000000000000000000007 /* GeneralPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000007 /* GeneralPaneView.swift */; };
 		515000000000000000000008 /* MIDIPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000008 /* MIDIPaneView.swift */; };
 		515000000000000000000009 /* HotKeyPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000009 /* HotKeyPaneView.swift */; };
-		51500000000000000000000A /* ColorWellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000A /* ColorWellView.swift */; };
 		51500000000000000000000B /* ShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000B /* ShortcutField.swift */; };
 		51500000000000000000000C /* SandboxPathModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000C /* SandboxPathModel.swift */; };
 		51500000000000000000000D /* AudioDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50500000000000000000000D /* AudioDeviceModel.swift */; };
@@ -976,7 +975,6 @@
 		505000000000000000000007 /* GeneralPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000008 /* MIDIPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000009 /* HotKeyPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyPaneView.swift; sourceTree = "<group>"; };
-		50500000000000000000000A /* ColorWellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorWellView.swift; sourceTree = "<group>"; };
 		50500000000000000000000B /* ShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutField.swift; sourceTree = "<group>"; };
 		50500000000000000000000C /* SandboxPathModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxPathModel.swift; sourceTree = "<group>"; };
 		50500000000000000000000D /* AudioDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceModel.swift; sourceTree = "<group>"; };
@@ -1731,7 +1729,6 @@
 				505000000000000000000007 /* GeneralPaneView.swift */,
 				505000000000000000000008 /* MIDIPaneView.swift */,
 				505000000000000000000009 /* HotKeyPaneView.swift */,
-				50500000000000000000000A /* ColorWellView.swift */,
 				50500000000000000000000B /* ShortcutField.swift */,
 				50500000000000000000000C /* SandboxPathModel.swift */,
 				50500000000000000000000D /* AudioDeviceModel.swift */,
@@ -3000,7 +2997,6 @@
 				8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */,
 				515000000000000000000008 /* MIDIPaneView.swift in Sources */,
 				515000000000000000000009 /* HotKeyPaneView.swift in Sources */,
-				51500000000000000000000A /* ColorWellView.swift in Sources */,
 				51500000000000000000000B /* ShortcutField.swift in Sources */,
 				51500000000000000000000C /* SandboxPathModel.swift in Sources */,
 				51500000000000000000000D /* AudioDeviceModel.swift in Sources */,
