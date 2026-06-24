@@ -53,7 +53,7 @@ private final class RubberbandPrefs: ObservableObject {
 }
 
 struct RubberbandPaneView: View {
-    @StateObjectCompat private var prefs = RubberbandPrefs()
+    @StateObject private var prefs = RubberbandPrefs()
 
     private var isEnabled: Bool { prefs.engine != "disabled" && prefs.engine != "signalsmith" }
     private var isR3: Bool { prefs.engine == "finer" }

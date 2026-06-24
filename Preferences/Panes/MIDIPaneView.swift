@@ -121,7 +121,7 @@ private let sampleRateOptions: [Int] = [22050, 44100, 48000, 88200, 96000, 17640
 // MARK: - View
 
 struct MIDIPaneView: View {
-    @StateObjectCompat private var prefs = MIDIPrefs()
+    @StateObject private var prefs = MIDIPrefs()
 
     var body: some View {
         if #available(macOS 13.0, *) {

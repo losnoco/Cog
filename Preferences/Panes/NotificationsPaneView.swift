@@ -24,7 +24,7 @@ private final class NotificationsPrefs: ObservableObject {
 }
 
 struct NotificationsPaneView: View {
-    @StateObjectCompat private var prefs = NotificationsPrefs()
+    @StateObject private var prefs = NotificationsPrefs()
 
     var body: some View {
         if #available(macOS 13.0, *) {

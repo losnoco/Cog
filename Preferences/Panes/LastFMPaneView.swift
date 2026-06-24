@@ -74,7 +74,7 @@ import SwiftUI
 }
 
 struct LastFMPaneView: View {
-    @StateObjectCompat private var prefs = LastFMPrefs()
+    @StateObject private var prefs = LastFMPrefs()
 
     var body: some View {
         if #available(macOS 13.0, *) {

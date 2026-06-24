@@ -71,8 +71,8 @@ private final class OutputPrefs: ObservableObject {
 ]
 
 struct OutputPaneView: View {
-    @StateObjectCompat private var prefs = OutputPrefs()
-    @StateObjectCompat private var deviceModel = AudioDeviceModel()
+    @StateObject private var prefs = OutputPrefs()
+    @StateObject private var deviceModel = AudioDeviceModel()
 
     var body: some View {
         if #available(macOS 13.0, *) {
