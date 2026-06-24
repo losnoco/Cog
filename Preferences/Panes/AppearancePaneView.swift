@@ -50,7 +50,7 @@ private final class AppearancePrefs: ObservableObject {
 }
 
 struct AppearancePaneView: View {
-    @StateObjectCompat private var prefs = AppearancePrefs()
+    @StateObject private var prefs = AppearancePrefs()
 
     var body: some View {
         if #available(macOS 13.0, *) {

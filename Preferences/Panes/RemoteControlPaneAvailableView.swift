@@ -22,7 +22,7 @@ private final class RemoteControlPrefs: ObservableObject {
 
 @available(macOS 13.0, *)
 struct RemoteControlPaneAvailableView: View {
-    @StateObjectCompat private var prefs = RemoteControlPrefs()
+    @StateObject private var prefs = RemoteControlPrefs()
     @ObservedObject private var status = RemoteControlBootstrap.shared.statusModel
 
     var body: some View {
