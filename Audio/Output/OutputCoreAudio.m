@@ -260,7 +260,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	AudioObjectPropertyAddress theAddress = {
 		.mSelector = kAudioHardwarePropertyDefaultOutputDevice,
 		.mScope = kAudioObjectPropertyScopeGlobal,
-		.mElement = kAudioObjectPropertyElementMaster
+		.mElement = kAudioObjectPropertyElementMain
 	};
 
 	AudioDeviceID deviceID = (AudioDeviceID)deviceIDIn;
@@ -384,7 +384,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	AudioObjectPropertyAddress theAddress = {
 		.mSelector = kAudioHardwarePropertyDevices,
 		.mScope = kAudioObjectPropertyScopeGlobal,
-		.mElement = kAudioObjectPropertyElementMaster
+		.mElement = kAudioObjectPropertyElementMain
 	};
 
 	OSStatus status = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &theAddress, 0, NULL, &propsize);
@@ -1131,7 +1131,7 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 		if(defaultdevicelistenerapplied || currentdevicelistenerapplied || devicealivelistenerapplied) {
 			AudioObjectPropertyAddress theAddress = {
 				.mScope = kAudioObjectPropertyScopeGlobal,
-				.mElement = kAudioObjectPropertyElementMaster
+				.mElement = kAudioObjectPropertyElementMain
 			};
 			if(defaultdevicelistenerapplied) {
 				theAddress.mSelector = kAudioHardwarePropertyDefaultOutputDevice;

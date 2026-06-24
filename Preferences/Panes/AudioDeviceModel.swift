@@ -21,11 +21,7 @@ final class AudioDeviceModel: ObservableObject {
     }
 
     private var elementMain: AudioObjectPropertyElement {
-        if #available(macOS 12.0, *) {
-            return kAudioObjectPropertyElementMain
-        } else {
-            return kAudioObjectPropertyElementMaster  // deprecated but needed for <12
-        }
+        return kAudioObjectPropertyElementMain
     }
 
     func loadDevices() {
