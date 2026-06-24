@@ -38,8 +38,8 @@ private final class GeneralPrefs: ObservableObject {
 }
 
 struct GeneralPaneView: View {
-    @StateObjectCompat private var pathModel = SandboxPathModel()
-    @StateObjectCompat private var prefs = GeneralPrefs()
+    @StateObject private var pathModel = SandboxPathModel()
+    @StateObject private var prefs = GeneralPrefs()
     @State private var selectedIndices: Set<Int> = []
 
     private var pathEntries: [SandboxPathEntry] {

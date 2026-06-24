@@ -50,7 +50,7 @@ private final class PlaylistPrefs: ObservableObject {
 ]
 
 struct PlaylistPaneView: View {
-    @StateObjectCompat private var prefs = PlaylistPrefs()
+    @StateObject private var prefs = PlaylistPrefs()
 
     var body: some View {
         if #available(macOS 13.0, *) {
