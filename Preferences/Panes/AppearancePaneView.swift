@@ -159,23 +159,16 @@ func nsColor(from color: Color) -> NSColor? {
 
 private extension Color {
     var nsColorComponents: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
-        var red: CGFloat = 0
-        var green: CGFloat = 0
-        var blue: CGFloat = 0
-        var alpha: CGFloat = 0
-
         // Try to extract sRGB components
-        if #available(macOS 11.0, *) {
-            if let cgColor = self.cgColor {
-                let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
-                if let converted = cgColor.converted(to: colorSpace!, intent: .defaultIntent, options: nil) {
-                    let components = converted.components
-                    if let components = components, components.count >= 4 {
-                        return (components[0], components[1], components[2], components[3])
-                    } else if let components = components, components.count == 1 {
-                        // Grayscale
-                        return (components[0], components[0], components[0], components[0])
-                    }
+        if let cgColor = self.cgColor {
+            let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
+            if let converted = cgColor.converted(to: colorSpace!, intent: .defaultIntent, options: nil) {
+                let components = converted.components
+                if let components = components, components.count >= 4 {
+                    return (components[0], components[1], components[2], components[3])
+                } else if let components = components, components.count == 1 {
+                    // Grayscale
+                    return (components[0], components[0], components[0], components[0])
                 }
             }
         }
