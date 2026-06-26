@@ -78,6 +78,7 @@
 @property(nonatomic, readonly) NSString *_Nullable statusMessage;
 
 @property(nonatomic) NSURL *_Nullable url;
+@property(nonatomic) NSURL *_Nullable trashUrl;
 
 @property(nonatomic) NSData *_Nullable albumArtInternal;
 

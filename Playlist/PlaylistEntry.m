@@ -37,6 +37,10 @@ extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 	return [NSSet setWithObject:@"urlString"];
 }
 
++ (NSSet *)keyPathsForValuesAffectingTrashUrl {
+	return [NSSet setWithObject:@"trashUrlString"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingTitle {
 	return [NSSet setWithObject:@"rawTitle"];
 }
@@ -497,6 +501,15 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 - (void)setUrl:(NSURL *)url {
 	self.urlString = url ? [url absoluteString] : nil;
+}
+
+@dynamic trashUrl;
+- (NSURL *)trashUrl {
+	return urlForPath(self.trashUrlString);
+}
+
+- (void)setTrashUrl:(NSURL *)trashUrl {
+	self.trashUrlString = trashUrl ? [trashUrl absoluteString] : nil;
 }
 
 @dynamic path;
