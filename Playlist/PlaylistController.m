@@ -1335,13 +1335,41 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
+BOOL showTrashConsent(NSWindow *window) {
+	BOOL askedConsent = [[NSUserDefaults standardUserDefaults] boolForKey:@"trashAskedConsent"];
+	if(!askedConsent) {
+		[window orderFront:window];
+
+		NSAlert *alert = [NSAlert new];
+		[alert setMessageText:NSLocalizedString(@"TrashConsentTitle", @"Title for a file trash operation consent dialog")];
+		[alert setInformativeText:NSLocalizedString(@"TrashConsentText", @"Message body for the consent dialog asking if the user really wants to reversibly trash some files from their playlist")];
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentNo", @"The negative answer")];
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentYes",@"The affirmative answer")];
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentAlways",@"The always affirmative answer")];
+		
+		NSModalResponse returnCode = [alert runModal];
+		if(returnCode == NSAlertThirdButtonReturn) {
+			[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"trashAskedConsent"];
+			return YES;
+		} else if(returnCode == NSAlertSecondButtonReturn) {
+			return YES;
+		} else {
+			return NO;
+		}
+	} else {
+		return YES;
+	}
+}
+
 - (IBAction)trash:(id)sender {
 	// Someone asked for this, so they're getting it.
 	// Trash the selection, and advance playback to the next untrashed file if necessary.
 
 	NSIndexSet *selected = [self selectionIndexes];
 	if([selected count] > 0) {
-		[self trashObjectsAtArrangedObjectIndexes:selected];
+		if(showTrashConsent([appController mainWindow])) {
+			[self trashObjectsAtArrangedObjectIndexes:selected];
+		}
 	}
 }
 
