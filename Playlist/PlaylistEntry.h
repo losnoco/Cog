@@ -79,6 +79,7 @@
 
 @property(nonatomic) NSURL *_Nullable url;
 @property(nonatomic) NSURL *_Nullable trashUrl;
+@property(nonatomic) NSData *_Nullable urlBookmark;
 
 @property(nonatomic) NSData *_Nullable albumArtInternal;
 

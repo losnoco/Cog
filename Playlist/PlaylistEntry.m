@@ -503,6 +503,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	self.urlString = url ? [url absoluteString] : nil;
 }
 
+@dynamic urlBookmark;
+
 @dynamic trashUrl;
 - (NSURL *)trashUrl {
 	return urlForPath(self.trashUrlString);

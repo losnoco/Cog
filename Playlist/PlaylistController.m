@@ -1019,10 +1019,43 @@ static void *playlistControllerContext = &playlistControllerContext;
 	for(PlaylistEntry *pe in objects) {
 		if(pe.deLeted && pe.trashUrl) {
 			NSError *error = nil;
-			[[NSFileManager defaultManager] moveItemAtURL:pe.trashUrl toURL:pe.url error:&error];
+			NSURL *destURL = pe.url;
+
+			if(pe.urlBookmark) {
+				BOOL isStale = NO;
+				NSURL *resolvedFolder = [NSURL URLByResolvingBookmarkData:pe.urlBookmark
+				                                                 options:NSURLBookmarkResolutionWithSecurityScope
+				                                           relativeToURL:nil
+				                                     bookmarkDataIsStale:&isStale
+				                                                   error:&error];
+				if(resolvedFolder) {
+					[resolvedFolder startAccessingSecurityScopedResource];
+					error = nil;
+					[[NSFileManager defaultManager] moveItemAtURL:pe.trashUrl toURL:destURL error:&error];
+					[resolvedFolder stopAccessingSecurityScopedResource];
+					if(error) {
+						ALog(@"Error restoring %@ to %@: %@", pe.trashUrl, destURL, [error localizedDescription]);
+					}
+				} else {
+					ALog(@"Could not resolve trash bookmark for %@, falling back: %@", destURL, [error localizedDescription]);
+					const void *handle = [[SandboxBroker sharedSandboxBroker] beginFolderAccess:destURL];
+					error = nil;
+					[[NSFileManager defaultManager] moveItemAtURL:pe.trashUrl toURL:destURL error:&error];
+					[[SandboxBroker sharedSandboxBroker] endFolderAccess:handle];
+					if(error) {
+						ALog(@"Error restoring %@ to %@: %@", pe.trashUrl, destURL, [error localizedDescription]);
+					}
+				}
+			} else {
+				[[NSFileManager defaultManager] moveItemAtURL:pe.trashUrl toURL:destURL error:&error];
+				if(error) {
+					ALog(@"Error restoring %@ to %@: %@", pe.trashUrl, destURL, [error localizedDescription]);
+				}
+			}
 		}
 		pe.deLeted = NO;
 		pe.trashUrl = nil;
+		pe.urlBookmark = nil;
 	}
 
 	[super insertObjects:objects atArrangedObjectIndexes:indexes];
@@ -1129,13 +1162,30 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	// Collect file URLs before dispatching to background, since PlaylistEntry
 	// is a CoreData managed object and must not be accessed off its context queue.
+	// Also request sandbox permission for any folder not yet covered, then begin
+	// folder access and capture the token bookmark for later restoration.
+	NSMutableArray<NSURL *> *fileURLs = [NSMutableArray array];
+	for(PlaylistEntry *pe in objects) {
+		if([pe.url isFileURL]) [fileURLs addObject:pe.url];
+	}
+	if([fileURLs count] > 0 && ![[SandboxBroker sharedSandboxBroker] areAllPathsSafe:fileURLs]) {
+		for(NSURL *url in fileURLs) {
+			[[SandboxBroker sharedSandboxBroker] requestFolderForFile:url];
+		}
+	}
+
+	NSMutableArray<NSValue *> *sbHandles = [NSMutableArray array];
 	NSMutableArray<NSDictionary *> *trashWork = [NSMutableArray array];
 	for(PlaylistEntry *pe in objects) {
 		if([pe.url isFileURL]) {
-			[trashWork addObject:@{
-				@"url": pe.url,
-				@"objectID": pe.objectID
-			}];
+			const void *handle = [[SandboxBroker sharedSandboxBroker] beginFolderAccess:pe.url];
+			[sbHandles addObject:[NSValue valueWithPointer:handle]];
+
+			NSData *bookmark = [[SandboxBroker sharedSandboxBroker] bookmarkDataForHandle:handle];
+
+			NSMutableDictionary *item = [@{@"url": pe.url, @"objectID": pe.objectID} mutableCopy];
+			if(bookmark) item[@"bookmark"] = bookmark;
+			[trashWork addObject:[item copy]];
 		}
 	}
 
@@ -1143,6 +1193,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		NSPersistentContainer *container = self.persistentContainer;
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 			NSMutableDictionary<NSManagedObjectID *, NSURL *> *trashedURLs = [NSMutableDictionary dictionary];
+			NSMutableDictionary<NSManagedObjectID *, NSData *> *bookmarks = [NSMutableDictionary dictionary];
 
 			for(NSDictionary *item in trashWork) {
 				NSURL *fileURL = item[@"url"];
@@ -1152,6 +1203,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 				[[NSFileManager defaultManager] trashItemAtURL:fileURL resultingItemURL:&removed error:&error];
 				if(removed) {
 					trashedURLs[objectID] = removed;
+					NSData *bookmark = item[@"bookmark"];
+					if(bookmark) bookmarks[objectID] = bookmark;
 				}
 				if(error) {
 					ALog(@"Error trashing file %@: %@", fileURL, [error localizedDescription]);
@@ -1165,6 +1218,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 					PlaylistEntry *pe = (PlaylistEntry *)[container.viewContext existingObjectWithID:objectID error:&error];
 					if(pe && !error) {
 						pe.trashUrl = trashedURLs[objectID];
+						pe.urlBookmark = bookmarks[objectID];
 					}
 				}
 
@@ -1174,6 +1228,13 @@ static void *playlistControllerContext = &playlistControllerContext;
 					ALog(@"Error saving trash URLs: %@", [saveError localizedDescription]);
 				}
 			}];
+
+			// Release sandbox access handles after background work completes.
+			dispatch_async(dispatch_get_main_queue(), ^{
+				for(NSValue *handleValue in sbHandles) {
+					[[SandboxBroker sharedSandboxBroker] endFolderAccess:[handleValue pointerValue]];
+				}
+			});
 		});
 	} else {
 		// No files to trash, but still need to persist the playlist changes
