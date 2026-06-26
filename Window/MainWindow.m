@@ -24,11 +24,11 @@ void showSentryConsent(NSWindow *window) {
 		NSAlert *alert = [NSAlert new];
 		[alert setMessageText:NSLocalizedString(@"SentryConsentTitle", @"")];
 		[alert setInformativeText:NSLocalizedString(@"SentryConsentText", @"")];
-		[alert addButtonWithTitle:NSLocalizedString(@"ConsentYes",@"")];
 		[alert addButtonWithTitle:NSLocalizedString(@"ConsentNo", @"")];
-		
+		[alert addButtonWithTitle:NSLocalizedString(@"ConsentYes",@"")];
+
 		[alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse returnCode) {
-			if(returnCode == NSAlertFirstButtonReturn) {
+			if(returnCode == NSAlertSecondButtonReturn) {
 				[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"sentryConsented"];
 			}
 		}];
