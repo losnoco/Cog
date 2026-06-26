@@ -632,7 +632,25 @@
         }
       }
     },
+    "ConsentAlways" : {
+      "comment" : "The always affirmative answer",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always allow"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir siempre"
+          }
+        }
+      }
+    },
     "ConsentNo" : {
+      "comment" : "The negative answer",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -649,6 +667,7 @@
       }
     },
     "ConsentYes" : {
+      "comment" : "The affirmative answer",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3444,6 +3463,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transientes:"
+          }
+        }
+      }
+    },
+    "TrashConsentText" : {
+      "comment" : "Message body for the consent dialog asking if the user really wants to reversibly trash some files from their playlist",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to move the selected tracks to the Trash? You may Undo the action at any time while the player is still open, or by opening the Trash manually and using Put Back."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Quieres transferir las pistas seleccionadas al Basurero? Puedes deshacer la acción en el reproductor, o con la opción Sacar del basurero en el Finder."
+          }
+        }
+      }
+    },
+    "TrashConsentTitle" : {
+      "comment" : "Title for a file trash operation consent dialog",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move files to the Trash"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transferir archivos al basurero"
           }
         }
       }

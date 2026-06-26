@@ -175,7 +175,8 @@ static BOOL consentLastEnabled = NO;
 
 - (void)awakeFromNib {
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @NO,
-															   @"sentryAskedConsent": @NO }];
+															   @"sentryAskedConsent": @NO,
+															   @"trashAskedConsent": @NO}];
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
 
