@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (const void *_Nullable)beginFolderAccess:(NSURL *)fileUrl;
 - (void)endFolderAccess:(const void *_Nullable)handle;
+- (NSData *_Nullable)bookmarkDataForHandle:(const void *_Nullable)handle;
 
 - (BOOL)areAllPathsSafe:(NSArray *)urls;
 

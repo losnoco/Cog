@@ -491,6 +491,12 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 	});
 }
 
+- (NSData *_Nullable)bookmarkDataForHandle:(const void *_Nullable)handle {
+	if(!handle) return nil;
+	SandboxEntry *entry = (__bridge SandboxEntry *)(void *)handle;
+	return entry.token.bookmark;
+}
+
 - (BOOL)areAllPathsSafe:(NSArray *)urls {
 	for(NSURL *url in urls) {
 		if(![url isFileURL]) continue;
