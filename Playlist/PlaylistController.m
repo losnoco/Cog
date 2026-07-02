@@ -1903,10 +1903,10 @@ BOOL showTrashConsent(NSWindow *window) {
 	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
 }
 
-- (IBAction)toggleQueued:(id)sender {
+- (void)toggleQueuedForEntries:(NSArray *)entries {
 	NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
 
-	for(PlaylistEntry *queueItem in [self selectedObjects]) {
+	for(PlaylistEntry *queueItem in entries) {
 		if(queueItem.queued) {
 			[queueList removeObject:queueItem];
 
@@ -1925,7 +1925,7 @@ BOOL showTrashConsent(NSWindow *window) {
 	}
 
 	for(PlaylistEntry *queueItem in queueList) {
-		if(![[self selectedObjects] containsObject:queueItem])
+		if(![entries containsObject:queueItem])
 			[refreshSet addIndex:[queueItem index]];
 	}
 
@@ -1939,6 +1939,27 @@ BOOL showTrashConsent(NSWindow *window) {
 	// Refresh entire row to refresh tooltips
 	unsigned long columns = [[self.tableView tableColumns] count];
 	[self.tableView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+}
+
+- (IBAction)toggleQueued:(id)sender {
+	[self toggleQueuedForEntries:[self selectedObjects]];
+}
+
+- (BOOL)toggleQueueForEntryAtIndex:(NSInteger)i {
+	if(i < 0 || i >= [[self arrangedObjects] count]) return NO;
+
+	PlaylistEntry *pe = [[self arrangedObjects] objectAtIndex:i];
+	[self toggleQueuedForEntries:@[pe]];
+
+	return YES;
+}
+
+- (BOOL)removeEntryAtIndex:(NSInteger)i {
+	if(i < 0 || i >= [[self arrangedObjects] count]) return NO;
+
+	[self removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndex:i]];
+
+	return YES;
 }
 
 - (IBAction)removeFromQueue:(id)sender {

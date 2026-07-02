@@ -106,6 +106,12 @@ struct PreferencePaneDescriptor: Identifiable {
                 icon: paneIcon(system: "music.note", legacy: "lastfm"),
                 body: AnyView(LastFMPaneView())
             ),
+            PreferencePaneDescriptor(
+                title: "Remote Control",
+                localizedTitle: NSLocalizedString("Remote Control", comment: "Preference pane title"),
+                icon: paneIcon(system: "network", legacy: "general"),
+                body: AnyView(RemoteControlPaneView())
+            ),
         ]
     }
 

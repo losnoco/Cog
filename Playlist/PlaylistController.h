@@ -120,6 +120,8 @@ static inline BOOL IsRepeatOneSet(void) {
 
 // queue methods
 - (IBAction)toggleQueued:(id _Nullable)sender;
+- (BOOL)toggleQueueForEntryAtIndex:(NSInteger)i;
+- (BOOL)removeEntryAtIndex:(NSInteger)i;
 - (IBAction)emptyQueueList:(id _Nullable)sender;
 - (void)emptyQueueListUnsynced;
 - (NSMutableArray *_Nullable)queueList;
