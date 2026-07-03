@@ -14,7 +14,7 @@
 
 #import "EqualizerWindowController.h"
 
-#import "PlaylistEntry.h"
+@class PlaylistEntry;
 
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
@@ -77,6 +77,10 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;
 - (IBAction)volumeUp:(id)sender;
+
+// Volume on the linear 0-100 scale used by the volume slider
+- (double)volume;
+- (void)setVolume:(double)volume;
 
 - (IBAction)changePitch:(id)sender;
 - (IBAction)pitchDown:(id)sender;
