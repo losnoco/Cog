@@ -15,18 +15,18 @@ import Foundation
 public final class RemoteControlServerBridge: NSObject {
 	override private init() {}
 
-	/// Starts the server on 127.0.0.1:<port>. The completion receives an
-	/// error description, or nil on success.
+	/// Starts the server on the given Unix domain socket path. The completion
+	/// receives an error description, or nil on success.
 	/// Selector pinned to match the app-side mirror declaration in
 	/// RemoteControl/CogRemoteControlServerBridgeInterface.h.
-	@objc(startWithPort:target:completion:) public static func start(
-		port: Int,
+	@objc(startWithSocketPath:target:completion:) public static func start(
+		socketPath: String,
 		target: any CogRemoteControlTarget,
 		completion: @escaping @Sendable (_ errorDescription: String?) -> Void
 	) {
 		Task {
 			do {
-				try await RemoteControlServer.shared.start(port: port, target: target)
+				try await RemoteControlServer.shared.start(socketPath: socketPath, target: target)
 				completion(nil)
 			} catch {
 				completion(error.localizedDescription)

@@ -245,7 +245,7 @@
 		CEC0CAFE000000000000B007 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC07 /* Logging */; };
 		CEC0CAFE000000000000B103 /* RemoteControlServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F103 /* RemoteControlServer.swift */; };
 		CEC0CAFE000000000000B104 /* RemoteControlToolHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */; };
-		CEC0CAFE000000000000B105 /* RemoteControlTCPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F105 /* RemoteControlTCPApp.swift */; };
+		CEC0CAFE000000000000B105 /* RemoteControlSocketApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F105 /* RemoteControlSocketApp.swift */; };
 		CEC0CAFE000000000000B107 /* CogRemoteControlTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F107 /* CogRemoteControlTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEC0CAFE000000000000B108 /* RemoteControlServerBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F108 /* RemoteControlServerBridge.swift */; };
 		CEC0CAFE000000000000B109 /* CogRemoteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F109 /* CogRemoteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1185,7 +1185,7 @@
 		CEC0CAFE000000000000F001 /* CogRemoteControl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogRemoteControl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0CAFE000000000000F103 /* RemoteControlServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlServer.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlToolHandlers.swift; sourceTree = "<group>"; };
-		CEC0CAFE000000000000F105 /* RemoteControlTCPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlTCPApp.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F105 /* RemoteControlSocketApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlSocketApp.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F107 /* CogRemoteControlTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogRemoteControlTarget.h; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F108 /* RemoteControlServerBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlServerBridge.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F109 /* CogRemoteControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogRemoteControl.h; sourceTree = "<group>"; };
@@ -2183,7 +2183,7 @@
 				CEC0CAFE000000000000F107 /* CogRemoteControlTarget.h */,
 				CEC0CAFE000000000000F103 /* RemoteControlServer.swift */,
 				CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */,
-				CEC0CAFE000000000000F105 /* RemoteControlTCPApp.swift */,
+				CEC0CAFE000000000000F105 /* RemoteControlSocketApp.swift */,
 				CEC0CAFE000000000000F108 /* RemoteControlServerBridge.swift */,
 			);
 			path = CogRemoteControl;
@@ -3021,7 +3021,7 @@
 			files = (
 				CEC0CAFE000000000000B103 /* RemoteControlServer.swift in Sources */,
 				CEC0CAFE000000000000B104 /* RemoteControlToolHandlers.swift in Sources */,
-				CEC0CAFE000000000000B105 /* RemoteControlTCPApp.swift in Sources */,
+				CEC0CAFE000000000000B105 /* RemoteControlSocketApp.swift in Sources */,
 				CEC0CAFE000000000000B108 /* RemoteControlServerBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3653,14 +3653,15 @@
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
 				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
 				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
@@ -3669,6 +3670,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
 				PRODUCT_NAME = "cog-mcp";
@@ -3683,14 +3685,15 @@
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
 				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
 				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
 				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
@@ -3699,6 +3702,7 @@
 				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
 				ENABLE_RESOURCE_ACCESS_USB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
 				PRODUCT_NAME = "cog-mcp";
