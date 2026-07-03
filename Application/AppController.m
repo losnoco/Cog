@@ -43,6 +43,10 @@ static AppController *kAppController = nil;
 @synthesize miniWindow;
 @synthesize miniPlusWindow;
 
+@synthesize playbackController;
+@synthesize playlistController;
+@synthesize playlistLoader;
+
 + (void)initialize {
 	// Register transformers
 	NSValueTransformer *stringToURLTransformer = [StringToURLTransformer new];
@@ -365,6 +369,8 @@ static BOOL consentLastEnabled = NO;
 	       forKeyPath:@"playlistController.currentEntry"
 	          options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
 	          context:kAppControllerContext];
+
+	[CogRemoteControlBootstrap bootstrap];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -533,6 +539,8 @@ static BOOL consentLastEnabled = NO;
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
 	kAppControllerShuttingDown = YES;
+
+	[CogRemoteControlBootstrap shutdown];
 
 	CogStatus currentStatus = [playbackController playbackStatus];
 

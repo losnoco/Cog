@@ -237,6 +237,25 @@
 		B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */; };
 		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
 		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
+		CEC0CAFE000000000000B001 /* CogRemoteControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		CEC0CAFE000000000000B002 /* CogRemoteControl.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CEC0CAFE000000000000B003 /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC02 /* MCP */; };
+		CEC0CAFE000000000000B004 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC04 /* NIOCore */; };
+		CEC0CAFE000000000000B005 /* NIOPosix in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC05 /* NIOPosix */; };
+		CEC0CAFE000000000000B007 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC07 /* Logging */; };
+		CEC0CAFE000000000000B103 /* RemoteControlServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F103 /* RemoteControlServer.swift */; };
+		CEC0CAFE000000000000B104 /* RemoteControlToolHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */; };
+		CEC0CAFE000000000000B105 /* RemoteControlTCPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F105 /* RemoteControlTCPApp.swift */; };
+		CEC0CAFE000000000000B107 /* CogRemoteControlTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F107 /* CogRemoteControlTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEC0CAFE000000000000B108 /* RemoteControlServerBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F108 /* RemoteControlServerBridge.swift */; };
+		CEC0CAFE000000000000B109 /* CogRemoteControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F109 /* CogRemoteControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CEC0CAFE000000000000B201 /* CogRemoteControlAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F201 /* CogRemoteControlAdapter.swift */; };
+		CEC0CAFE000000000000B202 /* RemoteControlBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F202 /* RemoteControlBootstrap.swift */; };
+		CEC0CAFE000000000000B203 /* RemoteControlObjCBootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F203 /* RemoteControlObjCBootstrap.swift */; };
+		CEC0CAFE000000000000B204 /* RemoteControlPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F204 /* RemoteControlPaneView.swift */; };
+		CEC0CAFE000000000000B205 /* RemoteControlPaneAvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F205 /* RemoteControlPaneAvailableView.swift */; };
+		CEC0CAFE000000000000B301 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F302 /* main.swift */; };
+		CEC0CAFE000000000000B302 /* cog-mcp in Copy Executables */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F301 /* cog-mcp */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E20C8ADB5FA449AD83F40538 /* PreferencesRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */; };
 		ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; };
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -693,6 +712,20 @@
 			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
 			remoteInfo = FFMPEG;
 		};
+		CEC0CAFE000000000000D002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEC0CAFE000000000000A001;
+			remoteInfo = CogRemoteControl;
+		};
+		CEC0CAFE000000000000D004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEC0CAFE000000000000A002;
+			remoteInfo = "cog-mcp";
+		};
 		ED69CBBE25BE328C0090B90D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */;
@@ -779,6 +812,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CEC0CAFE000000000000B002 /* CogRemoteControl.framework in Copy Files */,
 				836DF617298F6F1700CD0580 /* libsoxr.0.dylib in Copy Files */,
 				836EF0E127BB98AB00BF35B2 /* libopusfile.0.dylib in Copy Files */,
 				836EF0E027BB98A800BF35B2 /* libopus.0.dylib in Copy Files */,
@@ -799,6 +833,17 @@
 				17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */,
 			);
 			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEC0CAFE0000000000005006 /* Copy Executables */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Helpers;
+			dstSubfolderSpec = 1;
+			files = (
+				CEC0CAFE000000000000B302 /* cog-mcp in Copy Executables */,
+			);
+			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1083,6 +1128,7 @@
 		83AA7D03279EBC8300087AA4 /* libavformat.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.dylib; path = ThirdParty/ffmpeg/lib/libavformat.62.dylib; sourceTree = "<group>"; };
 		83AB9031237CEFD300A433D5 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
+		83B30F652FF7A5D9003D672B /* CogMCP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CogMCP.entitlements; sourceTree = "<group>"; };
 		83B61E2329A8296500CD0580 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LyricsWindow.xib; sourceTree = "<group>"; };
 		83B61E2629A82A0200CD0580 /* LyricsWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LyricsWindowController.h; sourceTree = "<group>"; };
 		83B61E2729A82A0200CD0580 /* LyricsWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LyricsWindowController.m; sourceTree = "<group>"; };
@@ -1136,6 +1182,21 @@
 		CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindow.m; path = Window/MiniPlayerPlusWindow.m; sourceTree = "<group>"; };
 		CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindowController.h; path = Window/MiniPlayerPlusWindowController.h; sourceTree = "<group>"; };
 		CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindowController.m; path = Window/MiniPlayerPlusWindowController.m; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F001 /* CogRemoteControl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogRemoteControl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEC0CAFE000000000000F103 /* RemoteControlServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlServer.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlToolHandlers.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F105 /* RemoteControlTCPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlTCPApp.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F107 /* CogRemoteControlTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogRemoteControlTarget.h; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F108 /* RemoteControlServerBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlServerBridge.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F109 /* CogRemoteControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogRemoteControl.h; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F201 /* CogRemoteControlAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogRemoteControlAdapter.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F202 /* RemoteControlBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlBootstrap.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F203 /* RemoteControlObjCBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlObjCBootstrap.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F204 /* RemoteControlPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlPaneView.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F205 /* RemoteControlPaneAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlPaneAvailableView.swift; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F206 /* CogRemoteControlServerBridgeInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogRemoteControlServerBridgeInterface.h; sourceTree = "<group>"; };
+		CEC0CAFE000000000000F301 /* cog-mcp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cog-mcp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEC0CAFE000000000000F302 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesWindow.swift; path = Preferences/PreferencesWindow.swift; sourceTree = "<group>"; };
 		ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
 		EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSliderToolbarItem.swift; path = Window/PositionSliderToolbarItem.swift; sourceTree = "<group>"; };
@@ -1149,6 +1210,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEC0CAFE000000000000B001 /* CogRemoteControl.framework in Frameworks */,
 				0AC233A32F6C3B4900E6FE2E /* SwiftUIIntrospect in Frameworks */,
 				83DFCDA12E8532E5009E3DF1 /* nuked_sc55.framework in Frameworks */,
 				8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */,
@@ -1171,6 +1233,24 @@
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
 				8305963D277F013200EBFAAE /* File_Extractor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEC0CAFE0000000000005002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEC0CAFE000000000000B003 /* MCP in Frameworks */,
+				CEC0CAFE000000000000B004 /* NIOCore in Frameworks */,
+				CEC0CAFE000000000000B005 /* NIOPosix in Frameworks */,
+				CEC0CAFE000000000000B007 /* Logging in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEC0CAFE0000000000005005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1534,6 +1614,8 @@
 			isa = PBXGroup;
 			children = (
 				1770424E0B8BC41800B86321 /* Cog.app */,
+				CEC0CAFE000000000000F001 /* CogRemoteControl.framework */,
+				CEC0CAFE000000000000F301 /* cog-mcp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1544,7 +1626,11 @@
 				83CB1F592E74D83D001D6294 /* Play.icon */,
 				83D0380E24A40DF2004CF90F /* CogAssets.xcassets */,
 				83859520234FEB35004E9946 /* Cog.entitlements */,
+				83B30F652FF7A5D9003D672B /* CogMCP.entitlements */,
 				080E96DDFE201D6D7F000001 /* Classes */,
+				CEC0CAFE000000000000E001 /* CogRemoteControl */,
+				CEC0CAFE000000000000E003 /* CogMCP */,
+				CEC0CAFE000000000000E002 /* RemoteControl */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -1647,6 +1733,8 @@
 				50500000000000000000000C /* SandboxPathModel.swift */,
 				50500000000000000000000D /* AudioDeviceModel.swift */,
 				50500000000000000000000E /* LastFMPaneView.swift */,
+				CEC0CAFE000000000000F204 /* RemoteControlPaneView.swift */,
+				CEC0CAFE000000000000F205 /* RemoteControlPaneAvailableView.swift */,
 			);
 			name = Panes;
 			path = Preferences/Panes;
@@ -2088,6 +2176,38 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		CEC0CAFE000000000000E001 /* CogRemoteControl */ = {
+			isa = PBXGroup;
+			children = (
+				CEC0CAFE000000000000F109 /* CogRemoteControl.h */,
+				CEC0CAFE000000000000F107 /* CogRemoteControlTarget.h */,
+				CEC0CAFE000000000000F103 /* RemoteControlServer.swift */,
+				CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */,
+				CEC0CAFE000000000000F105 /* RemoteControlTCPApp.swift */,
+				CEC0CAFE000000000000F108 /* RemoteControlServerBridge.swift */,
+			);
+			path = CogRemoteControl;
+			sourceTree = "<group>";
+		};
+		CEC0CAFE000000000000E002 /* RemoteControl */ = {
+			isa = PBXGroup;
+			children = (
+				CEC0CAFE000000000000F206 /* CogRemoteControlServerBridgeInterface.h */,
+				CEC0CAFE000000000000F201 /* CogRemoteControlAdapter.swift */,
+				CEC0CAFE000000000000F202 /* RemoteControlBootstrap.swift */,
+				CEC0CAFE000000000000F203 /* RemoteControlObjCBootstrap.swift */,
+			);
+			path = RemoteControl;
+			sourceTree = "<group>";
+		};
+		CEC0CAFE000000000000E003 /* CogMCP */ = {
+			isa = PBXGroup;
+			children = (
+				CEC0CAFE000000000000F302 /* main.swift */,
+			);
+			path = CogMCP;
+			sourceTree = "<group>";
+		};
 		ED69CBB925BE328C0090B90D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2099,6 +2219,18 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CEC0CAFE0000000000005003 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEC0CAFE000000000000B109 /* CogRemoteControl.h in Headers */,
+				CEC0CAFE000000000000B107 /* CogRemoteControlTarget.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		8D1107260486CEB800E47090 /* Cog */ = {
@@ -2113,11 +2245,14 @@
 				8E757AEC09F3265E0080F1EE /* Copy Files */,
 				177FD1000B90CB570011C3B5 /* CopyFiles */,
 				07DFC3930ECDF80100DA400D /* Copy Files */,
+				CEC0CAFE0000000000005006 /* Copy Executables */,
 				83978E27285C5A4C0076ED21 /* Run Sentry symbol upload */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CEC0CAFE000000000000D001 /* PBXTargetDependency */,
+				CEC0CAFE000000000000D003 /* PBXTargetDependency */,
 				835DBDD82FAB062F00FAD80F /* PBXTargetDependency */,
 				8389FCC02E76D4FB004FAB82 /* PBXTargetDependency */,
 				83B73B642D8FD74000A57F08 /* PBXTargetDependency */,
@@ -2161,6 +2296,45 @@
 			productReference = 1770424E0B8BC41800B86321 /* Cog.app */;
 			productType = "com.apple.product-type.application";
 		};
+		CEC0CAFE000000000000A001 /* CogRemoteControl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEC0CAFE000000000000C000 /* Build configuration list for PBXNativeTarget "CogRemoteControl" */;
+			buildPhases = (
+				CEC0CAFE0000000000005003 /* Headers */,
+				CEC0CAFE0000000000005001 /* Sources */,
+				CEC0CAFE0000000000005002 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CogRemoteControl;
+			packageProductDependencies = (
+				CEC0CAFE000000000000AC02 /* MCP */,
+				CEC0CAFE000000000000AC04 /* NIOCore */,
+				CEC0CAFE000000000000AC05 /* NIOPosix */,
+				CEC0CAFE000000000000AC07 /* Logging */,
+			);
+			productName = CogRemoteControl;
+			productReference = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		CEC0CAFE000000000000A002 /* cog-mcp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEC0CAFE000000000000C100 /* Build configuration list for PBXNativeTarget "cog-mcp" */;
+			buildPhases = (
+				CEC0CAFE0000000000005004 /* Sources */,
+				CEC0CAFE0000000000005005 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cog-mcp";
+			productName = "cog-mcp";
+			productReference = CEC0CAFE000000000000F301 /* cog-mcp */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2183,6 +2357,9 @@
 			packageReferences = (
 				83F9FFED2D6EB75B00026576 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				0AC233A12F6C3B4900E6FE2E /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
+				CEC0CAFE000000000000AC01 /* XCRemoteSwiftPackageReference "swift-sdk" */,
+				CEC0CAFE000000000000AC03 /* XCRemoteSwiftPackageReference "swift-nio" */,
+				CEC0CAFE000000000000AC08 /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			projectDirPath = "";
 			projectReferences = (
@@ -2326,6 +2503,8 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Cog */,
+				CEC0CAFE000000000000A001 /* CogRemoteControl */,
+				CEC0CAFE000000000000A002 /* cog-mcp */,
 			);
 		};
 /* End PBXProject section */
@@ -2801,6 +2980,11 @@
 				83E998722F7131140017AE33 /* TotalTimeTransformer.swift in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,
 				B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */,
+				CEC0CAFE000000000000B201 /* CogRemoteControlAdapter.swift in Sources */,
+				CEC0CAFE000000000000B202 /* RemoteControlBootstrap.swift in Sources */,
+				CEC0CAFE000000000000B203 /* RemoteControlObjCBootstrap.swift in Sources */,
+				CEC0CAFE000000000000B204 /* RemoteControlPaneView.swift in Sources */,
+				CEC0CAFE000000000000B205 /* RemoteControlPaneAvailableView.swift in Sources */,
 				E20C8ADB5FA449AD83F40538 /* PreferencesRootView.swift in Sources */,
 				62FE80E521E14AFB9C8B48E5 /* PreferencesWindow.swift in Sources */,
 				515000000000000000000001 /* PreferencePaneDescriptor.swift in Sources */,
@@ -2828,6 +3012,25 @@
 				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,
 				F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEC0CAFE0000000000005001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEC0CAFE000000000000B103 /* RemoteControlServer.swift in Sources */,
+				CEC0CAFE000000000000B104 /* RemoteControlToolHandlers.swift in Sources */,
+				CEC0CAFE000000000000B105 /* RemoteControlTCPApp.swift in Sources */,
+				CEC0CAFE000000000000B108 /* RemoteControlServerBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEC0CAFE0000000000005004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEC0CAFE000000000000B301 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2989,6 +3192,16 @@
 			name = Pls;
 			targetProxy = 8E8D41CB0CBB0DD200135C1B /* PBXContainerItemProxy */;
 		};
+		CEC0CAFE000000000000D001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEC0CAFE000000000000A001 /* CogRemoteControl */;
+			targetProxy = CEC0CAFE000000000000D002 /* PBXContainerItemProxy */;
+		};
+		CEC0CAFE000000000000D003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEC0CAFE000000000000A002 /* cog-mcp */;
+			targetProxy = CEC0CAFE000000000000D004 /* PBXContainerItemProxy */;
+		};
 		ED69CBC625BE32B40090B90D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = MASShortcut;
@@ -3110,17 +3323,21 @@
 /* Begin XCBuildConfiguration section */
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
 				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
@@ -3173,6 +3390,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog;
 				PRODUCT_NAME = Cog;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
 				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
 				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
@@ -3189,16 +3407,20 @@
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				AUTOMATION_APPLE_EVENTS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
 				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
@@ -3249,6 +3471,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog;
 				PRODUCT_NAME = Cog;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
 				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
 				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
@@ -3292,7 +3515,6 @@
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3342,7 +3564,6 @@
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = N6E749HJ2X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3357,6 +3578,132 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		CEC0CAFE000000000000C001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.RemoteControl;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CEC0CAFE000000000000C002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.RemoteControl;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		CEC0CAFE000000000000C101 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
+				PRODUCT_NAME = "cog-mcp";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CEC0CAFE000000000000C102 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
+				PRODUCT_NAME = "cog-mcp";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -3381,6 +3728,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		CEC0CAFE000000000000C000 /* Build configuration list for PBXNativeTarget "CogRemoteControl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEC0CAFE000000000000C001 /* Debug */,
+				CEC0CAFE000000000000C002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEC0CAFE000000000000C100 /* Build configuration list for PBXNativeTarget "cog-mcp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEC0CAFE000000000000C101 /* Debug */,
+				CEC0CAFE000000000000C102 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -3400,6 +3765,30 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		CEC0CAFE000000000000AC01 /* XCRemoteSwiftPackageReference "swift-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/modelcontextprotocol/swift-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.11.0;
+			};
+		};
+		CEC0CAFE000000000000AC03 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.65.0;
+			};
+		};
+		CEC0CAFE000000000000AC08 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3412,6 +3801,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 83F9FFED2D6EB75B00026576 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = Sentry;
+		};
+		CEC0CAFE000000000000AC02 /* MCP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEC0CAFE000000000000AC01 /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = MCP;
+		};
+		CEC0CAFE000000000000AC04 /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEC0CAFE000000000000AC03 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOCore;
+		};
+		CEC0CAFE000000000000AC05 /* NIOPosix */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEC0CAFE000000000000AC03 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOPosix;
+		};
+		CEC0CAFE000000000000AC07 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CEC0CAFE000000000000AC08 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
 		};
 /* End XCSwiftPackageProductDependency section */
 

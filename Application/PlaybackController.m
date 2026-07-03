@@ -511,6 +511,25 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
+- (double)volume {
+	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+	return logarithmicToLinear([audioPlayer volume], MAX_VOLUME);
+}
+
+- (void)setVolume:(double)volume {
+	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+	volume = MAX(0.0, MIN(volume, 100.0));
+
+	[audioPlayer setVolume:linearToLogarithmic(volume, MAX_VOLUME)];
+	[volumeSlider setDoubleValue:volume];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
+}
+
 /* selector for NSTimer - gets passed the Timer object itself
  and the appropriate userInfo, which in this case is an NSNumber
  containing the current volume before we start fading. */

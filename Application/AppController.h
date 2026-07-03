@@ -67,6 +67,11 @@
 @property(strong) IBOutlet NSButton *infoButton;
 @property(strong) IBOutlet NSButton *infoButtonMini;
 
+// Expose the nib-connected controllers (synthesized onto the existing ivars)
+@property(nonatomic, readonly) PlaybackController *playbackController;
+@property(nonatomic, readonly) PlaylistController *playlistController;
+@property(nonatomic, readonly) PlaylistLoader *playlistLoader;
+
 - (IBAction)openURL:(id)sender;
 
 - (IBAction)openFiles:(id)sender;
