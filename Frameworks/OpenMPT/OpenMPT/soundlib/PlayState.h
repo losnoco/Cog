@@ -91,6 +91,12 @@ public:
 
 	void UpdateTimeSignature(const CSoundFile &sndFile) noexcept;
 	void UpdatePPQ(bool patternTransition) noexcept;
+	double PPQPos() const noexcept;
+
+	constexpr bool AtStartOfTick() const noexcept
+	{
+		return m_nBufferCount == m_nSamplesPerTick;
+	}
 
 	constexpr uint32 TicksOnRow() const noexcept
 	{

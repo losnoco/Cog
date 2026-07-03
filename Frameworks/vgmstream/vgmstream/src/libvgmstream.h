@@ -28,7 +28,7 @@
  * This may make the API a bit odd, will probably improve later. Probably.
  *
  * Notes:
- * - now there is an API, internals (vgmstream.h) will change in the future so avoid accesing them
+ * - now there is an API, internals (vgmstream.h) will change in the future so avoid including or accesing them
  * - some details described in the API may not happen at the moment (defined for future changes)
  * - uses long-winded libvgmstream_* names since internals already use the vgmstream_* 'namespace', #define if needed
  * - c-strings should be in UTF-8
@@ -43,12 +43,20 @@
 //LIBVGMSTREAM_API (type) LIBVGMSTREAM_CALL libvgmstream_function(...);
 
 /* external function behavior (for compile time) */
-#if defined(LIBVGMSTREAM_EXPORT)
-    #define LIBVGMSTREAM_API __declspec(dllexport) /* when exporting/creating vgmstream DLL */
-#elif defined(LIBVGMSTREAM_IMPORT)
-    #define LIBVGMSTREAM_API __declspec(dllimport) /* when importing/linking vgmstream DLL */
+#if defined(_MSC_VER) || defined(__CYGWIN__)
+    #if defined(LIBVGMSTREAM_EXPORT)
+        #define LIBVGMSTREAM_API __declspec(dllexport) /* when exporting/creating vgmstream DLL */
+    #elif defined(LIBVGMSTREAM_IMPORT)
+        #define LIBVGMSTREAM_API __declspec(dllimport) /* when importing/linking vgmstream DLL */
+    #else
+        #define LIBVGMSTREAM_API /* nothing, internal/default */
+    #endif
 #else
-    #define LIBVGMSTREAM_API /* nothing, internal/default */
+    #if defined(LIBVGMSTREAM_EXPORT)
+        #define LIBVGMSTREAM_API __attribute__ ((visibility ("default"))) /* when exporting/creating vgmstream SO */
+    #else
+        #define LIBVGMSTREAM_API
+    #endif
 #endif
 
 #include <stdint.h>
@@ -294,7 +302,7 @@ LIBVGMSTREAM_API const char** libvgmstream_get_common_extensions(int* size);
 
 typedef struct {
     bool is_extension;           /* set if filename is just an extension (otherwise may be seen as 'extensionless') */
-    bool skip_standard;           /* disable extension check vs default formats */
+    bool skip_standard;          /* disable extension check vs default formats */
     bool reject_extensionless;   /* enable if player can't play extensionless files */
     bool accept_unknown;         /* enable to allow any extension even if not known by vgmstream (for .txth) */
     bool accept_common;          /* enable to allow known-but-common extension (when player has plugin priority) */

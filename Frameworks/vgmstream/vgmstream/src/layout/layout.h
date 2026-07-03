@@ -6,11 +6,13 @@
 #include "../util/reader_sf.h"
 #include "../util/log.h"
 #include "../base/sbuf.h"
+#include "../base/rc.h"
+
 
 /* basic layouts */
-void render_vgmstream_flat(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+rc_t render_layout_flat(sbuf_t* sbuf, VGMSTREAM* vgmstream);
 
-void render_vgmstream_interleave(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+rc_t render_layout_interleave(sbuf_t* sbuf, VGMSTREAM* vgmstream);
 
 
 /* segmented layout */
@@ -19,14 +21,14 @@ typedef struct {
     int segment_count;
     VGMSTREAM** segments;
     int current_segment;
-    sample_t* buffer;
-    int input_channels;     /* internal buffer channels */
-    int output_channels;    /* resulting channels (after mixing, if applied) */
-    bool mixed_channels;     /* segments have different number of channels */
+    void* buffer;
+    int input_channels;     // internal buffer channels
+    int output_channels;    // resulting channels (after mixing, if applied)
+    bool mixed_channels;    // segments have different number of channels //TODO remove
     sfmt_t fmt;
 } segmented_layout_data;
 
-void render_vgmstream_segmented(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+rc_t render_layout_segmented(sbuf_t* sbuf, VGMSTREAM* vgmstream);
 segmented_layout_data* init_layout_segmented(int segment_count);
 bool setup_layout_segmented(segmented_layout_data* data);
 void free_layout_segmented(segmented_layout_data* data);
@@ -41,14 +43,14 @@ typedef struct {
     int layer_count;
     VGMSTREAM** layers;
     void* buffer;
-    int input_channels;     /* internal buffer channels */
-    int output_channels;    /* resulting channels (after mixing, if applied) */
-    int external_looping;   /* don't loop using per-layer loops, but layout's own looping */
-    int curr_layer;         /* helper */
+    int input_channels;     // internal buffer channels
+    int output_channels;    // resulting channels (after mixing, if applied)
+    int external_looping;   // don't loop using per-layer loops, but layout's own looping
+    int curr_layer;         // helper
     sfmt_t fmt;
 } layered_layout_data;
 
-void render_vgmstream_layered(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+rc_t render_layout_layered(sbuf_t* sbuf, VGMSTREAM* vgmstream);
 layered_layout_data* init_layout_layered(int layer_count);
 bool setup_layout_layered(layered_layout_data* data);
 void free_layout_layered(layered_layout_data* data);
@@ -58,7 +60,8 @@ void loop_layout_layered(VGMSTREAM* vgmstream, int32_t loop_sample);
 
 
 /* blocked layouts */
-void render_vgmstream_blocked(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+rc_t render_layout_blocked(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+
 void block_update(off_t block_offset, VGMSTREAM* vgmstream);
 
 void block_update_ast(off_t block_ofset, VGMSTREAM* vgmstream);
@@ -93,12 +96,14 @@ void block_update_xvag_subsong(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_ea_wve_au00(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_ea_wve_ad10(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_sthd(off_t block_offset, VGMSTREAM* vgmstream);
-void block_update_h4m(off_t block_offset, VGMSTREAM* vgmstream);
+void block_update_hvqm4(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_xa_aiff(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_vs_square(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_vid1(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_ubi_sce(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_tt_ad(off_t block_offset, VGMSTREAM* vgmstream);
 void block_update_vas(off_t block_offset, VGMSTREAM* vgmstream);
+void block_update_cf_df(off_t block_offset, VGMSTREAM* vgmstream);
+void block_update_cf_df_v5(off_t block_offset, VGMSTREAM* vgmstream);
 
 #endif

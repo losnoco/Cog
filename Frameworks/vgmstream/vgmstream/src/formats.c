@@ -125,7 +125,6 @@ static const char* extension_list[] = {
     "bkh",
     "bkr",  //txth/reserved [P.N.03 (GC), Viewtiful Joe (GC)]
     "blk",
-    "bmdx", //fake extension (to be removed?)
     "bms",
     "bnk",
     "bnm",
@@ -279,6 +278,7 @@ static const char* extension_list[] = {
     "is14",
     "isb",
     "isd",
+    "ish",
     "isws",
     "itl",
     "ivaud",
@@ -361,7 +361,7 @@ static const char* extension_list[] = {
     "mdsp",
     "med",
     "mhk",
-    "mjb",
+    "mjh",
     "mi4", //fake extension for .mib (renamed, to be removed)
     "mib",
     "mic",
@@ -427,6 +427,8 @@ static const char* extension_list[] = {
     "nwa",
     "nwav",
     "nxa",
+    "nxms",
+    "nxse", //txth/reserved [Tetris the Grand Master 4: Absolute Eye (Switch)]
     "nxopus",
 
     "oga",
@@ -709,6 +711,7 @@ static const char* extension_list[] = {
     "wic", //txth/reserved [Road Rash (SAT)-videos]
     "wip", //txth/reserved [Colin McRae DiRT (PC)]
     "wlv", //txth/reserved [ToeJam & Earl III: Mission to Earth (DC)]
+    "wmw",
     "wp2",
     "wpd",
     "wsd",
@@ -719,9 +722,10 @@ static const char* extension_list[] = {
     "wv6",
     "wvd", //txth/reserved [Donkey Kong Barrel Blast (Wii)]
     "wve",
+    "wvp", //txth/semi [Virtua Cop 2 (PC)]
     "wvs",
     "wvx",
-    "wxd",
+    "wxh",
     "wxv",
 
     "x",
@@ -867,6 +871,7 @@ static const coding_info coding_info_list[] = {
         {coding_NGC_DTK,            "Nintendo DTK 4-bit ADPCM"},
         {coding_AFC,                "Nintendo AFC 4-bit ADPCM"},
         {coding_AFC_2bit,           "Nintendo AFC 2-bit ADPCM"},
+        {coding_AFC_4X,             "Nintendo AFC 4X 4-bit ADPCM"},
         {coding_VADPCM,             "Silicon Graphics VADPCM 4-bit ADPCM"},
 
         {coding_G721,               "CCITT G.721 4-bit ADPCM"},
@@ -904,6 +909,7 @@ static const coding_info coding_info_list[] = {
         {coding_MS_IMA_mono,        "Microsoft 4-bit IMA ADPCM (mono)"},
         {coding_XBOX_IMA,           "XBOX 4-bit IMA ADPCM"},
         {coding_XBOX_IMA_mch,       "XBOX 4-bit IMA ADPCM (multichannel)"},
+        {coding_XBOX_IMA_saber,     "XBOX 4-bit IMA ADPCM (Saber)"},
         {coding_XBOX_IMA_mono,      "XBOX 4-bit IMA ADPCM (mono)"},
         {coding_NDS_IMA,            "NDS-style 4-bit IMA ADPCM"},
         {coding_DAT4_IMA,           "Eurocom DAT4 4-bit IMA ADPCM"},
@@ -916,7 +922,7 @@ static const coding_info coding_info_list[] = {
         {coding_AWC_IMA,            "Rockstar AWC 4-bit IMA ADPCM"},
         {coding_UBI_IMA,            "Ubisoft 4-bit IMA ADPCM"},
         {coding_UBI_SCE_IMA,        "Ubisoft 4-bit SCE IMA ADPCM"},
-        {coding_H4M_IMA,            "Hudson HVQM4 4-bit IMA ADPCM"},
+        {coding_HVQM4_IMA,          "Hudson HVQM4 4-bit IMA ADPCM"},
         {coding_CD_IMA,             "Crystal Dynamics 4-bit IMA ADPCM"},
         {coding_CRANKCASE_IMA,      "CrankcaseAudio REV 4-bit IMA ADPCM"},
 
@@ -973,8 +979,11 @@ static const coding_info coding_info_list[] = {
         {coding_UBI_MPEG,           "Ubisoft MPEG"},
         {coding_MIO,                "Entis MIO"},
         {coding_BINKA,              "RAD Game tools Bink Audio"},
+        {coding_AAC_raw,            "Custom AAC"},
         {coding_CF_DF_ADPCM_V40,    "Cyberflix DreamFactory v4.0 ADPCM"},
         {coding_CF_DF_DPCM_V41,     "Cyberflix DreamFactory v4.1 DPCM"},
+        {coding_CF_DF_ADPCM_v5,     "Cyberflix DreamFactory v5 ADPCM"},
+        {coding_CF_DF_IMA_v5,       "Cyberflix DreamFactory v5 IMA ADPCM"},
 
 #ifdef VGM_USE_VORBIS
         {coding_OGG_VORBIS,         "Ogg Vorbis"},
@@ -1049,13 +1058,15 @@ static const layout_info layout_info_list[] = {
         {layout_blocked_ea_wve_au00,    "blocked (EA WVE au00)"},
         {layout_blocked_ea_wve_ad10,    "blocked (EA WVE Ad10)"},
         {layout_blocked_sthd,           "blocked (STHD)"},
-        {layout_blocked_h4m,            "blocked (H4M)"},
+        {layout_blocked_hvqm4,          "blocked (HVQM4)"},
         {layout_blocked_xa_aiff,        "blocked (XA AIFF)"},
         {layout_blocked_vs_square,      "blocked (Square VS)"},
         {layout_blocked_vid1,           "blocked (VID1)"},
         {layout_blocked_ubi_sce,        "blocked (Ubi SCE)"},
         {layout_blocked_tt_ad,          "blocked (TT AD)"},
         {layout_blocked_vas,            "blocked (VAS)"},
+        {layout_blocked_cf_df,          "blocked (Cyberflix DreamFactory CF_DF)"},
+        {layout_blocked_cf_df_v5,       "blocked (Cyberflix DreamFactory v5 CF_DF)"},
 };
 
 static const meta_info meta_info_list[] = {
@@ -1080,8 +1091,8 @@ static const meta_info meta_info_list[] = {
         {meta_DSP_STD,              "Nintendo DSP header"},
         {meta_DSP_CSTR,             "Namco Cstr header"},
         {meta_GCSW,                 "MileStone GCSW header"},
-        {meta_ADS,                  "Sony ADS header"},
-        {meta_NPS,                  "Namco NPSF header"},
+        {meta_SSHD,                 "Sony SSHD header"},
+        {meta_NPSF,                 "Namco NPSF header"},
         {meta_RWSD,                 "Nintendo RWSD header (single stream)"},
         {meta_RWAR,                 "Nintendo RWAR header (single stream)"},
         {meta_RWAV,                 "Nintendo RWAV header"},
@@ -1120,7 +1131,6 @@ static const meta_info meta_info_list[] = {
         {meta_GENH,                 "GENH generic header"},
         {meta_DSP_SADB,             "Procyon Studio SADB header"},
         {meta_SADL,                 "Procyon Studio SADL header"},
-        {meta_PS2_BMDX,             "Beatmania .bmdx header"},
         {meta_DSP_WSI,              "Alone in the Dark .WSI header"},
         {meta_AIFC,                 "Apple AIFF-C header"},
         {meta_AIFF,                 "Apple AIFF header"},
@@ -1207,7 +1217,7 @@ static const meta_info meta_info_list[] = {
         {meta_GSND,                 "Tecmo GSND Header"},
         {meta_YDSP,                 "Yuke's YDSP Header"},
         {meta_SSM,                  "HAL Laboratory .SSM Header"},
-        {meta_PS2_JOE,              "Asobo Studio .JOE header"},
+        {meta_JOE,                  "Asobo Studio .JOE header"},
         {meta_VGS,                  "Harmonix VGS Header"},
         {meta_DCS_WAV,              "In Utero DCS+WAV header"},
         {meta_SMP,                  "Infernal Engine .smp header"},
@@ -1231,7 +1241,7 @@ static const meta_info meta_info_list[] = {
         {meta_RAGE_AUD,             "Rockstar AUD header"},
         {meta_DSP_WII_WSD,          ".WSD header"},
         {meta_WII_NDP,              "Icon Games NDP header"},
-        {meta_NDS_HWAS,             "Vicarious Visions HWAS header"},
+        {meta_HWAS,                 "Vicarious Visions HWAS header"},
         {meta_LPS,                  "Konami .LPS Header"},
         {meta_NAOMI_ADPCM,          "NAOMI/NAOMI2 Arcade games ADPCM header"},
         {meta_SD9,                  "Konami SD9 header"},
@@ -1309,7 +1319,7 @@ static const meta_info meta_info_list[] = {
         {meta_IVAG,                 "Namco IVAG header"},
         {meta_2PFS,                 "Konami 2PFS header"},
         {meta_UBI_CKD,              "Ubisoft CKD RIFF header"},
-        {meta_PS2_VBK,              "PS2 VBK Header"},
+        {meta_VBK,                  "High Voltage VBK header"},
         {meta_XWB_KONAMI,           "Konami .XWB header"},
         {meta_CSTM,                 "Nintendo CSTM Header"},
         {meta_FSTM,                 "Nintendo FSTM Header"},
@@ -1388,7 +1398,7 @@ static const meta_info meta_info_list[] = {
         {meta_UBI_BAO,              "Ubisoft BAO header"},
         {meta_DSP_SWITCH_AUDIO,     "UE4 Switch Audio header"},
         {meta_SADF,                 "Procyon Studio SADF header"},
-        {meta_H4M,                  "Hudson HVQM4 header"},
+        {meta_HVQM4,                "Hudson HVQM4 header"},
         {meta_ASF,                  "Argonaut ASF header"},
         {meta_XMD,                  "Konami XMD header"},
         {meta_CKS,                  "Cricket Audio CKS header"},
@@ -1406,7 +1416,7 @@ static const meta_info meta_info_list[] = {
         {meta_SVGP,                 "High Voltage SVGp header"},
         {meta_VAI,                  "Asobo Studio .VAI header"},
         {meta_AIF_ASOBO,            "Asobo Studio .AIF header"},
-        {meta_AO,                   "AlphaOgg .AO header"},
+        {meta_ALPHAOGG,             "AlphaOgg .AO header"},
         {meta_APC,                  "Cryo APC header"},
         {meta_WAV2,                 "Infogrames North America WAV2 header"},
         {meta_SFXB,                 "Konami SFXB header"},
@@ -1501,7 +1511,7 @@ static const meta_info meta_info_list[] = {
         {meta_AWD,                  "RenderWare AWD header"},
         {meta_SQUEAKSTREAM,         "Torus SqueakStream header"},
         {meta_SQUEAKSAMPLE,         "Torus SqueakSample header"},
-        {meta_SNDS,                 "Sony SNDS header"},
+        {meta_SSDD,                 "Sony SSDD header"},
         {meta_NXOF,                 "Nihon Falcom FDK header"},
         {meta_GWB_GWD,              "Ubisoft GWB+GWD header"},
         {meta_CBX,                  "Traveller's Tales/Warthog Chatterbox header"},
@@ -1525,6 +1535,7 @@ static const meta_info meta_info_list[] = {
         {meta_SRCD,                 "Capcom SRCD header"},
         {meta_MHWK,                 "Broderbund MHWK header"},
         {meta_CF_DF,                "Cyberflix DreamFactory header"},
+        {meta_CF_DF_D5,             "Cyberflix DreamFactory D5 header"},
         {meta_JAUDIO,               "Nintendo JAudio header"},
         {meta_BCF1,                 "RAD BCF1 header"},
         {meta_UEBA,                 "Epic Games UEBA header"},
@@ -1533,6 +1544,10 @@ static const meta_info meta_info_list[] = {
         {meta_PS2P,                 "THQ Australia PS2P header"},
         {meta_GCSP,                 "THQ Australia GCSP header"},
         {meta_UEOPUS,               "Epic Games UEOPUS header"},
+        {meta_WMW,                  "Artoon WMW header"},
+        {meta_PXND,                 "Pixelbite PXND header"},
+        {meta_NXMS,                 "Arika NXMS header"},
+        {meta_SAUD,                 "LucasArts SAUD header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* out, size_t out_size) {

@@ -41,6 +41,7 @@ typedef enum {
     coding_NGC_DTK,         /* Nintendo DTK ADPCM (hardware disc), also called TRK or ADP */
     coding_AFC,             /* Nintendo AFC ADPCM */
     coding_AFC_2bit,        /* Nintendo AFC ADPCM (2-bit) */
+    coding_AFC_4X,          /* Nintendo AFC 4X ADPCM */
     coding_VADPCM,          /* Silicon Graphics VADPCM */
 
     coding_G721,            /* CCITT G.721 */
@@ -77,6 +78,7 @@ typedef enum {
     coding_MS_IMA_mono,     /* Microsoft IMA ADPCM (mono) */
     coding_XBOX_IMA,        /* XBOX IMA ADPCM */
     coding_XBOX_IMA_mch,    /* XBOX IMA ADPCM (multichannel) */
+    coding_XBOX_IMA_saber,  /* XBOX IMA ADPCM (Saber) */
     coding_XBOX_IMA_mono,   /* XBOX IMA ADPCM (mono) */
     coding_NDS_IMA,         /* IMA ADPCM w/ NDS layout */
     coding_DAT4_IMA,        /* Eurocom 'DAT4' IMA ADPCM */
@@ -89,7 +91,7 @@ typedef enum {
     coding_AWC_IMA,         /* Rockstar AWC IMA ADPCM */
     coding_UBI_IMA,         /* Ubisoft IMA ADPCM */
     coding_UBI_SCE_IMA,     /* Ubisoft SCE IMA ADPCM */
-    coding_H4M_IMA,         /* H4M IMA ADPCM (stereo or mono, high nibble first) */
+    coding_HVQM4_IMA,       /* HVQM4 IMA ADPCM (stereo or mono, high nibble first) */
     coding_MTF_IMA,         /* Capcom MT Framework IMA ADPCM */
     coding_CD_IMA,          /* Crystal Dynamics IMA ADPCM */
     coding_CRANKCASE_IMA,   /* CrankcaseAudio REV IMA ADPCM */
@@ -152,9 +154,12 @@ typedef enum {
     coding_UBI_MPEG,        /* Ubisoft MPEG codec (transform-based) */
     coding_MIO,             /* Entis MIO codec (transform-based) */
     coding_BINKA,           /* RAD Game Tools Bink Audio codec (transform-based) */
+    coding_AAC_raw,         /* AAC raw frames (transform-based) */
 
     coding_CF_DF_ADPCM_V40, /* Cyberflix DreamFactory v4.0 ADPCM */
     coding_CF_DF_DPCM_V41,  /* Cyberflix DreamFactory v4.1 DPCM */
+    coding_CF_DF_ADPCM_v5,  /* Cyberflix DreamFactory v5 (per-block, <<9) */
+    coding_CF_DF_IMA_v5,    /* Cyberflix DreamFactory v5 IMA ADPCM (per-block) */
 
 #ifdef VGM_USE_VORBIS
     coding_OGG_VORBIS,      /* Xiph Vorbis with Ogg layer (transform-based) */
@@ -239,13 +244,15 @@ typedef enum {
     layout_blocked_ea_wve_au00, /* EA WVE au00 blocks */
     layout_blocked_ea_wve_ad10, /* EA WVE Ad10 blocks */
     layout_blocked_sthd,        /* Dream Factory STHD */
-    layout_blocked_h4m,         /* H4M video */
+    layout_blocked_hvqm4,
     layout_blocked_xa_aiff,     /* XA in AIFF files [Crusader: No Remorse (SAT), Road Rash (3DO)] */
     layout_blocked_vs_square,
     layout_blocked_vid1,
     layout_blocked_ubi_sce,
     layout_blocked_tt_ad,
     layout_blocked_vas,
+    layout_blocked_cf_df,
+    layout_blocked_cf_df_v5,
 
     /* otherwise odd */
     layout_segmented,       /* song divided in segments (song sections) */
@@ -309,8 +316,8 @@ typedef enum {
     meta_BNSF,              /* Bandai Namco Sound Format */
 
     meta_XA,
-    meta_ADS,
-    meta_NPS,
+    meta_SSHD,
+    meta_NPSF,
     meta_RXWS,
     meta_RAW_INT,
     meta_EXST,
@@ -327,7 +334,6 @@ typedef enum {
     meta_ILD,
     meta_PWB,
     meta_VPK,               /* VPK Audio File */
-    meta_PS2_BMDX,          /* Beatmania thing */
     meta_IIVB,
     meta_SSND,
     meta_SVS,
@@ -377,7 +383,7 @@ typedef enum {
     meta_UBI_JADE,          /* Beyond Good & Evil, Rayman Raving Rabbids */
     meta_GCA,               /* Metal Slug Anthology */
     meta_SSM,
-    meta_PS2_JOE,           /* Wall-E / Pixar games */
+    meta_JOE,
     meta_YMF,
     meta_SADL,
     meta_FAG,               /* Jackie Chan - Stuntmaster */
@@ -444,7 +450,7 @@ typedef enum {
     meta_ZSD,
     meta_REDSPARK,
     meta_RAGE_AUD,          /* Rockstar AUD - MC:LA, GTA IV */
-    meta_NDS_HWAS,          /* Spider-Man 3, Tony Hawk's Downhill Jam, possibly more... */
+    meta_HWAS,
     meta_LPS,
     meta_NAOMI_ADPCM,       /* NAOMI/NAOMI2 Arcade games */
     meta_SD9,
@@ -513,7 +519,7 @@ typedef enum {
     meta_HSF,
     meta_IVAG,
     meta_2PFS,
-    meta_PS2_VBK,           /* Disney's Stitch - Experiment 626 */
+    meta_VBK,
     meta_XWB_KONAMI,
     meta_CSTM,              /* Nintendo 3DS CSTM (Century Stream) */
     meta_FSTM,              /* Nintendo Wii U FSTM (caFe? Stream) */
@@ -590,7 +596,7 @@ typedef enum {
     meta_SPS_N1,
     meta_UBI_BAO,
     meta_DSP_SWITCH_AUDIO,  /* Gal Gun 2 (Switch) */
-    meta_H4M,               /* Hudson HVQM4 video [Resident Evil 0 (GC), Tales of Symphonia (GC)] */
+    meta_HVQM4,
     meta_ASF,               /* Argonaut ASF [Croc 2 (PC)] */
     meta_XMD,               /* Konami XMD [Silent Hill 4 (Xbox), Castlevania: Curse of Darkness (Xbox)] */
     meta_CKS,               /* Cricket Audio stream [Part Time UFO (Android), Mega Man 1-6 (Android)] */
@@ -608,7 +614,7 @@ typedef enum {
     meta_SVGP,
     meta_VAI,               /* Ratatouille (GC) */
     meta_AIF_ASOBO,         /* Ratatouille (PC) */
-    meta_AO,                /* Cloudphobia (PC) */
+    meta_ALPHAOGG,
     meta_APC,               /* MegaRace 3 (PC) */
     meta_WAV2,
     meta_SFXB,
@@ -704,7 +710,7 @@ typedef enum {
     meta_AWD,
     meta_SQUEAKSTREAM,
     meta_SQUEAKSAMPLE,
-    meta_SNDS,
+    meta_SSDD,
     meta_NXOF,
     meta_GWB_GWD,
     meta_CBX,
@@ -728,6 +734,7 @@ typedef enum {
     meta_SRCD,
     meta_MHWK,
     meta_CF_DF,
+    meta_CF_DF_D5,
     meta_JAUDIO,
     meta_BCF1,
     meta_UEBA,
@@ -736,6 +743,10 @@ typedef enum {
     meta_PS2P,
     meta_GCSP,
     meta_UEOPUS,
+    meta_WMW,
+    meta_PXND,
+    meta_NXMS,
+    meta_SAUD,
 } meta_t;
 
 #endif

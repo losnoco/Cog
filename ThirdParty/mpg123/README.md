@@ -1,9 +1,9 @@
-Built from the latest version indicated by Homebrew, 1.33.2, using the
+Built from the latest version indicated by Homebrew, 1.33.5, using the
 following commands:
 
 ```
 for arch in x86_64 arm64; do
-  arch -"$arch" env CFLAGS="-g -Os -mmacosx-version-min=10.13 -arch $arch" CXXFLAGS="-g -Os -mmacosx-version-min=10.13 -arch $arch" LDFLAGS="-mmacosx-version-min=10.13 -arch $arch" ./configure
+  arch -"$arch" env CFLAGS="-g -Os -mmacosx-version-min=10.15 -arch $arch" CXXFLAGS="-g -Os -mmacosx-version-min=10.15 -arch $arch" LDFLAGS="-mmacosx-version-min=10.15 -arch $arch" ./configure
   make -j14
   cp src/libmpg123/.libs/libmpg123.0.dylib ./libmpg123.0_$arch.dylib
   make clean

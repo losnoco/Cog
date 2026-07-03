@@ -9,7 +9,7 @@
  * outbuf must big enough to hold output_channels*samples_to_do */
 void mix_vgmstream(sbuf_t* sbuf, VGMSTREAM* vgmstream);
 
-void resample_vgmstream(sbuf_t* sbuf, VGMSTREAM* vgmstream);
+void resample_vgmstream(sbuf_t* sbuf, VGMSTREAM* vgmstream, bool is_eor);
 
 /* Call to let vgmstream apply mixing, which must handle input/output_channels.
  * Once mixing is active any new mixes are ignored (to avoid the possibility
@@ -19,6 +19,7 @@ void mixing_setup(VGMSTREAM* vgmstream, int32_t max_sample_count);
 /* gets current mixing info */
 void mixing_info(VGMSTREAM* vgmstream, int* input_channels, int* output_channels);
 
+int mixing_get_max_channels(VGMSTREAM* vgmstream);
 sfmt_t mixing_get_input_sample_type(VGMSTREAM* vgmstream);
 sfmt_t mixing_get_output_sample_type(VGMSTREAM* vgmstream);
 

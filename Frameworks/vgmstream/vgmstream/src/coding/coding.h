@@ -15,12 +15,13 @@ void adx_next_key(VGMSTREAMCHANNEL* stream);
 
 /* g721_decoder */
 void decode_g721(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
-void g72x_init_state(struct g72x_state* state_ptr);
-
+void setup_g721(VGMSTREAM* vgmstream);
+bool g721_check_format(STREAMFILE* sf, int interleave, int max_size);
 
 /* ima_decoder */
 void decode_standard_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo, int is_high_first);
 void decode_camelot_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+void decode_cf_df_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_snds_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_otns_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_wv6_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
@@ -34,6 +35,7 @@ void decode_ref_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* ou
 
 void decode_xbox_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int is_stereo);
 void decode_xbox_ima_mch(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_xbox_ima_saber(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_nds_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_dat4_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_rad_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do,int channel);
@@ -44,7 +46,7 @@ void decode_wwise_ima(VGMSTREAM* vgmstream, VGMSTREAMCHANNEL* stream, sample_t* 
 void decode_awc_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_ubi_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 void decode_ubi_sce_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
-void decode_h4m_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, uint16_t frame_format);
+void decode_hvqm4_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, uint16_t frame_format);
 void decode_cd_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_crankcase_ima(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 size_t ima_bytes_to_samples(size_t bytes, int channels);
@@ -74,7 +76,9 @@ void decode_ngc_dtk(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspaci
 /* afc_decoder */
 void decode_afc(VGMSTREAMCHANNEL* stream, short* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 void decode_afc_2bit(VGMSTREAMCHANNEL* stream, short* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
-
+void decode_afc_4x(VGMSTREAM* vgmstream, short* outbuf, int32_t first_sample, int32_t samples_to_do);
+int32_t afc_bytes_to_samples(size_t bytes, int channels);
+int32_t afc_4x_bytes_to_samples(size_t bytes, int channels);
 
 /* vadpcm_decoder */
 void decode_vadpcm(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int order);
@@ -267,7 +271,7 @@ void decode_circus_adpcm(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channel
 /* oki_decoder */
 void decode_pcfx(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int mode);
 void decode_oki16(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
-void decode_oki4s(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_oki4s(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, bool is_stereo);
 size_t oki_bytes_to_samples(size_t bytes, int channels);
 
 
@@ -375,6 +379,10 @@ void* init_mio(STREAMFILE* sf, int* p_loop_point);
 /* binka_decoder */
 void* init_binka_bcf1(int sample_rate, int channels);
 void* init_binka_ueba(int sample_rate, int channels);
+
+/* aac_raw_decoder */
+void* init_aac_raw(int sample_rate, int channels, int encoder_delay);
+
 
 #ifdef VGM_USE_VORBIS
 /* ogg_vorbis_decoder */
@@ -723,6 +731,10 @@ size_t ac3_bytes_to_samples(size_t bytes, int full_block_align, int channels);
 int32_t aac_get_samples(STREAMFILE* sf, uint32_t start_offset, uint32_t bytes);
 int32_t aac_get_samples_fs(STREAMFILE* sf, uint32_t start_offset, uint32_t bytes, int frame_samples);
 int mpc_get_samples(STREAMFILE* sf, off_t offset, int32_t* p_samples, int32_t* p_delay);
+
+
+/* df_decoder (CyberFlix DreamFactory) */
+int32_t cf_df_v5_get_samples(STREAMFILE* sf, off_t offset, int block_size);
 
 
 /* helper to pass a wrapped, clamped, fake extension-ed, SF to another meta */
