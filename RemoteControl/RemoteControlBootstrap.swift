@@ -70,7 +70,7 @@ import Combine
 	/// the bundled stdio bridge, plus the port when it isn't the default.
 	private func clientCommand(port: Int) -> String {
 		let helper = Bundle.main.bundleURL
-			.appendingPathComponent("Contents/MacOS/cog-mcp").path
+			.appendingPathComponent("Contents/Helpers/cog-mcp").path
 		return port == 8089 ? helper : "\(helper) --port \(port)"
 	}
 

@@ -110,7 +110,6 @@ let stdinPump = Thread {
 		}
 	}
 }
-stdinPump.stackSize = 512 * 1024
 stdinPump.start()
 
 // socket → stdout, on the main thread. Ends when Cog closes the connection
