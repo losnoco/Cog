@@ -145,6 +145,12 @@ void sbuf_init_flt(sbuf_t* sbuf, float* buf, int samples, int channels) {
     sbuf_init(sbuf, SFMT_FLT, buf, samples, channels);
 }
 
+/* signals usage of internal bufs in some cases; needs max samples to do for layouts */
+void sbuf_init_default(sbuf_t* sbuf, int samples) {
+    memset(sbuf, 0, sizeof(sbuf_t));
+    sbuf->samples = samples;
+}
+
 
 int sfmt_get_sample_size(sfmt_t fmt) {
     switch(fmt) {
@@ -207,7 +213,10 @@ void sbuf_silence_part(sbuf_t* sbuf, int from, int count) {
 }
 
 void sbuf_silence_rest(sbuf_t* sbuf) {
-    sbuf_silence_part(sbuf, sbuf->filled, sbuf->samples - sbuf->filled);
+    int sample_count = sbuf->samples - sbuf->filled;
+    sbuf_silence_part(sbuf, sbuf->filled, sample_count);
+
+    sbuf->filled += sample_count;
 }
 
 
@@ -288,6 +297,11 @@ void sbuf_copy_segments(sbuf_t* sdst, sbuf_t* ssrc, int samples) {
     // rarely when decoding with empty frames, may not setup ssrc
     if (samples == 0)
         return;
+
+    if (sdst->filled + samples > sdst->samples) {
+        VGM_LOG("SBUF: wrong copy segments (src-filled=%i, dst-free=%i, requested=%i)\n", ssrc->filled, sdst->samples - sdst->filled, samples);
+        return;
+    }
 
     if (ssrc->channels != sdst->channels) {
         // 0'd other channels first (uncommon so probably fine albeit slower-ish)
@@ -508,8 +522,10 @@ void sbuf_fadeout(sbuf_t* sbuf, int start, int to_do, int fade_pos, int fade_dur
 }
 
 void sbuf_interleave(sbuf_t* sbuf, float** ibuf) {
-    if (sbuf->fmt != SFMT_FLT)
+    if (sbuf->fmt != SFMT_FLT && sbuf->fmt != SFMT_F16) {
+        VGM_LOG("SBUF: interleave only supports float formats\n");
         return;
+    }
 
     // copy multidimensional buf (pcm[0]=[ch0,ch0,...], pcm[1]=[ch1,ch1,...])
     // to interleaved buf (buf[0]=ch0, sbuf[1]=ch1, sbuf[2]=ch0, sbuf[3]=ch1, ...)

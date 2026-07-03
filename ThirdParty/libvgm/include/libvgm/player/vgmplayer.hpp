@@ -217,6 +217,7 @@ protected:
 	
 	static void DeviceLinkCallback(void* userParam, VGM_BASEDEV* cDev, DEVLINK_INFO* dLink);
 	CHIP_DEVICE* GetDevicePtr(UINT8 chipType, UINT8 chipID);
+	void ParseFileForOPL4ROMRequirement(void);
 	void LoadOPL4ROM(CHIP_DEVICE* chipDev);
 	
 	UINT8 SeekToTick(UINT32 tick);
@@ -366,6 +367,7 @@ protected:
 	PCM_COMPR_TBL _pcmComprTbl;
 	
 	UINT8 _p2612Fix;	// enable hack/fix for Project2612 VGMs
+	UINT8 _opl4YRW801Req;	// bit mask for YMF278B chips that need the YRW801 sample ROM
 	UINT32 _ym2612pcm_bnkPos;
 	UINT8 _rf5cBank[2][2];	// [0 RF5C68 / 1 RF5C164][chipID]
 	QSOUND_WORK _qsWork[2];

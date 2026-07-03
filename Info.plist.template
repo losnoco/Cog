@@ -445,7 +445,6 @@
 				<string>bkh</string>
 				<string>bkr</string>
 				<string>blk</string>
-				<string>bmdx</string>
 				<string>bms</string>
 				<string>bnk</string>
 				<string>bnm</string>
@@ -590,6 +589,7 @@
 				<string>is14</string>
 				<string>isb</string>
 				<string>isd</string>
+				<string>ish</string>
 				<string>isws</string>
 				<string>itl</string>
 				<string>ivaud</string>
@@ -668,7 +668,7 @@
 				<string>mdsp</string>
 				<string>med</string>
 				<string>mhk</string>
-				<string>mjb</string>
+				<string>mjh</string>
 				<string>mi4</string>
 				<string>mib</string>
 				<string>mic</string>
@@ -682,6 +682,7 @@
 				<string>mps</string>
 				<string>ms</string>
 				<string>msa</string>
+				<string>msb</string>
 				<string>msh</string>
 				<string>msd</string>
 				<string>mse</string>
@@ -724,6 +725,8 @@
 				<string>nwa</string>
 				<string>nwav</string>
 				<string>nxa</string>
+				<string>nxms</string>
+				<string>nxse</string>
 				<string>nxopus</string>
 				<string>oga</string>
 				<string>ogg_</string>
@@ -993,6 +996,7 @@
 				<string>wic</string>
 				<string>wip</string>
 				<string>wlv</string>
+				<string>wmw</string>
 				<string>wp2</string>
 				<string>wpd</string>
 				<string>wsd</string>
@@ -1003,9 +1007,10 @@
 				<string>wv6</string>
 				<string>wvd</string>
 				<string>wve</string>
+				<string>wvp</string>
 				<string>wvs</string>
 				<string>wvx</string>
-				<string>wxd</string>
+				<string>wxh</string>
 				<string>wxv</string>
 				<string>x</string>
 				<string>x360audio</string>
@@ -1739,6 +1744,24 @@
 			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Wavpack File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>m3u8</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>playlist.icns</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
+			<key>CFBundleTypeName</key>
+			<string>HTTP Live Streaming Playlist</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>

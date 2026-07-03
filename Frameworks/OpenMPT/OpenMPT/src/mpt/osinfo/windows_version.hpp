@@ -132,10 +132,10 @@ public:
 	static mpt::osinfo::windows::Version FromSDK() noexcept {
 		// Initialize to used SDK version
 #if 0
-//#elif MPT_WINNT_AT_LEAST(MPT_WIN_11_26H1)
-//		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 28000, 0);
-//#elif MPT_WINNT_AT_LEAST(MPT_WIN_11_25H2)
-//		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 26200, 0);
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_11_26H1)
+		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 28000, 0);
+#elif MPT_WINNT_AT_LEAST(MPT_WIN_11_25H2)
+		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 26200, 0);
 #elif MPT_WINNT_AT_LEAST(MPT_WIN_11_24H2)
 		return mpt::osinfo::windows::Version(mpt::osinfo::windows::Version::Win10, mpt::osinfo::windows::Version::ServicePack(0, 0), 26100, 0);
 //#elif MPT_WINNT_AT_LEAST(MPT_WIN_11_23H2)

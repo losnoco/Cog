@@ -61,6 +61,7 @@ typedef enum {
     ALAW,
     DPCM_KCEJ,
     IMA_SNDS,
+    XBOX_SABER,
 
     UNKNOWN = 255,
 } txth_codec_t;
@@ -124,6 +125,8 @@ typedef struct {
     uint32_t subsong_count;
     uint32_t subsong_spacing;
     uint32_t subsong_sum;
+    uint32_t subsong_delta;
+    uint32_t subsong_delta_max;
 
     uint32_t name_offset_set;
     uint32_t name_offset;
@@ -234,7 +237,7 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         uint32_t interleave  = 0;
         switch(txth.codec) {
             case PSX:
-            case PSX_bf:        
+            case PSX_bf:
             case HEVAG:         interleave = 0x10; break;
             case NGC_DSP:       interleave = 0x08; break;
             case PCM_FLOAT_LE:  interleave = 0x04; break;
@@ -261,6 +264,7 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case PSX_bf:        coding = coding_PSX_badflags; break;
         case HEVAG:         coding = coding_HEVAG; break;
         case XBOX:          coding = coding_XBOX_IMA; break;
+        case XBOX_SABER:    coding = coding_XBOX_IMA_saber; break;
         case NGC_DTK:       coding = coding_NGC_DTK; break;
         case PCM24LE:       coding = coding_PCM24LE; break;
         case PCM24BE:       coding = coding_PCM24BE; break;
@@ -338,6 +342,7 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         read_string_sz(vgmstream->stream_name, STREAM_NAME_SIZE, txth.name_size, txth.name_offset, txth.sf_head);
     }
 
+
     /* codec specific (taken from GENH with minimal changes) */
     switch (coding) {
         case coding_PCM24LE:
@@ -365,13 +370,12 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
         case coding_TGC:
             vgmstream->interleave_block_size = txth.interleave;
             vgmstream->interleave_last_block_size = txth.interleave_last;
-            if (vgmstream->channels > 1)
-            {
+            if (vgmstream->channels > 1) {
                 if (coding == coding_SDX2) {
                     coding = coding_SDX2_int;
                 }
 
-                if (vgmstream->interleave_block_size==0xffffffff || vgmstream->interleave_block_size == 0) {
+                if (txth.interleave == 0xFFFFFFFF || txth.interleave == 0) {
                     vgmstream->layout_type = layout_none;
                 }
                 else {
@@ -395,7 +399,8 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
                         coding == coding_AICA_int) ) {
                     goto fail;
                 }
-            } else {
+            }
+            else {
                 vgmstream->layout_type = layout_none;
             }
 
@@ -435,7 +440,12 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
 
 
             //TODO recheck and use only for needed cases
-            vgmstream->allow_dual_stereo = true; /* known to be used in: PSX, AICA, YMZ */
+            /* known to be used in: 
+               PSX 
+               AICA [Psychic Force 2012 (DC)]
+               YMZ [VJ - Visual & Music Slap (AC)]
+             */
+            vgmstream->allow_dual_stereo = true;
             break;
 
         case coding_DPCM_KCEJ:
@@ -452,8 +462,15 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
                 vgmstream->codec_config = txth.codec_mode;
             break;
 
-        case coding_OKI16:
         case coding_OKI4S:
+            vgmstream->layout_type = layout_none;
+            if (vgmstream->channels == 1) {
+                vgmstream->allow_dual_stereo = 1; //
+                vgmstream->codec_config = 1;
+            }
+            break;
+
+        case coding_OKI16:
         case coding_XA:
         case coding_XA_EA:
         case coding_CP_YM:
@@ -524,6 +541,13 @@ VGMSTREAM* init_vgmstream_txth(STREAMFILE* sf) {
                 if (vgmstream->channels > 2 && vgmstream->channels % 2 != 0)
                     goto fail; /* only 2ch+..+2ch layout is known */
             }
+            break;
+
+        case coding_XBOX_IMA_saber:
+            vgmstream->layout_type = layout_none;
+            // only multichannel (4ch) files have an alt layout
+            if (vgmstream->channels <= 2)
+                coding = coding_XBOX_IMA;
             break;
 
         case coding_NGC_DTK:
@@ -1020,6 +1044,7 @@ fail:
 static txth_codec_t parse_codec(txth_header* txth, const char* val) {
     if      (is_string(val,"PSX"))          return PSX;
     else if (is_string(val,"XBOX"))         return XBOX;
+    else if (is_string(val,"XBOX_SABER"))   return XBOX_SABER;
     else if (is_string(val,"NGC_DTK"))      return NGC_DTK;
     else if (is_string(val,"DTK"))          return NGC_DTK;
     else if (is_string(val,"PCM24BE"))      return PCM24BE;
@@ -1407,7 +1432,7 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
         if (!parse_num(txth->sf_head,txth,val, &txth->subsong_spacing)) goto fail;
     }
     else if (is_string(key,"subsong_sum")) {
-        /* add all values up to current subsong (for example, to add all sizes to get current offset, so get start_offset) 
+        /* add all values up to current subsong (for example, to add all sizes to get current offset, so get start_offset)
          * doesn't include current (that is, reading size from fist subsong doesn't add anything) */
         int default_subsong = txth->target_subsong;
         uint32_t subsong_sum = 0;
@@ -1422,7 +1447,32 @@ static int parse_keyval(STREAMFILE* sf_, txth_header* txth, const char* key, cha
 
         txth->target_subsong = default_subsong;
     }
-    
+    else if (is_string(key,"subsong_delta")) {
+        /* get current and next offset */
+        uint32_t subsong_curr = 0;
+        uint32_t subsong_next = 0;
+
+        if (!parse_num(txth->sf_head,txth,val, &subsong_curr)) goto fail;
+
+        if (txth->target_subsong >= txth->subsong_count) {
+            // Some files have an extra offset for 'last size' to calculate next but most don't.
+            subsong_next = txth->subsong_delta_max;
+            if (subsong_next == 0)
+                subsong_next = txth->data_size;
+        }
+        else {
+            int default_subsong = txth->target_subsong;
+            txth->target_subsong += 1;
+            if (!parse_num(txth->sf_head,txth,val, &subsong_next)) goto fail;
+            txth->target_subsong = default_subsong;
+        }
+
+        txth->subsong_delta = subsong_next - subsong_curr;
+    }
+    else if (is_string(key,"subsong_delta_max")) {
+        if (!parse_num(txth->sf_head,txth,val, &txth->subsong_delta_max)) goto fail;
+    }
+
     else if (is_string(key,"name_offset")) {
         if (!parse_num(txth->sf_head,txth,val, &txth->name_offset)) goto fail;
         txth->name_offset_set = true;
@@ -1822,7 +1872,7 @@ static int read_name_table_keyval(txth_header* txth, const char* line, char* key
         return 0;
 
     /* try "(name): (val))" */
-    
+
     ok = sscanf(line, " %[^\t#:] : %[^\t#\r\n] ", key, val);
     if (ok == 2) {
         string_trim(key); /* otherwise includes end spaces before : */
@@ -2141,6 +2191,8 @@ static bool parse_num(STREAMFILE* sf, txth_header* txth, const char* val, uint32
             else if ((n = is_string_field(val,"subsong_spacing")))      value = txth->subsong_spacing;
             else if ((n = is_string_field(val,"subsong_offset")))       value = txth->subsong_spacing;
             else if ((n = is_string_field(val,"subsong_sum")))          value = txth->subsong_sum;
+            else if ((n = is_string_field(val,"subsong_delta")))        value = txth->subsong_delta;
+            else if ((n = is_string_field(val,"subsong_delta_max")))    value = txth->subsong_delta_max;
             else if ((n = is_string_field(val,"subfile_offset")))       value = txth->subfile_offset;
             else if ((n = is_string_field(val,"subfile_size")))         value = txth->subfile_size;
             else if ((n = is_string_field(val,"base_offset")))          value = txth->base_offset;
@@ -2243,6 +2295,7 @@ static int get_bytes_to_samples(txth_header* txth, uint32_t bytes) {
                 return ms_ima_bytes_to_samples(bytes / txth->channels, txth->frame_size, 1);
             return ms_ima_bytes_to_samples(bytes, txth->frame_size ? txth->frame_size : txth->interleave, txth->channels);
         case XBOX:
+        case XBOX_SABER:
             return xbox_ima_bytes_to_samples(bytes, txth->channels);
         case NGC_DSP:
             return dsp_bytes_to_samples(bytes, txth->channels);

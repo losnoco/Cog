@@ -208,7 +208,7 @@ IMixPlugin::ChunkData DigiBoosterEcho::GetChunk(bool)
 void DigiBoosterEcho::SetChunk(const ChunkData &chunk, bool)
 {
 	auto data = chunk.data();
-	if(chunk.size() == sizeof(chunk) && !memcmp(data, "Echo", 4))
+	if(chunk.size() == sizeof(m_chunk) && !memcmp(data, "Echo", 4))
 	{
 		memcpy(&m_chunk, data, chunk.size());
 		RecalculateEchoParams();

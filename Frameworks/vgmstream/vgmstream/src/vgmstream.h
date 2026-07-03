@@ -29,9 +29,9 @@
 
 
 #ifdef BUILD_VGMSTREAM
-#include "coding/g72x_state.h"
+#include "coding/libs/g72x_vgmstream.h"
 #else
-#include "g72x_state.h"
+#include "g72x_vgmstream.h"
 #endif
 
 
@@ -256,8 +256,10 @@ typedef struct {
 /* vgmstream internal API                                                   */
 /* -------------------------------------------------------------------------*/
 
+#if 0
 /* do format detection, return pointer to a usable VGMSTREAM, or NULL on failure */
 VGMSTREAM* init_vgmstream(const char* const filename);
+#endif
 
 /* init with custom IO via streamfile */
 VGMSTREAM* init_vgmstream_from_STREAMFILE(STREAMFILE* sf);
@@ -267,18 +269,6 @@ void reset_vgmstream(VGMSTREAM* vgmstream);
 
 /* close an open vgmstream */
 void close_vgmstream(VGMSTREAM* vgmstream);
-
-// If you are using vgmstream as a library and wonder what happened to render_vgmstream(), you can use
-// render_vgmstream2() for the time being, it's 100% the same (it was renamed to bring this into attention,
-// typedef as needed). However, please migrate to the public API (see libvgmstream.h) instead, it's
-// fairly straightforward (see "Use external API" and related commits for various plugins).
-// In next versions the "API" in this .h will be removed without warning as it wasn't really intended to be
-// used by external projects. I hate breaking things but it's becoming very hard to improve anything otherwise, sorry.
-/* Decode data into sample buffer. Returns < sample_count on stream end */
-int render_vgmstream2(sample_t* buffer, int32_t sample_count, VGMSTREAM* vgmstream);
-
-/* Seek to sample position (next render starts from that point). Use only after config is set (vgmstream_apply_config) */
-void seek_vgmstream(VGMSTREAM* vgmstream, int32_t seek_sample);
 
 /* -------------------------------------------------------------------------*/
 /* vgmstream internal helpers                                               */

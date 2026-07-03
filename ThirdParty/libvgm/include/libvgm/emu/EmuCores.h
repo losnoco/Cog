@@ -18,5 +18,6 @@
 #define FCC_LAOO	0x4C414F4F	// laoo
 #define FCC_RN22	0x524E3232	// Mao757 (RN22)
 #define FCC_EITO	0x4549544F	// eito
+#define FCC_SBOY	0x53424F59	// SameBoy
 
 #endif	// __EMUCORES_H__

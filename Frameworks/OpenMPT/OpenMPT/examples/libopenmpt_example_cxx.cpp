@@ -29,12 +29,17 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
 #endif
+#elif defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #endif
 #include <portaudiocpp/PortAudioCpp.hxx>
 #if defined( __clang__ )
 #if ( ( __clang_major__ * 10000 + __clang_minor__ * 100 + __clang_patchlevel__ ) >= 40000 )
 #pragma clang diagnostic pop
 #endif
+#elif defined( __GNUC__ ) && !defined( __clang__ ) && !defined( _MSC_VER )
+#pragma GCC diagnostic pop
 #endif
 
 #if defined( __DJGPP__ )

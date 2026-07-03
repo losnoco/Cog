@@ -1,14 +1,12 @@
 #include "layout.h"
 #include "../vgmstream.h"
 #include "../base/decode.h"
-#include "../base/sbuf.h"
-#include "../coding/coding.h"
 
 
 /* Decodes samples for blocked streams.
  * Data is divided into headered blocks with a bunch of data. The layout calls external helper functions
  * when a block is decoded, and those must parse the new block and move offsets accordingly. */
-void render_vgmstream_blocked(sbuf_t* sdst, VGMSTREAM* vgmstream) {
+rc_t render_layout_blocked(sbuf_t* sdst, VGMSTREAM* vgmstream) {
 
     int frame_size = decode_get_frame_size(vgmstream);
     int samples_per_frame = decode_get_samples_per_frame(vgmstream);
@@ -25,8 +23,11 @@ void render_vgmstream_blocked(sbuf_t* sdst, VGMSTREAM* vgmstream) {
         samples_this_block = vgmstream->current_block_size / frame_size * samples_per_frame;
     }
 
+    // detect stuck blocks //TODO: improve
+    const int max_empty = 1000;
+    int num_empty = 0;
+
     while (sdst->filled < sdst->samples) {
-        int samples_to_do; 
 
         if (vgmstream->loop_flag && decode_do_loop(vgmstream)) {
             /* handle looping, readjust back to loop start values */
@@ -43,28 +44,41 @@ void render_vgmstream_blocked(sbuf_t* sdst, VGMSTREAM* vgmstream) {
         if (samples_this_block < 0) {
             /* probably block bug or EOF, next calcs would give wrong values/segfaults/infinite loop */
             VGM_LOG("BLOCKED: wrong block samples\n");
-            goto decode_fail;
+            return RC_LAYOUT_ERROR;
         }
 
-        if (vgmstream->current_block_offset < 0 || vgmstream->current_block_offset == 0xFFFFFFFF) {
+        if (vgmstream->current_block_offset < 0 || vgmstream->current_block_offset == SIZE_MAX) {
             /* probably block bug or EOF, block functions won't be able to read anything useful/infinite loop */
             VGM_LOG("BLOCKED: wrong block offset found\n");
-            goto decode_fail;
+            return RC_LAYOUT_ERROR;
         }
 
-        samples_to_do = decode_get_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
+        int samples_to_do = decode_get_samples_to_do(samples_this_block, samples_per_frame, vgmstream);
         if (samples_to_do > sdst->samples - sdst->filled)
             samples_to_do = sdst->samples - sdst->filled;
 
+        int curr_filled = sdst->filled;
         if (samples_to_do > 0) {
             /* samples_this_block = 0 is allowed (empty block, do nothing then move to next block) */
             decode_vgmstream(sdst, vgmstream, samples_to_do);
         }
+        int samples_done = sdst->filled - curr_filled;
 
-        sdst->filled += samples_to_do;
-        vgmstream->current_sample += samples_to_do;
-        vgmstream->samples_into_block += samples_to_do;
+        vgmstream->current_sample += samples_done;
+        vgmstream->samples_into_block += samples_done;
 
+
+        if (samples_done == 0) {
+            num_empty++;
+
+            if (num_empty > max_empty) {
+                VGM_LOG("BLOCKED: deadlock?\n");
+                break;
+            }
+        }
+        else {
+            num_empty = 0;
+        }
 
         /* move to next block when all samples are consumed */
         if (vgmstream->samples_into_block == samples_this_block
@@ -89,9 +103,7 @@ void render_vgmstream_blocked(sbuf_t* sdst, VGMSTREAM* vgmstream) {
         }
     }
 
-    return;
-decode_fail:
-    sbuf_silence_rest(sdst);
+    return RC_RENDER_OK;
 }
 
 /* helper functions to parse new block */
@@ -193,8 +205,8 @@ void block_update(off_t block_offset, VGMSTREAM* vgmstream) {
         case layout_blocked_sthd:
             block_update_sthd(block_offset,vgmstream);
             break;
-        case layout_blocked_h4m:
-            block_update_h4m(block_offset,vgmstream);
+        case layout_blocked_hvqm4:
+            block_update_hvqm4(block_offset,vgmstream);
             break;
         case layout_blocked_xa_aiff:
             block_update_xa_aiff(block_offset,vgmstream);
@@ -213,6 +225,12 @@ void block_update(off_t block_offset, VGMSTREAM* vgmstream) {
             break;
         case layout_blocked_vas:
             block_update_vas(block_offset,vgmstream);
+            break;
+        case layout_blocked_cf_df:
+            block_update_cf_df(block_offset,vgmstream);
+            break;
+        case layout_blocked_cf_df_v5:
+            block_update_cf_df_v5(block_offset,vgmstream);
             break;
         default: /* not a blocked layout */
             break;
