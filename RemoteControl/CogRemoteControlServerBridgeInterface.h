@@ -21,11 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(macos(13.0))
 @interface CogRemoteControlServerBridge : NSObject
 
-/// Starts the MCP server on 127.0.0.1:<port>. The completion receives an
-/// error description, or nil on success.
-+ (void)startWithPort:(NSInteger)port
-               target:(id<CogRemoteControlTarget>)target
-           completion:(void (^)(NSString *_Nullable errorDescription))completion;
+/// Starts the MCP server on the given Unix domain socket path. The completion
+/// receives an error description, or nil on success.
++ (void)startWithSocketPath:(NSString *)socketPath
+                     target:(id<CogRemoteControlTarget>)target
+                 completion:(void (^)(NSString *_Nullable errorDescription))completion;
 
 + (void)stopWithCompletion:(void (^_Nullable)(void))completion;
 

@@ -6,13 +6,15 @@
 //
 //  Stdio bridge for Cog's MCP server. MCP clients launch this binary as a
 //  stdio server; it pipes stdin/stdout to the newline-delimited JSON-RPC
-//  listener the running Cog exposes on 127.0.0.1. No MCP logic lives here —
-//  it is a dumb byte pump, so it needs no dependencies.
+//  listener the running Cog exposes on a Unix domain socket in the shared
+//  app-group folder. No MCP logic lives here — it is a dumb byte pump, so it
+//  needs no dependencies.
 //
 
 import Foundation
 
-let defaultPort: UInt16 = 8089
+let appGroupIdentifier = "group.org.cogx.cog"
+let socketName = "ipc.sock"
 
 func fail(_ message: String) -> Never {
 	FileHandle.standardError.write(Data((message + "\n").utf8))
@@ -21,19 +23,13 @@ func fail(_ message: String) -> Never {
 
 // MARK: - Arguments
 
-var port = defaultPort
 var arguments = CommandLine.arguments.dropFirst().makeIterator()
 while let argument = arguments.next() {
 	switch argument {
-	case "--port", "-p":
-		guard let value = arguments.next(), let parsed = UInt16(value), parsed > 0 else {
-			fail("cog-mcp: --port expects a number between 1 and 65535")
-		}
-		port = parsed
 	case "--help", "-h":
-		print("Usage: cog-mcp [--port N]")
-		print("Bridges an MCP client (stdio) to the Cog audio player running on this Mac.")
-		print("The port must match Cog's Remote Control preference (default \(defaultPort)).")
+		print("Usage: cog-mcp")
+		print("Bridges an MCP client (stdio) to the Cog audio player running on this Mac,")
+		print("over the Unix domain socket Cog exposes in its shared app-group folder.")
 		exit(0)
 	default:
 		fail("cog-mcp: unknown argument '\(argument)' (try --help)")
@@ -42,32 +38,47 @@ while let argument = arguments.next() {
 
 // MARK: - Connect
 
-let sock = socket(AF_INET, SOCK_STREAM, 0)
+/// The socket lives in the app-group container Cog and this helper share.
+/// containerURL works on macOS even without the group entitlement in effect
+/// (e.g. when inheriting an unsandboxed parent), but fall back to the
+/// well-known location just in case.
+let socketPath: String = {
+	if let container = FileManager.default
+		.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
+		return container.appendingPathComponent(socketName).path
+	}
+	return NSHomeDirectory() + "/Library/Group Containers/\(appGroupIdentifier)/\(socketName)"
+}()
+
+let sock = socket(AF_UNIX, SOCK_STREAM, 0)
 guard sock >= 0 else {
 	fail("cog-mcp: socket() failed: \(String(cString: strerror(errno)))")
 }
 
-var address = sockaddr_in()
-address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
-address.sin_family = sa_family_t(AF_INET)
-address.sin_port = port.bigEndian
-address.sin_addr = in_addr(s_addr: inet_addr("127.0.0.1"))
+var address = sockaddr_un()
+address.sun_len = UInt8(MemoryLayout<sockaddr_un>.size)
+address.sun_family = sa_family_t(AF_UNIX)
+let pathBytes = Array(socketPath.utf8)
+let sunPathCapacity = MemoryLayout.size(ofValue: address.sun_path)
+guard pathBytes.count < sunPathCapacity else {
+	fail("cog-mcp: socket path is too long: \(socketPath)")
+}
+withUnsafeMutableBytes(of: &address.sun_path) { sunPath in
+	sunPath.copyBytes(from: pathBytes)
+}
 
 let connected = withUnsafePointer(to: &address) {
 	$0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-		connect(sock, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
+		connect(sock, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
 	}
 }
 guard connected == 0 else {
 	fail("""
-	cog-mcp: can't reach Cog on 127.0.0.1:\(port).
+	cog-mcp: can't reach Cog at \(socketPath).
 	Make sure Cog is running and "Allow remote control via MCP" is enabled \
-	in Cog's Preferences (and that the port there matches).
+	in Cog's Preferences.
 	""")
 }
-
-var nodelay: Int32 = 1
-setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &nodelay, socklen_t(MemoryLayout<Int32>.size))
 
 // Writing to a peer that vanished raises SIGPIPE; handle it as EPIPE instead.
 signal(SIGPIPE, SIG_IGN)

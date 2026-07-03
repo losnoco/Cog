@@ -39,6 +39,12 @@ enum RemoteControlTools {
 
 	// MARK: - Tool definitions
 
+	/// Page-size bounds for list_playlist: large playlists (thousands of
+	/// entries) must never exceed MCP clients' tool-result size caps (1 MB in
+	/// Claude's case), so a full page stays in the tens of kilobytes.
+	private static let listDefaultLimit = 200
+	private static let listMaxLimit = 1000
+
 	private static let emptySchema: Value = .object(["type": "object", "properties": [:]])
 
 	private static let allTools: [Tool] = [
@@ -73,11 +79,12 @@ enum RemoteControlTools {
 			"properties": ["mode": ["type": "string", "enum": ["none", "one", "album", "all"], "description": "Repeat mode."]],
 			"required": ["mode"],
 		])),
-		Tool(name: "list_playlist", description: "List playlist entries as JSON, with their index, metadata, queued flag, and whether each is the current track.", inputSchema: .object([
+		Tool(name: "list_playlist", description: "List playlist entries as JSON, with their index, metadata, queued flag, and whether each is the current track. Results are paginated: a response with a next_offset field has more entries, fetch the next page with offset = next_offset. Use query to find tracks by name instead of paging through a large playlist.", inputSchema: .object([
 			"type": "object",
 			"properties": [
 				"offset": ["type": "integer", "description": "Index of the first entry to return (default 0)."],
-				"limit": ["type": "integer", "description": "Maximum number of entries to return (default: all)."],
+				"limit": ["type": "integer", "description": "Maximum number of entries to return (default \(listDefaultLimit), max \(listMaxLimit))."],
+				"query": ["type": "string", "description": "Only return entries whose title, artist, or album contains this text (case-insensitive)."],
 			],
 		])),
 		Tool(name: "add_to_playlist", description: "Add tracks to the playlist by file path or URL. Note: Cog is sandboxed, so file paths must be within folders Cog has been granted access to; other paths are added but will fail to play.", inputSchema: .object([
@@ -187,14 +194,32 @@ enum RemoteControlTools {
 			return text("Repeat mode set to \(mode).")
 
 		case "list_playlist":
-			let entries = target.remoteListPlaylist()
+			var entries = target.remoteListPlaylist()
 			let offset = arguments["offset"]?.intValue ?? 0
-			let limit = arguments["limit"]?.intValue ?? entries.count
+			let limit = arguments["limit"]?.intValue ?? listDefaultLimit
 			guard offset >= 0, limit >= 0 else {
 				throw MCPError.invalidParams("offset and limit must be non-negative")
 			}
-			let page = Array(entries.dropFirst(offset).prefix(limit))
-			return try json(["total": entries.count, "offset": offset, "entries": page])
+			if let query = arguments["query"]?.stringValue, !query.isEmpty {
+				entries = entries.filter { entry in
+					["title", "artist", "album"].contains { key in
+						(entry[key] as? String)?
+							.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) != nil
+					}
+				}
+			}
+			let clamped = min(max(limit, 1), listMaxLimit)
+			let page = Array(entries.dropFirst(offset).prefix(clamped))
+			var result: [String: Any] = [
+				"total": entries.count,
+				"offset": offset,
+				"count": page.count,
+				"entries": page,
+			]
+			if offset + page.count < entries.count {
+				result["next_offset"] = offset + page.count
+			}
+			return try json(result)
 
 		case "add_to_playlist":
 			guard let values = arguments["urls"]?.arrayValue else {
@@ -261,7 +286,7 @@ enum RemoteControlTools {
 	private static func json(_ object: Any) throws -> CallTool.Result {
 		let data = try JSONSerialization.data(
 			withJSONObject: object,
-			options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+			options: [.sortedKeys, .withoutEscapingSlashes]
 		)
 		let string = String(data: data, encoding: .utf8) ?? "{}"
 		return .init(content: [.text(text: string, annotations: nil, _meta: nil)], isError: false)

@@ -13,21 +13,10 @@ private final class RemoteControlPrefs: ObservableObject {
         }
     }
 
-    @Published var portText: String {
-        didSet {
-            guard isActive else { return }
-            guard let port = Int(portText), (1...65535).contains(port) else { return }
-            guard port != UserDefaults.standard.integer(forKey: RemoteControlBootstrap.portKey) else { return }
-            UserDefaults.standard.set(port, forKey: RemoteControlBootstrap.portKey)
-            RemoteControlBootstrap.shared.restartIfRunning()
-        }
-    }
-
     deinit { isActive = false }
 
     init() {
         enabled = UserDefaults.standard.bool(forKey: RemoteControlBootstrap.enabledKey)
-        portText = String(RemoteControlBootstrap.shared.port)
     }
 }
 
@@ -40,12 +29,6 @@ struct RemoteControlPaneAvailableView: View {
         Form {
             Section {
                 Toggle(NSLocalizedString("Allow remote control via MCP", comment: "Remote Control preference"), isOn: $prefs.enabled)
-                HStack {
-                    Text(NSLocalizedString("Port", comment: "Remote Control preference"))
-                    TextField("8089", text: $prefs.portText)
-                        .frame(width: 80)
-                        .multilineTextAlignment(.trailing)
-                }
             } footer: {
                 Text(NSLocalizedString("Lets MCP clients like Claude control playback and the playlist. Add the command below to your MCP client (stdio); it only connects to Cog on this Mac and works only while this is enabled.", comment: "Remote Control preference"))
                     .foregroundColor(.secondary)

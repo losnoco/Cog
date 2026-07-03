@@ -1,17 +1,14 @@
 //
-//  RemoteControlTCPApp.swift
+//  RemoteControlSocketApp.swift
 //  CogRemoteControl
 //
 //  Created by Kevin López Brante on 2026-07-01.
 //
-//  NIO TCP host for the MCP stdio-style transport: each accepted loopback
-//  connection carries newline-delimited JSON-RPC (the same framing as stdio),
-//  so the bundled cog-mcp helper can pipe an MCP client straight through.
-//
-//  TCP rather than a Unix socket because the app is sandboxed: the socket
-//  file would have to live in the app container, and outside processes
-//  touching another app's container trip macOS 14+'s "app container
-//  protection" TCC prompt (attributed to whichever app spawned cog-mcp).
+//  NIO Unix-domain-socket host for the MCP stdio-style transport: each
+//  accepted connection carries newline-delimited JSON-RPC (the same framing
+//  as stdio), so the bundled cog-mcp helper can pipe an MCP client straight
+//  through. The socket file lives in the app-group container, so only this
+//  user's processes can reach it.
 //
 
 import Foundation
@@ -20,15 +17,14 @@ import MCP
 @preconcurrency import NIOCore
 @preconcurrency import NIOPosix
 
-/// Hosts MCP `Server` sessions over raw TCP on a local port. Each connection
+/// Hosts MCP `Server` sessions over a Unix domain socket. Each connection
 /// gets its own `Server` + `LineFramedTransport` pair; the connection's
 /// lifetime is the session's lifetime.
 @available(macOS 13.0, *)
-actor RemoteControlTCPApp {
+actor RemoteControlSocketApp {
 	typealias ServerFactory = @Sendable () async -> Server
 
-	private let host: String
-	private let port: Int
+	private let socketPath: String
 	private let serverFactory: ServerFactory
 
 	private var group: MultiThreadedEventLoopGroup?
@@ -36,31 +32,36 @@ actor RemoteControlTCPApp {
 
 	private var sessions: [ObjectIdentifier: (server: Server, transport: LineFramedTransport)] = [:]
 
-	init(host: String, port: Int, serverFactory: @escaping ServerFactory) {
-		self.host = host
-		self.port = port
+	init(socketPath: String, serverFactory: @escaping ServerFactory) {
+		self.socketPath = socketPath
 		self.serverFactory = serverFactory
 	}
 
 	// MARK: - Lifecycle
 
 	/// Binds the listening socket and starts accepting connections.
-	/// Throws (e.g. address in use) without leaving anything running.
+	/// Throws (e.g. unwritable directory) without leaving anything running.
 	func start() async throws {
 		guard channel == nil else { return }
+
+		try FileManager.default.createDirectory(
+			atPath: (socketPath as NSString).deletingLastPathComponent,
+			withIntermediateDirectories: true
+		)
 
 		let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
 
 		let bootstrap = ServerBootstrap(group: group)
 			.serverChannelOption(ChannelOptions.backlog, value: 16)
-			.serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
 			.childChannelInitializer { channel in
 				channel.pipeline.addHandler(LineFramedHandler(app: self))
 			}
-			.childChannelOption(ChannelOptions.Types.SocketOption(level: .tcp, name: .tcp_nodelay), value: 1)
 
 		do {
-			channel = try await bootstrap.bind(host: host, port: port).get()
+			channel = try await bootstrap.bind(
+				unixDomainSocketPath: socketPath,
+				cleanupExistingSocketFile: true
+			).get()
 		} catch {
 			try? await group.shutdownGracefully()
 			throw error
@@ -78,6 +79,8 @@ actor RemoteControlTCPApp {
 		channel = nil
 		try? await group?.shutdownGracefully()
 		group = nil
+		// NIO unlinks stale sockets on bind, not on close; tidy up ourselves.
+		try? FileManager.default.removeItem(atPath: socketPath)
 	}
 
 	// MARK: - Session Management
@@ -172,11 +175,11 @@ private final class LineFramedHandler: ChannelInboundHandler, @unchecked Sendabl
 	/// drop the connection rather than buffer without bound.
 	private static let maxLineBytes = 4 << 20
 
-	private let app: RemoteControlTCPApp
+	private let app: RemoteControlSocketApp
 	private var transport: LineFramedTransport?
 	private var pending = Data()
 
-	init(app: RemoteControlTCPApp) {
+	init(app: RemoteControlSocketApp) {
 		self.app = app
 	}
 
