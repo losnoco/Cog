@@ -25,8 +25,8 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 
 	showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
     
-    self.font = [NSFont monospacedDigitSystemFontOfSize:fontSize
-                                                 weight:NSFontWeightRegular];
+	self.font = [NSFont monospacedDigitSystemFontOfSize:fontSize
+	                                             weight:NSFontWeightRegular];
 
 	[self update];
 }
@@ -57,7 +57,7 @@ static int _log10(long minutes) {
 		int padding = MAX(0, otherminutedigits - minutedigits);
 		text = formatTimer(sec / 60, sec % 60, 0x2212, padding); // Minus
 	}
-    [self setStringValue:text];
+	[self setStringValue:text];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
