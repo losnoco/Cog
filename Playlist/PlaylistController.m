@@ -577,10 +577,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 		frameRect.size.height = tableView.rowHeight;
 		cellView.frame = frameRect;
 
+		NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
+
 		if(cellView.textField) {
 			cellView.textField.allowsDefaultTighteningForTruncation = YES;
-
-			NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
 
 			cellView.textField.font = font;
 			cellView.textField.stringValue = cellTextTruncated ?: @"";
@@ -601,13 +601,12 @@ static void *playlistControllerContext = &playlistControllerContext;
 			cellView.textField.frame = cellFrameRect;
 		}
 		if(cellView.imageView) {
+			if(@available(macOS 11.0, *)) {
+				cellView.imageView.symbolConfiguration =
+				[NSImageSymbolConfiguration configurationWithPointSize:font.pointSize weight:NSFontWeightRegular];
+			}
 			cellView.imageView.image = cellImage;
 			cellView.imageView.toolTip = [pe statusMessage];
-
-			NSRect cellFrameRect = cellView.imageView.frame;
-			cellFrameRect.size.height = frameRect.size.height * 14.0 / 18.0;
-			cellFrameRect.origin.y = (frameRect.size.height - cellFrameRect.size.height) * 0.5;
-			cellView.imageView.frame = cellFrameRect;
 		}
 
 		cellView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
