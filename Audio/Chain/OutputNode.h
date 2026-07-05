@@ -56,6 +56,7 @@
 
 - (void)fadeOut;
 - (void)fadeOutBackground;
+- (void)beginSeek;
 - (void)fadeIn;
 - (void)faderFadeIn;
 

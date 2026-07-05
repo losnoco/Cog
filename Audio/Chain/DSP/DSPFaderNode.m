@@ -28,6 +28,7 @@
 	uint32_t outputChannelConfig;
 
 	float fadeLevel, fadeStep;
+	BOOL doPMode;
 
 	float inBuffer[512 * 32];
 	float outBuffer[512 * 32];
@@ -173,6 +174,7 @@
 	}
 
 	if(!frameCount) {
+		[mutex unlock];
 		return nil;
 	}
 
@@ -187,15 +189,25 @@
 
 	BOOL fadingOut = NO;
 	if(frameCount && (fadeStep || count)) {
+		BOOL inputIsDoP = NO;
 		if(inputRead) {
 			NSData *sampleData = [chunk removeSamples:frameCount];
 			memcpy(inBuffer, [sampleData bytes], frameCount * outputFormat.mBytesPerPacket);
+			inputIsDoP = audioBufferIsDoP(inBuffer, outputFormat.mChannelsPerFrame, frameCount, NULL);
 		} else {
 			// [chunk removeSamples:frameCount];
 			// Only happens above, and since the samples aren't assigned, they don't need to be removed
 		}
 		float *nextBuffer = inBuffer;
-		if(inputRead && fadeStep) {
+		if(doPMode || inputIsDoP) {
+			// Never apply a gain ramp or an old-track mix to a DoP carrier.
+			doPMode = YES;
+			fadeStep = 0;
+			fadeLevel = 1.0;
+			[fadersLock lock];
+			[faders removeAllObjects];
+			[fadersLock unlock];
+		} else if(inputRead && fadeStep) {
 			bzero(outBuffer, frameCount * outputFormat.mBytesPerPacket);
 			BOOL stopping = fadeAudio(inBuffer, outBuffer, outputFormat.mChannelsPerFrame, frameCount, &fadeLevel, fadeStep, 1.0);
 			if(stopping) {
@@ -237,6 +249,10 @@
 		fadeStep = 1000.0f / fadeTimeMS;
 	}
 	waitForResetEvent = YES;
+}
+
+- (void)setDoPMode:(BOOL)enabled {
+	doPMode = enabled;
 }
 
 - (float)fadeLevel {

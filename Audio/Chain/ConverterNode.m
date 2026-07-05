@@ -12,6 +12,7 @@
 #import "ConverterNode.h"
 
 #import "BufferChain.h"
+#import "FadedBuffer.h"
 #import "OutputNode.h"
 
 #import "Logging.h"
@@ -358,10 +359,14 @@ void scale_by_volume(float *buffer, size_t count, float volume) {
 			[chunk setChannelConfig:nodeChannelConfig];
 		}
 		[self addObservers];
-		scale_by_volume(floatBuffer, ioNumberPackets / sizeof(float), volumeScale);
+		const size_t frameCount = ioNumberPackets / floatFormat.mBytesPerPacket;
+		doPStream = doPStream || audioBufferIsDoP(floatBuffer, floatFormat.mChannelsPerFrame, frameCount, NULL);
+		if(!doPStream) {
+			scale_by_volume(floatBuffer, ioNumberPackets / sizeof(float), volumeScale);
+		}
 		[chunk setStreamTimestamp:streamTimestamp];
 		[chunk setStreamTimeRatio:streamTimeRatio];
-		[chunk assignSamples:floatBuffer frameCount:ioNumberPackets / floatFormat.mBytesPerPacket];
+		[chunk assignSamples:floatBuffer frameCount:frameCount];
 		if(resetProcessed) {
 			chunk.resetForward = YES;
 			resetProcessed = NO;
@@ -510,6 +515,7 @@ static float db_to_scale(float db) {
 
 	latencyEaten = 0;
 	latencyEatenPost = 0;
+	doPStream = NO;
 
 	PrintStreamDesc(&inf);
 	PrintStreamDesc(&nodeFormat);

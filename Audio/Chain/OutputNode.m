@@ -111,6 +111,10 @@
 	[output fadeOutBackground];
 }
 
+- (void)beginSeek {
+	[output beginSeek];
+}
+
 - (void)fadeIn {
 	[self reconnectInputAndReplumb];
 	[output fadeIn];

@@ -60,6 +60,9 @@ using std::atomic_long;
 
 	BOOL cutOffInput;
 	BOOL fading, faded, fadingstop;
+	BOOL doPActive;
+	BOOL doPSeekPending;
+	uint8_t doPMarker;
 	float fadeLevel;
 	float fadeStep;
 	float fadeTarget;
@@ -131,6 +134,7 @@ using std::atomic_long;
 
 - (void)fadeOut;
 - (void)fadeOutBackground;
+- (void)beginSeek;
 - (void)fadeIn;
 - (void)faderFadeIn;
 

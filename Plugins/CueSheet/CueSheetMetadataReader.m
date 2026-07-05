@@ -93,8 +93,9 @@
 
 			NSDictionary *cuesheetMetadata = [CueSheetMetadataReader processDataForTrack:track];
 
-            // second dictionary takes priority
-			return [fileMetadata dictionaryByMergingWith:cuesheetMetadata];
+			// Cue-sheet fields describe this logical track and take priority over
+			// the metadata shared by the underlying audio file.
+			return [cuesheetMetadata dictionaryByMergingWith:fileMetadata];
 		}
 	}
 

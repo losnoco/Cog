@@ -29,6 +29,11 @@ extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSNotificationName CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
 
+static BOOL playbackFadesEnabled(void) {
+	NSNumber *enabled = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableFading"];
+	return !enabled || [enabled boolValue];
+}
+
 @implementation OutputCoreAudio {
 	VisualizationController *visController;
 }
@@ -649,6 +654,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
+		BOOL outputContainsDoP = NO;
 
 		inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
 		bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
@@ -685,10 +691,40 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 						NSData *sampleData = [chunk removeSamples:_frameCount];
 						float *samplePtr = (float *)[sampleData bytes];
 						size_t inputTodo = MIN(_frameCount, frameCount - renderedSamples);
+						uint8_t nextDoPMarker = 0x05;
+						BOOL inputIsDoP = audioBufferIsDoP(samplePtr, channels, inputTodo, &nextDoPMarker);
 
-						if(!_self->fading) {
+						if(_self->doPSeekPending && !inputIsDoP) {
+							// Never expose transitional or stale PCM-looking data while a
+							// DoP seek is waiting for the first verified post-seek carrier.
+							fillDoPSilence(outSamples + renderedSamples * channels, channels, inputTodo, &_self->doPMarker);
+							outputContainsDoP = YES;
+						} else if(inputIsDoP) {
+							// A DoP carrier must remain bit-perfect. Complete a pending
+							// fade as a hard transition and preserve the marker phase.
+							const uint8_t firstDoPMarker = (inputTodo % 2) ? ((nextDoPMarker == 0x05) ? 0xFA : 0x05) : nextDoPMarker;
+							if(inputIsDoP && _self->doPActive && firstDoPMarker != _self->doPMarker) {
+								// Dropping one carrier frame is preferable to repeating a marker,
+								// which can make the DAC lose DoP lock at the join.
+								samplePtr += channels;
+								--inputTodo;
+							}
+							cblas_scopy((int)(inputTodo * channels), samplePtr, 1, outSamples + renderedSamples * channels, 1);
+							_self->doPActive = YES;
+							_self->doPSeekPending = NO;
+							_self->doPMarker = nextDoPMarker;
+							outputContainsDoP = YES;
+							if(_self->fading) {
+								_self->faded = _self->fadeStep < 0.0;
+								_self->fading = NO;
+								_self->fadeStep = 0.0f;
+								_self->fadeLevel = _self->faded ? 0.0f : 1.0f;
+							}
+						} else if(!_self->fading) {
+							_self->doPActive = NO;
 							cblas_scopy((int)(inputTodo * channels), samplePtr, 1, outSamples + renderedSamples * channels, 1);
 						} else {
+							_self->doPActive = NO;
 							BOOL faded = fadeAudio(samplePtr, outSamples + renderedSamples * channels, channels, inputTodo, &_self->fadeLevel, _self->fadeStep, _self->fadeTarget);
 							if(faded) {
 								if(_self->fadeStep < 0.0) {
@@ -707,10 +743,18 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					}
 				}
 			}
+			if(_self->doPActive && renderedSamples < frameCount) {
+				// PCM zeroes make a DoP DAC lose lock. Keep it locked across pause,
+				// track changes, and brief underruns with standard DSD silence.
+				fillDoPSilence(outSamples + renderedSamples * channels, channels, frameCount - renderedSamples, &_self->doPMarker);
+				outputContainsDoP = YES;
+			}
 
 			double secondsRendered = (double)renderedSamples / format->mSampleRate;
 
-			scale_by_volume(outSamples, frameCount * channels, _self->volume);
+			if(!outputContainsDoP) {
+				scale_by_volume(outSamples, frameCount * channels, _self->volume);
+			}
 
 			[_self updateLatency:secondsRendered];
 
@@ -758,6 +802,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		fading = NO;
 		faded = NO;
 		fadingstop = YES;
+		doPActive = NO;
+		doPSeekPending = NO;
+		doPMarker = 0x05;
 
 		streamTimestamp = 0.0;
 		prebufferReached = NO;
@@ -1004,6 +1051,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)fadeOut {
+	if(!playbackFadesEnabled()) {
+		fadeTarget = 0.0f;
+		fadeLevel = 0.0f;
+		fadeStep = 0.0f;
+		fading = NO;
+		faded = YES;
+		return;
+	}
 	fadeTarget = 0.0f;
 	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / fadeTimeMS);
 	fading = YES;
@@ -1024,30 +1079,59 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:nil latency:0.03];
 	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
 	faderNode = [[DSPFaderNode alloc] initWithController:self previous:nil latency:0.03];
+	[faderNode setDoPMode:doPActive];
 	[hrtfNode setResetBarrier:YES];
 	[downmixNode setOutputFormat:deviceFormat withChannelConfig:deviceChannelConfig];
 	faderNode.timestamp = oldFader.timestamp;
 
 	ChunkList *oldBuffer = buffer;
 	buffer = [[ChunkList alloc] initWithMaximumDuration:2.0f * (fadeTimeMS / 1000.0f)];
-	FadedBuffer *fbuffer = [[FadedBuffer alloc] initWithBuffer:oldBuffer withDSPs:@[oldHrtf, oldDownmix, oldFader] fadeStart:fadeLevel fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
-	oldBuffer = nil;
-
-	oldHrtf = nil;
-	oldDownmix = nil;
-	oldFader = nil;
+	// DoP cannot be crossfaded: a seek may otherwise combine buffered frames
+	// from before and after the discontinuity, corrupting the DSD payload.
+	const BOOL fadesEnabled = playbackFadesEnabled() && !doPActive;
+	FadedBuffer *fbuffer = nil;
+	if(fadesEnabled) {
+		fbuffer = [[FadedBuffer alloc] initWithBuffer:oldBuffer withDSPs:@[oldHrtf, oldDownmix, oldFader] fadeStart:fadeLevel fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
+	}
 
 	[hrtfNode setPreviousNode:self];
 	[bufferNode setPreviousNode:faderNode];
 	[self launchDSPs];
 
-	[faderNode appendFadeOut:fbuffer];
+	if(fadesEnabled) {
+		[faderNode appendFadeOut:fbuffer];
+	} else {
+		[oldHrtf setShouldContinue:NO];
+		[oldDownmix setShouldContinue:NO];
+		[oldFader setShouldContinue:NO];
+		[bufferNode resetBuffer];
+		fbuffer = nil;
+	}
+	oldBuffer = nil;
+	oldHrtf = nil;
+	oldDownmix = nil;
+	oldFader = nil;
 
 	cutOffInput = NO;
 }
 
+- (void)beginSeek {
+	// fadeOutBackground has already detached and drained the old path. If the
+	// active stream is DoP, keep emitting valid DoP silence until the new path
+	// supplies a completely verified carrier buffer.
+	doPSeekPending = doPActive;
+}
+
 - (void)fadeIn {
 	[self stopIdle];
+	if(!playbackFadesEnabled()) {
+		fadeLevel = 1.0f;
+		fadeTarget = 1.0f;
+		fadeStep = 0.0f;
+		fading = NO;
+		faded = NO;
+		return;
+	}
 	if(fading || faded) {
 		fadeLevel = 0.0f;
 		fadeTarget = 1.0f;
@@ -1061,7 +1145,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)faderFadeIn {
 	[self stopIdle];
-	[faderNode fadeIn];
+	if(playbackFadesEnabled() || doPActive) {
+		[faderNode fadeIn];
+	}
 	[faderNode setPreviousNode:downmixNode];
 	prebufferSignaled = NO;
 }

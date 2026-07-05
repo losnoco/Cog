@@ -222,6 +222,7 @@
 		[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time andResumeInterval:YES];
 	} else {
 		[output fadeOutBackground];
+		[output beginSeek];
 
 		[output seek:time];
 		[bufferChain seek:time];

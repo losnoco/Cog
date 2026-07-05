@@ -13,6 +13,50 @@
 
 float fadeTimeMS = 200.0f;
 
+static uint8_t doPMarkerForSample(float sample) {
+	int32_t packed = (int32_t)llrint((double)sample * 2147483648.0);
+	return (uint8_t)(((uint32_t)packed) >> 24);
+}
+
+BOOL audioBufferIsDoP(const float *samples, size_t channels, size_t count, uint8_t *nextMarker) {
+	if(!samples || !channels || !count) return NO;
+
+	// A DoP frame has the same 0x05/0xFA marker in every channel, and the
+	// marker alternates on every frame. Validate the complete buffer: callers use
+	// the returned phase to join buffers, so accepting a damaged tail can make a
+	// DAC lose DoP lock.
+	uint8_t previousMarker = 0;
+	for(size_t frame = 0; frame < count; ++frame) {
+		const uint8_t marker = doPMarkerForSample(samples[frame * channels]);
+		if(marker != 0x05 && marker != 0xFA) return NO;
+		if(frame && marker == previousMarker) return NO;
+		for(size_t channel = 1; channel < channels; ++channel) {
+			if(doPMarkerForSample(samples[frame * channels + channel]) != marker) return NO;
+		}
+		previousMarker = marker;
+	}
+
+	if(nextMarker) {
+		*nextMarker = (previousMarker == 0x05) ? 0xFA : 0x05;
+	}
+	return YES;
+}
+
+void fillDoPSilence(float *samples, size_t channels, size_t count, uint8_t *nextMarker) {
+	uint8_t marker = (*nextMarker == 0xFA) ? 0xFA : 0x05;
+	for(size_t frame = 0; frame < count; ++frame) {
+		const uint32_t packed = ((uint32_t)marker << 24) | (0x69U << 16) | (0x69U << 8);
+		int32_t signedPacked;
+		memcpy(&signedPacked, &packed, sizeof(signedPacked));
+		const float silence = (float)((double)signedPacked / 2147483648.0);
+		for(size_t channel = 0; channel < channels; ++channel) {
+			samples[frame * channels + channel] = silence;
+		}
+		marker = (marker == 0x05) ? 0xFA : 0x05;
+	}
+	*nextMarker = marker;
+}
+
 BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels, size_t count, float *fadeLevel, float fadeStep, float fadeTarget) {
 	float _fadeLevel = *fadeLevel;
 	BOOL towardZero = fadeStep < 0.0;
@@ -109,6 +153,11 @@ BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels, size_
 			// Will always be input request size or less
 			size_t samplesToMix = [chunk frameCount];
 			NSData *sampleData = [chunk removeSamples:samplesToMix];
+			if(audioBufferIsDoP((const float *)[sampleData bytes], channels, samplesToMix, NULL)) {
+				// DoP is a bitstream disguised as PCM. Mixing or fading it corrupts
+				// both its marker bytes and its DSD payload, so use a hard cut.
+				return true;
+			}
 			BOOL stopping = fadeAudio((const float *)[sampleData bytes], outputBuffer, channels, samplesToMix, &fadeLevel, fadeStep, fadeTarget);
 			if(stopping) {
 				fadeStep = 0;
