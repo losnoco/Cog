@@ -14,14 +14,79 @@
 #import "NSDictionary+Optional.h"
 
 #import <stdlib.h>
+#import <stdint.h>
 #import <string.h>
 
 @implementation HTTPSource
 
+#define HTTP_STREAMING_BUFFER_SIZE_DEFAULT 0x40000
+#define HTTP_STREAMING_BUFFER_SIZE_MIN 0x10000
+#define HTTP_STREAMING_BUFFER_SIZE_MAX 0x8000000
+
 #define RETRY_OVERLAP_MIN_MATCH 512
-#define RETRY_OVERLAP_RETRY_SEARCH_SIZE (BUFFER_SIZE / 2)
-#define RETRY_OVERLAP_GAP_SEARCH_SIZE (BUFFER_SIZE / 8)
 #define RETRY_OVERLAP_GAP_INTERVAL 2.0
+
+static size_t http_streaming_buffer_size_from_defaults(void) {
+	NSInteger requested = [[NSUserDefaults standardUserDefaults] integerForKey:@"httpStreamingBufferSize"];
+	if(requested <= 0) {
+		return HTTP_STREAMING_BUFFER_SIZE_DEFAULT;
+	}
+
+	const size_t options[] = {
+		HTTP_STREAMING_BUFFER_SIZE_MIN,
+		0x20000,
+		HTTP_STREAMING_BUFFER_SIZE_DEFAULT,
+		0x80000,
+		0x100000,
+		0x200000,
+		0x400000,
+		0x800000,
+		0x1000000,
+		0x2000000,
+		0x4000000,
+		HTTP_STREAMING_BUFFER_SIZE_MAX
+	};
+
+	size_t requestedSize = (size_t)requested;
+	size_t best = HTTP_STREAMING_BUFFER_SIZE_DEFAULT;
+	size_t bestDistance = SIZE_MAX;
+
+	for(size_t i = 0; i < sizeof(options) / sizeof(options[0]); i++) {
+		size_t option = options[i];
+		size_t distance = requestedSize > option ? requestedSize - option : option - requestedSize;
+		if(distance < bestDistance) {
+			best = option;
+			bestDistance = distance;
+		}
+	}
+
+	return best;
+}
+
+static void http_free_buffers(HTTPSource *fp) {
+	free(fp->buffer);
+	free(fp->retryOverlapBuffer);
+	fp->buffer = NULL;
+	fp->retryOverlapBuffer = NULL;
+	fp->bufferSize = 0;
+	fp->bufferMask = 0;
+}
+
+static BOOL http_allocate_buffers(HTTPSource *fp) {
+	http_free_buffers(fp);
+
+	fp->bufferSize = http_streaming_buffer_size_from_defaults();
+	fp->bufferMask = (int64_t)(fp->bufferSize - 1);
+	fp->buffer = calloc(1, fp->bufferSize);
+	fp->retryOverlapBuffer = calloc(1, fp->bufferSize);
+	if(!fp->buffer || !fp->retryOverlapBuffer) {
+		http_free_buffers(fp);
+		return NO;
+	}
+
+	DLog(@"urlsession: using %zu byte streaming buffer", fp->bufferSize);
+	return YES;
+}
 
 static void http_retry_overlap_clear(HTTPSource *fp) {
 	fp->retryOverlapSize = 0;
@@ -38,19 +103,20 @@ static void http_retry_overlap_snapshot_locked(HTTPSource *fp, int32_t searchByt
 		return;
 	}
 
-	fp->retryOverlapSize = (int32_t)MIN((int64_t)RETRY_OVERLAP_SIZE, tail);
+	fp->retryOverlapSize = (int32_t)MIN((int64_t)fp->bufferSize, tail);
 	fp->retryOverlapOffset = 0;
 	fp->retryOverlapSearchRemaining = searchBytes;
 	fp->retryOverlapMatched = 0;
 	fp->retryOverlapActive = fp->retryOverlapSize > 0;
 
-	int readpos = (tail - fp->retryOverlapSize) & BUFFER_MASK;
-	size_t part1 = BUFFER_SIZE - readpos;
-	part1 = MIN(part1, fp->retryOverlapSize);
+	size_t overlapSize = (size_t)fp->retryOverlapSize;
+	size_t readpos = (size_t)((tail - fp->retryOverlapSize) & fp->bufferMask);
+	size_t part1 = fp->bufferSize - readpos;
+	part1 = MIN(part1, overlapSize);
 	memcpy(fp->retryOverlapBuffer, fp->buffer + readpos, part1);
 
-	if(part1 < fp->retryOverlapSize) {
-		memcpy(fp->retryOverlapBuffer + part1, fp->buffer, fp->retryOverlapSize - part1);
+	if(part1 < overlapSize) {
+		memcpy(fp->retryOverlapBuffer + part1, fp->buffer, overlapSize - part1);
 	}
 }
 
@@ -207,14 +273,14 @@ static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
 			break;
 		}
 
-		int sz = BUFFER_SIZE / 2 - fp->remaining; // number of bytes free in buffer
-		                                          // don't allow to fill more than half -- used for seeking backwards
+		int32_t sz = (int32_t)(fp->bufferSize / 2) - fp->remaining; // number of bytes free in buffer
+		                                                            // don't allow to fill more than half -- used for seeking backwards
 
 		if(sz > 5000) { // wait until there are at least 5k bytes free
-			size_t cp = MIN(avail, sz);
-			int writepos = (fp->pos + fp->remaining) & BUFFER_MASK;
+			size_t cp = MIN(avail, (size_t)sz);
+			size_t writepos = (size_t)((fp->pos + fp->remaining) & fp->bufferMask);
 			// copy 1st portion (before end of buffer
-			size_t part1 = BUFFER_SIZE - writepos;
+			size_t part1 = fp->bufferSize - writepos;
 			// may not be more than total
 			part1 = MIN(part1, cp);
 			memcpy(fp->buffer + writepos, ptr, part1);
@@ -565,7 +631,7 @@ static size_t http_data_write(NSData *data, HTTPSource *fp) {
 		NSTimeInterval sec = [now timeIntervalSinceDate:fp->last_read_time];
 		if(sec > RETRY_OVERLAP_GAP_INTERVAL) {
 			DLog(@"urlsession: data resumed after %.2fs gap; watching for retry overlap", sec);
-			http_retry_overlap_snapshot_locked(fp, RETRY_OVERLAP_GAP_SEARCH_SIZE);
+			http_retry_overlap_snapshot_locked(fp, (int32_t)(fp->bufferSize / 8));
 		}
 	}
 	fp->last_read_time = now;
@@ -646,7 +712,7 @@ static void http_clear_stream_metadata(HTTPSource *fp) {
 
 static void http_schedule_retry_locked(HTTPSource *fp) {
 	if(fp->continuousStream || fp->length < 0) {
-		http_retry_overlap_snapshot_locked(fp, RETRY_OVERLAP_RETRY_SEARCH_SIZE);
+		http_retry_overlap_snapshot_locked(fp, (int32_t)(fp->bufferSize / 2));
 	}
 	fp->last_read_time = [NSDate date];
 	fp->status = STATUS_RETRY;
@@ -779,7 +845,7 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	BOOL transparentRetry = self->gotheader || self->status == STATUS_READING || self->pos > 0 || self->remaining > 0;
 	if(transparentRetry && (self->continuousStream || self->length < 0)) {
 		DLog(@"urlsession: received another response for active stream; watching for retry overlap");
-		http_retry_overlap_snapshot_locked(self, RETRY_OVERLAP_RETRY_SEARCH_SIZE);
+		http_retry_overlap_snapshot_locked(self, (int32_t)(self->bufferSize / 2));
 		http_transport_retry_reset(self);
 	}
 
@@ -945,6 +1011,11 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 - (BOOL)open:(NSURL *)url {
 	URL = url;
 
+	if(!http_allocate_buffers(self)) {
+		DLog(@"urlsession: failed to allocate streaming buffer");
+		return NO;
+	}
+
 	mutex = [NSLock new];
 
 	need_abort = NO;
@@ -958,7 +1029,6 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	retryOverlapSize = 0;
 	retryOverlapOffset = 0;
 	retryOverlapSearchRemaining = 0;
-	memset(buffer, 0, sizeof(buffer));
 
 	nheaderpackets = 0;
 	content_type = nil;
@@ -1067,11 +1137,11 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 			skipbytes = 0;
 			[mutex unlock];
 			return YES;
-		} else if(pos < position && pos + BUFFER_SIZE > position) {
+		} else if(pos < position && pos + (int64_t)bufferSize > position) {
 			skipbytes = position - pos;
 			[mutex unlock];
 			return YES;
-		} else if(pos - position >= 0 && pos - position <= BUFFER_SIZE - remaining) {
+		} else if(pos - position >= 0 && pos - position <= (int64_t)bufferSize - remaining) {
 			skipbytes = 0;
 			remaining += pos - position;
 			pos = position;
@@ -1131,9 +1201,9 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 		//    DLog(@"buffer remaining: %d\n", remaining);
 		[mutex lock];
 		// DLog(@"http_read %lld/%lld/%d\n", pos, length, remaining);
-		size_t cp = MIN(sz, remaining);
-		int64_t readpos = pos & BUFFER_MASK;
-		size_t part1 = BUFFER_SIZE - readpos;
+		size_t cp = MIN(sz, (size_t)remaining);
+		size_t readpos = (size_t)(pos & bufferMask);
+		size_t part1 = bufferSize - readpos;
 		part1 = MIN(part1, cp);
 		//        DLog(@"readpos=%d, remaining=%d, req=%d, cp=%d, part1=%d, part2=%d\n", readpos, remaining, sz, cp, part1, cp-part1);
 		memcpy(ptr, buffer + readpos, part1);
@@ -1173,6 +1243,7 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 
 - (void)dealloc {
 	[self close];
+	http_free_buffers(self);
 }
 
 - (NSURL *)url {

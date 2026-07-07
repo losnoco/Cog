@@ -7,11 +7,37 @@ struct SandboxPathEntry: Identifiable {
     let token: AnyObject?
 }
 
+private let httpStreamingBufferSizeOptions: [(String, Int)] = [
+    ("64 KB", 0x10000),
+    ("128 KB", 0x20000),
+    ("256 KB", 0x40000),
+    ("512 KB", 0x80000),
+    ("1 MB", 0x100000),
+    ("2 MB", 0x200000),
+    ("4 MB", 0x400000),
+    ("8 MB", 0x800000),
+    ("16 MB", 0x1000000),
+    ("32 MB", 0x2000000),
+    ("64 MB", 0x4000000),
+    ("128 MB", 0x8000000),
+]
+
+private func normalizedHTTPStreamingBufferSize(_ size: Int) -> Int {
+    guard !httpStreamingBufferSizeOptions.isEmpty else { return 0x40000 }
+
+    return httpStreamingBufferSizeOptions.min { lhs, rhs in
+        abs(lhs.1 - size) < abs(rhs.1 - size)
+    }?.1 ?? 0x40000
+}
+
 private final class GeneralPrefs: ObservableObject {
     private var isActive = true
 
     @Published var allowInsecureSSL: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(allowInsecureSSL, forKey: "allowInsecureSSL") }
+    }
+    @Published var httpStreamingBufferSize: Int {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(httpStreamingBufferSize, forKey: "httpStreamingBufferSize") }
     }
     @Published var sentryConsented: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(sentryConsented, forKey: "sentryConsented") }
@@ -26,6 +52,8 @@ private final class GeneralPrefs: ObservableObject {
     init() {
         let d = UserDefaults.standard
         allowInsecureSSL = d.bool(forKey: "allowInsecureSSL")
+        let storedHTTPStreamingBufferSize = d.object(forKey: "httpStreamingBufferSize") == nil ? 0x40000 : d.integer(forKey: "httpStreamingBufferSize")
+        httpStreamingBufferSize = normalizedHTTPStreamingBufferSize(storedHTTPStreamingBufferSize)
         sentryConsented = d.bool(forKey: "sentryConsented")
         suCheckAtStartup = d.bool(forKey: "SUCheckAtStartup")
     }
@@ -115,6 +143,15 @@ struct GeneralPaneView: View {
         Form {
             Section {
                 Toggle("Allow insecure SSL connections", isOn: $prefs.allowInsecureSSL)
+                Picker("HTTP/HTTPS streaming buffer:", selection: $prefs.httpStreamingBufferSize) {
+                    ForEach(httpStreamingBufferSizeOptions, id: \.1) { option in
+                        Text(option.0).tag(option.1)
+                    }
+                }
+            } header: {
+                Text("Network").bold()
+            }
+            Section {
                 Toggle("Send crash reports and usage data", isOn: $prefs.sentryConsented)
             }
         }

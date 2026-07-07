@@ -11,10 +11,6 @@
 #import "Plugin.h"
 
 
-#define BUFFER_SIZE 0x40000
-#define BUFFER_MASK 0x3ffff
-#define RETRY_OVERLAP_SIZE BUFFER_SIZE
-
 #define MAX_METADATA 4096
 
 #define TIMEOUT 10 // in seconds
@@ -34,12 +30,14 @@ enum {
 
 	int redirectsRemaining;
 
-	int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
+	int64_t pos;
 	int64_t length;
 	int32_t remaining; // remaining bytes in buffer read from stream
 	int64_t skipbytes;
-	uint8_t buffer[BUFFER_SIZE];
-	uint8_t retryOverlapBuffer[RETRY_OVERLAP_SIZE];
+	size_t bufferSize;
+	int64_t bufferMask;
+	uint8_t *buffer;
+	uint8_t *retryOverlapBuffer;
 	int32_t retryOverlapSize;
 	int32_t retryOverlapOffset;
 	int32_t retryOverlapSearchRemaining;

@@ -746,6 +746,8 @@ static BOOL consentLastEnabled = NO;
 
 	[userDefaultsValuesDict setObject:@NO forKey:@"quitOnNaturalStop"];
 
+	[userDefaultsValuesDict setObject:@(0x40000) forKey:@"httpStreamingBufferSize"];
+
 	[userDefaultsValuesDict setObject:@NO forKey:@"spectrumFreqMode"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumProjectionMode"];
 
