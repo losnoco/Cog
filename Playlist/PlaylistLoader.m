@@ -785,9 +785,16 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
-		for(PlaylistEntry *pe in preloadedEntries) {
-			[self->playlistController firstSawTrackWithoutReload:pe];
+		BOOL selectsInsertedObjects = [self->playlistController selectsInsertedObjects];
+		[self->playlistController setSelectsInsertedObjects:NO];
+		@try {
+			[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
+			for(PlaylistEntry *pe in preloadedEntries) {
+				[self->playlistController firstSawTrackWithoutReload:pe];
+			}
+		}
+		@finally {
+			[self->playlistController setSelectsInsertedObjects:selectsInsertedObjects];
 		}
 	});
 
