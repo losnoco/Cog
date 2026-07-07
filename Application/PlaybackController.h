@@ -60,6 +60,9 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	double position;
 	double lastPosition;
 	BOOL seekable;
+	BOOL explicitStopRequested;
+	BOOL allowBackwardPositionUpdate;
+	BOOL lastPositionUpdateAccepted;
 	BOOL fading;
 
 	// progress bar display

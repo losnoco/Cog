@@ -19,6 +19,8 @@
 
 #import "Logging.h"
 
+#import <math.h>
+
 @implementation OutputNode {
 	BOOL DSPsLaunched;
 
@@ -139,11 +141,17 @@
 }
 
 - (void)setAmountPlayed:(double)seconds {
+	if(!isfinite(seconds) || seconds < 0.0) {
+		return;
+	}
+
 	double delta = seconds - amountPlayed;
 	if(delta > 0.0 && delta < 5.0) {
 		[self incrementAmountPlayed:delta];
-	} else if(delta) {
+	} else if(delta > 0.0 || amountPlayed == 0.0) {
 		amountPlayed = seconds;
+	} else if(delta < 0.0) {
+		DLog(@"Ignoring backward playback timestamp update from %.3f to %.3f", amountPlayed, seconds);
 	}
 }
 

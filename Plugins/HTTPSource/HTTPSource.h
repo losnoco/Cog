@@ -13,6 +13,7 @@
 
 #define BUFFER_SIZE 0x40000
 #define BUFFER_MASK 0x3ffff
+#define RETRY_OVERLAP_SIZE BUFFER_SIZE
 
 #define MAX_METADATA 4096
 
@@ -25,6 +26,7 @@ enum {
 	STATUS_FINISHED = 3,
 	STATUS_ABORTED = 4,
 	STATUS_SEEK = 5,
+	STATUS_RETRY = 6,
 };
 
 @interface HTTPSource : NSObject <CogSource, NSURLSessionDelegate> {
@@ -37,6 +39,10 @@ enum {
 	int32_t remaining; // remaining bytes in buffer read from stream
 	int64_t skipbytes;
 	uint8_t buffer[BUFFER_SIZE];
+	uint8_t retryOverlapBuffer[RETRY_OVERLAP_SIZE];
+	int32_t retryOverlapSize;
+	int32_t retryOverlapOffset;
+	int32_t retryOverlapSearchRemaining;
 
 	NSLock *mutex;
 
@@ -66,6 +72,9 @@ enum {
 	unsigned icyheader : 1; // tells that we're currently reading ICY headers
 	unsigned gotsomeheader : 1; // tells that we got some headers before body started
 	unsigned gotmetadata : 1; // got some metadata
+	unsigned continuousStream : 1; // stream-style source; reconnect clean socket closes instead of treating them as EOF
+	unsigned retryOverlapActive : 1; // retry snapshot is available for suppressing duplicate stream bursts
+	unsigned retryOverlapMatched : 1; // retry stream has been aligned against the snapshot
 }
 
 - (BOOL)hasMetadata;
