@@ -358,19 +358,24 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 	}
 }
 
-- (void)seedInitialCueMetadataForEntry:(PlaylistEntry *)entry url:(NSURL *)url {
+- (BOOL)seedInitialCueMetadataForEntry:(PlaylistEntry *)entry url:(NSURL *)url {
 	if(!isCueSheetTrackURL(url)) {
-		return;
+		return NO;
+	}
+
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
+	if(!properties) {
+		return NO;
 	}
 
 	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
-	if(!metadata) {
-		return;
-	}
+	NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:properties with:metadata];
 
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[entry setMetadata:metadata markLoaded:NO];
+		[entry setMetadata:entryInfo];
 	});
+
+	return YES;
 }
 
 + (NSString *)keyForPath:(NSString *)path {
@@ -725,6 +730,7 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 
 	NSInteger i = 0;
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
+	NSMutableArray *preloadedEntries = [NSMutableArray new];
 	for(NSURL *url in validURLs) {
 		__block PlaylistEntry *pe;
 
@@ -741,7 +747,9 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 			[addItemTask finish];
 		});
 
-		[self seedInitialCueMetadataForEntry:pe url:url];
+		if([self seedInitialCueMetadataForEntry:pe url:url]) {
+			[preloadedEntries addObject:pe];
+		}
 
 		[entries addObject:pe];
 
@@ -778,6 +786,9 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
+		for(PlaylistEntry *pe in preloadedEntries) {
+			[self->playlistController firstSawTrackWithoutReload:pe];
+		}
 	});
 
 	if(xmlData && [[xmlData objectForKey:@"queue"] count]) {
@@ -806,8 +817,21 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 	});
 
 	{
-		NSArray *arrayFirst = @[[entries objectAtIndex:0]];
-		NSMutableArray *arrayRest = [entries mutableCopy];
+		NSMutableArray *entriesNeedingInfo = [NSMutableArray new];
+		for(PlaylistEntry *pe in entries) {
+			if(![pe metadataLoaded]) {
+				[entriesNeedingInfo addObject:pe];
+			}
+		}
+
+		if(![entriesNeedingInfo count]) {
+			[self->playlistController commitPersistentStoreAsync];
+			[self->playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+			return entries;
+		}
+
+		NSArray *arrayFirst = @[[entriesNeedingInfo objectAtIndex:0]];
+		NSMutableArray *arrayRest = [entriesNeedingInfo mutableCopy];
 		[arrayRest removeObjectAtIndex:0];
 
 		metadataLoadInProgress = YES;
@@ -817,7 +841,7 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 
 		[self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
 
-		progressstep = 100.0 / (double)([entries count]);
+		progressstep = 100.0 / (double)([entriesNeedingInfo count]);
 		progress = progressstep;
 		[self setProgressJobStatus:progress];
 

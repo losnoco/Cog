@@ -289,6 +289,15 @@ static void *playlistControllerContext = &playlistControllerContext;
 }
 
 - (void)firstSawTrack:(PlaylistEntry *)pe {
+	[self firstSawTrackWithoutReload:pe];
+
+	NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
+	NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
+
+	[self.tableView reloadDataForRowIndexes:refreshRow columnIndexes:refreshColumns];
+}
+
+- (void)firstSawTrackWithoutReload:(PlaylistEntry *)pe {
 	__block PlayCount *pc = pe.playCountItem;
 
 	if(!pc) {
@@ -302,11 +311,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 			pc.filename = pe.filenameFragment;
 		}];
 	}
-
-	NSIndexSet *refreshRow = [NSIndexSet indexSetWithIndex:pe.index];
-	NSIndexSet *refreshColumns = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[self.tableView tableColumns] count])];
-
-	[self.tableView reloadDataForRowIndexes:refreshRow columnIndexes:refreshColumns];
 }
 
 - (void)ratingUpdatedWithEntry:(PlaylistEntry *)pe rating:(CGFloat)rating {
