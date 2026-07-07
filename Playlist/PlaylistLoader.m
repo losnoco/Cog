@@ -293,6 +293,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+static inline BOOL isCueSheetTrackURL(NSURL *url) {
+	return [url isFileURL] &&
+	       [[url fragment] length] &&
+	       [[url pathExtension] caseInsensitiveCompare:@"cue"] == NSOrderedSame;
+}
+
 - (void)beginProgress:(NSString *)localizedDescription {
 	while(playbackController.progressOverall) {
 		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
@@ -350,6 +356,21 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	} else {
 		[self completeProgressJob];
 	}
+}
+
+- (void)seedInitialCueMetadataForEntry:(PlaylistEntry *)entry url:(NSURL *)url {
+	if(!isCueSheetTrackURL(url)) {
+		return;
+	}
+
+	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
+	if(!metadata) {
+		return;
+	}
+
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[entry setMetadata:metadata markLoaded:NO];
+	});
 }
 
 + (NSString *)keyForPath:(NSString *)path {
@@ -719,6 +740,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			pe.queuePosition = -1;
 			[addItemTask finish];
 		});
+
+		[self seedInitialCueMetadataForEntry:pe url:url];
 
 		[entries addObject:pe];
 

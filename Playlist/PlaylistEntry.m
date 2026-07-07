@@ -587,6 +587,10 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 - (void)setMetadata:(NSDictionary *)metadata {
+	[self setMetadata:metadata markLoaded:YES];
+}
+
+- (void)setMetadata:(NSDictionary *)metadata markLoaded:(BOOL)markLoaded {
 	if(metadata == nil) {
 		self.error = YES;
 		self.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMetadata", nil, [NSBundle bundleForClass:[self class]], @"");
@@ -676,7 +680,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDict];
 	}
 
-	[self setMetadataLoaded:YES];
+	if(markLoaded) {
+		[self setMetadataLoaded:YES];
+	}
 }
 
 @dynamic playCountItem;
@@ -981,16 +987,19 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	NSArray *values = [value componentsSeparatedByString:@", "];
 
 	id metaObj = self.metadataBlob;
+	NSMutableDictionary *metaDictCopy = nil;
 
 	if(metaObj && [metaObj isKindOfClass:[NSDictionary class]]) {
 		NSDictionary *metaDict = (NSDictionary *)metaObj;
-		NSMutableDictionary *metaDictCopy = [metaDict mutableCopy];
-		NSString *realKey = [PlaylistEntry keyForMetaTag:tagName];
-
-		[metaDictCopy setObject:values forKey:realKey];
-
-		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
+		metaDictCopy = [metaDict mutableCopy];
+	} else {
+		metaDictCopy = [NSMutableDictionary new];
 	}
+
+	NSString *realKey = [PlaylistEntry keyForMetaTag:tagName];
+	[metaDictCopy setObject:values forKey:realKey];
+
+	self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDictCopy];
 }
 
 - (void)addValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nonnull)value {
