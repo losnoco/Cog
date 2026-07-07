@@ -143,7 +143,7 @@ struct GeneralPaneView: View {
         Form {
             Section {
                 Toggle("Allow insecure SSL connections", isOn: $prefs.allowInsecureSSL)
-                Picker("HTTP/HTTPS streaming buffer:", selection: $prefs.httpStreamingBufferSize) {
+                Picker("HTTP/HTTPS streaming buffer", selection: $prefs.httpStreamingBufferSize) {
                     ForEach(httpStreamingBufferSizeOptions, id: \.1) { option in
                         Text(option.0).tag(option.1)
                     }
