@@ -12,6 +12,7 @@
 #import "DSPRubberbandNode.h"
 
 #import "Logging.h"
+#import "FadedBuffer.h"
 
 #import <rubberband/rubberband-c.h>
 
@@ -480,9 +481,24 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		isResetForward = isResetForward || chunk.resetForward;
 
 		size_t frameCount = [chunk frameCount];
-		countIn += ((double)frameCount) / tempo;
 
 		NSData *sampleData = [chunk removeSamples:frameCount];
+		if(audioBufferIsDoP((const float *)[sampleData bytes], inputFormat.mChannelsPerFrame, frameCount, NULL)) {
+			AudioChunk *outputChunk = [AudioChunk new];
+			[outputChunk setFormat:inputFormat];
+			if(inputChannelConfig) {
+				[outputChunk setChannelConfig:inputChannelConfig];
+			}
+			if([chunk isHDCD]) [outputChunk setHDCD];
+			if(chunk.resetForward) outputChunk.resetForward = YES;
+			[outputChunk setStreamTimestamp:streamTimestamp];
+			[outputChunk setStreamTimeRatio:streamTimeRatio];
+			[outputChunk assignData:sampleData];
+			[mutex unlock];
+			return outputChunk;
+		}
+
+		countIn += ((double)frameCount) / tempo;
 
 		for (size_t i = 0; i < channels; ++i) {
 			cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsPtrs[i], 1);

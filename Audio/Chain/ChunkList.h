@@ -41,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 	
 	BOOL observersRegistered;
 	BOOL halveDSDVolume;
+	BOOL outputDSDAsDoP;
+	BOOL dsdDoPHasPendingFrame;
+	uint8_t dsdDoPPendingFrame[32];
+	uint8_t dsdDoPMarker;
 	
 	BOOL enableHDCD;
 	void *hdcd_decoder;
@@ -72,6 +76,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (AudioChunk *)removeSamples:(size_t)maxFrameCount;
 
 - (AudioChunk *)removeSamplesAsFloat32:(size_t)maxFrameCount;
+
+- (void)setOutputDSDAsDoP:(BOOL)enabled;
 
 - (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config;
 

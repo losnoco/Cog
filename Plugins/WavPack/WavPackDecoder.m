@@ -180,11 +180,13 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 	frame = 0;
 
 	isDSD = NO;
+	dsdDoPReverseBits = NO;
 
 	float nativeFrequency = WavpackGetNativeSampleRate(wpc);
 
 	if(nativeFrequency != frequency && bitsPerSample == 8) {
 		isDSD = YES;
+		dsdDoPReverseBits = !!(WavpackGetQualifyMode(wpc) & QMODE_DSD_LSB_FIRST);
 		frequency = nativeFrequency;
 		bitsPerSample = 1;
 		totalFrames *= 8;
@@ -360,6 +362,7 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 		      @"totalFrames": @(totalFrames),
 		      @"seekable": @([[wv source] seekable]),
 		      @"codec": @"WavPack",
+		      @"dsdDoPReverseBits": @(isDSD && dsdDoPReverseBits),
 		      @"endian": @"little",
 		      @"encoding": isLossy ? @"lossy" : @"lossless" };
 }

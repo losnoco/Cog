@@ -303,6 +303,15 @@
 	return [output deviceChannelConfig];
 }
 
+- (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	BOOL prepared = [output prepareForInputFormat:inputFormat];
+	if(prepared) {
+		format = [output deviceFormat];
+		config = [output deviceChannelConfig];
+	}
+	return prepared;
+}
+
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig {
 	if(!shouldContinue) return;
 

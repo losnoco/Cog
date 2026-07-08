@@ -70,6 +70,7 @@
 
 - (AudioStreamBasicDescription)deviceFormat;
 - (uint32_t)deviceChannelConfig;
+- (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat;
 
 - (double)volume;
 - (void)setVolume:(double)v;

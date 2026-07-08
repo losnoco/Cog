@@ -83,6 +83,14 @@
 	if(![inputNode openWithSource:source])
 		return NO;
 
+	if(resetBuffers) {
+		AudioPlayer *audioPlayer = controller;
+		OutputNode *outputNode = [audioPlayer output];
+		if(outputNode && [outputNode prepareForInputFormat:[inputNode nodeFormat]]) {
+			outputFormat = [outputNode format];
+		}
+	}
+
 	if(![self initConverter:outputFormat])
 		return NO;
 	[self initDownmixer];
@@ -108,6 +116,14 @@
 
 	if(![inputNode openWithDecoder:[i decoder]])
 		return NO;
+
+	if(resetBuffers) {
+		AudioPlayer *audioPlayer = controller;
+		OutputNode *outputNode = [audioPlayer output];
+		if(outputNode && [outputNode prepareForInputFormat:[inputNode nodeFormat]]) {
+			outputFormat = [outputNode format];
+		}
+	}
 
 	if(![self initConverter:outputFormat])
 		return NO;

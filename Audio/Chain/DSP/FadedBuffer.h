@@ -13,11 +13,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern float fadeTimeMS;
 
 extern BOOL fadeAudio(const float *inSamples, float *outSamples, size_t channels, size_t count, float *fadeLevel, float fadeStep, float fadeTarget);
 extern BOOL audioBufferIsDoP(const float *samples, size_t channels, size_t count, uint8_t * _Nullable nextMarker);
 extern void fillDoPSilence(float *samples, size_t channels, size_t count, uint8_t *nextMarker);
+
+#ifdef __cplusplus
+}
+#endif
 
 @interface FadedBuffer : Node
 

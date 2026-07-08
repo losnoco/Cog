@@ -6,10 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <math.h>
 
 #import "Downmix.h"
 
 #import "Logging.h"
+#import "FadedBuffer.h"
 
 #import "DSPDownmixNode.h"
 
@@ -184,8 +186,39 @@
 
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
+	const float *inSamples = (const float *)[sampleData bytes];
+	uint8_t nextDoPMarker = 0x05;
+	if(fabs(inputFormat.mSampleRate - outputFormat.mSampleRate) < 1.0 &&
+	   audioBufferIsDoP(inSamples, inputFormat.mChannelsPerFrame, frameCount, &nextDoPMarker)) {
+		AudioChunk *outputChunk = [AudioChunk new];
+		[outputChunk setFormat:outputFormat];
+		if(outputChannelConfig) {
+			[outputChunk setChannelConfig:outputChannelConfig];
+		}
+		if([chunk isHDCD]) [outputChunk setHDCD];
+		if(chunk.resetForward) outputChunk.resetForward = YES;
+		[outputChunk setStreamTimestamp:streamTimestamp];
+		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
+		if(inputFormat.mChannelsPerFrame == outputFormat.mChannelsPerFrame &&
+		   inputFormat.mBytesPerPacket == outputFormat.mBytesPerPacket) {
+			[outputChunk assignData:sampleData];
+		} else {
+			const size_t inputChannels = inputFormat.mChannelsPerFrame;
+			const size_t outputChannels = outputFormat.mChannelsPerFrame;
+			const size_t channelsToCopy = MIN(inputChannels, outputChannels);
+			const uint8_t firstMarker = (frameCount % 2) ? ((nextDoPMarker == 0x05) ? 0xFA : 0x05) : nextDoPMarker;
+			uint8_t marker = firstMarker;
+			fillDoPSilence(&outBuffer[0], outputChannels, frameCount, &marker);
+			for(size_t frame = 0; frame < frameCount; ++frame) {
+				memcpy(&outBuffer[frame * outputChannels], &inSamples[frame * inputChannels], channelsToCopy * sizeof(float));
+			}
+			[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
+		}
+		[mutex unlock];
+		return outputChunk;
+	}
 
-	[downmix process:[sampleData bytes] frameCount:frameCount output:&outBuffer[0]];
+	[downmix process:inSamples frameCount:frameCount output:&outBuffer[0]];
 
 	AudioChunk *outputChunk = [AudioChunk new];
 	[outputChunk setFormat:outputFormat];

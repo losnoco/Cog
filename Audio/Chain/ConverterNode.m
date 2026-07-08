@@ -457,6 +457,11 @@ static float db_to_scale(float db) {
 
 	rememberedLossless = lossless;
 
+	const BOOL outputDSDAsDoP = (inputFormat.mBitsPerChannel == 1 &&
+	                             inputFormat.mChannelsPerFrame == outputFormat.mChannelsPerFrame &&
+	                             fabs(outputFormat.mSampleRate - (inputFormat.mSampleRate / 16.0)) < 1e-7);
+	[[previousNode buffer] setOutputDSDAsDoP:outputDSDAsDoP];
+
 	// These are the only sample formats we support translating
 	BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
 	if((!isFloat && !(inputFormat.mBitsPerChannel >= 1 && inputFormat.mBitsPerChannel <= 32)) || (isFloat && !(inputFormat.mBitsPerChannel == 32 || inputFormat.mBitsPerChannel == 64))) {
@@ -472,8 +477,7 @@ static float db_to_scale(float db) {
 
 #if DSD_DECIMATE
 	if(inputFormat.mBitsPerChannel == 1) {
-		// Decimate this for speed
-		floatFormat.mSampleRate *= 1.0 / 8.0;
+		floatFormat.mSampleRate *= outputDSDAsDoP ? (1.0 / 16.0) : (1.0 / 8.0);
 	}
 #endif
 

@@ -12,6 +12,7 @@
 #import "DSPSignalsmithStretchNode.h"
 
 #import "Logging.h"
+#import "FadedBuffer.h"
 
 #define SIGNALSMITH_USE_ACCELERATE 1
 #import <signalsmith-stretch/signalsmith-stretch.h>
@@ -317,9 +318,24 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 			isResetForward = isResetForward || chunk.resetForward;
 
 			size_t frameCount = [chunk frameCount];
-			countIn += ((double)frameCount) / tempo;
 
 			NSData *sampleData = [chunk removeSamples:frameCount];
+			if(audioBufferIsDoP((const float *)[sampleData bytes], inputFormat.mChannelsPerFrame, frameCount, NULL)) {
+				AudioChunk *outputChunk = [AudioChunk new];
+				[outputChunk setFormat:inputFormat];
+				if(inputChannelConfig) {
+					[outputChunk setChannelConfig:inputChannelConfig];
+				}
+				if([chunk isHDCD]) [outputChunk setHDCD];
+				if(chunk.resetForward) outputChunk.resetForward = YES;
+				[outputChunk setStreamTimestamp:streamTimestamp];
+				[outputChunk setStreamTimeRatio:streamTimeRatio];
+				[outputChunk assignData:sampleData];
+				[mutex unlock];
+				return outputChunk;
+			}
+
+			countIn += ((double)frameCount) / tempo;
 
 			for (size_t i = 0; i < channels; ++i) {
 				cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsOutBuffer[i], 1);
@@ -342,9 +358,24 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 		isResetForward = isResetForward || chunk.resetForward;
 
 		size_t frameCount = [chunk frameCount];
-		countIn += ((double)frameCount) / tempo;
 
 		NSData *sampleData = [chunk removeSamples:frameCount];
+		if(audioBufferIsDoP((const float *)[sampleData bytes], inputFormat.mChannelsPerFrame, frameCount, NULL)) {
+			AudioChunk *outputChunk = [AudioChunk new];
+			[outputChunk setFormat:inputFormat];
+			if(inputChannelConfig) {
+				[outputChunk setChannelConfig:inputChannelConfig];
+			}
+			if([chunk isHDCD]) [outputChunk setHDCD];
+			if(chunk.resetForward) outputChunk.resetForward = YES;
+			[outputChunk setStreamTimestamp:streamTimestamp];
+			[outputChunk setStreamTimeRatio:streamTimeRatio];
+			[outputChunk assignData:sampleData];
+			[mutex unlock];
+			return outputChunk;
+		}
+
+		countIn += ((double)frameCount) / tempo;
 
 		for (size_t i = 0; i < channels; ++i) {
 			cblas_scopy((int)frameCount, ((const float *)[sampleData bytes]) + i, channels, rsInBuffer[i], 1);

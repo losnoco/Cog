@@ -12,6 +12,7 @@
 #import "Logging.h"
 
 #import "DSPHRTFNode.h"
+#import "FadedBuffer.h"
 
 #import "lpc.h"
 
@@ -403,6 +404,20 @@ static void unregisterMotionListener(void) {
 
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
+	if(audioBufferIsDoP((const float *)[sampleData bytes], inputFormat.mChannelsPerFrame, frameCount, NULL)) {
+		AudioChunk *outputChunk = [AudioChunk new];
+		[outputChunk setFormat:inputFormat];
+		if(inputChannelConfig) {
+			[outputChunk setChannelConfig:inputChannelConfig];
+		}
+		if([chunk isHDCD]) [outputChunk setHDCD];
+		if(chunk.resetForward) outputChunk.resetForward = YES;
+		[outputChunk setStreamTimestamp:streamTimestamp];
+		[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
+		[outputChunk assignData:sampleData];
+		[mutex unlock];
+		return outputChunk;
+	}
 
 	if(needPrefill) {
 		size_t maxToUse = 4096 - needPrefill;

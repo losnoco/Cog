@@ -17,6 +17,7 @@
 #import "OutputNode.h"
 
 #import "Logging.h"
+#import "FadedBuffer.h"
 
 #import "AudioPlayer.h"
 
@@ -377,6 +378,20 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 		NSData *sampleData = [chunk removeSamples:frameCount];
 		
 		const float *inBuffer = (const float *)[sampleData bytes];
+		if(audioBufferIsDoP(inBuffer, channels, frameCount, NULL)) {
+			outputChunk = [AudioChunk new];
+			[outputChunk setFormat:inputFormat];
+			if(inputChannelConfig) {
+				[outputChunk setChannelConfig:inputChannelConfig];
+			}
+			if([chunk isHDCD]) [outputChunk setHDCD];
+			if(chunk.resetForward) outputChunk.resetForward = YES;
+			[outputChunk setStreamTimestamp:streamTimestamp];
+			[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
+			[outputChunk assignData:sampleData];
+			[mutex unlock];
+			return outputChunk;
+		}
 
 		memcpy(outBuffer, inBuffer, frameCount * channels * sizeof(float));
 
