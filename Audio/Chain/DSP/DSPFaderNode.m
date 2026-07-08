@@ -251,6 +251,10 @@
 	waitForResetEvent = YES;
 }
 
+- (void)waitForReset {
+	waitForResetEvent = YES;
+}
+
 - (void)setDoPMode:(BOOL)enabled {
 	doPMode = enabled;
 }

@@ -1147,6 +1147,8 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	[self stopIdle];
 	if(playbackFadesEnabled() || doPActive) {
 		[faderNode fadeIn];
+	} else {
+		[faderNode waitForReset];
 	}
 	[faderNode setPreviousNode:downmixNode];
 	prebufferSignaled = NO;
