@@ -7,6 +7,7 @@
 //
 
 #import "TimeField.h"
+#import "PlaybackController.h"
 
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
 
@@ -18,17 +19,30 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 
 @implementation TimeField {
 	BOOL showTimeRemaining;
+	BOOL allowZeroTime;
 }
 
 - (void)awakeFromNib {
 	CGFloat fontSize = 13.0;
 
 	showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+	                                         selector:@selector(playbackWillResetPosition:)
+	                                             name:CogPlaybackWillResetPositionNotification
+	                                           object:nil];
 
 	self.font = [NSFont monospacedDigitSystemFontOfSize:fontSize
 	                                             weight:NSFontWeightRegular];
 
 	[self update];
+}
+
+- (void)dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)playbackWillResetPosition:(NSNotification *)notification {
+	allowZeroTime = YES;
 }
 
 static int _log10(long minutes) {
@@ -67,6 +81,13 @@ static int _log10(long minutes) {
 }
 
 - (void)setCurrentTime:(NSInteger)currentTime {
+	BOOL zeroTimeAllowed = allowZeroTime;
+	allowZeroTime = NO;
+
+	if(currentTime == 0 && _currentTime > 0 && _duration == 0 && !zeroTimeAllowed) {
+		return;
+	}
+
 	_currentTime = currentTime;
 	[self update];
 }
