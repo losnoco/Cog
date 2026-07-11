@@ -40,7 +40,6 @@ enum {
 	uint8_t *retryOverlapBuffer;
 	int32_t retryOverlapSize;
 	int32_t retryOverlapOffset;
-	int32_t retryOverlapSearchRemaining;
 
 	NSLock *mutex;
 
@@ -71,7 +70,6 @@ enum {
 	unsigned gotsomeheader : 1; // tells that we got some headers before body started
 	unsigned gotmetadata : 1; // got some metadata
 	unsigned continuousStream : 1; // stream-style source; reconnect clean socket closes instead of treating them as EOF
-	unsigned retryOverlapActive : 1; // retry snapshot is available for suppressing duplicate stream bursts
 	unsigned retryOverlapMatched : 1; // retry stream has been aligned against the snapshot
 }
 

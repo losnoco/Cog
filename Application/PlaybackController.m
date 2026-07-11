@@ -19,15 +19,11 @@
 
 #import "Logging.h"
 
-#import <math.h>
-
 @import Sentry;
 
 // Sentry captureMessage is too spammy to use for anything but actual errors
 
 extern BOOL kAppControllerShuttingDown;
-
-static NSNotificationName CogPlaybackAllowsZeroTimeDisplayNotification = @"CogPlaybackAllowsZeroTimeDisplayNotification";
 
 static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
 	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
@@ -135,9 +131,6 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 		[self initDefaults];
 
 		seekable = NO;
-		explicitStopRequested = NO;
-		allowBackwardPositionUpdate = NO;
-		lastPositionUpdateAccepted = YES;
 		fading = NO;
 
 		progressOverall = nil;
@@ -262,9 +255,7 @@ static double reverseSpeedScale(double input, double min, double max) {
 
 	[self audioPlayer:audioPlayer removeEqualizer:_eq];
 
-	explicitStopRequested = YES;
 	[audioPlayer stop];
-	explicitStopRequested = NO;
 
 	[self sendMetaData];
 }
@@ -347,7 +338,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[self setPosition:[offset doubleValue] allowBackward:YES];
+	[self setPosition:[offset doubleValue]];
 
 	if(pe == nil)
 		return;
@@ -405,9 +396,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)updatePosition:(id)sender {
 	double pos = [audioPlayer amountPlayed];
 
-	if(![self setPosition:pos allowBackward:NO]) {
-		return;
-	}
+	[self setPosition:pos];
 
 	if(!kAppControllerShuttingDown) {
 		PlaylistEntry *pe = [playlistController currentEntry];
@@ -427,7 +416,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[self setPosition:time allowBackward:YES];
+	[self setPosition:time];
 
 	if(!kAppControllerShuttingDown) {
 		PlaylistEntry *pe = [playlistController currentEntry];
@@ -442,7 +431,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(time), nil];
 
-	[self setPosition:time allowBackward:YES];
+	[self setPosition:time];
 
 	if(!kAppControllerShuttingDown) {
 		PlaylistEntry *pe = [playlistController currentEntry];
@@ -474,7 +463,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		} else {
 			lastPosition = -10;
 			[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
-			[self setPosition:seekTo allowBackward:YES];
+			[self setPosition:seekTo];
 		}
 	}
 }
@@ -493,7 +482,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		lastPosition = -10;
 		
 		[audioPlayer performSelectorOnMainThread:@selector(seekToTimeBG:) withObjects:@(seekTo), nil];
-		[self setPosition:seekTo allowBackward:YES];
+		[self setPosition:seekTo];
 	}
 }
 
@@ -881,8 +870,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	// Dispatch to main thread, unless this is the main thread
 	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
-		BOOL isSameEntry = pe && pe == [self->playlistController currentEntry];
-
 		[self->playlistController setCurrentEntry:pe];
 
 		// Update metadata for currently playing track to update its position for scrobbling.
@@ -892,11 +879,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			equalizerApplyGenre((__bridge DSPEqualizerNode *)self->_eq, [pe genre]);
 		}
 
-		if(!isSameEntry) {
-			self->lastPosition = -10;
+		self->lastPosition = -10;
 
-			[self setPosition:0 allowBackward:YES];
-		}
+		[self setPosition:0];
 	});
 
 	if(pe) {
@@ -913,27 +898,24 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(NSNumber *)s userInfo:(id)userInfo {
 	int status = [s intValue];
-	if(status == CogStatusStopped) {
-		BOOL explicitStop = explicitStopRequested;
-		explicitStopRequested = NO;
-
-		if(!explicitStop && [self shouldSuppressStoppedStatusForUserInfo:userInfo]) {
-			DLog(@"Ignoring transient stopped status for current HTTP stream");
-			return;
-		}
-
-		[self applyStoppedStatus];
-		return;
-	}
-
-	if(status == CogStatusPaused) {
+	if(status == CogStatusStopped || status == CogStatusPaused) {
 		if(positionTimer) {
 			[positionTimer invalidate];
 			positionTimer = NULL;
 		}
 
-		//[SentrySDK captureMessage:@"Playback paused"];
-		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotificiation object:nil];
+		if(status == CogStatusStopped) {
+			//[SentrySDK captureMessage:@"Playback stopped"];
+
+			[self setPosition:0];
+			[self setSeekable:NO]; // the player stopped, disable the slider
+
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotificiation object:nil];
+		} else // paused
+		{
+			//[SentrySDK captureMessage:@"Playback paused"];
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidPauseNotificiation object:nil];
+		}
 	} else if(status == CogStatusPlaying) {
 		//[SentrySDK captureMessage:@"Playback started"];
 
@@ -945,7 +927,12 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidResumeNotificiation object:nil];
 	}
 
-	[self setSeekable:YES];
+	if(status == CogStatusStopped) {
+		[playlistController setCurrentEntry:nil];
+		[self setSeekable:NO]; // the player stopped, disable the slider
+	} else {
+		[self setSeekable:YES];
+	}
 	switch(status) {
 		case CogStatusPlaying:
 			DLog(@"PLAYING!");
@@ -1025,106 +1012,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[audioPlayer resetNextStreams];
 }
 
-- (BOOL)isRecoverableStreamingEntry:(PlaylistEntry *)pe {
-	if(!pe || !pe.url) {
-		return NO;
-	}
-
-	NSString *scheme = [[pe.url scheme] lowercaseString];
-	if(![scheme isEqualToString:@"http"] && ![scheme isEqualToString:@"https"]) {
-		return NO;
-	}
-
-	return [pe.length doubleValue] <= 0.0 || !pe.seekable;
-}
-
-- (BOOL)shouldSuppressStoppedStatusForUserInfo:(id)userInfo {
-	PlaylistEntry *pe = [playlistController currentEntry];
-	if(position <= 0.0 || ![self isRecoverableStreamingEntry:pe]) {
-		return NO;
-	}
-
-	if(!userInfo || pe == userInfo) {
-		return YES;
-	}
-
-	if([userInfo isKindOfClass:[PlaylistEntry class]]) {
-		PlaylistEntry *stoppedEntry = (PlaylistEntry *)userInfo;
-		return [stoppedEntry.url isEqual:pe.url];
-	}
-
-	return NO;
-}
-
-- (void)applyStoppedStatus {
-	if(positionTimer) {
-		[positionTimer invalidate];
-		positionTimer = NULL;
-	}
-
-	//[SentrySDK captureMessage:@"Playback stopped"];
-
-	[self setPosition:0 allowBackward:YES];
-	[self setSeekable:NO]; // the player stopped, disable the slider
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidStopNotificiation object:nil];
-
-	[playlistController setCurrentEntry:nil];
-	[self setSeekable:NO]; // the player stopped, disable the slider
-
-	DLog(@"STOPPED!");
-
-	[self setPlaybackStatus:CogStatusStopped];
-	// If we don't send it here, if we've stopped, then the NPIC will be stuck at the last file we played.
-	[self sendMetaData];
-}
-
-- (BOOL)shouldIgnorePositionUpdate:(double)p {
-	if(allowBackwardPositionUpdate || p >= position || position <= 0.0) {
-		return NO;
-	}
-
-	PlaylistEntry *pe = [playlistController currentEntry];
-	if(![self isRecoverableStreamingEntry:pe]) {
-		return NO;
-	}
-
-	DLog(@"Ignoring backward streaming playback position update from %.3f to %.3f", position, p);
-	return YES;
-}
-
-- (BOOL)setPosition:(double)p allowBackward:(BOOL)allowBackward {
-	BOOL oldAllowBackward = allowBackwardPositionUpdate;
-	allowBackwardPositionUpdate = allowBackward;
-	lastPositionUpdateAccepted = YES;
-
-	if(allowBackward && p <= 0.0) {
-		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackAllowsZeroTimeDisplayNotification object:self];
-	}
-
-	[self setPosition:p];
-
-	BOOL accepted = lastPositionUpdateAccepted;
-	allowBackwardPositionUpdate = oldAllowBackward;
-	return accepted;
-}
-
 - (void)setPosition:(double)p {
-	if(!isfinite(p)) {
-		lastPositionUpdateAccepted = NO;
-		return;
-	}
-
-	if(p < 0.0) {
-		p = 0.0;
-	}
-
-	if([self shouldIgnorePositionUpdate:p]) {
-		lastPositionUpdateAccepted = NO;
-		return;
-	}
-
-	lastPositionUpdateAccepted = YES;
 	position = p;
 
 	if(kAppControllerShuttingDown) return;

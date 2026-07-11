@@ -9,8 +9,6 @@
 #import "TimeField.h"
 
 static NSString *kTimerModeKey = @"timerShowTimeRemaining";
-static NSNotificationName CogPlaybackAllowsZeroTimeDisplayNotification = @"CogPlaybackAllowsZeroTimeDisplayNotification";
-static const NSTimeInterval kTransientZeroDelay = 0.75;
 
 NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 	NSString *paddingChar = [NSString stringWithFormat:@"%C", (unichar)0x2007]; // Digit-width space
@@ -20,37 +18,17 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 
 @implementation TimeField {
 	BOOL showTimeRemaining;
-	BOOL allowsImmediateZeroTime;
-	NSUInteger zeroTimeGeneration;
 }
 
 - (void)awakeFromNib {
 	CGFloat fontSize = 13.0;
 
 	showTimeRemaining = [[NSUserDefaults standardUserDefaults] boolForKey:kTimerModeKey];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-	                                         selector:@selector(allowImmediateZeroTime:)
-	                                             name:CogPlaybackAllowsZeroTimeDisplayNotification
-	                                           object:nil];
 
 	self.font = [NSFont monospacedDigitSystemFontOfSize:fontSize
 	                                             weight:NSFontWeightRegular];
 
 	[self update];
-}
-
-- (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)allowImmediateZeroTime:(NSNotification *)notification {
-	allowsImmediateZeroTime = YES;
-	NSUInteger generation = ++zeroTimeGeneration;
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(NSEC_PER_SEC * kTransientZeroDelay)), dispatch_get_main_queue(), ^{
-		if(generation == self->zeroTimeGeneration) {
-			self->allowsImmediateZeroTime = NO;
-		}
-	});
 }
 
 static int _log10(long minutes) {
@@ -89,26 +67,6 @@ static int _log10(long minutes) {
 }
 
 - (void)setCurrentTime:(NSInteger)currentTime {
-	if(currentTime < 0) {
-		currentTime = 0;
-	}
-
-	if(currentTime == 0 && _currentTime > 0 && _duration == 0 && !allowsImmediateZeroTime) {
-		NSUInteger generation = ++zeroTimeGeneration;
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(NSEC_PER_SEC * kTransientZeroDelay)), dispatch_get_main_queue(), ^{
-			if(generation == self->zeroTimeGeneration) {
-				self->_currentTime = currentTime;
-				[self update];
-			}
-		});
-		return;
-	}
-
-	zeroTimeGeneration++;
-	if(currentTime != 0) {
-		allowsImmediateZeroTime = NO;
-	}
-
 	_currentTime = currentTime;
 	[self update];
 }

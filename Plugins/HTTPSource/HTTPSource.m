@@ -14,7 +14,6 @@
 #import "NSDictionary+Optional.h"
 
 #import <stdlib.h>
-#import <stdint.h>
 #import <string.h>
 
 @implementation HTTPSource
@@ -23,44 +22,18 @@
 #define HTTP_STREAMING_BUFFER_SIZE_MIN 0x10000
 #define HTTP_STREAMING_BUFFER_SIZE_MAX 0x8000000
 
+#define RETRY_OVERLAP_SIZE_MAX HTTP_STREAMING_BUFFER_SIZE_DEFAULT
 #define RETRY_OVERLAP_MIN_MATCH 512
-#define RETRY_OVERLAP_GAP_INTERVAL 2.0
 
 static size_t http_streaming_buffer_size_from_defaults(void) {
 	NSInteger requested = [[NSUserDefaults standardUserDefaults] integerForKey:@"httpStreamingBufferSize"];
-	if(requested <= 0) {
+	if(requested < HTTP_STREAMING_BUFFER_SIZE_MIN ||
+	   requested > HTTP_STREAMING_BUFFER_SIZE_MAX ||
+	   (requested & (requested - 1)) != 0) {
 		return HTTP_STREAMING_BUFFER_SIZE_DEFAULT;
 	}
 
-	const size_t options[] = {
-		HTTP_STREAMING_BUFFER_SIZE_MIN,
-		0x20000,
-		HTTP_STREAMING_BUFFER_SIZE_DEFAULT,
-		0x80000,
-		0x100000,
-		0x200000,
-		0x400000,
-		0x800000,
-		0x1000000,
-		0x2000000,
-		0x4000000,
-		HTTP_STREAMING_BUFFER_SIZE_MAX
-	};
-
-	size_t requestedSize = (size_t)requested;
-	size_t best = HTTP_STREAMING_BUFFER_SIZE_DEFAULT;
-	size_t bestDistance = SIZE_MAX;
-
-	for(size_t i = 0; i < sizeof(options) / sizeof(options[0]); i++) {
-		size_t option = options[i];
-		size_t distance = requestedSize > option ? requestedSize - option : option - requestedSize;
-		if(distance < bestDistance) {
-			best = option;
-			bestDistance = distance;
-		}
-	}
-
-	return best;
+	return (size_t)requested;
 }
 
 static void http_free_buffers(HTTPSource *fp) {
@@ -78,7 +51,7 @@ static BOOL http_allocate_buffers(HTTPSource *fp) {
 	fp->bufferSize = http_streaming_buffer_size_from_defaults();
 	fp->bufferMask = (int64_t)(fp->bufferSize - 1);
 	fp->buffer = calloc(1, fp->bufferSize);
-	fp->retryOverlapBuffer = calloc(1, fp->bufferSize);
+	fp->retryOverlapBuffer = calloc(1, MIN(fp->bufferSize, (size_t)RETRY_OVERLAP_SIZE_MAX));
 	if(!fp->buffer || !fp->retryOverlapBuffer) {
 		http_free_buffers(fp);
 		return NO;
@@ -91,23 +64,18 @@ static BOOL http_allocate_buffers(HTTPSource *fp) {
 static void http_retry_overlap_clear(HTTPSource *fp) {
 	fp->retryOverlapSize = 0;
 	fp->retryOverlapOffset = 0;
-	fp->retryOverlapSearchRemaining = 0;
-	fp->retryOverlapActive = 0;
 	fp->retryOverlapMatched = 0;
 }
 
-static void http_retry_overlap_snapshot_locked(HTTPSource *fp, int32_t searchBytes) {
+static void http_retry_overlap_snapshot_locked(HTTPSource *fp) {
 	int64_t tail = fp->pos + fp->remaining;
-	if(fp->retryOverlapActive || tail <= 0) {
-		fp->retryOverlapSearchRemaining = MAX(fp->retryOverlapSearchRemaining, searchBytes);
+	if(fp->retryOverlapSize > 0 || tail <= 0) {
 		return;
 	}
 
-	fp->retryOverlapSize = (int32_t)MIN((int64_t)fp->bufferSize, tail);
+	fp->retryOverlapSize = (int32_t)MIN((int64_t)MIN(fp->bufferSize, (size_t)RETRY_OVERLAP_SIZE_MAX), tail);
 	fp->retryOverlapOffset = 0;
-	fp->retryOverlapSearchRemaining = searchBytes;
 	fp->retryOverlapMatched = 0;
-	fp->retryOverlapActive = fp->retryOverlapSize > 0;
 
 	size_t overlapSize = (size_t)fp->retryOverlapSize;
 	size_t readpos = (size_t)((tail - fp->retryOverlapSize) & fp->bufferMask);
@@ -130,7 +98,7 @@ static size_t http_retry_overlap_match_length(const uint8_t *a, size_t asize, co
 }
 
 static BOOL http_retry_overlap_find_locked(HTTPSource *fp, const uint8_t *ptr, size_t size, size_t *inputSkip, size_t *overlapOffset) {
-	if(!fp->retryOverlapActive || fp->retryOverlapSize <= 0 || size == 0) {
+	if(fp->retryOverlapSize <= 0 || size == 0) {
 		return NO;
 	}
 
@@ -190,7 +158,7 @@ static BOOL http_retry_overlap_find_locked(HTTPSource *fp, const uint8_t *ptr, s
 }
 
 static size_t http_retry_overlap_discard_locked(HTTPSource *fp, const uint8_t *ptr, size_t size) {
-	if(!fp->retryOverlapActive || size == 0) {
+	if(fp->retryOverlapSize <= 0 || size == 0) {
 		return 0;
 	}
 
@@ -200,14 +168,6 @@ static size_t http_retry_overlap_discard_locked(HTTPSource *fp, const uint8_t *p
 		size_t inputSkip = 0;
 		size_t overlapOffset = 0;
 		if(!http_retry_overlap_find_locked(fp, ptr, size, &inputSkip, &overlapOffset)) {
-			if(fp->retryOverlapSearchRemaining > 0) {
-				size_t discard = MIN(size, (size_t)fp->retryOverlapSearchRemaining);
-				fp->retryOverlapSearchRemaining -= (int32_t)discard;
-				if(fp->retryOverlapSearchRemaining <= 0) {
-					http_retry_overlap_clear(fp);
-				}
-				return discard;
-			}
 			http_retry_overlap_clear(fp);
 			return 0;
 		}
@@ -252,7 +212,7 @@ static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
 		if(fp->status == STATUS_SEEK || fp->status == STATUS_RETRY) {
 			DLog(@"urlsession restart request, aborting current request");
 			[fp->mutex unlock];
-			return 0;
+			return consumed;
 		}
 		if(fp->need_abort) {
 			fp->status = STATUS_ABORTED;
@@ -623,18 +583,8 @@ static size_t http_data_write(NSData *data, HTTPSource *fp) {
 	size_t avail = size;
 
 	// DLog(@"http_data_write %d bytes, wait_meta=%d\n", (int)size, fp->wait_meta);
-	NSDate *now = [NSDate date];
 	[fp->mutex lock];
-	if(fp->last_read_time &&
-	   fp->status == STATUS_READING &&
-	   (fp->continuousStream || fp->length < 0)) {
-		NSTimeInterval sec = [now timeIntervalSinceDate:fp->last_read_time];
-		if(sec > RETRY_OVERLAP_GAP_INTERVAL) {
-			DLog(@"urlsession: data resumed after %.2fs gap; watching for retry overlap", sec);
-			http_retry_overlap_snapshot_locked(fp, (int32_t)(fp->bufferSize / 8));
-		}
-	}
-	fp->last_read_time = now;
+	fp->last_read_time = [NSDate date];
 	[fp->mutex unlock];
 
 	// Check for abort
@@ -678,29 +628,22 @@ static size_t http_data_write(NSData *data, HTTPSource *fp) {
 	return size - avail;
 }
 
-static void http_stream_reset(HTTPSource *fp) {
+static void http_transport_reset(HTTPSource *fp) {
 	fp->gotheader = 0;
 	fp->icyheader = 0;
 	fp->gotsomeheader = 0;
-	fp->remaining = 0;
 	fp->metadata_size = 0;
 	fp->metadata_have_size = 0;
-	fp->skipbytes = 0;
 	fp->nheaderpackets = 0;
 	fp->icy_metaint = 0;
 	fp->wait_meta = 0;
-	http_retry_overlap_clear(fp);
 }
 
-static void http_transport_retry_reset(HTTPSource *fp) {
-	fp->gotheader = 0;
-	fp->icyheader = 0;
-	fp->gotsomeheader = 0;
-	fp->metadata_size = 0;
-	fp->metadata_have_size = 0;
-	fp->nheaderpackets = 0;
-	fp->icy_metaint = 0;
-	fp->wait_meta = 0;
+static void http_stream_reset(HTTPSource *fp) {
+	http_transport_reset(fp);
+	fp->remaining = 0;
+	fp->skipbytes = 0;
+	http_retry_overlap_clear(fp);
 }
 
 static void http_clear_stream_metadata(HTTPSource *fp) {
@@ -712,9 +655,8 @@ static void http_clear_stream_metadata(HTTPSource *fp) {
 
 static void http_schedule_retry_locked(HTTPSource *fp) {
 	if(fp->continuousStream || fp->length < 0) {
-		http_retry_overlap_snapshot_locked(fp, (int32_t)(fp->bufferSize / 2));
+		http_retry_overlap_snapshot_locked(fp);
 	}
-	fp->last_read_time = [NSDate date];
 	fp->status = STATUS_RETRY;
 }
 
@@ -751,12 +693,13 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 				skipbytes = 0;
 				self->status = STATUS_INITIAL;
 
+				if(dataTask) {
+					[dataTask cancel];
+					dataTask = nil;
+				}
+
 				if(retrying) {
-					if(dataTask) {
-						[dataTask cancel];
-						dataTask = nil;
-					}
-					http_transport_retry_reset(self);
+					http_transport_reset(self);
 				} else if(length < 0) {
 					// icy -- need full restart
 					http_stream_reset(self);
@@ -813,11 +756,6 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 			[request setValue:rangeHeader forHTTPHeaderField:@"Range"];
 		}
 
-		// Cancel existing task if any
-		if(dataTask) {
-			[dataTask cancel];
-		}
-
 		// Create and start new task
 		dataTask = [session dataTaskWithRequest:request];
 		[dataTask resume];
@@ -841,13 +779,6 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	}
 
 	DLog(@"urlsession: received response");
-
-	BOOL transparentRetry = self->gotheader || self->status == STATUS_READING || self->pos > 0 || self->remaining > 0;
-	if(transparentRetry && (self->continuousStream || self->length < 0)) {
-		DLog(@"urlsession: received another response for active stream; watching for retry overlap");
-		http_retry_overlap_snapshot_locked(self, (int32_t)(self->bufferSize / 2));
-		http_transport_retry_reset(self);
-	}
 
 	NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 	NSDictionary *headers = httpResponse.allHeaderFields;
@@ -903,10 +834,7 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 		return;
 	}
 
-	HTTPSource *fp = self;
-
-	// Call the new NSData-based write function
-	http_data_write(data, fp);
+	http_data_write(data, self);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
@@ -918,29 +846,21 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 		return;
 	}
 
-	if(error) {
-		if(error.code == NSURLErrorCancelled) {
-			DLog(@"urlsession: task cancelled");
-			if(need_abort) {
-				self->status = STATUS_ABORTED;
-			} else if(gotheader || pos > 0 || remaining > 0) {
-				http_schedule_retry_locked(self);
-			}
+	BOOL transferStarted = gotheader || pos > 0 || remaining > 0;
+	if(need_abort) {
+		self->status = STATUS_ABORTED;
+	} else if(self->status == STATUS_SEEK || self->status == STATUS_RETRY) {
+		// Preserve an explicitly requested restart until the worker thread handles it.
+	} else if(error) {
+		DLog(@"urlsession: task completed with error: %@", error.localizedDescription);
+		if(transferStarted) {
+			http_schedule_retry_locked(self);
 		} else {
-			DLog(@"urlsession: task completed with error: %@", error.localizedDescription);
-			if(need_abort) {
-				self->status = STATUS_ABORTED;
-			} else if(gotheader || pos > 0 || remaining > 0) {
-				http_schedule_retry_locked(self);
-			} else {
-				self->status = STATUS_ABORTED;
-			}
+			self->status = STATUS_ABORTED;
 		}
 	} else {
 		DLog(@"urlsession: task completed successfully");
-		if(need_abort) {
-			self->status = STATUS_ABORTED;
-		} else if(continuousStream && (gotheader || pos > 0 || remaining > 0)) {
+		if(continuousStream && transferStarted) {
 			http_schedule_retry_locked(self);
 		} else if(self->status == STATUS_READING || self->status == STATUS_INITIAL) {
 			self->status = STATUS_FINISHED;
@@ -1026,9 +946,6 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	length = 0;
 	remaining = 0;
 	skipbytes = 0;
-	retryOverlapSize = 0;
-	retryOverlapOffset = 0;
-	retryOverlapSearchRemaining = 0;
 
 	nheaderpackets = 0;
 	content_type = nil;
@@ -1055,8 +972,7 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	icyheader = 0;
 	gotsomeheader = 0;
 	continuousStream = 0;
-	retryOverlapActive = 0;
-	retryOverlapMatched = 0;
+	http_retry_overlap_clear(self);
 
 	[NSThread detachNewThreadSelector:@selector(urlSessionThreadEntry:) toTarget:self withObject:nil];
 
@@ -1154,11 +1070,6 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	pos = position;
 	status = STATUS_SEEK;
 
-	// Cancel current data task to force restart with new position
-	if(dataTask) {
-		[dataTask cancel];
-	}
-
 	[mutex unlock];
 	return YES;
 }
@@ -1236,7 +1147,7 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 	if(dataTask) {
 		[dataTask cancel];
 	}
-	while(dataTask != nil && status != STATUS_FINISHED) {
+	while(dataTask != nil) {
 		usleep(3000);
 	}
 }

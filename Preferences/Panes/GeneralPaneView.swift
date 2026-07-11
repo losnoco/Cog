@@ -7,28 +7,7 @@ struct SandboxPathEntry: Identifiable {
     let token: AnyObject?
 }
 
-private let httpStreamingBufferSizeOptions: [(String, Int)] = [
-    ("64 KB", 0x10000),
-    ("128 KB", 0x20000),
-    ("256 KB", 0x40000),
-    ("512 KB", 0x80000),
-    ("1 MB", 0x100000),
-    ("2 MB", 0x200000),
-    ("4 MB", 0x400000),
-    ("8 MB", 0x800000),
-    ("16 MB", 0x1000000),
-    ("32 MB", 0x2000000),
-    ("64 MB", 0x4000000),
-    ("128 MB", 0x8000000),
-]
-
-private func normalizedHTTPStreamingBufferSize(_ size: Int) -> Int {
-    guard !httpStreamingBufferSizeOptions.isEmpty else { return 0x40000 }
-
-    return httpStreamingBufferSizeOptions.min { lhs, rhs in
-        abs(lhs.1 - size) < abs(rhs.1 - size)
-    }?.1 ?? 0x40000
-}
+private let httpStreamingBufferSizeOptions = (16...27).map { 1 << $0 }
 
 private final class GeneralPrefs: ObservableObject {
     private var isActive = true
@@ -52,8 +31,7 @@ private final class GeneralPrefs: ObservableObject {
     init() {
         let d = UserDefaults.standard
         allowInsecureSSL = d.bool(forKey: "allowInsecureSSL")
-        let storedHTTPStreamingBufferSize = d.object(forKey: "httpStreamingBufferSize") == nil ? 0x40000 : d.integer(forKey: "httpStreamingBufferSize")
-        httpStreamingBufferSize = normalizedHTTPStreamingBufferSize(storedHTTPStreamingBufferSize)
+        httpStreamingBufferSize = d.integer(forKey: "httpStreamingBufferSize")
         sentryConsented = d.bool(forKey: "sentryConsented")
         suCheckAtStartup = d.bool(forKey: "SUCheckAtStartup")
     }
@@ -144,8 +122,8 @@ struct GeneralPaneView: View {
             Section {
                 Toggle("Allow insecure SSL connections", isOn: $prefs.allowInsecureSSL)
                 Picker("HTTP/HTTPS streaming buffer", selection: $prefs.httpStreamingBufferSize) {
-                    ForEach(httpStreamingBufferSizeOptions, id: \.1) { option in
-                        Text(option.0).tag(option.1)
+                    ForEach(httpStreamingBufferSizeOptions, id: \.self) { size in
+                        Text(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .memory)).tag(size)
                     }
                 }
             } header: {

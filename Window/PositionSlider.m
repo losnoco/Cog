@@ -9,14 +9,10 @@
 #import "PositionSlider.h"
 #import "TimeField.h"
 
-@implementation PositionSlider {
-	BOOL updatingMaxValue;
-}
+@implementation PositionSlider
 
 - (void)setDoubleValue:(double)value {
-	if(!updatingMaxValue) {
-		self.positionTextField.currentTime = (long)value;
-	}
+	self.positionTextField.currentTime = (long)value;
 
 	[super setDoubleValue:value];
 }
@@ -26,9 +22,7 @@
 
 	self.positionTextField.duration = (long)value;
 
-	updatingMaxValue = YES;
 	[super setMaxValue:value];
-	updatingMaxValue = NO;
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {

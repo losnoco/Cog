@@ -80,13 +80,12 @@
 	if(output) {
 		[output fadeOutBackground];
 	}
-	BOOL outputWasCreated = NO;
+	BOOL shouldFadeIn = resumeInterval || stoppedRecently || !output;
 	if(!output) {
 		output = [[OutputNode alloc] initWithController:self previous:nil];
 		if(![output setupWithInterval:resumeInterval]) {
 			return;
 		}
-		outputWasCreated = YES;
 	}
 	[output setVolume:volume];
 	@synchronized(chainQueue) {
@@ -150,7 +149,7 @@
 		if(time > 0.0) {
 			[self updatePosition:userInfo];
 		}
-	} else if(resumeInterval || stoppedRecently || outputWasCreated) {
+	} else if(shouldFadeIn) {
 		[output faderFadeIn];
 	}
 }
