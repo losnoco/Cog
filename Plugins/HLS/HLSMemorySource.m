@@ -193,4 +193,8 @@
 	[_cond unlock];
 }
 
+- (void)interrupt {
+	[self close];
+}
+
 @end

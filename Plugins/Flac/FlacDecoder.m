@@ -468,6 +468,12 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	blockBuffer = NULL;
 }
 
+- (void)interrupt {
+	if([source respondsToSelector:@selector(interrupt)]) {
+		[source interrupt];
+	}
+}
+
 - (void)dealloc {
 	[self close];
 }

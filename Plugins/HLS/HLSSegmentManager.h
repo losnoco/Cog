@@ -59,6 +59,10 @@
 // the last synchronously-downloaded index + 1).
 - (void)startFetchingFromIndex:(NSInteger)index;
 
+// Request cancellation and interrupt active HTTP reads without waiting for the
+// fetch thread to exit. Safe to call from a playback-control thread.
+- (void)interrupt;
+
 // Stop the background fetcher. Blocks until the thread exits.
 - (void)stop;
 

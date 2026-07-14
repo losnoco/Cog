@@ -19,6 +19,11 @@
 - (long)read:(void *)buffer amount:(long)amount; // reads UP TO amount, returns amount read.
 - (void)close;
 - (void)dealloc;
+
+@optional
+// Promptly unblock any in-flight read without waiting for full teardown.
+// The normal -close call still follows on the reader's own thread.
+- (void)interrupt;
 @end
 
 @protocol CogVersionCheck <NSObject>
@@ -56,6 +61,10 @@
 
 @optional
 - (void)dealloc;
+
+// Promptly unblock -readAudio when playback is being stopped. Implementations
+// should only interrupt their input here; decoder teardown remains in -close.
+- (void)interrupt;
 
 - (BOOL)setTrack:(NSURL *)track;
 

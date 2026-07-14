@@ -557,6 +557,12 @@ static uint8_t reverse_bits[0x100];
 	}
 }
 
+- (void)interrupt {
+	if([source respondsToSelector:@selector(interrupt)]) {
+		[source interrupt];
+	}
+}
+
 - (void)dealloc {
 	[self close];
 }

@@ -16,6 +16,10 @@
 #import <stdlib.h>
 #import <string.h>
 
+@interface HTTPSource ()
+@property(atomic) BOOL interruptRequested;
+@end
+
 @implementation HTTPSource
 
 static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
@@ -451,8 +455,16 @@ static void http_stream_reset(HTTPSource *fp) {
 		// Create session with self as delegate
 		session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:delegateQueue];
 
+		[mutex lock];
 		length = -1;
+		if(need_abort) {
+			self->status = STATUS_ABORTED;
+			[mutex unlock];
+			[session invalidateAndCancel];
+			return;
+		}
 		self->status = STATUS_INITIAL;
+		[mutex unlock];
 
 		DLog(@"urlsession: started loading data %@", URL);
 
@@ -706,6 +718,11 @@ static void http_stream_reset(HTTPSource *fp) {
 	metadata_have_size = 0;
 
 	need_abort = NO;
+	if(self.interruptRequested) {
+		need_abort = YES;
+		status = STATUS_ABORTED;
+		return NO;
+	}
 
 	album = @"";
 	artist = @"";
@@ -728,6 +745,7 @@ static void http_stream_reset(HTTPSource *fp) {
 	// Now wait for it to either begin streaming, or complete if file is small enough to fit in the buffer
 	while(status != STATUS_READING &&
 	      status != STATUS_FINISHED &&
+	      status != STATUS_ABORTED &&
 	      !dataTask) {
 		usleep(3000);
 	}
@@ -911,6 +929,19 @@ static void http_stream_reset(HTTPSource *fp) {
 
 + (NSArray *)schemes {
 	return @[@"http", @"https"];
+}
+
+- (void)interrupt {
+	self.interruptRequested = YES;
+
+	[mutex lock];
+	need_abort = YES;
+	content_type = nil;
+	status = STATUS_ABORTED;
+	NSURLSessionDataTask *task = dataTask;
+	[mutex unlock];
+
+	[task cancel];
 }
 
 @end

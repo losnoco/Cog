@@ -191,6 +191,9 @@ static void *kInputNodeContext = &kInputNodeContext;
 		@autoreleasepool {
 			chunk = [decoder readAudio];
 		}
+		if([self shouldContinue] == NO) {
+			break;
+		}
 
 		if(chunk && [chunk frameCount]) {
 			@autoreleasepool {
@@ -202,6 +205,9 @@ static void *kInputNodeContext = &kInputNodeContext;
 				chunk = nil;
 			}
 		} else {
+			if([self shouldContinue] == NO) {
+				break;
+			}
 			if(chunk) {
 				@autoreleasepool {
 					chunk = nil;
@@ -274,8 +280,12 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 - (void)setShouldContinue:(BOOL)s {
 	[super setShouldContinue:s];
-	if(!s)
+	if(!s) {
 		[self removeObservers];
+		if([decoder respondsToSelector:@selector(interrupt)]) {
+			[decoder interrupt];
+		}
+	}
 }
 
 - (void)setResetBuffers:(BOOL)resetBuffers {
