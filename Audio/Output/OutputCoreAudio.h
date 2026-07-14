@@ -159,6 +159,7 @@ using std::atomic_long;
 
 - (AudioStreamBasicDescription)deviceFormat;
 - (uint32_t)deviceChannelConfig;
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat;
 - (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat;
 
 - (DSPDownmixNode *)downmix;

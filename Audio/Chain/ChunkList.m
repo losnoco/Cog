@@ -614,6 +614,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
+		[ret setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
 		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
@@ -659,6 +660,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
+		[ret setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
 		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
@@ -736,6 +738,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 		if([chunk isHDCD]) {
 			[outputChunk setHDCD];
+		}
+
+		if(!totalFrameCount) {
+			[outputChunk setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
 		}
 
 		if(chunk.resetForward) {

@@ -570,6 +570,7 @@
 
 - (BOOL)selectNextBuffer {
 	BOOL signalStopped = NO;
+	BufferChain *selectedChain = nil;
 	do {
 		@synchronized(chainQueue) {
 			endOfInputReached = NO;
@@ -582,7 +583,8 @@
 
 			[bufferChain setShouldContinue:NO];
 			bufferChain = nil;
-			bufferChain = [chainQueue objectAtIndex:0];
+			selectedChain = [chainQueue objectAtIndex:0];
+			bufferChain = selectedChain;
 
 			[chainQueue removeObjectAtIndex:0];
 			DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
@@ -604,6 +606,11 @@
 		});
 
 		return YES;
+	}
+
+	AudioStreamBasicDescription inputFormat = [selectedChain inputFormat];
+	if(![output prepareForInputFormat:inputFormat]) {
+		ALog(@"Unable to prepare the output device for the next track format");
 	}
 
 	[output setEndOfStream:NO];

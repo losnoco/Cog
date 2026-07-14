@@ -34,6 +34,24 @@
 	return self;
 }
 
+- (AudioStreamBasicDescription)configuredOutputFormat:(AudioStreamBasicDescription)outputFormat forInputFormat:(AudioStreamBasicDescription)inputFormat resetBuffers:(BOOL)resetBuffers {
+	AudioPlayer *audioPlayer = controller;
+	OutputNode *outputNode = [audioPlayer output];
+	if(!outputNode) {
+		return outputFormat;
+	}
+
+	if(resetBuffers) {
+		if([outputNode prepareForInputFormat:inputFormat]) {
+			return [outputNode format];
+		}
+	} else {
+		return [outputNode outputFormatForInputFormat:inputFormat];
+	}
+
+	return outputFormat;
+}
+
 - (BOOL)buildChain:(BOOL)resetBuffers {
 	// Cut off output source
 	finalNode = nil;
@@ -83,13 +101,7 @@
 	if(![inputNode openWithSource:source])
 		return NO;
 
-	if(resetBuffers) {
-		AudioPlayer *audioPlayer = controller;
-		OutputNode *outputNode = [audioPlayer output];
-		if(outputNode && [outputNode prepareForInputFormat:[inputNode nodeFormat]]) {
-			outputFormat = [outputNode format];
-		}
-	}
+	outputFormat = [self configuredOutputFormat:outputFormat forInputFormat:[inputNode nodeFormat] resetBuffers:resetBuffers];
 
 	if(![self initConverter:outputFormat])
 		return NO;
@@ -117,13 +129,7 @@
 	if(![inputNode openWithDecoder:[i decoder]])
 		return NO;
 
-	if(resetBuffers) {
-		AudioPlayer *audioPlayer = controller;
-		OutputNode *outputNode = [audioPlayer output];
-		if(outputNode && [outputNode prepareForInputFormat:[inputNode nodeFormat]]) {
-			outputFormat = [outputNode format];
-		}
-	}
+	outputFormat = [self configuredOutputFormat:outputFormat forInputFormat:[inputNode nodeFormat] resetBuffers:resetBuffers];
 
 	if(![self initConverter:outputFormat])
 		return NO;

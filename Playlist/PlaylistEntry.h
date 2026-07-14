@@ -116,7 +116,6 @@
 - (void)addValue:(NSString *_Nonnull)tagName fromString:(NSString *_Nonnull)value;
 
 - (void)setMetadata:(NSDictionary *_Nonnull)metadata;
-- (void)setMetadata:(NSDictionary *_Nonnull)metadata markLoaded:(BOOL)markLoaded;
 
 - (AudioScrobblerTrack *_Nonnull)audioScrobblerTrack;
 

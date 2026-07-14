@@ -303,11 +303,16 @@
 	return [output deviceChannelConfig];
 }
 
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	return [output outputFormatForInputFormat:inputFormat];
+}
+
 - (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat {
 	BOOL prepared = [output prepareForInputFormat:inputFormat];
 	if(prepared) {
 		format = [output deviceFormat];
 		config = [output deviceChannelConfig];
+		[[output downmix] setOutputFormat:format withChannelConfig:config];
 	}
 	return prepared;
 }

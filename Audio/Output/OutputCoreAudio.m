@@ -701,6 +701,17 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 	return [self updateDeviceFormatNotifyingController:YES];
 }
 
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	AudioStreamBasicDescription outputFormat = deviceFormat;
+	if(inputFormatUsesDoPCarrierRate(inputFormat)) {
+		const double sampleRate = preferredDeviceSampleRateForInputFormat(inputFormat);
+		if([self deviceSupportsSampleRate:sampleRate]) {
+			outputFormat.mSampleRate = sampleRate;
+		}
+	}
+	return outputFormat;
+}
+
 - (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat {
 	if(!inputFormatUsesDoPCarrierRate(inputFormat)) {
 		if(preferDoPIntegerOutput || renderFormatDoPInteger) {
@@ -891,7 +902,7 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 							// A DoP carrier must remain bit-perfect. Complete a pending
 							// fade as a hard transition and preserve the marker phase.
 							const uint8_t firstDoPMarker = (inputTodo % 2) ? ((nextDoPMarker == 0x05) ? 0xFA : 0x05) : nextDoPMarker;
-							if(inputIsDoP && _self->doPActive && firstDoPMarker != _self->doPMarker) {
+							if(_self->doPActive && firstDoPMarker != _self->doPMarker) {
 								// Dropping one carrier frame is preferable to repeating a marker,
 								// which can make the DAC lose DoP lock at the join.
 								samplePtr += channels;
