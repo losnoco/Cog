@@ -41,6 +41,7 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 	NSInteger _nextFetchIndex;          // next index into playlist.segments to fetch
 	BOOL _stopRequested;
 	BOOL _running;
+	NSMutableSet<id<CogSource>> *_activeSources;
 
 	// Live-stream playlist refresh:
 	NSDate *_lastRefreshDate;
@@ -59,6 +60,7 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 		_nextFetchIndex = 0;
 		_stopRequested = NO;
 		_running = NO;
+		_activeSources = [NSMutableSet set];
 		_seenSequenceNumbers = [NSMutableSet set];
 		for(HLSSegment *seg in playlist.segments) {
 			[_seenSequenceNumbers addObject:@(seg.sequenceNumber)];
@@ -110,12 +112,35 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 
 	Class audioSourceClass = NSClassFromString(@"AudioSource");
 	id<CogSource> src = [audioSourceClass audioSourceForURL:segment.url];
-	if(!src || ![src open:segment.url]) {
+	if(!src) {
 		if(error) {
 			*error = [NSError errorWithDomain:@"HLSSegmentManager"
 			                             code:3
 			                         userInfo:@{NSLocalizedDescriptionKey:
 			    [NSString stringWithFormat:@"Failed to open segment: %@", segment.url]}];
+		}
+		return nil;
+	}
+
+	[_cond lock];
+	BOOL cancelled = _stopRequested;
+	if(!cancelled) {
+		[_activeSources addObject:src];
+	}
+	[_cond unlock];
+
+	if(cancelled || ![src open:segment.url]) {
+		if(error) {
+			*error = [NSError errorWithDomain:@"HLSSegmentManager"
+			                             code:cancelled ? NSUserCancelledError : 3
+			                         userInfo:@{NSLocalizedDescriptionKey:
+			    cancelled ? @"Segment download cancelled" :
+			                [NSString stringWithFormat:@"Failed to open segment: %@", segment.url]}];
+		}
+		if(!cancelled) {
+			[_cond lock];
+			[_activeSources removeObject:src];
+			[_cond unlock];
 		}
 		return nil;
 	}
@@ -133,6 +158,19 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 		[data appendBytes:buf length:got];
 	}
 	[src close];
+	[_cond lock];
+	[_activeSources removeObject:src];
+	cancelled = _stopRequested;
+	[_cond unlock];
+
+	if(cancelled) {
+		if(error) {
+			*error = [NSError errorWithDomain:@"HLSSegmentManager"
+			                             code:NSUserCancelledError
+			                         userInfo:@{NSLocalizedDescriptionKey: @"Segment download cancelled"}];
+		}
+		return nil;
+	}
 
 	if([data length] == 0) {
 		if(error) {
@@ -169,16 +207,15 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 }
 
 - (void)stop {
+	[self interrupt];
+
 	[_cond lock];
-	_stopRequested = YES;
-	[_cond broadcast];
 	NSThread *t = _fetchThread;
 	[_cond unlock];
 
 	// Wait for the thread to exit. NSThread doesn't have a direct join,
-	// so spin on the `executing`/`finished` flags. The fetch loop
-	// checks _stopRequested on every iteration, so this only takes one
-	// in-flight HTTP request to drain in the worst case.
+	// so spin on the `executing`/`finished` flags. Active HTTP reads have
+	// already been interrupted, so this no longer waits for network I/O.
 	if(t && t != [NSThread currentThread]) {
 		while(!t.finished) {
 			[NSThread sleepForTimeInterval:0.01];
@@ -189,6 +226,22 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 	_running = NO;
 	_fetchThread = nil;
 	[_cond unlock];
+}
+
+- (void)interrupt {
+	[_cond lock];
+	_stopRequested = YES;
+	NSArray<id<CogSource>> *sources = [_activeSources allObjects];
+	[_cond broadcast];
+	[_cond unlock];
+
+	for(id<CogSource> src in sources) {
+		if([src respondsToSelector:@selector(interrupt)]) {
+			[src interrupt];
+		} else {
+			[src close];
+		}
+	}
 }
 
 #pragma mark - Background fetch loop
@@ -231,6 +284,10 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 						_consecutiveFailures = 0;
 						didWork = YES;
 					} else {
+						[_cond lock];
+						BOOL stopping = _stopRequested;
+						[_cond unlock];
+						if(stopping) break;
 						ALog(@"HLS: segment fetch failed (%@): %@",
 						     next.url, fetchErr.localizedDescription);
 						[self handleFetchFailure];
@@ -267,14 +324,36 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 
 	Class audioSourceClass = NSClassFromString(@"AudioSource");
 	id<CogSource> src = [audioSourceClass audioSourceForURL:self.playlist.url];
-	if(!src || ![src open:self.playlist.url]) {
+	if(!src) {
 		ALog(@"HLS: failed to reopen playlist for refresh: %@", self.playlist.url);
+		return;
+	}
+
+	[_cond lock];
+	BOOL cancelled = _stopRequested;
+	if(!cancelled) {
+		[_activeSources addObject:src];
+	}
+	[_cond unlock];
+
+	if(cancelled || ![src open:self.playlist.url]) {
+		if(!cancelled) {
+			[_cond lock];
+			[_activeSources removeObject:src];
+			[_cond unlock];
+			ALog(@"HLS: failed to reopen playlist for refresh: %@", self.playlist.url);
+		}
 		return;
 	}
 
 	NSError *parseErr = nil;
 	HLSPlaylist *fresh = [HLSPlaylistParser parsePlaylistFromSource:src error:&parseErr];
 	[src close];
+	[_cond lock];
+	[_activeSources removeObject:src];
+	cancelled = _stopRequested;
+	[_cond unlock];
+	if(cancelled) return;
 
 	if(!fresh) {
 		ALog(@"HLS: playlist refresh failed to parse: %@", parseErr.localizedDescription);
