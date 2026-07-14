@@ -305,6 +305,12 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 	}
 }
 
+- (void)interrupt {
+	if([_source respondsToSelector:@selector(interrupt)]) {
+		[_source interrupt];
+	}
+}
+
 - (long)seek:(long)frame {
 	if(frame == _framesDecoded) {
 		return frame;

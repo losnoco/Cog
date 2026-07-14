@@ -252,6 +252,14 @@ static void *kHLSDecoderContext = &kHLSDecoderContext;
 	[stateLock unlock];
 }
 
+- (void)interrupt {
+	[segmentManager interrupt];
+	[memorySource interrupt];
+	if([decoder respondsToSelector:@selector(interrupt)]) {
+		[decoder interrupt];
+	}
+}
+
 - (void)dealloc {
 	[self close];
 }

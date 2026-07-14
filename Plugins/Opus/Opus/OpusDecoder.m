@@ -309,6 +309,12 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 	opusRef = NULL;
 }
 
+- (void)interrupt {
+	if([source respondsToSelector:@selector(interrupt)]) {
+		[source interrupt];
+	}
+}
+
 - (void)dealloc {
 	[self close];
 }
