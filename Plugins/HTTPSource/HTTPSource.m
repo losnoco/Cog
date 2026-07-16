@@ -24,6 +24,7 @@
 
 #define RETRY_OVERLAP_SIZE_MAX HTTP_STREAMING_BUFFER_SIZE_DEFAULT
 #define RETRY_OVERLAP_MIN_MATCH 512
+#define RETRY_OVERLAP_BUFFER_RESERVE 5000
 
 static size_t http_streaming_buffer_size_from_defaults(void) {
 	NSInteger requested = [[NSUserDefaults standardUserDefaults] integerForKey:@"httpStreamingBufferSize"];
@@ -110,6 +111,18 @@ static void http_retry_overlap_snapshot_locked(HTTPSource *fp) {
 	if(part1 < overlapSize) {
 		memcpy(fp->retryOverlapBuffer + part1, fp->buffer, overlapSize - part1);
 	}
+
+	DLog(@"urlsession: retry overlap snapshot has %d bytes; %d bytes remain buffered",
+	     fp->retryOverlapSize, fp->remaining);
+}
+
+static int32_t http_retry_overlap_candidate_limit(HTTPSource *fp) {
+	if(fp->retryOverlapSize <= 0 || fp->bufferSize <= RETRY_OVERLAP_BUFFER_RESERVE) {
+		return 0;
+	}
+
+	size_t writable = fp->bufferSize - RETRY_OVERLAP_BUFFER_RESERVE;
+	return (int32_t)MIN((size_t)fp->retryOverlapSize, writable);
 }
 
 static size_t http_retry_overlap_match_length(const uint8_t *a, size_t asize, const uint8_t *b, size_t bsize) {
@@ -267,7 +280,7 @@ static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
 		int32_t maxBuffered = (int32_t)(trackingCandidate ? fp->bufferSize : fp->bufferSize / 2);
 		int32_t sz = maxBuffered - fp->remaining; // number of bytes free in buffer
 
-		if(sz > 5000) { // wait until there are at least 5k bytes free
+		if(sz > RETRY_OVERLAP_BUFFER_RESERVE) { // keep a small reserve between producer and consumer
 			size_t cp = MIN(avail, (size_t)sz);
 			size_t written = cp;
 			size_t writepos = (size_t)((fp->pos + fp->remaining) & fp->bufferMask);
@@ -1144,10 +1157,15 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 			if(trusted > 0) {
 				readable = (int32_t)MIN((int64_t)readable, trusted);
 			} else {
-				DLog(@"urlsession: no retry overlap found in %d bytes; accepting reconnect data",
-				     retryOverlapCandidateBytes);
-				http_retry_overlap_clear(self);
-				readable = remaining;
+				int32_t candidateLimit = http_retry_overlap_candidate_limit(self);
+				if(retryOverlapCandidateBytes >= candidateLimit) {
+					DLog(@"urlsession: no retry overlap found in %d bytes; accepting reconnect data",
+					     retryOverlapCandidateBytes);
+					http_retry_overlap_clear(self);
+					readable = remaining;
+				} else {
+					readable = 0;
+				}
 			}
 		}
 
