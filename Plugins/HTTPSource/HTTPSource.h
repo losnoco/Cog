@@ -40,6 +40,8 @@ enum {
 	uint8_t *retryOverlapBuffer;
 	int32_t retryOverlapSize;
 	int32_t retryOverlapOffset;
+	int32_t retryOverlapCandidateBytes; // reconnect bytes appended but not yet exposed to the decoder
+	int64_t retryOverlapTail; // absolute end of audio trusted before the reconnect
 
 	NSLock *mutex;
 

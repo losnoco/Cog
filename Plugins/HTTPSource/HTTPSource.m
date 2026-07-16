@@ -64,7 +64,29 @@ static BOOL http_allocate_buffers(HTTPSource *fp) {
 static void http_retry_overlap_clear(HTTPSource *fp) {
 	fp->retryOverlapSize = 0;
 	fp->retryOverlapOffset = 0;
+	fp->retryOverlapCandidateBytes = 0;
+	fp->retryOverlapTail = 0;
 	fp->retryOverlapMatched = 0;
+}
+
+static void http_retry_overlap_rollback_candidates_locked(HTTPSource *fp) {
+	if(fp->retryOverlapCandidateBytes <= 0) {
+		return;
+	}
+
+	int32_t candidateBytes = fp->retryOverlapCandidateBytes;
+	int64_t expectedTail = fp->retryOverlapTail + candidateBytes;
+	int64_t actualTail = fp->pos + fp->remaining;
+	if(candidateBytes > fp->remaining || actualTail != expectedTail) {
+		DLog(@"urlsession: unable to roll back %d unverified retry bytes (tail %lld, expected %lld)",
+		     candidateBytes, actualTail, expectedTail);
+		http_retry_overlap_clear(fp);
+		return;
+	}
+
+	fp->remaining -= candidateBytes;
+	fp->retryOverlapCandidateBytes = 0;
+	DLog(@"urlsession: rolled back %d unverified retry bytes", candidateBytes);
 }
 
 static void http_retry_overlap_snapshot_locked(HTTPSource *fp) {
@@ -75,6 +97,8 @@ static void http_retry_overlap_snapshot_locked(HTTPSource *fp) {
 
 	fp->retryOverlapSize = (int32_t)MIN((int64_t)MIN(fp->bufferSize, (size_t)RETRY_OVERLAP_SIZE_MAX), tail);
 	fp->retryOverlapOffset = 0;
+	fp->retryOverlapCandidateBytes = 0;
+	fp->retryOverlapTail = tail;
 	fp->retryOverlapMatched = 0;
 
 	size_t overlapSize = (size_t)fp->retryOverlapSize;
@@ -168,7 +192,11 @@ static size_t http_retry_overlap_discard_locked(HTTPSource *fp, const uint8_t *p
 		size_t inputSkip = 0;
 		size_t overlapOffset = 0;
 		if(!http_retry_overlap_find_locked(fp, ptr, size, &inputSkip, &overlapOffset)) {
-			http_retry_overlap_clear(fp);
+			return 0;
+		}
+
+		http_retry_overlap_rollback_candidates_locked(fp);
+		if(fp->retryOverlapSize <= 0) {
 			return 0;
 		}
 
@@ -233,11 +261,15 @@ static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
 			break;
 		}
 
-		int32_t sz = (int32_t)(fp->bufferSize / 2) - fp->remaining; // number of bytes free in buffer
-		                                                            // don't allow to fill more than half -- used for seeking backwards
+		BOOL trackingCandidate = fp->retryOverlapSize > 0 && !fp->retryOverlapMatched;
+		// Unverified reconnect data can temporarily use the history half of the ring.
+		// The old history needed for matching is preserved in retryOverlapBuffer.
+		int32_t maxBuffered = (int32_t)(trackingCandidate ? fp->bufferSize : fp->bufferSize / 2);
+		int32_t sz = maxBuffered - fp->remaining; // number of bytes free in buffer
 
 		if(sz > 5000) { // wait until there are at least 5k bytes free
 			size_t cp = MIN(avail, (size_t)sz);
+			size_t written = cp;
 			size_t writepos = (size_t)((fp->pos + fp->remaining) & fp->bufferMask);
 			// copy 1st portion (before end of buffer
 			size_t part1 = fp->bufferSize - writepos;
@@ -255,6 +287,10 @@ static size_t http_data_write_wrapper(HTTPSource *fp, char *ptr, size_t size) {
 				avail -= cp;
 				consumed += cp;
 				fp->remaining += cp;
+			}
+
+			if(trackingCandidate) {
+				fp->retryOverlapCandidateBytes += (int32_t)written;
 			}
 		}
 		[fp->mutex unlock];
@@ -655,7 +691,15 @@ static void http_clear_stream_metadata(HTTPSource *fp) {
 
 static void http_schedule_retry_locked(HTTPSource *fp) {
 	if(fp->continuousStream || fp->length < 0) {
-		http_retry_overlap_snapshot_locked(fp);
+		if(fp->retryOverlapSize > 0) {
+			http_retry_overlap_rollback_candidates_locked(fp);
+			if(fp->retryOverlapSize > 0) {
+				fp->retryOverlapOffset = 0;
+				fp->retryOverlapMatched = 0;
+			}
+		} else {
+			http_retry_overlap_snapshot_locked(fp);
+		}
 	}
 	fp->status = STATUS_RETRY;
 }
@@ -1083,11 +1127,32 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 
 - (long)read:(void *)ptr amount:(long)amount {
 	size_t sz = amount;
-	while((remaining > 0 || (status != STATUS_FINISHED && status != STATUS_ABORTED)) && sz > 0) {
-		// wait until data is available
-		while((remaining == 0 || skipbytes > 0) && status != STATUS_FINISHED && status != STATUS_ABORTED) {
-			//            DLog(@"urlsession: readwait, status: %d..\n", status);
-			[mutex lock];
+	while(sz > 0) {
+		[mutex lock];
+
+		int64_t skip = MIN(remaining, skipbytes);
+		if(skip > 0) {
+			// DLog(@"skipping %lld bytes\n", skip);
+			pos += skip;
+			remaining -= skip;
+			skipbytes -= skip;
+		}
+
+		int32_t readable = remaining;
+		if(retryOverlapSize > 0 && !retryOverlapMatched && retryOverlapCandidateBytes > 0) {
+			int64_t trusted = retryOverlapTail - pos;
+			if(trusted > 0) {
+				readable = (int32_t)MIN((int64_t)readable, trusted);
+			} else {
+				DLog(@"urlsession: no retry overlap found in %d bytes; accepting reconnect data",
+				     retryOverlapCandidateBytes);
+				http_retry_overlap_clear(self);
+				readable = remaining;
+			}
+		}
+
+		BOOL terminal = status == STATUS_FINISHED || status == STATUS_ABORTED;
+		if((readable == 0 || skipbytes > 0) && !terminal) {
 			if(status == STATUS_READING) {
 				NSTimeInterval sec = [[NSDate date] timeIntervalSinceDate:last_read_time];
 				if(sec > TIMEOUT) {
@@ -1099,20 +1164,18 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 					continue;
 				}
 			}
-			int64_t skip = MIN(remaining, skipbytes);
-			if(skip > 0) {
-				//                DLog(@"skipping %lld bytes\n", skip);
-				pos += skip;
-				remaining -= skip;
-				skipbytes -= skip;
-			}
 			[mutex unlock];
 			usleep(3000);
+			continue;
 		}
-		//    DLog(@"buffer remaining: %d\n", remaining);
-		[mutex lock];
+
+		if(readable <= 0) {
+			[mutex unlock];
+			break;
+		}
+
 		// DLog(@"http_read %lld/%lld/%d\n", pos, length, remaining);
-		size_t cp = MIN(sz, (size_t)remaining);
+		size_t cp = MIN(sz, (size_t)readable);
 		size_t readpos = (size_t)(pos & bufferMask);
 		size_t part1 = bufferSize - readpos;
 		part1 = MIN(part1, cp);
