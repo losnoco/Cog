@@ -194,6 +194,11 @@
 			NSData *sampleData = [chunk removeSamples:frameCount];
 			memcpy(inBuffer, [sampleData bytes], frameCount * outputFormat.mBytesPerPacket);
 			inputIsDoP = audioBufferIsDoP(inBuffer, outputFormat.mChannelsPerFrame, frameCount, NULL);
+			if(!inputIsDoP) {
+				// DoP mode follows the current carrier instead of remaining latched
+				// after playback has moved back to PCM.
+				doPMode = NO;
+			}
 		} else {
 			// [chunk removeSamples:frameCount];
 			// Only happens above, and since the samples aren't assigned, they don't need to be removed
@@ -256,7 +261,9 @@
 }
 
 - (void)setDoPMode:(BOOL)enabled {
+	[mutex lock];
 	doPMode = enabled;
+	[mutex unlock];
 }
 
 - (float)fadeLevel {

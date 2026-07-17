@@ -569,6 +569,19 @@
 	[self sendDelegateMethod:@selector(audioPlayer:reportScrobbleForTrack:) withObject:userInfo waitUntilDone:NO];
 }
 
+- (void)schedulePlaybackStopAfterOutputLatency {
+	double latency = 0;
+	if(output) latency = [output latency];
+
+	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, latency * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+		[self stop];
+
+		self->bufferChain = nil;
+
+		[self notifyPlaybackStopped:nil];
+	});
+}
+
 - (BOOL)selectNextBuffer {
 	BOOL signalStopped = NO;
 	BufferChain *selectedChain = nil;
@@ -595,23 +608,17 @@
 	} while(0);
 
 	if(signalStopped) {
-		double latency = 0;
-		if(output) latency = [output latency];
-		
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, latency * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			[self stop];
-
-			self->bufferChain = nil;
-
-			[self notifyPlaybackStopped:nil];
-		});
-
+		[self schedulePlaybackStopAfterOutputLatency];
 		return YES;
 	}
 
 	AudioStreamBasicDescription inputFormat = [selectedChain inputFormat];
 	if(![output prepareForInputFormat:inputFormat]) {
 		ALog(@"Unable to prepare the output device for the next track format");
+		[selectedChain setError:YES];
+		[selectedChain setShouldContinue:NO];
+		[self schedulePlaybackStopAfterOutputLatency];
+		return YES;
 	}
 
 	[output setEndOfStream:NO];

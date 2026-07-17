@@ -513,6 +513,35 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 	}
 }
 
+- (BOOL)prepareOutputFloatScratchForRenderFormat:(AudioStreamBasicDescription)format {
+	if(format.mFormatFlags & kAudioFormatFlagIsFloat) {
+		return YES;
+	}
+
+	const size_t maximumFrames = (size_t)_au.maximumFramesToRender;
+	const size_t channels = (size_t)format.mChannelsPerFrame;
+	if(!maximumFrames || !channels || maximumFrames > SIZE_MAX / channels) {
+		return NO;
+	}
+
+	const size_t requiredSamples = maximumFrames * channels;
+	if(requiredSamples > SIZE_MAX / sizeof(float)) {
+		return NO;
+	}
+	if(outputFloatScratch && outputFloatScratchCapacity >= requiredSamples) {
+		return YES;
+	}
+
+	float *scratch = (float *)realloc(outputFloatScratch, requiredSamples * sizeof(float));
+	if(!scratch) {
+		return NO;
+	}
+
+	outputFloatScratch = scratch;
+	outputFloatScratchCapacity = requiredSamples;
+	return YES;
+}
+
 - (BOOL)deviceSupportsSampleRate:(double)sampleRate {
 	AudioObjectPropertyAddress theAddress = {
 		.mSelector = kAudioDevicePropertyAvailableNominalSampleRates,
@@ -672,8 +701,14 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 				[_au.inputBusses[0] setFormat:renderAVFormat error:&err];
 			}
 		}
-		if(!renderAVFormat || err != nil)
+		if(!renderAVFormat || err != nil) {
+			resetting = NO;
 			return NO;
+		}
+		if(![self prepareOutputFloatScratchForRenderFormat:renderFormat]) {
+			resetting = NO;
+			return NO;
+		}
 		renderFormatDoPInteger = targetDoPInteger && preferDoPIntegerOutput;
 
 		if(notifyController) {
@@ -714,6 +749,14 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 
 - (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat {
 	if(!inputFormatUsesDoPCarrierRate(inputFormat)) {
+		// A pending DoP seek is only meaningful while another DoP carrier is
+		// expected. If playback moves to PCM before that carrier arrives, do not
+		// keep replacing PCM buffers with DoP silence indefinitely.
+		doPSeekPending = NO;
+		doPActive = NO;
+		doPMarker = 0x05;
+		[faderNode setDoPMode:NO];
+
 		if(preferDoPIntegerOutput || renderFormatDoPInteger) {
 			preferDoPIntegerOutput = NO;
 			preferredDoPCarrierSampleRate = 0.0;
@@ -730,7 +773,11 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 	preferDoPIntegerOutput = YES;
 	preferredDoPCarrierSampleRate = sampleRate;
 	outputdevicechanged = YES;
-	return [self updateDeviceFormatNotifyingController:NO];
+	BOOL prepared = [self updateDeviceFormatNotifyingController:NO];
+	if(prepared) {
+		[faderNode setDoPMode:YES];
+	}
+	return prepared;
 }
 
 - (void)updateStreamFormat {
@@ -853,13 +900,8 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 			outSamples = (float *)inputData->mBuffers[0].mData;
 		} else {
 			const size_t scratchSamples = (size_t)frameCount * channels;
-			if(_self->outputFloatScratchCapacity < scratchSamples) {
-				float *scratch = (float *)realloc(_self->outputFloatScratch, scratchSamples * sizeof(float));
-				if(!scratch) {
-					return 0;
-				}
-				_self->outputFloatScratch = scratch;
-				_self->outputFloatScratchCapacity = scratchSamples;
+			if(!_self->outputFloatScratch || _self->outputFloatScratchCapacity < scratchSamples) {
+				return 0;
 			}
 			outSamples = _self->outputFloatScratch;
 			bzero(outSamples, scratchSamples * sizeof(float));
