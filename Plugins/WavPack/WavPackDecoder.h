@@ -39,6 +39,7 @@
 
 	BOOL isDSD;
 	BOOL isLossy;
+	BOOL dsdDoPReverseBits;
 
 	int bitsPerSample;
 	int channels;

@@ -28,6 +28,7 @@
 
 	BOOL shouldSeek;
 	long seekFrame;
+	NSUInteger seekRequestID;
 
 	BOOL observersAdded;
 

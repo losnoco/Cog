@@ -111,6 +111,10 @@
 	[output fadeOutBackground];
 }
 
+- (void)beginSeek {
+	[output beginSeek];
+}
+
 - (void)fadeIn {
 	[self reconnectInputAndReplumb];
 	[output fadeIn];
@@ -297,6 +301,20 @@
 
 - (uint32_t)deviceChannelConfig {
 	return [output deviceChannelConfig];
+}
+
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	return [output outputFormatForInputFormat:inputFormat];
+}
+
+- (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	BOOL prepared = [output prepareForInputFormat:inputFormat];
+	if(prepared) {
+		format = [output deviceFormat];
+		config = [output deviceChannelConfig];
+		[[output downmix] setOutputFormat:format withChannelConfig:config];
+	}
+	return prepared;
 }
 
 - (void)setFormat:(AudioStreamBasicDescription *)f channelConfig:(uint32_t)channelConfig {

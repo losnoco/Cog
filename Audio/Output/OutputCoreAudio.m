@@ -16,6 +16,7 @@
 #import "Logging.h"
 
 #import <Accelerate/Accelerate.h>
+#import <limits.h>
 
 #import <CogAudio/VisualizationController.h>
 
@@ -28,6 +29,11 @@ static NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDid
 extern void scale_by_volume(float *buffer, size_t count, float volume);
 
 static NSNotificationName CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotificiation";
+
+static BOOL playbackFadesEnabled(void) {
+	NSNumber *enabled = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableFading"];
+	return !enabled || [enabled boolValue];
+}
 
 @implementation OutputCoreAudio {
 	VisualizationController *visController;
@@ -459,21 +465,151 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	free(devids);
 }
 
-- (BOOL)updateDeviceFormat {
+static BOOL inputFormatUsesDoPCarrierRate(AudioStreamBasicDescription inputFormat) {
+	if(inputFormat.mBitsPerChannel == 1) {
+		return YES;
+	}
+
+	const BOOL isFloat = !!(inputFormat.mFormatFlags & kAudioFormatFlagIsFloat);
+	return !isFloat &&
+	       inputFormat.mBitsPerChannel >= 24 &&
+	       inputFormat.mSampleRate >= 176400.0;
+}
+
+static double preferredDeviceSampleRateForInputFormat(AudioStreamBasicDescription inputFormat) {
+	if(inputFormat.mBitsPerChannel == 1) {
+		return inputFormat.mSampleRate / 16.0;
+	}
+	return inputFormat.mSampleRate;
+}
+
+static AudioStreamBasicDescription DoPIntegerRenderFormatForDeviceFormat(AudioStreamBasicDescription deviceFormat) {
+	AudioStreamBasicDescription outputFormat = deviceFormat;
+	outputFormat.mFormatID = kAudioFormatLinearPCM;
+	outputFormat.mFormatFlags = kAudioFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsAlignedHigh | kAudioFormatFlagsNativeEndian;
+	outputFormat.mBitsPerChannel = 24;
+	outputFormat.mFramesPerPacket = 1;
+	outputFormat.mBytesPerFrame = (UInt32)(sizeof(int32_t) * outputFormat.mChannelsPerFrame);
+	outputFormat.mBytesPerPacket = outputFormat.mBytesPerFrame * outputFormat.mFramesPerPacket;
+	outputFormat.mReserved = 0;
+	return outputFormat;
+}
+
+static int32_t convertDoPFloatToS32(float sample) {
+	const double scaled = (double)sample * 2147483648.0;
+	int32_t packed = (int32_t)llrint(scaled);
+	return (int32_t)(((uint32_t)packed) & 0xFFFFFF00U);
+}
+
+static int32_t convertPCMFloatToS32(float sample) {
+	if(sample >= 1.0f) return (int32_t)(((uint32_t)INT32_MAX) & 0xFFFFFF00U);
+	if(sample <= -1.0f) return INT32_MIN;
+	return (int32_t)(((uint32_t)llrint((double)sample * 2147483647.0)) & 0xFFFFFF00U);
+}
+
+static void convertFloatBufferToS32(int32_t *output, const float *input, size_t count, BOOL isDoP) {
+	for(size_t i = 0; i < count; ++i) {
+		output[i] = isDoP ? convertDoPFloatToS32(input[i]) : convertPCMFloatToS32(input[i]);
+	}
+}
+
+- (BOOL)deviceSupportsSampleRate:(double)sampleRate {
+	AudioObjectPropertyAddress theAddress = {
+		.mSelector = kAudioDevicePropertyAvailableNominalSampleRates,
+		.mScope = kAudioObjectPropertyScopeGlobal,
+		.mElement = kAudioObjectPropertyElementMaster
+	};
+
+	UInt32 propsize = 0;
+	OSStatus status = AudioObjectGetPropertyDataSize(outputDeviceID, &theAddress, 0, NULL, &propsize);
+	if(status != noErr || !propsize) {
+		return YES;
+	}
+
+	AudioValueRange *ranges = (AudioValueRange *)malloc(propsize);
+	if(!ranges) {
+		return NO;
+	}
+
+	status = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &propsize, ranges);
+	if(status != noErr) {
+		free(ranges);
+		return YES;
+	}
+
+	const UInt32 rangeCount = propsize / (UInt32)sizeof(AudioValueRange);
+	BOOL supported = NO;
+	for(UInt32 i = 0; i < rangeCount; ++i) {
+		if(sampleRate >= ranges[i].mMinimum - 1.0 && sampleRate <= ranges[i].mMaximum + 1.0) {
+			supported = YES;
+			break;
+		}
+	}
+
+	free(ranges);
+	return supported;
+}
+
+- (BOOL)setDeviceSampleRate:(double)sampleRate {
+	if(outputDeviceID == (AudioDeviceID)-1 || sampleRate <= 0.0) {
+		return NO;
+	}
+
+	AudioObjectPropertyAddress theAddress = {
+		.mSelector = kAudioDevicePropertyNominalSampleRate,
+		.mScope = kAudioObjectPropertyScopeGlobal,
+		.mElement = kAudioObjectPropertyElementMaster
+	};
+
+	Float64 currentRate = 0.0;
+	UInt32 propsize = sizeof(currentRate);
+	OSStatus status = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &propsize, &currentRate);
+	if(status == noErr && fabs(currentRate - sampleRate) < 1.0) {
+		return YES;
+	}
+
+	if(![self deviceSupportsSampleRate:sampleRate]) {
+		return NO;
+	}
+
+	Float64 requestedRate = sampleRate;
+	status = AudioObjectSetPropertyData(outputDeviceID, &theAddress, 0, NULL, sizeof(requestedRate), &requestedRate);
+	if(status != noErr) {
+		return NO;
+	}
+
+	for(size_t attempt = 0; attempt < 50; ++attempt) {
+		currentRate = 0.0;
+		propsize = sizeof(currentRate);
+		status = AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &propsize, &currentRate);
+		if(status == noErr && fabs(currentRate - sampleRate) < 1.0) {
+			return YES;
+		}
+		usleep(10000);
+	}
+
+	return NO;
+}
+
+- (BOOL)updateDeviceFormatNotifyingController:(BOOL)notifyController {
 	AVAudioFormat *format = _au.outputBusses[0].format;
 	if(!format) {
 		return NO;
 	}
 
-	if(!_deviceFormat || ![_deviceFormat isEqual:format]) {
-		NSError *err;
-		AVAudioFormat *renderFormat;
+	const BOOL targetDoPInteger = preferDoPIntegerOutput;
+	if(!_deviceFormat || ![_deviceFormat isEqual:format] || renderFormatDoPInteger != targetDoPInteger) {
+		NSError *err = nil;
+		AVAudioFormat *renderAVFormat;
 
 		_deviceFormat = format;
 		deviceFormat = *(format.streamDescription);
 
 		/// Seems some 3rd party devices return incorrect stuff...or I just don't like noninterleaved data.
 		deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
+		if(preferDoPIntegerOutput && preferredDoPCarrierSampleRate > 0.0) {
+			deviceFormat.mSampleRate = preferredDoPCarrierSampleRate;
+		}
 		//    deviceFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsFloat;
 		//    deviceFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
 		// We don't want more than 8 channels
@@ -520,14 +656,29 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 				break;
 		}
 
-		renderFormat = [[AVAudioFormat alloc] initWithStreamDescription:&deviceFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
+		renderFormat = targetDoPInteger ? DoPIntegerRenderFormatForDeviceFormat(deviceFormat) : deviceFormat;
+		renderAVFormat = [[AVAudioFormat alloc] initWithStreamDescription:&renderFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
 		resetting = YES;
 		[_au stopHardware];
-		[_au.inputBusses[0] setFormat:renderFormat error:&err];
-		if(err != nil)
+		if(renderAVFormat) {
+			[_au.inputBusses[0] setFormat:renderAVFormat error:&err];
+		}
+		if((!renderAVFormat || err != nil) && targetDoPInteger) {
+			preferDoPIntegerOutput = NO;
+			renderFormat = deviceFormat;
+			renderAVFormat = [[AVAudioFormat alloc] initWithStreamDescription:&renderFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
+			err = nil;
+			if(renderAVFormat) {
+				[_au.inputBusses[0] setFormat:renderAVFormat error:&err];
+			}
+		}
+		if(!renderAVFormat || err != nil)
 			return NO;
+		renderFormatDoPInteger = targetDoPInteger && preferDoPIntegerOutput;
 
-		[outputController setFormat:&deviceFormat channelConfig:deviceChannelConfig];
+		if(notifyController) {
+			[outputController setFormat:&deviceFormat channelConfig:deviceChannelConfig];
+		}
 		
 		[outputLock lock];
 		[buffer reset];
@@ -544,6 +695,42 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	}
 
 	return YES;
+}
+
+- (BOOL)updateDeviceFormat {
+	return [self updateDeviceFormatNotifyingController:YES];
+}
+
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	AudioStreamBasicDescription outputFormat = deviceFormat;
+	if(inputFormatUsesDoPCarrierRate(inputFormat)) {
+		const double sampleRate = preferredDeviceSampleRateForInputFormat(inputFormat);
+		if([self deviceSupportsSampleRate:sampleRate]) {
+			outputFormat.mSampleRate = sampleRate;
+		}
+	}
+	return outputFormat;
+}
+
+- (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat {
+	if(!inputFormatUsesDoPCarrierRate(inputFormat)) {
+		if(preferDoPIntegerOutput || renderFormatDoPInteger) {
+			preferDoPIntegerOutput = NO;
+			preferredDoPCarrierSampleRate = 0.0;
+			return [self updateDeviceFormatNotifyingController:NO];
+		}
+		return YES;
+	}
+
+	const double sampleRate = preferredDeviceSampleRateForInputFormat(inputFormat);
+	if(![self setDeviceSampleRate:sampleRate]) {
+		return NO;
+	}
+
+	preferDoPIntegerOutput = YES;
+	preferredDoPCarrierSampleRate = sampleRate;
+	outputdevicechanged = YES;
+	return [self updateDeviceFormatNotifyingController:NO];
 }
 
 - (void)updateStreamFormat {
@@ -632,6 +819,7 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)audioOutputBlock {
 	__block AudioStreamBasicDescription *format = &deviceFormat;
+	__block AudioStreamBasicDescription *renderASBD = &renderFormat;
 	__block void *refCon = (__bridge void *)self;
 	__block NSLock *refLock = self->outputLock;
 
@@ -649,8 +837,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 		OutputCoreAudio *_self = (__bridge OutputCoreAudio *)refCon;
 		int renderedSamples = 0;
+		BOOL outputContainsDoP = NO;
 
-		inputData->mBuffers[0].mDataByteSize = frameCount * format->mBytesPerPacket;
+		inputData->mBuffers[0].mDataByteSize = frameCount * renderASBD->mBytesPerPacket;
 		bzero(inputData->mBuffers[0].mData, inputData->mBuffers[0].mDataByteSize);
 		inputData->mBuffers[0].mNumberChannels = channels;
 		
@@ -658,7 +847,23 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			return 0;
 		}
 		
-		float *outSamples = (float*)inputData->mBuffers[0].mData;
+		const BOOL renderAsFloat = !!(renderASBD->mFormatFlags & kAudioFormatFlagIsFloat);
+		float *outSamples = NULL;
+		if(renderAsFloat) {
+			outSamples = (float *)inputData->mBuffers[0].mData;
+		} else {
+			const size_t scratchSamples = (size_t)frameCount * channels;
+			if(_self->outputFloatScratchCapacity < scratchSamples) {
+				float *scratch = (float *)realloc(_self->outputFloatScratch, scratchSamples * sizeof(float));
+				if(!scratch) {
+					return 0;
+				}
+				_self->outputFloatScratch = scratch;
+				_self->outputFloatScratchCapacity = scratchSamples;
+			}
+			outSamples = _self->outputFloatScratch;
+			bzero(outSamples, scratchSamples * sizeof(float));
+		}
 
 		@autoreleasepool {
 			if(!_self->faded) {
@@ -685,10 +890,40 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 						NSData *sampleData = [chunk removeSamples:_frameCount];
 						float *samplePtr = (float *)[sampleData bytes];
 						size_t inputTodo = MIN(_frameCount, frameCount - renderedSamples);
+						uint8_t nextDoPMarker = 0x05;
+						BOOL inputIsDoP = audioBufferIsDoP(samplePtr, channels, inputTodo, &nextDoPMarker);
 
-						if(!_self->fading) {
+						if(_self->doPSeekPending && !inputIsDoP) {
+							// Never expose transitional or stale PCM-looking data while a
+							// DoP seek is waiting for the first verified post-seek carrier.
+							fillDoPSilence(outSamples + renderedSamples * channels, channels, inputTodo, &_self->doPMarker);
+							outputContainsDoP = YES;
+						} else if(inputIsDoP) {
+							// A DoP carrier must remain bit-perfect. Complete a pending
+							// fade as a hard transition and preserve the marker phase.
+							const uint8_t firstDoPMarker = (inputTodo % 2) ? ((nextDoPMarker == 0x05) ? 0xFA : 0x05) : nextDoPMarker;
+							if(_self->doPActive && firstDoPMarker != _self->doPMarker) {
+								// Dropping one carrier frame is preferable to repeating a marker,
+								// which can make the DAC lose DoP lock at the join.
+								samplePtr += channels;
+								--inputTodo;
+							}
+							cblas_scopy((int)(inputTodo * channels), samplePtr, 1, outSamples + renderedSamples * channels, 1);
+							_self->doPActive = YES;
+							_self->doPSeekPending = NO;
+							_self->doPMarker = nextDoPMarker;
+							outputContainsDoP = YES;
+							if(_self->fading) {
+								_self->faded = _self->fadeStep < 0.0;
+								_self->fading = NO;
+								_self->fadeStep = 0.0f;
+								_self->fadeLevel = _self->faded ? 0.0f : 1.0f;
+							}
+						} else if(!_self->fading) {
+							_self->doPActive = NO;
 							cblas_scopy((int)(inputTodo * channels), samplePtr, 1, outSamples + renderedSamples * channels, 1);
 						} else {
+							_self->doPActive = NO;
 							BOOL faded = fadeAudio(samplePtr, outSamples + renderedSamples * channels, channels, inputTodo, &_self->fadeLevel, _self->fadeStep, _self->fadeTarget);
 							if(faded) {
 								if(_self->fadeStep < 0.0) {
@@ -707,23 +942,37 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 					}
 				}
 			}
+			if(_self->doPActive && renderedSamples < frameCount) {
+				// PCM zeroes make a DoP DAC lose lock. Keep it locked across pause,
+				// track changes, and brief underruns with standard DSD silence.
+				fillDoPSilence(outSamples + renderedSamples * channels, channels, frameCount - renderedSamples, &_self->doPMarker);
+				outputContainsDoP = YES;
+			}
 
 			double secondsRendered = (double)renderedSamples / format->mSampleRate;
 
-			scale_by_volume(outSamples, frameCount * channels, _self->volume);
+			if(!outputContainsDoP) {
+				scale_by_volume(outSamples, frameCount * channels, _self->volume);
+			}
+
+			if(!renderAsFloat) {
+				convertFloatBufferToS32((int32_t *)inputData->mBuffers[0].mData, outSamples, (size_t)frameCount * channels, outputContainsDoP);
+			}
 
 			[_self updateLatency:secondsRendered];
 
 #ifdef OUTPUT_LOG
-			NSData *outData = [NSData dataWithBytes:outSamples length:frameCount * format->mBytesPerPacket];
+			NSData *outData = [NSData dataWithBytes:inputData->mBuffers[0].mData length:inputData->mBuffers[0].mDataByteSize];
 			[logFile writeData:outData];
 #endif
 		}
 
 #ifdef _DEBUG
-		[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
-								amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
-							  location:@"final output"];
+		if(renderAsFloat) {
+			[BadSampleCleaner cleanSamples:(float *)inputData->mBuffers[0].mData
+									amount:inputData->mBuffers[0].mDataByteSize / sizeof(float)
+								  location:@"final output"];
+		}
 #endif
 
 		return 0;
@@ -750,6 +999,10 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		paused = NO;
 		outputDeviceID = -1;
 		restarted = NO;
+		preferDoPIntegerOutput = NO;
+		renderFormatDoPInteger = NO;
+		preferredDoPCarrierSampleRate = 0.0;
+		bzero(&renderFormat, sizeof(renderFormat));
 
 		cutOffInput = NO;
 		fadeTarget = 1.0f;
@@ -758,6 +1011,9 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 		fading = NO;
 		faded = NO;
 		fadingstop = YES;
+		doPActive = NO;
+		doPSeekPending = NO;
+		doPMarker = 0x05;
 
 		streamTimestamp = 0.0;
 		prebufferReached = NO;
@@ -927,6 +1183,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 			[_au stopHardware];
 			_au = nil;
 		}
+		if(outputFloatScratch) {
+			free(outputFloatScratch);
+			outputFloatScratch = NULL;
+			outputFloatScratchCapacity = 0;
+		}
 		if(running) {
 			while(!stopped) {
 				stopping = YES;
@@ -1004,6 +1265,14 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 - (void)fadeOut {
+	if(!playbackFadesEnabled()) {
+		fadeTarget = 0.0f;
+		fadeLevel = 0.0f;
+		fadeStep = 0.0f;
+		fading = NO;
+		faded = YES;
+		return;
+	}
 	fadeTarget = 0.0f;
 	fadeStep = ((fadeTarget - fadeLevel) / deviceFormat.mSampleRate) * (1000.0f / fadeTimeMS);
 	fading = YES;
@@ -1024,30 +1293,59 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 	hrtfNode = [[DSPHRTFNode alloc] initWithController:self previous:nil latency:0.03];
 	downmixNode = [[DSPDownmixNode alloc] initWithController:self previous:hrtfNode latency:0.03];
 	faderNode = [[DSPFaderNode alloc] initWithController:self previous:nil latency:0.03];
+	[faderNode setDoPMode:doPActive];
 	[hrtfNode setResetBarrier:YES];
 	[downmixNode setOutputFormat:deviceFormat withChannelConfig:deviceChannelConfig];
 	faderNode.timestamp = oldFader.timestamp;
 
 	ChunkList *oldBuffer = buffer;
 	buffer = [[ChunkList alloc] initWithMaximumDuration:2.0f * (fadeTimeMS / 1000.0f)];
-	FadedBuffer *fbuffer = [[FadedBuffer alloc] initWithBuffer:oldBuffer withDSPs:@[oldHrtf, oldDownmix, oldFader] fadeStart:fadeLevel fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
-	oldBuffer = nil;
-
-	oldHrtf = nil;
-	oldDownmix = nil;
-	oldFader = nil;
+	// DoP cannot be crossfaded: a seek may otherwise combine buffered frames
+	// from before and after the discontinuity, corrupting the DSD payload.
+	const BOOL fadesEnabled = playbackFadesEnabled() && !doPActive;
+	FadedBuffer *fbuffer = nil;
+	if(fadesEnabled) {
+		fbuffer = [[FadedBuffer alloc] initWithBuffer:oldBuffer withDSPs:@[oldHrtf, oldDownmix, oldFader] fadeStart:fadeLevel fadeTarget:0.0 sampleRate:deviceFormat.mSampleRate];
+	}
 
 	[hrtfNode setPreviousNode:self];
 	[bufferNode setPreviousNode:faderNode];
 	[self launchDSPs];
 
-	[faderNode appendFadeOut:fbuffer];
+	if(fadesEnabled) {
+		[faderNode appendFadeOut:fbuffer];
+	} else {
+		[oldHrtf setShouldContinue:NO];
+		[oldDownmix setShouldContinue:NO];
+		[oldFader setShouldContinue:NO];
+		[bufferNode resetBuffer];
+		fbuffer = nil;
+	}
+	oldBuffer = nil;
+	oldHrtf = nil;
+	oldDownmix = nil;
+	oldFader = nil;
 
 	cutOffInput = NO;
 }
 
+- (void)beginSeek {
+	// fadeOutBackground has already detached and drained the old path. If the
+	// active stream is DoP, keep emitting valid DoP silence until the new path
+	// supplies a completely verified carrier buffer.
+	doPSeekPending = doPActive;
+}
+
 - (void)fadeIn {
 	[self stopIdle];
+	if(!playbackFadesEnabled()) {
+		fadeLevel = 1.0f;
+		fadeTarget = 1.0f;
+		fadeStep = 0.0f;
+		fading = NO;
+		faded = NO;
+		return;
+	}
 	if(fading || faded) {
 		fadeLevel = 0.0f;
 		fadeTarget = 1.0f;
@@ -1061,7 +1359,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 
 - (void)faderFadeIn {
 	[self stopIdle];
-	[faderNode fadeIn];
+	if(playbackFadesEnabled() || doPActive) {
+		[faderNode fadeIn];
+	} else {
+		[faderNode waitForReset];
+	}
 	[faderNode setPreviousNode:downmixNode];
 	prebufferSignaled = NO;
 }

@@ -20,6 +20,7 @@
 		lossless = NO;
 		hdcd = NO;
 		resetForward = NO;
+		dsdDoPReverseBits = NO;
 		streamTimestamp = 0.0;
 		streamTimeRatio = 1.0;
 	}
@@ -36,6 +37,7 @@
 		lossless = [[properties objectForKey:@"encoding"] isEqualToString:@"lossless"];
 		hdcd = NO;
 		resetForward = NO;
+		dsdDoPReverseBits = [[properties objectForKey:@"dsdDoPReverseBits"] boolValue];
 		streamTimestamp = 0.0;
 		streamTimeRatio = 1.0;
 	}
@@ -49,6 +51,7 @@
 	[outputChunk setChannelConfig:channelConfig];
 	if(hdcd) [outputChunk setHDCD];
 	if(resetForward) outputChunk.resetForward = YES;
+	outputChunk.dsdDoPReverseBits = dsdDoPReverseBits;
 	[outputChunk setStreamTimestamp:streamTimestamp];
 	[outputChunk setStreamTimeRatio:streamTimeRatio];
 	[outputChunk assignData:chunkData];
@@ -139,6 +142,7 @@ static const uint32_t AudioChannelConfigTable[] = {
 @synthesize resetForward;
 @synthesize streamTimestamp;
 @synthesize streamTimeRatio;
+@synthesize dsdDoPReverseBits;
 
 - (AudioStreamBasicDescription)format {
 	return format;

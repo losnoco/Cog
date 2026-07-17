@@ -1024,6 +1024,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		      @"bitrate": @(bitrate),
 		      @"seekable": @(seekable),
 		      @"codec": guess_encoding_of_string(avcodec_get_name(codecCtx->codec_id)),
+		      @"dsdDoPReverseBits": @NO,
 		      @"endian": @"host",
 		      @"encoding": lossy ? @"lossy" : @"lossless" };
 }

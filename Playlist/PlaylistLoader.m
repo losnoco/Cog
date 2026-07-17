@@ -293,6 +293,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+static inline BOOL isCueSheetTrackURL(NSURL *url) {
+	return [url isFileURL] &&
+	       [[url fragment] length] &&
+	       [[url pathExtension] caseInsensitiveCompare:@"cue"] == NSOrderedSame;
+}
+
 - (void)beginProgress:(NSString *)localizedDescription {
 	while(playbackController.progressOverall) {
 		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
@@ -350,6 +356,26 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	} else {
 		[self completeProgressJob];
 	}
+}
+
+- (BOOL)seedInitialCueMetadataForEntry:(PlaylistEntry *)entry url:(NSURL *)url {
+	if(!isCueSheetTrackURL(url)) {
+		return NO;
+	}
+
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
+	if(!properties) {
+		return NO;
+	}
+
+	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
+	NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:properties with:metadata];
+
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		[entry setMetadata:entryInfo];
+	});
+
+	return YES;
 }
 
 + (NSString *)keyForPath:(NSString *)path {
@@ -704,6 +730,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	NSInteger i = 0;
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
+	NSMutableArray *preloadedEntries = [NSMutableArray new];
 	for(NSURL *url in validURLs) {
 		__block PlaylistEntry *pe;
 
@@ -719,6 +746,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			pe.queuePosition = -1;
 			[addItemTask finish];
 		});
+
+		if([self seedInitialCueMetadataForEntry:pe url:url]) {
+			[preloadedEntries addObject:pe];
+		}
 
 		[entries addObject:pe];
 
@@ -754,7 +785,17 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
 
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
+		BOOL selectsInsertedObjects = [self->playlistController selectsInsertedObjects];
+		[self->playlistController setSelectsInsertedObjects:NO];
+		@try {
+			[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
+			for(PlaylistEntry *pe in preloadedEntries) {
+				[self->playlistController firstSawTrackWithoutReload:pe];
+			}
+		}
+		@finally {
+			[self->playlistController setSelectsInsertedObjects:selectsInsertedObjects];
+		}
 	});
 
 	if(xmlData && [[xmlData objectForKey:@"queue"] count]) {
@@ -783,8 +824,21 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	});
 
 	{
-		NSArray *arrayFirst = @[[entries objectAtIndex:0]];
-		NSMutableArray *arrayRest = [entries mutableCopy];
+		NSMutableArray *entriesNeedingInfo = [NSMutableArray new];
+		for(PlaylistEntry *pe in entries) {
+			if(![pe metadataLoaded]) {
+				[entriesNeedingInfo addObject:pe];
+			}
+		}
+
+		if(![entriesNeedingInfo count]) {
+			[self->playlistController commitPersistentStoreAsync];
+			[self->playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
+			return entries;
+		}
+
+		NSArray *arrayFirst = @[[entriesNeedingInfo objectAtIndex:0]];
+		NSMutableArray *arrayRest = [entriesNeedingInfo mutableCopy];
 		[arrayRest removeObjectAtIndex:0];
 
 		metadataLoadInProgress = YES;
@@ -794,7 +848,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		[self performSelectorOnMainThread:@selector(syncLoadInfoForEntries:) withObject:arrayFirst waitUntilDone:YES];
 
-		progressstep = 100.0 / (double)([entries count]);
+		progressstep = 100.0 / (double)([entriesNeedingInfo count]);
 		progress = progressstep;
 		[self setProgressJobStatus:progress];
 

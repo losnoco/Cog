@@ -56,6 +56,7 @@
 
 - (void)fadeOut;
 - (void)fadeOutBackground;
+- (void)beginSeek;
 - (void)fadeIn;
 - (void)faderFadeIn;
 
@@ -69,6 +70,8 @@
 
 - (AudioStreamBasicDescription)deviceFormat;
 - (uint32_t)deviceChannelConfig;
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat;
+- (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat;
 
 - (double)volume;
 - (void)setVolume:(double)v;

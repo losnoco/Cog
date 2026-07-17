@@ -274,6 +274,65 @@ static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count
 }
 #endif
 
+static uint8_t reverse_bits8(uint8_t value) {
+	value = (uint8_t)(((value & 0xF0) >> 4) | ((value & 0x0F) << 4));
+	value = (uint8_t)(((value & 0xCC) >> 2) | ((value & 0x33) << 2));
+	value = (uint8_t)(((value & 0xAA) >> 1) | ((value & 0x55) << 1));
+	return value;
+}
+
+static float convert_dop_word_to_f32(uint8_t first, uint8_t second, uint8_t marker) {
+	const uint32_t packed = ((uint32_t)marker << 24) | ((uint32_t)first << 16) | ((uint32_t)second << 8);
+	int32_t signedPacked;
+	memcpy(&signedPacked, &packed, sizeof(signedPacked));
+	return (float)((double)signedPacked / 2147483648.0);
+}
+
+static size_t convert_dsd_to_dop_f32(float *output, const uint8_t *input, size_t inputFrames, size_t channels, BOOL reverseBits, uint8_t *pendingFrame, BOOL *hasPendingFrame, uint8_t *nextMarker) {
+	if(!output || !input || !channels || channels > 32) return 0;
+
+	size_t inputFrame = 0;
+	size_t outputFrame = 0;
+	uint8_t marker = (*nextMarker == 0xFA) ? 0xFA : 0x05;
+
+	// Some decoders normalize DSD bytes for PCM conversion; DoP needs the
+	// serialized payload bit order back on the wire.
+	if(*hasPendingFrame && inputFrames) {
+		for(size_t channel = 0; channel < channels; ++channel) {
+			const uint8_t first = reverseBits ? reverse_bits8(pendingFrame[channel]) : pendingFrame[channel];
+			const uint8_t second = reverseBits ? reverse_bits8(input[channel]) : input[channel];
+			output[channel] = convert_dop_word_to_f32(first, second, marker);
+		}
+		marker = (marker == 0x05) ? 0xFA : 0x05;
+		inputFrame = 1;
+		outputFrame = 1;
+		*hasPendingFrame = NO;
+	}
+
+	while(inputFrame + 1 < inputFrames) {
+		for(size_t channel = 0; channel < channels; ++channel) {
+			uint8_t first = input[inputFrame * channels + channel];
+			uint8_t second = input[(inputFrame + 1) * channels + channel];
+			if(reverseBits) {
+				first = reverse_bits8(first);
+				second = reverse_bits8(second);
+			}
+			output[outputFrame * channels + channel] = convert_dop_word_to_f32(first, second, marker);
+		}
+		marker = (marker == 0x05) ? 0xFA : 0x05;
+		inputFrame += 2;
+		++outputFrame;
+	}
+
+	if(inputFrame < inputFrames) {
+		memcpy(pendingFrame, input + inputFrame * channels, channels);
+		*hasPendingFrame = YES;
+	}
+
+	*nextMarker = marker;
+	return outputFrame;
+}
+
 static void convert_u8_to_s16(int16_t *output, const uint8_t *input, size_t count) {
 	for(size_t i = 0; i < count; ++i) {
 		uint16_t sample = (input[i] << 8) | input[i];
@@ -400,6 +459,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 #endif
 
 		observersRegistered = NO;
+		outputDSDAsDoP = NO;
+		dsdDoPHasPendingFrame = NO;
+		dsdDoPMarker = 0x05;
 	}
 
 	return self;
@@ -469,6 +531,32 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[chunkList removeAllObjects];
 		listDuration = 0.0;
 		listDurationRatioed = 0.0;
+		dsdDoPHasPendingFrame = NO;
+		dsdDoPMarker = 0x05;
+	}
+}
+
+- (void)setOutputDSDAsDoP:(BOOL)enabled {
+	@synchronized(chunkList) {
+		if(outputDSDAsDoP == enabled) {
+			return;
+		}
+		outputDSDAsDoP = enabled;
+		formatRead = NO;
+		dsdDoPHasPendingFrame = NO;
+		dsdDoPMarker = 0x05;
+#if DSD_DECIMATE
+		if(dsd2pcm && dsd2pcmCount) {
+			for(size_t i = 0; i < dsd2pcmCount; ++i) {
+				dsd2pcm_free(dsd2pcm[i]);
+				dsd2pcm[i] = NULL;
+			}
+			free(dsd2pcm);
+			dsd2pcm = NULL;
+			dsd2pcmCount = 0;
+			dsd2pcmLatency = 0;
+		}
+#endif
 	}
 }
 
@@ -526,6 +614,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
+		[ret setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
 		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
@@ -571,6 +660,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		[ret setFormat:[chunk format]];
 		[ret setChannelConfig:[chunk channelConfig]];
 		[ret setLossless:[chunk lossless]];
+		[ret setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
 		[ret setStreamTimestamp:streamTimestamp];
 		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
 		[ret assignData:removedData];
@@ -650,6 +740,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			[outputChunk setHDCD];
 		}
 
+		if(!totalFrameCount) {
+			[outputChunk setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
+		}
+
 		if(chunk.resetForward) {
 			outputChunk.resetForward = YES;
 		}
@@ -725,27 +819,45 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		floatFormat.mBytesPerFrame = (32 / 8) * floatFormat.mChannelsPerFrame;
 		floatFormat.mBytesPerPacket = floatFormat.mBytesPerFrame * floatFormat.mFramesPerPacket;
 
-#if DSD_DECIMATE
 		if(inputFormat.mBitsPerChannel == 1) {
-			// Decimate this for speed
-			floatFormat.mSampleRate *= 1.0 / 8.0;
-			if(dsd2pcm && dsd2pcmCount) {
-				for(size_t i = 0; i < dsd2pcmCount; ++i) {
-					dsd2pcm_free(dsd2pcm[i]);
-					dsd2pcm[i] = NULL;
+			dsdDoPHasPendingFrame = NO;
+			dsdDoPMarker = 0x05;
+			if(outputDSDAsDoP && inputFormat.mChannelsPerFrame <= sizeof(dsdDoPPendingFrame)) {
+				floatFormat.mSampleRate *= 1.0 / 16.0;
+#if DSD_DECIMATE
+				if(dsd2pcm && dsd2pcmCount) {
+					for(size_t i = 0; i < dsd2pcmCount; ++i) {
+						dsd2pcm_free(dsd2pcm[i]);
+						dsd2pcm[i] = NULL;
+					}
+					free(dsd2pcm);
+					dsd2pcm = NULL;
+					dsd2pcmCount = 0;
+					dsd2pcmLatency = 0;
 				}
-				free(dsd2pcm);
-				dsd2pcm = NULL;
-			}
-			dsd2pcmCount = floatFormat.mChannelsPerFrame;
-			dsd2pcm = (void **)calloc(dsd2pcmCount, sizeof(void *));
-			dsd2pcm[0] = dsd2pcm_alloc();
-			dsd2pcmLatency = dsd2pcm_latency(dsd2pcm[0]);
-			for(size_t i = 1; i < dsd2pcmCount; ++i) {
-				dsd2pcm[i] = dsd2pcm_dup(dsd2pcm[0]);
+#endif
+			} else {
+#if DSD_DECIMATE
+				// Decimate this for speed
+				floatFormat.mSampleRate *= 1.0 / 8.0;
+				if(dsd2pcm && dsd2pcmCount) {
+					for(size_t i = 0; i < dsd2pcmCount; ++i) {
+						dsd2pcm_free(dsd2pcm[i]);
+						dsd2pcm[i] = NULL;
+					}
+					free(dsd2pcm);
+					dsd2pcm = NULL;
+				}
+				dsd2pcmCount = floatFormat.mChannelsPerFrame;
+				dsd2pcm = (void **)calloc(dsd2pcmCount, sizeof(void *));
+				dsd2pcm[0] = dsd2pcm_alloc();
+				dsd2pcmLatency = dsd2pcm_latency(dsd2pcm[0]);
+				for(size_t i = 1; i < dsd2pcmCount; ++i) {
+					dsd2pcm[i] = dsd2pcm_dup(dsd2pcm[0]);
+				}
+#endif
 			}
 		}
-#endif
 	}
 	
 	NSUInteger samplesRead = [inChunk frameCount];
@@ -807,7 +919,15 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		if(bitsPerSample == 1) {
 			const size_t buffer_adder = (inputBuffer == &tempData[0]) ? buffer_adder_base : 0;
 			samplesRead = bytesReadFromInput / inputFormat.mBytesPerPacket;
-			convert_dsd_to_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame
+			if(outputDSDAsDoP && inputFormat.mChannelsPerFrame <= sizeof(dsdDoPPendingFrame)) {
+				samplesRead = convert_dsd_to_dop_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, [inChunk dsdDoPReverseBits], dsdDoPPendingFrame, &dsdDoPHasPendingFrame, &dsdDoPMarker);
+				bitsPerSample = 32;
+				bytesReadFromInput = samplesRead * floatFormat.mBytesPerPacket;
+				isFloat = YES;
+				inputBuffer = &tempData[buffer_adder];
+				inputChanged = YES;
+			} else {
+				convert_dsd_to_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame
 #if DSD_DECIMATE
 							   ,
 							   dsd2pcm
@@ -816,12 +936,12 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 #if !DSD_DECIMATE
 			samplesRead *= 8;
 #endif
-			bitsPerSample = 32;
-			bytesReadFromInput = samplesRead * floatFormat.mBytesPerPacket;
-			isFloat = YES;
-			inputBuffer = &tempData[buffer_adder];
-			inputChanged = YES;
-			[self addObservers];
+				bitsPerSample = 32;
+				bytesReadFromInput = samplesRead * floatFormat.mBytesPerPacket;
+				isFloat = YES;
+				inputBuffer = &tempData[buffer_adder];
+				inputChanged = YES;
+				[self addObservers];
 #if DSD_DECIMATE
 			if(halveDSDVolume) {
 				float scaleFactor = 2.0f;
@@ -833,6 +953,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				vDSP_vsmul((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
 			}
 #endif
+			}
 		} else if(bitsPerSample <= 8) {
 			samplesRead = bytesReadFromInput;
 			const size_t buffer_adder = (inputBuffer == &tempData[0]) ? buffer_adder_base : 0;

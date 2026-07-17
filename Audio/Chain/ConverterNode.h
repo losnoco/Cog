@@ -47,6 +47,7 @@
 	BOOL observersAdded;
 
 	BOOL resetProcessed;
+	BOOL doPStream;
 
 	float volumeScale;
 
