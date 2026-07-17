@@ -29,6 +29,7 @@ extern NSNotificationName CogPlaybackDidBeginNotificiation;
 extern NSNotificationName CogPlaybackDidPauseNotificiation;
 extern NSNotificationName CogPlaybackDidResumeNotificiation;
 extern NSNotificationName CogPlaybackDidStopNotificiation;
+extern NSNotificationName CogPlaybackWillResetPositionNotification;
 
 extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 

@@ -8,12 +8,16 @@ struct SandboxPathEntry: Identifiable {
     let token: AnyObject?
 }
 
-@MainActor
-private final class GeneralPrefs: ObservableObject {
+private let httpStreamingBufferSizeOptions = (16...27).map { 1 << $0 }
+
+@MainActor private final class GeneralPrefs: ObservableObject {
     private var isActive = true
 
     @Published var allowInsecureSSL: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(allowInsecureSSL, forKey: "allowInsecureSSL") }
+    }
+    @Published var httpStreamingBufferSize: Int {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(httpStreamingBufferSize, forKey: "httpStreamingBufferSize") }
     }
     @Published var sentryConsented: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(sentryConsented, forKey: "sentryConsented") }
@@ -28,6 +32,7 @@ private final class GeneralPrefs: ObservableObject {
     init() {
         let d = UserDefaults.standard
         allowInsecureSSL = d.bool(forKey: "allowInsecureSSL")
+        httpStreamingBufferSize = d.integer(forKey: "httpStreamingBufferSize")
         sentryConsented = d.bool(forKey: "sentryConsented")
         automaticallyChecksForUpdates = SparkleBridge.sharedStandardUpdaterController()?.updater.automaticallyChecksForUpdates ?? false
     }
@@ -117,6 +122,15 @@ struct GeneralPaneView: View {
         Form {
             Section {
                 Toggle("Allow insecure SSL connections", isOn: $prefs.allowInsecureSSL)
+                Picker("HTTP/HTTPS streaming buffer", selection: $prefs.httpStreamingBufferSize) {
+                    ForEach(httpStreamingBufferSizeOptions, id: \.self) { size in
+                        Text(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .memory)).tag(size)
+                    }
+                }
+            } header: {
+                Text("Network").bold()
+            }
+            Section {
                 Toggle("Send crash reports and usage data", isOn: $prefs.sentryConsented)
             }
             Section {
