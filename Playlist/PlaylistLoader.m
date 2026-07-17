@@ -293,10 +293,45 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+static inline BOOL cueSheetValueHasContent(id value) {
+	if([value isKindOfClass:[NSString class]]) {
+		return [value length] > 0;
+	}
+	if([value isKindOfClass:[NSArray class]]) {
+		for(id item in value) {
+			if([item isKindOfClass:[NSString class]] && [item length] > 0) {
+				return YES;
+			}
+		}
+	}
+	return NO;
+}
+
 static inline BOOL isCueSheetTrackURL(NSURL *url) {
-	return [url isFileURL] &&
-	       [[url fragment] length] &&
-	       [[url pathExtension] caseInsensitiveCompare:@"cue"] == NSOrderedSame;
+	if(![url isFileURL] || ![[url fragment] length]) {
+		return NO;
+	}
+	if([[url pathExtension] caseInsensitiveCompare:@"cue"] == NSOrderedSame) {
+		return YES;
+	}
+
+	// Embedded CUE tracks retain the audio file's extension (for example,
+	// album.flac#01). Inspect the underlying file without its track fragment;
+	// checking the fragment alone would also match unrelated subsong URLs.
+	NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+	components.fragment = nil;
+	NSURL *baseURL = components.URL;
+	if(!baseURL) {
+		return NO;
+	}
+
+	NSDictionary *metadata = [AudioMetadataReader metadataForURL:baseURL skipCue:YES];
+	if(cueSheetValueHasContent(metadata[@"cuesheet"])) {
+		return YES;
+	}
+
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:baseURL skipCue:YES];
+	return cueSheetValueHasContent(properties[@"cuesheet"]);
 }
 
 - (void)beginProgress:(NSString *)localizedDescription {
