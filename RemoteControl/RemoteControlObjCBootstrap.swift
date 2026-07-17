@@ -6,7 +6,7 @@
 //
 //  The one remote-control symbol callable unconditionally from Objective-C.
 //  Everything else is reached only behind #available(macOS 13.0, *), so the
-//  weak-linked CogRemoteControl framework is never touched on older systems.
+//  runtime-loaded CogRemoteControl framework is never touched on older systems.
 //
 
 import Foundation

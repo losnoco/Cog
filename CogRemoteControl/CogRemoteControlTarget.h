@@ -63,4 +63,23 @@ NS_SWIFT_SENDABLE
 
 @end
 
+/// Class interface of the framework's RemoteControlServerBridge. The app must
+/// not link the framework — its macOS 13 floor gives it hard dependencies on
+/// Swift runtime dylibs that don't exist before 13, and dyld loads even
+/// weak-linked frameworks eagerly, killing launch on older systems. So the
+/// app loads the bundle at runtime, finds the class by name, and talks to it
+/// through this protocol, which both sides compile in textually.
+API_AVAILABLE(macos(13.0))
+@protocol CogRemoteControlServerBridging <NSObject>
+
+/// Starts the MCP server on the given Unix domain socket path. The completion
+/// receives an error description, or nil on success.
++ (void)startWithSocketPath:(NSString *)socketPath
+                     target:(id<CogRemoteControlTarget>)target
+                 completion:(void (NS_SWIFT_SENDABLE ^)(NSString *_Nullable errorDescription))completion;
+
++ (void)stopWithCompletion:(void (NS_SWIFT_SENDABLE ^_Nullable)(void))completion;
+
+@end
+
 NS_ASSUME_NONNULL_END
