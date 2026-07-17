@@ -112,6 +112,13 @@ static void *kCogDecoderMultiContext = &kCogDecoderMultiContext;
 	}
 }
 
+- (void)interrupt {
+	id<CogDecoder> activeDecoder = theDecoder;
+	if([activeDecoder respondsToSelector:@selector(interrupt)]) {
+		[activeDecoder interrupt];
+	}
+}
+
 - (void)dealloc {
 	[self close];
 }

@@ -267,6 +267,19 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	track = nil;
 }
 
+- (void)interrupt {
+	id<CogDecoder> activeDecoder = decoder;
+	if([activeDecoder respondsToSelector:@selector(interrupt)]) {
+		[activeDecoder interrupt];
+		return;
+	}
+
+	id<CogSource> activeSource = source;
+	if([activeSource respondsToSelector:@selector(interrupt)]) {
+		[activeSource interrupt];
+	}
+}
+
 - (void)dealloc {
 	[self close];
 }
