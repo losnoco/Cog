@@ -3482,6 +3482,17 @@
         }
       }
     },
+    "The Remote Control component could not be loaded." : {
+      "comment" : "Remote Control error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar el componente de control remoto."
+          }
+        }
+      }
+    },
     "The shared app-group folder is unavailable." : {
       "comment" : "Remote Control error",
       "localizations" : {
