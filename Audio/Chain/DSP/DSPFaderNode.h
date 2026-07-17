@@ -31,6 +31,8 @@
 - (AudioChunk * _Nullable)convert;
 
 - (void)fadeIn;
+- (void)waitForReset;
+- (void)setDoPMode:(BOOL)enabled;
 
 - (float)fadeLevel;
 

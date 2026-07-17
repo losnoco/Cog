@@ -24,6 +24,9 @@ private final class OutputPrefs: ObservableObject {
     @Published var suspendOutputOnPause: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(suspendOutputOnPause, forKey: "suspendOutputOnPause") }
     }
+    @Published var enableFading: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(enableFading, forKey: "enableFading") }
+    }
     @Published var enableHdcd: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableHdcd, forKey: "enableHDCD") }
     }
@@ -42,6 +45,7 @@ private final class OutputPrefs: ObservableObject {
         enableFSurround = d.bool(forKey: "enableFSurround")
         volumeLimit = d.object(forKey: "volumeLimit") as? Bool ?? true
         suspendOutputOnPause = d.object(forKey: "suspendOutputOnPause") as? Bool ?? true
+        enableFading = d.object(forKey: "enableFading") as? Bool ?? true
         enableHdcd = d.object(forKey: "enableHDCD") as? Bool ?? true
         halveDSDVolume = d.object(forKey: "halveDSDVolume") as? Bool ?? false
     }
@@ -116,6 +120,7 @@ struct OutputPaneView: View {
             }
             Toggle("Limit volume to prevent clipping", isOn: $prefs.volumeLimit)
             Toggle("Suspend output when paused", isOn: $prefs.suspendOutputOnPause)
+            Toggle("Fade playback transitions", isOn: $prefs.enableFading)
             Section {
                 Toggle(
                     "Enable HDCD Peak and Low Level Range Extend",

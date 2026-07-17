@@ -142,6 +142,7 @@ static inline BOOL IsRepeatOneSet(void) {
 // Play statistics
 - (void)updatePlayCountForTrack:(PlaylistEntry *_Nonnull)pe;
 - (void)firstSawTrack:(PlaylistEntry *_Nonnull)pe;
+- (void)firstSawTrackWithoutReload:(PlaylistEntry *_Nonnull)pe;
 
 - (void)moveObjectsInArrangedObjectsFromIndexes:(NSIndexSet *_Nullable)indexSet
                                         toIndex:(NSUInteger)insertIndex;

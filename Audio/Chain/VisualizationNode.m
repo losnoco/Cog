@@ -21,6 +21,7 @@
 
 #import "rsstate.h"
 
+#import "FadedBuffer.h"
 #import "VisualizationNode.h"
 
 @implementation VisualizationNode {
@@ -242,6 +243,10 @@
 
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
+	if(audioBufferIsDoP((const float *)[sampleData bytes], format.mChannelsPerFrame, frameCount, NULL)) {
+		[mutex unlock];
+		return;
+	}
 
 	[downmixer process:[sampleData bytes] frameCount:frameCount output:&visAudio[0]];
 

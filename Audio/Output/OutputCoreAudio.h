@@ -60,6 +60,9 @@ using std::atomic_long;
 
 	BOOL cutOffInput;
 	BOOL fading, faded, fadingstop;
+	BOOL doPActive;
+	BOOL doPSeekPending;
+	uint8_t doPMarker;
 	float fadeLevel;
 	float fadeStep;
 	float fadeTarget;
@@ -90,12 +93,20 @@ using std::atomic_long;
 
 	AudioDeviceID outputDeviceID;
 	AudioStreamBasicDescription deviceFormat;
+	AudioStreamBasicDescription renderFormat;
 	AudioStreamBasicDescription realStreamFormat; // stream format pre-hrtf
 	AudioStreamBasicDescription streamFormat; // stream format last seen in render callback
 
 	uint32_t deviceChannelConfig;
 	uint32_t realStreamChannelConfig;
 	uint32_t streamChannelConfig;
+
+	BOOL preferDoPIntegerOutput;
+	BOOL renderFormatDoPInteger;
+	double preferredDoPCarrierSampleRate;
+
+	float *outputFloatScratch;
+	size_t outputFloatScratchCapacity;
 
 	AUAudioUnit *_au;
 
@@ -131,6 +142,7 @@ using std::atomic_long;
 
 - (void)fadeOut;
 - (void)fadeOutBackground;
+- (void)beginSeek;
 - (void)fadeIn;
 - (void)faderFadeIn;
 
@@ -147,6 +159,8 @@ using std::atomic_long;
 
 - (AudioStreamBasicDescription)deviceFormat;
 - (uint32_t)deviceChannelConfig;
+- (AudioStreamBasicDescription)outputFormatForInputFormat:(AudioStreamBasicDescription)inputFormat;
+- (BOOL)prepareForInputFormat:(AudioStreamBasicDescription)inputFormat;
 
 - (DSPDownmixNode *)downmix;
 - (DSPFaderNode *)fader;

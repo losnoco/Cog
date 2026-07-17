@@ -52,12 +52,15 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	NSDictionary *metadata = @{};
 	if(track != nil)
 		metadata = [CueSheetMetadataReader processDataForTrack:track];
-    if(decoder != nil) {
-        NSDictionary *decoderMetadata = [decoder metadata];
-        if(decoderMetadata != nil) // second dictionary takes priority
-            return [decoderMetadata dictionaryByMergingWith:metadata];
-    }
-    return metadata;
+	if(decoder != nil) {
+		NSDictionary *decoderMetadata = [decoder metadata];
+		if(decoderMetadata != nil) {
+			// Cue-sheet fields describe this logical track and take priority over
+			// the metadata shared by the underlying audio file.
+			return [metadata dictionaryByMergingWith:decoderMetadata];
+		}
+	}
+	return metadata;
 }
 
 - (BOOL)open:(id<CogSource>)s {

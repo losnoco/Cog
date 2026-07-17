@@ -34,6 +34,25 @@ static void *kInputNodeContext = &kInputNodeContext;
 	return self;
 }
 
+- (BOOL)takePendingSeekFrame:(long *)frame requestID:(NSUInteger *)requestID {
+	@synchronized(self) {
+		if(!shouldSeek) {
+			return NO;
+		}
+
+		*frame = seekFrame;
+		*requestID = seekRequestID;
+		shouldSeek = NO;
+		return YES;
+	}
+}
+
+- (BOOL)hasSeekRequestAfterID:(NSUInteger)requestID {
+	@synchronized(self) {
+		return shouldSeek || seekRequestID != requestID;
+	}
+}
+
 - (BOOL)openWithSource:(id<CogSource>)source {
 	[self removeObservers];
 
@@ -62,6 +81,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 	shouldContinue = YES;
 	shouldSeek = NO;
+	seekRequestID = 0;
 
 	return YES;
 }
@@ -87,6 +107,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 	shouldContinue = YES;
 	shouldSeek = NO;
+	seekRequestID = 0;
 
 	DLog(@"DONES: %@", decoder);
 	return YES;
@@ -150,6 +171,7 @@ static void *kInputNodeContext = &kInputNodeContext;
 	BOOL isError = NO;
 
 	BOOL signalReset = shouldResetBuffers;
+	NSUInteger activeSeekRequestID = 0;
 
 	if([decoder respondsToSelector:@selector(isSilence)]) {
 		if([decoder isSilence]) {
@@ -160,7 +182,9 @@ static void *kInputNodeContext = &kInputNodeContext;
 	[controller setError:isError];
 
 	while([self shouldContinue] == YES && [self endOfStream] == NO) {
-		if(shouldSeek == YES) {
+		long requestedSeekFrame = 0;
+		NSUInteger requestedSeekID = activeSeekRequestID;
+		if([self takePendingSeekFrame:&requestedSeekFrame requestID:&requestedSeekID]) {
 			BufferChain *bufferChain = controller;
 			AudioPlayer *audioPlayer = [bufferChain controller];
 			OutputNode *outputNode = [audioPlayer output];
@@ -173,10 +197,10 @@ static void *kInputNodeContext = &kInputNodeContext;
 
 			DLog(@"SEEKING!");
 			@autoreleasepool {
-				seekError = [decoder seek:seekFrame] < 0;
+				seekError = [decoder seek:requestedSeekFrame] < 0;
 			}
 
-			shouldSeek = NO;
+			activeSeekRequestID = requestedSeekID;
 			DLog(@"Seeked! Resetting Buffer");
 			initialBufferFilled = NO;
 
@@ -185,11 +209,20 @@ static void *kInputNodeContext = &kInputNodeContext;
 			}
 
 			signalReset = YES;
+
+			if([self hasSeekRequestAfterID:activeSeekRequestID]) {
+				continue;
+			}
 		}
 
 		AudioChunk *chunk;
 		@autoreleasepool {
 			chunk = [decoder readAudio];
+		}
+
+		if([self hasSeekRequestAfterID:activeSeekRequestID]) {
+			chunk = nil;
+			continue;
 		}
 
 		if(chunk && [chunk frameCount]) {
@@ -222,8 +255,12 @@ static void *kInputNodeContext = &kInputNodeContext;
 			// wait before exiting, as we might still get seeking request
 			DLog("InputNode: Before wait")
 			[exitAtTheEndOfTheStream waitIndefinitely];
-			DLog("InputNode: After wait, should seek = %d", shouldSeek);
-			if(shouldSeek) {
+			BOOL hasPendingSeek = NO;
+			@synchronized(self) {
+				hasPendingSeek = shouldSeek;
+			}
+			DLog("InputNode: After wait, should seek = %d", hasPendingSeek);
+			if(hasPendingSeek) {
 				endOfStream = NO;
 				shouldClose = NO;
 				continue;
@@ -243,8 +280,11 @@ static void *kInputNodeContext = &kInputNodeContext;
 }
 
 - (void)seek:(long)frame {
-	seekFrame = frame;
-	shouldSeek = YES;
+	@synchronized(self) {
+		seekFrame = frame;
+		shouldSeek = YES;
+		++seekRequestID;
+	}
 	DLog(@"Should seek!");
 	[self resetBuffer];
 	[writeSemaphore signal];
