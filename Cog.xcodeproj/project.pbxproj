@@ -237,7 +237,6 @@
 		B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */; };
 		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
 		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
-		CEC0CAFE000000000000B001 /* CogRemoteControl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		CEC0CAFE000000000000B002 /* CogRemoteControl.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CEC0CAFE000000000000B003 /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC02 /* MCP */; };
 		CEC0CAFE000000000000B004 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC04 /* NIOCore */; };
@@ -1194,7 +1193,6 @@
 		CEC0CAFE000000000000F203 /* RemoteControlObjCBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlObjCBootstrap.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F204 /* RemoteControlPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlPaneView.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F205 /* RemoteControlPaneAvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlPaneAvailableView.swift; sourceTree = "<group>"; };
-		CEC0CAFE000000000000F206 /* CogRemoteControlServerBridgeInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogRemoteControlServerBridgeInterface.h; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F301 /* cog-mcp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cog-mcp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0CAFE000000000000F302 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesWindow.swift; path = Preferences/PreferencesWindow.swift; sourceTree = "<group>"; };
@@ -1210,7 +1208,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CEC0CAFE000000000000B001 /* CogRemoteControl.framework in Frameworks */,
 				0AC233A32F6C3B4900E6FE2E /* SwiftUIIntrospect in Frameworks */,
 				83DFCDA12E8532E5009E3DF1 /* nuked_sc55.framework in Frameworks */,
 				8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */,
@@ -2192,7 +2189,6 @@
 		CEC0CAFE000000000000E002 /* RemoteControl */ = {
 			isa = PBXGroup;
 			children = (
-				CEC0CAFE000000000000F206 /* CogRemoteControlServerBridgeInterface.h */,
 				CEC0CAFE000000000000F201 /* CogRemoteControlAdapter.swift */,
 				CEC0CAFE000000000000F202 /* RemoteControlBootstrap.swift */,
 				CEC0CAFE000000000000F203 /* RemoteControlObjCBootstrap.swift */,

@@ -4,23 +4,23 @@
 //
 //  Created by Kevin López Brante on 2026-07-01.
 //
-//  The app calls this through the generated CogRemoteControl-Swift.h header
-//  (the framework's Swift module can't be imported by the 10.15 app target).
+//  The app finds this class by name at runtime (it can't link the framework:
+//  the macOS 13 floor makes dyld loading fatal on the app's older systems)
+//  and calls it through the CogRemoteControlServerBridging protocol in
+//  CogRemoteControlTarget.h. Keep the class name and selectors stable.
 //
 
 import Foundation
 
 @available(macOS 13.0, *)
 @objc(CogRemoteControlServerBridge)
-public final class RemoteControlServerBridge: NSObject {
+public final class RemoteControlServerBridge: NSObject, CogRemoteControlServerBridging {
 	override private init() {}
 
 	/// Starts the server on the given Unix domain socket path. The completion
 	/// receives an error description, or nil on success.
-	/// Selector pinned to match the app-side mirror declaration in
-	/// RemoteControl/CogRemoteControlServerBridgeInterface.h.
 	@objc(startWithSocketPath:target:completion:) public static func start(
-		socketPath: String,
+		withSocketPath socketPath: String,
 		target: any CogRemoteControlTarget,
 		completion: @escaping @Sendable (_ errorDescription: String?) -> Void
 	) {
