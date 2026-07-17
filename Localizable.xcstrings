@@ -1630,6 +1630,9 @@
         }
       }
     },
+    "HTTP/HTTPS streaming buffer" : {
+
+    },
     "Independent" : {
       "localizations" : {
         "es" : {
@@ -1848,6 +1851,9 @@
           }
         }
       }
+    },
+    "Network" : {
+
     },
     "Next" : {
       "comment" : "Label for a media player shortcut.",

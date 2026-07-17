@@ -113,6 +113,7 @@ NSNotificationName CogPlaybackDidBeginNotificiation = @"CogPlaybackDidBeginNotif
 NSNotificationName CogPlaybackDidPauseNotificiation = @"CogPlaybackDidPauseNotificiation";
 NSNotificationName CogPlaybackDidResumeNotificiation = @"CogPlaybackDidResumeNotificiation";
 NSNotificationName CogPlaybackDidStopNotificiation = @"CogPlaybackDidStopNotificiation";
+NSNotificationName CogPlaybackWillResetPositionNotification = @"CogPlaybackWillResetPositionNotification";
 
 NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebufferNotification";
 
@@ -338,7 +339,11 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	lastPosition = -10;
 
-	[self setPosition:[offset doubleValue]];
+	double startPosition = [offset doubleValue];
+	if(startPosition <= 0.0) {
+		[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackWillResetPositionNotification object:self];
+	}
+	[self setPosition:startPosition];
 
 	if(pe == nil)
 		return;
@@ -870,6 +875,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	// Dispatch to main thread, unless this is the main thread
 	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
+		BOOL isSameEntry = pe && pe == [self->playlistController currentEntry];
+
 		[self->playlistController setCurrentEntry:pe];
 
 		// Update metadata for currently playing track to update its position for scrobbling.
@@ -881,6 +888,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 		self->lastPosition = -10;
 
+		if(!isSameEntry) {
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackWillResetPositionNotification object:self];
+		}
 		[self setPosition:0];
 	});
 
@@ -907,6 +917,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		if(status == CogStatusStopped) {
 			//[SentrySDK captureMessage:@"Playback stopped"];
 
+			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackWillResetPositionNotification object:self];
 			[self setPosition:0];
 			[self setSeekable:NO]; // the player stopped, disable the slider
 

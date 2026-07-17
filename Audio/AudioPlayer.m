@@ -80,6 +80,7 @@
 	if(output) {
 		[output fadeOutBackground];
 	}
+	BOOL shouldFadeIn = resumeInterval || stoppedRecently || !output;
 	if(!output) {
 		output = [[OutputNode alloc] initWithController:self previous:nil];
 		if(![output setupWithInterval:resumeInterval]) {
@@ -148,7 +149,7 @@
 		if(time > 0.0) {
 			[self updatePosition:userInfo];
 		}
-	} else if(resumeInterval || stoppedRecently) {
+	} else if(shouldFadeIn) {
 		[output faderFadeIn];
 	}
 }

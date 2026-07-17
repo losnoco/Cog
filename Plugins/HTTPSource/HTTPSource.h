@@ -11,9 +11,6 @@
 #import "Plugin.h"
 
 
-#define BUFFER_SIZE 0x40000
-#define BUFFER_MASK 0x3ffff
-
 #define MAX_METADATA 4096
 
 #define TIMEOUT 10 // in seconds
@@ -25,6 +22,7 @@ enum {
 	STATUS_FINISHED = 3,
 	STATUS_ABORTED = 4,
 	STATUS_SEEK = 5,
+	STATUS_RETRY = 6,
 };
 
 @interface HTTPSource : NSObject <CogSource, NSURLSessionDelegate> {
@@ -32,11 +30,18 @@ enum {
 
 	int redirectsRemaining;
 
-	int64_t pos; // position in stream; use "& BUFFER_MASK" to make it index into ringbuffer
+	int64_t pos;
 	int64_t length;
 	int32_t remaining; // remaining bytes in buffer read from stream
 	int64_t skipbytes;
-	uint8_t buffer[BUFFER_SIZE];
+	size_t bufferSize;
+	int64_t bufferMask;
+	uint8_t *buffer;
+	uint8_t *retryOverlapBuffer;
+	int32_t retryOverlapSize;
+	int32_t retryOverlapOffset;
+	int32_t retryOverlapCandidateBytes; // reconnect bytes appended but not yet exposed to the decoder
+	int64_t retryOverlapTail; // absolute end of audio trusted before the reconnect
 
 	NSLock *mutex;
 
@@ -66,6 +71,8 @@ enum {
 	unsigned icyheader : 1; // tells that we're currently reading ICY headers
 	unsigned gotsomeheader : 1; // tells that we got some headers before body started
 	unsigned gotmetadata : 1; // got some metadata
+	unsigned continuousStream : 1; // stream-style source; reconnect clean socket closes instead of treating them as EOF
+	unsigned retryOverlapMatched : 1; // retry stream has been aligned against the snapshot
 }
 
 - (BOOL)hasMetadata;
