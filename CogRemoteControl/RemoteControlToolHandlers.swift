@@ -230,7 +230,7 @@ enum RemoteControlTools {
 				throw MCPError.invalidParams("urls must be a non-empty array of strings")
 			}
 			let count = target.remoteAdd(toPlaylist: urls)
-			return text("Added \(count) entr\(count == 1 ? "y" : "ies") to the playlist.")
+			return text("Queued \(count) entr\(count == 1 ? "y" : "ies") for adding to the playlist.")
 
 		case "remove_from_playlist":
 			guard let index = arguments["index"]?.intValue else {
