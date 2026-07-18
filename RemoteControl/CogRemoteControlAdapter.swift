@@ -194,7 +194,7 @@ import Cocoa
 	}
 
 	func remoteAdd(toPlaylist urls: [String]) -> Int {
-		guard let loader = appController?.playlistLoader else { return 0 }
+		guard let playlist else { return 0 }
 
 		let parsed = urls.compactMap { string -> URL? in
 			if string.contains("://") {
@@ -204,7 +204,18 @@ import Cocoa
 		}
 		guard !parsed.isEmpty else { return 0 }
 
-		return loader.addURLs(parsed, sort: false)?.count ?? 0
+		// PlaylistLoader blocks on its metadata operations, and those report
+		// progress back to the main thread with dispatch_sync; loading from
+		// the main actor would deadlock. Use the same background path as the
+		// app's own open handlers (see AppController's addURLsInBackground
+		// call sites).
+		let loadEntryData: [String: Any] = [
+			"entries": parsed,
+			"sort": false,
+			"origin": URLOrigin.external.rawValue,
+		]
+		playlist.performSelector(inBackground: #selector(PlaylistController.addURLs(inBackground:)), with: loadEntryData)
+		return parsed.count
 	}
 
 	func remoteRemoveFromPlaylist(at index: Int) -> Bool {
