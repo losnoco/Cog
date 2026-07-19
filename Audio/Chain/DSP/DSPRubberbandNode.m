@@ -38,7 +38,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	BOOL isResetForward;
 
 	BOOL stopping, paused;
-	NSRecursiveLock *mutex;
 
 	BOOL flushed;
 
@@ -66,8 +65,6 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 		lastPitch = pitch;
 		lastTempo = tempo;
-
-		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -239,12 +236,14 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 - (BOOL)fullInit {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	RubberBandOptions options = [self getRubberbandOptions];
 	tslastoptions = options;
 	tschannels = inputFormat.mChannelsPerFrame;
 	ts = rubberband_new(inputFormat.mSampleRate, (int)tschannels, options, 1.0 / tempo, pitch);
 	if(!ts) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return NO;
 	}
@@ -280,6 +279,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	countIn = 0.0;
 	countOut = 0;
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return YES;
 }
@@ -288,6 +288,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(stopping || paused || !ts) return;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	RubberBandOptions changed = tslastoptions ^ tsnewoptions;
 
@@ -324,15 +325,18 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 
 	tsapplynewoptions = NO;
 
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
 - (void)fullShutdown {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	if(ts) {
 		rubberband_delete(ts);
 		ts = NULL;
 	}
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -351,10 +355,12 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 - (void)resetBuffer {
 	paused = YES;
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	shouldReset = YES;
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -366,8 +372,10 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(previousNode != p) {
 		paused = YES;
 		[mutex lock];
+		mutexLocked = [NSThread currentThread];
 		previousNode = p;
 		paused = NO;
+		mutexLocked = nil;
 		[mutex unlock];
 	}
 }
@@ -424,13 +432,16 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		return nil;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(stopping || flushed || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -441,6 +452,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -452,12 +464,14 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableRubberband && ![self setup]) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!ts) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return [self readChunk:4096];
 	}
@@ -471,6 +485,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 	if(samplesToProcess > 0) {
 		AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
 		if(!chunk || ![chunk frameCount]) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return nil;
 		}
@@ -494,6 +509,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 			[outputChunk setStreamTimestamp:streamTimestamp];
 			[outputChunk setStreamTimeRatio:streamTimeRatio];
 			[outputChunk assignData:sampleData];
+			mutexLocked = nil;
 			[mutex unlock];
 			return outputChunk;
 		}
@@ -571,6 +587,7 @@ static void * kDSPRubberbandNodeContext = &kDSPRubberbandNodeContext;
 		streamTimestamp += chunkDuration * [outputChunk streamTimeRatio];
 	}
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return outputChunk;
 }

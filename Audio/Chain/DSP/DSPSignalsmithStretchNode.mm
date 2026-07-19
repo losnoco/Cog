@@ -40,7 +40,6 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	BOOL isResetForward;
 
 	BOOL stopping, paused;
-	NSRecursiveLock *mutex;
 
 	BOOL flushed;
 
@@ -67,8 +66,6 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
 		lastPitch = pitch;
 		lastTempo = tempo;
-
-		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -120,12 +117,14 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
 - (BOOL)fullInit {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	tschannels = inputFormat.mChannelsPerFrame;
 	tssamplerate = inputFormat.mSampleRate;
 
 	ts = new Stretch;
 	if(!ts) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return NO;
 	}
@@ -142,6 +141,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	countIn = 0.0;
 	countOut = 0;
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return YES;
 }
@@ -150,6 +150,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	if(stopping || paused || !ts) return;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(fabs(pitch - lastPitch) > 1e-5 ||
 	   fabs(tempo - lastTempo) > 1e-5) {
@@ -160,15 +161,18 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
 	tsapplynewoptions = NO;
 
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
 - (void)fullShutdown {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	if(ts) {
 		delete ts;
 		ts = NULL;
 	}
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -187,10 +191,12 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 - (void)resetBuffer {
 	paused = YES;
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	shouldReset = YES;
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -202,8 +208,10 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	if(previousNode != p) {
 		paused = YES;
 		[mutex lock];
+		mutexLocked = [NSThread currentThread];
 		previousNode = p;
 		paused = NO;
+		mutexLocked = nil;
 		[mutex unlock];
 	}
 }
@@ -258,13 +266,16 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 		return nil;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(stopping || flushed || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -275,6 +286,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -286,12 +298,14 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableStretch && ![self setup]) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!ts) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return [self readChunk:4096];
 	}
@@ -308,6 +322,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 				seekLength = 65536;
 			AudioChunk *chunk = [self readAndMergeChunksAsFloat32:seekLength];
 			if(!chunk || ![chunk frameCount]) {
+				mutexLocked = nil;
 				[mutex unlock];
 				return nil;
 			}
@@ -331,6 +346,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 				[outputChunk setStreamTimestamp:streamTimestamp];
 				[outputChunk setStreamTimeRatio:streamTimeRatio];
 				[outputChunk assignData:sampleData];
+				mutexLocked = nil;
 				[mutex unlock];
 				return outputChunk;
 			}
@@ -346,6 +362,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
 		AudioChunk *chunk = [self readAndMergeChunksAsFloat32:samplesToProcess];
 		if(!chunk || ![chunk frameCount]) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return nil;
 		}
@@ -371,6 +388,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 			[outputChunk setStreamTimestamp:streamTimestamp];
 			[outputChunk setStreamTimeRatio:streamTimeRatio];
 			[outputChunk assignData:sampleData];
+			mutexLocked = nil;
 			[mutex unlock];
 			return outputChunk;
 		}
@@ -444,6 +462,7 @@ using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 		streamTimestamp += chunkDuration * [outputChunk streamTimeRatio];
 	}
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return outputChunk;
 }

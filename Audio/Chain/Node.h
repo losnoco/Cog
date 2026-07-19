@@ -22,6 +22,9 @@
 	Semaphore *writeSemaphore;
 	Semaphore *readSemaphore;
 
+	NSThread __weak *mutexLocked;
+	NSRecursiveLock *mutex;
+
 	NSLock *accessLock;
 
 	id __weak previousNode;

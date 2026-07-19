@@ -28,7 +28,6 @@
 	void *rs;
 	double lastVisRate;
 
-	NSRecursiveLock *mutex;
 	BOOL stopping;
 	BOOL paused;
 	BOOL threadTerminated;
@@ -80,8 +79,6 @@
 
 		[self setPreviousNode:p];
 
-		mutex = [NSRecursiveLock new];
-
 #ifdef LOG_CHAINS
 		[self initLogFiles];
 #endif
@@ -112,9 +109,11 @@
 - (void)resetBuffer {
 	paused = YES;
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -132,9 +131,11 @@
 
 - (BOOL)setup {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	if(fabs(inputFormat.mSampleRate - 44100.0) > 1e-6) {
 		rs = rsstate_new(1, inputFormat.mSampleRate, 44100.0);
 		if(!rs) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return NO;
 		}
@@ -149,10 +150,12 @@
 
 	downmixer = [[DownmixProcessor alloc] initWithInputFormat:inputFormat inputConfig:inputChannelConfig andOutputFormat:visFormat outputConfig:visChannelConfig];
 	if(!downmixer) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return NO;
 	}
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return YES;
 }
@@ -164,11 +167,13 @@
 
 - (void)fullShutdown {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	if(rs) {
 		rsstate_delete(rs);
 		rs = NULL;
 	}
 	downmixer = nil;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -207,8 +212,10 @@
 
 - (void)processVis:(AudioChunk *)chunk {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(paused) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return;
 	}
@@ -236,6 +243,7 @@
 		inputFormat = format;
 		inputChannelConfig = channelConfig;
 		if(![self setup]) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return;
 		}
@@ -244,6 +252,7 @@
 	size_t frameCount = [chunk frameCount];
 	NSData *sampleData = [chunk removeSamples:frameCount];
 	if(audioBufferIsDoP((const float *)[sampleData bytes], format.mChannelsPerFrame, frameCount, NULL)) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return;
 	}
@@ -280,6 +289,7 @@
 		[self postVisPCM:&visAudio[0] amount:frameCount];
 	}
 
+	mutexLocked = nil;
 	[mutex unlock];
 }
 

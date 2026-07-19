@@ -21,6 +21,8 @@
 		writeSemaphore = [Semaphore new];
 		readSemaphore = [Semaphore new];
 
+		mutex = [NSRecursiveLock new];
+
 		accessLock = [NSLock new];
 
 		initialBufferFilled = NO;
