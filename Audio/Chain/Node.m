@@ -60,6 +60,8 @@ static uint64_t _Node_serial;
 		writeSemaphore = [Semaphore new];
 		readSemaphore = [Semaphore new];
 
+		mutex = [NSRecursiveLock new];
+
 		accessLock = [NSLock new];
 
 		initialBufferFilled = NO;

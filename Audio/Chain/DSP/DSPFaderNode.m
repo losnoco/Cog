@@ -20,7 +20,6 @@
 	BOOL stopping, paused;
 	BOOL formatSet;
 	BOOL waitForResetEvent;
-	NSRecursiveLock *mutex;
 
 	double timestamp;
 
@@ -39,7 +38,6 @@
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
 	self = [super initWithController:c previous:p latency:latency];
 	if(self) {
-		mutex = [NSRecursiveLock new];
 		fadersLock = [NSLock new];
 		faders = [NSMutableArray new];
 		fadeLevel = 1.0;
@@ -69,12 +67,14 @@
 - (void)resetBuffer {
 	paused = YES;
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	[buffer reset];
 	[fadersLock lock];
 	[faders removeAllObjects];
 	[fadersLock unlock];
 	paused = NO;
 	waitForResetEvent = NO;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -87,9 +87,9 @@
 			}
 			fadeStep /= format.mSampleRate;
 		}
-        outputFormat = format;
-        outputChannelConfig = config;
-        formatSet = YES;
+		outputFormat = format;
+		outputChannelConfig = config;
+		formatSet = YES;
 	}
 }
 
@@ -101,8 +101,10 @@
 	if(previousNode != p) {
 		paused = YES;
 		[mutex lock];
+		mutexLocked = [NSThread currentThread];
 		previousNode = p;
 		paused = NO;
+		mutexLocked = nil;
 		[mutex unlock];
 	}
 }
@@ -139,8 +141,10 @@
 		return nil;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(stopping || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -174,6 +178,7 @@
 	}
 
 	if(!frameCount) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -242,6 +247,7 @@
 	}
 	timestamp += chunk.duration;
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return (fadingOut || inputRead) ? chunk : nil;
 }
@@ -262,7 +268,9 @@
 
 - (void)setDoPMode:(BOOL)enabled {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	doPMode = enabled;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 

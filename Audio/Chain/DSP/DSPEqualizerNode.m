@@ -50,7 +50,6 @@ typedef struct {
 	vDSP_biquadm_Setup eqSetup;
 
 	BOOL stopping, paused;
-	NSRecursiveLock *mutex;
 
 	BOOL observersapplied;
 
@@ -94,7 +93,10 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 }
 
 - (void)setupCoefficients {
-	if(!equalizerBegin) [mutex lock];
+	if(!equalizerBegin) {
+		[mutex lock];
+		mutexLocked = [NSThread currentThread];
+	}
 
 	eqSectionCount = 0;
 
@@ -103,7 +105,10 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 	if(!coefs) {
 		coefs = (biquadcoefficients *) calloc(31 * channels, sizeof(*coefs));
 		if(!coefs) {
-			if(!equalizerBegin) [mutex unlock];
+			if(!equalizerBegin) {
+				mutexLocked = nil;
+				[mutex unlock];
+			}
 			return;
 		}
 	}
@@ -120,7 +125,10 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 	if(!eqSetup) {
 		eqSetup = vDSP_biquadm_CreateSetup((const double *)coefs, 31, channels);
 		if(!eqSetup) {
-			if(!equalizerBegin) [mutex unlock];
+			if(!equalizerBegin) {
+				mutexLocked = nil;
+				[mutex unlock];
+			}
 			return;
 		}
 	} else {
@@ -128,11 +136,17 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 		vDSP_biquadm_SetCoefficientsDouble(eqSetup, (const double *)coefs, 0, 0, 31, channels);
 	}
 
-	if(!equalizerBegin) [mutex unlock];
+	if(!equalizerBegin) {
+		mutexLocked = nil;
+		[mutex unlock];
+	}
 }
 
 - (void)setBandGain:(float)gainDB forIndex:(int)i {
-	if(!equalizerBegin) [mutex lock];
+	if(!equalizerBegin) {
+		[mutex lock];
+		mutexLocked = [NSThread currentThread];
+	}
 	if(coefs) {
 		int channels = inputFormat.mChannelsPerFrame;
 		eqBandGains[i] = gainDB;
@@ -145,22 +159,37 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 			vDSP_biquadm_SetCoefficientsDouble(eqSetup, (const double *)(&coefs[i * channels]), i, 0, 1, channels);
 		}
 	}
-	if(!equalizerBegin) [mutex unlock];
+	if(!equalizerBegin) {
+		mutexLocked = nil;
+		[mutex unlock];
+	}
 }
 
 - (void)setAllBands:(float *_Nonnull)gainsDB {
-	if(!equalizerBegin) [mutex lock];
+	if(!equalizerBegin) {
+		[mutex lock];
+		mutexLocked = [NSThread currentThread];
+	}
 	if(coefs) {
 		memcpy(eqBandGains, gainsDB, sizeof(eqBandGains));
 		[self setupCoefficients];
 	}
-	if(!equalizerBegin) [mutex unlock];
+	if(!equalizerBegin) {
+		mutexLocked = nil;
+		[mutex unlock];
+	}
 }
 
 - (void)setPreamp:(float)preampDB {
-	if(!equalizerBegin) [mutex lock];
+	if(!equalizerBegin) {
+		[mutex lock];
+		mutexLocked = [NSThread currentThread];
+	}
 	equalizerPreamp = pow(10.0, preampDB / 20.0);
-	if(!equalizerBegin) [mutex unlock];
+	if(!equalizerBegin) {
+		mutexLocked = nil;
+		[mutex unlock];
+	}
 }
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
@@ -174,8 +203,6 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 
 		OutputNode *outputNode = c;
 		audioPlayer = [outputNode controller];
-
-		mutex = [NSRecursiveLock new];
 
 		[self addObservers];
 	}
@@ -227,10 +254,12 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 
 - (BOOL)fullInit {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	if(enableEqualizer) {
 		[self setupCoefficients];
 
 		if(!coefs || !eqSetup) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return NO;
 		}
@@ -242,6 +271,7 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 		equalizerBegin = NO;
 	}
 
+	mutexLocked = nil;
 	[mutex unlock];
 
 	return YES;
@@ -249,6 +279,7 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 
 - (void)fullShutdown {
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	if(coefs) {
 		if(equalizerInitialized) {
 			[[self audioPlayer] endEqualizer:(__bridge void *)self];
@@ -260,6 +291,7 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 			equalizerInitialized = NO;
 		}
 	}
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -278,9 +310,11 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 - (void)resetBuffer {
 	paused = YES;
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	[buffer reset];
 	[self fullShutdown];
 	paused = NO;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -323,13 +357,16 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 		return nil;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(stopping || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
 
 	if(![self peekFormat:&inputFormat channelConfig:&inputChannelConfig]) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -340,6 +377,7 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 	   !inputFormat.mBytesPerFrame ||
 	   !inputFormat.mFramesPerPacket ||
 	   !inputFormat.mBytesPerPacket) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -351,18 +389,21 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 		lastInputChannelConfig = inputChannelConfig;
 		[self fullShutdown];
 		if(enableEqualizer && ![self setup]) {
+			mutexLocked = nil;
 			[mutex unlock];
 			return nil;
 		}
 	}
 
 	if(!equalizerInitialized) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return [self readChunk:4096];
 	}
 
 	AudioChunk *chunk = [self readChunkAsFloat32:4096];
 	if(!chunk || ![chunk frameCount]) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
@@ -389,6 +430,7 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 			[outputChunk setStreamTimestamp:streamTimestamp];
 			[outputChunk setStreamTimeRatio:[chunk streamTimeRatio]];
 			[outputChunk assignData:sampleData];
+			mutexLocked = nil;
 			[mutex unlock];
 			return outputChunk;
 		}
@@ -415,6 +457,7 @@ static inline void setupOneBand(double frequency, float gainDB, double q, double
 		[outputChunk assignSamples:&outBuffer[0] frameCount:frameCount];
 	}
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return outputChunk;
 }

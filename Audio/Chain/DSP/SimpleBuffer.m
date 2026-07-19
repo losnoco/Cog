@@ -11,15 +11,10 @@
 
 @implementation SimpleBuffer {
 	BOOL paused, stopping;
-	NSRecursiveLock *mutex;
 }
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency {
-	self = [super initWithController:c previous:p latency:latency];
-	if(self) {
-		mutex = [NSRecursiveLock new];
-	}
-	return self;
+	return [super initWithController:c previous:p latency:latency];
 }
 
 - (void)dealloc {
@@ -41,8 +36,10 @@
 - (void)resetBuffer {
 	paused = YES;
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 	[buffer reset];
 	paused = NO;
+	mutexLocked = nil;
 	[mutex unlock];
 }
 
@@ -54,8 +51,10 @@
 	if(previousNode != p) {
 		paused = YES;
 		[mutex lock];
+		mutexLocked = [NSThread currentThread];
 		previousNode = p;
 		paused = NO;
+		mutexLocked = nil;
 		[mutex unlock];
 	}
 }
@@ -92,14 +91,17 @@
 		return nil;
 
 	[mutex lock];
+	mutexLocked = [NSThread currentThread];
 
 	if(stopping || !previousNode || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) || [self shouldContinue] == NO) {
+		mutexLocked = nil;
 		[mutex unlock];
 		return nil;
 	}
 
 	AudioChunk *chunk = [self readChunk:512];
 
+	mutexLocked = nil;
 	[mutex unlock];
 	return chunk;
 }
