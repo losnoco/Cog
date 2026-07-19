@@ -12,7 +12,6 @@
 #import "CueSheet.h"
 
 #import "AudioMetadataReader.h"
-#import "NSDictionary+Merge.h"
 #import "NSDictionary+Optional.h"
 
 @implementation CueSheetMetadataReader
@@ -94,8 +93,13 @@
 			NSDictionary *cuesheetMetadata = [CueSheetMetadataReader processDataForTrack:track];
 
 			// Cue-sheet fields describe this logical track and take priority over
-			// the metadata shared by the underlying audio file.
-			return [cuesheetMetadata dictionaryByMergingWith:fileMetadata];
+			// the metadata shared by the underlying audio file. Do not use the
+			// NSDictionary merge category here: plug-ins load their own category
+			// implementations into one Objective-C runtime, so selector collisions
+			// can silently change which dictionary wins based on bundle load order.
+			NSMutableDictionary *metadata = fileMetadata ? [fileMetadata mutableCopy] : [NSMutableDictionary new];
+			[metadata addEntriesFromDictionary:cuesheetMetadata];
+			return [metadata copy];
 		}
 	}
 

@@ -334,6 +334,31 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 	return cueSheetValueHasContent(properties[@"cuesheet"]);
 }
 
+static NSDictionary *entryInfoForURL(NSURL *url) {
+	BOOL cueSheetTrack = isCueSheetTrackURL(url);
+	// Resolve logical CUE metadata before opening a decoder for properties. A
+	// properties lookup may need to inspect the shared audio file, whose tags do
+	// not describe an individual CUE fragment.
+	NSDictionary *metadata = cueSheetTrack ? [AudioMetadataReader metadataForURL:url] : nil;
+	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
+	if(!properties) {
+		return nil;
+	}
+
+	if(!metadata) {
+		metadata = [AudioMetadataReader metadataForURL:url] ?: @{};
+	}
+	if(cueSheetTrack) {
+		// Decoder properties may include tags from the shared album file. Apply
+		// the logical CUE dictionary last so its title and track fields replace
+		// those values unconditionally.
+		NSMutableDictionary *entryInfo = [properties mutableCopy];
+		[entryInfo addEntriesFromDictionary:metadata];
+		return [entryInfo copy];
+	}
+	return [NSDictionary dictionaryByMerging:properties with:metadata];
+}
+
 - (void)beginProgress:(NSString *)localizedDescription {
 	while(playbackController.progressOverall) {
 		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
@@ -393,24 +418,11 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 	}
 }
 
-- (BOOL)seedInitialCueMetadataForEntry:(PlaylistEntry *)entry url:(NSURL *)url {
+- (NSDictionary *)initialCueInfoForURL:(NSURL *)url {
 	if(!isCueSheetTrackURL(url)) {
-		return NO;
+		return nil;
 	}
-
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
-	if(!properties) {
-		return NO;
-	}
-
-	NSDictionary *metadata = [AudioMetadataReader metadataForURL:url];
-	NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:properties with:metadata];
-
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[entry setMetadata:entryInfo];
-	});
-
-	return YES;
+	return entryInfoForURL(url);
 }
 
 + (NSString *)keyForPath:(NSString *)path {
@@ -765,7 +777,7 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 
 	NSInteger i = 0;
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
-	NSMutableArray *preloadedEntries = [NSMutableArray new];
+	NSMutableArray *preloadedEntryInfo = [NSMutableArray new];
 	for(NSURL *url in validURLs) {
 		__block PlaylistEntry *pe;
 
@@ -782,8 +794,9 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 			[addItemTask finish];
 		});
 
-		if([self seedInitialCueMetadataForEntry:pe url:url]) {
-			[preloadedEntries addObject:pe];
+		NSDictionary *entryInfo = [self initialCueInfoForURL:url];
+		if(entryInfo) {
+			[preloadedEntryInfo addObject:@[pe, entryInfo]];
 		}
 
 		[entries addObject:pe];
@@ -824,7 +837,12 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 		[self->playlistController setSelectsInsertedObjects:NO];
 		@try {
 			[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
-			for(PlaylistEntry *pe in preloadedEntries) {
+			// Apply cue metadata only after the array controller owns each managed
+			// object. Otherwise it can miss the per-entry KVO changes and reused row
+			// bindings may display the final cue title for every inserted track.
+			for(NSArray *preloadedInfo in preloadedEntryInfo) {
+				PlaylistEntry *pe = preloadedInfo[0];
+				[pe setMetadata:preloadedInfo[1]];
 				[self->playlistController firstSawTrackWithoutReload:pe];
 			}
 		}
@@ -1003,13 +1021,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 					}
 
 					@try {
-						NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:url];
-						if(entryProperties == nil)
+						NSDictionary *entryInfo = entryInfoForURL(url);
+						if(entryInfo == nil)
 							return;
-						
-						NSDictionary *entryMetadata = [AudioMetadataReader metadataForURL:url];
-						
-						NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:entryMetadata];
 						
 						[weakLock lock];
 						@autoreleasepool {
@@ -1163,11 +1177,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		}
 
 		@try {
-			NSDictionary *entryProperties = [AudioPropertiesReader propertiesForURL:pe.url];
-			if(entryProperties == nil)
+			NSDictionary *entryInfo = entryInfoForURL(pe.url);
+			if(entryInfo == nil)
 				return;
-			
-			NSDictionary *entryInfo = [NSDictionary dictionaryByMerging:entryProperties with:[AudioMetadataReader metadataForURL:pe.url]];
 			
 			[pe setMetadata:entryInfo];
 			[playlistController firstSawTrack:pe];
