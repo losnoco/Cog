@@ -124,6 +124,8 @@ static uint64_t _Node_serial;
 		return;
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	AudioChunk *chunk = [AudioChunk new];
@@ -154,7 +156,9 @@ static uint64_t _Node_serial;
 	while(shouldContinue == YES && ![self paused] && durationLeft < 0.0) {
 		if(durationLeft < 0.0 || shouldReset) {
 			[accessLock unlock];
+			if(mutexLocked) [mutex unlock];
 			[writeSemaphore timedWait:2000];
+			if(mutexLocked) [mutex lock];
 			[accessLock lock];
 		}
 
@@ -183,6 +187,8 @@ static uint64_t _Node_serial;
 		return;
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	if(chunk.resetForward) {
@@ -209,7 +215,9 @@ static uint64_t _Node_serial;
 
 		if(durationLeft < 0.0 || shouldReset) {
 			[accessLock unlock];
+			if(mutexLocked) [mutex unlock];
 			[writeSemaphore timedWait:2000];
+			if(mutexLocked) [mutex lock];
 			[accessLock lock];
 		}
 
@@ -256,13 +264,17 @@ static uint64_t _Node_serial;
 		return NO;
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	while(shouldContinue && ![self paused] &&
 		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
 		[writeSemaphore signal];
+		if(mutexLocked) [mutex unlock];
 		[[previousNode readSemaphore] timedWait:2000];
+		if(mutexLocked) [mutex lock];
 		[accessLock lock];
 	}
 
@@ -294,13 +306,17 @@ static uint64_t _Node_serial;
 		return NO;
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	while(shouldContinue && ![self paused] &&
 		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
 		[writeSemaphore signal];
+		if(mutexLocked) [mutex unlock];
 		[[previousNode readSemaphore] timedWait:2000];
+		if(mutexLocked) [mutex lock];
 		[accessLock lock];
 	}
 
@@ -332,13 +348,17 @@ static uint64_t _Node_serial;
 		return [AudioChunk new];
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	while(shouldContinue && ![self paused] &&
 		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
 		[writeSemaphore signal];
+		if(mutexLocked) [mutex unlock];
 		[[previousNode readSemaphore] timedWait:2000];
+		if(mutexLocked) [mutex lock];
 		[accessLock lock];
 		if(!resetBarrier && [previousNode shouldReset] == YES) {
 			break;
@@ -401,13 +421,17 @@ static uint64_t _Node_serial;
 		return [AudioChunk new];
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	while(shouldContinue && ![self paused] &&
 		  [[previousNode buffer] isEmpty] && [previousNode endOfStream] == NO) {
 		[accessLock unlock];
 		[writeSemaphore signal];
+		if(mutexLocked) [mutex unlock];
 		[[previousNode readSemaphore] timedWait:2000];
+		if(mutexLocked) [mutex lock];
 		[accessLock lock];
 		if(!resetBarrier && [previousNode shouldReset] == YES) {
 			break;
@@ -470,6 +494,8 @@ static uint64_t _Node_serial;
 		return [AudioChunk new];
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
@@ -493,7 +519,9 @@ static uint64_t _Node_serial;
 
 			[accessLock unlock];
 			[[previousNode writeSemaphore] signal];
+			if(mutexLocked) [mutex unlock];
 			[[previousNode readSemaphore] timedWait:2000];
+			if(mutexLocked) [mutex lock];
 			[accessLock lock];
 
 			return !shouldContinue || [self paused] || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES);
@@ -527,6 +555,8 @@ static uint64_t _Node_serial;
 		return [AudioChunk new];
 	}
 
+	BOOL mutexLocked = self->mutexLocked == [NSThread currentThread];
+
 	[accessLock lock];
 
 	if([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES) {
@@ -550,7 +580,9 @@ static uint64_t _Node_serial;
 
 			[accessLock unlock];
 			[[previousNode writeSemaphore] signal];
+			if(mutexLocked) [mutex unlock];
 			[[previousNode readSemaphore] timedWait:2000];
+			if(mutexLocked) [mutex lock];
 			[accessLock lock];
 
 			return !shouldContinue || [self paused] || ([[previousNode buffer] isEmpty] && [previousNode endOfStream] == YES);
