@@ -314,7 +314,8 @@
 }
 
 - (void)setError:(BOOL)status {
-	[controller setError:status];
+	AudioPlayer *audioPlayer = controller;
+	[audioPlayer setError:status forTrack:userInfo];
 }
 
 @end
