@@ -39,6 +39,12 @@ static std::thread *Cache_Thread = NULL;
 
 static void cache_run();
 
+static std::string cache_key(NSURL *url, bool skipCue) {
+	std::string key = [[url absoluteString] UTF8String];
+	key.append(skipCue ? "\x1fskip-cue" : "\x1fwith-cue");
+	return key;
+}
+
 static void cache_init() {
 	id dataStoreClass = NSClassFromString(@"RedundantPlaylistDataStore"); // CogAudio
 	Cache_Data_Store = [dataStoreClass new];
@@ -58,12 +64,12 @@ static void cache_deinit() {
 	Cache_Data_Store = nil;
 }
 
-static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
+static void cache_insert_properties(NSURL *url, BOOL skipCue, NSDictionary *properties) {
 	if(properties == nil) return;
 
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	std::string path = [[url absoluteString] UTF8String];
+	std::string path = cache_key(url, skipCue);
 	properties = [Cache_Data_Store coalesceEntryInfo:properties];
 
 	Cached_Metadata &entry = Cache_List[path];
@@ -72,12 +78,12 @@ static void cache_insert_properties(NSURL *url, NSDictionary *properties) {
 	entry.time_accessed = std::chrono::steady_clock::now();
 }
 
-static void cache_insert_metadata(NSURL *url, NSDictionary *metadata) {
+static void cache_insert_metadata(NSURL *url, BOOL skipCue, NSDictionary *metadata) {
 	if(metadata == nil) return;
 
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	std::string path = [[url absoluteString] UTF8String];
+	std::string path = cache_key(url, skipCue);
 	metadata = [Cache_Data_Store coalesceEntryInfo:metadata];
 
 	Cached_Metadata &entry = Cache_List[path];
@@ -86,10 +92,10 @@ static void cache_insert_metadata(NSURL *url, NSDictionary *metadata) {
 	entry.time_accessed = std::chrono::steady_clock::now();
 }
 
-static NSDictionary *cache_access_properties(NSURL *url) {
+static NSDictionary *cache_access_properties(NSURL *url, BOOL skipCue) {
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	std::string path = [[url absoluteString] UTF8String];
+	std::string path = cache_key(url, skipCue);
 
 	Cached_Metadata &entry = Cache_List[path];
 
@@ -101,10 +107,10 @@ static NSDictionary *cache_access_properties(NSURL *url) {
 	return nil;
 }
 
-static NSDictionary *cache_access_metadata(NSURL *url) {
+static NSDictionary *cache_access_metadata(NSURL *url, BOOL skipCue) {
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
-	std::string path = [[url absoluteString] UTF8String];
+	std::string path = cache_key(url, skipCue);
 
 	Cached_Metadata &entry = Cache_List[path];
 
@@ -690,7 +696,7 @@ static NSString *xmlEscapeString(NSString * string) {
 	   [urlScheme isEqualToString:@"https"])
 		return nil;
 
-	NSDictionary *cacheData = cache_access_metadata(url);
+	NSDictionary *cacheData = cache_access_metadata(url, skip);
 	if(cacheData) return cacheData;
 
 	do {
@@ -763,7 +769,7 @@ static NSString *xmlEscapeString(NSString * string) {
 		}
 	}
 
-	cache_insert_metadata(url, cacheData);
+	cache_insert_metadata(url, skip, cacheData);
 	return cacheData;
 }
 
@@ -778,7 +784,7 @@ static NSString *xmlEscapeString(NSString * string) {
 
 	NSDictionary *properties = nil;
 
-	properties = cache_access_properties(url);
+	properties = cache_access_properties(url, skip);
 	if(properties) return properties;
 
 	NSString *ext = [url pathExtension];
@@ -793,7 +799,7 @@ static NSString *xmlEscapeString(NSString * string) {
 		if([readers count] > 1) {
 			properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
 			if(properties != nil && [properties count]) {
-				cache_insert_properties(url, properties);
+				cache_insert_properties(url, skip, properties);
 				return properties;
 			}
 		} else {
@@ -805,7 +811,7 @@ static NSString *xmlEscapeString(NSString * string) {
 			if([readers count] > 1) {
 				properties = [CogPropertiesReaderMulti propertiesForSource:source readers:readers];
 				if(properties != nil && [properties count]) {
-					cache_insert_properties(url, properties);
+					cache_insert_properties(url, skip, properties);
 					return properties;
 				}
 			} else {
@@ -819,7 +825,7 @@ static NSString *xmlEscapeString(NSString * string) {
 
 		properties = [propertiesReader propertiesForSource:source];
 		if(properties != nil && [properties count]) {
-			cache_insert_properties(url, properties);
+			cache_insert_properties(url, skip, properties);
 			return properties;
 		}
 	}
@@ -836,7 +842,7 @@ static NSString *xmlEscapeString(NSString * string) {
 		[decoder close];
 
 		NSDictionary *cacheData = [NSDictionary dictionaryByMerging:properties with:metadata];
-		cache_insert_properties(url, cacheData);
+		cache_insert_properties(url, skip, cacheData);
 		return cacheData;
 	}
 }

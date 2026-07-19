@@ -12,8 +12,6 @@
 #import "CueSheetContainer.h"
 #import "CueSheetMetadataReader.h"
 
-#import "NSDictionary+Merge.h"
-
 #import "Logging.h"
 
 @implementation CueSheetDecoder
@@ -56,8 +54,11 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 		NSDictionary *decoderMetadata = [decoder metadata];
 		if(decoderMetadata != nil) {
 			// Cue-sheet fields describe this logical track and take priority over
-			// the metadata shared by the underlying audio file.
-			return [metadata dictionaryByMergingWith:decoderMetadata];
+			// the metadata shared by the underlying audio file. Merge explicitly
+			// to avoid Objective-C category selector collisions between plug-ins.
+			NSMutableDictionary *mergedMetadata = [decoderMetadata mutableCopy];
+			[mergedMetadata addEntriesFromDictionary:metadata];
+			return [mergedMetadata copy];
 		}
 	}
 	return metadata;
