@@ -15,6 +15,25 @@
 
 #import "Logging.h"
 
+static NSURL *streamURLWithoutFragment(NSURL *url) {
+	if(!url || ![[url fragment] length]) {
+		return url;
+	}
+
+	NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+	components.fragment = nil;
+	return components.URL;
+}
+
+static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL) {
+	NSURL *firstResource = streamURLWithoutFragment(firstURL);
+	NSURL *secondResource = streamURLWithoutFragment(secondURL);
+	if(!firstResource || !secondResource) {
+		return NO;
+	}
+	return [firstResource isEqualTo:secondResource];
+}
+
 @implementation AudioPlayer {
 	BOOL stoppedRecently;
 }
@@ -106,7 +125,23 @@
 		[self notifyStreamChanged:userInfo];
 	}
 
-	while(![bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi resetBuffers:YES]) {
+	NSURL *failedFragmentResource = nil;
+	BOOL advancedPastFailedStream = NO;
+	while(YES) {
+		BOOL skipRepeatedProbe = failedFragmentResource && streamURLsShareUnderlyingResource(failedFragmentResource, url);
+		if(!skipRepeatedProbe && [bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi resetBuffers:YES]) {
+			break;
+		}
+
+		if(skipRepeatedProbe) {
+			DLog(@"Skipping another logical track from failed source: %@", url);
+		} else {
+			// Logical tracks with different fragments share one decoder source. If
+			// that source cannot be opened, probing every remaining fragment repeats
+			// the same expensive failure while this method blocks the main thread.
+			failedFragmentResource = [[url fragment] length] ? streamURLWithoutFragment(url) : nil;
+		}
+		[self setError:YES forTrack:userInfo];
 		bufferChain = nil;
 
 		[self requestNextStream:userInfo];
@@ -122,10 +157,14 @@
 
 		userInfo = nextStreamUserInfo;
 		rgi = nextStreamRGInfo;
-
-		[self notifyStreamChanged:userInfo];
+		advancedPastFailedStream = YES;
 
 		bufferChain = [[BufferChain alloc] initWithController:self];
+	}
+	if(advancedPastFailedStream) {
+		// Do not present every failed fallback as the current track. Publish only
+		// the first stream that actually opened.
+		[self notifyStreamChanged:userInfo];
 	}
 
 	if(resumeInterval || time > 0.0) {
