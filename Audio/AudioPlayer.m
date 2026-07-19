@@ -686,8 +686,11 @@
 //	[self sendDelegateMethod:@selector(audioPlayer:sustainHDCD:) withObject:[bufferChain userInfo] waitUntilDone:NO];
 }
 
-- (void)setError:(BOOL)status {
-	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:@(status) withObject:[bufferChain userInfo] waitUntilDone:NO];
+- (void)setError:(BOOL)status forTrack:(id)userInfo {
+	// Buffer chains overlap while tracks are preloaded and switched. Preserve
+	// the chain's own track here; consulting the current global bufferChain when
+	// this asynchronous callback runs can apply a late error to the next track.
+	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:@(status) withObject:userInfo waitUntilDone:NO];
 }
 
 - (void)setPlaybackStatus:(int)status {

@@ -204,13 +204,10 @@ static void *kInputNodeContext = &kInputNodeContext;
 			DLog(@"Seeked! Resetting Buffer");
 			initialBufferFilled = NO;
 
-			if(seekError) {
-				[controller setError:YES];
-			}
-
 			signalReset = YES;
 
 			if([self hasSeekRequestAfterID:activeSeekRequestID]) {
+				seekError = NO;
 				continue;
 			}
 		}
@@ -229,6 +226,11 @@ static void *kInputNodeContext = &kInputNodeContext;
 		}
 
 		if(chunk && [chunk frameCount]) {
+			// Some decoders can recover from an inexact or rejected seek and
+			// immediately return valid audio (cue-sheet fragments do this by
+			// seeking to their own start). Do not persist a track error when the
+			// requested playback is still producing audio.
+			seekError = NO;
 			@autoreleasepool {
 				if(signalReset) {
 					chunk.resetForward = YES;
@@ -240,6 +242,11 @@ static void *kInputNodeContext = &kInputNodeContext;
 		} else {
 			if([self shouldContinue] == NO) {
 				break;
+			}
+			if(seekError) {
+				ALog(@"Decoder seek failed and produced no audio");
+				[controller setError:YES];
+				seekError = NO;
 			}
 			if(chunk) {
 				@autoreleasepool {
