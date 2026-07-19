@@ -122,6 +122,7 @@
 - (void)endOfInputPlayed;
 - (void)reportPlayCount;
 - (void)reportScrobble;
+- (void)setError:(BOOL)status forTrack:(id)userInfo;
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
