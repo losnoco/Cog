@@ -77,6 +77,7 @@ private final class MIDIPrefs: ObservableObject {
             MIDIPlugin(id: "DOOM0003",     name: "DMX Raptor",    configurable: false, builtIn: true),
             MIDIPlugin(id: "DOOM0004",     name: "DMX Strife",    configurable: false, builtIn: true),
             MIDIPlugin(id: "DOOM0005",     name: "DMXOPL",        configurable: false, builtIn: true),
+            MIDIPlugin(id: "OPL3W000",     name: "OPL3Windows",   configurable: false, builtIn: true),
         ]
         // Add installed AudioUnit MusicDevice plugins
         var cd = AudioComponentDescription(
@@ -176,7 +177,7 @@ struct MIDIPaneView: View {
                         .truncationMode(.middle)
                         .foregroundColor(.secondary)
                     Button("Choose…") { pickSoundFont() }
-					Button("Reset") { prefs.soundFontPath = "" }
+                    Button("Reset") { prefs.soundFontPath = "" }
                 }
             } header: {
                 Text("MIDI").bold()
@@ -254,41 +255,41 @@ private struct FormRow<Content: View>: View {
 }
 
 private final class timeIntervalFormatter: DateComponentsFormatter, @unchecked Sendable {
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
-	}
-	override init() {
-		super.init()
-		self.allowedUnits = [.hour, .minute, .second]
-		self.allowsFractionalUnits = false
-		self.zeroFormattingBehavior = .dropLeading
-		self.collapsesLargestUnit = false
-		self.unitsStyle = .positional;
-	}
-	override func string(for obj: Any?) -> String? {
-		if obj is Double {
-			return super.string(from: obj as! TimeInterval)
-		} else if obj is DateComponents {
-			return super.string(for: obj)
-		} else {
-			return ""
-		}
-	}
-	override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for string: String, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
-		let components = string.split(separator: ":")
-		var totalSeconds = 0
-		var multiplier = 1
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    override init() {
+        super.init()
+        self.allowedUnits = [.hour, .minute, .second]
+        self.allowsFractionalUnits = false
+        self.zeroFormattingBehavior = .dropLeading
+        self.collapsesLargestUnit = false
+        self.unitsStyle = .positional;
+    }
+    override func string(for obj: Any?) -> String? {
+        if obj is Double {
+            return super.string(from: obj as! TimeInterval)
+        } else if obj is DateComponents {
+            return super.string(for: obj)
+        } else {
+            return ""
+        }
+    }
+    override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for string: String, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
+        let components = string.split(separator: ":")
+        var totalSeconds = 0
+        var multiplier = 1
 
-		for component in components.reversed() {
-			if let value = Int(component) {
-				totalSeconds += value * multiplier
-			}
-			multiplier *= 60
-		}
+        for component in components.reversed() {
+            if let value = Int(component) {
+                totalSeconds += value * multiplier
+            }
+            multiplier *= 60
+        }
 
-		obj?.pointee = totalSeconds as AnyObject
+        obj?.pointee = totalSeconds as AnyObject
 
-		return true
-	}
+        return true
+    }
 }
 
