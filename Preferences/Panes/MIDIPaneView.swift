@@ -41,7 +41,9 @@ private final class MIDIPrefs: ObservableObject {
 
     @Published var setupButtonEnabled: Bool = false
     @Published var isNukedTheSelectedPlugin: Bool = false
+    @Published var isTabulaSonoraTheSelectedPlugin: Bool = false
     @Published var nukedRomsInstalled: Bool = false
+    @Published var tsRomsInstalled: Bool = false
 
     init() {
         let d = UserDefaults.standard
@@ -59,20 +61,22 @@ private final class MIDIPrefs: ObservableObject {
     private func updateSetupButton() {
         setupButtonEnabled = plugins.first(where: { $0.id == plugin })?.configurable ?? false
         isNukedTheSelectedPlugin = plugin == "NukeSc55"
+        isTabulaSonoraTheSelectedPlugin = plugin == "TabulaSonora"
         nukedRomsInstalled = MIDIConfigHost.nukedRomsInstalled()
+        tsRomsInstalled = MIDIConfigHost.tsRomsInstalled()
     }
 
     private static func buildPluginList() -> [MIDIPlugin] {
         var list: [MIDIPlugin] = [
-			MIDIPlugin(id: "Spessa",    name: "SpessaSynth",    configurable: false, builtIn: true),
-            MIDIPlugin(id: "NukeSc55",  name: "Nuked SC-55",    configurable: true,  builtIn: true),
-            MIDIPlugin(id: "DOOM0000",  name: "DMX Generic",    configurable: false, builtIn: true),
-            MIDIPlugin(id: "DOOM0001",  name: "DMX Doom 1",     configurable: false, builtIn: true),
-            MIDIPlugin(id: "DOOM0002",  name: "DMX Doom 2",     configurable: false, builtIn: true),
-            MIDIPlugin(id: "DOOM0003",  name: "DMX Raptor",     configurable: false, builtIn: true),
-            MIDIPlugin(id: "DOOM0004",  name: "DMX Strife",     configurable: false, builtIn: true),
-            MIDIPlugin(id: "DOOM0005",  name: "DMXOPL",         configurable: false, builtIn: true),
-            MIDIPlugin(id: "OPL3W000",  name: "OPL3Windows",    configurable: false, builtIn: true),
+            MIDIPlugin(id: "Spessa",       name: "SpessaSynth",   configurable: false, builtIn: true),
+            MIDIPlugin(id: "NukeSc55",     name: "Nuked SC-55",   configurable: true,  builtIn: true),
+            MIDIPlugin(id: "TabulaSonora", name: "Tabula Sonora", configurable: true,  builtIn: true),
+            MIDIPlugin(id: "DOOM0000",     name: "DMX Generic",   configurable: false, builtIn: true),
+            MIDIPlugin(id: "DOOM0001",     name: "DMX Doom 1",    configurable: false, builtIn: true),
+            MIDIPlugin(id: "DOOM0002",     name: "DMX Doom 2",    configurable: false, builtIn: true),
+            MIDIPlugin(id: "DOOM0003",     name: "DMX Raptor",    configurable: false, builtIn: true),
+            MIDIPlugin(id: "DOOM0004",     name: "DMX Strife",    configurable: false, builtIn: true),
+            MIDIPlugin(id: "DOOM0005",     name: "DMXOPL",        configurable: false, builtIn: true),
         ]
         // Add installed AudioUnit MusicDevice plugins
         var cd = AudioComponentDescription(
@@ -155,7 +159,7 @@ struct MIDIPaneView: View {
                 }
 
                 if (prefs.setupButtonEnabled) {
-                    Button(prefs.isNukedTheSelectedPlugin ? (prefs.nukedRomsInstalled ? "Remove ROM set…" : "Choose ROM set…") : "Configure…") {
+                    Button(prefs.isNukedTheSelectedPlugin ? (prefs.nukedRomsInstalled ? "Remove ROM set…" : "Choose ROM set…") : (prefs.isTabulaSonoraTheSelectedPlugin ? (prefs.tsRomsInstalled ? "Remove ROM set…" : "Choose ROM set…") : "Configure…")) {
                         configurePlugin()
                     }
                     .disabled(!prefs.setupButtonEnabled)
@@ -224,6 +228,7 @@ struct MIDIPaneView: View {
     private func configurePlugin() {
         MIDIConfigHost.setupPlugin()
         prefs.nukedRomsInstalled = MIDIConfigHost.nukedRomsInstalled()
+        prefs.tsRomsInstalled = MIDIConfigHost.tsRomsInstalled()
     }
 }
 

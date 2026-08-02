@@ -11,6 +11,8 @@
 		8315D48D2F8C9FAD00310505 /* spessasynth_core.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B7F5BF2F86821200C57C20 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834BE91B1DE407CB00A07DCD /* resampler.c in Sources */ = {isa = PBXBuildFile; fileRef = 834BE9191DE407CB00A07DCD /* resampler.c */; };
 		834D190C2D7F954100F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D190B2D7F954100F13B89 /* CogAudio.framework */; };
+		8362F14B301F2C23002C8347 /* TSPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8362F14A301F2C20002C8347 /* TSPlayer.mm */; };
+		8362F14D301F39FD002C8347 /* libtabulasonora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8362F14C301F39FD002C8347 /* libtabulasonora.a */; };
 		83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83686AAB1C5C69D400671C7A /* AUPlayerView.mm */; };
 		83686AB11C5C783000671C7A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83686AB01C5C783000671C7A /* CoreAudioKit.framework */; };
 		8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8398F2DF1C438C7D00EB9639 /* AudioUnit.framework */; };
@@ -96,6 +98,9 @@
 		834BE91A1DE407CB00A07DCD /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		834D190B2D7F954100F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		835F91BA1EE211820003E186 /* dmxopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmxopl.h; sourceTree = "<group>"; };
+		8362F149301F2C17002C8347 /* TSPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TSPlayer.h; sourceTree = "<group>"; };
+		8362F14A301F2C20002C8347 /* TSPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TSPlayer.mm; sourceTree = "<group>"; };
+		8362F14C301F39FD002C8347 /* libtabulasonora.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtabulasonora.a; path = ../../ThirdParty/TabulaSonora/lib/libtabulasonora.a; sourceTree = "<group>"; };
 		83686AAB1C5C69D400671C7A /* AUPlayerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayerView.mm; sourceTree = "<group>"; };
 		83686AAD1C5C6A2700671C7A /* AUPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayerView.h; sourceTree = "<group>"; };
 		83686AAE1C5C780500671C7A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -154,6 +159,7 @@
 			files = (
 				83B7F5C02F86821200C57C20 /* spessasynth_core.framework in Frameworks */,
 				83DFCDBA2E8533DC009E3DF1 /* nuked_sc55.framework in Frameworks */,
+				8362F14D301F39FD002C8347 /* libtabulasonora.a in Frameworks */,
 				834D190C2D7F954100F13B89 /* CogAudio.framework in Frameworks */,
 				83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */,
 				8398F2E01C438C7D00EB9639 /* AudioUnit.framework in Frameworks */,
@@ -248,6 +254,7 @@
 		83B06689180D5668008E3612 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8362F14C301F39FD002C8347 /* libtabulasonora.a */,
 				8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */,
 				83E83F7A2D9654470054365C /* Accelerate.framework */,
 				834D190B2D7F954100F13B89 /* CogAudio.framework */,
@@ -274,6 +281,8 @@
 		83B06690180D5668008E3612 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				8362F14A301F2C20002C8347 /* TSPlayer.mm */,
+				8362F149301F2C17002C8347 /* TSPlayer.h */,
 				83095D932F81DA0100DDA4B4 /* SpessaPlayer.h */,
 				83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */,
 				834A42BC287AFC7F00EB9D9B /* AudioChunk.h */,
@@ -428,6 +437,7 @@
 				83E973471C4378880007F413 /* AUPlayer.mm in Sources */,
 				83686AAC1C5C69D400671C7A /* AUPlayerView.mm in Sources */,
 				83A09F621CFA83F2001E7D2D /* i_oplmusic.cpp in Sources */,
+				8362F14B301F2C23002C8347 /* TSPlayer.mm in Sources */,
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
 				83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
@@ -476,7 +486,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -538,7 +548,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -595,16 +605,12 @@
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIDI/MIDI-Prefix.pch";
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../ThirdParty/BASS",
-					"$(SRCROOT)/../../ThirdParty/json",
-				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../ThirdParty/TabulaSonora/include";
 				INFOPLIST_FILE = "MIDI/MIDI-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../ThirdParty/BASS",
-					"$(PROJECT_DIR)/../../ThirdParty/FLAC/lib",
+					"$(PROJECT_DIR)/../../ThirdParty/TabulaSonora/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -622,16 +628,12 @@
 				DEAD_CODE_STRIPPING = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MIDI/MIDI-Prefix.pch";
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../ThirdParty/BASS",
-					"$(SRCROOT)/../../ThirdParty/json",
-				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../ThirdParty/TabulaSonora/include";
 				INFOPLIST_FILE = "MIDI/MIDI-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/../../ThirdParty/BASS",
-					"$(PROJECT_DIR)/../../ThirdParty/FLAC/lib",
+					"$(PROJECT_DIR)/../../ThirdParty/TabulaSonora/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.midi;
 				PRODUCT_NAME = "$(TARGET_NAME)";

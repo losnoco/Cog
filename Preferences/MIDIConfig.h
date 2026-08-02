@@ -12,5 +12,6 @@
 
 + (void)setupPlugin;
 + (BOOL)nukedRomsInstalled;
++ (BOOL)tsRomsInstalled;
 
 @end

@@ -15,6 +15,7 @@
 class AUPlayer;
 class SCPlayer;
 class SpessaPlayer;
+class TSPlayer;
 
 @interface MIDIDecoder : NSObject <CogDecoder> {
 	id<CogSource> source;
@@ -23,6 +24,7 @@ class SpessaPlayer;
 	AUPlayer *auplayer;
 	SCPlayer *scplayer;
 	SpessaPlayer *spessaplayer;
+	TSPlayer *tsplayer;
 	MIDIPlayer *player;
 	SS_MIDIFile *midi_file;
 

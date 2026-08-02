@@ -12,6 +12,7 @@
 #import "MSPlayer.h"
 #import "SCPlayer.h"
 #import "SpessaPlayer.h"
+#import "TSPlayer.h"
 
 #import "Logging.h"
 
@@ -140,6 +141,8 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		sampleRate = SCPlayer::sampleRate();
 		if(!sampleRate)
 			return NO;
+	} else if([plugin isEqualToString:@"TabulaSonora"]) {
+		sampleRate = TSPlayer::sampleRate();
 	}
 
 	framesLength = round(framesLength * sampleRate);
@@ -267,6 +270,21 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		}
 	}
 
+	NSString *tsRomPath = nil;
+	if(plugin && [plugin isEqualToString:@"TabulaSonora"]) {
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+		NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+		basePath = [basePath stringByAppendingPathComponent:@"Roms"];
+		basePath = [basePath stringByAppendingPathComponent:@"TabulaSonora"];
+		basePath = [basePath stringByAppendingPathComponent:@"SCCore.bin"];
+		BOOL dir = NO;
+		if(![[NSFileManager defaultManager] fileExistsAtPath:basePath isDirectory:&dir] || dir) {
+			plugin = @"Spessa";
+		} else {
+			tsRomPath = basePath;
+		}
+	}
+
 	if(midi_file && midi_file->embedded_soundbank && midi_file->embedded_soundbank_size > 0) {
 		plugin = @"Spessa";
 	}
@@ -299,6 +317,13 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 			scplayer->setSampleRate(sampleRate);
 
 			player = scplayer;
+		} else if([plugin isEqualToString:@"TabulaSonora"]) {
+			tsplayer = new TSPlayer;
+
+			tsplayer->setSCCore([tsRomPath UTF8String]);
+			tsplayer->setSampleRate(sampleRate);
+
+			player = tsplayer;
 		} else if([[plugin substringToIndex:4] isEqualToString:@"DOOM"]) {
 			MSPlayer *msplayer = new MSPlayer;
 			player = msplayer;
@@ -450,6 +475,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	auplayer = NULL;
 	scplayer = NULL;
 	spessaplayer = NULL;
+	tsplayer = NULL;
 
 	if(midi_file) {
 		ss_midi_free(midi_file);

@@ -63,12 +63,20 @@ static OSType getOSType(const char *in_) {
 	}
 }
 
-+ (NSString *)romPath {
++ (NSString *)romPath:(NSString *)subject {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
 	basePath = [basePath stringByAppendingPathComponent:@"Roms"];
-	basePath = [basePath stringByAppendingPathComponent:@"Nuked-SC55"];
+	basePath = [basePath stringByAppendingPathComponent:subject];
 	return basePath;
+}
+
++ (NSString *)scRomPath {
+	return [self romPath:@"Nuked-SC55"];
+}
+
++ (NSString *)tsRomPath {
+	return [self romPath:@"TabulaSonora"];
 }
 
 + (void)removeNuked:(NSString *)romPath isDir:(BOOL)dir {
@@ -83,6 +91,23 @@ static OSType getOSType(const char *in_) {
 		[alert setInformativeText:dir ? NSLocalizedString(@"NukedInfoDirExists", @"A status message indicating that the Nuked SC-55 ROM directory existed, but was successfully removed.") : NSLocalizedString(@"NukedErrorFileExists", @"A status message indicating that the Nuked SC-55 ROM directory path existed, and was somehow just a file.")];
 	}
 	[alert addButtonWithTitle:NSLocalizedString(@"NukedOK", @"An 'OK' button message for the Nuked SC-55 status alert.")];
+
+	[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+	}];
+}
+
++ (void)removeTS:(NSString *)romPath isDir:(BOOL)dir {
+	NSError *error = nil;
+	[[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
+
+	NSAlert *alert = [NSAlert new];
+	[alert setMessageText:NSLocalizedString(@"TSInfoTitle", @"Title of a general Tabula Sonora Info alert.")];
+	if(error) {
+		[alert setInformativeText:[NSString stringWithFormat:(dir ? NSLocalizedString(@"TSErrorDirExistsError", @"Error message indicating ROM directory exists but could not be removed. A %@ operator should be placed for a NSError to be printed.") : NSLocalizedString(@"TSErrorFileExistsError", @"Error message indicating ROM directory exists, but is somehow a file, and could not be removed. A %@ operator should be placed for a NSError to be printed.")), error]];
+	} else {
+		[alert setInformativeText:dir ? NSLocalizedString(@"TSInfoDirExists", @"A status message indicating that the Tabula Sonora ROM directory existed, but was successfully removed.") : NSLocalizedString(@"TSErrorFileExists", @"A status message indicating that the Tabula Sonora ROM directory path existed, and was somehow just a file.")];
+	}
+	[alert addButtonWithTitle:NSLocalizedString(@"TSOK", @"An 'OK' button message for the Tabula Sonora status alert.")];
 
 	[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
 	}];
@@ -141,6 +166,11 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 				 @{@"name": @"jv880_waverom1.bin", @"type": nukedJv880},
 			 @"a7b50bb47734ee9117fa16df1f257990a9a1a0b5ed420337ae4310eb80df75c8":
 				 @{@"name": @"jv880_waverom2.bin", @"type": nukedJv880}*/};
+}
+
++ (NSDictionary *)tsRomsets {
+	return @{@"117e6aa147a96fbde5e10d2caf16c89965acc1e44235fd245992216cc620bdb1":
+				 @{@"version": @"1.1.6 (64 bit)"}};
 }
 
 + (void)importNuked:(NSString *)romPath {
@@ -301,8 +331,152 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 	return;
 }
 
++ (void)importTS:(NSString *)romPath {
+	NSFileManager *defaultManager = [NSFileManager defaultManager];
+	NSError *error = nil;
+	[defaultManager createDirectoryAtPath:romPath withIntermediateDirectories:YES attributes:nil error:&error];
+	if(error) {
+		NSAlert *alert = [NSAlert new];
+		[alert setMessageText:NSLocalizedString(@"TSInfoTitle", @"Title of a general Tabula Sonora Info alert.")];
+		[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"TSErrorDirCreateError", @"The error message for the Tabula Sonora setup error dialog for when directory creation failed. It should have a placeholder %@ to receive the NSError."), error]];
+		[alert addButtonWithTitle:NSLocalizedString(@"TSOK", @"An 'OK' button message for the Tabula Sonora status alert.")];
+
+		[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+		}];
+
+		[defaultManager removeItemAtPath:romPath error:&error];
+		return;
+	}
+
+	NSArray *fileTypes = @[@"zip", @"rar", @"7z", @"dll"];
+	NSOpenPanel *panel = [NSOpenPanel openPanel];
+	[panel setAllowsMultipleSelection:NO];
+	[panel setCanChooseDirectories:YES];
+	[panel setCanChooseFiles:YES];
+	[panel setFloatingPanel:YES];
+	[panel setAllowedFileTypes:fileTypes];
+	NSInteger result = [panel runModal];
+	if(result == NSModalResponseOK) {
+		NSURL *url = [panel URL];
+		NSString *path = [url path];
+
+		BOOL isDir = NO;
+		[[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:&isDir];
+
+		if(!isDir) {
+			fex_t *fex = NULL;
+			fex_err_t err = fex_open(&fex, [path UTF8String]);
+			if(!err) {
+				NSString *currentDevice = nil;
+				NSDictionary *romSets = [self tsRomsets];
+				NSMutableDictionary *foundSets = [NSMutableDictionary new];
+
+				while(!fex_done(fex)) {
+					const void *data = NULL;
+					err = fex_data(fex, &data);
+					if(!err) {
+						uint64_t size = fex_size(fex);
+						NSData *itemData = [NSData dataWithBytes:data length:size];
+						Class shaClass = NSClassFromString(@"SHA256Digest");
+						NSString *hash = [shaClass digestDataAsString:itemData];
+						NSDictionary *foundItem = romSets[hash];
+						if(foundItem) {
+							currentDevice = foundItem[@"version"];
+							foundSets[hash] = @{@"data": itemData, @"version": foundItem[@"version"]};
+							break;
+						}
+						fex_next(fex);
+					}
+				}
+				if(!fex_done(fex) &&
+				   ![foundSets count]) {
+					fex_close(fex);
+
+					NSAlert *alert = [NSAlert new];
+					[alert setMessageText:NSLocalizedString(@"TSInfoTitle", @"Title of a general Tabula Sonora Info alert.")];
+					[alert setInformativeText:NSLocalizedString(@"TSErrorBrokenSet", @"An error message indicating that the Tabula Sonora ROM specified is unsupported and cannot be used.")];
+					[alert addButtonWithTitle:NSLocalizedString(@"TSOK", @"An 'OK' button message for the Tabula Sonora status alert.")];
+
+					[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+					}];
+
+					[defaultManager removeItemAtPath:romPath error:&error];
+					return;
+				}
+
+				fex_close(fex);
+
+				[foundSets enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+					NSString *itemPath = [romPath stringByAppendingPathComponent:@"SCCore.bin"];
+					[defaultManager createFileAtPath:itemPath contents:obj[@"data"] attributes:nil];
+				}];
+
+				NSAlert *alert = [NSAlert new];
+				[alert setMessageText:NSLocalizedString(@"TSInfoTitle", @"Title of a general Tabula Sonora Info alert.")];
+				[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"TSInfoSetInstalled", @"Status alert message for Tabula Sonora setup, on successful install of a ROM dump. A placeholder %@ should be inserted to receive the NSString indicating the dump version number."), currentDevice]];
+				[alert addButtonWithTitle:NSLocalizedString(@"TSOK", @"An 'OK' button message for the Tabula Sonora status alert.")];
+
+				[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+				}];
+			}
+		} else {
+			NSDirectoryEnumerator *enumerator = [defaultManager enumeratorAtURL:url
+													 includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey]
+																		options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
+																   errorHandler:^BOOL(NSURL *url, NSError *error) {
+				return NO;
+			}];
+
+			NSString *currentDevice = nil;
+			NSDictionary *romSets = [self tsRomsets];
+			NSMutableDictionary *foundSets = [NSMutableDictionary new];
+
+			for(NSURL *theUrl in enumerator) {
+				NSData *data = [NSData dataWithContentsOfURL:theUrl];
+				if(data) {
+					Class shaClass = NSClassFromString(@"SHA256Digest");
+					NSString *hash = [shaClass digestDataAsString:data];
+					NSDictionary *foundItem = romSets[hash];
+					if(foundItem) {
+						currentDevice = foundItem[@"version"];
+						foundSets[hash] = @{@"data": data, @"version": foundItem[@"version"]};
+						break;
+					}
+				}
+			}
+
+			if(!currentDevice) {
+				NSAlert *alert = [NSAlert new];
+				[alert setMessageText:NSLocalizedString(@"TSInfoTitle", @"Title of a general Tabula Sonora Info alert.")];
+				[alert setInformativeText:NSLocalizedString(@"TSErrorBrokenSet", @"An error message indicating that the Tabula Sonora ROM dump specified is unsupported and cannot be used.")];
+				[alert addButtonWithTitle:NSLocalizedString(@"TSOK", @"An 'OK' button message for the Tabula Sonora status alert.")];
+
+				[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+				}];
+
+				[defaultManager removeItemAtPath:romPath error:&error];
+				return;
+			}
+
+			[foundSets enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+				NSString *itemPath = [romPath stringByAppendingPathComponent:@"SCCore.bin"];
+				[defaultManager createFileAtPath:itemPath contents:obj[@"data"] attributes:nil];
+			}];
+
+			NSAlert *alert = [NSAlert new];
+			[alert setMessageText:NSLocalizedString(@"TSInfoTitle", @"Title of a general Tabula Sonora Info alert.")];
+			[alert setInformativeText:[NSString stringWithFormat:NSLocalizedString(@"TSInfoSetInstalled", @"Status alert message for Tabula Sonora setup, on successful install of a ROM dump. A placeholder %@ should be inserted to receive the NSString indicating the dump version number."), currentDevice]];
+			[alert addButtonWithTitle:NSLocalizedString(@"TSOK", @"An 'OK' button message for the Tabula Sonora status alert.")];
+
+			[alert beginSheetModalForWindow:[NSApp keyWindow] completionHandler:^(NSModalResponse returnCode) {
+			}];
+		}
+	}
+	return;
+}
+
 + (void)setupNuked {
-	NSString *_romPath = [self romPath];
+	NSString *_romPath = [self scRomPath];
 	NSFileManager *defaultManager = [NSFileManager defaultManager];
 	BOOL dir = NO;
 	if(![defaultManager fileExistsAtPath:_romPath isDirectory:&dir]) {
@@ -314,10 +488,31 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 	}
 }
 
++ (void)setupTS {
+	NSString *_romPath = [self tsRomPath];
+	NSFileManager *defaultManager = [NSFileManager defaultManager];
+	BOOL dir = NO;
+	if(![defaultManager fileExistsAtPath:_romPath isDirectory:&dir]) {
+		// Import a ROM path
+		[self importTS:_romPath];
+	} else {
+		// Remove existing setup
+		[self removeTS:_romPath isDir:dir];
+	}
+}
+
 + (BOOL)nukedRomsInstalled {
-	NSString *_romPath = [self romPath];
+	NSString *_romPath = [self scRomPath];
 	BOOL dir = NO;
 	return [[NSFileManager defaultManager] fileExistsAtPath:_romPath isDirectory:&dir] && dir;
+}
+
++ (BOOL)tsRomsInstalled {
+	NSString *_romPath = [self tsRomPath];
+	NSString *_romItemPath = [_romPath stringByAppendingPathComponent:@"SCCore.bin"];
+	BOOL dir = NO;
+	return [[NSFileManager defaultManager] fileExistsAtPath:_romPath isDirectory:&dir] && dir &&
+	[[NSFileManager defaultManager] fileExistsAtPath:_romItemPath isDirectory:&dir] && !dir;
 }
 
 + (void)setupPlugin {
@@ -325,6 +520,8 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 
 	if([plugin isEqualToString:@"NukeSc55"]) {
 		[self setupNuked];
+	} else if([plugin isEqualToString:@"TabulaSonora"]) {
+		[self setupTS];
 	} else {
 		[self setupAU:plugin];
 	}

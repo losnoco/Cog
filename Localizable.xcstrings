@@ -3663,6 +3663,154 @@
         }
       }
     },
+    "TSErrorBrokenSet" : {
+      "comment" : "An error message indicating that the Tabula Sonora ROM dump specified is unsupported and cannot be used.\nAn error message indicating that the Tabula Sonora ROM specified is unsupported and cannot be used.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The specified SCCore dump is unsupported and cannot be used."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El archivo SCCore especificado no es compatible y no se puede utilizar."
+          }
+        }
+      }
+    },
+    "TSErrorDirCreateError" : {
+      "comment" : "The error message for the Tabula Sonora setup error dialog for when directory creation failed. It should have a placeholder %@ to receive the NSError.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There was an error creating the ROM directory: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocurrió un error al crear el directorio de ROMs: %@"
+          }
+        }
+      }
+    },
+    "TSErrorDirExistsError" : {
+      "comment" : "Error message indicating ROM directory exists but could not be removed. A %@ operator should be placed for a NSError to be printed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory already exists and there was an error removing it: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El directorio de ROMs ya existe, pero ocurrió un error al eliminarlo: %@"
+          }
+        }
+      }
+    },
+    "TSErrorFileExists" : {
+      "comment" : "A status message indicating that the Tabula Sonora ROM directory path existed, and was somehow just a file.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory already exists and is somehow a file and not a directory. It has been removed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre del directorio de ROMs ya existe, pero como archivo, no como directorio. Se ha eliminado."
+          }
+        }
+      }
+    },
+    "TSErrorFileExistsError" : {
+      "comment" : "Error message indicating ROM directory exists, but is somehow a file, and could not be removed. A %@ operator should be placed for a NSError to be printed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory already exists and is somehow a file and not a directory. There was an error removing it: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre del directorio de ROMs ya existe, pero como archivo, no como directorio. Ocurrió un error al eliminarlo: %@"
+          }
+        }
+      }
+    },
+    "TSInfoDirExists" : {
+      "comment" : "A status message indicating that the Tabula Sonora ROM directory existed, but was successfully removed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The ROM directory has been removed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha eliminado el directorio de ROMs."
+          }
+        }
+      }
+    },
+    "TSInfoSetInstalled" : {
+      "comment" : "Status alert message for Tabula Sonora setup, on successful install of a ROM dump. A placeholder %@ should be inserted to receive the NSString indicating the dump version number.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A ROM dump has been installed, identified as the following version: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha instalado un archivo ROM, identificado como la siguiente versión: %@"
+          }
+        }
+      }
+    },
+    "TSInfoTitle" : {
+      "comment" : "Title of a general Tabula Sonora Info alert.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tabula Sonora"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "TSOK" : {
+      "comment" : "An 'OK' button message for the Tabula Sonora status alert.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "Use 3D rendered spectrum" : {
       "localizations" : {
         "es" : {
