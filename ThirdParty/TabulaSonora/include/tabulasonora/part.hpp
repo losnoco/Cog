@@ -1,11 +1,15 @@
 #pragma once
 
+#include "tabulasonora/control_matrix.hpp"
 #include "tabulasonora/lfo_engine.hpp"
+#include "tabulasonora/part_modifiers.hpp"
 #include "tabulasonora/pitch_chain.hpp"
 #include "tabulasonora/sequence.hpp"
 #include "tabulasonora/tva_chain.hpp"
 
+#include <algorithm>
 #include <array>
+#include <cstdlib>
 #include <vector>
 
 namespace ts {
@@ -98,16 +102,69 @@ public:
     /// GS part key shift (`40 1x 16`), 0x40 centred; the engine clamps it to 0x28-0x58.
     int key_shift = 0x40;
 
-    /// Channel aftertouch, stored but not yet routed: the engine feeds it to the modulation
-    /// matrix (`channel_pressure_apply`), which this port does not model beyond the mod wheel.
+    /// The controller assignment matrix (`40 2x`), which decides what each source modulates.
+    ///
+    /// Bend's pitch depth is the one route that lives elsewhere: it is `bend_range` above, because
+    /// the engine stores it in the same byte RPN 00/00 writes. See `ControlMatrix`.
+    ControlMatrix control;
+
+    /// Channel aftertouch, which reaches pitch through the control matrix.
     int channel_pressure = 0;
+
+    /// Which Control Change numbers this part's two assignable sources listen to (`40 1x 1F` and
+    /// `20`), and what those controllers currently read.
+    ///
+    /// The numbers default to 16 and 17 — General Purpose 1 and 2, which is what makes those two
+    /// controllers do anything on a GS module at all. Nothing else in the engine reads CC#16 or
+    /// CC#17; they exist to be pointed at the matrix.
+    ///
+    /// An assignable source is not a controller with a fixed meaning, so it is tracked as a pair:
+    /// the number decides which message feeds it, and the amount is what the matrix scales. Pointing
+    /// CC1 at a controller that already means something — the mod wheel, say — does not take that
+    /// meaning away; the message does both jobs.
+    int cc1_number = 16;
+    int cc2_number = 17;
+    int cc1 = 0;
+    int cc2 = 0;
+
+    /// Bank select MSB while the engine is in XG mode, where it means something else entirely.
+    ///
+    /// XG inverts the pair: the *LSB* carries the variation and lands in `bank`, while the MSB
+    /// chooses between melodic (below 0x7E), the SFX voice bank (0x40), the SFX kits (0x7E) and the
+    /// drum kits (0x7F). It needs its own field because it decides melodic-versus-drum for the part
+    /// and so has to survive until the next program change, which is when that decision is taken.
+    ///
+    /// **-1 means no bank select has been sent**, which is not the same as zero. A program change
+    /// on a part whose bank was never written must not decide drum routing at all -- it leaves the
+    /// part on its default, so channel 10 stays drums the way XG starts it. Reading an unwritten
+    /// bank as 0 would silently make every default drum part melodic, which is exactly what a file
+    /// that sends nothing but program changes would suffer.
+    int xg_bank_msb = -1;
+
+    /// Polyphonic aftertouch, per key.
+    ///
+    /// One byte a note rather than one a part, which is the whole of what makes it polyphonic: the
+    /// engine's `poly_aftertouch_apply` takes the part's matrix depths and the pressure belonging
+    /// to *that key*, so two notes held on one part can be modulated by different amounts.
+    ///
+    /// **Not cleared by note-on**, which is the opposite of the obvious guess and was measured
+    /// rather than assumed. Press a key to full pressure, release it, strike it again and say
+    /// nothing about pressure: the module sounds the new note *still bent*, an octave and a half up
+    /// on a part whose `40 2x 30` depth is 0x58. The pressure belongs to the key, not to the note
+    /// that happened to be sounding on it, and only another poly message or a reset moves it.
+    std::array<std::uint8_t, 128> poly_pressure{};
+
+    /// The pressure on one key, or zero for anything out of range.
+    [[nodiscard]] int key_pressure(int note) const noexcept
+    {
+        return note >= 0 && note < 128 ? poly_pressure[static_cast<std::size_t>(note)] : 0;
+    }
 
     /// The GS part modify offsets, 0x40 centred. Three writers share each one -- the sound
     /// controllers (CC#71-78), the NRPNs (`01 08`-`01 66`), and the part SysEx (`40 1x 30`-`37`)
     /// all land on the same per-part byte in the engine (`part+0x3e4`-`0x3eb`).
     ///
-    /// Latched but not yet consumed: routing them into the LFO, TVF and envelope setup is the
-    /// remaining synthesis work, tracked alongside the insertion-EFX block.
+    /// All eight reach the synthesis chains through `modifiers()`.
     int vibrato_rate = 0x40;
     int vibrato_depth = 0x40;
     int vibrato_delay = 0x40;
@@ -117,9 +174,45 @@ public:
     int env_decay = 0x40;
     int env_release = 0x40;
 
+    /// The eight live modify offsets, in the form the synthesis chains take.
+    [[nodiscard]] PartModifiers modifiers() const noexcept
+    {
+        return PartModifiers{vibrato_rate,
+                             vibrato_depth,
+                             vibrato_delay,
+                             tvf_cutoff,
+                             tvf_resonance,
+                             env_attack,
+                             env_decay,
+                             env_release};
+    }
+
+    /// The velocity a note-on actually sounds at, after this part's velocity sense (`40 1x 1A`
+    /// depth and `40 1x 1B` offset).
+    ///
+    /// Three details are load-bearing. A depth of zero collapses every velocity to **1**, not to
+    /// silence. A depth of exactly 0x40 skips the multiply rather than multiplying by one, so a
+    /// neutral part cannot lose a count to the shift's truncation. And the low clamp is to 1 as
+    /// well: an offset that drives the sum negative still sounds, at the floor.
+    [[nodiscard]] int effective_velocity(int velocity) const noexcept
+    {
+        int value = velocity;
+        if (velocity_depth == 0) {
+            value = 1;
+        } else if (velocity_depth != 0x40) {
+            value = (value * velocity_depth) >> 6;
+        }
+
+        value += (velocity_offset - 0x40) * 2;
+        if (value < 0) {
+            return 1;
+        }
+        return value > 0x7F ? 0x7F : value;
+    }
+
     /// GS scale tuning (`40 1x 40`-`4B`), one entry per pitch class, 0x40 centred, a cent a step.
-    std::array<int, 12> scale_tuning{0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-                                     0x40, 0x40, 0x40, 0x40, 0x40, 0x40};
+    std::array<int, 12> scale_tuning{
+        0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40};
 
     /// GS use-for-rhythm (`40 1x 15`): -1 follows the channel default, 0 forces melodic, 1 or 2
     /// route the part to the drum path on that drum map.
@@ -129,8 +222,40 @@ public:
     int key_low = 0;
     int key_high = 0x7F;
 
-    /// GS velocity sense depth and offset (`40 1x 1A`/`1B`), stored but not yet applied to the
-    /// velocity curve.
+    /// Whether this part runs through the four-band EQ (`40 4x 20`), which is `part+0x450`.
+    ///
+    /// **Off by default, which contradicts the SC-8820 manual.** The manual gives this parameter a
+    /// default of `01 ON`; in this engine the part reset writes the byte to zero and *nothing
+    /// anywhere sets it to one* except the SysEx handler, so a module that is never told to switch
+    /// the EQ on never switches it on. That is a difference without a sound until a file also sends
+    /// a non-flat `40 02`, since a flat EQ is exactly transparent either way — but on such a file
+    /// it decides whether the EQ is heard at all, so it is worth an oracle check before it is
+    /// trusted.
+    bool eq_enabled = false;
+
+    /// Whether this part feeds the insertion EFX block (`40 4x 22`), which is `part+0x452`.
+    ///
+    /// An EFX part's dry signal detours to the EFX input pair and **both of its sends are forced
+    /// to the null bus** — the block's own `40 03 17`–`19` send levels replace them, which is the
+    /// mechanism behind the manual's note that system-effect levels become common to all EFX
+    /// parts.
+    bool efx_enabled = false;
+
+    /// The two biases on the envelope hold clock's rate index — the ninth tone-modify slot, which
+    /// continues the `30`-`37` run past where Roland's published list ends.
+    ///
+    /// `envelope_delay` is the user offset (`40 1x 38`, `part+0x44b`) and survives a program
+    /// change; `envelope_delay_tone` is the per-program one (`40 4x 38`, `part+0x45b`) that every
+    /// program change forces back to centre, the same way the tone loader fills the eight slots
+    /// before it. Both are `0x40` for no change, and they are summed.
+    ///
+    /// Above centre this does not merely lengthen an existing delay — it **arms** one on partials
+    /// that have none, because the rate curve's first entry is zero. See
+    /// `EnvelopeMachine::hold_samples`.
+    int envelope_delay = 0x40;
+    int envelope_delay_tone = 0x40;
+
+    /// GS velocity sense depth and offset (`40 1x 1A`/`1B`), applied by `effective_velocity`.
     int velocity_depth = 0x40;
     int velocity_offset = 0x40;
 
@@ -218,16 +343,82 @@ public:
         recompute();
     }
 
+    /// The chorus and delay sends in force, which chase `chorus_send` and `delay_send`.
+    ///
+    /// Per *part*, not per voice, because that is what the engine smooths: these two are taps in
+    /// the 33-bus send matrix -- chorus at `DAT_181a6f310` tap 1, delay at `DAT_181a6e8c0` tap 1 --
+    /// one coefficient each for the whole part. Only the reverb send is per voice.
+    [[nodiscard]] double chorus_send_level() const noexcept { return chorus_send_level_; }
+    [[nodiscard]] double delay_send_level() const noexcept { return delay_send_level_; }
+
+    /// Controller units a send moves in one control tick.
+    ///
+    /// Measured on the matrix coefficient itself: CC#93 driven 0 -> 127 walks it in 64 steps of
+    /// 16/1024, one every 640 samples, 1255 ms end to end. That is the same effective rate as the
+    /// per-voice reverb send's 1260 ms -- one controller unit a tick -- reached in double steps at
+    /// half the cadence.
+    static constexpr double send_slew_per_tick = 1.0;
+
+    /// Advances both toward their targets by one control tick's worth.
+    void slew_sends(double per_tick) noexcept
+    {
+        chorus_send_level_ +=
+            std::clamp(chorus_send - chorus_send_level_, -per_tick, per_tick);
+        delay_send_level_ += std::clamp(delay_send - delay_send_level_, -per_tick, per_tick);
+    }
+
     /// The combined volume multiplier, 1.0 with everything at 127.
     [[nodiscard]] double volume_scale() const noexcept { return volume_scale_; }
 
-    /// The mod wheel's contribution to LFO1 pitch depth, in milli-semitones.
-    [[nodiscard]] double mod_wheel_depth() const noexcept
+    /// The same combination as the integer `voice_volume_apply` yields, which is what the voices'
+    /// anti-zipper ramps chase. The mixer reads the ramp rather than this directly.
+    [[nodiscard]] int volume_word() const noexcept { return volume_word_; }
+
+    /// Everything the control matrix modulates, each destination in its own unit.
+    ///
+    /// `part_mod_depth_recalc` keeps eleven running sums a part, one a destination, each the total
+    /// of the sources' contributions, and clamps and scales each by its own law. This is that
+    /// function, computed on demand rather than cached behind a dirty mask — the mask is a way of
+    /// not recomputing, not a difference in what is computed.
+    ///
+    /// All six sources reach it: the mod wheel, bend, both aftertouches, and the two assignable
+    /// controllers. Every one is summed raw before anything is clamped, which is why they are
+    /// gathered here rather than scaled separately and added up — clamping each in turn would let
+    /// the total escape the rail.
+    ///
+    /// `key_pressure` is the polyphonic aftertouch on the note being rendered, which is why this
+    /// takes an argument at all: everything else here belongs to the part, and that one belongs to
+    /// the key. The module applies it at exactly this point too, and for the same reason — it is
+    /// the one source whose amount is not a property of the part, so it cannot be folded into a
+    /// per-part cache. A caller with no note in hand passes nothing.
+    [[nodiscard]] ControlMatrix::Modulation matrix(int key_pressure = 0) const noexcept
     {
-        return LfoEngine::mod_wheel_depth(modulation);
+        ControlMatrix::Modulation sums =
+            control.applied_linear(ControlMatrix::Source::modulation, modulation);
+        sums += control.applied_linear(ControlMatrix::Source::channel_pressure, channel_pressure);
+        sums += control.applied_linear(ControlMatrix::Source::poly_pressure, key_pressure);
+        sums += control.applied_linear(ControlMatrix::Source::cc1, cc1);
+        sums += control.applied_linear(ControlMatrix::Source::cc2, cc2);
+        sums += control.applied_bipolar(
+            ControlMatrix::Source::bend, bend - 8192, bend_range + ControlMatrix::neutral);
+        return ControlMatrix::scaled(sums);
+    }
+
+    /// The control matrix's contribution to pitch alone, in milli-semitones.
+    ///
+    /// The clamp behind this is not a round number by accident: 0xbe8 is 3048, which is 127 × 24,
+    /// exactly the largest value `amount × (depth − 0x40)` can reach. The scale then works out to
+    /// 24 semitones at the rail, which is what fixes the unit as milli-semitones.
+    [[nodiscard]] double matrix_pitch_milli_semitones(int key_pressure = 0) const noexcept
+    {
+        return static_cast<double>(matrix(key_pressure).pitch);
     }
 
     /// The bend offset in milli-semitones.
+    ///
+    /// Retained for callers that want bend alone — the offline timelines still build a curve from
+    /// it. The voice no longer uses it: bend reaches pitch through the control matrix, which is
+    /// where the engine puts it and which differs from this by up to 0.8 cents at full deflection.
     [[nodiscard]] double bend_milli_semitones() const noexcept
     {
         return PitchChain::bend_offset_milli_semitones(bend, bend_range);
@@ -273,6 +464,7 @@ public:
         soft = false;
         modulation = 0;
         channel_pressure = 0;
+        poly_pressure.fill(0);
         portamento_on = false;
         portamento_control_key = -1;
         rpn_msb = 0x7F;
@@ -286,12 +478,16 @@ private:
     void recompute() noexcept
     {
         volume_scale_ = TvaChain::part_volume_scale(volume_, expression_, master_);
+        volume_word_ = TvaChain::part_volume_word(volume_, expression_, master_);
     }
 
     int volume_ = sequence_builder::default_volume;
     int expression_ = sequence_builder::default_expression;
     int master_ = sequence_builder::default_master;
     double volume_scale_ = 1.0;
+    int volume_word_ = TvaChain::part_volume_word();
+    double chorus_send_level_ = 0.0;
+    double delay_send_level_ = 0.0;
 };
 
 } // namespace ts

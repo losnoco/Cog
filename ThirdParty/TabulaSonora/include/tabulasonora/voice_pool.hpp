@@ -40,7 +40,7 @@ struct Voice {
     [[nodiscard]] bool is_active() const noexcept { return state() != VoiceState::free; }
 };
 
-/// The 64-voice allocator.
+/// The voice allocator.
 ///
 /// Polyphony is 64, and a note consumes one voice per sounding partial — so a two-partial patch
 /// halves the effective note count. Partials of one note share a *note group* so that stealing
@@ -54,8 +54,17 @@ struct Voice {
 /// faithful. It is isolated here so it can be replaced without touching any DSP.
 class VoicePool {
 public:
-    /// Total voice slots.
-    static constexpr int max_voices = 64;
+    /// The hardware's polyphony, and this pool's default.
+    static constexpr int default_polyphony = 64;
+
+    /// Kept as the name the rest of the engine sizes its scratch by.
+    static constexpr int max_voices = default_polyphony;
+
+    /// How many slots a growing pool adds each time it would otherwise steal.
+    ///
+    /// A chunk rather than one slot, because growing reallocates and a note that needs four
+    /// partials should not pay for four reallocations.
+    static constexpr int growth_chunk = 64;
 
     /// Voices are rendered in groups of this size; the engine's layout is SIMD-shaped.
     static constexpr int group_size = 4;
@@ -65,6 +74,47 @@ public:
     /// A host that renders voices needs this: the slot is about to be overwritten, so whatever was
     /// sounding in it has to be moved somewhere it can fade out. Cutting it dead instead clicks.
     std::function<void(int)> stealing;
+
+    /// Creates a pool with the hardware's polyphony.
+    VoicePool() : VoicePool(default_polyphony, false) {}
+
+    /// Creates a pool with a given polyphony, optionally allowed to grow past it.
+    ///
+    /// A growing pool never steals: when it runs out it allocates more slots instead. That trades a
+    /// hard voice limit for an unbounded one, which is right for an offline render whose only job
+    /// is to be correct, and wrong on an audio thread — growing allocates, and allocating inside
+    /// the block loop is exactly what a real-time thread must not do. Nothing selects it by
+    /// accident: it is off unless asked for.
+    VoicePool(int polyphony, bool growing);
+
+    /// How many slots exist now. A growing pool's capacity rises during a render.
+    [[nodiscard]] int capacity() const noexcept { return capacity_; }
+
+    /// Whether this pool grows rather than steals.
+    [[nodiscard]] bool grows() const noexcept { return growing_; }
+
+    /// The largest capacity reached, which is what a growing render actually needed.
+    [[nodiscard]] int high_water() const noexcept { return high_water_; }
+
+    /// How many times a sounding voice was taken to make room.
+    ///
+    /// The reason a caller wants this: a render that never stole is one a larger pool would not
+    /// have changed, so a test can say whether its result depends on the limit at all. A render
+    /// that *did* steal is one where 64 and 256 genuinely differ, and a digest taken at one of them
+    /// says nothing about the other.
+    [[nodiscard]] int steal_count() const noexcept { return steal_count_; }
+
+    /// How many times a growing pool allocated another chunk.
+    [[nodiscard]] int growth_count() const noexcept { return growth_count_; }
+
+    /// Whether this render's output depends on the polyphony setting.
+    ///
+    /// False means the pool never ran out, so every larger limit -- and the growing mode -- would
+    /// have produced the same audio.
+    [[nodiscard]] bool limit_was_reached() const noexcept
+    {
+        return steal_count_ > 0 || growth_count_ > 0;
+    }
 
     /// Number of slots currently sounding.
     [[nodiscard]] int active_count() const noexcept;
@@ -120,13 +170,23 @@ private:
     [[nodiscard]] int find_oldest(VoiceState state) const noexcept;
     void steal_group(int note_group, int except);
 
-    std::array<VoiceState, max_voices> state_{};
-    std::array<int, max_voices> channel_{};
-    std::array<int, max_voices> note_{};
-    std::array<int, max_voices> velocity_{};
-    std::array<int, max_voices> note_group_{};
-    std::array<std::int64_t, max_voices> sequence_{};
+    /// Adds `growth_chunk` slots and returns the first new one.
+    [[nodiscard]] int grow();
 
+    // Vectors rather than arrays: the capacity is a run-time choice now. The struct-of-arrays
+    // shape is unchanged, which is what the render loop cares about.
+    std::vector<VoiceState> state_;
+    std::vector<int> channel_;
+    std::vector<int> note_;
+    std::vector<int> velocity_;
+    std::vector<int> note_group_;
+    std::vector<std::int64_t> sequence_;
+
+    int steal_count_ = 0;
+    int growth_count_ = 0;
+    int capacity_ = default_polyphony;
+    int high_water_ = default_polyphony;
+    bool growing_ = false;
     std::int64_t counter_ = 0;
     int next_note_group_ = 0;
 };

@@ -75,6 +75,13 @@ public:
         std::span<const double> mod_wheel_per_tick;
     };
 
+    /// The ROM this renderer was opened on.
+    ///
+    /// Exposed because the GS effect parameters are edits to a *macro row*, and recomputing a
+    /// network from an edited row means reading the same tables the macro came from. The reference
+    /// outlives the renderer's caller by construction: a renderer cannot be built without one.
+    [[nodiscard]] const RomImage& rom() const noexcept;
+
     /// The static tables this renderer loaded.
     [[nodiscard]] const TableSet& tables() const noexcept;
 

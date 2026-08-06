@@ -103,11 +103,6 @@ struct DelayPresets {
     /// Send-bus gain at full scale.
     static constexpr double send_at_full_scale = 0.356;
 
-    /// Fixed input pre-delay ahead of the feedback line, in samples — 60 ms at 32 kHz.
-    ///
-    /// Measured from first arrival; it is not in the preset table.
-    static constexpr int pre_delay_samples = 1920;
-
     /// Pre-lowpass coefficient ladder; index 0 bypasses, which every preset uses.
     static constexpr std::array<double, 8> pre_low_pass_coefficients{
         0.0, 0.10, 0.18, 0.28, 0.40, 0.55, 0.70, 0.84};
@@ -116,6 +111,44 @@ struct DelayPresets {
     std::vector<double> time_milliseconds;
     std::vector<double> ratio_percent;
     std::vector<std::array<int, 10>> raw_presets;
+};
+
+/// One shelving band: `H(z) = (b0 + b1·z⁻¹) / (1 − a1·z⁻¹)`.
+///
+/// A one-pole shelf, not a biquad. At 0 dB the stored row is exactly `{1, −a, a}`, which makes the
+/// numerator and denominator identical and the response algebraically unity — the flat setting is
+/// exact rather than merely close, and that identity is the check that the three coefficients have
+/// been read in the right order.
+struct EqBand {
+    double b0 = 1.0;
+    double b1 = 0.0;
+    double a1 = 0.0;
+};
+
+/// The four-band EQ block's coefficient tables — two bands, two corner frequencies each.
+///
+/// The engine computes nothing here: every gain setting is a stored row, and the SysEx values index
+/// straight into them. The corner is not a parameter but a choice of table, which is why `40 02 00`
+/// and `40 02 02` take 0 or 1 and nothing else.
+struct EqPresets {
+    /// Gain settings per band: `40 02 01` and `40 02 03` accept 0x34–0x4C, which is −12…+12 dB.
+    static constexpr int gain_count = 25;
+
+    /// The lowest gain byte, subtracted to index the tables.
+    static constexpr int gain_base = 0x34;
+
+    /// Corner frequencies each band can be switched between, in Hz, for reporting only — the
+    /// coefficients carry the real thing.
+    static constexpr std::array<int, 2> low_frequencies{200, 400};
+    static constexpr std::array<int, 2> high_frequencies{3000, 6000};
+
+    /// `[frequency][gain byte − 0x34]`.
+    std::array<std::array<EqBand, gain_count>, 2> low{};
+    std::array<std::array<EqBand, gain_count>, 2> high{};
+
+    /// The band for a SysEx frequency and gain pair, clamped the way the engine clamps them.
+    [[nodiscard]] const EqBand& low_band(int frequency, int gain) const noexcept;
+    [[nodiscard]] const EqBand& high_band(int frequency, int gain) const noexcept;
 };
 
 class RomImage;
@@ -153,7 +186,7 @@ public:
 
     /// Assembles a preset set from computed parts.
     [[nodiscard]] static EffectPresets
-    from_parts(ReverbPresets reverb, ChorusPresets chorus, DelayPresets delay);
+    from_parts(ReverbPresets reverb, ChorusPresets chorus, DelayPresets delay, EqPresets eq = {});
 
     /// Parses presets from a JSON document.
     ///
@@ -166,10 +199,23 @@ public:
 
     [[nodiscard]] const DelayPresets& delay() const noexcept { return delay_; }
 
+    /// The EQ coefficient tables.
+    ///
+    /// These are read from the DLL and are not part of the JSON round trip, unlike the other three:
+    /// there is nothing to harvest, because the engine stores every setting rather than deriving
+    /// it. A set parsed from a pinned `presets.json` therefore carries no EQ, and `is_present`
+    /// says so — the EQ stage passes audio through untouched rather than pretending to be flat.
+    [[nodiscard]] const EqPresets& eq() const noexcept { return eq_; }
+
+    /// Whether EQ coefficients are available.
+    [[nodiscard]] bool has_eq() const noexcept { return has_eq_; }
+
 private:
     ReverbPresets reverb_;
     ChorusPresets chorus_;
     DelayPresets delay_;
+    EqPresets eq_;
+    bool has_eq_ = false;
 };
 
 } // namespace ts

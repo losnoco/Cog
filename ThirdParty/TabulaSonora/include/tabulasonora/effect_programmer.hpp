@@ -3,6 +3,10 @@
 #include "tabulasonora/effect_presets.hpp"
 #include "tabulasonora/rom_image.hpp"
 
+#include <array>
+#include <cstdint>
+#include <span>
+
 namespace ts {
 
 /// Computes the reverb, chorus and delay coefficient sets from the DLL's own preset tables — the
@@ -38,6 +42,31 @@ public:
     ///
     /// Throws `std::runtime_error` if a table does not look like the expected data.
     [[nodiscard]] static EffectPresets compute(const RomImage& rom);
+
+    /// Bytes in a reverb and a chorus macro row.
+    ///
+    /// A macro does not select a preset that individual edits then sit on top of — it loads these
+    /// bytes, and the GS addresses `40 01 31`-`37` and `40 01 39`-`40` write into the same ones. So
+    /// a single-parameter edit is a byte in a row followed by a recompute.
+    static constexpr int reverb_row_bytes = 7;
+    static constexpr int chorus_row_bytes = 8;
+
+    /// The row a macro loads, which is the starting point every individual edit modifies.
+    [[nodiscard]] static std::array<std::uint8_t, reverb_row_bytes>
+    reverb_macro_row(const RomImage& rom, int type);
+    [[nodiscard]] static std::array<std::uint8_t, chorus_row_bytes>
+    chorus_macro_row(const RomImage& rom, int type);
+
+    /// Recomputes a network from a row, edited or not.
+    ///
+    /// Neither reads the row's **level** byte — reverb `[2]`, chorus `[1]` — because level is not a
+    /// coefficient. It does not shape the network, it scales what leaves it, so a caller applying
+    /// an edited row still has to apply level itself. Forgetting that is silent: the recompute
+    /// succeeds and the one parameter a file is most likely to set does nothing.
+    [[nodiscard]] static ReverbPreset reverb_from_row(const RomImage& rom,
+                                                      std::span<const std::uint8_t> row);
+    [[nodiscard]] static ChorusPreset chorus_from_row(const RomImage& rom,
+                                                      std::span<const std::uint8_t> row);
 
     /// Reads the ten GS delay presets straight out of the DLL's own preset table.
     [[nodiscard]] static std::vector<std::array<int, delay_preset_stride>>

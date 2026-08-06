@@ -33,6 +33,13 @@ enum class FilterTap {
 /// The order of those three lines is load-bearing and so is the grouping in the middle one.
 /// Reassociating `input - (q*band + low)` into `input - q*band - low` is a different sequence of
 /// IEEE operations, and the build disables FMA contraction so the compiler cannot fuse them either.
+///
+/// **Verified against the reference, not just transcribed.** Driving this recurrence with the
+/// engine's own filter-input buffer and its own `f`/`q` — both read live out of the DLL — reproduces
+/// its filter output to a mean relative error of about 1e-5, which is float32 round-off. A long
+/// investigation into drum tone 1946 passed through here twice on the way to the real cause, which
+/// turned out to be in the wave decode; see `WaveRom`. Nothing in this file needed changing, and a
+/// `q` clamp proposed along the way would have been a curve fit over an unrelated bug.
 class StateVariableFilter {
 public:
     /// The lowpass integrator's current value.

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tabulasonora/engine_noise.hpp"
+#include "tabulasonora/part_modifiers.hpp"
 #include "tabulasonora/partial_parameters.hpp"
 #include "tabulasonora/table_set.hpp"
 
@@ -67,12 +69,23 @@ class LfoRunner;
 /// Pitch depth is in *milli-semitones*, not cents. The pitch accumulator clamps at 0x1f018, which
 /// is 127 x 1000, and that is what fixes the unit.
 ///
-/// Waveform selectors 1, 2 and 3 are the random shapes, driven by a Galois LFSR. They need the
-/// engine's RNG state and are not modelled: they return zero, as in the reference.
+/// Waveform selectors 1, 2 and 3 are the random shapes. They are **not** functions of the phase the
+/// way every other shape is — they redraw when the phase *wraps* and hold or walk toward that draw
+/// in between — so they live in ts::LfoRunner rather than in `waveform` below, which asks only
+/// where in the cycle the LFO is and cannot express them.
 class LfoEngine {
 public:
     /// Scale that maps a raw waveform value to [-1, 1].
     static constexpr double waveform_scale = 32640.0;
+
+    /// Whether a waveform is one of the three random shapes, which the runner drives.
+    [[nodiscard]] static constexpr bool is_random(int waveform) noexcept
+    {
+        return waveform >= 1 && waveform <= 3;
+    }
+
+    /// How far a slewed random shape moves toward its target in one control tick.
+    static constexpr int slew_step = 0x50;
 
     /// Depth clamp and rounding constant for a destination.
     ///
@@ -97,22 +110,40 @@ public:
     }
 
     /// Creates the engine over a loaded table set, which must outlive it.
-    explicit LfoEngine(const TableSet& tables);
+    ///
+    /// `noise` is the engine's shared generator, which the random shapes draw from; when null a
+    /// private one is used. Sharing it is not a detail — the module has exactly one generator, and
+    /// the LFO shapes, the pitch start jitter and the random pan all draw from it, so which voice
+    /// draws when is part of what the sequence is.
+    explicit LfoEngine(const TableSet& tables, EngineNoise* noise = nullptr);
+
+    /// The generator the random shapes draw from.
+    [[nodiscard]] EngineNoise& noise() const noexcept { return *noise_; }
 
     /// Evaluates a waveform at a 16-bit phase.
+    ///
+    /// The three random shapes are not evaluable this way and return zero here; ts::LfoRunner
+    /// drives them, because what they depend on is the phase having wrapped rather than the phase.
     [[nodiscard]] int waveform(int phase, int waveform_index) const noexcept;
 
     /// Reads both LFO configurations for one partial: the tone-common LFO1 and the per-partial
     /// LFO2.
-    [[nodiscard]] std::pair<LfoConfig, LfoConfig> configure(int tone_number,
-                                                            const PartialParameters& partial) const;
+    ///
+    /// `modifiers` applies the part's vibrato rate, depth and delay. They reach LFO1 alone — LFO2
+    /// has no table indices for them to bias.
+    [[nodiscard]] std::pair<LfoConfig, LfoConfig>
+    configure(int tone_number,
+              const PartialParameters& partial,
+              const PartModifiers& modifiers = {}) const;
 
     /// Creates a runner that steps one LFO a control tick at a time.
     [[nodiscard]] LfoRunner create_runner(const LfoConfig& config) const;
 
     /// Creates runners for both of a partial's LFOs.
     [[nodiscard]] std::pair<LfoRunner, LfoRunner>
-    create_runners(int tone_number, const PartialParameters& partial) const;
+    create_runners(int tone_number,
+                   const PartialParameters& partial,
+                   const PartModifiers& modifiers = {}) const;
 
     /// Runs one LFO for a number of control ticks.
     [[nodiscard]] std::vector<double>
@@ -156,6 +187,9 @@ private:
     std::span<const std::uint8_t> wave_map_;
     std::span<const std::int16_t> wave_bank_;
     std::span<const std::uint8_t> tone_;
+
+    EngineNoise* noise_;
+    EngineNoise owned_noise_;
 };
 
 /// One LFO's running state: phase, delay and fade-in accumulators, stepped a control tick at a
@@ -178,19 +212,45 @@ public:
     /// The configuration this runner steps.
     [[nodiscard]] const LfoConfig& config() const noexcept { return config_; }
 
-    /// Whether the delay has elapsed, so the LFO is being applied.
+    /// Whether the last tick ran an update at all, so the LFO has an output to give.
+    ///
+    /// This is **not** "the delay has elapsed" — the delay holds the fade-in at zero but does not
+    /// stop the LFO being applied, since a matrix depth is summed past the fade. What turns it off
+    /// is an increment of nothing, which is the one case the module skips outright.
     [[nodiscard]] bool is_applied() const noexcept { return applied_; }
 
     /// Advances one control tick.
-    void tick() noexcept;
+    ///
+    /// `rate_offset` is the control matrix's LFO rate destination, in the same per-tick increment
+    /// units as the configured rate — the engine adds it to the rate straight out of the table (or,
+    /// for LFO2, to the raw rate) and clamps the total to 0x28f6.
+    ///
+    /// A total of zero or less does not merely stop the phase: the engine skips the whole update,
+    /// so the depths are not applied either and the LFO's last output is held rather than decaying.
+    /// Deep enough negative rate modulation is therefore an off switch, which is why this shares
+    /// its early return with a configured rate of zero.
+    void tick(int rate_offset = 0) noexcept;
 
     /// The modulation for one destination, after the last tick.
-    [[nodiscard]] double value(LfoDestination destination) const noexcept;
+    ///
+    /// `matrix_depth` is the control matrix's depth destination for this LFO, in the destination's
+    /// own units. It is summed *after* the fade-in — the fade scales the patch's depth, not the
+    /// controller's — and the total is then clamped to the destination's limit. Those limits are
+    /// exactly the matrix's own full-scale figures, so a matrix depth alone can reach the rail but
+    /// never exceed it.
+    [[nodiscard]] double value(LfoDestination destination, int matrix_depth = 0) const noexcept;
 
     /// The pitch modulation with a mod-wheel depth folded in, in milli-semitones.
+    ///
+    /// The offline path's spelling of the same thing: the wheel reaches LFO1 pitch depth through
+    /// the matrix, so this is `value(LfoDestination::pitch, ...)` with the wheel's contribution
+    /// standing in for the whole matrix sum.
     [[nodiscard]] double pitch_value(double wheel_depth) const noexcept;
 
 private:
+    /// Evaluates the waveform for the tick just taken, into `output_`.
+    void advance_waveform(bool wrapped) noexcept;
+
     [[nodiscard]] int faded(int depth) const noexcept;
     [[nodiscard]] double apply(int effective, int rounding) const noexcept;
 
@@ -201,6 +261,23 @@ private:
     int delay_ = 0;
     int fade_ = 0;
     bool applied_ = false;
+
+    /// The waveform value for the last tick — `g_lfo_out`.
+    ///
+    /// Kept rather than recomputed from the phase because the random shapes cannot be recomputed:
+    /// a slewed one that has arrived at its target leaves this standing untouched, so the previous
+    /// tick's value *is* this tick's answer. For every other shape it is the same number
+    /// `LfoEngine::waveform` would return, evaluated at the tick that produced the phase.
+    int output_ = 0;
+
+    /// The random shapes' two registers, which the module keeps per voice next to the phase: the
+    /// value last drawn from the generator, and the value walking toward it.
+    ///
+    /// Both start at zero, which is the one part of this not read off the engine — its per-voice
+    /// block is loaded from voice state that a note-on has already cleared. A sample-and-hold
+    /// therefore sits at zero until its first wrap rather than opening on a random step.
+    int held_ = 0;
+    int slewed_ = 0;
 };
 
 } // namespace ts

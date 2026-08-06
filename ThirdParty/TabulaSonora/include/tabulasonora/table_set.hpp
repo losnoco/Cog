@@ -74,7 +74,12 @@ public:
         static constexpr std::string_view ramp_divider = "ramp_divider_a03e00.bin";
         static constexpr std::string_view ramp_exp = "ramp_exp_986420.bin";
         static constexpr std::string_view ramp_flagword = "ramp_flagword_a84d8.bin";
+        static constexpr std::string_view svf_f_ceil = "svf_fceil_986860.bin";
         static constexpr std::string_view tone = "tone_a.bin";
+        static constexpr std::string_view tone_indirect_bank64 =
+            "tone_indirect_bank64_a8bf0.bin";
+        static constexpr std::string_view tone_indirect_bank65 =
+            "tone_indirect_bank65_a9800.bin";
         static constexpr std::string_view tvf_cutoff_ceil = "tvf_ceil_a7ed0.bin";
         static constexpr std::string_view tvf_q_lp = "tvf_q_lp_a7cd0.bin";
         static constexpr std::string_view tvf_q_t6 = "tvf_q_t6_a7fd0.bin";
@@ -181,8 +186,9 @@ public:
     /// 0x80 + position]`.
     [[nodiscard]] std::span<const std::uint8_t> vel_xfade() const noexcept { return vel_xfade_; }
 
-    /// `g_env_shape` — the fast-approach segment shape. Only the first 256 entries (0x200 bytes)
-    /// are used; the cache over-reads slightly. Must be interpolated, not looked up bare.
+    /// `g_env_shape` — the fast-approach segment shape. 258 entries, and the 257th is not slack:
+    /// `env_ramp_segment` interpolates from the entry it lands on to the *next* one, so a phase of
+    /// zero reads entry 256. Must be interpolated, not looked up bare.
     [[nodiscard]] std::span<const std::uint16_t> env_shape() const noexcept { return env_shape_; }
 
     /// `g_env_startphase` — 128 entries; per-segment initial phase seed.
@@ -195,7 +201,11 @@ public:
     /// 512 floats. Index a phase as `phase * 4 + tap`. Every phase sums to 1.0.
     [[nodiscard]] std::span<const float> interp_coef() const noexcept { return interp_coef_; }
 
-    /// `g_kf_pitch` — 8 rows of 128; pitch key-follow, indexed `row * 0x80 + key`.
+    /// `g_kf_pitch` — pitch key-follow, indexed `row * 0x80 + key`.
+    ///
+    /// Four rows, though 2,048 bytes are cached: `g_kf_pitchrate0` begins at `0x1a00f20`, where a
+    /// fifth row would start, so the second half of this span is the neighbouring table. The engine
+    /// reads row 2 and nothing else — see `PitchChain::base_pitch_milli_semitones`.
     [[nodiscard]] std::span<const std::int16_t> kf_pitch() const noexcept { return kf_pitch_; }
 
     /// `g_kf_pitchrate0` — 128×128; pitch-envelope rate key-follow for the segments.
@@ -301,6 +311,26 @@ public:
     /// centre is 75/127, neither constant-power nor linear.
     [[nodiscard]] std::span<const std::uint8_t> pan() const noexcept { return pan_; }
 
+    /// The two banks that redirect rather than resolve — `g_tone_indirect_bank64/65`.
+    ///
+    /// Eleven planes of 128 bytes, indexed by program. `program_resolve_tone` @`180069200` takes
+    /// this path whenever the lookup bank is 0x40 or 0x41, before any of the three levels run: the
+    /// first three planes *replace* the map, bank and program the lookup then uses, and the
+    /// remaining eight override part parameters `+0x453`-`+0x45a`.
+    ///
+    /// What the data says is simple. Bank 0x40 substitutes map 2 and bank 0, bank 0x41 map 1 and
+    /// bank 0, and both leave the program alone — so these are the **SC-88 and SC-55 compatibility
+    /// banks**, reachable from any map. All eight parameter overrides are 0x40, neutral, for every
+    /// program in both tables, which is why nothing here plumbs them.
+    [[nodiscard]] std::span<const std::uint8_t> tone_indirect_bank64() const noexcept
+    {
+        return tone_indirect_bank64_;
+    }
+    [[nodiscard]] std::span<const std::uint8_t> tone_indirect_bank65() const noexcept
+    {
+        return tone_indirect_bank65_;
+    }
+
     /// `g_ramp_divider` — the anti-zipper zero-order-hold masks `[0, 7, 31, 127]`.
     [[nodiscard]] std::span<const std::uint8_t> ramp_divider() const noexcept
     {
@@ -315,6 +345,12 @@ public:
     {
         return ramp_flagword_;
     }
+
+    /// `g_svf_f_ceil` — 1024 entries; the stability ceiling the filter's `f` is clamped to, indexed
+    /// by the damping coefficient's raw integer shifted right by 8. The curve is Chamberlin's own
+    /// bound, `sqrt(q^2 + 4) − q`, to within 0.002 — it is neither a make-up nor a gain, despite
+    /// the `g_svf_makeup_gain_tbl` label the decompile carries.
+    [[nodiscard]] std::span<const float> svf_f_ceil() const noexcept { return svf_f_ceil_; }
 
     /// `g_tone_table` — tone records of stride 0x100: 0x24 header plus partial blocks of 0x6e.
     [[nodiscard]] std::span<const std::uint8_t> tone() const noexcept { return tone_; }
@@ -402,7 +438,10 @@ private:
     std::span<const std::uint8_t> ramp_divider_;
     std::vector<std::int32_t> ramp_exp_;
     std::span<const std::uint8_t> ramp_flagword_;
+    std::vector<float> svf_f_ceil_;
     std::span<const std::uint8_t> tone_;
+    std::span<const std::uint8_t> tone_indirect_bank64_;
+    std::span<const std::uint8_t> tone_indirect_bank65_;
     std::vector<std::uint16_t> tvf_cutoff_ceil_;
     std::vector<std::uint16_t> tvf_q_lp_;
     std::vector<std::uint16_t> tvf_q_t6_;

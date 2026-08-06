@@ -28,6 +28,14 @@ struct DecodedWave {
     std::vector<float> samples;
     /// The shifted per-sample deltas, needed to rebuild a ping-pong traversal.
     std::vector<std::int32_t> steps;
+    /// The predictor's value entering the data start — the integral of the preamble deltas from
+    /// the 32-sample exponent-block boundary below it, where the engine's decoder zeroes.
+    ///
+    /// Every decoded sample already includes it; it is kept so the ping-pong rebuild can
+    /// integrate from the same origin. An unaligned wave rides this as a constant DC — the
+    /// verification article's "module has DC", measured live at exactly −0.041015625 on
+    /// `Crash Cym.1` and −0.139 on the sine-kick zone.
+    std::int32_t seed = 0;
     /// Index of the loop point.
     int loop_start = 0;
     /// Number of decodable samples.

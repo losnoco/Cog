@@ -119,6 +119,10 @@ public:
     key_follow_key(const PartialParameters& partial, int note, int key_center = 0x3C) noexcept;
 
     /// The note's absolute base pitch in milli-semitones.
+    ///
+    /// `key × 1000 + weight + g_kf_pitch[row 2][key] + coarse`, which is `partial_compute_pitch @
+    /// 18005fc20` term for term. Comparable against the module exactly: `tabula-sonora pitch` turns
+    /// this and `native` into the module's own ramp word, and `scdec postrace` reads the module's.
     [[nodiscard]] int base_pitch_milli_semitones(const PartialParameters& partial,
                                                  int note,
                                                  int key_center = 0x3C) const noexcept;

@@ -7,17 +7,40 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <string_view>
+#include <utility>
 #include <vector>
 
 namespace ts {
 
 /// Which vintage's tone map a program change resolves against.
+///
+/// The value is the module's own map selector, so these index the first lookup level directly and a
+/// new map needs no code beyond its name. `xg` is not a vintage: XG System On switches every part
+/// onto it, and it selects a separate melodic layout — 45 bank-LSB variations over 534 presets,
+/// where the bank *LSB* picks the variation rather than the MSB.
+/// The two lookup banks that redirect to another map instead of resolving in this one — the SC-88
+/// and SC-55 compatibility banks, which any map can reach.
+inline constexpr int indirect_bank_88 = 0x40;
+inline constexpr int indirect_bank_55 = 0x41;
+
 enum class ToneMap {
     sc55 = 1,
     sc88 = 2,
     sc88pro = 3,
     sc8820 = 4,
+    xg = 0x77,
 };
+
+/// The tone maps a command line accepts, by name and by the module's own selector value.
+///
+/// Shared so the four front ends spell the same thing the same way, and so a bad value is refused
+/// rather than cast to a selector that resolves to nothing. `xg` is 0x77 because that is the number
+/// the module uses, not a label invented here.
+[[nodiscard]] const std::vector<std::pair<std::string, int>>& tone_map_choices() noexcept;
+
+/// The name of a tone map, for a UI to display. Empty for a value that names none.
+[[nodiscard]] std::string_view tone_map_name(ToneMap map) noexcept;
 
 /// One key zone of a tone, expressed in MIDI note numbers.
 struct ToneZone {

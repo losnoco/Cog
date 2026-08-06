@@ -6,6 +6,7 @@
 #include <array>
 #include <cstdint>
 #include <optional>
+#include <string>
 #include <vector>
 
 namespace ts {
@@ -22,6 +23,24 @@ struct DrumKey {
     int group = 0;
     /// Pan position, per key.
     int pan = 0;
+    /// Whether this key responds to note-off at all — GS `Rx.Note Off`, per key.
+    ///
+    /// Almost none do. A drum is a struck sound whose envelope is its whole story, so releasing it
+    /// early is wrong; the exceptions are the sounds you have to be able to stop, and the kit
+    /// records say exactly which. In the SC-88 Standard kit **one** key sets it, key 25, the snare
+    /// roll. The Orchestra kit adds key 88, Applause. The SFX kit sets it on 52 of its 128 keys.
+    /// That is GS's documented behaviour read straight out of the ROM rather than assumed.
+    ///
+    /// Bit 0 of the kit record's receive plane. The engine copies that plane per part and lets
+    /// drum-setup SysEx rewrite it, so this is the *default*, not the last word.
+    bool receives_note_off = false;
+
+    /// Whether this key responds to note-on — GS `Rx.Note On`, bit 4 of the same plane.
+    ///
+    /// The module's note-on dispatch refuses the key outright when this is off
+    /// (`note_on_dispatch` tests `0x480[key] & 0x10` before anything else), which is how a file
+    /// silences individual drum keys without emptying their track.
+    bool receives_note_on = true;
 };
 
 /// The drum kit records: for each of 128 keys, which tone sounds and how it is levelled, tuned,
@@ -74,7 +93,10 @@ public:
     /// tone map in turn and reading back the tone it resolves for program 0 on the drum part:
     /// SC-55 selects row 3 (kit 59), SC-88 row 2 (kit 47), SC-88Pro row 1 and SC-8820 row 0.
     ///
-    /// Rows 4 and 5 exist and no vintage selects them; a host that wants them sets the row itself.
+    /// Rows 4 and 5 are not vintages: row 4 is the XG kit set — Standard 1/2, Room, Rock, Electro,
+    /// Analog, Jazz, Brush, Classic on programs 0/1/8/16/24/25/32/40/48, plus SFX 1 and 2 on 120
+    /// and 121 — and row 5 is GM2's. `ToneMap::xg` selects row 4; a host that wants row 5 sets it
+    /// itself.
     [[nodiscard]] static std::optional<int> row_for_map(ToneMap map) noexcept;
 
     /// Maps an internal bank code to a drum map row; standard GM/GS drum parts use 0x04.
@@ -85,6 +107,27 @@ public:
     /// The engine leaves the kit unchanged rather than silencing the part, which is why this is an
     /// absence rather than a zero.
     [[nodiscard]] std::optional<int> kit_for_program(int program, int row = 0) const noexcept;
+
+    /// The kit's name, as the ROM record carries it, trimmed of trailing spaces.
+    ///
+    /// Twelve bytes at `+0x500` of the record, the same field the module's rhythm-set name dump
+    /// reads. A mixer that shows "kit 73" is showing an index nobody chose; the record has been
+    /// carrying "Analog Kit" all along.
+    ///
+    /// Three things not to assume about the result, all measured and written up in FINDINGS under
+    /// "Kit names, and three things not to assume about them":
+    ///
+    ///  * **The casing is the ROM's and is not normalised here.** Every GS and GM2 kit is upper
+    ///    case and every XG kit is lower, which makes an ALL-CAPS name on XG-flavoured material a
+    ///    free signal that the drum row is not following XG mode.
+    ///  * **A name is not an identifier.** Fifteen are shared by two to four records — `ROOM` is
+    ///    four, one per GS vintage — so anything keyed on the name collides across exactly the
+    ///    vintages a tone map exists to separate.
+    ///  * **A twelve-byte name may be abbreviated**, and not always at the end: `standrd kit2`
+    ///    drops the *a* of "standard", `GM2 ORCHSTRA` the *E* of "ORCHESTRA".
+    ///
+    /// Empty for a kit index outside the table.
+    [[nodiscard]] std::string kit_name(int kit) const;
 
     /// Reads one key's settings from a kit; kit 0 is GM Standard.
     ///
@@ -117,6 +160,12 @@ private:
     static constexpr int pitch_plane = 0x180;
     static constexpr int group_plane = 0x200;
     static constexpr int pan_plane = 0x280;
+    // 0x300 reverb depth, 0x380 chorus depth, 0x400 delay depth — per key, and not yet wired.
+    /// Receive flags. Bit 0 is `Rx.Note Off`; the byte otherwise reads 0x10 across every kit.
+    static constexpr int receive_plane = 0x480;
+    /// Twelve ASCII bytes naming the kit.
+    static constexpr int name_plane = 0x500;
+    static constexpr int name_length = 12;
 
     std::int64_t kit_base_ = 0;
     std::vector<std::uint8_t> bank_row_;

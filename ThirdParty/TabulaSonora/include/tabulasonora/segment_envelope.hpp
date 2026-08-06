@@ -77,10 +77,35 @@ public:
     /// The envelope's value at a sample position relative to note-on.
     [[nodiscard]] double value_at(std::int64_t sample) const noexcept;
 
-    /// Whether the release has run out at a sample position.
+    /// Whether the envelope has reached silence and cannot leave it.
+    ///
+    /// Two ways to get there. The release running out is the usual one. The other is an envelope
+    /// whose last segment ends *at* zero: it has nowhere left to go, and a voice that never receives
+    /// a note-off — every drum key but a handful — would otherwise sit in the pool forever holding
+    /// silence. The module frees those when the gain reaches zero, which is the same rule.
     [[nodiscard]] bool is_finished(std::int64_t sample) const noexcept
     {
-        return note_off_ >= 0 && sample - note_off_ >= release_samples_;
+        if (note_off_ >= 0 && sample - note_off_ >= release_samples_) {
+            return true;
+        }
+        return targets_.back() <= 0.0 && sample >= to_.back();
+    }
+
+    /// The gain each segment ramps to, in the order they run.
+    ///
+    /// Exposed so a built envelope can be read back and compared against the module's own, which
+    /// `scdec tvatrace` lifts out of `voice+0x16/0x1d2/0x1d4/0x1d6` after note-on. Inferring an
+    /// envelope error from the audio it produces is guesswork; this makes it arithmetic.
+    [[nodiscard]] std::span<const double, segment_count> targets() const noexcept
+    {
+        return targets_;
+    }
+
+    /// Where each segment ends, in samples from note-on. The module's counterpart is a duration in
+    /// milliseconds at `voice+0x12/0x1c6/0x1c8/0x1ca`, so these are cumulative and those are not.
+    [[nodiscard]] std::span<const std::int64_t, segment_count> segment_ends() const noexcept
+    {
+        return to_;
     }
 
 private:

@@ -41,8 +41,8 @@ class TSPlayer : public MIDIPlayer {
 	std::string romPath;
 
 	std::unique_ptr<const ts::RomImage> rom;
-	ts::NoteRenderer *notes[2];
-	ts::ToneGenerator *tonegen[2];
+	ts::NoteRenderer *notes;
+	ts::ToneGenerator *tonegen;
 };
 
 #endif // !__TSPlayer_h__

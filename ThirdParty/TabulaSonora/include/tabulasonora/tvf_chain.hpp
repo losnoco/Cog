@@ -1,6 +1,8 @@
 #pragma once
 
+#include "tabulasonora/control_ramp.hpp"
 #include "tabulasonora/envelope_machine.hpp"
+#include "tabulasonora/part_modifiers.hpp"
 #include "tabulasonora/partial_parameters.hpp"
 #include "tabulasonora/segment_envelope.hpp"
 #include "tabulasonora/state_variable_filter.hpp"
@@ -42,6 +44,12 @@ public:
         int base_cutoff = 0;
     };
 
+    /// The pair of coefficients the filter runs on for one control block.
+    struct Coefficients {
+        double frequency = 0.0;
+        double damping = 0.0;
+    };
+
     /// Creates the chain over a loaded table set and the shared machine, both of which must outlive
     /// it.
     TvfChain(const TableSet& tables, const EnvelopeMachine& envelope);
@@ -54,15 +62,37 @@ public:
     [[nodiscard]] FilterTap tap(int filter_type) const noexcept;
 
     /// The resonance byte — stage A. Floored at 4.
+    ///
+    /// `part_resonance` is the part's CC#71 modify byte (`part+0x3e7`) and `part_resonance_default`
+    /// its user-tone sibling (`part+0x456`), which a standard file leaves neutral. Both subtract, so
+    /// raising CC#71 *lowers* the byte and, since the byte is reciprocal-Q, raises the resonance.
+    ///
+    /// The engine recomputes this every control tick, not once per note: `FUN_1800845c0` reads both
+    /// part bytes through the voice's part pointer each time stage A runs.
     [[nodiscard]] static int resonance_byte(const PartialParameters& partial,
                                             int part_resonance = 0x40,
                                             int part_resonance_default = 0x40) noexcept;
+
+    /// The same, from a partial's already-extracted resonance byte.
+    ///
+    /// A voice keeps that one byte rather than the whole partial, because it has to redo this on
+    /// every block against a CC#71 that may have moved since the note started.
+    [[nodiscard]] static int resonance_byte_of(int partial_resonance,
+                                               int part_resonance = 0x40,
+                                               int part_resonance_default = 0x40) noexcept;
 
     /// Warps a 15-bit cutoff sum and clamps it to the resonance-dependent ceiling — stage C.
     ///
     /// The ceiling at neutral resonance times four is 245,760 — the "fully open" constant an
     /// earlier calibration measured empirically. It is a ceiling, not a saturation of the sum.
     [[nodiscard]] int cutoff_units(double cutoff15, int resonance_byte) const noexcept;
+
+    /// The integer `f` is carried as between the exponential table and the filter.
+    ///
+    /// This is what `voice_ctrl_ramp_c` accumulates, so it is the quantity a ramp has to walk in:
+    /// gliding the decoded double instead would be a different curve, because the decode truncates
+    /// three bits off the bottom.
+    [[nodiscard]] int frequency_accumulator(int units) const noexcept;
 
     /// The filter's frequency coefficient `f`.
     ///
@@ -79,6 +109,25 @@ public:
     /// values are more resonant — effectively `Q = 64 / resonance_byte`.
     [[nodiscard]] double
     damping_coefficient(int units, int resonance_byte, int filter_type) const noexcept;
+
+    /// Both coefficients at once, with `f` clamped to the stability ceiling `q` selects.
+    ///
+    /// The engine couples the two: `voice_ctrl_ramp_d` ramps `q` and, from the same value, clamps
+    /// the `f` that `voice_ctrl_ramp_c` has just written — `f = min(f, g_svf_f_ceil[q_raw >> 8])`.
+    /// The ceiling is Chamberlin's own stability bound, `sqrt(q^2 + 4) − q`, so the clamp keeps the
+    /// filter out of the region where the loop diverges. Anything that runs the filter must take
+    /// its coefficients from here rather than from the two accessors separately.
+    ///
+    /// The clamp is inert over every cutoff and resonance the engine can reach: `cutoff_units`
+    /// already holds `f` below the ceiling for all three `q` branches, though only just — filter
+    /// type 6 at resonance byte 4 comes within 0.78%. It is implemented because it is a real stage,
+    /// not because it changes a render.
+    [[nodiscard]] Coefficients
+    coefficients(int units, int resonance_byte, int filter_type) const noexcept;
+
+    /// The shared `g_ramp_exp_tbl`. The pitch ramp decodes its sampler increment from the same
+    /// table and the same octave size, so it is exposed here rather than loaded twice.
+    [[nodiscard]] std::span<const std::int32_t> ramp_exp() const noexcept { return ramp_exp_; }
 
     /// The cutoff in Hz. Diagnostic only — the filter never needs it.
     [[nodiscard]] double
@@ -104,10 +153,24 @@ public:
     /// The running level starts at zero rather than at the release level: all five targets are made
     /// relative to the peak, and the peak itself is folded into the base cutoff instead. TVF
     /// segments are always linear — unlike the TVA, the shape is not data-driven here.
+    ///
+    /// `modifiers` supplies the part's cutoff offset, which always applies, and its envelope
+    /// offsets, which apply only when the partial opts in — see `responds_to_env_modifiers`.
     [[nodiscard]] Envelope create_envelope(const PartialParameters& partial,
                                            int velocity,
                                            int key,
-                                           int sample_rate = 32000) const;
+                                           int sample_rate = 32000,
+                                           const PartModifiers& modifiers = {}) const;
+
+    /// Whether this partial's filter envelope follows the part's envelope modify offsets.
+    ///
+    /// Bit 4 of block byte 0x0E. `tvf_compute_env_rates` zeroes its bias outright when the bit is
+    /// clear, so on those partials CC#73/75/72 move the amplitude envelope and leave the filter
+    /// envelope alone. The amplitude side has no such gate.
+    [[nodiscard]] static bool responds_to_env_modifiers(const PartialParameters& partial) noexcept
+    {
+        return (partial.raw()[0x0E] & 0x10) != 0;
+    }
 
     /// The 15-bit cutoff trajectory over a note, clamped to 15 bits.
     [[nodiscard]] std::vector<double> envelope(const PartialParameters& partial,
@@ -145,6 +208,9 @@ private:
     [[nodiscard]] int env_depth_word(int offset) const;
     [[nodiscard]] int pitch_bias(int magnitude) const;
 
+    /// The damping coefficient before its scaling — the integer the ceiling is indexed by.
+    [[nodiscard]] int damping_raw(int units, int resonance_byte, int filter_type) const noexcept;
+
     const EnvelopeMachine* envelope_machine_;
     std::span<const std::uint8_t> env_depth_;
     std::span<const std::uint8_t> pitch_env_;
@@ -157,6 +223,7 @@ private:
     std::span<const std::uint16_t> q_low_pass_;
     std::span<const std::uint16_t> q_type6_;
     std::span<const std::int32_t> ramp_exp_;
+    std::span<const float> f_ceiling_;
     std::span<const std::uint8_t> velocity_sensitivity_;
 };
 

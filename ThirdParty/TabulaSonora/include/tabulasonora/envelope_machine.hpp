@@ -77,8 +77,15 @@ public:
     /// It fires once; it is a delayed start, not a tremolo. `0xff` is the one-shot form: held for
     /// the voice's whole life, so the sample plays at its note-on control levels (the `.o`
     /// variation tones), and note-off takes the fast fade instead of the release.
+    /// The envelope hold clock's delay, in samples.
+    ///
+    /// `delay_bias` is the sum of the part's two hold-clock biases (`40 1x 38` and `40 4x 38`),
+    /// each `0x40` for no change, so `0x80` is neutral. It is not a trim: the rate curve's first
+    /// entry is zero, so a bias above neutral **arms** the clock on a partial whose own clock byte
+    /// is zero, delaying every voice on the part by up to 24 seconds.
     [[nodiscard]] std::int64_t hold_samples(const PartialParameters& partial,
-                                            int velocity) const noexcept;
+                                            int velocity,
+                                            int delay_bias = 0x80) const noexcept;
 
 private:
     std::span<const std::uint16_t> rate_curve_;
@@ -86,7 +93,8 @@ private:
     std::span<const std::uint8_t> scale_curve_;
 
     /// Only the first 256 entries of `g_env_shape` are used; the cache over-reads.
-    std::array<double, 256> shape_{};
+    /// 257, not 256: `segment_curve` interpolates from entry `k` up to `k + 1`, and `k` reaches 255.
+    std::array<double, 257> shape_{};
 };
 
 } // namespace ts

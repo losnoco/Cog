@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tabulasonora/envelope_machine.hpp"
+#include "tabulasonora/part_modifiers.hpp"
 #include "tabulasonora/partial_parameters.hpp"
 #include "tabulasonora/segment_envelope.hpp"
 #include "tabulasonora/table_set.hpp"
@@ -72,6 +73,9 @@ public:
     /// keeps it at `voice+0x161`, which `voice_trigger_partials` fills from the note plus a
     /// transpose; on a drum part that works out to the kit's coarse-pitch plane, so it is not the
     /// MIDI key. Nothing uses `key`, which is what a melodic note wants.
+    ///
+    /// `modifiers` carries the part's envelope offsets. The amplitude envelope takes them
+    /// unconditionally — unlike the filter envelope, which the partial can opt out of.
     [[nodiscard]] SegmentEnvelope create_envelope(const PartialParameters& partial,
                                                   int velocity,
                                                   int key,
@@ -79,7 +83,8 @@ public:
                                                   int tone_level = 127,
                                                   int sample_rate = 32000,
                                                   double attack_milliseconds = 0.0,
-                                                  std::optional<int> rate_key = std::nullopt) const;
+                                                  std::optional<int> rate_key = std::nullopt,
+                                                  const PartModifiers& modifiers = {}) const;
 
     /// Renders the amplitude envelope for one note, or an empty vector when it cannot sound.
     ///
@@ -104,6 +109,20 @@ public:
     /// intermediate exceeds 32 bits, so it is computed widened.
     [[nodiscard]] static double
     part_volume_scale(int volume = 127, int expression = 127, int master = 127) noexcept;
+
+    /// The same law as an integer, in the units the control ramp's target is set in.
+    ///
+    /// `voice_volume_apply` @`180060390` returns this, and the tail `part_volume_scale` does not
+    /// model is where it comes from: the squared product is taken sixteen bits down, narrowed to
+    /// `uint16`, scaled by `0x208` and shifted back by eight. Everything at 127 yields 32764 rather
+    /// than a round 32768, so a part at full volume rests a whisker under unity — 0.99988, which is
+    /// -0.001 dB. That is the engine's number, and the ramp's gain is derived from it rather than
+    /// from `part_volume_scale`, so the two differ in the last few places by design.
+    ///
+    /// The TVA-destination LFO the engine folds in here is not modelled: it reaches the voice
+    /// through the control matrix instead.
+    [[nodiscard]] static int
+    part_volume_word(int volume = 127, int expression = 127, int master = 127) noexcept;
 
 private:
     const EnvelopeMachine* envelope_;

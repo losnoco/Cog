@@ -65,7 +65,7 @@ public:
     [[nodiscard]] static Reverb for_type(std::optional<int> type);
 
     /// The send-bus gain for CC#91. Linear in the controller, unlike the volume law.
-    [[nodiscard]] static double send_gain(int controller) noexcept
+    [[nodiscard]] static double send_gain(double controller) noexcept
     {
         return ReverbPresets::send_at_full_scale * (controller / 127.0);
     }
@@ -120,7 +120,7 @@ public:
     [[nodiscard]] static Chorus for_type(std::optional<int> type);
 
     /// The send-bus gain for CC#93.
-    [[nodiscard]] static double send_gain(int controller) noexcept
+    [[nodiscard]] static double send_gain(double controller) noexcept
     {
         return ChorusPresets::send_at_full_scale * (controller / 127.0);
     }
@@ -174,7 +174,7 @@ public:
     /// The send-bus gain for a part's delay send, 0–127.
     ///
     /// There is no Control Change for this: the delay send is reachable only over SysEx.
-    [[nodiscard]] static double send_gain(int send) noexcept
+    [[nodiscard]] static double send_gain(double send) noexcept
     {
         return DelayPresets::send_at_full_scale * (send / 127.0);
     }
@@ -199,11 +199,9 @@ private:
     DelayParameters parameters_;
     std::vector<double> ring_ = std::vector<double>(ring_size, 0.0);
 
-    int pre_delay_ = DelayPresets::pre_delay_samples;
     double pre_low_pass_coefficient_ = 0.0;
-    std::vector<float> pending_left_;
-    std::vector<float> pending_right_;
-    int pending_ = 0;
+    double dc_state_ = 0.0;
+    double feedback_hold_ = 0.0;
     double lowpass_ = 0.0;
     int write_cursor_ = 0;
 };
