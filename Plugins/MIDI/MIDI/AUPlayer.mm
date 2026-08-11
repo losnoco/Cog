@@ -367,6 +367,18 @@ bool AUPlayer::openInstance(const AudioComponentDescription &cd, Instance &into)
 	into.unit = created.audioUnit;
 	into.auUnit = created.AUAudioUnit;
 
+	/* And let the block's own reference go.
+	 *
+	 * `created` is a __block variable, so it lives in the block's heap copy and
+	 * holds the node strongly for as long as that copy survives -- which is not
+	 * ours to decide, and in practice is much longer than this call. Without
+	 * this, closing the instance drops our reference and the audio unit stays
+	 * alive regardless: measured in Cog, one whole plugin retained per file
+	 * played, and with it an extension process growing by a set of tables a
+	 * track. The players themselves were being deleted correctly; it was only
+	 * ever this that kept their units. */
+	created = nil;
+
 	/* Before the unit is initialized, which is when the API says to take them. */
 	into.scheduleEvent = into.auUnit.scheduleMIDIEventBlock;
 	if(@available(macOS 12.0, iOS 15.0, *))
