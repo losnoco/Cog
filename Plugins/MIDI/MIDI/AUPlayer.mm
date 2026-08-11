@@ -204,7 +204,10 @@ void AUPlayer::renderChunk(float *out, uint32_t count) {
 				bzero(bufferList->mBuffers[j].mData, numberFrames * sizeof(float));
 			}
 
-			AudioUnitRender(instances[i].unit, &ioActionFlags, &mTimeStamp, 0, numberFrames, bufferList);
+			if(instances[i].render)
+				instances[i].render(&ioActionFlags, &mTimeStamp, numberFrames, 0, bufferList, nil);
+			else
+				AudioUnitRender(instances[i].unit, &ioActionFlags, &mTimeStamp, 0, numberFrames, bufferList);
 
 			ptrL = (const float *)bufferList->mBuffers[0].mData;
 			ptrR = (const float *)bufferList->mBuffers[1].mData;
@@ -235,6 +238,7 @@ void AUPlayer::closeInstance(Instance &instance) {
 	 * The blocks are released with it and must not outlive it. */
 	instance.scheduleEvent = nil;
 	instance.scheduleEventList = nil;
+	instance.render = nil;
 	instance.auUnit = nil;
 	instance.node = nil;
 	instance.needsInput = false;
@@ -367,6 +371,8 @@ bool AUPlayer::openInstance(const AudioComponentDescription &cd, Instance &into)
 	into.scheduleEvent = into.auUnit.scheduleMIDIEventBlock;
 	if(@available(macOS 12.0, iOS 15.0, *))
 		into.scheduleEventList = into.auUnit.scheduleMIDIEventListBlock;
+
+	into.render = into.auUnit.renderBlock;
 
 	return true;
 }
