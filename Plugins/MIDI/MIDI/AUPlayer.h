@@ -68,6 +68,9 @@ class AUPlayer : public MIDIPlayer {
 		AUScheduleMIDIEventBlock scheduleEvent = nil;
 		AUMIDIEventListBlock scheduleEventList = nil;
 
+		/* The AUv3 render block */
+		AURenderBlock render = nil;
+
 		bool needsInput = false;
 	};
 
