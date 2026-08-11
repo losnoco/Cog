@@ -14,6 +14,8 @@
 
 #import "AUPlayerView.h"
 
+#import "Logging.h"
+
 #import <File_Extractor/fex.h>
 
 #import "SHA256Digest.h"
@@ -43,24 +45,28 @@ static OSType getOSType(const char *in_) {
 	if(!comp)
 		return;
 
-	AudioUnit au = NULL;
+	/* Asynchronously, and through AVAudioUnit, because AudioComponentInstanceNew
+	 * cannot create an AUv3 at all: an app extension lives in another process
+	 * and there is nothing for a synchronous call to return. That is why
+	 * choosing a v3 plugin here opened no window and said nothing.
+	 *
+	 * AVAudioUnit is also what gives AUPluginUI both faces of the instance --
+	 * the v2 handle its property calls need, and the AUAudioUnit that vends an
+	 * app extension's view. It owns the instance, so nothing disposes of it by
+	 * hand; AUPluginUI lets go of it when its window closes. */
+	[AVAudioUnit instantiateWithComponentDescription:cd
+	                                         options:0
+	                               completionHandler:^(AVAudioUnit *node, NSError *error) {
+		if(!node) {
+			ALog(@"Could not instantiate MIDI plugin %@: %@", plugin, error);
+			return;
+		}
 
-	OSStatus error;
-
-	error = AudioComponentInstanceNew(comp, &au);
-
-	if(error != noErr)
-		return;
-
-	/*error = AudioUnitInitialize(au);
-	if(error != noErr)
-		return;*/
-
-	AUPluginUI * pluginUI = new AUPluginUI(plugin, au);
-
-	if(!pluginUI->window_opened()) {
-		delete pluginUI;
-	}
+		dispatch_async(dispatch_get_main_queue(), ^{
+			/* Owned by the window it opens, and deleted when that closes. */
+			new AUPluginUI(plugin, node);
+		});
+	}];
 }
 
 + (NSString *)romPath {
