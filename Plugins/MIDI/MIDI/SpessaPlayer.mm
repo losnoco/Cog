@@ -242,8 +242,6 @@ void SpessaPlayer::setInterpolation(SS_InterpolationType interp) {
 
 void SpessaPlayer::shutdown() {
 	if(_synth) {
-		ss_processor_remove_soundbank(_synth, "fileBank", true);
-		ss_processor_remove_soundbank(_synth, "globalBank", true);
 		ss_processor_free(_synth);
 		_synth = nullptr;
 	}
