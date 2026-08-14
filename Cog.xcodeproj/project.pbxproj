@@ -997,6 +997,7 @@
 		606000000000000000000004 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PathSuggester.m; path = Preferences/PathSuggester.m; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		8307D30C28606148000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxBroker.h; sourceTree = "<group>"; };
+		83C0F1A02E4C1B0100C0F1A0 /* CogURLNormalization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogURLNormalization.h; sourceTree = "<group>"; };
 		8307D30D28606148000FF8EB /* SandboxBroker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SandboxBroker.m; sourceTree = "<group>"; };
 		830C37A027B95E3000E02BB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Equalizer.xib; sourceTree = "<group>"; };
 		830C37A327B95EB300E02BB0 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EqualizerWindowController.h; path = Equalizer/EqualizerWindowController.h; sourceTree = "<group>"; };
@@ -1401,6 +1402,7 @@
 				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
 				8307D30C28606148000FF8EB /* SandboxBroker.h */,
 				8307D30D28606148000FF8EB /* SandboxBroker.m */,
+				83C0F1A02E4C1B0100C0F1A0 /* CogURLNormalization.h */,
 			);
 			path = Utils;
 			sourceTree = "<group>";

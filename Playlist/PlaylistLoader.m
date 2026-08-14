@@ -27,6 +27,8 @@
 
 #import "XmlContainer.h"
 
+#import "CogURLNormalization.h"
+
 #import "NSData+MD5.h"
 
 #import "NSString+FinderCompare.h"
@@ -454,6 +456,9 @@ static inline BOOL isCueSheetTrackURL(NSURL *url) {
 
 	NSURL *url;
 	for(url in urls) {
+		/* Drops and services can hand us file reference URLs, which most of the
+		 * player cannot open and which must never reach the database. */
+		url = CogNormalizeURL(url);
 		id<SentrySpan> pathTask = [sandboxTask startChildWithOperation:@"Process one folder" description:[NSString stringWithFormat:@"Processing file or folder: %@", url]];
 		@try {
 			if(!url) continue;
@@ -1260,13 +1265,31 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 		}
 		[resultsCopy removeObjectsAtIndexes:pruneSet];
 
+		/* Older versions stored whatever the drop handed them, which for a drag
+		 * from some sources is a file reference URL. Resolve those back to real
+		 * paths now, while the referenced files are presumably still around. */
+		BOOL urlsNormalized = NO;
+		for(PlaylistEntry *pe in resultsCopy) {
+			NSString *normalized = CogNormalizeURLStringIfNeeded(pe.urlString);
+			if(normalized) {
+				DLog(@"Normalizing stored file reference URL %@ to %@", pe.urlString, normalized);
+				pe.urlString = normalized;
+				urlsNormalized = YES;
+			}
+			normalized = CogNormalizeURLStringIfNeeded(pe.trashUrlString);
+			if(normalized) {
+				pe.trashUrlString = normalized;
+				urlsNormalized = YES;
+			}
+		}
+
 		if(!dataMigrated) {
 			for(PlaylistEntry *pe in resultsCopy) {
 				pe.metadataLoaded = NO;
 			}
 		}
 
-		if([pruneSet count] || !dataMigrated) {
+		if([pruneSet count] || urlsNormalized || !dataMigrated) {
 			[playlistController commitPersistentStoreAsync];
 		}
 

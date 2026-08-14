@@ -45,6 +45,10 @@ static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString 
 		return @[];
 	}
 
+	/* The archive path gets baked into every unpack:// URL below, so it has to
+	 * be a real path rather than a file reference. */
+	url = CogNormalizeURL(url);
+
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 

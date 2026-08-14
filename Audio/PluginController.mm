@@ -10,6 +10,8 @@
 
 #import "RedundantPlaylistDataStore.h"
 
+#import "CogURLNormalization.h"
+
 #import <chrono>
 #import <map>
 #import <mutex>
@@ -579,6 +581,8 @@ static NSString *xmlEscapeString(NSString * string) {
 }
 
 - (NSArray *)urlsForContainerURL:(NSURL *)url {
+	url = CogNormalizeURL(url);
+
 	NSString *ext = [url pathExtension];
 	NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
 	NSString *classString;
@@ -598,6 +602,8 @@ static NSString *xmlEscapeString(NSString * string) {
 }
 
 - (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url {
+	url = CogNormalizeURL(url);
+
 	NSString *ext = [url pathExtension];
 	NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
 	NSString *classString;
@@ -677,6 +683,8 @@ static NSString *xmlEscapeString(NSString * string) {
 }
 
 - (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip {
+	url = CogNormalizeURL(url);
+
 	NSString *urlScheme = [url scheme];
 	if([urlScheme isEqualToString:@"http"] ||
 	   [urlScheme isEqualToString:@"https"])
@@ -761,6 +769,8 @@ static NSString *xmlEscapeString(NSString * string) {
 
 // If no properties reader is defined, use the decoder's properties.
 - (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip {
+	url = CogNormalizeURL(url);
+
 	NSString *urlScheme = [url scheme];
 	if([urlScheme isEqualToString:@"http"] ||
 	   [urlScheme isEqualToString:@"https"])
