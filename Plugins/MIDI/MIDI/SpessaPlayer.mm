@@ -117,12 +117,13 @@ static SS_SoundBank *open_font(const char *path) {
 }
 
 SS_File *cog_file_open(const char *path) {
+	NSString *spath = [NSString stringWithUTF8String:path];
 	if(!strstr(path, "://")) {
-		return ss_file_open_from_file(path);
+		spath = [@"file://" stringByAppendingString:spath];
 	}
 
 	id audioSourceClass = NSClassFromString(@"AudioSource");
-	NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:path]];
+	NSURL *url = [NSURL URLWithString:spath];
 	id<CogSource> src = [audioSourceClass audioSourceForURL:url];
 	if(![src open:url]) {
 		return NULL;
