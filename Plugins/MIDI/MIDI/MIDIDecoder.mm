@@ -267,7 +267,8 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		}
 	}
 
-	if(midi_file && midi_file->embedded_soundbank && midi_file->embedded_soundbank_size > 0) {
+	if((midi_file && midi_file->embedded_soundbank && midi_file->embedded_soundbank_size > 0) ||
+	   [soundFontPath length]) {
 		plugin = @"Spessa";
 	}
 
