@@ -35,6 +35,9 @@ private final class MIDIPrefs: ObservableObject {
     @Published var synthSampleRate: Int {
         didSet { guard isActive else { return }; UserDefaults.standard.set(synthSampleRate, forKey: "synthSampleRate") }
     }
+	@Published var synthResampling: String {
+		didSet { guard isActive else { return }; UserDefaults.standard.set(synthResampling, forKey: "resampling") }
+	}
 
     deinit { isActive = false }
     @Published var plugins: [MIDIPlugin] = []
@@ -52,6 +55,7 @@ private final class MIDIPrefs: ObservableObject {
         synthDefaultFadeSeconds = d.object(forKey: "synthDefaultFadeSeconds") as? Double ?? 8.0
         synthDefaultLoopCount = d.object(forKey: "synthDefaultLoopCount") as? Int ?? 2
         synthSampleRate = d.object(forKey: "synthSampleRate") as? Int ?? 44100
+		synthResampling = d.string(forKey: "resampling") ?? "cubic"
         plugins = Self.buildPluginList()
         updateSetupButton()
     }
@@ -117,6 +121,15 @@ private func fourCharCode(_ value: OSType) -> String {
 ]
 
 private let sampleRateOptions: [Int] = [22050, 44100, 48000, 88200, 96000, 176400, 192000]
+
+@MainActor private let resamplingOptions: [(LocalizedStringKey, String)] = [
+	("Zero Order Hold", "zoh"),
+	("Blep Synthesis", "blep"),
+	("Linear Interpolation", "linear"),
+	("Blam Synthesis", "blam"),
+	("Cubic Interpolation", "cubic"),
+	("Sinc Interpolation", "sinc"),
+]
 
 // MARK: - View
 
@@ -185,6 +198,11 @@ struct MIDIPaneView: View {
                         .tag(rate)
                 }
             }
+			Picker("Resampling:", selection: $prefs.synthResampling) {
+				ForEach(resamplingOptions, id: \.1) { opt in
+					Text(opt.0).tag(opt.1)
+				}
+			}
             FormRow("Default play time:") {
                 HStack {
                     TextField("", value: $prefs.synthDefaultSeconds, formatter: timeIntervalFormatter())
