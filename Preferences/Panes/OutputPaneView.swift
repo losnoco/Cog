@@ -6,9 +6,6 @@ private final class OutputPrefs: ObservableObject {
     @Published var volumeScaling: String {
         didSet { guard isActive else { return }; UserDefaults.standard.set(volumeScaling, forKey: "volumeScaling") }
     }
-    @Published var resampling: String {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(resampling, forKey: "resampling") }
-    }
     @Published var enableHrtf: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableHrtf, forKey: "enableHrtf") }
     }
@@ -39,7 +36,6 @@ private final class OutputPrefs: ObservableObject {
     init() {
         let d = UserDefaults.standard
         volumeScaling = d.string(forKey: "volumeScaling") ?? "albumGainWithPeak"
-        resampling = d.string(forKey: "resampling") ?? "cubic"
         enableHrtf = d.bool(forKey: "enableHrtf")
         enableHeadTracking = d.bool(forKey: "enableHeadTracking")
         enableFSurround = d.bool(forKey: "enableFSurround")
@@ -59,15 +55,6 @@ private final class OutputPrefs: ObservableObject {
     ("SoundCheck", "soundcheck", 1),
     ("Volume scale tag only", "volumeScale", 1),
     ("No volume scaling", "none", 2),
-]
-
-@MainActor private let resamplingOptions: [(LocalizedStringKey, String)] = [
-    ("Zero Order Hold", "zoh"),
-    ("Blep Synthesis", "blep"),
-    ("Linear Interpolation", "linear"),
-    ("Blam Synthesis", "blam"),
-    ("Cubic Interpolation", "cubic"),
-    ("Sinc Interpolation", "sinc"),
 ]
 
 struct OutputPaneView: View {
@@ -111,11 +98,6 @@ struct OutputPaneView: View {
                     ForEach(volumeOptions.filter { $0.2 == 2 }, id: \.1) { opt in
                         Text(opt.0).tag(opt.1)
                     }
-                }
-            }
-            Picker("Resampling:", selection: $prefs.resampling) {
-                ForEach(resamplingOptions, id: \.1) { opt in
-                    Text(opt.0).tag(opt.1)
                 }
             }
             Toggle("Limit volume to prevent clipping", isOn: $prefs.volumeLimit)
