@@ -99,6 +99,8 @@ static SandboxBroker *kSharedSandboxBroker = nil;
 + (NSURL *_Nullable)urlWithoutFragment:(NSURL *)url {
 	if(![url isFileURL]) return url;
 
+	url = CogNormalizeURL(url);
+
 	NSString *s = [url path];
 	if(!s) return nil; // Cool, the resource no longer exists!
 
@@ -242,6 +244,8 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 - (void)addFolderIfMissing:(NSURL *)folderUrl {
 	if(![folderUrl isFileURL]) return;
 
+	folderUrl = CogNormalizeURL(folderUrl);
+
 	dispatch_async_reentrant(dispatch_get_main_queue(), ^{
 		SandboxEntry *_entry = nil;
 
@@ -281,6 +285,8 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 
 - (void)addFileIfMissing:(NSURL *)fileUrl {
 	if(![fileUrl isFileURL]) return;
+
+	fileUrl = CogNormalizeURL(fileUrl);
 
 	NSURL *url = [SandboxBroker urlWithoutFragment:fileUrl];
 	if(!url) return;
@@ -327,7 +333,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 
 - (void)requestFolderForFile:(NSURL *)fileUrl {
 	if(![fileUrl isFileURL]) return;
-	NSURL *folderUrl = [fileUrl URLByDeletingLastPathComponent];
+	NSURL *folderUrl = [CogNormalizeURL(fileUrl) URLByDeletingLastPathComponent];
 
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		SandboxEntry *_entry = nil;
@@ -500,7 +506,7 @@ static inline void dispatch_async_reentrant(dispatch_queue_t queue, dispatch_blo
 - (BOOL)areAllPathsSafe:(NSArray *)urls {
 	for(NSURL *url in urls) {
 		if(![url isFileURL]) continue;
-		if(![self recursivePathTest:url]) {
+		if(![self recursivePathTest:CogNormalizeURL(url)]) {
 			return NO;
 		}
 	}

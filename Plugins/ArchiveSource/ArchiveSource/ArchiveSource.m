@@ -85,6 +85,10 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 	if(![type isEqualToString:@"fex"])
 		return NO;
 
+	/* An unpack:// URL stored before archive paths were normalized can still
+	 * carry a file reference, which fex_open() cannot use. */
+	archive = CogNormalizeFilePath(archive);
+
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
 

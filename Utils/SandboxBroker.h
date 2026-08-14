@@ -7,6 +7,10 @@
 
 #import <Foundation/Foundation.h>
 
+/* Imported here so that the plugins, which already reach this header, get the
+ * file reference URL helpers along with it. */
+#import "CogURLNormalization.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SandboxBroker : NSObject {

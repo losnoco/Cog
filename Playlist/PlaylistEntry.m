@@ -13,6 +13,7 @@
 #import "PlaylistEntry.h"
 
 #import "AVIFDecoder.h"
+#import "CogURLNormalization.h"
 #import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
@@ -469,7 +470,9 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 
 	NSRange protocolRange = [path rangeOfString:@"://"];
 	if(protocolRange.location != NSNotFound) {
-		return [NSURL URLWithString:path];
+		/* Anything stored before file reference URLs were normalized on the way
+		 * in still has to be usable now. */
+		return CogNormalizeURL([NSURL URLWithString:path]);
 	}
 
 	NSMutableString *unixPath = [path mutableCopy];
@@ -490,7 +493,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	}
 
 	// Append the fragment
-	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:unixPath] absoluteString] stringByAppendingString:fragment]];
+	NSString *filePath = CogNormalizeFilePath(unixPath);
+	NSURL *url = [NSURL URLWithString:[[[NSURL fileURLWithPath:filePath] absoluteString] stringByAppendingString:fragment]];
 	return url;
 }
 
@@ -500,7 +504,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 - (void)setUrl:(NSURL *)url {
-	self.urlString = url ? [url absoluteString] : nil;
+	self.urlString = url ? [CogNormalizeURL(url) absoluteString] : nil;
 }
 
 @dynamic urlBookmark;
@@ -511,7 +515,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 }
 
 - (void)setTrashUrl:(NSURL *)trashUrl {
-	self.trashUrlString = trashUrl ? [trashUrl absoluteString] : nil;
+	self.trashUrlString = trashUrl ? [CogNormalizeURL(trashUrl) absoluteString] : nil;
 }
 
 @dynamic path;

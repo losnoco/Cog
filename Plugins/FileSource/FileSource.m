@@ -28,6 +28,9 @@
 }
 
 - (BOOL)open:(NSURL *)url {
+	/* fopen() below cannot do anything with a file reference URL. */
+	url = CogNormalizeURL(url);
+
 	[self setURL:url];
 
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
