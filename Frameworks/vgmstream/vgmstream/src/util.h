@@ -49,6 +49,7 @@ static inline /*const*/ uint64_t get_id64be(const char* s) {
 /* less common functions, no need to inline */
 
 uint32_t clamp_u32(uint32_t v, uint32_t min, uint32_t max);
+int32_t clamp_s32(int32_t v, int32_t min, int32_t max);
 
 #define align_size align_size_to_block
 
@@ -59,9 +60,9 @@ size_t align_size_to_block(size_t value, size_t block_align);
  * extension in the original filename or the ending null byte if no extension */
 const char* filename_extension(const char* pathname);
 
-void concatn(int length, char * dst, const char * src);
-
 /* checks max subsongs and setups target */
 bool check_subsongs(int* target_subsong, int total_subsongs);
+
+bool prealloc_buf(void** buf, int* current_size, int target_size);
 
 #endif

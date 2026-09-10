@@ -406,6 +406,7 @@
 				<string>ast</string>
 				<string>at3</string>
 				<string>at9</string>
+				<string>at9psv</string>
 				<string>atsl</string>
 				<string>atsl3</string>
 				<string>atsl4</string>
@@ -481,6 +482,7 @@
 				<string>csmp</string>
 				<string>cvs</string>
 				<string>cwav</string>
+				<string>cwv</string>
 				<string>cxb</string>
 				<string>cxk</string>
 				<string>cxs</string>
@@ -520,7 +522,7 @@
 				<string>ezw</string>
 				<string>fag</string>
 				<string>fda</string>
-				<string>filp</string>
+				<string>fil</string>
 				<string>fish</string>
 				<string>flx</string>
 				<string>fsb</string>
@@ -534,6 +536,7 @@
 				<string>gcub</string>
 				<string>gcw</string>
 				<string>ged</string>
+				<string>gen</string>
 				<string>genh</string>
 				<string>gin</string>
 				<string>gmd</string>
@@ -703,7 +706,6 @@
 				<string>mvb</string>
 				<string>mwa</string>
 				<string>mwv</string>
-				<string>mxst</string>
 				<string>myspd</string>
 				<string>n64</string>
 				<string>naac</string>
@@ -716,6 +718,7 @@
 				<string>npsf</string>
 				<string>nsa</string>
 				<string>nsopus</string>
+				<string>nst</string>
 				<string>nfx</string>
 				<string>nub</string>
 				<string>nub2</string>
@@ -737,6 +740,7 @@
 				<string>omu</string>
 				<string>oor</string>
 				<string>opu</string>
+				<string>opusnsw</string>
 				<string>opusnx</string>
 				<string>opusx</string>
 				<string>oto</string>
@@ -891,6 +895,7 @@
 				<string>ssp</string>
 				<string>sspr</string>
 				<string>sss</string>
+				<string>ste</string>
 				<string>ster</string>
 				<string>sth</string>
 				<string>stm</string>
@@ -904,6 +909,8 @@
 				<string>svag</string>
 				<string>svs</string>
 				<string>svg</string>
+				<string>sw</string>
+				<string>sw2</string>
 				<string>swag</string>
 				<string>swar</string>
 				<string>swav</string>

@@ -9,7 +9,7 @@ typedef struct {
     VGMSTREAM* (*init_vgmstream_subkey)(STREAMFILE* sf, uint16_t subkey);
     const char* extension;
     bool load_loops;
-    bool use_riff_size;
+    uint32_t subfile_size;
 } meta_info_t;
 
 static bool load_meta_type(meta_info_t* meta, STREAMFILE* sf, uint32_t subfile_offset);
@@ -42,11 +42,16 @@ VGMSTREAM* init_vgmstream_awb_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
     uint8_t offset_size         = read_u8   (0x05,sf);
     uint16_t waveid_alignment   = read_u16le(0x06,sf); // usually 0x02, rarely 0x04 [Voice of Cards: The Beasts of Burden (Switch)]
     int total_subsongs          = read_s32le(0x08,sf);
-    uint16_t offset_alignment   = read_u16le(0x0c,sf);
+    uint16_t offset_alignment   = read_u16le(0x0c,sf); // always(?) 0x20
     uint16_t subkey             = read_u16le(0x0e,sf);
 
+    if (waveid_alignment == 0 || offset_alignment == 0) // avoid div-by-zero
+        return NULL;
+
     if (target_subsong == 0) target_subsong = 1;
-    if (target_subsong > total_subsongs || total_subsongs <= 0) return NULL;
+    if (target_subsong > total_subsongs || total_subsongs <= 0)
+        return NULL;
+
 
     uint32_t offset = 0x10;
 
@@ -96,7 +101,7 @@ VGMSTREAM* init_vgmstream_awb_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
 
         bool meta_ok = load_meta_type(&meta, sf, subfile_offset);
         if (!meta_ok) { 
-            // try encrypted meta (loads key after reguylar cases since it's uncommon)
+            // try encrypted meta (loads key after regular cases since it's uncommon)
             uint64_t keycode = load_keycode(sf);
             if (keycode) {
 #ifdef VGM_USE_FFMPEG
@@ -115,14 +120,17 @@ VGMSTREAM* init_vgmstream_awb_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
             goto fail;
         }
 
-        if (meta.use_riff_size) {
-            subfile_size = read_u32le(subfile_offset + 0x04,sf) + 0x08;
+        if (meta.subfile_size) {
+            subfile_size = meta.subfile_size;
         }
 
         if (!temp_sf) {
             temp_sf = setup_subfile_streamfile(sf, subfile_offset, subfile_size, meta.extension);
             if (!temp_sf) goto fail;
         }
+
+        // don't pass AWB subsong index (ffmpeg/MP4 allows subsongs)
+        temp_sf->stream_index = 0;
 
         if (meta.init_vgmstream_subkey)
             vgmstream = meta.init_vgmstream_subkey(temp_sf, subkey);
@@ -190,13 +198,18 @@ static bool load_meta_type(meta_info_t* meta, STREAMFILE* sf, uint32_t subfile_o
     if (is_id32be(subfile_offset,sf, "RIFF")) {
         meta->init_vgmstream = init_vgmstream_riff;
         meta->extension = "wav";
-        meta->use_riff_size = true; // padded size, use RIFF's
+
+        // padded size, use RIFF's
+        meta->subfile_size = read_u32le(subfile_offset + 0x04,sf) + 0x08;
         return true;
     }
 
     if (is_id32be(subfile_offset,sf, "CWAV")) {
         meta->init_vgmstream = init_vgmstream_bcwav;
         meta->extension = "bcwav";
+
+        // sometimes padded [Mario & Sonic at the Rio 2016 Olympic Games (3DS)]
+        meta->subfile_size = read_u32le(subfile_offset + 0x0c,sf);
         return true;
     }
 

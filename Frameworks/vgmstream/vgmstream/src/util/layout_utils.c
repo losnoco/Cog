@@ -90,6 +90,9 @@ static bool layered_add_internal(VGMSTREAM* vs, int layers, int layer_channels, 
             break;
     }
 
+    if (i >= data->layer_count)
+        goto fail;
+
     data->layers[i] = allocate_vgmstream(layer_channels, vs->loop_flag);
     if (!data->layers[i]) goto fail;
 
@@ -154,14 +157,17 @@ fail:
 /* helper for easier creation of layers */
 VGMSTREAM* allocate_layered_vgmstream(layered_layout_data* data) {
     VGMSTREAM* vgmstream = NULL;
-    int i, channels, loop_flag, sample_rate, external_looping;
+    int channels, loop_flag, sample_rate, external_looping;
     int32_t num_samples, loop_start, loop_end;
-    int delta = 1024;
-    coding_t coding_type = data->layers[0]->coding_type;
+    int loop_delta = 1024;
+    coding_t coding_type;
+
+    if (!data || data->layer_count == 0)
+        return NULL;
 
     /* get data */
+    coding_type = data->layers[0]->coding_type;
     channels = data->output_channels;
-
     num_samples = 0;
     loop_flag = 1;
     loop_start = data->layers[0]->loop_start_sample;
@@ -169,7 +175,7 @@ VGMSTREAM* allocate_layered_vgmstream(layered_layout_data* data) {
     external_looping = 0;
     sample_rate = 0;
 
-    for (i = 0; i < data->layer_count; i++) {
+    for (int i = 0; i < data->layer_count; i++) {
         int32_t layer_samples = vgmstream_get_samples(data->layers[i]);
         int layer_loop = data->layers[i]->loop_flag;
         int32_t layer_loop_start = data->layers[i]->loop_start_sample;
@@ -187,8 +193,8 @@ VGMSTREAM* allocate_layered_vgmstream(layered_layout_data* data) {
         /* all layers should share loop pointsto consider looping enabled,
          * but allow some leeway (ex. Dragalia Lost bgm+vocals ~12 samples) */
         if (!layer_loop
-                || !(loop_start >= layer_loop_start - delta && loop_start <= layer_loop_start + delta)
-                || !(loop_end >= layer_loop_end - delta && loop_start <= layer_loop_end + delta)) {
+                || !(loop_start >= layer_loop_start - loop_delta && loop_start <= layer_loop_start + loop_delta)
+                || !(loop_end >= layer_loop_end - loop_delta && loop_start <= layer_loop_end + loop_delta)) {
             loop_flag = 0;
             loop_start = 0;
             loop_end = 0;
@@ -233,18 +239,22 @@ fail:
 /* helper for easier creation of segments */
 VGMSTREAM* allocate_segmented_vgmstream(segmented_layout_data* data, int loop_flag, int loop_start_segment, int loop_end_segment) {
     VGMSTREAM* vgmstream = NULL;
-    int channel_layout;
-    int i, sample_rate;
+    uint32_t channel_layout;
+    int sample_rate;
     int32_t num_samples, loop_start, loop_end;
-    coding_t coding_type = data->segments[0]->coding_type;
+    coding_t coding_type;
+
+    if (!data || data->segment_count == 0)
+        return NULL;
 
     /* save data */
+    coding_type = data->segments[0]->coding_type;
     channel_layout = data->segments[0]->channel_layout;
     num_samples = 0;
     loop_start = 0;
     loop_end = 0;
     sample_rate = 0;
-    for (i = 0; i < data->segment_count; i++) {
+    for (int i = 0; i < data->segment_count; i++) {
         /* needs get_samples since element may use play settings */
         int32_t segment_samples = vgmstream_get_samples(data->segments[i]);
         int segment_rate = data->segments[i]->sample_rate;
@@ -304,8 +314,10 @@ void blocked_count_samples(VGMSTREAM* vgmstream, STREAMFILE* sf, blocked_counter
     int num_empty = 0;
 
     int block_count = 0;
+    int audio_count = 0;
     off_t max_offset = get_streamfile_size(sf);
 
+    vgmstream->num_samples = 0;
     vgmstream->next_block_offset = cfg->offset;
     do {
         block_update(vgmstream->next_block_offset, vgmstream);
@@ -313,10 +325,18 @@ void blocked_count_samples(VGMSTREAM* vgmstream, STREAMFILE* sf, blocked_counter
         if (vgmstream->current_block_samples < 0 || vgmstream->current_block_size == SIZE_MAX)
             break;
 
-        if (cfg->loop_flag && block_count == cfg->loop_start_block)
-            vgmstream->loop_start_sample = vgmstream->num_samples;
-        if (cfg->loop_flag && block_count == cfg->loop_end_block)
-            vgmstream->loop_end_sample = vgmstream->num_samples;
+        if (cfg->loop_flag) {
+
+            if ((!cfg->loop_audio_only && block_count == cfg->loop_start_block) || 
+                ( cfg->loop_audio_only && audio_count == cfg->loop_start_block)) {
+                vgmstream->loop_start_sample = vgmstream->num_samples;
+            }
+
+            if ((!cfg->loop_audio_only && block_count == cfg->loop_end_block) || 
+                ( cfg->loop_audio_only && block_count == cfg->loop_end_block)) {
+                vgmstream->loop_end_sample = vgmstream->num_samples;
+            }
+        }   
 
         int block_samples;
         if (vgmstream->current_block_samples) {
@@ -350,10 +370,14 @@ void blocked_count_samples(VGMSTREAM* vgmstream, STREAMFILE* sf, blocked_counter
             }
         }
         else {
+            audio_count++;
             num_empty = 0;
         }
     }
     while (vgmstream->next_block_offset < max_offset);
+
+    if (cfg->loop_flag && cfg->loop_end_block == -1)
+        vgmstream->loop_end_sample = vgmstream->num_samples;
 
     block_update(cfg->offset, vgmstream); /* reset */
 }

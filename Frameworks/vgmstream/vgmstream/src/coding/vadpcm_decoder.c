@@ -49,10 +49,10 @@ void decode_vadpcm(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacin
 
     scale = 1 << scale;
 
-    VGM_ASSERT_ONCE(index > 8, "DSP: incorrect index at %x\n", (uint32_t)frame_offset);
-    if (index > 8) /* assumed */
-        index = 8;
-    coefs = &stream->vadpcm_coefs[index * (order*8) + 0];
+    VGM_ASSERT_ONCE(index > 7, "DSP: incorrect index at %x\n", (uint32_t)frame_offset);
+    if (index > 7) /* assumed */
+        index = 7;
+    coefs = &stream->vadpcm_coefs[index * (order * 8) + 0];
 
 
     /* read and pre-scale all nibbles, since groups of 8 are needed */
@@ -78,13 +78,13 @@ void decode_vadpcm(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacin
         int16_t* sf_out = &out[j*8];
 
         /* works with 8 samples at a time, related in twisted ways */
-        for( i = 0; i < 8; i++) {
+        for(i = 0; i < 8; i++) {
             int sample, delta = 0;
 
             /* in practice: delta = coefs[0][i] * hist[6] + coefs[1][i] * hist[7],
              * much like XA's coef1*hist1 + coef2*hist2 but with multi coefs */
             for (o = 0; o < order; o++) {
-                delta += coefs[o*8 + i] * hist[(8 - order) + o];
+                delta += coefs[o * 8 + i] * hist[(8 - order) + o];
             }
 
             /* adds all previous samples */
@@ -139,16 +139,14 @@ int32_t vadpcm_bytes_to_samples(size_t bytes, int channels) {
  * - k: coef index (multiplication coefficient for 8 samples in a sub-frame)
  * coefs[i * (order*8) + j * 8 + k * order] = coefs[i][j][k] */
 void vadpcm_read_coefs_be(VGMSTREAM* vgmstream, STREAMFILE* sf, off_t offset, int order, int entries, int ch) {
-    int i;
 
-    if (entries > 8)
-        entries = 8;
-    VGM_ASSERT(order != 2, "VADPCM: wrong order %i found\n", order);
-    if (order != 2)
-        order = 2;
+    if (entries < 1 || entries > 8 ) {
+        VGM_LOG("VADPCM: wrong entries %i / order %i found\n", entries, order);
+        return;
+    }
 
     /* assumes all channels use same coefs, never seen non-mono files */
-    for (i = 0; i < entries * order * 8; i++) {
+    for (int i = 0; i < entries * order * 8; i++) {
         vgmstream->ch[ch].vadpcm_coefs[i] = read_s16be(offset + i*2, sf);
     }
     vgmstream->codec_config = order;

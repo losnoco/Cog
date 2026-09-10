@@ -123,6 +123,7 @@ typedef enum {
     coding_PCFX,            /* PC-FX 4-bit ADPCM */
     coding_OKI16,           /* OKI 4-bit ADPCM with 16-bit output and modified expand */
     coding_OKI4S,           /* OKI 4-bit ADPCM with 16-bit output and cuadruple step */
+    coding_OKI_UM,          /* OKI 4-bit ADPCM with 16-bit output and custom expand */
     coding_PTADPCM,         /* Platinum 4-bit ADPCM */
     coding_IMUSE,           /* LucasArts iMUSE Variable ADPCM */
     coding_COMPRESSWAVE,    /* CompressWave Huffman ADPCM */
@@ -136,6 +137,7 @@ typedef enum {
     coding_DERF,            /* DERF 8-bit DPCM */
     coding_WADY,            /* WADY 8-bit DPCM */
     coding_DPCM_KCEJ,       /* Konami Computer Entertainment Japan 8-bit DPCM */
+    coding_CWV,             /* Nintendo CWV DPCM */
     coding_NWA,             /* VisualArt's NWA DPCM */
     coding_ACM,             /* InterPlay ACM */
     coding_CIRCUS_ADPCM,    /* Circus 8-bit ADPCM */
@@ -230,8 +232,7 @@ typedef enum {
     layout_blocked_filp,
     layout_blocked_ea_swvr,
     layout_blocked_adm,
-    layout_blocked_mxch,
-    layout_blocked_rage_aud,    /* Rockstar AUD blocks */
+    layout_blocked_rage_aud,
     layout_blocked_ps2_iab,
     layout_blocked_vs_str,
     layout_blocked_rws,
@@ -430,7 +431,6 @@ typedef enum {
     meta_RIFX_WAVE,         /* RIFX, for big-endian WAVs */
     meta_RIFX_WAVE_smpl,    /* RIFX w/ loop data in smpl chunk */
     meta_XNB,               /* XNA Game Studio 4.0 */
-    meta_PC_MXST,           /* Lego Island MxSt */
     meta_SAB,               /* Worms 4 Mayhem SAB+SOB file */
     meta_NWA,               /* Visual Art's NWA */
     meta_NWA_NWAINFOINI,    /* Visual Art's NWA w/ NWAINFO.INI for looping */
@@ -593,7 +593,6 @@ typedef enum {
     meta_TXTP,
     meta_SMH_SMC,
     meta_PPST,
-    meta_SPS_N1,
     meta_UBI_BAO,
     meta_DSP_SWITCH_AUDIO,  /* Gal Gun 2 (Switch) */
     meta_HVQM4,
@@ -747,6 +746,8 @@ typedef enum {
     meta_PXND,
     meta_NXMS,
     meta_SAUD,
+    meta_CWV,
+    meta_XMA_UE5,
 } meta_t;
 
 #endif

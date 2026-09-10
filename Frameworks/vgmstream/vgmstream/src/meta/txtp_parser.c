@@ -3,12 +3,18 @@
 #include "txtp.h"
 #include "../util/text_reader.h"
 #include "../util/paths.h"
+#include "../util/string_utils.h"
 #include "../base/resampler.h"
 
 #define TXT_LINE_MAX 2048 /* some wwise .txtp get wordy */
 #define TXT_LINE_KEY_MAX 128
 #define TXT_LINE_VAL_MAX (TXT_LINE_MAX - TXT_LINE_KEY_MAX)
+// sscanf needs buf maxs when key/val aren't as big as line
+#define TXT_LINE_STR "2047"
+#define TXT_LINE_KEY_STR "127"
+#define TXT_LINE_VAL_STR "1919"
 
+#define TXTP_RANGE_MAX 1000 //arbitrary max to avoid excess allocs
 
 /*******************************************************************************/
 /* PARSER - HELPERS                                                            */
@@ -22,6 +28,7 @@
  * - %d/f: match number until end or *non-number* (so "%d" reads "5t" as "5")
  * - %s: reads string (dangerous due to overflows and surprising as %s%d can't match numbers since string eats all chars)
  * - %[^(chars)] match string with chars not in the list (stop reading at those chars)
+ * - %10[^(chars)] same as above, at most 10 chars (not counting null terminator)
  * - %*(command) read but don't match (no need to supply parameterr)
  * - " ": ignore all spaces until next non-space
  * - other chars in string must exist: ("%dt t%dt" reads "5t  t5t" as "5" and "5", while "t5t 5t" matches only first "5")
@@ -189,7 +196,6 @@ static int get_bool(const char* params, bool* value) {
 static int get_mask(const char* params, uint32_t* value) {
     int n, m, total_n = 0;
     int temp1,temp2, r1, r2;
-    int i;
     char cmd;
     uint32_t mask = *value;
 
@@ -216,7 +222,7 @@ static int get_mask(const char* params, uint32_t* value) {
         if (n == 0 || r1 < 0 || r1 > 31 || r2 < 0 || r2 > 31)
             break;
 
-        for (i = r1; i < r2 + 1; i++) {
+        for (int i = r1; i < r2 + 1; i++) {
             mask |= (1 << i);
         }
 
@@ -386,7 +392,7 @@ static void add_settings(txtp_entry_t* current, txtp_entry_t* entry, const char*
     //*current = *cfg;
 
     if (filename)
-        strcpy(current->filename, filename);
+        strcpy_v(current->filename, sizeof(current->filename), filename);
 
 
     /* play config */
@@ -423,8 +429,9 @@ static void add_settings(txtp_entry_t* current, txtp_entry_t* entry, const char*
     }
 
     if (entry->mixing_count > 0) {
-        int i;
-        for (i = 0; i < entry->mixing_count; i++) {
+        for (int i = 0; i < entry->mixing_count; i++) {
+            if (current->mixing_count >= TXTP_MIXING_MAX)
+                break;
             current->mixing[current->mixing_count] = entry->mixing[i];
             current->mixing_count++;
         }
@@ -458,7 +465,7 @@ static void parse_params(txtp_entry_t* entry, char* params) {
 
         /* get command until next space/number/comment/end */
         command[0] = '\0';
-        mc = sscanf(params, "#%n%[^ #0-9\r\n]%n", &nc, command, &nc);
+        mc = sscanf(params, "#%n%"TXT_LINE_STR"[^ #0-9\r\n]%n", &nc, command, &nc);
         //;VGM_LOG("TXTP:  command='%s', nc=%i, mc=%i\n", command, nc, mc);
         if (mc <= 0 && nc == 0) break;
 
@@ -873,10 +880,9 @@ static int add_group(txtp_header_t* txtp, char* line) {
     {
         /* resize in steps if not enough */
         if (txtp->group_count+1 > txtp->group_max) {
-            txtp_group_t *temp_group;
-
             txtp->group_max += 5;
-            temp_group = realloc(txtp->group, sizeof(txtp_group_t) * txtp->group_max);
+
+            txtp_group_t* temp_group = realloc(txtp->group, sizeof(txtp_group_t) * txtp->group_max);
             if (!temp_group) goto fail;
             txtp->group = temp_group;
         }
@@ -893,29 +899,8 @@ fail:
 }
 
 
-static void clean_filename(char* filename) {
-    int i;
-    size_t len;
-
-    if (filename[0] == '\0')
-        return;
-
-    /* normalize paths */
-    fix_dir_separators(filename);
-
-    /* remove trailing spaces */
-    len = strlen(filename);
-    for (i = len-1; i > 0; i--) {
-        if (filename[i] != ' ')
-            break;
-        filename[i] = '\0';
-    }
-
-}
-
 //TODO see if entry can be set to &default/&entry[entry_count] to avoid add_settings
 static int add_entry(txtp_header_t* txtp, char* filename, int is_default) {
-    int i;
     txtp_entry_t entry = {0};
 
 
@@ -967,7 +952,7 @@ static int add_entry(txtp_header_t* txtp, char* filename, int is_default) {
 
     //;VGM_LOG("TXTP: output filename=%s\n", filename);
 
-    clean_filename(filename);
+    trim_path(filename);
     //;VGM_LOG("TXTP: clean filename='%s'\n", filename);
 
     /* settings that applies to final vgmstream */
@@ -977,16 +962,21 @@ static int add_entry(txtp_header_t* txtp, char* filename, int is_default) {
         return 1;
     }
 
+    int range_entries = entry.range_end - entry.range_start;
+    if (range_entries < 0 || range_entries > TXTP_RANGE_MAX)
+        return 0;
+
     /* add final entry */
-    for (i = entry.range_start; i < entry.range_end; i++){
+    for (int i = entry.range_start; i < entry.range_end; i++){
         txtp_entry_t* current;
 
         /* resize in steps if not enough */
         if (txtp->entry_count+1 > txtp->entry_max) {
-            txtp_entry_t* temp_entry;
+            txtp->entry_max *= 2;
+            if (txtp->entry_max < 5)
+                txtp->entry_max = 5;
 
-            txtp->entry_max += 5;
-            temp_entry = realloc(txtp->entry, sizeof(txtp_entry_t) * txtp->entry_max);
+            txtp_entry_t* temp_entry = realloc(txtp->entry, sizeof(txtp_entry_t) * txtp->entry_max);
             if (!temp_entry) goto fail;
             txtp->entry = temp_entry;
         }
@@ -1011,17 +1001,17 @@ fail:
 /* PARSER - BASE                                                               */
 /*******************************************************************************/
 
-static int is_substring(const char* val, const char* cmp) {
-    int n;
+static bool is_substring(const char* str, const char* cmp) {
     char subval[TXT_LINE_MAX];
 
     /* read string without trailing spaces or comments/commands */
-    if (sscanf(val, " %s%n[^ #\t\r\n]%n", subval, &n, &n) != 1)
-        return 0;
+    int n;
+    if (sscanf(str, " %"TXT_LINE_STR"s%n[^ #\t\r\n]%n", subval, &n, &n) != 1)
+        return false;
 
     if (0 != strcmp(subval,cmp))
-        return 0;
-    return n;
+        return false;
+    return n > 0;
 }
 
 static int parse_num(const char* val, uint32_t* out_value) {
@@ -1074,14 +1064,13 @@ static int parse_keyval(txtp_header_t* txtp, const char* key, const char* val) {
     }
     else if (0==strcmp(key,"commands")) {
         char val2[TXT_LINE_MAX];
-        strcpy(val2, val); /* copy since val is modified here but probably not important */
+        strcpy_v(val2, sizeof(val2), val); /* copy since val is modified here but probably not important */
         if (!add_entry(txtp, val2, 1)) goto fail;
     }
     else if (0==strcmp(key,"group")) {
         char val2[TXT_LINE_MAX];
-        strcpy(val2, val); /* copy since val is modified here but probably not important */
+        strcpy_v(val2, sizeof(val2), val); /* copy since val is modified here but probably not important */
         if (!add_group(txtp, val2)) goto fail;
-
     }
     else {
         // in rare cases a filename may contain a (blah=blah.blah), but it's hard to distinguish
@@ -1129,7 +1118,7 @@ txtp_header_t* txtp_parse(STREAMFILE* sf) {
                 continue;
 
             /* try key/val (ignores lead/trail spaces, # may be commands or comments) */
-            ok = sscanf(line, " %[^ \t#=] = %[^\t\r\n] ", key,val);
+            ok = sscanf(line, " %"TXT_LINE_KEY_STR"[^ \t#=] = %"TXT_LINE_VAL_STR"[^\t\r\n] ", key,val);
             if (ok == 2) { /* key=val */
                 int ret = parse_keyval(txtp, key, val); /* read key/val */
                 if (ret == 0) goto fail;
@@ -1139,7 +1128,7 @@ txtp_header_t* txtp_parse(STREAMFILE* sf) {
             }
 
             /* must be a filename (only remove spaces from start/end, as filenames con contain mid spaces/#/etc) */
-            ok = sscanf(line, " %[^\t\r\n] ", val);
+            ok = sscanf(line, " %"TXT_LINE_VAL_STR"[^\t\r\n] ", val);
             if (ok != 1) /* not a filename either */
                 continue;
             if (val[0] == '#')
