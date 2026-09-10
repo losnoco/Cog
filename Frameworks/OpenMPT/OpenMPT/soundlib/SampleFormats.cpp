@@ -354,11 +354,34 @@ bool CSoundFile::ReadSampleFromSong(SAMPLEINDEX targetSample, const CSoundFile &
 ////////////////////////////////////////////////////////////////////////
 // IMA ADPCM Support for WAV files
 
+struct IMAADPCM_BlockHeader
+{
+	int16le value;
+	int8le index;
+	int8le reserved;
+};
+
+MPT_BINARY_STRUCT(IMAADPCM_BlockHeader, 4)
+
+struct IMAADPCM_Chunk
+{
+	uint8 data[4];
+};
+
+MPT_BINARY_STRUCT(IMAADPCM_Chunk, 4)
 
 static bool IMAADPCMUnpack16(int16 *target, SmpLength sampleLen, FileReader file, uint16 blockAlign, uint32 numChannels)
 {
-	static constexpr int8 IMAIndexTab[8] =  { -1, -1, -1, -1, 2, 4, 6, 8 };
-	static constexpr int16 IMAUnpackTable[90] =
+
+	// reference code from <https://www.cs.columbia.edu/~hgs/audio/dvi/IMA_ADPCM.pdf>
+
+	// v reference code
+	static constexpr int8 indexTable[16] = 
+	{
+		-1, -1, -1, -1,  2,  4,  6,  8,
+		-1, -1, -1, -1,  2,  4,  6,  8
+	};
+	static constexpr int16 stepsizeTable[89] =
 	{
 		7,     8,     9,     10,    11,    12,    13,    14,
 		16,    17,    19,    21,    23,    25,    28,    31,
@@ -371,60 +394,118 @@ static bool IMAADPCMUnpack16(int16 *target, SmpLength sampleLen, FileReader file
 		3327,  3660,  4026,  4428,  4871,  5358,  5894,  6484,
 		7132,  7845,  8630,  9493,  10442, 11487, 12635, 13899,
 		15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794,
-		32767, 0
+		32767
 	};
+	// ^ reference code
 
-	if(target == nullptr || blockAlign < 4u * numChannels)
+	if(!target)
+	{
 		return false;
-
-	SmpLength samplePos = 0;
+	}
+	if(blockAlign < (sizeof(IMAADPCM_BlockHeader) * numChannels))
+	{
+		return false;
+	}
+	// stricter rejection of bogus blockAlign
+	/*
+	if(((blockAlign - (sizeof(IMAADPCM_BlockHeader) * numChannels)) % (sizeof(IMAADPCM_Chunk) * numChannels)) != 0)
+	{
+		return false;
+	}
+	*/
 	sampleLen *= numChannels;
-	while(file.CanRead(4u * numChannels) && samplePos < sampleLen)
+	static constexpr SmpLength samplesPerChunk = 8;
+	// round up expected chunks, assume zero data for short blocks
+	const uint16 chunksPerChannelPerBlock = static_cast<uint16>(mpt::align_up(blockAlign - (sizeof(IMAADPCM_BlockHeader) * numChannels), sizeof(IMAADPCM_Chunk) * numChannels) / (sizeof(IMAADPCM_Chunk) * numChannels));
+	SmpLength samplePos = 0;
+	while(file.CanRead(sizeof(IMAADPCM_BlockHeader) * numChannels))
 	{
 		FileReader block = file.ReadChunk(blockAlign);
-		FileReader::PinnedView blockView = block.GetPinnedView();
-		const std::byte *data = blockView.data();
-		const uint32 blockSize = static_cast<uint32>(blockView.size());
-
-		for(uint32 chn = 0; chn < numChannels; chn++)
+		FileReader blockChunks = block.GetChunkAt(sizeof(IMAADPCM_BlockHeader) * numChannels, chunksPerChannelPerBlock * numChannels * sizeof(IMAADPCM_Chunk));
+		FileReader::PinnedView blockChunksView = blockChunks.GetPinnedView();
+		MemoryFileReader chunks{blockChunksView.GetSpan()};
+		for(uint32 channel = 0; channel < numChannels; ++channel)
 		{
-			// Block header
-			int32 value = block.ReadInt16LE();
-			int32 nIndex = block.ReadUint8();
-			Limit(nIndex, 0, 89);
-			block.Skip(1);
+			block.Seek(sizeof(IMAADPCM_BlockHeader) * channel);
+			IMAADPCM_BlockHeader header;
+			block.ReadStruct(header);
 
-			SmpLength smpPos = samplePos + chn;
-			uint32 dataPos = (numChannels + chn) * 4;
-			// Block data
-			while(smpPos <= (sampleLen - 8) && dataPos <= (blockSize - 4))
+			// v reference code
+			int32 predictedSample = header.value;
+			int32 index = header.index;
+			//int32 stepsize = 7;  // wrong
+			// ^ reference code
+			index = std::clamp(index, static_cast<int32>(0), static_cast<int32>(88));
+			int32 stepsize = stepsizeTable[index];
+
+			// skip writing output after given sample length
+			if(samplePos < sampleLen)
 			{
-				for(uint32 i = 0; i < 8; i++)
-				{
-					uint8 delta = mpt::byte_cast<uint8>(data[dataPos]);
-					if(i & 1)
-					{
-						delta >>= 4;
-						dataPos++;
-					} else
-					{
-						delta &= 0x0F;
-					}
-					int32 v = IMAUnpackTable[nIndex] >> 3;
-					if (delta & 1) v += IMAUnpackTable[nIndex] >> 2;
-					if (delta & 2) v += IMAUnpackTable[nIndex] >> 1;
-					if (delta & 4) v += IMAUnpackTable[nIndex];
-					if (delta & 8) value -= v; else value += v;
-					nIndex += IMAIndexTab[delta & 7];
-					Limit(nIndex, 0, 88);
-					Limit(value, -32768, 32767);
-					target[smpPos] = static_cast<int16>(value);
-					smpPos += numChannels;
-				}
-				dataPos += (numChannels - 1) * 4u;
+				target[samplePos] = static_cast<int16>(predictedSample);
 			}
+			samplePos += numChannels;
+
+			for(uint16 chunk = 0; chunk < chunksPerChannelPerBlock; ++chunk)
+			{
+				IMAADPCM_Chunk chunkdata;
+				// assume zero data for short blocks
+				if(chunks.Seek((sizeof(IMAADPCM_Chunk) * numChannels * chunk) + (channel * sizeof(IMAADPCM_Chunk))))
+				{
+					chunks.ReadStructPartial(chunkdata);
+				} else
+				{
+					mpt::memclear(chunkdata);
+				}
+				// always decode the complete chunk, even if the output only has space for a partial chunk at the end of the sample
+				for(SmpLength chunkSample = 0; chunkSample < samplesPerChunk; ++chunkSample)
+				{
+					const int32 originalSample = (chunkdata.data[chunkSample >> 1u] >> ((chunkSample & 1u) * 4u)) & 0x0fu;
+					int32 newSample = predictedSample;
+
+					// v reference code
+					int32 difference = 0;
+					if(originalSample & 4)
+					{
+						difference += stepsize;
+					}
+					if(originalSample & 2)
+					{
+						difference += stepsize >> 1;
+					}
+					if(originalSample & 1)
+					{
+						difference += stepsize >> 2;
+					}
+					difference += stepsize >> 3;
+					if(originalSample & 8)
+					{
+						difference = -difference;
+					}
+					newSample += difference;
+					newSample = std::clamp(newSample, static_cast<int32>(-32768), static_cast<int32>(32767));
+					// ^ reference code
+
+					// skip writing output after given sample length
+					predictedSample = newSample;
+					if(samplePos < sampleLen)
+					{
+						target[samplePos] = static_cast<int16>(predictedSample);
+					}
+
+					// v reference code
+					index += indexTable[originalSample];
+					index = std::clamp(index, static_cast<int32>(0), static_cast<int32>(88));
+					stepsize = stepsizeTable[index];
+					// ^ reference code
+
+					samplePos += numChannels;
+				}
+			}
+			samplePos -= ((samplesPerChunk * chunksPerChannelPerBlock) + 1) * numChannels;
+			samplePos += 1;
 		}
-		samplePos += ((blockSize - (numChannels * 4u)) * 2u);
+		samplePos -= numChannels;
+		samplePos += ((samplesPerChunk * chunksPerChannelPerBlock) + 1) * numChannels;
 	}
 
 	return true;

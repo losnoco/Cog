@@ -1317,6 +1317,7 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 					{SchismVersionFromDate<2024,  5, 27>::date, kITOffsetWithInstrNumber      },  // https://github.com/schismtracker/schismtracker/commit/9237960d45079a54ad73f87bacfe5dd8ae82e273
 					{SchismVersionFromDate<2024, 10, 13>::date, kITDoublePortamentoSlides     },  // https://github.com/schismtracker/schismtracker/commit/223e327d9448561931b8cac8a55180286b17276c
 					{SchismVersionFromDate<2025,  1,  8>::date, kITCarryAfterNoteOff          },  // https://github.com/schismtracker/schismtracker/commit/ff7a817df327c8f13d97b8c6546a9329f59edff8
+					{SchismVersionFromDate<2026,  7, 13>::date, kITCompatGxxCarryPortaWithIns },  // https://github.com/schismtracker/schismtracker/commit/21bbd9a74df8266efe10c1c7c8aaccfc7512ede5
 				};
 				for(const auto &quirk : SchismQuirks)
 				{
@@ -1350,6 +1351,15 @@ bool CSoundFile::ReadIT(FileReader &file, ModLoadingFlags loadFlags)
 				madeWithTracker = UL_("itwriter");
 			else
 				madeWithTracker = UL_("Unknown");
+			break;
+		case 0x0E:
+			if(fileHeader.cwtv == 0xEFFF)
+				madeWithTracker = UL_("rosetracker");
+			else
+				madeWithTracker = UL_("Unknown");
+			break;
+		default:
+			madeWithTracker = UL_("Unknown");
 			break;
 		}
 	}

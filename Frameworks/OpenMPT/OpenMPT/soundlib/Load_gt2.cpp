@@ -1181,7 +1181,9 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 		return true;
 
 	std::vector<uint16be> pannedTracks;
-	file.ReadVector(pannedTracks, fileHeader.numPannedTracks);
+	if(fileHeader.fileVersion <= 5)
+		file.ReadVector(pannedTracks, fileHeader.numPannedTracks);
+	file.Seek(fileHeader.headerSize);
 
 	ChunkReader chunkFile(file);
 	auto chunks = chunkFile.ReadChunksUntil<GT2Chunk>(1, GT2Chunk::idENDC);
@@ -1230,7 +1232,6 @@ bool CSoundFile::ReadGT2(FileReader &file, ModLoadingFlags loadFlags)
 			ChnSettings[chn].nPan = std::min(static_cast<uint16>(Util::muldivr_unsigned(pannedTracks[chn], 256, 4095)), uint16(256));
 		}
 	}
-	file.Seek(fileHeader.headerSize);
 
 	if(auto chunk = chunks.GetChunk(GT2Chunk::idSONG); chunk.CanRead(2))
 	{

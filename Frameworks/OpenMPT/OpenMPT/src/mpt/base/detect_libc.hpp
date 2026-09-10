@@ -9,6 +9,16 @@
 #include "mpt/base/detect_os.hpp"
 
 #include <cstddef>
+#include <cstdint>
+// Work-around MSYS2/CLANG64 bug:
+// With Clang, including <stddef.h> includes only the generic
+// Clang-provided header which does not result in trnansitively including
+// the MinGW-specific version which would ultimately include <_mingw.h>.
+// However, <_mingw.h> is required to properly identify the version of the
+// C Runtime (i.e. if undefined, it defines _UCRT, __MSVCRT_VERSION__, or
+// __CRTDLL__ and related macros, which are necessary for proper detection
+// of the C library).
+#include <cstdlib>
 
 
 

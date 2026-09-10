@@ -11,9 +11,13 @@
 #ifndef MPT_CHECK_LIBC_IGNORE_WARNING_NO_MTRT
 #if MPT_PLATFORM_MULTITHREADED
 #if MPT_LIBC_MINGW
+#if MPT_LIBC_MS_UCRT
+// nothing
+#else /* MPT_LIBC_MS_MSVCRT || MPT_LIBC_MS_CRTDLL */
 // MinGW only has `#define _MT` in header files instead of `#define _MT 1`.
 #if !defined(_MT)
 MPT_WARNING("C stdlib is not multi-threaded.")
+#endif
 #endif
 #elif MPT_LIBC_MS
 #if defined(_MT)

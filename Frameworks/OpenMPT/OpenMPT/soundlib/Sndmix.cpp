@@ -2176,14 +2176,6 @@ bool CSoundFile::ReadNote()
 	for(CHANNELINDEX nChn = 0; nChn < m_PlayState.Chn.size(); nChn++)
 	{
 		ModChannel &chn = m_PlayState.Chn[nChn];
-		// FT2 Compatibility: Prevent notes to be stopped after a fadeout. This way, a portamento effect can pick up a faded instrument which is long enough.
-		// This occurs for example in the bassline (channel 11) of jt_burn.xm. I hope this won't break anything else...
-		// I also suppose this could decrease mixing performance a bit, but hey, which CPU can't handle 32 muted channels these days... :-)
-		if(chn.dwFlags[CHN_NOTEFADE] && (!(chn.nFadeOutVol|chn.leftVol|chn.rightVol)) && !m_playBehaviour[kFT2ProcessSilentChannels])
-		{
-			chn.nLength = 0;
-			chn.nROfs = chn.nLOfs = 0;
-		}
 		// Increment age of NNA channels
 		if(chn.nMasterChn && nChn < GetNumChannels() && chn.nnaChannelAge < Util::MaxValueOfType(chn.nnaChannelAge))
 			chn.nnaChannelAge++;
@@ -2477,6 +2469,18 @@ bool CSoundFile::ReadNote()
 			IncrementEnvelopePositions(chn);
 		}
 
+		// FT2 Compatibility: Prevent notes to be stopped after a fadeout. This way, a portamento effect can pick up a faded instrument which is long enough.
+		// This occurs for example in the bassline (channel 11) of jt_burn.xm.
+		// Test case: FadeoutPickup.xm
+		// NB: This check used to be right at the top of the loop, but was moved down here to match the channel stop behaviour
+		// of Impulse Tracker for the kITCompatGxxCarryPortaWithIns play behaviour.
+		// Test case: CarryCompatGxxPortaWithIns.it
+		if(chn.dwFlags[CHN_NOTEFADE] && (!(chn.nFadeOutVol | chn.leftVol | chn.rightVol)) && !m_playBehaviour[kFT2ProcessSilentChannels])
+		{
+			chn.nLength = 0;
+			chn.nROfs = chn.nLOfs = 0;
+		}
+
 		// Volume ramping
 		chn.dwFlags.set(CHN_VOLUMERAMP, (chn.nRealVolume | chn.rightVol | chn.leftVol) != 0 && !chn.dwFlags[CHN_ADLIB]);
 
@@ -2601,6 +2605,12 @@ bool CSoundFile::ReadNote()
 			{
 				m_PlayState.ChnMix[m_nMixChannels++] = nChn;
 			}
+
+			// Stop NNA channel processing if the channel is effectively muted.
+			// Required for Carry Envelope quirk to stop processing envelopes of affected channels.
+			// Test case: CarryCompatGxxPortaWithIns.it
+			if(nChn >= GetNumChannels() && !(chn.nVolume && chn.nGlobalVol && chn.nInsVol))
+				chn.nLength = 0;
 		} else
 		{
 			chn.rightVol = chn.leftVol = 0;

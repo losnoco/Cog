@@ -172,7 +172,7 @@ struct Convert<uint8, double>
 	using output_t = uint8;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		val = std::clamp(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 128.0;
 		return static_cast<uint8>(mpt::saturate_cast<int8>(static_cast<int>(SC::fastround(val))) + 0x80);
 	}
@@ -253,7 +253,7 @@ struct Convert<int8, double>
 	using output_t = int8;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		val = std::clamp(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 128.0;
 		return mpt::saturate_cast<int8>(static_cast<int>(SC::fastround(val)));
 	}
@@ -334,7 +334,7 @@ struct Convert<int16, double>
 	using output_t = int16;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		val = std::clamp(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 32768.0;
 		return mpt::saturate_cast<int16>(static_cast<int>(SC::fastround(val)));
 	}
@@ -415,7 +415,7 @@ struct Convert<int24, double>
 	using output_t = int24;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		val = std::clamp(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 2147483648.0;
 		return static_cast<int24>(mpt::rshift_signed(mpt::saturate_cast<int32>(static_cast<int64>(SC::fastround(val))), 8));
 	}
@@ -496,7 +496,7 @@ struct Convert<int32, double>
 	using output_t = int32;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		val = std::clamp(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= 2147483648.0;
 		return mpt::saturate_cast<int32>(static_cast<int64>(SC::fastround(val)));
 	}
@@ -577,7 +577,7 @@ struct Convert<int64, double>
 	using output_t = int64;
 	MPT_FORCEINLINE output_t operator()(input_t val)
 	{
-		val = std::clamp(val, -1.0, 1.0);
+		val = mpt::safe_clamp(val, -1.0, 1.0);
 		val *= static_cast<double>(uint64(1) << 63);
 		return mpt::saturate_trunc<int64>(SC::fastround(val));
 	}

@@ -270,7 +270,7 @@ namespace openmpt {
 		chn.nMasterChn = 0;	// remove NNA association
 		chn.nNewNote = chn.nLastNote = static_cast<std::uint8_t>(note);
 		chn.ResetEnvelopes();
-		m_sndFile->InstrumentChange(chn, instrument + 1);
+		m_sndFile->InstrumentChange(m_sndFile->m_PlayState, free_channel, instrument + 1);
 		chn.nFadeOutVol = 0x10000;
 		m_sndFile->NoteChange(chn, note, false, true, true);
 		chn.nPan = mpt::saturate_round<std::int32_t>( OpenMPT::Clamp( panning * 128.0, -128.0, 128.0 ) + 128.0 );

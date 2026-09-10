@@ -55,6 +55,14 @@ public:
 };
 
 
+
+#if MPT_GCC_AT_LEAST(16, 0, 0) && MPT_GCC_BEFORE(17, 1, 0)
+// Work-around confused GCC 16 optimizer which generates bogus -Warray-bounds in multiple call chains and member functions.
+#pragma GCC push_options
+#if defined(__OPTIMIZE__)
+#pragma GCC optimize("O1")
+#endif
+#endif
 class FileDataWindow : public IFileData {
 private:
 	std::shared_ptr<const IFileData> data;
@@ -104,6 +112,9 @@ public:
 		return std::min(length, dataLength - pos);
 	}
 };
+#if MPT_GCC_AT_LEAST(16, 0, 0) && MPT_GCC_BEFORE(17, 1, 0)
+#pragma GCC pop_options
+#endif
 
 
 
