@@ -80,6 +80,7 @@
 	}
 
 	int track_count = gme_track_count(emu);
+	gme_delete(emu);
 
 	if(track_count <= 1) {
 		return @[url];
