@@ -588,47 +588,19 @@ fail:
     return NULL;
 }
 
-/* ********************************* */
 
-/* .stm - Intelligent Systems + others (same programmers) full interleaved dsp [Paper Mario TTYD (GC), Fire Emblem: POR (GC), Cubivore (GC)] */
-VGMSTREAM* init_vgmstream_ngc_dsp_stm(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (read_u16be(0x00, sf) != 0x0200)
-        goto fail;
-
-    /* .lstm/dsp: renamed to avoid hijacking Scream Tracker 2 Modules (not needed) */
-    if (!check_extensions(sf, "stm,lstm,dsp"))
-        goto fail;
-    /* 0x02: sample rate
-     * 0x08+: channel sizes/loop offsets? */
-
-    dspm.channels = read_u32be(0x04, sf);
-    dspm.max_channels = 2;
-    dspm.fix_looping = 1;
-
-    dspm.header_offset =  0x40;
-    dspm.header_spacing = 0x60;
-    dspm.start_offset = 0x100;
-    dspm.interleave = (read_u32be(0x08, sf) + 0x20) / 0x20 * 0x20; /* strange rounding, but works */
-
-    dspm.meta_type = meta_DSP_STM;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
+// ****************************************************************************
+// Interleaved variations, detected by heuristics + dsp header validations
 
 /* .STE - single header + interleaved dsp [Monopoly Party! (GC)] */
-VGMSTREAM* init_vgmstream_ngc_mpdsp(STREAMFILE* sf) {
+static VGMSTREAM* init_vgmstream_dspi_ste(STREAMFILE* sf) {
     dsp_meta dspm = {0};
 
     /* checks */
     /* .ste: real extension
      * .mpdsp: fake/renamed since standard .dsp would catch it otherwise */
-    if (!check_extensions(sf, "mpdsp,ste"))
-        goto fail;
+    if (!check_extensions(sf, "ste,mpdsp"))
+        return NULL;
 
     /* at 0x48 is extra data that could help differenciating these DSPs, but seems like
      * memory garbage created by the encoder that other games also have */
@@ -646,19 +618,16 @@ VGMSTREAM* init_vgmstream_ngc_mpdsp(STREAMFILE* sf) {
 
     dspm.meta_type = meta_DSP_MPDSP;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
-
 /* various dsp with differing extensions and interleave values */
-VGMSTREAM* init_vgmstream_ngc_dsp_std_int(STREAMFILE* sf) {
+static VGMSTREAM* init_vgmstream_dspi_dsp_mss_gcm(STREAMFILE* sf) {
     dsp_meta dspm = {0};
     char filename[PATH_LIMIT];
 
     /* checks */
     if (!check_extensions(sf, "dsp,mss,gcm"))
-        goto fail;
+        return NULL;
 
     dspm.channels = 2;
     dspm.max_channels = 2;
@@ -672,24 +641,441 @@ VGMSTREAM* init_vgmstream_ngc_dsp_std_int(STREAMFILE* sf) {
     if (strlen(filename) > 7 && !strcasecmp("_lr.dsp",filename+strlen(filename)-7)) { //todo improve
         dspm.interleave = 0x14180;
         dspm.meta_type = meta_DSP_JETTERS; /* Bomberman Jetters (GC) */
-    } else if (check_extensions(sf, "mss")) {
+    }
+    else if (check_extensions(sf, "mss")) {
         dspm.interleave = 0x1000;
         dspm.meta_type = meta_DSP_MSS; /* Free Radical GC games */
         /* Timesplitters 2 GC's ts2_atom_smasher_44_fx.mss differs slightly in samples but plays ok */
         dspm.ignore_header_agreement = 1;
-    } else if (check_extensions(sf, "gcm")) {
+    }
+    else if (check_extensions(sf, "gcm")) {
         /* older Traveller's Tales games [Lego Star Wars (GC), The Chronicles of Narnia (GC), Sonic R (GC)] */
         dspm.interleave = 0x8000;
         dspm.meta_type = meta_DSP_GCM;
-    } else {
-        goto fail;
+    }
+    else {
+        return NULL;
     }
 
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
+}
+
+/* .str - Infogrames raw interleaved dsp [Micro Machines (GC), Superman: Shadow of Apokolips (GC)] */
+static VGMSTREAM* init_vgmstream_dspi_str_ig(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (!check_extensions(sf, "str"))
+        return NULL;
+
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = 0x80;
+    dspm.start_offset = 0x800;
+    dspm.interleave = 0x4000;
+
+    dspm.meta_type = meta_DSP_STR_IG;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .dsp - Ubisoft interleaved dsp with bad loop start [Speed Challenge: Jacques Villeneuve's Racing Vision (GC), XIII (GC)] */
+static VGMSTREAM* init_vgmstream_dspi_xiii(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (!check_extensions(sf, "dsp"))
+        return NULL;
+
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+    dspm.fix_loop_start = 1; /* loop flag but strange loop start instead of 0 (maybe shouldn't loop) */
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = 0x60;
+    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
+    dspm.interleave = 0x08;
+
+    dspm.meta_type = meta_DSP_XIII;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .ddsp - full interleaved dsp [Shark Tale (GC), The Sims series (GC/Wii), Wacky Races: Crash & Dash (Wii)] */
+static VGMSTREAM* init_vgmstream_dspi_ddsp(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    /* .adp: Tale of Despereaux (Wii) */
+    /* .ddsp: fake extension (games have bigfiles without names, but has references to .wav)
+     * .wav: Wacky Races: Crash & Dash (Wii)
+     * (extensionless): The Sims series (GC/Wii) */
+    if (!check_extensions(sf, "adp,ddsp,wav,lwav,"))
+        return NULL;
+
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = (get_streamfile_size(sf) / dspm.channels);
+    dspm.start_offset = 0x60;
+    dspm.interleave = dspm.header_spacing;
+
+    /* this format has nibbles in both headers matching all data (not just for that channel),
+     * and interleave is exact half even for files that aren't aligned to 0x10 */
+
+    dspm.meta_type = meta_DSP_DDSP;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* Cabela's series (Magic Wand dev?) - header + interleaved dsp
+ *  [Cabela's Big Game Hunt 2005 Adventures (GC), Cabela's Outdoor Adventures (GC)] */
+static VGMSTREAM* init_vgmstream_dspi_cabelas(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (!check_extensions(sf, "dsp"))
+        return NULL;
+    /* has extra stuff in the reserved data, without it this meta may catch other DSPs it shouldn't */
+    if (read_32bitBE(0x50,sf) == 0 || read_32bitBE(0x54,sf) == 0)
+        return NULL;
+
+    /* sfx are mono, but standard dsp will catch them tho */
+    dspm.channels = read_32bitBE(0x00,sf) == read_32bitBE(0x60,sf) ? 2 : 1;
+    dspm.max_channels = 2;
+    dspm.force_loop = (dspm.channels > 1);
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = 0x60;
+    dspm.start_offset = dspm.header_offset + dspm.channels*dspm.header_spacing;
+    dspm.interleave = 0x10;
+
+    dspm.meta_type = meta_DSP_CABELAS;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .itl - from Chanrinko Hero (GC) */
+static VGMSTREAM* init_vgmstream_dspi_itl_ch(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (!check_extensions(sf, "itl"))
+        return NULL;
+
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = 0x60;
+    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
+    dspm.interleave = 0x23C0;
+
+    dspm.fix_looping = 1;
+
+    dspm.meta_type = meta_DSP_ITL;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .ds2 - LucasArts wrapper [Star Wars: Bounty Hunter (GC)] */
+static VGMSTREAM* init_vgmstream_dspi_lucasarts(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+    size_t file_size, channel_offset;
+
+    /* checks */
+    /* .ds2: real extension, dsp: fake/renamed */
+    if (!check_extensions(sf, "ds2,dsp"))
+        return NULL;
+    if (!(read_32bitBE(0x50,sf) == 0 &&
+          read_32bitBE(0x54,sf) == 0 &&
+          read_32bitBE(0x58,sf) == 0 &&
+          read_32bitBE(0x5c,sf) != 0))
+        return NULL;
+
+    file_size = get_streamfile_size(sf);
+    channel_offset = read_32bitBE(0x5c,sf);  /* absolute offset to 2nd channel */
+    if (channel_offset < file_size / 2 || channel_offset > file_size) /* just to make sure */
+        return NULL;
+
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+    dspm.single_header = true;
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = 0x00;
+    dspm.start_offset = 0x60;
+    dspm.interleave = channel_offset - dspm.start_offset;
+
+    dspm.meta_type = meta_DSP_DS2;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .itl - Incinerator Studios interleaved dsp [Cars Race-o-rama (Wii), MX vs ATV Untamed (Wii)] */
+static VGMSTREAM* init_vgmstream_dspi_itl(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+    size_t stream_size;
+
+    /* checks */
+    /* .itl: standard
+     * .dsp: default to catch a similar file, not sure which devs */
+    if (!check_extensions(sf, "itl,dsp"))
+        return NULL;
+
+    stream_size = get_streamfile_size(sf);
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+
+    dspm.start_offset = 0x60;
+    dspm.interleave = 0x10000;
+    dspm.interleave_first_skip = dspm.start_offset;
+    dspm.interleave_first = dspm.interleave - dspm.interleave_first_skip;
+    dspm.interleave_last = (stream_size / dspm.channels) % dspm.interleave;
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = dspm.interleave;
+
+    //todo some files end in half a frame and may click at the very end
+    //todo when .dsp should refer to Ultimate Board Collection (Wii), not sure about dev
+    dspm.meta_type = meta_DSP_ITL_i;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .switch_audio - UE4 standard LE header + full interleaved dsp [Gal Gun 2 (Switch)] */
+static VGMSTREAM* init_vgmstream_dspi_switch_audio(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    /* .switch_audio: possibly UE4 class name rather than extension
+     * .dsp: assumed */
+    if (!check_extensions(sf, "switch_audio,dsp"))
+        return NULL;
+
+    /* manual double header test */
+    //todo improve to read after first header
+    if (read_u32le(0x00, sf) == read_u32le(get_streamfile_size(sf) / 2, sf))
+        dspm.channels = 2;
+    else
+        dspm.channels = 1;
+    dspm.max_channels = 2;
+    dspm.little_endian = 1;
+
+    dspm.header_offset = 0x00;
+    dspm.header_spacing = get_streamfile_size(sf) / dspm.channels;
+    dspm.start_offset = dspm.header_offset + 0x60;
+    dspm.interleave = dspm.header_spacing;
+
+    dspm.meta_type = meta_DSP_SWITCH_AUDIO;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+/* .ds2 - Rebellion (Asura engine) [PDC World Championship Darts 2009 & Pro Tour (Wii)] */
+static VGMSTREAM* init_vgmstream_dspi_asura_ds2(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    if (!check_extensions(sf, "ds2"))
+        return NULL;
+
+    dspm.channels = 2;
+    dspm.max_channels = 2;
+    dspm.interleave = 0x8000;
+
+    dspm.header_offset = 0x00;
+    dspm.start_offset = 0x60;
+
+    dspm.header_spacing = dspm.interleave;
+    dspm.interleave_first_skip = dspm.start_offset;
+    dspm.interleave_first = dspm.interleave - dspm.interleave_first_skip;
+
+    dspm.meta_type = meta_DSP_ASURA;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+// TODO clean/unify
+VGMSTREAM* init_vgmstream_dsp_interleaved(STREAMFILE* sf) {
+    VGMSTREAM* v;
+
+    v = init_vgmstream_dspi_ste(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_dsp_mss_gcm(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_ddsp(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_str_ig(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_xiii(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_cabelas(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_itl_ch(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_lucasarts(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_itl(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_switch_audio(sf);
+    if (v) return v;
+
+    v = init_vgmstream_dspi_asura_ds2(sf);
+    if (v) return v;
+
     return NULL;
 }
 
+
+// ****************************************************************************
+// variations with extra fields in header (detectable but a bit simple)
+
+/* .stm - Intelligent Systems + others (same programmers) full interleaved dsp [Paper Mario TTYD (GC), Fire Emblem: POR (GC), Cubivore (GC)] */
+VGMSTREAM* init_vgmstream_ngc_dsp_stm(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (read_u16be(0x00, sf) != 0x0200)
+        return NULL;
+
+    /* .lstm/dsp: renamed to avoid hijacking Scream Tracker 2 Modules (not needed) */
+    if (!check_extensions(sf, "stm,lstm,dsp"))
+        return NULL;
+    /* 0x02: sample rate
+     * 0x08+: channel sizes/loop offsets? */
+
+    dspm.channels = read_u32be(0x04, sf);
+    dspm.max_channels = 2;
+    dspm.fix_looping = 1;
+
+    dspm.header_offset =  0x40;
+    dspm.header_spacing = 0x60;
+    dspm.start_offset = 0x100;
+    dspm.interleave = (read_u32be(0x08, sf) + 0x20) / 0x20 * 0x20; /* strange rounding, but works */
+
+    dspm.meta_type = meta_DSP_STM;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+
+/* .idsp - interleaved dsp [Harvest Moon: Another Wonderful Life (GC)] */
+VGMSTREAM* init_vgmstream_idsp_tose(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+    uint32_t blocks;
+
+    /* checks */
+    if (read_u32be(0x00,sf) != 0)
+        return NULL;
+    if (!check_extensions(sf, "idsp"))
+        return NULL;
+
+    dspm.max_channels = 4; /* mainly stereo */
+
+    /* 0x04: format? */
+    dspm.channels   = read_u16be(0x06,sf);
+    dspm.interleave = read_u32be(0x08,sf);
+    blocks          = read_u32be(0x0c,sf);
+
+    dspm.header_offset = 0x40;
+    dspm.header_spacing = 0x60;
+    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
+
+    if (dspm.start_offset + dspm.interleave * dspm.channels * blocks != get_streamfile_size(sf))
+        return NULL;
+
+    dspm.meta_type = meta_IDSP_TOSE;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+
+/* .KWA - interleaved dsp [Knight Wars prototype (Wii)] */
+VGMSTREAM* init_vgmstream_dsp_kwa(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (read_u32be(0x00,sf) != 3)
+        return NULL;
+
+    if (!check_extensions(sf, "kwa"))
+        return NULL;
+
+    dspm.max_channels   = 4;
+
+    dspm.channels       = read_u32be(0x04,sf);
+    dspm.interleave     = read_u32be(0x0c,sf);
+
+    dspm.header_offset  = 0x20;
+    dspm.header_spacing = dspm.interleave;
+    dspm.start_offset = dspm.header_offset + 0x60;
+
+    dspm.interleave_first_skip = 0x60;
+    dspm.interleave_first = dspm.interleave - dspm.interleave_first_skip;
+
+    dspm.ignore_header_agreement = 1; /* Reus_2.kwa has a few more samples in channels 3+4 */
+
+    dspm.meta_type = meta_DSP_KWA;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+
+/* .wav - Square Enix wrapper [Dragon Quest I-III (Switch)] */
+VGMSTREAM* init_vgmstream_dsp_sqex(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (read_u32be(0x00,sf) != 0x00000000)
+        return NULL;
+    if (!check_extensions(sf, "wav,lwav"))
+        return NULL;
+
+    dspm.channels = read_u32le(0x04,sf);
+    dspm.header_offset = read_u32le(0x08,sf);
+    /* 0x0c: channel size */
+    dspm.start_offset = dspm.header_offset + 0x60;
+
+    if (dspm.channels > 1) {
+        dspm.interleave = read_u32le(0x10,sf) - dspm.header_offset;
+        dspm.header_spacing = dspm.interleave;
+    }
+
+
+    dspm.max_channels = 2;
+    dspm.little_endian = 1;
+
+    dspm.meta_type = meta_DSP_SQEX;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+
+/* .mcadpcm - Custom header + full interleaved dsp [Skyrim (Switch)] */
+VGMSTREAM* init_vgmstream_dsp_mcadpcm(STREAMFILE* sf) {
+    dsp_meta dspm = {0};
+
+    /* checks */
+    if (!check_extensions(sf, "mcadpcm"))
+        return NULL;
+    /* could validate dsp sizes but only for +1ch, check_dsp_samples will do it anyway */
+    //if (read_32bitLE(0x08,sf) != read_32bitLE(0x10,sf))
+    //   return NULL;
+
+    dspm.channels = read_32bitLE(0x00,sf);
+    dspm.max_channels = 2;
+    dspm.little_endian = 1;
+
+    dspm.header_offset =  read_32bitLE(0x04,sf);
+    dspm.header_spacing = dspm.channels == 1 ? 0 :
+        read_32bitLE(0x0c,sf) - dspm.header_offset; /* channel 2 start, only with Nch */
+    dspm.start_offset = dspm.header_offset + 0x60;
+    dspm.interleave = dspm.header_spacing;
+
+    dspm.meta_type = meta_DSP_MCADPCM;
+    return init_vgmstream_dsp_common(sf, &dspm);
+}
+
+// ****************************************************************************
+// variations with cleaner fourcc identity
 
 /* IDSP - Namco header (from NUB/NUS3) + interleaved dsp [SSB4 (3DS), Tekken Tag Tournament 2 (WiiU)] */
 VGMSTREAM* init_vgmstream_idsp_namco(STREAMFILE* sf) {
@@ -741,10 +1127,10 @@ VGMSTREAM* init_vgmstream_sadb(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "sadb"))
-        goto fail;
+        return NULL;
 
     if (!check_extensions(sf, "sad"))
-        goto fail;
+        return NULL;
 
     dspm.channels = read_8bit(0x32, sf);
     dspm.max_channels = 2;
@@ -756,8 +1142,6 @@ VGMSTREAM* init_vgmstream_sadb(STREAMFILE* sf) {
 
     dspm.meta_type = meta_DSP_SADB;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -768,13 +1152,13 @@ VGMSTREAM* init_vgmstream_idsp_tt(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "IDSP"))
-        goto fail;
+        return NULL;
 
     /* .gcm: standard
      * .idsp: header id?
      * .wua: Lego Dimensions (Wii U) */
     if (!check_extensions(sf, "gcm,idsp,wua"))
-        goto fail;
+        return NULL;
 
     version_main = read_u32be(0x04, sf);
     version_sub  = read_u32be(0x08, sf); /* extra check since there are other IDSPs */
@@ -805,7 +1189,7 @@ VGMSTREAM* init_vgmstream_idsp_tt(STREAMFILE* sf) {
         /* 0x14+: "I_AM_PADDING" */
     }
     else {
-        goto fail;
+        return NULL;
     }
 
     dspm.header_spacing = 0x60;
@@ -814,8 +1198,6 @@ VGMSTREAM* init_vgmstream_idsp_tt(STREAMFILE* sf) {
 
     dspm.meta_type = meta_IDSP_TT;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -825,21 +1207,21 @@ VGMSTREAM* init_vgmstream_idsp_nl(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "IDSP"))
-        goto fail;
+        return NULL;
     if (!check_extensions(sf, "idsp"))
-        goto fail;
+        return NULL;
 
     dspm.channels = 2;
     dspm.max_channels = 2;
 
     dspm.header_offset =  0x0c;
     dspm.header_spacing = 0x60;
-    dspm.start_offset = dspm.header_offset + dspm.header_spacing*dspm.channels;
-    dspm.interleave = read_32bitBE(0x04,sf);
+    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
+    dspm.interleave = read_u32be(0x04,sf);
     /* 0x08: usable channel size */
     {
         size_t stream_size = get_streamfile_size(sf);
-        if (read_32bitBE(stream_size - 0x04,sf) == 0x30303030)
+        if (read_u32be(stream_size - 0x04,sf) == 0x30303030)
             stream_size -= 0x14; /* remove padding */
         stream_size -= dspm.start_offset;
 
@@ -853,8 +1235,6 @@ VGMSTREAM* init_vgmstream_idsp_nl(STREAMFILE* sf) {
 
     dspm.meta_type = meta_IDSP_NL;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -864,11 +1244,11 @@ VGMSTREAM* init_vgmstream_wii_wsd(STREAMFILE* sf) {
 
     /* checks */
     if (read_u32be(0x00,sf) != 0x20)
-        goto fail;
+        return NULL;
     if (!check_extensions(sf, "wsd"))
-        goto fail;
+        return NULL;
     if (read_u32be(0x08,sf) != read_u32be(0x0c,sf)) /* channel sizes */
-        goto fail;
+        return NULL;
 
     dspm.channels = 2;
     dspm.max_channels = 2;
@@ -880,38 +1260,6 @@ VGMSTREAM* init_vgmstream_wii_wsd(STREAMFILE* sf) {
 
     dspm.meta_type = meta_DSP_WII_WSD;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .ddsp - full interleaved dsp [Shark Tale (GC), The Sims series (GC/Wii), Wacky Races: Crash & Dash (Wii)] */
-VGMSTREAM* init_vgmstream_dsp_ddsp(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    /* .adp: Tale of Despereaux (Wii) */
-    /* .ddsp: fake extension (games have bigfiles without names, but has references to .wav)
-     * .wav: Wacky Races: Crash & Dash (Wii)
-     * (extensionless): The Sims series (GC/Wii) */
-    if (!check_extensions(sf, "adp,ddsp,wav,lwav,"))
-        goto fail;
-
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = (get_streamfile_size(sf) / dspm.channels);
-    dspm.start_offset = 0x60;
-    dspm.interleave = dspm.header_spacing;
-
-    /* this format has nibbles in both headers matching all data (not just for that channel),
-     * and interleave is exact half even for files that aren't aligned to 0x10 */
-
-    dspm.meta_type = meta_DSP_DDSP;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -921,9 +1269,9 @@ VGMSTREAM* init_vgmstream_wii_was(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "iSWS"))
-        goto fail;
+        return NULL;
     if (!check_extensions(sf, "was,dsp,isws"))
-        goto fail;
+        return NULL;
 
     dspm.channels = read_32bitBE(0x08,sf);
     dspm.max_channels = 2;
@@ -935,55 +1283,6 @@ VGMSTREAM* init_vgmstream_wii_was(STREAMFILE* sf) {
 
     dspm.meta_type = meta_WII_WAS;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .str - Infogrames raw interleaved dsp [Micro Machines (GC), Superman: Shadow of Apokolips (GC)] */
-VGMSTREAM* init_vgmstream_dsp_str_ig(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (!check_extensions(sf, "str"))
-        goto fail;
-
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = 0x80;
-    dspm.start_offset = 0x800;
-    dspm.interleave = 0x4000;
-
-    dspm.meta_type = meta_DSP_STR_IG;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .dsp - Ubisoft interleaved dsp with bad loop start [Speed Challenge: Jacques Villeneuve's Racing Vision (GC), XIII (GC)] */
-VGMSTREAM* init_vgmstream_dsp_xiii(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (!check_extensions(sf, "dsp"))
-        goto fail;
-
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-    dspm.fix_loop_start = 1; /* loop flag but strange loop start instead of 0 (maybe shouldn't loop) */
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = 0x60;
-    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
-    dspm.interleave = 0x08;
-
-    dspm.meta_type = meta_DSP_XIII;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -993,13 +1292,13 @@ VGMSTREAM* init_vgmstream_dsp_ndp(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "NDP\0"))
-        goto fail;
+        return NULL;
     /* .nds: standard
      * .ndp: header id */
     if (!check_extensions(sf, "nds,ndp"))
-        goto fail;
+        return NULL;
     if (read_u32le(0x08,sf) + 0x18 != get_streamfile_size(sf))
-        goto fail;
+        return NULL;
     /* 0x0c: sample rate */
 
     dspm.channels = read_u32le(0x10,sf);
@@ -1013,37 +1312,6 @@ VGMSTREAM* init_vgmstream_dsp_ndp(STREAMFILE* sf) {
 
     dspm.meta_type = meta_WII_NDP;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* Cabela's series (Magic Wand dev?) - header + interleaved dsp
- *  [Cabela's Big Game Hunt 2005 Adventures (GC), Cabela's Outdoor Adventures (GC)] */
-VGMSTREAM* init_vgmstream_dsp_cabelas(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (!check_extensions(sf, "dsp"))
-        goto fail;
-    /* has extra stuff in the reserved data, without it this meta may catch other DSPs it shouldn't */
-    if (read_32bitBE(0x50,sf) == 0 || read_32bitBE(0x54,sf) == 0)
-        goto fail;
-
-    /* sfx are mono, but standard dsp will catch them tho */
-    dspm.channels = read_32bitBE(0x00,sf) == read_32bitBE(0x60,sf) ? 2 : 1;
-    dspm.max_channels = 2;
-    dspm.force_loop = (dspm.channels > 1);
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = 0x60;
-    dspm.start_offset = dspm.header_offset + dspm.channels*dspm.header_spacing;
-    dspm.interleave = 0x10;
-
-    dspm.meta_type = meta_DSP_CABELAS;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -1053,9 +1321,9 @@ VGMSTREAM* init_vgmstream_ngc_dsp_aaap(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "AAAp"))
-        goto fail;
+        return NULL;
     if (!check_extensions(sf, "dsp"))
-        goto fail;
+        return NULL;
 
 
     dspm.interleave = read_u16be(0x04,sf);
@@ -1068,8 +1336,6 @@ VGMSTREAM* init_vgmstream_ngc_dsp_aaap(STREAMFILE* sf) {
 
     dspm.meta_type = meta_NGC_DSP_AAAP;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -1080,12 +1346,12 @@ VGMSTREAM* init_vgmstream_dsp_dspw(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "DSPW"))
-        goto fail;
+        return NULL;
     if (!check_extensions(sf, "dspw"))
-        goto fail;
+        return NULL;
 
     /* ignore time marker */
-    data_size = read_32bitBE(0x08, sf);
+    data_size = read_u32be(0x08, sf);
     if (is_id32be(data_size - 0x10, sf, "tIME"))
         data_size -= 0x10; /* (ignore, 2 ints in YYYYMMDD hhmmss00) */
 
@@ -1094,9 +1360,10 @@ VGMSTREAM* init_vgmstream_dsp_dspw(STREAMFILE* sf) {
         off_t mrkr_offset = data_size - 0x04;
         off_t max_offset = data_size - 0x1000;
         while (mrkr_offset > max_offset) {
-            if (read_32bitBE(mrkr_offset, sf) != 0x6D726B72) { /* "mrkr" */
+            if (read_u32be(mrkr_offset, sf) != get_id32be("mrkr")) {
                 mrkr_offset -= 0x04;
-            } else {
+            }
+            else {
                 data_size = mrkr_offset;
                 break;
             }
@@ -1105,8 +1372,10 @@ VGMSTREAM* init_vgmstream_dsp_dspw(STREAMFILE* sf) {
     data_size -= 0x20; /* header size */
     /* 0x10: loop start, 0x14: loop end, 0x1c: num_samples */
 
-    dspm.channels = read_32bitBE(0x18, sf);
+    dspm.channels = read_s32be(0x18, sf);
     dspm.max_channels = 6; /* 6ch in Monster Hunter 3 Ultimate */
+    if (dspm.channels < 1) // div-by-zero
+        return NULL;
 
     dspm.header_offset = 0x20;
     dspm.header_spacing = data_size / dspm.channels;
@@ -1115,8 +1384,6 @@ VGMSTREAM* init_vgmstream_dsp_dspw(STREAMFILE* sf) {
 
     dspm.meta_type = meta_DSP_DSPW;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -1126,12 +1393,12 @@ VGMSTREAM* init_vgmstream_ngc_dsp_iadp(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "iadp"))
-        goto fail;
+        return NULL;
 
     /* .adp: actual extension
      * .iadp: header id */
     if (!check_extensions(sf, "adp,iadp"))
-        goto fail;
+        return NULL;
 
     dspm.channels = read_32bitBE(0x04,sf);
     dspm.max_channels = 2;
@@ -1143,91 +1410,6 @@ VGMSTREAM* init_vgmstream_ngc_dsp_iadp(STREAMFILE* sf) {
 
     dspm.meta_type = meta_NGC_DSP_IADP;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .mcadpcm - Custom header + full interleaved dsp [Skyrim (Switch)] */
-VGMSTREAM* init_vgmstream_dsp_mcadpcm(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (!check_extensions(sf, "mcadpcm"))
-        goto fail;
-    /* could validate dsp sizes but only for +1ch, check_dsp_samples will do it anyway */
-    //if (read_32bitLE(0x08,sf) != read_32bitLE(0x10,sf))
-    //   goto fail;
-
-    dspm.channels = read_32bitLE(0x00,sf);
-    dspm.max_channels = 2;
-    dspm.little_endian = 1;
-
-    dspm.header_offset =  read_32bitLE(0x04,sf);
-    dspm.header_spacing = dspm.channels == 1 ? 0 :
-        read_32bitLE(0x0c,sf) - dspm.header_offset; /* channel 2 start, only with Nch */
-    dspm.start_offset = dspm.header_offset + 0x60;
-    dspm.interleave = dspm.header_spacing;
-
-    dspm.meta_type = meta_DSP_MCADPCM;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .switch_audio - UE4 standard LE header + full interleaved dsp [Gal Gun 2 (Switch)] */
-VGMSTREAM* init_vgmstream_dsp_switch_audio(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    /* .switch_audio: possibly UE4 class name rather than extension
-     * .dsp: assumed */
-    if (!check_extensions(sf, "switch_audio,dsp"))
-        goto fail;
-
-    /* manual double header test */
-    //todo improve to read after first header
-    if (read_32bitLE(0x00, sf) == read_32bitLE(get_streamfile_size(sf) / 2, sf))
-        dspm.channels = 2;
-    else
-        dspm.channels = 1;
-    dspm.max_channels = 2;
-    dspm.little_endian = 1;
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = get_streamfile_size(sf) / dspm.channels;
-    dspm.start_offset = dspm.header_offset + 0x60;
-    dspm.interleave = dspm.header_spacing;
-
-    dspm.meta_type = meta_DSP_SWITCH_AUDIO;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-/* .itl - from Chanrinko Hero (GC) */
-VGMSTREAM* init_vgmstream_dsp_itl_ch(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (!check_extensions(sf, "itl"))
-        goto fail;
-
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = 0x60;
-    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
-    dspm.interleave = 0x23C0;
-
-    dspm.fix_looping = 1;
-
-    dspm.meta_type = meta_DSP_ITL;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -1237,10 +1419,10 @@ VGMSTREAM* init_vgmstream_dsp_adpy(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "ADPY"))
-        goto fail;
+        return NULL;
 
     if (!check_extensions(sf, "adpcmx"))
-        goto fail;
+        return NULL;
 
     /* 0x04(2): 1? */
     /* 0x08: some size? */
@@ -1257,8 +1439,6 @@ VGMSTREAM* init_vgmstream_dsp_adpy(STREAMFILE* sf) {
 
     dspm.meta_type = meta_DSP_ADPY;
     return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
 }
 
 
@@ -1268,122 +1448,24 @@ VGMSTREAM* init_vgmstream_dsp_adpx(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00,sf, "ADPX"))
-        goto fail;
-
+        return NULL;
     if (!check_extensions(sf, "adpcmx"))
-        goto fail;
+        return NULL;
 
     /* from 0x04 *6 are probably channel sizes, so max would be 6ch; this assumes 2ch */
-    if (read_32bitLE(0x04,sf) != read_32bitLE(0x08,sf) &&
-        read_32bitLE(0x0c,sf) != 0)
-        goto fail;
+    if (read_u32le(0x04,sf) != read_u32le(0x08,sf) &&
+        read_u32le(0x0c,sf) != 0)
+        return NULL;
     dspm.channels = 2;
     dspm.max_channels = 2;
     dspm.little_endian = 1;
 
     dspm.header_offset = 0x1c;
-    dspm.header_spacing = read_32bitLE(0x04,sf);
+    dspm.header_spacing = read_u32le(0x04,sf);
     dspm.start_offset = dspm.header_offset + 0x60;
     dspm.interleave = dspm.header_spacing;
 
     dspm.meta_type = meta_DSP_ADPX;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .ds2 - LucasArts wrapper [Star Wars: Bounty Hunter (GC)] */
-VGMSTREAM* init_vgmstream_dsp_lucasarts_ds2(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-    size_t file_size, channel_offset;
-
-    /* checks */
-    /* .ds2: real extension, dsp: fake/renamed */
-    if (!check_extensions(sf, "ds2,dsp"))
-        goto fail;
-    if (!(read_32bitBE(0x50,sf) == 0 &&
-          read_32bitBE(0x54,sf) == 0 &&
-          read_32bitBE(0x58,sf) == 0 &&
-          read_32bitBE(0x5c,sf) != 0))
-        goto fail;
-
-    file_size = get_streamfile_size(sf);
-    channel_offset = read_32bitBE(0x5c,sf);  /* absolute offset to 2nd channel */
-    if (channel_offset < file_size / 2 || channel_offset > file_size) /* just to make sure */
-        goto fail;
-
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-    dspm.single_header = true;
-
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = 0x00;
-    dspm.start_offset = 0x60;
-    dspm.interleave = channel_offset - dspm.start_offset;
-
-    dspm.meta_type = meta_DSP_DS2;
-    return init_vgmstream_dsp_common(sf, &dspm);
-fail:
-    return NULL;
-}
-
-
-/* .itl - Incinerator Studios interleaved dsp [Cars Race-o-rama (Wii), MX vs ATV Untamed (Wii)] */
-VGMSTREAM* init_vgmstream_dsp_itl(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-    size_t stream_size;
-
-    /* checks */
-    /* .itl: standard
-     * .dsp: default to catch a similar file, not sure which devs */
-    if (!check_extensions(sf, "itl,dsp"))
-        return NULL;
-
-    stream_size = get_streamfile_size(sf);
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-
-    dspm.start_offset = 0x60;
-    dspm.interleave = 0x10000;
-    dspm.interleave_first_skip = dspm.start_offset;
-    dspm.interleave_first = dspm.interleave - dspm.interleave_first_skip;
-    dspm.interleave_last = (stream_size / dspm.channels) % dspm.interleave;
-    dspm.header_offset = 0x00;
-    dspm.header_spacing = dspm.interleave;
-
-    //todo some files end in half a frame and may click at the very end
-    //todo when .dsp should refer to Ultimate Board Collection (Wii), not sure about dev
-    dspm.meta_type = meta_DSP_ITL_i;
-    return init_vgmstream_dsp_common(sf, &dspm);
-}
-
-
-/* .wav - Square Enix wrapper [Dragon Quest I-III (Switch)] */
-VGMSTREAM* init_vgmstream_dsp_sqex(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (read_u32be(0x00,sf) != 0x00000000)
-        return NULL;
-    if (!check_extensions(sf, "wav,lwav"))
-        return NULL;
-
-    dspm.channels = read_u32le(0x04,sf);
-    dspm.header_offset = read_u32le(0x08,sf);
-    /* 0x0c: channel size */
-    dspm.start_offset = dspm.header_offset + 0x60;
-
-    if (dspm.channels > 1) {
-        dspm.interleave = read_u32le(0x10,sf) - dspm.header_offset;
-        dspm.header_spacing = dspm.interleave;
-    }
-
-
-    dspm.max_channels = 2;
-    dspm.little_endian = 1;
-
-    dspm.meta_type = meta_DSP_SQEX;
     return init_vgmstream_dsp_common(sf, &dspm);
 }
 
@@ -1489,66 +1571,6 @@ VGMSTREAM* init_vgmstream_dsp_cwac(STREAMFILE* sf) {
 }
 
 
-/* .idsp - interleaved dsp [Harvest Moon: Another Wonderful Life (GC)] */
-VGMSTREAM* init_vgmstream_idsp_tose(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-    uint32_t blocks;
-
-    /* checks */
-    if (read_u32be(0x00,sf) != 0)
-        return NULL;
-    if (!check_extensions(sf, "idsp"))
-        return NULL;
-
-    dspm.max_channels = 4; /* mainly stereo */
-
-    /* 0x04: format? */
-    dspm.channels   = read_u16be(0x06,sf);
-    dspm.interleave = read_u32be(0x08,sf);
-    blocks          = read_u32be(0x0c,sf);
-
-    dspm.header_offset = 0x40;
-    dspm.header_spacing = 0x60;
-    dspm.start_offset = dspm.header_offset + dspm.header_spacing * dspm.channels;
-
-    if (dspm.start_offset + dspm.interleave * dspm.channels * blocks != get_streamfile_size(sf))
-        return NULL;
-
-    dspm.meta_type = meta_IDSP_TOSE;
-    return init_vgmstream_dsp_common(sf, &dspm);
-}
-
-
-/* .KWA - interleaved dsp [Knight Wars prototype (Wii)] */
-VGMSTREAM* init_vgmstream_dsp_kwa(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    /* checks */
-    if (read_u32be(0x00,sf) != 3)
-        return NULL;
-
-    if (!check_extensions(sf, "kwa"))
-        return NULL;
-
-    dspm.max_channels   = 4;
-
-    dspm.channels       = read_u32be(0x04,sf);
-    dspm.interleave     = read_u32be(0x0c,sf);
-
-    dspm.header_offset  = 0x20;
-    dspm.header_spacing = dspm.interleave;
-    dspm.start_offset = dspm.header_offset + 0x60;
-
-    dspm.interleave_first_skip = 0x60;
-    dspm.interleave_first = dspm.interleave - dspm.interleave_first_skip;
-
-    dspm.ignore_header_agreement = 1; /* Reus_2.kwa has a few more samples in channels 3+4 */
-
-    dspm.meta_type = meta_DSP_KWA;
-    return init_vgmstream_dsp_common(sf, &dspm);
-}
-
-
 /* APEX - interleaved dsp [Ninja Gaiden 3 Razor's Edge (WiiU)] */
 VGMSTREAM* init_vgmstream_dsp_apex(STREAMFILE* sf) {
     dsp_meta dspm = {0};
@@ -1564,9 +1586,11 @@ VGMSTREAM* init_vgmstream_dsp_apex(STREAMFILE* sf) {
 
     dspm.max_channels   = 2;
     stream_size         = read_u32be(0x04,sf);
-    /* 0x08: 1? */
+    // 0x08: 1?
     dspm.channels       = read_u16be(0x0a,sf);
-    /* 0x0c: channel size? */
+    // 0x0c: channel size?
+    if (dspm.channels < 1) // div-by-zero
+        return NULL;
 
     dspm.interleave     = 0x08;
     dspm.header_offset  = 0x20;
@@ -1630,29 +1654,6 @@ VGMSTREAM* init_vgmstream_dsp_asura(STREAMFILE* sf) {
 
     dspm.header_offset = start_offset + 0x00;
     dspm.start_offset = start_offset + 0x60;
-
-    dspm.meta_type = meta_DSP_ASURA;
-    return init_vgmstream_dsp_common(sf, &dspm);
-}
-
-
-/* .ds2 - Rebellion (Asura engine) [PDC World Championship Darts 2009 & Pro Tour (Wii)] */
-VGMSTREAM* init_vgmstream_dsp_asura_ds2(STREAMFILE* sf) {
-    dsp_meta dspm = {0};
-
-    if (!check_extensions(sf, "ds2"))
-        return NULL;
-
-    dspm.channels = 2;
-    dspm.max_channels = 2;
-    dspm.interleave = 0x8000;
-
-    dspm.header_offset = 0x00;
-    dspm.start_offset = 0x60;
-
-    dspm.header_spacing = dspm.interleave;
-    dspm.interleave_first_skip = dspm.start_offset;
-    dspm.interleave_first = dspm.interleave - dspm.interleave_first_skip;
 
     dspm.meta_type = meta_DSP_ASURA;
     return init_vgmstream_dsp_common(sf, &dspm);

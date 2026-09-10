@@ -134,10 +134,11 @@ static const int8_t* index_tables_v2[8] = {
 #define MAX_BLOCK_SIZE 0x2000
 #define MAX_BLOCK_COUNT 0x10000     // arbitrary max
 #define BLOCK_COUNT_AIFC 0x2000     // observed max
+#define PCM_BUF_SIZE (MAX_BLOCK_SIZE / sizeof(short) * MAX_CHANNELS) //a block could be all PCM
 
 /* ************************** */
 
-static int clamp_s32(int val, int min, int max) {
+static int _clamp_s32(int val, int min, int max) {
     if (val > max)
         return max;
     else if (val < min)
@@ -178,7 +179,7 @@ typedef struct {
     int16_t adpcm_history[MAX_CHANNELS];
     uint8_t adpcm_step_index[MAX_CHANNELS];
 
-    short pbuf[MAX_BLOCK_SIZE / sizeof(short) * MAX_CHANNELS];
+    short pbuf[PCM_BUF_SIZE];
 
     bool overread;
 } imuse_codec_data;
@@ -468,7 +469,7 @@ static void expand_vima(imuse_codec_data* data, bitstream_t* is, int ch, int s) 
         index_tables_v1[code_bits][code] :
         index_tables_v2[code_bits][code];
     step_index += new_step;
-    data->adpcm_step_index[ch] = clamp_s32(step_index, 0, 88);
+    data->adpcm_step_index[ch] = _clamp_s32(step_index, 0, 88);
 }
 
 static int decode_vima_comp(imuse_codec_data* data, block_entry_t* entry) {
@@ -485,23 +486,33 @@ static int decode_vima_comp(imuse_codec_data* data, block_entry_t* entry) {
         uint16_t copy_size = get_u16be(data->block + pos);
         pos += 0x02;
 
+        if (copy_size > data_left) {
+            VGM_LOG("IMUSE: bad copy_size=%x vs left=%x\n", copy_size, data_left);
+            return -1;
+        }
+
         if (data->current_block == 0 && copy_size > 0) {
             /* iMUS header (always in first block) */
             pos += copy_size;
             data_left -= copy_size;
         }
         else if (copy_size > 0) {
+            /* presumably PCM data (not seen) */
             VGM_LOG("IMUSE: found PCM block %i\n", data->current_block);
 
-            /* presumably PCM data (not seen) */
-            for (int i = 0, j = pos; i < copy_size / sizeof(int16_t); i++, j += 2) {
+            int copy_count = copy_size / sizeof(short);
+            if (copy_count > PCM_BUF_SIZE) {
+                VGM_LOG("IMUSE: PCM block too big\n");
+                return -1;
+            }
+
+            for (int i = 0, j = pos; i < copy_count; i++, j += 2) {
                 data->pbuf[i] = get_s16le(data->block + j);
             }
-            filled += copy_size / chs / sizeof(int16_t);
+            filled += copy_count / chs;
 
             pos += copy_size;
             data_left -= copy_size;
-
         }
         else {
             /* ADPCM header (never in first block) */
@@ -512,7 +523,7 @@ static int decode_vima_comp(imuse_codec_data* data, block_entry_t* entry) {
                 pos += 0x09;
 
                 // not done originally
-                data->adpcm_step_index[i] = clamp_s32(data->adpcm_step_index[i], 0, 88);
+                data->adpcm_step_index[i] = _clamp_s32(data->adpcm_step_index[i], 0, 88);
             }
         }
     }
@@ -572,7 +583,7 @@ static int decode_vima_mcmp(imuse_codec_data* data, block_entry_t* entry) {
             }
 
             // not done originally
-            data->adpcm_step_index[i] = clamp_s32(data->adpcm_step_index[i], 0, 88); 
+            data->adpcm_step_index[i] = _clamp_s32(data->adpcm_step_index[i], 0, 88); 
         }
     }
 
@@ -612,8 +623,8 @@ static int decode_vima_aifc(imuse_codec_data* data, block_entry_t* entry) {
         data->adpcm_step_index[1] = entry->step_r;
 
         // not done originally
-        data->adpcm_step_index[0] = clamp_s32(data->adpcm_step_index[0], 0, 88);
-        data->adpcm_step_index[1] = clamp_s32(data->adpcm_step_index[1], 0, 88);
+        data->adpcm_step_index[0] = _clamp_s32(data->adpcm_step_index[0], 0, 88);
+        data->adpcm_step_index[1] = _clamp_s32(data->adpcm_step_index[1], 0, 88);
     }
 
     bitstream_t is = {0};
@@ -647,14 +658,22 @@ static int decode_data_mcmp(imuse_codec_data* data, block_entry_t* entry) {
         return 0;
     }
 
+    uint32_t copy_size = entry->data;
+
+    /* presumably PCM data (not seen) */
     VGM_LOG("IMUSE: found PCM block %i\n", data->current_block);
 
-    // presumably PCM data (not seen)
-    for (int i = 0; i < entry->data / sizeof(short); i++) {
+    int copy_count = copy_size / sizeof(short);
+    if (copy_count > PCM_BUF_SIZE) {
+        VGM_LOG("IMUSE: PCM block too big\n");
+        return -1;
+    }
+
+    for (int i = 0; i < copy_count; i++) {
         data->pbuf[i] = get_s16le(data->block + i * 0x02);
     }
 
-    return entry->data / data->channels / sizeof(short);
+    return copy_count / data->channels;
 }
 
 static int decode_block_comp(imuse_codec_data* data, block_entry_t* entry) {

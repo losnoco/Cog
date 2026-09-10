@@ -26,7 +26,7 @@ struct  mp4_aac_codec_data {
     UINT codec_init_data_size;
     HANDLE_AACDECODER h_aacdecoder;
     unsigned int sample_ptr;
-    unsigned int samples_per_frame
+    unsigned int samples_per_frame;
     unsigned int samples_discard;
     INT_PCM sample_buffer[( (6) * (2048)*4 )];
 };
@@ -105,7 +105,7 @@ mp4_aac_codec_data* init_mp4_aac(STREAMFILE* sf) {
     data->if_file.size = size;
 
     /* Big ol' kludge! */
-    sprintf( filename, "%p", &data->if_file );
+    snprintf(filename, sizeof(filename), "%p", &data->if_file );
     data->h_mp4file = MP4ReadProvider( filename, &mp4_file_provider );
     if ( !data->h_mp4file ) goto fail;
 
@@ -151,6 +151,7 @@ mp4_aac_codec_data* init_mp4_aac(STREAMFILE* sf) {
 fail:
     free( buffer ); buffer = NULL;
     free_mp4_aac(data);
+    return NULL;
 }
 
 

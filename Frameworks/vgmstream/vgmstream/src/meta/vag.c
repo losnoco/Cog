@@ -5,12 +5,12 @@
 /* VAGp - Sony SDK format, created by various official tools */
 VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
     VGMSTREAM* vgmstream = NULL;
-    uint32_t start_offset, file_size, channel_size, stream_name_size, interleave, interleave_first = 0, interleave_first_skip = 0;
+    uint32_t start_offset, file_size, channel_size, stream_name_size, interleave = 0, interleave_first = 0, interleave_first_skip = 0;
     meta_t meta_type;
-    int channels = 0, loop_flag, sample_rate;
+    int channels = 0, loop_flag = 0, sample_rate;
     uint32_t vag_id, version, reserved;
     int32_t loop_start_sample = 0, loop_end_sample = 0;
-    int allow_dual_stereo = 0, has_interleave_last = 0;
+    bool allow_dual_stereo = false, has_interleave_last = false;
 
 
     /* checks */
@@ -30,8 +30,9 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
      * (extensionless): The Urbz (PS2), The Sims series (PS2)
      * .wav: Sniper Elite (PS2), The Simpsons Game (PS2/PSP) 
      * .msv: Casper and the Ghostly Trio (PS2), Earache Extreme Metal Racing (PS2)
-     * .eng,fre,ger,int,ita,jap,spa: Jak and Daxter (PS2) (Preview build) */
-    if (!check_extensions(sf,"vag,swag,str,vig,l,r,vas,xa2,snd,svg,,wav,lwav,msv,eng,fre,ger,int,ita,jap,spa"))
+     * .eng,fre,ger,int,ita,jap,spa: Jak and Daxter (PS2) (Preview build)
+     * .stv: Metal Gear Solid 3 (PS2) internal names (STreamed Vag?) */
+    if (!check_extensions(sf,"vag,swag,str,vig,l,r,vas,xa2,snd,svg,,wav,lwav,msv,eng,fre,ger,int,ita,jap,spa,stv"))
         return NULL;
 
     file_size = get_streamfile_size(sf);
@@ -64,21 +65,29 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
     switch(vag_id) {
 
         case 0x56414731: /* "VAG1" [Metal Gear Solid 3 (PS2), Cabela's African Safari (PSP), Shamu's Deep Sea Adventures (PS2)] */
-            meta_type = meta_VAG_custom; //TODO not always Konami (Sand Grain Studios)
+            meta_type = meta_VAG_custom;
             start_offset = 0x40; /* 0x30 is extra data in VAG1 */
             interleave = 0x10;
             loop_flag = 0;
 
             /* MGS3 is 0 while Cabela's has this, plus description is 0x10 " " then 0x10 "-" */
             channels = read_u8(0x1e, sf);
-            if (channels == 0)
+            if (channels == 0) {
                 channels = 1;
+            }
+            else {
+                if (channel_size == file_size - 0x40) {
+                    /* Shamu's Deep Sea Adventures (PS2) */
+                    channel_size /= channels;
+                }
+            }
+
             break;
 
         case 0x56414732: /* "VAG2" (2 channels) [Metal Gear Solid 3 (PS2)] */
             meta_type = meta_VAG_custom;
             start_offset = 0x40; /* 0x30 is extra data in VAG2 */
-            channels = 2;
+            channels = 2; // (seems to be mapped to "VAG1" = 1, other = 2)
             interleave = 0x800;
             loop_flag = 0;
             break;
@@ -91,30 +100,47 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
             loop_flag = 0;
             break;
 
-        case 0x70474156: /* pGAV (little endian / stereo) [Jak II, Jak 3, Jak X (PS2)] */
+        case 0x70474156: /* pGAV (little endian / stereo) */
             meta_type = meta_VAG_custom;
             start_offset = 0x30;
 
-            if (is_id32be(0x2000,sf, "pGAV"))
-                interleave = 0x2000; /* Jak II & Jak 3 interleave, includes header */
-            else if (is_id32be(0x1000,sf, "pGAV"))
-                interleave = 0x1000; /* Jak X interleave, includes header */
-            else
-                interleave = 0;
+            if (version == 0x20000000 && read_u32le(0x0c, sf) + 0x30 == file_size) {
+                /* Army Men RTS (PS2)-le */
+                channels = 1;
+                has_interleave_last = true;
 
-            if (interleave) {
-                channels = 2;
-                interleave_first = interleave - start_offset; /* interleave includes header */
-                interleave_first_skip = start_offset;
+                channel_size = read_u32le(0x0c,sf);
+                sample_rate = read_u32le(0x10,sf);
+                // string seems to be always "name"
+
+                if (read_u32be(0x8030,sf) == 0x00000000) {
+                    channels = 2;
+                    interleave = 0x8000;
+                    channel_size /= channels;
+                }
             }
             else {
-                channels = 1;
+                // Jak II, Jak 3, Jak X (PS2) */
+                if (is_id32be(0x2000,sf, "pGAV"))
+                    interleave = 0x2000; /* Jak II & Jak 3 interleave, includes header */
+                else if (is_id32be(0x1000,sf, "pGAV"))
+                    interleave = 0x1000; /* Jak X interleave, includes header */
+
+                if (interleave) {
+                    channels = 2;
+                    interleave_first = interleave - start_offset; /* interleave includes header */
+                    interleave_first_skip = start_offset;
+                }
+                else {
+                    channels = 1;
+                }
+
+                channel_size = read_u32le(0x0C,sf) / channels;
+                sample_rate = read_s32le(0x10,sf);
+                //todo adjust channel_size, includes part of header?
+                loop_flag = 0;
             }
 
-            channel_size = read_u32le(0x0C,sf) / channels;
-            sample_rate = read_s32le(0x10,sf);
-            //todo adjust channel_size, includes part of header?
-            loop_flag = 0;
             break;
 
         case 0x56414770: /* "VAGp" (standard and variations) */
@@ -297,7 +323,7 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
                     goto fail;
 
                 channel_size = channel_size / channels;
-                has_interleave_last = 1;
+                has_interleave_last = true;
 
                 /* all files do full loops */
                 loop_flag = 1;
@@ -335,21 +361,21 @@ VGMSTREAM* init_vgmstream_vag(STREAMFILE* sf) {
                 else {
                     loop_flag = ps_find_loop_offsets(sf, start_offset, channel_size*channels, channels, interleave, &loop_start_sample, &loop_end_sample);
                 }
-                allow_dual_stereo = 1; /* often found with external L/R files */
+                allow_dual_stereo = true; // often found with external L/R files
             }
             break;
 
         default:
-            goto fail;
+            return NULL;
     }
 
     /* ignore bigfiles and bad extractions (approximate) */
     /* padding is set to 2 MiB to avoid breaking Jak series' VAGs */
-    if (channel_size * channels + interleave * channels + start_offset * channels + 0x200000 < file_size ||
-        channel_size * channels > file_size) {
-        vgm_logi("VAG: wrong expected (incorrect extraction? %x * %i + %x + %x + ~ vs %x)\n",
+    if (channels <= 0 || channel_size > file_size / channels ||
+        (file_size > 0x200000 && (uint64_t)channel_size + interleave + start_offset < (file_size - 0x200000) / channels)) {
+        vgm_logi("VAG: wrong expected size (incorrect extraction? %x * %i + %x + %x + ~ vs %x)\n",
             channel_size, channels, interleave * channels, start_offset * channels, file_size);
-        goto fail;
+        return NULL;
     }
 
 

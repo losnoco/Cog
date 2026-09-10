@@ -203,6 +203,142 @@ void decode_reset(VGMSTREAM* vgmstream) {
 }
 
 
+static bool decode_uses_internal_offset_updates(VGMSTREAM* vgmstream);
+
+/* validations and setup for simpler codecs (ugly but...) */
+bool decode_setup_coding(VGMSTREAM* vgmstream) {
+
+    switch(vgmstream->coding_type) {
+        case coding_MSADPCM:
+        case coding_MSADPCM_ck:
+        case coding_MSADPCM_mono:
+        case coding_MS_IMA:
+        case coding_MS_IMA_mono:
+        case coding_PSX_cfg:
+        case coding_PSX_pivotal:
+            // TODO: should just reject
+            if (vgmstream->frame_size == 0) {
+                vgmstream->frame_size = vgmstream->interleave;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    // TODO: unify interleave/frame_size
+    size_t interleave_min = 0;
+    size_t interleave_max = 0;
+    size_t frame_min = 0;
+    size_t frame_max = 0;
+    switch(vgmstream->coding_type) {
+        case coding_CRI_ADX:
+        case coding_CRI_ADX_enc_8:
+        case coding_CRI_ADX_enc_9:
+        case coding_CRI_ADX_exp:
+        case coding_CRI_ADX_fixed:
+            interleave_min = 0x12;
+            interleave_max = 0x12;
+            break;
+
+        case coding_MS_IMA_mono:
+            frame_min = 0x04; // has header samples
+            //frame_max = 0x800; // arbitrary max
+            break;
+
+        case coding_MS_IMA:
+            frame_min = 0x04 * vgmstream->channels; // has header samples
+            //frame_max = 0x800; // arbitrary max
+            break;
+
+        case coding_REF_IMA:
+            interleave_min = 0x04 * vgmstream->channels; // has header samples
+            //interleave_max = ?;
+            break;
+
+        case coding_RAD_IMA:
+            interleave_min = 0x04 * vgmstream->channels + 0x01;
+            //interleave_max = ?;
+            break;
+
+        case coding_NDS_IMA:
+        case coding_DAT4_IMA:
+            interleave_min = 0x04 + 0x01;
+            //interleave_max = ?;
+            break;
+
+        case coding_PSX_cfg:
+        case coding_PSX_pivotal:
+            frame_min = 0x02;
+            frame_max = 0x50;
+            break;
+
+        case coding_MSADPCM:
+            frame_min = 0x07 * vgmstream->channels; // has header samples
+            frame_max = MSADPCM_MAX_BLOCK_SIZE;
+            break;
+
+        case coding_MSADPCM_mono:
+        case coding_MSADPCM_ck:
+            frame_min = 0x07; // has header samples
+            frame_max = MSADPCM_MAX_BLOCK_SIZE;
+            break;
+
+        case coding_ASKA:
+            frame_min = 0x04 * vgmstream->channels + 0x01;
+            frame_max = 0xC0;
+            break;
+
+        case coding_XMD:
+            interleave_min = 0x06; // has header samples
+            interleave_max = 0x15;
+            break;
+
+        case coding_PTADPCM:
+            interleave_min = 0x05; // has header samples
+            interleave_max = 0x104;
+            break;
+
+        default:
+            break;
+    }
+
+    if ((interleave_min && vgmstream->interleave < interleave_min) || (interleave_max && vgmstream->interleave > interleave_max)) {
+        VGM_LOG("VGMSTREAM: decoder with wrong interleave size %x, expected [%x, %x]\n", vgmstream->interleave, interleave_min, interleave_max);
+        return false;
+    }
+
+    if ((frame_min && vgmstream->frame_size < frame_min) || (frame_max && vgmstream->frame_size > frame_max)) {
+        VGM_LOG("VGMSTREAM: decoder with wrong frame size %x, expected [%x, %x]\n", vgmstream->frame_size, frame_min, frame_max);
+        return false;
+    }
+
+
+    vgmstream->codec_internal_updates = decode_uses_internal_offset_updates(vgmstream);
+
+    /* big interleaved values for non-interleaved data may result in incorrect behavior,
+     * quick fix for now since layouts are finicky, with 'interleave' left for meta info
+     * (certain layouts+codecs combos results in funny output too, should rework the whole thing) */
+    if (vgmstream->layout_type == layout_interleave
+            && vgmstream->channels == 1
+            && vgmstream->interleave_block_size > 0) {
+        /* main codecs that use arbitrary interleaves but could happen for others too */
+        switch(vgmstream->coding_type) {
+            case coding_NGC_DSP:
+            case coding_NGC_DSP_subint:
+            case coding_PSX:
+            case coding_PSX_badflags:
+                vgmstream->interleave_block_size = 0;
+                break;
+            default:
+                break;
+        }
+    }
+
+    return true;
+}
+
+
 /* Get the number of samples of a single frame (smallest self-contained sample group, 1/N channels) */
 int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
     /* Value returned here is the max (or less) that vgmstream will ask a decoder per
@@ -259,6 +395,7 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_DERF:
         case coding_WADY:
         case coding_DPCM_KCEJ:
+        case coding_CWV:
         case coding_NWA:
         case coding_SASSC:
         case coding_CIRCUS_ADPCM:
@@ -285,6 +422,7 @@ int decode_get_samples_per_frame(VGMSTREAM* vgmstream) {
         case coding_SQEX_IMA:
         case coding_BLITZ_IMA:
         case coding_PCFX:
+        case coding_OKI_UM:
             return 2;
         case coding_XBOX_IMA:
         case coding_XBOX_IMA_mch:
@@ -466,6 +604,7 @@ int decode_get_frame_size(VGMSTREAM* vgmstream) {
         case coding_DERF:
         case coding_WADY:
         case coding_DPCM_KCEJ:
+        case coding_CWV:
         case coding_NWA:
         case coding_SASSC:
         case coding_CIRCUS_ADPCM:
@@ -485,6 +624,7 @@ int decode_get_frame_size(VGMSTREAM* vgmstream) {
         case coding_PCFX:
         case coding_OKI16:
         case coding_OKI4S:
+        case coding_OKI_UM:
         case coding_MTF_IMA:
         case coding_SNDS_IMA:
             return 0x01;
@@ -1083,6 +1223,12 @@ void decode_vgmstream(sbuf_t* sdst, VGMSTREAM* vgmstream, int samples_to_do) {
                         vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
             }
             break;
+        case coding_CWV:
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_cwv(&vgmstream->ch[ch], buffer+ch,
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do);
+            }
+            break;
         case coding_CIRCUS_ADPCM:
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_circus_adpcm(&vgmstream->ch[ch], buffer+ch,
@@ -1409,6 +1555,15 @@ void decode_vgmstream(sbuf_t* sdst, VGMSTREAM* vgmstream, int samples_to_do) {
             for (ch = 0; ch < vgmstream->channels; ch++) {
                 decode_oki4s(&vgmstream->ch[ch], buffer+ch,
                         vgmstream->channels, vgmstream->samples_into_block, samples_to_do, ch, is_stereo);
+            }
+            break;
+        }
+
+        case coding_OKI_UM: {
+            int shift = vgmstream->codec_config;
+            for (ch = 0; ch < vgmstream->channels; ch++) {
+                decode_oki_um(&vgmstream->ch[ch], buffer+ch,
+                        vgmstream->channels, vgmstream->samples_into_block, samples_to_do, shift);
             }
             break;
         }

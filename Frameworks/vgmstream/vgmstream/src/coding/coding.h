@@ -182,7 +182,7 @@ void decode_msadpcm_stereo(VGMSTREAM* vgmstream, sample_t* outbuf, int32_t first
 void decode_msadpcm_mono(VGMSTREAM* vgmstream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, int config);
 void decode_msadpcm_ck(VGMSTREAM* vgmstream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
 long msadpcm_bytes_to_samples(long bytes, int block_size, int channels);
-int msadpcm_check_coefs(STREAMFILE* sf, uint32_t offset);
+bool msadpcm_check_coefs(STREAMFILE* sf, uint32_t offset);
 
 
 /* yamaha_decoder */
@@ -257,6 +257,9 @@ void decode_wady(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing,
 /* dpcm_kcej_decoder */
 void decode_dpcm_kcej(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
 
+/* derf_decoder */
+void decode_cwv(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do);
+
 /* circus_decoder */
 typedef struct circus_codec_data circus_codec_data;
 
@@ -269,9 +272,10 @@ void decode_circus_adpcm(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channel
 
 
 /* oki_decoder */
-void decode_pcfx(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int mode);
-void decode_oki16(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
-void decode_oki4s(VGMSTREAMCHANNEL* stream, sample_t* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, bool is_stereo);
+void decode_pcfx(VGMSTREAMCHANNEL* stream, short* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int mode);
+void decode_oki16(VGMSTREAMCHANNEL* stream, short* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel);
+void decode_oki4s(VGMSTREAMCHANNEL* stream, short* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int channel, bool is_stereo);
+void decode_oki_um(VGMSTREAMCHANNEL* stream, short* outbuf, int channelspacing, int32_t first_sample, int32_t samples_to_do, int shift);
 size_t oki_bytes_to_samples(size_t bytes, int channels);
 
 
