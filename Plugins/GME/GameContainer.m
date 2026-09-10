@@ -81,6 +81,10 @@
 
 	int track_count = gme_track_count(emu);
 
+	if(track_count <= 1) {
+		return @[url];
+	}
+
 	NSMutableArray *tracks = [NSMutableArray array];
 
 	int i;

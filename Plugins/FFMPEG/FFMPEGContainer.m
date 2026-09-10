@@ -133,10 +133,13 @@
 	}
 
 	int subsongs = formatCtx->nb_chapters;
-	if(subsongs < 1) subsongs = 1;
 
-	for(i = 0; i < subsongs; ++i) {
-		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+	if(subsongs <= 1) {
+		[tracks addObject:url];
+	} else {
+		for(i = 0; i < subsongs; ++i) {
+			[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+		}
 	}
 
 exit:
