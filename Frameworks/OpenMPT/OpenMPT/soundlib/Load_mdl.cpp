@@ -644,7 +644,7 @@ bool CSoundFile::ReadMDL(FileReader &file, ModLoadingFlags loadFlags)
 				if(sampleHeader.smpNum == 0 || sampleHeader.smpNum > GetNumSamples())
 					continue;
 
-				LimitMax(sampleHeader.lastNote, static_cast<uint8>(std::size(mptIns->Keyboard)));
+				LimitMax(sampleHeader.lastNote, static_cast<uint8>(std::size(mptIns->Keyboard) - 1));
 				for(uint8 n = firstNote; n <= sampleHeader.lastNote; n++)
 				{
 					mptIns->Keyboard[n] = sampleHeader.smpNum;

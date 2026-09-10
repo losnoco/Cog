@@ -52,7 +52,7 @@ static bool ValidateHeader(const STKFileHeaders &fileHeaders)
 	SmpLength totalSampleLen = 0;
 	uint8 allVolumes = 0;
 	uint8 validNameCount = 0;
-	bool invalidNames = false;
+	uint8 invalidNames = 0;
 
 	for(SAMPLEINDEX smp = 0; smp < 15; smp++)
 	{
@@ -66,7 +66,7 @@ static bool ValidateHeader(const STKFileHeaders &fileHeaders)
 		if(const auto nameType = ClassifyName(sampleHeader.name); nameType == NameClassification::ValidASCII)
 			validNameCount++;
 		else if(nameType == NameClassification::Invalid)
-			invalidNames = true;
+			invalidNames++;
 
 		// Sanity checks - invalid character count adjusted for ata.mod (MD5 937b79b54026fa73a1a4d3597c26eace, SHA1 3322ca62258adb9e0ae8e9afe6e0c29d39add874)
 		// Sample length adjusted for romantic.stk which has a (valid) sample of length 72222
@@ -82,7 +82,8 @@ static bool ValidateHeader(const STKFileHeaders &fileHeaders)
 	}
 
 	// scramble_2.mod has a lot of garbage in the song title, but it has lots of properly-formatted sample names, so we consider those to be more important than the garbage bytes.
-	if(invalidCharsInTitle > 5 && (validNameCount < 4 || invalidNames))
+	// STK.CRB-GreatMuzaxs6 also has a garbage title and first sample name, so we consider one invalid sample name to be okay.
+	if(invalidCharsInTitle > 5 && (validNameCount < 4 || invalidNames > 1))
 		return false;
 
 	// Reject any files with no (or only silent) samples at all, as this might just be a random binary file (e.g. ID3 tags with tons of padding)

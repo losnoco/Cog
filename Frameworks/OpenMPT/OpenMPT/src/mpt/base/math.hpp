@@ -13,6 +13,10 @@
 
 #include <cmath>
 
+#if MPT_OS_DJGPP
+#include <math.h>
+#endif // MPT_OS_DJGPP
+
 
 
 namespace mpt {

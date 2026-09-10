@@ -273,7 +273,6 @@ public:
 		return result;
 	}
 #if MPT_GCC_AT_LEAST(12, 0, 0) && MPT_GCC_BEFORE(13, 1, 0)
-#pragma GCC diagnostic pop
 #pragma GCC pop_options
 #endif
 

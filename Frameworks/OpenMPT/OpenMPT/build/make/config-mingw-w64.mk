@@ -23,11 +23,20 @@ else ifeq ($(WINDOWS_CRT),ucrt)
 MINGW_CRT = mingw32ucrt
 endif
 
+
 ifeq ($(origin CC),default)
+ifeq ($(MINGW_COMPILER),clang)
+CC  = $(MINGW_ARCH)-w64-$(MINGW_CRT)-clang$(MINGW_FLAVOUR)
+else
 CC  = $(MINGW_ARCH)-w64-$(MINGW_CRT)-gcc$(MINGW_FLAVOUR)
 endif
+endif
 ifeq ($(origin CXX),default)
+ifeq ($(MINGW_COMPILER),clang)
+CXX = $(MINGW_ARCH)-w64-$(MINGW_CRT)-clang++$(MINGW_FLAVOUR)
+else
 CXX = $(MINGW_ARCH)-w64-$(MINGW_CRT)-g++$(MINGW_FLAVOUR)
+endif
 endif
 ifeq ($(origin LD),default)
 LD  = $(CXX)

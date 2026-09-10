@@ -620,6 +620,7 @@ enum PlayBehaviour
 	kITNoteCutWithPorta,            // Note Cut (SCx) resets note frequency and interacts with tone portamento with row delay
 	kITVolColNoSlidePropagation,    // Don't propagate volume command c/d parameter to regular command D memory
 	kITStoppedFilterEnvAtStart,     // Stopped filter envelope is still applied even when its first tick has not been processed yet
+	kITCompatGxxCarryPortaWithIns,  // Envelope Carry quirk in Compatible Gxx mode with portamento and instrument number
 
 	// Add new play behaviours here.
 

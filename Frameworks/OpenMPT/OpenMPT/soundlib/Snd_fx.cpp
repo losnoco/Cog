@@ -95,6 +95,7 @@ public:
 		state->m_ppqPosFract = 0.0;
 		state->m_ppqPosBeat = 0;
 		state->m_nGlobalVolume = sndFile.m_nDefaultGlobalVolume;
+		state->m_lastMovedChannel = CHANNELINDEX_INVALID;
 		state->m_globalScriptState.Initialize(sndFile);
 		chnSettings.assign(sndFile.GetNumChannels(), {});
 		const auto muteFlag = CSoundFile::GetChannelMuteFlag();
@@ -1102,7 +1103,7 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 						chn.increment = GetChannelIncrement(chn, chn.nPeriod, 0).first;
 					}
 					int32 setPan = chn.nPan;
-					if(chn.nNewIns != 0) InstrumentChange(chn, chn.nNewIns, porta);
+					if(chn.nNewIns != 0) InstrumentChange(playState, nChn, chn.nNewIns, porta);
 					NoteChange(chn, m.note, porta);
 					HandleNoteChangeFilter(chn);
 					HandleDigiSamplePlayDirection(playState, nChn);
@@ -1459,8 +1460,9 @@ std::vector<GetLengthType> CSoundFile::GetLength(enmGetLengthResetMode adjustMod
 // Effects
 
 // Change sample or instrument number.
-void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bool bUpdVol, bool bResetEnv) const
+void CSoundFile::InstrumentChange(PlayState &playState, CHANNELINDEX channel, uint32 instr, bool bPorta, bool bUpdVol, bool bResetEnv) const
 {
+	ModChannel &chn = playState.Chn[channel];
 	const ModInstrument *pIns = instr <= GetNumInstruments() ? Instruments[instr] : nullptr;
 	const ModSample *pSmp = &Samples[instr <= GetNumSamples() ? instr : 0];
 	const auto oldInsVol = chn.nInsVol;
@@ -1668,9 +1670,34 @@ void CSoundFile::InstrumentChange(ModChannel &chn, uint32 instr, bool bPorta, bo
 					chn.ResetEnvelopes();
 				} else
 				{
-					if(!pIns->VolEnv.dwFlags[ENV_CARRY]) chn.VolEnv.Reset();
-					if(!pIns->PanEnv.dwFlags[ENV_CARRY]) chn.PanEnv.Reset();
-					if(!pIns->PitchEnv.dwFlags[ENV_CARRY]) chn.PitchEnv.Reset();
+					// IT Compatibility: In Compatible Gxx mode, Envelope Carry mode has a
+					// really terrible quirk where, if a note has both an instrument number
+					// and tone portamento, it does not resume envelopes where the previously
+					// playing note left off:
+					// Internally, IT keeps track of the last allocated NNA channel in a
+					// global variable, which is then used to get the old envelope information
+					// from.
+					// However in this particular case (porta + instrument number), the last
+					// NNA channel memory is not updated. Due to this, the 'last' channel may
+					// actually be some earlier, already stopped note from the same channel, or
+					// it might be a completely different pattern channel altogether. Nasty!
+					// Test case: CarryCompatGxxPortaWithIns.it
+					const bool compatGxxCarryReset = m_playBehaviour[kITCompatGxxCarryPortaWithIns] && bPorta && m_SongFlags[SONG_ITCOMPATGXX];
+					const ModChannel *lastChn = playState.m_lastMovedChannel < playState.Chn.size() ? &playState.Chn[playState.m_lastMovedChannel] : nullptr;
+					if(!pIns->VolEnv.dwFlags[ENV_CARRY])
+						chn.VolEnv.Reset();
+					else if(compatGxxCarryReset)
+						chn.VolEnv.nEnvPosition = lastChn ? lastChn->VolEnv.nEnvPosition : 0;
+
+					if(!pIns->PanEnv.dwFlags[ENV_CARRY])
+						chn.PanEnv.Reset();
+					else if(compatGxxCarryReset)
+						chn.PanEnv.nEnvPosition = lastChn ? lastChn->PanEnv.nEnvPosition : 0;
+
+					if(!pIns->PitchEnv.dwFlags[ENV_CARRY])
+						chn.PitchEnv.Reset();
+					else if(compatGxxCarryReset)
+						chn.PitchEnv.nEnvPosition = lastChn ? lastChn->PitchEnv.nEnvPosition : 0;
 				}
 			}
 
@@ -1997,7 +2024,7 @@ void CSoundFile::NoteChange(ModChannel &chn, int note, bool bPorta, bool bResetE
 		chn.nResSwing = chn.nCutSwing = 0;
 		if(pIns)
 		{
-			// IT Compatiblity: NNA is reset on every note change, not every instrument change (fixes spx-farspacedance.it).
+			// IT Compatibility: NNA is reset on every note change, not every instrument change (fixes spx-farspacedance.it).
 			if(m_playBehaviour[kITNNAReset]) chn.nNNA = pIns->nNNA;
 
 			if(!pIns->VolEnv.dwFlags[ENV_CARRY]) chn.VolEnv.Reset();
@@ -2333,6 +2360,8 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 		}
 
 		const CHANNELINDEX nnaChn = GetNNAChannel(nChn);
+		if(m_PlayState.m_lastMovedChannel == nChn)
+			m_PlayState.m_lastMovedChannel = nnaChn;
 		if(nnaChn == CHANNELINDEX_INVALID)
 			return CHANNELINDEX_INVALID;
 		ModChannel &chn = m_PlayState.Chn[nnaChn];
@@ -2485,11 +2514,15 @@ CHANNELINDEX CSoundFile::CheckNNA(CHANNELINDEX nChn, uint32 instr, int note, boo
 		}
 	}
 
+	m_PlayState.m_lastMovedChannel = CHANNELINDEX_INVALID;
+
 	// New Note Action
 	if(!srcChn.IsSamplePlaying() && !applyNNAtoPlug)
 		return CHANNELINDEX_INVALID;
 
 	const CHANNELINDEX nnaChn = GetNNAChannel(nChn);
+	if(srcChn.pModInstrument == pIns)
+		m_PlayState.m_lastMovedChannel = nnaChn;
 
 #ifndef NO_PLUGINS
 	if(applyNNAtoPlug)
@@ -3087,7 +3120,7 @@ bool CSoundFile::ProcessEffects()
 				const ModSample *oldSample = chn.pModSample;
 				//const ModInstrument *oldInstrument = chn.pModInstrument;
 
-				InstrumentChange(chn, instr, bPorta, true);
+				InstrumentChange(m_PlayState, nChn, instr, bPorta, true);
 
 				if(!chn.dwFlags[CHN_MUTE | CHN_SYNCMUTE] && chn.pModSample != nullptr && chn.pModSample->uFlags[CHN_ADLIB] && m_opl)
 				{
@@ -3152,7 +3185,7 @@ bool CSoundFile::ProcessEffects()
 					if(m_playBehaviour[kITEmptyNoteMapSlotIgnoreCell] && ModCommand::IsNote(previousNewNote))
 						chn.nNewNote = previousNewNote;
 
-					InstrumentChange(chn, chn.nNewIns, bPorta, chn.pModSample == nullptr && chn.pModInstrument == nullptr, !(GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)));
+					InstrumentChange(m_PlayState, nChn, chn.nNewIns, bPorta, chn.pModSample == nullptr && chn.pModInstrument == nullptr, !(GetType() & (MOD_TYPE_XM|MOD_TYPE_MT2)));
 					chn.nNewNote = note;
 					chn.swapSampleIndex = chn.nNewIns = 0;
 				}
@@ -5975,7 +6008,7 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		{
 			if(chn.rowCommand.instr && param < 0x100)
 			{
-				InstrumentChange(chn, chn.rowCommand.instr, false, false);
+				InstrumentChange(m_PlayState, nChn, chn.rowCommand.instr, false, false);
 				resetEnv = true;
 			}
 			if(param < 0x100)
@@ -5986,7 +6019,7 @@ void CSoundFile::RetrigNote(CHANNELINDEX nChn, int param, int offset)
 		if(m_playBehaviour[kMODSampleSwap] && chn.rowCommand.instr)
 		{
 			auto oldFineTune = chn.nFineTune;
-			InstrumentChange(chn, chn.rowCommand.instr, false, false);
+			InstrumentChange(m_PlayState, nChn, chn.rowCommand.instr, false, false);
 			chn.nFineTune = oldFineTune;
 		}
 

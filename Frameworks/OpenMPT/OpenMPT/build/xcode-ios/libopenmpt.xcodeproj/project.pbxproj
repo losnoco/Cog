@@ -401,7 +401,6 @@
 		6C67B7D97E1EF7CBF38CE619 /* tests_base_math.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = tests_base_math.hpp; path = ../../src/mpt/base/tests/tests_base_math.hpp; sourceTree = "<group>"; };
 		6D2350A8B171F61AF3992EE8 /* FileReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FileReader.h; path = ../../common/FileReader.h; sourceTree = "<group>"; };
 		6DB68B53DADE99C5DC718993 /* Load_puma.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Load_puma.cpp; path = ../../soundlib/Load_puma.cpp; sourceTree = "<group>"; };
-		6E84090F7E6935416ADCBF4F /* environment.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = environment.hpp; path = ../../src/mpt/environment/environment.hpp; sourceTree = "<group>"; };
 		6F3A912F8923F36144AA076F /* filecursor_callbackstream.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = filecursor_callbackstream.hpp; path = ../../src/mpt/io_read/filecursor_callbackstream.hpp; sourceTree = "<group>"; };
 		70644035FF1571275A9F8E75 /* libopenmpt_stream_callbacks_file_msvcrt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = libopenmpt_stream_callbacks_file_msvcrt.h; path = ../../libopenmpt/libopenmpt_stream_callbacks_file_msvcrt.h; sourceTree = "<group>"; };
 		712230EFB9C16F21DCED272F /* filecursor_memory.hpp */ = {isa = PBXFileReference; lastKnownFileType = text; name = filecursor_memory.hpp; path = ../../src/mpt/io_read/filecursor_memory.hpp; sourceTree = "<group>"; };
@@ -743,14 +742,6 @@
 			name = endian;
 			sourceTree = "<group>";
 		};
-		30779B89F3E35D3B328701C9 /* environment */ = {
-			isa = PBXGroup;
-			children = (
-				6E84090F7E6935416ADCBF4F /* environment.hpp */,
-			);
-			name = environment;
-			sourceTree = "<group>";
-		};
 		31DC889B1CC8AE8D64AE76DB /* plugins */ = {
 			isa = PBXGroup;
 			children = (
@@ -999,7 +990,6 @@
 				A3AF43EF4801E1A15A3A2A2F /* crc */,
 				02978A9119AA25C309C620D1 /* detect */,
 				2AB619BD41C8B4EF31E4AFFD /* endian */,
-				30779B89F3E35D3B328701C9 /* environment */,
 				CA56FDBDF291B66FDA2D43FD /* exception */,
 				4ECA2D3165DCC86355F8C371 /* format */,
 				1063AA8FB3AF33C1CE8000CF /* io */,
