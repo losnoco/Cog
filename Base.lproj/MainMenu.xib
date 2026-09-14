@@ -1875,6 +1875,11 @@
                                     <action selector="toggleSideView:" target="2172" id="2419"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Collapse All Folders" keyEquivalent="D" id="Kc3-Tr-9fA">
+                                <connections>
+                                    <action selector="collapseAll:" target="2172" id="Kc3-Tr-9fB"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show Equalizer" secondaryImage="slider.vertical.3" catalog="system" keyEquivalent="e" id="nBU-pH-J3I">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>

@@ -70,6 +70,10 @@
 	}
 }
 
+- (IBAction)collapseAll:(id)sender {
+	[fileTreeOutlineView collapseItem:nil collapseChildren:YES];
+}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
 	if([menuItem action] == @selector(toggleSideView:)) {
 		NSSplitViewItem *sidebarItem = [self sidebarItem];
