@@ -65,6 +65,111 @@ AUPlayer::~AUPlayer() {
 
 /* ── Sending ─────────────────────────────────────────────────────────────── */
 
+/* One message as Universal MIDI Packets, SysEx included.
+ *
+ * Everything goes this way when the block exists, and that is the point.  The
+ * two calls are separate queues into the unit, and nothing orders one against
+ * the other when two messages share a timestamp: a file whose first tick holds
+ * a GS reset and the program changes for sixteen channels could have the reset
+ * arrive last and put every part it touched back to program 0, which is heard
+ * as a handful of channels playing grand piano.  Sending both kinds through
+ * the same block is what keeps them in the order they were written in.
+ *
+ * SysEx becomes SysEx7 (message type 0x3): six data bytes to a packet, the
+ * leading F0 and trailing F7 dropped because the status nibble carries them
+ * (0 whole, 1 start, 2 continue, 3 end).  A unit that has not adopted
+ * MIDIEventList does not see any of this -- the framework puts the message
+ * back together and hands it over as one piece, F0 and F7 in place.
+ *
+ * The group nibble is written into every packet as well as passed as the
+ * cable, because a unit reads one or the other.  This is what a multi-cable
+ * unit needs to receive SysEx on port B at all; with the cable alone it lands
+ * on port A. */
+API_AVAILABLE(macos(12.0), ios(15.0))
+static bool sendEventList(AUMIDIEventListBlock schedule, uint8_t cable,
+                          const uint8_t *data, size_t length, uint32_t sample_offset) {
+	const uint8_t group = cable & 0x0F;
+	const AUEventSampleTime when = AUEventSampleTimeImmediate + sample_offset;
+
+	/* Room for a good many packets, so that a bulk dump is not split into one
+	 * scheduling call per six bytes.  A list that fills up is sent and started
+	 * again; the calls stay in order, so the message does too. */
+	alignas(4) uint8_t storage[sizeof(MIDIEventList) + 8192];
+	MIDIEventList *list = (MIDIEventList *)storage;
+	MIDIEventPacket *packet = MIDIEventListInit(list, kMIDIProtocol_1_0);
+
+	/* Set once anything has been handed over, so that giving up half way
+	 * cannot end with the caller sending the message a second time down the
+	 * other block. */
+	bool sent = false;
+
+	auto add = [&](const uint32_t *words, UInt32 count) {
+		MIDIEventPacket *next = MIDIEventListAdd(list, sizeof(storage), packet, 0, count, words);
+		if(!next) {
+			/* Full.  Hand off what is built and carry on in a fresh list. */
+			schedule(when, group, list);
+			sent = true;
+			packet = MIDIEventListInit(list, kMIDIProtocol_1_0);
+			next = MIDIEventListAdd(list, sizeof(storage), packet, 0, count, words);
+		}
+		packet = next;
+		return next != NULL;
+	};
+
+	const uint8_t status = data[0];
+
+	if(status == 0xF0) {
+		/* Strip F0 and, when it is there, the closing F7. */
+		const uint8_t *body = data + 1;
+		size_t n = length - 1;
+		if(n && body[n - 1] == 0xF7) --n;
+
+		size_t at = 0;
+		do {
+			const size_t take = (n - at) > 6 ? 6 : (n - at);
+			const bool first = (at == 0), last = (at + take >= n);
+			const uint8_t st = (first && last) ? 0 : first ? 1 : last ? 3 : 2;
+
+			uint32_t w[2] = { (UInt32)0x3 << 28 | (UInt32)group << 24 |
+			                  (UInt32)st << 20 | (UInt32)take << 16, 0 };
+			for(size_t k = 0; k < take; ++k) {
+				const uint32_t v = body[at + k];
+				if(k < 2) w[0] |= v << (8 * (1 - k));
+				else      w[1] |= v << (8 * (5 - k));
+			}
+			if(!add(w, 2)) return sent;
+			at += take;
+		} while(at < n);
+	} else if(status >= 0xF1) {
+		/* System common and real time: message type 0x1, up to three bytes.
+		 *
+		 * Only the statuses the packet type actually defines.  F4 and F5 are
+		 * undefined there, and F5 is the port-select this file writes itself;
+		 * those go back to the other block rather than into a packet whose
+		 * status has no meaning. */
+		switch(status) {
+			case 0xF1: case 0xF2: case 0xF3: case 0xF6:
+			case 0xF8: case 0xFA: case 0xFB: case 0xFC: case 0xFE: case 0xFF:
+				break;
+			default:
+				return false;
+		}
+		uint32_t w = (UInt32)0x1 << 28 | (UInt32)group << 24 | (UInt32)status << 16;
+		if(length >= 2) w |= (UInt32)data[1] << 8;
+		if(length >= 3) w |= (UInt32)data[2];
+		if(!add(&w, 1)) return sent;
+	} else {
+		if(length > 3) return false;         /* not a thing type 0x2 can carry */
+		uint32_t w = (UInt32)0x2 << 28 | (UInt32)group << 24 | (UInt32)status << 16;
+		if(length >= 2) w |= (UInt32)data[1] << 8;
+		if(length >= 3) w |= (UInt32)data[2];
+		if(!add(&w, 1)) return sent;
+	}
+
+	schedule(when, group, list);
+	return true;
+}
+
 void AUPlayer::sendToCable(Instance &instance, uint8_t cable, const uint8_t *data, size_t length,
                            uint32_t sample_offset) {
 	if(!length) return;
@@ -73,29 +178,12 @@ void AUPlayer::sendToCable(Instance &instance, uint8_t cable, const uint8_t *dat
 	 * old code could only do this for channel messages, because MusicDeviceSysEx
 	 * has no offset argument; both blocks below take one. */
 	if(@available(macOS 12.0, iOS 15.0, *)) {
-		if(instance.scheduleEventList && length <= 3 && data[0] < 0xF0) {
-			MIDIEventList list;
-			MIDIEventPacket *packet = MIDIEventListInit(&list, kMIDIProtocol_1_0);
-			uint32_t word = (UInt32)0x2 << 28 | (UInt32)(cable & 0x0F) << 24 |
-			                (UInt32)data[0] << 16;
-			if(length >= 2) word |= (UInt32)data[1] << 8;
-			if(length >= 3) word |= (UInt32)data[2];
-			packet = MIDIEventListAdd(&list, sizeof(list), packet, 0, 1, &word);
-			/* Cable *and* group, because a unit reads one or the other. */
-			instance.scheduleEventList(AUEventSampleTimeImmediate + sample_offset, cable, &list);
+		if(instance.scheduleEventList &&
+		   sendEventList(instance.scheduleEventList, cable, data, length, sample_offset))
 			return;
-		}
 	}
 
-	/* Everything else, SysEx included: this block takes a whole message of any
-	 * length and delivers the cable with it.
-	 *
-	 * SysEx does not go the MIDIEventList route above because a Universal MIDI
-	 * Packet carries it six bytes at a time, in start/continue/end pieces that
-	 * would have to be assembled here and taken apart again by anything that
-	 * has not adopted the protocol.  The cost is that a unit which *has*
-	 * adopted it reads the group rather than the cable, so its SysEx lands on
-	 * port A -- worth fixing the day such a unit turns up, and not before. */
+	/* No event-list block, or a message it could not carry. */
 	if(instance.scheduleEvent) {
 		instance.scheduleEvent(AUEventSampleTimeImmediate + sample_offset, cable,
 		                       (NSInteger)length, data);
@@ -152,13 +240,21 @@ void AUPlayer::sendSysexTime(const uint8_t *data, size_t size, unsigned port, ui
 	sendToPort(port, data, size, time);
 
 	/* A reset arriving on port A is meant for the whole module, and a file that
-	 * addresses four ports very often sends exactly one.  Repeating it on the
-	 * others is what this did when each port was its own unit, and it has to
-	 * keep happening now that they may share one. */
+	 * addresses four ports very often sends exactly one.  Repeating it is what
+	 * this did when each port was its own unit -- separate synths, none of
+	 * which would have heard it otherwise.
+	 *
+	 * Once per *instance*, though, and not once per port.  A unit that serves
+	 * several cables is one module, and the reset it was handed on cable 0 has
+	 * already reached all of it; sending it again on cable 1 resets that same
+	 * module a second time.  On a Yamaha MU2000 the second one is destructive:
+	 * a GS reset puts the module in TG300B, and taking it there again by way
+	 * of the second port leaves parts playing the wrong voices -- measured as
+	 * peak 0.65 falling to 0.32 on a GS file whose every program change had
+	 * already arrived correctly. */
 	if(port == 0) {
-		unsigned ports = instanceCount * cablesPerInstance;
-		for(unsigned p = 1; p < ports && p < max_ports; ++p)
-			sendToPort(p, data, size, time);
+		for(unsigned i = 1; i < instanceCount; ++i)
+			sendToCable(instances[i], 0, data, size, time);
 	}
 }
 
