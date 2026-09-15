@@ -390,6 +390,9 @@ static BOOL consentLastEnabled = NO;
 					// Disable hang detection, lots of false positives still
 					options.enableAppHangTracking = NO;
 
+					// Enable MetricKit
+					options.enableMetricKit = YES;
+
 					// Enable logging
 					options.enableLogs = YES;
 
