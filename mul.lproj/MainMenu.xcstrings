@@ -4606,6 +4606,24 @@
         }
       }
     },
+    "Kc3-Tr-9fA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Collapse All Folders\"; ObjectID = \"Kc3-Tr-9fA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Collapse All Folders"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contraer todas las carpetas"
+          }
+        }
+      }
+    },
     "Kih-ky-A1h.ibShadowedDisplayPattern" : {
       "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedDisplayPattern = \"%{value1}@%{value2}@\"; ObjectID = \"Kih-ky-A1h\";",
       "extractionState" : "extracted_with_value",

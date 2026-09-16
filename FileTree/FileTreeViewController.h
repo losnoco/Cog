@@ -22,6 +22,8 @@
 
 - (IBAction)toggleSideView:(id)sender;
 
+- (IBAction)collapseAll:(id)sender;
+
 - (IBAction)chooseRootFolder:(id)sender;
 
 - (void)doAddToPlaylist:(NSArray *)urls origin:(URLOrigin)origin;
