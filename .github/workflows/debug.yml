@@ -22,6 +22,8 @@ jobs:
       - name: Unpack libraries
         run: >
           cd ThirdParty && tar xvf libraries.tar.xz
+      - name: Download Metal toolchain
+        run: xcodebuild -downloadComponent MetalToolchain
       - name: Run xcodebuild
         run: >
           xcodebuild
