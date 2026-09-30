@@ -22,6 +22,17 @@ extern "C" {
 
 #pragma clang assume_nonnull begin
 
+// MARK: - DoP
+
+/// Whether `count` interleaved frames are all DSD over PCM: the same 0x05 or
+/// 0xFA marker byte in every channel of a frame, alternating frame to frame.
+/// On success `nextMarker` (if given) is the marker the next frame must carry.
+bool cog_dop_validate(const float *frames, size_t channels, size_t count, uint8_t *_Nullable nextMarker);
+
+/// Fills `count` frames with DoP silence (the 0x69 idle pattern), continuing
+/// from `marker` and leaving it at the marker for the frame after.
+void cog_dop_fill_silence(float *frames, size_t channels, size_t count, uint8_t *marker);
+
 /// A gain applied on the render thread and steered from any other thread.
 ///
 /// The controlling thread asks for a target and a ramp length; the render
@@ -85,8 +96,21 @@ bool cog_renderer_set_crossfade_frames(CogRenderer *renderer, size_t frames);
 /// when fades are turned off, and for DoP, which cannot be mixed.
 void cog_renderer_set_crossfade_enabled(CogRenderer *renderer, bool enabled);
 
+/// Renders to 24-bit integer, high-aligned in 32 bits, instead of float: the
+/// DoP carrier format. DoP passes bit-exact; anything else is converted and
+/// clipped. `maximumFrames` is the most frames the device asks for at once.
+/// Allocates, so call only while the renderer is not running; zero goes
+/// back to float.
+bool cog_renderer_set_integer_output(CogRenderer *renderer, size_t maximumFrames);
+
 /// Render thread: fills `frames` frames of `out` (in the ring's channel
 /// count) and returns how many came from the ring; the rest are silence.
+///
+/// DoP from the ring is passed bit-exact: no volume, transport ramp or
+/// crossfade touches it (the transport can only let it through or replace
+/// it with DoP silence), its marker phase is kept across calls, and while
+/// DoP is playing, any shortfall is DoP silence rather than zeroes, which
+/// would make a DAC drop out of DSD.
 size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames);
 
 /// An AURenderCallback for an output unit whose input format is interleaved
@@ -100,6 +124,10 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
                                         UInt32 inBusNumber,
                                         UInt32 inNumberFrames,
                                         AudioBufferList *_Nullable ioData);
+
+/// Converts rendered floats to 24-bit integer high-aligned in 32 bits: DoP
+/// words exactly, PCM rounded and clipped.
+void cog_convert_to_s32(int32_t *output, const float *input, size_t count, bool dop);
 
 /// Frames delivered to the device, audio and silence alike.
 uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer);

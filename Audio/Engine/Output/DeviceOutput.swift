@@ -47,6 +47,20 @@ public final class DeviceOutput {
 	/// device's rate, at most eight channels.
 	public private(set) var format = StreamFormat(sampleRate: 0, channels: 0)
 
+	/// Whether the unit takes 24-bit integer (high-aligned in 32 bits) rather
+	/// than float: the DoP carrier format, set by `refreshFormat(integer:)`.
+	public private(set) var integerRender = false
+
+	/// The most frames the unit asks the renderer for at once.
+	public var maximumFramesPerSlice: Int {
+		var frames: UInt32 = 0
+		var size = UInt32(MemoryLayout<UInt32>.size)
+		guard AudioUnitGetProperty(unit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &frames, &size) == noErr else {
+			return 4096
+		}
+		return Int(frames)
+	}
+
 	/// Frames between the renderer handing audio over and it being heard.
 	public private(set) var latencyFrames = 0
 
@@ -165,9 +179,13 @@ public final class DeviceOutput {
 		return asbd
 	}
 
-	/// Re-reads the device format and sets the render format to match.
-	/// Call after `onDeviceChange(.format)` before rebuilding the renderer.
-	public func refreshFormat() throws {
+	/// Re-reads the device format and sets the render format to match, as
+	/// float or (for a DoP carrier) 24-bit integer. Call after
+	/// `onDeviceChange(.format)` before rebuilding the renderer.
+	///
+	/// `sampleRate` overrides the rate read from the unit, which can lag a
+	/// moment behind a nominal rate just set.
+	public func refreshFormat(integer: Bool = false, sampleRate: Double? = nil) throws {
 		let wasRunning = isRunning
 		if wasRunning { stop() }
 		uninitialize()
@@ -176,14 +194,16 @@ public final class DeviceOutput {
 			throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioUnitErr_FormatNotSupported))
 		}
 		let channels = min(Int(hardware.mChannelsPerFrame), 8)
-		let render = StreamFormat(sampleRate: hardware.mSampleRate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
-		var asbd = Pump.asbd(render)
+		let rate = sampleRate ?? hardware.mSampleRate
+		let render = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
+		var asbd = integer ? Self.integerASBD(render) : Pump.asbd(render)
 		try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
+		integerRender = integer
 		var layout = AudioChannelLayout()
 		layout.mChannelLayoutTag = Self.layoutTag(channels: channels)
 		// Not every device takes a layout; the stream format is what matters.
 		_ = AudioUnitSetProperty(unit, kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, 0, &layout, UInt32(MemoryLayout<AudioChannelLayout>.size))
-		configureBufferSize(sampleRate: hardware.mSampleRate)
+		configureBufferSize(sampleRate: rate)
 		try Self.check(AudioUnitInitialize(unit))
 		initialized = true
 
@@ -223,6 +243,57 @@ public final class DeviceOutput {
 		var actual: UInt32 = 0
 		_ = Self.getProperty(deviceID, kAudioDevicePropertyBufferFrameSize, &actual, scope: kAudioDevicePropertyScopeOutput)
 		EngineLog.logger.info("I/O buffer: asked for \(frames) frames (\(Double(frames) / sampleRate * 1000, format: .fixed(precision: 1)) ms), status \(status), device now \(actual) frames")
+	}
+
+	/// 24-bit samples high-aligned in 32-bit words, as DoP DACs expect: no
+	/// float conversion can then disturb the carrier.
+	static func integerASBD(_ format: StreamFormat) -> AudioStreamBasicDescription {
+		let bytesPerFrame = UInt32(MemoryLayout<Int32>.size * format.channels)
+		return AudioStreamBasicDescription(mSampleRate: format.sampleRate, mFormatID: kAudioFormatLinearPCM,
+		                                   mFormatFlags: kAudioFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsAlignedHigh | kAudioFormatFlagsNativeEndian,
+		                                   mBytesPerPacket: bytesPerFrame, mFramesPerPacket: 1,
+		                                   mBytesPerFrame: bytesPerFrame, mChannelsPerFrame: UInt32(format.channels),
+		                                   mBitsPerChannel: 24, mReserved: 0)
+	}
+
+	// MARK: - Device rate
+
+	/// Whether the device offers `rate`. A device that does not list its
+	/// rates is given the benefit of the doubt, as OutputCoreAudio did.
+	public func supportsSampleRate(_ rate: Double) -> Bool {
+		var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyAvailableNominalSampleRates,
+		                                         mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+		var size: UInt32 = 0
+		guard AudioObjectGetPropertyDataSize(deviceID, &address, 0, nil, &size) == noErr, size > 0 else { return true }
+		var ranges = [AudioValueRange](repeating: AudioValueRange(), count: Int(size) / MemoryLayout<AudioValueRange>.size)
+		guard AudioObjectGetPropertyData(deviceID, &address, 0, nil, &size, &ranges) == noErr else { return true }
+		return ranges.contains { rate >= $0.mMinimum - 1 && rate <= $0.mMaximum + 1 }
+	}
+
+	/// The device's nominal rate.
+	public var nominalSampleRate: Double {
+		var rate: Float64 = 0
+		_ = Self.getProperty(deviceID, kAudioDevicePropertyNominalSampleRate, &rate)
+		return rate
+	}
+
+	/// Sets the device's nominal rate (for everything using the device, as
+	/// Audio MIDI Setup would) and waits up to half a second for it to take.
+	/// Call `refreshFormat` afterwards.
+	public func setNominalSampleRate(_ rate: Double) -> Bool {
+		if abs(nominalSampleRate - rate) < 1 { return true }
+		guard supportsSampleRate(rate) else { return false }
+		var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyNominalSampleRate,
+		                                         mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+		var requested = Float64(rate)
+		guard AudioObjectSetPropertyData(deviceID, &address, 0, nil, UInt32(MemoryLayout<Float64>.size), &requested) == noErr else {
+			return false
+		}
+		for _ in 0..<50 {
+			if abs(nominalSampleRate - rate) < 1 { return true }
+			usleep(10000)
+		}
+		return false
 	}
 
 	/// Whether the device's rate or channel count no longer matches the

@@ -243,7 +243,7 @@ Each stage ships on its own and leaves the old engine working.
      default device (silently); `PumpTests` offline.
 
    *Not yet behind the switch:* DSP (EQ, HRTF, FreeSurround, time-stretch),
-   visualization, DoP, HDCD indicator, `resetNextStreams` (a playlist edit
+   visualization, HDCD indicator, `resetNextStreams` (a playlist edit
    after the next track has started decoding only applies from the track
    after it), seek crossfade, live
    `volumeScaling` changes, suspend-on-pause idle timer, and device changes
@@ -317,6 +317,25 @@ Each stage ships on its own and leaves the old engine working.
      the same device moves the running feeder to the new track as a seek
      would, instead of building a new pipeline. Paused, prebuffering,
      starting paused, or after a device change, it rebuilds as before.
+   - DoP: `play:` opens the first track's decoder (as BufferChain did) to
+     learn whether it wants a DoP carrier: a sixteenth of the rate for DSD,
+     or the rate itself for integer PCM of 24 bits or more at 176.4 kHz or
+     more (possibly DoP already), with channels matching the device. If
+     the device takes the rate, it is switched to it (for everything using
+     it, as OutputCoreAudio did) and a carrier pipeline is built: the
+     feeder packs DSD as DoP, the pump passes DoP blocks through with no
+     ReplayGain, DSP or channel fit, and the renderer renders 24-bit
+     integer, high-aligned. The renderer checks each slice: DoP passes
+     bit-exact (the transport can only pass it or replace it with DoP
+     silence), keeps its marker phase (dropping a frame rather than
+     repeating a marker), is cut rather than crossfaded, and any shortfall
+     while it plays is DoP silence, so the DAC stays locked. A next track
+     wanting another carrier ends the stream before it; the engine then
+     rebuilds for it and announces it when heard (not gapless, as the
+     device rate changes). PCM after DoP stays in the carrier pipeline,
+     resampled to its rate, as the old engine left the device rate alone.
+     Unlike the old engine, a track whose carrier the device cannot take
+     plays as PCM rather than failing.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
 
 ## Open questions

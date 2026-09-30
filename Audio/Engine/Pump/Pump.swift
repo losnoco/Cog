@@ -81,6 +81,9 @@ public final class Pump {
 
 	/// The DSP chain, in order. Each is skipped while inactive.
 	private let stages: [DSPStage]
+	/// Whether this pipeline runs at a DoP carrier rate, where blocks that
+	/// are DoP must reach the device untouched.
+	private let carrier: Bool
 	/// The active stages and input format the chain was last configured for.
 	private var configuredChain: (stages: [ObjectIdentifier], input: StreamFormat)?
 
@@ -107,7 +110,8 @@ public final class Pump {
 	///   - seconds: shallow ring length; this is the delay before a DSP
 	///     setting change is heard, so it is kept short.
 	///   - stages: the DSP chain, run in order on every block.
-	public init?(feeder: Feeder, outputFormat: StreamFormat, stages: [DSPStage] = [], seconds: Double = 0.2) {
+	///   - carrier: pass DoP blocks through bit-exact.
+	public init?(feeder: Feeder, outputFormat: StreamFormat, stages: [DSPStage] = [], carrier: Bool = false, seconds: Double = 0.2) {
 		guard outputFormat.sampleRate == feeder.outputRate,
 		      let ring = cog_ring_create(max(Int(outputFormat.sampleRate * seconds), Self.blockFrames * 2), UInt32(outputFormat.channels)) else {
 			return nil
@@ -116,6 +120,7 @@ public final class Pump {
 		self.feeder = feeder
 		self.outputFormat = outputFormat
 		self.stages = stages
+		self.carrier = carrier
 	}
 
 	deinit {
@@ -253,10 +258,21 @@ public final class Pump {
 		frames += UInt64(got)
 		feeder.consumerDidRead()
 
+		if carrier && channels == outputFormat.channels && isDoP(block) {
+			// DSD over PCM: any gain, filter or channel mapping would corrupt
+			// it, so it goes to the device as decoded.
+			block.samples.withUnsafeBufferPointer { write($0.baseAddress!, frames: got) }
+			return true
+		}
+
 		applyGain(frames: got, channels: channels)
 		runStages()
 		emit()
 		return true
+	}
+
+	private func isDoP(_ buffer: DSPBuffer) -> Bool {
+		buffer.samples.withUnsafeBufferPointer { cog_dop_validate($0.baseAddress!, buffer.format.channels, buffer.frames, nil) }
 	}
 
 	/// Where an event at the chain's input will be heard: after everything

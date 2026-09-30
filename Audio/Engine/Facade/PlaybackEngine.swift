@@ -191,12 +191,44 @@ import Foundation
 	/// Starts `url` from `seconds`. Returns false if the device could not be
 	/// opened.
 	@objc public func play(_ url: URL, userInfo: Any?, rgInfo: [AnyHashable: Any]?, startPaused: Bool, seekTo seconds: Double) -> Bool {
-		if !startPaused && switchInPlace(to: url, userInfo: userInfo, rgInfo: rgInfo, seekTo: seconds) {
+		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
+		register(track)
+		// Opened here, as BufferChain did, to learn whether it needs a DoP
+		// carrier before anything is built; the feeder takes it over.
+		let decoder = (opener ?? Feeder.defaultOpener)(track)
+
+		if !startPaused && switchInPlace(to: track, decoder: decoder, seekTo: seconds) {
 			return true
 		}
 		tearDown()
-		pipelineBuilds += 1
+		guard build(for: track, decoder: decoder, offset: seconds, startPaused: startPaused) else {
+			decoder?.close()
+			return false
+		}
 
+		EngineLog.logger.info("Play \(url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s\(startPaused ? " paused" : "", privacy: .public): volume \(self.volumeLevel, format: .fixed(precision: 1)), fade \(self.fadeFrames) frames, track gain \(track.gain, format: .fixed(precision: 4)), rgInfo \(String(describing: rgInfo ?? [:]), privacy: .public)")
+		initialTrack = track
+		currentTrack = track
+		currentOffset = seconds
+		currentHeard = false
+		amountPlayed = seconds
+		resetInterval()
+		scrobbleReported = false
+		host?.playbackEngineDidChangeStatus(startPaused ? .paused : .playing, userInfo: userInfo)
+		return true
+	}
+
+	/// The DoP carrier rate the current pipeline runs at, or nil for PCM.
+	private var carrierRate: Double?
+
+	/// Lets a test keep the machine's device at its rate: a track needing a
+	/// DoP carrier then gets one only if the device already runs at it.
+	var allowsDeviceRateChanges = true
+
+	/// Builds the device side, feeder, pump and renderer for `track`, with its
+	/// decoder if already opened, and starts them from `offset`.
+	private func build(for track: EngineTrack, decoder: CogDecoder?, offset: Double, startPaused: Bool) -> Bool {
+		pipelineBuilds += 1
 		do {
 			if output == nil {
 				let device = try DeviceOutput()
@@ -210,11 +242,34 @@ import Foundation
 			output = nil
 			return false
 		}
-		guard let output,
-		      let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf]),
+		guard let output else { return false }
+
+		// A DoP carrier needs the device at its rate, rendering integers.
+		var carrier = decoder.flatMap { Self.carrierRate(for: $0.properties() ?? [:], output: output) }
+		if let rate = carrier, !(allowsDeviceRateChanges ? output.setNominalSampleRate(rate) : abs(output.nominalSampleRate - rate) < 1) {
+			EngineLog.logger.info("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz for DoP; converting to PCM")
+			carrier = nil
+		}
+		if carrier != nil || output.integerRender {
+			do {
+				try output.refreshFormat(integer: carrier != nil, sampleRate: carrier)
+			} catch {
+				return false
+			}
+		}
+		carrierRate = carrier
+
+		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: carrier != nil),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf], carrier: carrier != nil),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
+		}
+		if carrier != nil {
+			guard cog_renderer_set_integer_output(renderer, output.maximumFramesPerSlice) else {
+				cog_renderer_destroy(renderer)
+				return false
+			}
+			EngineLog.logger.info("DoP carrier at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, 24-bit integer output")
 		}
 		self.feeder = feeder
 		self.pump = pump
@@ -227,31 +282,60 @@ import Foundation
 		cog_gain_ramp_to(cog_renderer_transport(renderer), fadeFrames > 0 ? 0 : 1, 0)
 		// Room for a seek's crossfade, allocated before the device runs.
 		_ = cog_renderer_set_crossfade_frames(renderer, Int(output.format.sampleRate * Self.fadeSeconds))
-
-		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
-		register(track)
-		EngineLog.logger.info("Play \(url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s\(startPaused ? " paused" : "", privacy: .public): volume \(self.volumeLevel, format: .fixed(precision: 1)), fade \(self.fadeFrames) frames, track gain \(track.gain, format: .fixed(precision: 4)), rgInfo \(String(describing: rgInfo ?? [:]), privacy: .public)")
-		initialTrack = track
-		currentTrack = track
-		currentOffset = seconds
 		currentStart = 0
 		currentRatio = 1
-		currentHeard = false
-		amountPlayed = seconds
-		resetInterval()
-		scrobbleReported = false
 
+		let deviceChannels = output.format.channels
+		feeder.admits = { [weak output] decoder in
+			guard let output else { return true }
+			return Self.admits(decoder.properties() ?? [:], into: carrier, deviceChannels: deviceChannels) { output.supportsSampleRate($0) }
+		}
 		feeder.delegate = self
-		feeder.start(with: track, offset: seconds)
+		feeder.start(with: track, offset: offset, decoder: decoder)
 		pump.start()
 
 		phase = .prebuffering(paused: startPaused)
-		host?.playbackEngineDidChangeStatus(startPaused ? .paused : .playing, userInfo: userInfo)
-
 		let monitor = Timer(timeInterval: 0.02, repeats: true) { [weak self] _ in self?.tick() }
 		RunLoop.main.add(monitor, forMode: .common)
 		self.monitor = monitor
 		return true
+	}
+
+	/// The DoP carrier rate a track with these decoder properties wants, if
+	/// the device can take it: a sixteenth of the rate for DSD, or the rate
+	/// itself for integer PCM of 24 bits or more at 176.4 kHz or more, which
+	/// may be DoP already. Either way the channels must match the device, as
+	/// DoP cannot be remapped.
+	static func carrierRate(for properties: [AnyHashable: Any], deviceChannels: Int, supports: (Double) -> Bool) -> Double? {
+		let bits = (properties["bitsPerSample"] as? NSNumber)?.intValue ?? 0
+		let rate = (properties["sampleRate"] as? NSNumber)?.doubleValue ?? 0
+		let channels = (properties["channels"] as? NSNumber)?.intValue ?? 0
+		let floating = (properties["floatingPoint"] as? NSNumber)?.boolValue ?? false
+		guard rate > 0, channels == deviceChannels else { return nil }
+		let carrier: Double
+		if bits == 1 {
+			carrier = rate / 16
+		} else if !floating && bits >= 24 && rate >= 176400 {
+			carrier = rate
+		} else {
+			return nil
+		}
+		return supports(carrier) ? carrier : nil
+	}
+
+	private static func carrierRate(for properties: [AnyHashable: Any], output: DeviceOutput) -> Double? {
+		carrierRate(for: properties, deviceChannels: output.format.channels) { output.supportsSampleRate($0) }
+	}
+
+	/// Whether a track can join a stream running with DoP carrier `current`
+	/// (nil for PCM). One wanting another carrier cannot, and neither can DSD
+	/// that would have to become PCM in a carrier stream, which packs DSD as
+	/// DoP. PCM wanting no carrier joins anything, resampled.
+	static func admits(_ properties: [AnyHashable: Any], into current: Double?, deviceChannels: Int, supports: (Double) -> Bool) -> Bool {
+		let wanted = carrierRate(for: properties, deviceChannels: deviceChannels, supports: supports)
+		if wanted == current { return true }
+		let dsd = (properties["bitsPerSample"] as? NSNumber)?.intValue == 1
+		return wanted == nil && !(dsd && current != nil)
 	}
 
 	/// Times `play` built a new pipeline rather than switching in place.
@@ -263,15 +347,17 @@ import Foundation
 	/// A new track while one is playing on the same device: the running
 	/// feeder moves to it as it would seek, and the renderer crossfades from
 	/// what was about to be heard, as the old engine did. Returns false when
-	/// a rebuild is needed instead.
-	private func switchInPlace(to url: URL, userInfo: Any?, rgInfo: [AnyHashable: Any]?, seekTo seconds: Double) -> Bool {
+	/// a rebuild is needed instead, including when the track needs another
+	/// output format.
+	private func switchInPlace(to track: EngineTrack, decoder: CogDecoder?, seekTo seconds: Double) -> Bool {
 		guard case .playing = phase, !rebuildRequested, let feeder, let renderer, let output,
 		      !output.wouldChange(for: UserDefaults.standard.dictionary(forKey: "outputDevice")) else {
 			return false
 		}
-		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
-		register(track)
-		EngineLog.logger.info("Switch to \(url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s in place, track gain \(track.gain, format: .fixed(precision: 4))")
+		if let decoder, !Self.admits(decoder.properties() ?? [:], into: carrierRate, deviceChannels: output.format.channels, supports: { output.supportsSampleRate($0) }) {
+			return false
+		}
+		EngineLog.logger.info("Switch to \(track.url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s in place, track gain \(track.gain, format: .fixed(precision: 4))")
 		cog_renderer_set_crossfade_enabled(renderer, Self.fadesEnabled)
 		// Heard like the start of playback: announced by the app, not by
 		// the engine, once its first frame reaches the device.
@@ -283,9 +369,29 @@ import Foundation
 		amountPlayed = seconds
 		resetInterval()
 		scrobbleReported = false
-		feeder.seek(to: seconds, in: track)
-		host?.playbackEngineDidChangeStatus(.playing, userInfo: userInfo)
+		feeder.seek(to: seconds, in: track, decoder: decoder)
+		host?.playbackEngineDidChangeStatus(.playing, userInfo: track.userInfo)
 		return true
+	}
+
+	/// The stream ended before a track needing another output format: build
+	/// a pipeline for it. The track still heard stays current, so the new one
+	/// is announced and the old one counted when the new one is heard.
+	private func handOff(to next: (track: EngineTrack, decoder: CogDecoder)) {
+		let heard = (currentTrack, currentHeard)
+		EngineLog.logger.info("Rebuilding for \(next.track.url.lastPathComponent, privacy: .public)")
+		tearDown()
+		guard build(for: next.track, decoder: next.decoder, offset: 0, startPaused: false) else {
+			next.decoder.close()
+			host?.playbackEngineSetError(true, forTrack: next.track.userInfo)
+			host?.playbackEngineDidChangeStatus(.stopped, userInfo: heard.0?.userInfo)
+			host?.playbackEngineDidStopNaturally(heard.0?.userInfo)
+			return
+		}
+		(currentTrack, currentHeard) = heard
+		initialTrack = nil
+		// Hold the position until the new track is heard.
+		seekPending = true
 	}
 
 	/// Transport ramps, logged for diagnosing level problems.
@@ -384,6 +490,7 @@ import Foundation
 		initialTrack = nil
 		seekPending = false
 		rebuildRequested = false
+		carrierRate = nil
 		phase = .idle
 	}
 
@@ -437,6 +544,10 @@ import Foundation
 				}
 				currentRatio = ratio
 			case .endOfStream:
+				if let next = feeder?.takeHandoff() {
+					handOff(to: next)
+					return
+				}
 				finishTrack()
 				let userInfo = currentTrack?.userInfo
 				tearDown()
@@ -540,6 +651,7 @@ import Foundation
 			finishTrack()
 			currentTrack = track
 			initialTrack = nil
+			seekPending = false
 			amountPlayed = offset
 			scrobbleReported = false
 			host?.playbackEngineDidBeginTrack(track.userInfo)

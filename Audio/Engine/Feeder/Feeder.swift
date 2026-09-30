@@ -38,6 +38,11 @@ public final class Feeder {
 	public let outputRate: Double
 	public weak var delegate: FeederDelegate?
 
+	/// Whether a next track can join this stream; called on the feeder
+	/// thread with its opened decoder. One that cannot ends the stream
+	/// there and waits in `takeHandoff()`. Nil admits everything.
+	public var admits: ((CogDecoder) -> Bool)?
+
 	private let opener: Opener
 	private let converter: StreamConverter
 	private let floatConverter = ChunkList(maximumDuration: 1.0)
@@ -47,7 +52,10 @@ public final class Feeder {
 
 	// Shared with control threads, under `lock`.
 	private var running = false
-	private var pendingSeek: (track: EngineTrack, seconds: Double)?
+	private var pendingSeek: (track: EngineTrack, seconds: Double, decoder: CogDecoder?)?
+	/// A next track this pipeline cannot play (it needs another DoP
+	/// carrier), opened and waiting for the engine to rebuild for it.
+	private var handoff: (track: EngineTrack, decoder: CogDecoder)?
 	private var pendingReset = false
 	private var thread: Thread?
 	private var threadExited = DispatchSemaphore(value: 0)
@@ -84,14 +92,20 @@ public final class Feeder {
 	///   - outputRate: the rate the device runs at; everything is resampled to it.
 	///   - seconds: deep ring length at `maximumChannels`; more at fewer channels.
 	///   - opener: opens a track's decoder; defaults to Cog's plugin lookup.
-	public init?(outputRate: Double, seconds: Double = 2.0, opener: Opener? = nil) {
+	///   - dsdAsDoP: pack DSD as DSD over PCM at a sixteenth of its rate,
+	///     for a DoP carrier pipeline, instead of converting it to PCM.
+	public init?(outputRate: Double, seconds: Double = 2.0, opener: Opener? = nil, dsdAsDoP: Bool = false) {
 		let samples = Int(outputRate * seconds) * Self.maximumChannels
 		guard let ring = cog_ring_create(samples, 1) else { return nil }
 		self.ring = ring
 		self.outputRate = outputRate
 		self.opener = opener ?? Self.openWithPlugins
 		converter = StreamConverter(outputRate: outputRate)
+		floatConverter.setOutputDSDAsDoP(dsdAsDoP)
 	}
+
+	/// Cog's plugin lookup, as the default opener.
+	public static var defaultOpener: Opener { openWithPlugins }
 
 	deinit {
 		stop()
@@ -100,12 +114,13 @@ public final class Feeder {
 
 	// MARK: - Control
 
-	/// Starts decoding `track` from `offset` seconds.
-	public func start(with track: EngineTrack, offset: Double = 0) {
+	/// Starts decoding `track` from `offset` seconds, with `decoder` if it
+	/// has already been opened.
+	public func start(with track: EngineTrack, offset: Double = 0, decoder: CogDecoder? = nil) {
 		lock.withLock {
 			guard !running else { return }
 			running = true
-			pendingSeek = (track, offset)
+			pendingSeek = (track, offset, decoder)
 			threadExited = DispatchSemaphore(value: 0)
 		}
 		let thread = Thread { [weak self] in
@@ -129,6 +144,17 @@ public final class Feeder {
 		spaceAvailable.signal()
 		idle.signal()
 		Self.wait(for: exited)
+		takeHandoff()?.decoder.close()
+		lock.withLock { pendingSeek?.decoder?.close() }
+	}
+
+	/// The track waiting for a pipeline built for it, once the stream before
+	/// it has ended.
+	public func takeHandoff() -> (track: EngineTrack, decoder: CogDecoder)? {
+		lock.withLock {
+			defer { handoff = nil }
+			return handoff
+		}
 	}
 
 	/// Waits for `semaphore`. On the main thread the run loop keeps turning
@@ -147,9 +173,10 @@ public final class Feeder {
 	/// Moves playback to `seconds` into `track`, which need not be the track
 	/// being decoded (it usually is the one being heard, a few seconds behind).
 	/// Everything queued is discarded.
-	public func seek(to seconds: Double, in track: EngineTrack) {
+	public func seek(to seconds: Double, in track: EngineTrack, decoder: CogDecoder? = nil) {
 		lock.withLock {
-			pendingSeek = (track, seconds)
+			pendingSeek?.decoder?.close()
+			pendingSeek = (track, seconds, decoder)
 		}
 		spaceAvailable.signal()
 		idle.signal()
@@ -183,7 +210,7 @@ public final class Feeder {
 		lock.withLock { running }
 	}
 
-	private func takePendingSeek() -> (track: EngineTrack, seconds: Double)? {
+	private func takePendingSeek() -> (track: EngineTrack, seconds: Double, decoder: CogDecoder?)? {
 		lock.withLock {
 			defer { pendingSeek = nil }
 			return pendingSeek
@@ -204,7 +231,7 @@ public final class Feeder {
 
 		while isRunning {
 			if let seek = takePendingSeek() {
-				performSeek(to: seek.seconds, in: seek.track)
+				performSeek(to: seek.seconds, in: seek.track, with: seek.decoder)
 				continue
 			}
 
@@ -249,6 +276,13 @@ public final class Feeder {
 		var attempts = 0
 		while let next = candidate, isRunning {
 			if let nextDecoder = opener(next) {
+				if let admits, !admits(nextDecoder) {
+					// It needs a pipeline of its own: end this stream here.
+					EngineLog.logger.info("\(next.url.lastPathComponent, privacy: .public) needs another output format; ending the stream before it")
+					lock.withLock { handoff = (next, nextDecoder) }
+					finish()
+					return
+				}
 				closeDecoder()
 				decoder = nextDecoder
 				track = next
@@ -276,7 +310,8 @@ public final class Feeder {
 		finished = true
 	}
 
-	private func performSeek(to seconds: Double, in seekTrack: EngineTrack) {
+	private func performSeek(to seconds: Double, in seekTrack: EngineTrack, with opened: CogDecoder?) {
+		dropHandoff()
 		epoch = cog_ring_request_flush(ring)
 		converter.reset()
 		floatConverter.reset()
@@ -288,7 +323,12 @@ public final class Feeder {
 		// A decoder just opened is already at the start; one that has been
 		// read from must be told, even to go back to 0.
 		var fresh = false
-		if seekTrack !== track || decoder == nil {
+		if let opened {
+			closeDecoder()
+			track = seekTrack
+			decoder = opened
+			fresh = true
+		} else if seekTrack !== track || decoder == nil {
 			guard reopen(seekTrack) else { return }
 			fresh = true
 		}
@@ -322,6 +362,7 @@ public final class Feeder {
 			guard accepted == true else { continue }
 
 			EngineLog.logger.info("Abandoned the queued track at frame \(join.frame); asking again what follows \(join.before.url.lastPathComponent, privacy: .public)")
+			dropHandoff()
 			joins.removeSubrange(index...)
 			closeDecoder()
 			floatConverter.reset()
@@ -348,6 +389,10 @@ public final class Feeder {
 		}
 		decoder = opened
 		return true
+	}
+
+	private func dropHandoff() {
+		takeHandoff()?.decoder.close()
 	}
 
 	private func closeDecoder() {

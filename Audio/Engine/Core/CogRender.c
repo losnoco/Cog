@@ -13,6 +13,46 @@
 #include <stdlib.h>
 #include <string.h>
 
+// MARK: - DoP
+
+static uint8_t dop_marker(float sample) {
+	const int32_t packed = (int32_t)llrint((double)sample * 2147483648.0);
+	return (uint8_t)(((uint32_t)packed) >> 24);
+}
+
+bool cog_dop_validate(const float *frames, size_t channels, size_t count, uint8_t *nextMarker) {
+	if(!channels || !count) return false;
+	uint8_t previous = 0;
+	for(size_t frame = 0; frame < count; ++frame) {
+		const uint8_t marker = dop_marker(frames[frame * channels]);
+		if(marker != 0x05 && marker != 0xFA) return false;
+		if(frame && marker == previous) return false;
+		for(size_t channel = 1; channel < channels; ++channel) {
+			if(dop_marker(frames[frame * channels + channel]) != marker) return false;
+		}
+		previous = marker;
+	}
+	if(nextMarker) {
+		*nextMarker = (previous == 0x05) ? 0xFA : 0x05;
+	}
+	return true;
+}
+
+void cog_dop_fill_silence(float *frames, size_t channels, size_t count, uint8_t *marker) {
+	uint8_t next = (*marker == 0xFA) ? 0xFA : 0x05;
+	for(size_t frame = 0; frame < count; ++frame) {
+		const uint32_t packed = ((uint32_t)next << 24) | (0x69U << 16) | (0x69U << 8);
+		int32_t word;
+		memcpy(&word, &packed, sizeof(word));
+		const float silence = (float)((double)word / 2147483648.0);
+		for(size_t channel = 0; channel < channels; ++channel) {
+			frames[frame * channels + channel] = silence;
+		}
+		next = (next == 0x05) ? 0xFA : 0x05;
+	}
+	*marker = next;
+}
+
 // MARK: - Gain
 
 struct CogGain {
@@ -122,6 +162,26 @@ static void gain_take_command(CogGain *gain) {
 	}
 }
 
+/// Moves the gain through `count` frames without applying it, for audio
+/// that must pass untouched. Returns the level reached.
+static float gain_advance(CogGain *gain, size_t count) {
+	gain_take_command(gain);
+	if(gain->remaining) {
+		if(count >= gain->remaining) {
+			gain->remaining = 0;
+			gain->level = gain->rampTarget;
+		} else {
+			gain->remaining -= (uint32_t)count;
+			gain->level += gain->step * (float)count;
+		}
+	}
+	atomic_store_explicit(&gain->published, gain->level, memory_order_relaxed);
+	if(!gain->remaining && gain->seenSequence == atomic_load_explicit(&gain->sequence, memory_order_relaxed)) {
+		atomic_store_explicit(&gain->settled, true, memory_order_release);
+	}
+	return gain->level;
+}
+
 void cog_gain_apply(CogGain *gain, float *frames, size_t count, uint32_t channels) {
 	gain_take_command(gain);
 
@@ -182,6 +242,14 @@ struct CogRenderer {
 	size_t fadeInPosition;
 	_Atomic bool crossfadeEnabled;
 
+	// DoP, owned by the render thread.
+	bool dopActive;
+	/// The marker the next DoP frame must carry.
+	uint8_t dopMarker;
+	/// Float frames rendered before conversion, for integer output.
+	float *integerScratch;
+	size_t integerScratchFrames;
+
 	_Atomic uint64_t framesRendered;
 	_Atomic uint64_t silentFrames;
 	_Atomic uint64_t underrunEvents;
@@ -205,7 +273,19 @@ CogRenderer *cog_renderer_create(CogRing *ring) {
 	atomic_init(&renderer->underrunEvents, 0);
 	atomic_init(&renderer->peak, 0.0f);
 	atomic_init(&renderer->crossfadeEnabled, true);
+	renderer->dopMarker = 0x05;
 	return renderer;
+}
+
+bool cog_renderer_set_integer_output(CogRenderer *renderer, size_t maximumFrames) {
+	free(renderer->integerScratch);
+	renderer->integerScratch = NULL;
+	renderer->integerScratchFrames = 0;
+	if(!maximumFrames) return true;
+	renderer->integerScratch = calloc(maximumFrames * cog_ring_channels(renderer->ring), sizeof(float));
+	if(!renderer->integerScratch) return false;
+	renderer->integerScratchFrames = maximumFrames;
+	return true;
 }
 
 static void renderer_free_crossfade(CogRenderer *renderer) {
@@ -262,7 +342,8 @@ static void renderer_take_flush(CogRenderer *renderer, uint32_t channels) {
 	CogRing *ring = renderer->ring;
 	const size_t fadeFrames = renderer->fadeFrames;
 	// A paused transport has nothing audible to fade out.
-	const bool crossfade = fadeFrames && renderer->transport->level > 0.0f &&
+	// DoP cannot be mixed, so a flush during it is a cut.
+	const bool crossfade = fadeFrames && !renderer->dopActive && renderer->transport->level > 0.0f &&
 	                       atomic_load_explicit(&renderer->crossfadeEnabled, memory_order_relaxed);
 
 	const uint64_t before = cog_ring_flush_acknowledged(ring);
@@ -318,6 +399,7 @@ static void renderer_take_flush(CogRenderer *renderer, uint32_t channels) {
 void cog_renderer_destroy(CogRenderer *renderer) {
 	if(!renderer) return;
 	renderer_free_crossfade(renderer);
+	free(renderer->integerScratch);
 	cog_gain_destroy(renderer->volume);
 	cog_gain_destroy(renderer->transport);
 	free(renderer);
@@ -333,6 +415,49 @@ CogGain *cog_renderer_volume(const CogRenderer *renderer) {
 
 CogGain *cog_renderer_transport(const CogRenderer *renderer) {
 	return renderer->transport;
+}
+
+/// The DoP side of a render: `got` frames were read into `out`, the rest
+/// zeroed. Returns true if it produced the output (DoP, or DoP silence while
+/// DoP is playing); false leaves `out` to the PCM path.
+static bool renderer_render_dop(CogRenderer *renderer, float *out, size_t frames, size_t got, uint32_t channels) {
+	uint8_t nextMarker = 0x05;
+	const bool isDoP = got && cog_dop_validate(out, channels, got, &nextMarker);
+	if(got && !isDoP) {
+		// PCM again.
+		renderer->dopActive = false;
+		return false;
+	}
+	if(!isDoP && !renderer->dopActive) return false;
+
+	if(isDoP) {
+		// The marker this slice starts on.
+		const uint8_t first = (got % 2) ? ((nextMarker == 0x05) ? 0xFA : 0x05) : nextMarker;
+		if(renderer->dopActive && first != renderer->dopMarker) {
+			// Dropping one carrier frame is better than repeating a marker,
+			// which can make the DAC lose DoP lock at the join.
+			memmove(out, out + channels, (got - 1) * channels * sizeof(float));
+			--got;
+		}
+		renderer->dopActive = true;
+		renderer->dopMarker = nextMarker;
+		// Whatever was fading out cannot be mixed into it.
+		renderer->tailLength = 0;
+		renderer->tailPosition = 0;
+		renderer->fadeInPosition = renderer->fadeFrames;
+	}
+
+	// The transport can only pass DoP or silence it: once a pause has
+	// ramped it to nothing, what is read is replaced by DoP silence.
+	const float transport = gain_advance(renderer->transport, frames);
+	gain_advance(renderer->volume, frames);
+	if(transport == 0.0f) {
+		got = 0;
+	}
+	if(got < frames) {
+		cog_dop_fill_silence(out + got * channels, channels, frames - got, &renderer->dopMarker);
+	}
+	return true;
 }
 
 size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
@@ -351,6 +476,11 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 		}
 	}
 	renderer->starved = got < frames;
+
+	if(renderer_render_dop(renderer, out, frames, got, channels)) {
+		atomic_fetch_add_explicit(&renderer->framesRendered, frames, memory_order_relaxed);
+		return got;
+	}
 
 	// The new audio fades in from its first frame, however late it arrives.
 	size_t frame = 0;
@@ -390,6 +520,23 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	return got;
 }
 
+void cog_convert_to_s32(int32_t *output, const float *input, size_t count, bool dop) {
+	for(size_t i = 0; i < count; ++i) {
+		int32_t value;
+		if(dop) {
+			// Exactly the carrier word, low byte clear.
+			value = (int32_t)(((uint32_t)(int32_t)llrint((double)input[i] * 2147483648.0)) & 0xFFFFFF00U);
+		} else if(input[i] >= 1.0f) {
+			value = (int32_t)(((uint32_t)INT32_MAX) & 0xFFFFFF00U);
+		} else if(input[i] <= -1.0f) {
+			value = INT32_MIN;
+		} else {
+			value = (int32_t)(((uint32_t)(int32_t)llrint((double)input[i] * 2147483647.0)) & 0xFFFFFF00U);
+		}
+		output[i] = value;
+	}
+}
+
 OSStatus cog_renderer_audio_unit_render(void *inRefCon,
                                         AudioUnitRenderActionFlags *ioActionFlags,
                                         const AudioTimeStamp *inTimeStamp,
@@ -402,10 +549,18 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
 	CogRenderer *renderer = (CogRenderer *)inRefCon;
 	if(!renderer || !ioData || !ioData->mNumberBuffers || !ioData->mBuffers[0].mData) return noErr;
 
-	const UInt32 bytesPerFrame = (UInt32)(sizeof(float) * cog_ring_channels(renderer->ring));
+	const uint32_t channels = cog_ring_channels(renderer->ring);
+	const UInt32 bytesPerFrame = (UInt32)(sizeof(float) * channels);
 	const UInt32 capacity = ioData->mBuffers[0].mDataByteSize / bytesPerFrame;
-	const UInt32 frames = inNumberFrames < capacity ? inNumberFrames : capacity;
-	cog_renderer_render(renderer, (float *)ioData->mBuffers[0].mData, frames);
+	UInt32 frames = inNumberFrames < capacity ? inNumberFrames : capacity;
+	if(!renderer->integerScratch) {
+		cog_renderer_render(renderer, (float *)ioData->mBuffers[0].mData, frames);
+	} else {
+		if(frames > renderer->integerScratchFrames) frames = (UInt32)renderer->integerScratchFrames;
+		float *scratch = renderer->integerScratch;
+		cog_renderer_render(renderer, scratch, frames);
+		cog_convert_to_s32((int32_t *)ioData->mBuffers[0].mData, scratch, (size_t)frames * channels, renderer->dopActive);
+	}
 	ioData->mBuffers[0].mDataByteSize = frames * bytesPerFrame;
 	return noErr;
 }

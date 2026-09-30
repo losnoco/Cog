@@ -151,6 +151,42 @@ final class PlaybackEngineTests: XCTestCase {
 		engine.stop()
 	}
 
+	/// A DSD track after a PCM one needs a DoP carrier: the stream ends
+	/// before it and the engine rebuilds, announcing it once heard. The DSD
+	/// is at 16 times the device's own rate, so the device keeps its rate,
+	/// and its payload is DoP idle, as the carrier ignores the volume.
+	func testADSDTrackAfterPCMIsHandedToANewPipeline() throws {
+		let device = try DeviceOutput()
+		try device.selectDevice(nil)
+		let rate = device.format.sampleRate
+		let channels = device.format.channels
+
+		let pcm = SeamSignal.loopable(frames: 24000, sampleRate: 48000) // 0.5 s
+		let dsd = [UInt8](repeating: 0x69, count: Int(rate * 16 / 8 / 2) * channels) // 0.5 s
+		let host = RecordingHost()
+		host.queue = [EngineTrack(url: URL(string: "memory://dsd")!, userInfo: "dsd", gain: 1)]
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.allowsDeviceRateChanges = false
+		engine.opener = { track in
+			track.url.host == "dsd" ? DSDMemoryDecoder(bytes: dsd, bitRate: rate * 16, channels: channels)
+				: MemoryDecoder(samples: pcm, sampleRate: 48000, channels: 2)
+		}
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://pcm")!, userInfo: "pcm", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { host.stopped }, timeout: 10)
+
+		XCTAssertTrue(host.stopped)
+		XCTAssertEqual(engine.pipelineBuilds, 2, "rebuilt for the DSD track")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, [
+			"played pcm",
+			"begin dsd",
+			"played dsd",
+			"stopped after dsd",
+		])
+	}
+
 	/// At tempo 2 the playback position runs at twice the wall clock: the
 	/// stretch map, not the rendered frame count, gives track time.
 	func testThePositionFollowsTheTempo() throws {
