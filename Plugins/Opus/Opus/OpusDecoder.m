@@ -320,7 +320,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 }
 
 - (long)seek:(long)frame {
-	op_pcm_seek(opusRef, frame);
+	if(op_pcm_seek(opusRef, frame) != 0) {
+		// Refused (an unseekable stream, or a read error): the decoder is
+		// still where it was, so say so rather than claim the new position.
+		return -1;
+	}
 
 	self->frame = frame;
 
