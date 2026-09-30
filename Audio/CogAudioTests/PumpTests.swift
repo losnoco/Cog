@@ -206,4 +206,101 @@ final class PumpTests: XCTestCase {
 		let rampEnd = try XCTUnwrap(left.firstIndex { abs($0 - 0.125) < 1e-6 })
 		XCTAssertEqual(rampEnd - rampStart, 960, accuracy: 2, "ramps over 20 ms")
 	}
+
+	// MARK: - Playlist changes after the next track was queued
+
+	/// A track of one constant value, so any sample shows which track it is.
+	private func constantTrack(_ name: String, _ value: Float, frames: Int = 48000) -> (EngineTrack, MemoryDecoder) {
+		(EngineTrack(url: URL(string: "memory://\(name)")!, userInfo: name, gain: 1),
+		 MemoryDecoder(samples: [Float](repeating: value, count: frames * 2), sampleRate: 48000, channels: 2))
+	}
+
+	/// Plays everything, returning each track's run of frames in order.
+	private func playRuns(_ pump: Pump, renderer: OpaquePointer, prefix: inout Played) -> [(value: Float, frames: Int)] {
+		play(pump, renderer: renderer, into: &prefix) { $0.ended }
+		var runs: [(value: Float, frames: Int)] = []
+		for frame in 0..<(prefix.samples.count / 2) {
+			let value = prefix.samples[frame * 2]
+			if let last = runs.last, last.value == value {
+				runs[runs.count - 1].frames += 1
+			} else {
+				runs.append((value, 1))
+			}
+		}
+		return runs
+	}
+
+	private func makeResetPump(_ tracks: [(EngineTrack, MemoryDecoder)], queue: [EngineTrack]) throws -> (Feeder, Pump, OpaquePointer, ScriptedTracks) {
+		let feeder = makeFeeder(outputRate: 48000, tracks: tracks)
+		let delegate = ScriptedTracks(queue)
+		feeder.delegate = delegate
+		let pump = try XCTUnwrap(Pump(feeder: feeder, outputFormat: StreamFormat(sampleRate: 48000, channels: 2, channelConfig: UInt32(AudioConfigStereo))))
+		let renderer = try XCTUnwrap(cog_renderer_create(pump.ring))
+		return (feeder, pump, renderer, delegate)
+	}
+
+	func testAQueuedTrackIsReplacedWhenThePlaylistChanges() throws {
+		let a = constantTrack("a", 0.1), b = constantTrack("b", 0.5), c = constantTrack("c", 0.9)
+		let (feeder, pump, renderer, delegate) = try makeResetPump([a, b, c], queue: [b.0])
+		defer { cog_renderer_destroy(renderer) }
+
+		feeder.start(with: a.0)
+		pump.start()
+		// The feeder decodes A and queues B well ahead; the pump is held back
+		// by the shallow ring until the renderer pulls.
+		Thread.sleep(forTimeInterval: 0.3)
+		delegate.queue = [c.0]
+		feeder.resetNextTracks()
+		Thread.sleep(forTimeInterval: 0.1)
+
+		var played = Played()
+		let runs = playRuns(pump, renderer: renderer, prefix: &played)
+		pump.stop()
+		feeder.stop()
+
+		XCTAssertEqual(runs.map(\.value), [0.1, 0.9], "A then C, nothing of B")
+		XCTAssertEqual(runs.map(\.frames), [48000, 48000])
+		XCTAssertEqual(trackStarts(played).map { $0.1.host }, ["a", "c"])
+		XCTAssertEqual(trackStarts(played).map(\.0), [0, 48000])
+	}
+
+	func testAQueuedTrackAlreadyReachedStays() throws {
+		let a = constantTrack("a", 0.1, frames: 4800), b = constantTrack("b", 0.5), c = constantTrack("c", 0.9)
+		let (feeder, pump, renderer, delegate) = try makeResetPump([a, b, c], queue: [b.0])
+		defer { cog_renderer_destroy(renderer) }
+
+		feeder.start(with: a.0)
+		pump.start()
+		var played = Played()
+		// Play past the join into B, then change the playlist.
+		play(pump, renderer: renderer, into: &played) { $0.samples.count >= 6000 * 2 }
+		delegate.queue = [c.0]
+		feeder.resetNextTracks()
+		let runs = playRuns(pump, renderer: renderer, prefix: &played)
+		pump.stop()
+		feeder.stop()
+
+		XCTAssertEqual(runs.map(\.value), [0.1, 0.5, 0.9], "B was already playing; C follows it")
+	}
+
+	func testATrackAddedWhileTheLastOnePlaysIsPickedUp() throws {
+		let a = constantTrack("a", 0.1), c = constantTrack("c", 0.9)
+		let (feeder, pump, renderer, delegate) = try makeResetPump([a, c], queue: [])
+		defer { cog_renderer_destroy(renderer) }
+
+		feeder.start(with: a.0)
+		pump.start()
+		Thread.sleep(forTimeInterval: 0.3) // A decoded, end of stream queued
+		delegate.queue = [c.0]
+		feeder.resetNextTracks()
+		Thread.sleep(forTimeInterval: 0.1)
+
+		var played = Played()
+		let runs = playRuns(pump, renderer: renderer, prefix: &played)
+		pump.stop()
+		feeder.stop()
+
+		XCTAssertEqual(runs.map(\.value), [0.1, 0.9])
+		XCTAssertEqual(runs.map(\.frames), [48000, 48000])
+	}
 }

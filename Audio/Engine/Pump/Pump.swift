@@ -73,6 +73,12 @@ public final class Pump {
 	private var inputFormat: StreamFormat?
 	private let block = DSPBuffer()
 
+	/// The frame whose timeline entries were last taken, so an abandon
+	/// request for it can be refused once they have been acted on.
+	private var entriesTakenAt: UInt64?
+	/// An accepted abandon: at `frame`, discard the deep ring up to `to`.
+	private var skip: (frame: UInt64, to: UInt64)?
+
 	/// The DSP chain, in order. Each is skipped while inactive.
 	private let stages: [DSPStage]
 	/// The active stages and input format the chain was last configured for.
@@ -180,6 +186,8 @@ public final class Pump {
 			// anything still queued for the device is stale.
 			epoch = acknowledged
 			frames = 0
+			entriesTakenAt = nil
+			skip = nil
 			presentation.discard(before: cog_ring_write_position(ring))
 			cog_ring_request_flush(ring)
 			// Filter history belongs to audio that will never be heard.
@@ -188,8 +196,23 @@ public final class Pump {
 			}
 		}
 
+		answerAbandonRequest()
+		if let skip, frames == skip.frame {
+			// The abandoned track's audio: gone before anything reads it.
+			let read = cog_ring_read_position(deep)
+			if skip.to > read {
+				_ = cog_ring_read(deep, nil, Int(skip.to - read))
+			}
+			self.skip = nil
+			feeder.consumerDidRead()
+		}
+
 		var endOfStream = false
-		for entry in feeder.timeline.take(through: frames, epoch: epoch) {
+		let due = feeder.timeline.take(through: frames, epoch: epoch)
+		if !due.isEmpty {
+			entriesTakenAt = frames
+		}
+		for entry in due {
 			switch entry.event {
 			case let .format(format):
 				// Stages holding audio back (FreeSurround's block) give it up
@@ -218,6 +241,9 @@ public final class Pump {
 		var count = min(cog_ring_readable(deep) / channels, cog_ring_writable(ring), Self.blockFrames)
 		if let next = feeder.timeline.nextFrame(epoch: epoch) {
 			count = min(count, Int(next - frames))
+		}
+		if let skip {
+			count = min(count, Int(skip.frame - frames))
 		}
 		guard count > 0 else { return false }
 
@@ -259,6 +285,18 @@ public final class Pump {
 		if block.frames > 0 {
 			emit()
 		}
+	}
+
+	/// The feeder wants a queued track dropped from a frame on. Possible only
+	/// while that frame has not been read past and its entries not acted on;
+	/// then everything written so far after it is discarded on reaching it.
+	private func answerAbandonRequest() {
+		guard let frame = feeder.timeline.pendingAbandon(epoch: epoch) else { return }
+		let passed = frames > frame || (frames == frame && entriesTakenAt == frame)
+		if !passed {
+			skip = (frame, cog_ring_write_position(feeder.ring))
+		}
+		feeder.timeline.answerAbandon(!passed)
 	}
 
 	/// Runs the active stages over `block`, reconfiguring the chain when the

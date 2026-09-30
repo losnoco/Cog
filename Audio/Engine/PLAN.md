@@ -293,6 +293,16 @@ Each stage ships on its own and leaves the old engine working.
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote
    Control and MCP paths. Flip the default.
+   - `resetNextStreams`: the feeder remembers each join (the deep-ring
+     frame where a track began after another, and the end of stream). On a
+     playlist edit it asks the pump, through the timeline, to abandon from
+     the earliest join the pump has not yet reached. The pump accepts only
+     if it has not read past that frame (nor taken the entries at it), and
+     then skips the deep ring from that frame to what the feeder had
+     written; the feeder drops those timeline entries, restarts the
+     converter at the join and asks the delegate again for the track after
+     the one before it. A join already reached is left alone and the next
+     one tried, so a track that has begun playing is never cut.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
 
 ## Open questions

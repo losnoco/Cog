@@ -316,6 +316,12 @@ import Foundation
 		}
 	}
 
+	/// The playlist changed after the next track was chosen: drop any queued
+	/// track not yet playing and ask again what follows the current one.
+	@objc public func resetNextStreams() {
+		feeder?.resetNextTracks()
+	}
+
 	@objc public func setScrobbleThreshold(_ threshold: Double) {
 		scrobbleThreshold = threshold
 		scrobbleReported = false

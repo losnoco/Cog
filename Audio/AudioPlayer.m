@@ -359,9 +359,7 @@ static BOOL newAudioEngineEnabled(void) {
 // Called when the playlist changed before we actually started playing a requested stream. We will re-request.
 - (void)resetNextStreams {
 	if(engine) {
-		// TODO: have the feeder abandon a next track it has already started
-		// decoding (engine stage 6). Until then the playlist change applies
-		// from the track after it.
+		[engine resetNextStreams];
 		return;
 	}
 

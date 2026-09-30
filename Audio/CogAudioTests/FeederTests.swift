@@ -67,18 +67,32 @@ final class MemoryDecoder: NSObject, CogDecoder {
 
 /// Hands out tracks from a list and records what the feeder reports.
 final class ScriptedTracks: FeederDelegate {
-	var queue: [EngineTrack]
 	var unopenable: [EngineTrack] = []
+	private var pending: [EngineTrack]
 	private let lock = NSLock()
 
 	init(_ queue: [EngineTrack]) {
-		self.queue = queue
+		pending = queue
+	}
+
+	/// The feeder takes from this on its own thread; a test may replace it.
+	var queue: [EngineTrack] {
+		get {
+			lock.lock()
+			defer { lock.unlock() }
+			return pending
+		}
+		set {
+			lock.lock()
+			pending = newValue
+			lock.unlock()
+		}
 	}
 
 	func feeder(_ feeder: Feeder, nextTrackAfter track: EngineTrack) -> EngineTrack? {
 		lock.lock()
 		defer { lock.unlock() }
-		return queue.isEmpty ? nil : queue.removeFirst()
+		return pending.isEmpty ? nil : pending.removeFirst()
 	}
 
 	func feeder(_ feeder: Feeder, couldNotOpen track: EngineTrack) {

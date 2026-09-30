@@ -172,12 +172,13 @@ public final class StreamConverter {
 	}
 
 	/// Forgets the current run without draining it, as for a seek. The next
-	/// input starts a fresh run with its own lead-in.
-	public func reset() {
+	/// input starts a fresh run with its own lead-in, its output counted from
+	/// `outputFrames` (zero for a seek; the join for an abandoned track).
+	public func reset(outputFrames: UInt64 = 0) {
 		closeResampler()
 		inputFormat = nil
-		outputFrames = 0
-		runOutputBase = 0
+		self.outputFrames = outputFrames
+		runOutputBase = outputFrames
 		runInputFrames = 0
 	}
 

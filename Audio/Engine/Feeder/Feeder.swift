@@ -48,6 +48,7 @@ public final class Feeder {
 	// Shared with control threads, under `lock`.
 	private var running = false
 	private var pendingSeek: (track: EngineTrack, seconds: Double)?
+	private var pendingReset = false
 	private var thread: Thread?
 	private var threadExited = DispatchSemaphore(value: 0)
 
@@ -66,8 +67,15 @@ public final class Feeder {
 	private var epoch: UInt64 = 0
 	private var writtenFormat: StreamFormat?
 	private var trackStartPending: (track: EngineTrack, offset: Double)?
+	/// The track the pending start follows, for recording the join.
+	private var previousTrack: EngineTrack?
 	private var finished = false
 	private var waitNanoseconds: UInt64 = 0
+
+	/// Queued boundaries the DSP thread may not have reached: where the track
+	/// after `before` starts (or the stream ends), in output frames of the
+	/// current epoch. A playlist change can abandon them.
+	private var joins: [(frame: UInt64, before: EngineTrack)] = []
 
 	/// Maximum channels a track may carry; sizes the deep ring.
 	public static let maximumChannels = 8
@@ -147,6 +155,24 @@ public final class Feeder {
 		idle.signal()
 	}
 
+	/// The playlist changed after the next track was requested: forget any
+	/// queued track that has not started playing, and ask again what follows
+	/// the one being heard. A queued end of stream is forgotten too, so a
+	/// track added while the last one plays is picked up. A track the DSP
+	/// thread has already reached stays.
+	public func resetNextTracks() {
+		lock.withLock { pendingReset = true }
+		spaceAvailable.signal()
+		idle.signal()
+	}
+
+	private func takePendingReset() -> Bool {
+		lock.withLock {
+			defer { pendingReset = false }
+			return pendingReset
+		}
+	}
+
 	/// The consumer calls this after reading, so a feeder waiting for space
 	/// wakes at once instead of at its next poll.
 	public func consumerDidRead() {
@@ -179,6 +205,11 @@ public final class Feeder {
 		while isRunning {
 			if let seek = takePendingSeek() {
 				performSeek(to: seek.seconds, in: seek.track)
+				continue
+			}
+
+			if takePendingReset() {
+				performReset()
 				continue
 			}
 
@@ -224,6 +255,7 @@ public final class Feeder {
 				// Placed when the new track's first frames arrive, once it is
 				// known whether the resampler carries straight across.
 				trackStartPending = (next, 0)
+				previousTrack = finishedTrack
 				return
 			}
 			delegate?.feeder(self, couldNotOpen: next)
@@ -235,6 +267,9 @@ public final class Feeder {
 
 	private func finish() {
 		converter.drain { samples, format in write(samples, format: format) }
+		if let track {
+			joins.append((converter.outputFrames, track))
+		}
 		timeline.append(.endOfStream, at: converter.outputFrames, epoch: epoch)
 		closeDecoder()
 		track = nil
@@ -247,6 +282,8 @@ public final class Feeder {
 		floatConverter.reset()
 		writtenFormat = nil
 		finished = false
+		joins.removeAll()
+		previousTrack = nil
 
 		if seekTrack !== track || decoder == nil {
 			closeDecoder()
@@ -268,6 +305,36 @@ public final class Feeder {
 			}
 		}
 		trackStartPending = (seekTrack, offset)
+	}
+
+	/// Abandons the earliest queued join the DSP thread has not reached, and
+	/// decodes onward from the track before it again. The DSP thread decides,
+	/// under the timeline's lock, whether it is still ahead of the join.
+	private func performReset() {
+		for (index, join) in joins.enumerated() {
+			timeline.requestAbandon(from: join.frame, epoch: epoch)
+			var accepted: Bool?
+			let deadline = Date().addingTimeInterval(2)
+			while accepted == nil && isRunning && Date() < deadline {
+				Thread.sleep(forTimeInterval: 0.002)
+				accepted = timeline.abandonAccepted()
+			}
+			guard accepted == true else { continue }
+
+			EngineLog.logger.info("Abandoned the queued track at frame \(join.frame); asking again what follows \(join.before.url.lastPathComponent, privacy: .public)")
+			joins.removeSubrange(index...)
+			closeDecoder()
+			floatConverter.reset()
+			// A fresh run numbered from the join; the DSP thread discards what
+			// was written after it before reading on.
+			converter.reset(outputFrames: join.frame)
+			writtenFormat = nil
+			trackStartPending = nil
+			finished = false
+			track = join.before
+			advance()
+			return
+		}
 	}
 
 	private func closeDecoder() {
@@ -311,7 +378,12 @@ public final class Feeder {
 		if let current = converter.inputFormat, !current.resamplesContinuously(into: format) {
 			converter.drain { samples, outFormat in write(samples, format: outFormat) }
 		}
-		timeline.append(.trackStart(track, offset: offset), at: converter.outputPositionOfNextInput, epoch: epoch)
+		let frame = converter.outputPositionOfNextInput
+		if let before = previousTrack {
+			joins.append((frame, before))
+		}
+		previousTrack = nil
+		timeline.append(.trackStart(track, offset: offset), at: frame, epoch: epoch)
 	}
 
 	/// Writes output samples into the deep ring, waiting for room.

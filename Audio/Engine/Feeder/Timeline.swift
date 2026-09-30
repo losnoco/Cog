@@ -115,4 +115,45 @@ public final class Timeline {
 			entries.removeAll()
 		}
 	}
+
+	// MARK: - Abandoning queued tracks
+
+	/// The feeder asking the pump to give up everything from `frame` on
+	/// (a queued track the playlist no longer wants), and the pump's answer.
+	private var abandonRequest: (frame: UInt64, epoch: UInt64)?
+	private var abandonAnswer: Bool?
+
+	/// Feeder: asks for everything from `frame` of `epoch` on to be dropped.
+	func requestAbandon(from frame: UInt64, epoch: UInt64) {
+		lock.withLock {
+			abandonRequest = (frame, epoch)
+			abandonAnswer = nil
+		}
+	}
+
+	/// Feeder: the pump's answer, once there is one.
+	func abandonAccepted() -> Bool? {
+		lock.withLock { abandonAnswer }
+	}
+
+	/// Pump: the frame of an unanswered request in `epoch`.
+	func pendingAbandon(epoch: UInt64) -> UInt64? {
+		lock.withLock {
+			guard let request = abandonRequest, request.epoch == epoch, abandonAnswer == nil else { return nil }
+			return request.frame
+		}
+	}
+
+	/// Pump: answers the request. Accepting removes its entries in the same
+	/// step, so nothing can take them in between.
+	func answerAbandon(_ accepted: Bool) {
+		lock.withLock {
+			guard let request = abandonRequest else { return }
+			if accepted {
+				entries.removeAll { $0.epoch == request.epoch && $0.frame >= request.frame }
+			}
+			abandonAnswer = accepted
+			abandonRequest = nil
+		}
+	}
 }
