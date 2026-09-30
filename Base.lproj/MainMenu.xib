@@ -1033,19 +1033,16 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" bordered="YES" visibilityPriority="10" sizingBehavior="auto" id="1610">
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="10" sizingBehavior="auto" id="1610">
                         <nil key="toolTip"/>
-                        <button key="view" verticalHuggingPriority="750" id="1608" customClass="VolumeButton">
-                            <rect key="frame" x="9" y="14" width="29" height="23"/>
+                        <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="1608" customClass="VolumeSlider">
+                            <rect key="frame" x="0.0" y="14" width="96" height="14"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="1609">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
+                            <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="55" tickMarkPosition="above" sliderType="linear" id="1609"/>
                             <connections>
-                                <outlet property="_popView" destination="1612" id="2220"/>
+                                <action selector="changeVolume:" target="705" id="2220"/>
                             </connections>
-                        </button>
+                        </slider>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="7BC995AD-3F93-40E1-AE76-94574D34BCB0" label="Speed" paletteLabel="Speed" image="deskclock" catalog="system" bordered="YES" visibilityPriority="10" sizingBehavior="auto" id="ufn-od-xJF" userLabel="Speed">
                         <nil key="toolTip"/>
@@ -1321,17 +1318,14 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="15" sizingBehavior="auto" id="2275">
                         <nil key="toolTip"/>
-                        <button key="view" verticalHuggingPriority="750" id="2289" customClass="VolumeButton">
-                            <rect key="frame" x="9" y="14" width="29" height="23"/>
+                        <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="2289" customClass="VolumeSlider">
+                            <rect key="frame" x="0.0" y="14" width="96" height="14"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="2290">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
+                            <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="55" tickMarkPosition="above" sliderType="linear" id="2290"/>
                             <connections>
-                                <outlet property="_popView" destination="1612" id="2388"/>
+                                <action selector="changeVolume:" target="705" id="2388"/>
                             </connections>
-                        </button>
+                        </slider>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="2278">
                         <nil key="toolTip"/>
@@ -1586,17 +1580,14 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="A1B2C3D4-0004-7890-ABCD-EF1234567894" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="15" sizingBehavior="auto" id="3113">
                         <nil key="toolTip"/>
-                        <button key="view" verticalHuggingPriority="750" id="3114" customClass="VolumeButton">
-                            <rect key="frame" x="9" y="14" width="29" height="23"/>
+                        <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="3114" customClass="VolumeSlider">
+                            <rect key="frame" x="0.0" y="14" width="96" height="14"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="volume3Template" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="3115">
-                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                <font key="font" metaFont="system"/>
-                            </buttonCell>
+                            <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="55" tickMarkPosition="above" sliderType="linear" id="3115"/>
                             <connections>
-                                <outlet property="_popView" destination="1612" id="3416"/>
+                                <action selector="changeVolume:" target="705" id="3416"/>
                             </connections>
-                        </button>
+                        </slider>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="A1B2C3D4-0005-7890-ABCD-EF1234567895" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="3116">
                         <nil key="toolTip"/>
@@ -2600,7 +2591,9 @@ Gw
                 <outlet property="playlistLoader" destination="1319" id="ghZ-65-60L"/>
                 <outlet property="playlistView" destination="207" id="717"/>
                 <outlet property="tempoSlider" destination="stI-oD-51s" id="dDc-lb-crL"/>
-                <outlet property="volumeSlider" destination="1612" id="1615"/>
+                <outlet property="miniPlusVolumeSlider" destination="3114" id="Vs2-6r-mPl"/>
+                <outlet property="miniVolumeSlider" destination="2289" id="Vs1-6r-mNi"/>
+                <outlet property="volumeSlider" destination="1608" id="1615"/>
             </connections>
         </customObject>
         <menu title="Menu" id="1063" userLabel="ContextualMenu">
@@ -2771,21 +2764,6 @@ Gw
             </items>
             <point key="canvasLocation" x="-166" y="-282"/>
         </menu>
-        <customView id="1611" userLabel="Volume View">
-            <rect key="frame" x="0.0" y="0.0" width="32" height="168"/>
-            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-            <subviews>
-                <slider horizontalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1612" customClass="VolumeSlider">
-                    <rect key="frame" x="6" y="2" width="20" height="164"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="55" tickMarkPosition="left" sliderType="linear" id="1613"/>
-                    <connections>
-                        <action selector="changeVolume:" target="705" id="1614"/>
-                    </connections>
-                </slider>
-            </subviews>
-            <point key="canvasLocation" x="615" y="-25"/>
-        </customView>
         <customView id="90w-7t-RYP" userLabel="Speed View">
             <rect key="frame" x="0.0" y="0.0" width="69" height="216"/>
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>

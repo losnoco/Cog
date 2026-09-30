@@ -12,10 +12,17 @@
 
 static void *kVolumeSliderContext = &kVolumeSliderContext;
 
+@interface VolumeSlider ()
+- (double)displayedVolume;
+- (void)setDisplayedVolume:(double)volume;
+- (void)snapToVolumeStep;
+@end
+
 @implementation VolumeSlider {
 	NSTimer *currentTimer;
 	BOOL wasInsideSnapRange;
 	BOOL observersadded;
+	double scrollDeltaRemainder;
 }
 
 - (id)initWithFrame:(NSRect)frame {
@@ -60,39 +67,33 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 }
 
 - (void)updateToolTip {
+	[textView setString:[NSString stringWithFormat:@"%.0lf%%", round([self displayedVolume])]];
+}
+
+- (double)displayedVolume {
 	const double value = [self doubleValue];
-	// Sets volume to be the slider value if limit is set to 100% or the actual volume otherwise.
-	const double volume = (MAX_VOLUME == 100) ? value : linearToLogarithmic(value, MAX_VOLUME);
-	NSString *text;
+	return (MAX_VOLUME == 100) ? value : linearToLogarithmic(value, MAX_VOLUME);
+}
 
-	// If volume becomes less than 1%, display two decimal digits of precision (e.g. 0.34%).
-	if(volume < 1)
-		text = [NSString stringWithFormat:@"%0.2lf%%", volume];
-	// Else if volume becomes less than 10%, display one decimal digit of precision (e.g. 3.4%).
-	else if(volume < 10)
-		text = [NSString stringWithFormat:@"%0.1lf%%", volume];
-	// Else display no decimal digits.
-	else
-		text = [NSString stringWithFormat:@"%0.lf%%", volume];
+- (void)setDisplayedVolume:(double)volume {
+	volume = MAX(0.0, MIN(volume, MAX_VOLUME));
+	const double value = (MAX_VOLUME == 100) ? volume : logarithmicToLinear(volume, MAX_VOLUME);
+	[self setDoubleValue:value];
+}
 
-	[textView setString:text];
+- (void)snapToVolumeStep {
+	[self setDisplayedVolume:round([self displayedVolume])];
 }
 
 - (void)showToolTip {
 	[self updateToolTip];
 
-	double progress = (self.maxValue - [self doubleValue]) / (self.maxValue - self.minValue);
-	CGFloat width = self.knobThickness - 1;
-	// Show tooltip to the left of the Slider Knob
-	CGFloat height = self.knobThickness / 2.f + (self.bounds.size.height - self.knobThickness) * progress - 1;
+	double range = self.maxValue - self.minValue;
+	double progress = range == 0 ? 0 : ([self doubleValue] - self.minValue) / range;
+	CGFloat knobCenter = self.knobThickness / 2.f + (self.bounds.size.width - self.knobThickness) * progress;
+	NSRect anchor = NSMakeRect(knobCenter - 1, NSMidY(self.bounds) - 1, 2, 2);
 
-	NSWindow *window = self.window;
-	NSPoint screenPoint = [window convertPointToScreen:NSMakePoint(width + 1, height + 1)];
-
-	if(window.screen.frame.size.width < screenPoint.x + textView.bounds.size.width + 64) // wing it
-		[popover showRelativeToRect:NSMakeRect(1, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMinX];
-	else
-		[popover showRelativeToRect:NSMakeRect(width, height, 2, 2) ofView:self preferredEdge:NSRectEdgeMaxX];
+	[popover showRelativeToRect:anchor ofView:self preferredEdge:NSRectEdgeMaxY];
 	[self.window.parentWindow makeKeyWindow];
 }
 
@@ -154,12 +155,13 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	double snapProgress = ([self doubleValue] - snapTarget) / (self.maxValue - self.minValue);
 
 	if(fabs(snapProgress) < 0.005) {
-		[self setDoubleValue:snapTarget];
+		[self setDisplayedVolume:100.0];
 		if(!wasInsideSnapRange) {
 			[[NSHapticFeedbackManager defaultPerformer] performFeedbackPattern:NSHapticFeedbackPatternGeneric performanceTime:NSHapticFeedbackPerformanceTimeDefault];
 		}
 		wasInsideSnapRange = YES;
 	} else {
+		[self snapToVolumeStep];
 		wasInsideSnapRange = NO;
 	}
 
@@ -169,13 +171,19 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent {
-	double change = [theEvent deltaY];
+	scrollDeltaRemainder += [theEvent deltaY];
+	double steps = trunc(scrollDeltaRemainder);
 
-	[self setDoubleValue:[self doubleValue] + change];
+	if(steps != 0) {
+		scrollDeltaRemainder -= steps;
+		[self setDisplayedVolume:round([self displayedVolume]) + steps];
+		[[self target] changeVolume:self];
+		[self showToolTipForDuration:1.0];
+	}
 
-	[[self target] changeVolume:self];
-
-	[self showToolTipForDuration:1.0];
+	if(theEvent.phase == NSEventPhaseEnded || theEvent.phase == NSEventPhaseCancelled) {
+		scrollDeltaRemainder = 0;
+	}
 }
 
 @end

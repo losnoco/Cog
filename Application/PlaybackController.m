@@ -105,6 +105,10 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 @synthesize faded;
 @end
 
+@interface PlaybackController ()
+- (void)setVolumeControlsValue:(double)value;
+@end
+
 @implementation PlaybackController {
 	// Bumped by every play or stop, so a start deferred until an entry's
 	// tags load is dropped if something else happened meanwhile.
@@ -215,7 +219,7 @@ static double reverseSpeedScale(double input, double min, double max) {
 
 	double volume = [[NSUserDefaults standardUserDefaults] doubleForKey:@"volume"];
 
-	[volumeSlider setDoubleValue:logarithmicToLinear(volume, MAX_VOLUME)];
+	[self setVolumeControlsValue:logarithmicToLinear(volume, MAX_VOLUME)];
 	[audioPlayer setVolume:volume];
 
 	double pitch = [[NSUserDefaults standardUserDefaults] doubleForKey:@"pitch"];
@@ -558,9 +562,16 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	DLog(@"VOLUME: %lf, %lf", [sender doubleValue], linearToLogarithmic([sender doubleValue], MAX_VOLUME));
 
+	[self setVolumeControlsValue:[sender doubleValue]];
 	[audioPlayer setVolume:linearToLogarithmic([sender doubleValue], MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
+}
+
+- (void)setVolumeControlsValue:(double)value {
+	[volumeSlider setDoubleValue:value];
+	[miniVolumeSlider setDoubleValue:value];
+	[miniPlusVolumeSlider setDoubleValue:value];
 }
 
 - (double)volume {
@@ -577,7 +588,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	volume = MAX(0.0, MIN(volume, 100.0));
 
 	[audioPlayer setVolume:linearToLogarithmic(volume, MAX_VOLUME)];
-	[volumeSlider setDoubleValue:volume];
+	[self setVolumeControlsValue:volume];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
@@ -605,7 +616,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 			const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
 			[audioPlayer setVolume:originalVolume];
-			[volumeSlider setDoubleValue:logarithmicToLinear(originalVolume, MAX_VOLUME)];
+			[self setVolumeControlsValue:logarithmicToLinear(originalVolume, MAX_VOLUME)];
 			[audioTimer invalidate];
 
 			fading = NO;
@@ -632,7 +643,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
 		[audioPlayer setVolume:originalVolume];
-		[volumeSlider setDoubleValue:logarithmicToLinear(originalVolume, MAX_VOLUME)];
+		[self setVolumeControlsValue:logarithmicToLinear(originalVolume, MAX_VOLUME)];
 		[audioTimer invalidate];
 
 		fading = NO;
@@ -781,7 +792,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
 	double newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
-	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
+	[self setVolumeControlsValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
@@ -792,7 +803,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	double newVolume;
 	newVolume = [audioPlayer volumeUp:DEFAULT_VOLUME_UP];
-	[volumeSlider setDoubleValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
+	[self setVolumeControlsValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
