@@ -620,6 +620,41 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 	return NO;
 }
 
+// Devices default to a 512-frame I/O buffer whatever their rate, which at
+// 384 kHz is a 1.33 ms deadline: WindowServer or the GPU getting busy (a
+// newly revealed view is enough) makes the I/O thread miss it, and coreaudiod
+// logs "Overload possibly due to client timeout", heard as crackle. A player
+// has no use for that little latency, so ask for about 20 ms (the hidden
+// outputBufferMilliseconds setting overrides it), clamped to what the device
+// allows. The unit's maximumFramesToRender is raised in -setup to match.
+- (void)requestDeviceBufferForSampleRate:(double)sampleRate {
+	if(outputDeviceID == (AudioDeviceID)-1 || sampleRate <= 0.0) {
+		return;
+	}
+
+	double milliseconds = [[NSUserDefaults standardUserDefaults] doubleForKey:@"outputBufferMilliseconds"];
+	if(milliseconds <= 0.0) {
+		milliseconds = 20.0;
+	}
+	UInt32 frames = (UInt32)MAX(512.0, round(sampleRate * milliseconds / 1000.0));
+
+	AudioObjectPropertyAddress theAddress = {
+		.mSelector = kAudioDevicePropertyBufferFrameSizeRange,
+		.mScope = kAudioDevicePropertyScopeOutput,
+		.mElement = kAudioObjectPropertyElementMain
+	};
+	AudioValueRange range = { 0 };
+	UInt32 size = sizeof(range);
+	if(AudioObjectGetPropertyData(outputDeviceID, &theAddress, 0, NULL, &size, &range) == noErr && range.mMaximum > 0) {
+		frames = (UInt32)MIN(MAX((double)frames, range.mMinimum), range.mMaximum);
+	}
+	frames = MIN(frames, (UInt32)_au.maximumFramesToRender);
+
+	theAddress.mSelector = kAudioDevicePropertyBufferFrameSize;
+	OSStatus status = AudioObjectSetPropertyData(outputDeviceID, &theAddress, 0, NULL, sizeof(frames), &frames);
+	DLog(@"Requested a %u frame I/O buffer (%.1f ms): %d", frames, frames * 1000.0 / sampleRate, (int)status);
+}
+
 - (BOOL)updateDeviceFormatNotifyingController:(BOOL)notifyController {
 	AVAudioFormat *format = _au.outputBusses[0].format;
 	if(!format) {
@@ -684,6 +719,8 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 				deviceChannelConfig = AudioConfig7Point1;
 				break;
 		}
+
+		[self requestDeviceBufferForSampleRate:deviceFormat.mSampleRate];
 
 		renderFormat = targetDoPInteger ? DoPIntegerRenderFormatForDeviceFormat(deviceFormat) : deviceFormat;
 		renderAVFormat = [[AVAudioFormat alloc] initWithStreamDescription:&renderFormat channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:tag]];
@@ -1091,6 +1128,10 @@ static void convertFloatBufferToS32(int32_t *output, const float *input, size_t 
 		suspendOutputOnPause = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"suspendOutputOnPause"];
 
 		[self audioOutputBlock];
+
+		// Room for the larger I/O buffer -requestDeviceBufferForSampleRate:
+		// asks for; the render scratch is sized from this too.
+		_au.maximumFramesToRender = 16384;
 
 		[_au allocateRenderResourcesAndReturnError:&err];
 
