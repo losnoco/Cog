@@ -16,6 +16,14 @@ public protocol FeederDelegate: AnyObject {
 
 	/// A track could not be opened and was skipped.
 	func feeder(_ feeder: Feeder, couldNotOpen track: EngineTrack)
+
+	/// `track` was opened for decoding; `isSilence` if its file could not be
+	/// read and ten seconds of silence stand in for it, as BufferChain did.
+	func feeder(_ feeder: Feeder, opened track: EngineTrack, isSilence: Bool)
+}
+
+public extension FeederDelegate {
+	func feeder(_ feeder: Feeder, opened track: EngineTrack, isSilence: Bool) {}
 }
 
 /// The engine's first worker thread: decodes, converts to float, resamples to
@@ -287,6 +295,7 @@ public final class Feeder {
 			track = next
 			trackStartPending = (next, 0)
 			previousTrack = finishedTrack
+			announceOpened()
 			return
 		}
 		var attempts = 0
@@ -306,6 +315,7 @@ public final class Feeder {
 				// known whether the resampler carries straight across.
 				trackStartPending = (next, 0)
 				previousTrack = finishedTrack
+				announceOpened()
 				return
 			}
 			delegate?.feeder(self, couldNotOpen: next)
@@ -350,9 +360,11 @@ public final class Feeder {
 			track = seekTrack
 			decoder = opened
 			fresh = true
+			announceOpened()
 		} else if seekTrack !== track || decoder == nil {
 			guard reopen(seekTrack) else { return }
 			fresh = true
+			announceOpened()
 		}
 
 		var offset = 0.0
@@ -411,6 +423,14 @@ public final class Feeder {
 		}
 		decoder = opened
 		return true
+	}
+
+	/// Tells the delegate the current track is open, and whether it is the
+	/// silence standing in for an unreadable file (an error to flag), or
+	/// real audio (clearing any error flagged on it before).
+	private func announceOpened() {
+		guard let track else { return }
+		delegate?.feeder(self, opened: track, isSilence: decoder?.isSilence?() ?? false)
 	}
 
 	private func dropHandoff() {

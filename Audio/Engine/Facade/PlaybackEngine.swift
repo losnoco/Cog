@@ -890,4 +890,10 @@ import Foundation
 	public func feeder(_ feeder: Feeder, couldNotOpen track: EngineTrack) {
 		host?.playbackEngineSetError(true, forTrack: track.userInfo)
 	}
+
+	/// As InputNode did on starting each track: an unreadable file playing
+	/// as silence is flagged, and a readable one cleared.
+	public func feeder(_ feeder: Feeder, opened track: EngineTrack, isSilence: Bool) {
+		host?.playbackEngineSetError(isSilence, forTrack: track.userInfo)
+	}
 }

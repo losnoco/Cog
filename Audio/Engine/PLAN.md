@@ -297,6 +297,11 @@ Each stage ships on its own and leaves the old engine working.
      pushed it as soon as the decoder changed, up to the whole buffer early
      (about ten seconds in this engine's deep ring), so a stream title
      changed before the song did.
+   - Errors: as InputNode did on starting each track, the engine flags a
+     track whose file could not be read (the feeder opened the silence
+     standing in for it) and clears the flag on one that opened normally.
+     Tracks no decoder takes are flagged and skipped; a refused seek
+     restarts the track rather than failing.
    - Cue sheets: when the next track is in the same file (URLs equal but
      for the fragment) and the decoder takes `setTrack:`, the feeder keeps
      it, as AudioPlayer arranged: the next track carries straight on from

@@ -33,7 +33,15 @@ final class RecordingHost: NSObject, PlaybackEngineHost {
 	}
 	func playbackEngineReportPlayCount(_ userInfo: Any?) { log.append("played \(name(userInfo))") }
 	func playbackEngineReportScrobble(_ userInfo: Any?) { log.append("scrobble \(name(userInfo))") }
-	func playbackEngineSetError(_ error: Bool, forTrack userInfo: Any?) { log.append("error \(name(userInfo))") }
+	/// Tracks whose error flag was cleared (each one that opened normally).
+	var cleared: [String] = []
+	func playbackEngineSetError(_ error: Bool, forTrack userInfo: Any?) {
+		if error {
+			log.append("error \(name(userInfo))")
+		} else {
+			cleared.append(name(userInfo))
+		}
+	}
 	func playbackEnginePushInfo(_ info: [AnyHashable: Any], toTrack userInfo: Any?) {
 		log.append("info \(name(userInfo)): \(info["title"] as? String ?? "?")")
 	}
@@ -245,6 +253,27 @@ final class PlaybackEngineTests: XCTestCase {
 		engine.stop()
 	}
 
+	/// An unreadable file plays as the silence standing in for it, flagged
+	/// as an error; a readable one has any old error cleared, as InputNode
+	/// did on starting each track.
+	func testSilenceStandingInForAFileIsFlagged() throws {
+		let samples = SeamSignal.loopable(frames: 12000, sampleRate: 48000)
+		let host = RecordingHost()
+		host.queue = [EngineTrack(url: URL(string: "memory://missing")!, userInfo: "missing", gain: 1)]
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { track in
+			track.url.host == "missing" ? SilentMemoryDecoder(frames: 12000) : MemoryDecoder(samples: samples, sampleRate: 48000, channels: 2)
+		}
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://fine")!, userInfo: "fine", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { host.stopped }, timeout: 10)
+		XCTAssertTrue(host.log.contains("error missing"))
+		XCTAssertFalse(host.log.contains("error fine"))
+		XCTAssertEqual(host.cleared, ["fine"])
+	}
+
 	/// At tempo 2 the playback position runs at twice the wall clock: the
 	/// stretch map, not the rendered frame count, gives track time.
 	func testThePositionFollowsTheTempo() throws {
@@ -269,4 +298,27 @@ final class PlaybackEngineTests: XCTestCase {
 		engine.stop()
 		XCTAssertEqual(rate, 2, accuracy: 0.25, "track seconds per wall-clock second")
 	}
+}
+
+/// What BufferChain substitutes for an unreadable file, as far as the
+/// engine can tell: audio from a decoder that says it is silence.
+final class SilentMemoryDecoder: NSObject, CogDecoder {
+	private let decoder: MemoryDecoder
+
+	init(frames: Int) {
+		decoder = MemoryDecoder(samples: [Float](repeating: 0, count: frames * 2), sampleRate: 48000, channels: 2)
+	}
+
+	static func mimeTypes() -> [Any]! { [] }
+	static func fileTypes() -> [Any]! { [] }
+	static func fileTypeAssociations() -> [Any]! { [] }
+	static func priority() -> Float { 1 }
+
+	func properties() -> [AnyHashable: Any]! { decoder.properties() }
+	func metadata() -> [AnyHashable: Any]! { [:] }
+	func readAudio() -> AudioChunk! { decoder.readAudio() }
+	func open(_ source: CogSource!) -> Bool { true }
+	func seek(_ frame: Int) -> Int { decoder.seek(frame) }
+	func close() {}
+	func isSilence() -> Bool { true }
 }
