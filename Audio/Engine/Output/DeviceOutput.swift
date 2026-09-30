@@ -107,7 +107,7 @@ public final class DeviceOutput {
 	}
 
 	private func setProperty<Value>(_ property: AudioUnitPropertyID, scope: AudioUnitScope, _ value: inout Value) throws {
-		try Self.check(AudioUnitSetProperty(unit, property, scope, 0, &value, UInt32(MemoryLayout<Value>.size)))
+		try Self.check(withUnsafeMutableBytes(of: &value) { AudioUnitSetProperty(unit, property, scope, 0, $0.baseAddress, UInt32($0.count)) })
 	}
 
 	private func uninitialize() {
@@ -606,14 +606,16 @@ public final class DeviceOutput {
 	@discardableResult
 	static func setProperty<Value>(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector, _ value: inout Value, scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal) -> Bool {
 		var address = AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)
-		return AudioObjectSetPropertyData(object, &address, 0, nil, UInt32(MemoryLayout<Value>.size), &value) == noErr
+		return withUnsafeMutableBytes(of: &value) { AudioObjectSetPropertyData(object, &address, 0, nil, UInt32($0.count), $0.baseAddress!) } == noErr
 	}
 
 	@discardableResult
 	static func getProperty<Value>(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector, _ value: inout Value, scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal) -> Bool {
 		var address = AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)
-		var size = UInt32(MemoryLayout<Value>.size)
-		return AudioObjectGetPropertyData(object, &address, 0, nil, &size, &value) == noErr
+		return withUnsafeMutableBytes(of: &value) {
+			var size = UInt32($0.count)
+			return AudioObjectGetPropertyData(object, &address, 0, nil, &size, $0.baseAddress!)
+		} == noErr
 	}
 
 	// MARK: - Channel layouts

@@ -24,7 +24,9 @@ final class TimeStretchStage: NSObject, DSPStage {
 		var engine: String
 		var tempo: Double
 		var pitch: Double
-		var rubberBandOptions: RubberBandOptions
+		/// `RubberBandOptions`, spelled as its underlying type: a stored
+		/// property may not use a type from the implementation-only import.
+		var rubberBandOptions: Int32
 
 		static func current() -> Settings {
 			let defaults = UserDefaults.standard
@@ -444,7 +446,7 @@ private final class SignalsmithBackend: StretchBackend {
 			let seekFrames = seekPending.count / channels
 			seekPending.withUnsafeBufferPointer { input.split($0, from: 0, count: seekFrames) }
 			input.withPointers { pointers in
-				pointers.withMemoryRebound(to: UnsafePointer<Float>?.self, capacity: channels) {
+				pointers.withMemoryRebound(to: UnsafePointer<Float>.self, capacity: channels) {
 					cog_signalsmith_output_seek(stretch, $0, Int32(seekFrames))
 				}
 			}
@@ -459,10 +461,8 @@ private final class SignalsmithBackend: StretchBackend {
 			owedOutput -= Double(outCount)
 			input.withPointers { inPointers in
 				output.withPointers { outPointers in
-					inPointers.withMemoryRebound(to: UnsafePointer<Float>?.self, capacity: channels) { inputs in
-						outPointers.withMemoryRebound(to: UnsafeMutablePointer<Float>?.self, capacity: channels) { outputs in
-							cog_signalsmith_process(stretch, inputs, Int32(count), outputs, Int32(outCount))
-						}
+					inPointers.withMemoryRebound(to: UnsafePointer<Float>.self, capacity: channels) { inputs in
+						cog_signalsmith_process(stretch, inputs, Int32(count), outPointers, Int32(outCount))
 					}
 				}
 			}
@@ -478,7 +478,7 @@ private final class SignalsmithBackend: StretchBackend {
 			let seekFrames = seekPending.count / channels
 			seekPending.withUnsafeBufferPointer { input.split($0, from: 0, count: seekFrames) }
 			input.withPointers { pointers in
-				pointers.withMemoryRebound(to: UnsafePointer<Float>?.self, capacity: channels) {
+				pointers.withMemoryRebound(to: UnsafePointer<Float>.self, capacity: channels) {
 					cog_signalsmith_output_seek(stretch, $0, Int32(seekFrames))
 				}
 			}
@@ -492,11 +492,7 @@ private final class SignalsmithBackend: StretchBackend {
 		if latency > output.capacity {
 			output = ChannelBuffers(channels: channels, capacity: latency)
 		}
-		output.withPointers { pointers in
-			pointers.withMemoryRebound(to: UnsafeMutablePointer<Float>?.self, capacity: channels) {
-				cog_signalsmith_flush(stretch, $0, Int32(latency))
-			}
-		}
+		output.withPointers { cog_signalsmith_flush(stretch, $0, Int32(latency)) }
 		output.join(latency, into: &result)
 	}
 }

@@ -755,6 +755,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -796,6 +797,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;

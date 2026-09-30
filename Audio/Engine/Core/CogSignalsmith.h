@@ -30,10 +30,10 @@ int cog_signalsmith_output_latency(const CogSignalsmith *stretch);
 
 /// Input frames `output_seek` wants to start at `rate` (tempo) aligned.
 int cog_signalsmith_output_seek_length(const CogSignalsmith *stretch, float rate);
-void cog_signalsmith_output_seek(CogSignalsmith *stretch, const float *const *inputs, int frames);
+void cog_signalsmith_output_seek(CogSignalsmith *stretch, const float *_Nonnull const *_Nonnull inputs, int frames);
 
-void cog_signalsmith_process(CogSignalsmith *stretch, const float *const *inputs, int inputFrames, float *const *outputs, int outputFrames);
-void cog_signalsmith_flush(CogSignalsmith *stretch, float *const *outputs, int outputFrames);
+void cog_signalsmith_process(CogSignalsmith *stretch, const float *_Nonnull const *_Nonnull inputs, int inputFrames, float *_Nonnull const *_Nonnull outputs, int outputFrames);
+void cog_signalsmith_flush(CogSignalsmith *stretch, float *_Nonnull const *_Nonnull outputs, int outputFrames);
 
 #pragma clang assume_nonnull end
 
