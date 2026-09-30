@@ -297,6 +297,11 @@ Each stage ships on its own and leaves the old engine working.
      pushed it as soon as the decoder changed, up to the whole buffer early
      (about ten seconds in this engine's deep ring), so a stream title
      changed before the song did.
+   - Remote Control and MCP: nothing to port. The adapter works through
+     `PlaybackController`, `AppController.clickSeek` and the playlist
+     controller, which reach whichever engine `AudioPlayer` uses; playlist
+     edits arrive as `resetNextStreams`. The MCP helper only relays to the
+     same listener over its socket.
    - Errors: as InputNode did on starting each track, the engine flags a
      track whose file could not be read (the feeder opened the silence
      standing in for it) and clears the flag on one that opened normally.
