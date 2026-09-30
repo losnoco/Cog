@@ -54,7 +54,13 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 }
 
 - (id)init {
-	return [super init];
+	self = [super init];
+	if(self) {
+		// Created at launch: a device a crash left held is put back now,
+		// not on the first play.
+		[PlaybackEngine recoverAbandonedExclusiveOutput];
+	}
+	return self;
 }
 
 - (void)setDelegate:(id)d {

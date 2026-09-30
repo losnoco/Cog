@@ -397,6 +397,90 @@ Each stage ships on its own and leaves the old engine working.
    every plugin project's `AudioChunk.h` reference points at the new
    folder. The old per-track converter's seam test went with it.
 
+8. **Exclusive output.** Ported from a fork of the chain engine
+   (`feat/bit-perfect-pcm-dop-output`), whose settings it keeps:
+   `exclusiveIntegerOutput` and `setDeviceVolumeTo100ForExclusiveOutput`,
+   both off by default.
+   *Done:*
+   - With `exclusiveIntegerOutput` on and a specific output device (not the
+     followed system default, one output stream of at most eight channels),
+     every PCM track holds the device: hog mode, and the device at the
+     track's own rate, or failing that the nearest it offers (a whole
+     multiple above, else a whole fraction below: DSD64 made PCM, 352.8 kHz,
+     plays at 176.4 kHz on a 192 kHz device), so nothing is resampled that
+     need not be.
+   - The stream is set to the best format it offers at that rate
+     (`DeviceOutput.exclusiveCandidates`): integer the system cannot mix
+     first, widest first (32, then 24 in its layouts, then 16), then mixable
+     integer (the system converts float to it, exactly for 24 bits), then
+     float. Widest rather than the source's depth: every source up to 24 bits
+     passes exactly through any of 24 bits or more, processed audio loses
+     least, and tracks of other depths at the same rate stay gapless. DoP
+     now goes through the same path, needing integer of 24 bits or more.
+   - The device's rate is set through the stream's format alone. Setting
+     the nominal rate first as well (as the DoP path did), two
+     reconfigurations back to back, left an SMSL DAC unable to start I/O in
+     three starts out of four: the HAL waits seven seconds ("IO is still
+     disabled after waiting") and fails with EAGAIN. The nominal rate is now
+     only a fallback, for a device that will not take a rate as part of a
+     format. Should a held device still not start, playback restarts shared.
+   - A non-mixable stream's virtual format is its physical one, so the
+     renderer writes the DAC's own words. AUHAL will not drive such a device
+     (setting it as the unit's device fails with -10851 and the unit stays on
+     the old one, which the fork met as silent DoP), so a held device is
+     rendered into by an IOProc on the device, `cog_renderer_device_io_proc`,
+     plain C like the unit callback, with no converter after the renderer.
+   - The renderer converts to Int32, Int24 (high- or low-aligned in 32 bits,
+     or packed in 3 bytes) or Int16 by scaling by 2^(bits-1), the exact
+     inverse of ChunkList's integer-to-float scaling, rounding to nearest and
+     clipping before rounding (the fork's converter could round just short
+     of full scale past it and wrap). Every 16- and 24-bit sample comes back
+     exactly, with or without the HDCD decoder engaged (unity gain unless
+     HDCD is found), and DoP words exactly in any 24- or 32-bit layout, so
+     DoP needs no special case. The old 24-bit PCM conversion scaled by
+     2^31 - 1 and was one step low for positive samples. Callbacks loop over
+     the scratch buffer rather than truncating a cycle.
+   - Bit-perfect needs nothing more: at unity track gain, volume 100 % and no
+     active stage nothing multiplies the samples (transport fades and seek
+     crossfades aside, which only shape transitions). Otherwise the output is
+     still integer, and the status says what changed it.
+   - The feeder admits a track into the stream when it wants the same plan
+     (`PlaybackEngine.OutputPlan`: the device's rate, DoP or not, held or
+     not) or PCM wanting the held device at the rate it already runs at;
+     otherwise the stream ends before it and the engine rebuilds at the new
+     rate. The device stays held through that rebuild (and through `play:`
+     rebuilds), so another app or the system default cannot take it in
+     between; it is given back on stop, at the end of the playlist, or when a
+     plan no longer wants it. Pause keeps it, as for DoP.
+   - Fallbacks: DoP that cannot be had becomes PCM (held, if wanted), and a
+     device that cannot be held (another process holds it, or it will not
+     start) plays shared, and is not tried again until playback stops or the
+     setting changes. Turning the setting on or off while playing restarts at
+     the current position.
+   - Releasing puts back each stream's physical format (and with it the
+     device's rate), mixing, the system defaults moved off the device, and a
+     device volume set to full (if still full). Setting hog mode toggles it,
+     whatever value is written, so it is set only on an observed owner: the
+     old release would have taken a device whose hold had been lost.
+   - A process that dies holding a device loses hog mode, but macOS leaves
+     the stream in the format it was given, non-mixable, where no other app
+     can play (seen on an SMSL DAC). So what holding changes is recorded in
+     the defaults (`exclusiveOutputSession`, devices by UID) while held, and
+     `DeviceOutput.recoverAbandonedSession` undoes it at the next launch, or
+     before the next hold, if nobody else holds the device by then.
+   - `setDeviceVolumeTo100ForExclusiveOutput` turns the device's own volume
+     (main control, else each channel's) to full while held, and back.
+   - Not carried over: the fork passed integer PCM through untouched in
+     integer containers, so 25- to 32-bit integer sources stayed exact. Here
+     everything is Float32 between the decoder and the renderer, so those
+     are rounded to 24 bits (the status says "Sample precision reduced").
+     Carrying them exactly needs a wider sample path than this engine's.
+   - Tests: `ExclusiveOutputTests` (conversion through ChunkList, the
+     callbacks, format ranking, rate choice, planning, status) offline, and
+     `ExclusiveDeviceTests` against a real device, run only when
+     `COG_EXCLUSIVE_TEST_DEVICE` names one (pass it to xcodebuild as
+     `TEST_RUNNER_COG_EXCLUSIVE_TEST_DEVICE`).
+
 ## Open questions
 
 - Where the new engine's Swift lives in the target (a folder in CogAudio vs a
@@ -404,5 +488,3 @@ Each stage ships on its own and leaves the old engine working.
   header).
 - Whether FreeSurround belongs in the feeder (XPCog) or the DSP thread (so it
   can be toggled without a flush).
-- Hog/exclusive mode and following the track's rate on the device, versus
-  always resampling to the device's current rate.

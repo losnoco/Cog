@@ -247,7 +247,9 @@ struct CogRenderer {
 	bool dopActive;
 	/// The marker the next DoP frame must carry.
 	uint8_t dopMarker;
-	/// Float frames rendered before conversion, for integer output.
+	/// What the device is handed, and the float frames rendered before
+	/// conversion when that is not float.
+	CogSampleFormat outputFormat;
 	float *integerScratch;
 	size_t integerScratchFrames;
 
@@ -283,15 +285,33 @@ CogRenderer *cog_renderer_create(CogRing *ring) {
 	return renderer;
 }
 
-bool cog_renderer_set_integer_output(CogRenderer *renderer, size_t maximumFrames) {
+size_t cog_sample_format_bytes(CogSampleFormat format) {
+	switch(format) {
+		case CogSampleFormatInt24Packed:
+			return 3;
+		case CogSampleFormatInt16:
+			return 2;
+		default:
+			return 4;
+	}
+}
+
+bool cog_renderer_set_output_format(CogRenderer *renderer, CogSampleFormat format, size_t maximumFrames) {
 	free(renderer->integerScratch);
 	renderer->integerScratch = NULL;
 	renderer->integerScratchFrames = 0;
-	if(!maximumFrames) return true;
+	renderer->outputFormat = CogSampleFormatFloat32;
+	if(format == CogSampleFormatFloat32) return true;
+	if(!maximumFrames) return false;
 	renderer->integerScratch = calloc(maximumFrames * cog_ring_channels(renderer->ring), sizeof(float));
 	if(!renderer->integerScratch) return false;
 	renderer->integerScratchFrames = maximumFrames;
+	renderer->outputFormat = format;
 	return true;
+}
+
+CogSampleFormat cog_renderer_output_format(const CogRenderer *renderer) {
+	return renderer->outputFormat;
 }
 
 static void renderer_free_crossfade(CogRenderer *renderer) {
@@ -537,20 +557,102 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	return got;
 }
 
-void cog_convert_to_s32(int32_t *output, const float *input, size_t count, bool dop) {
-	for(size_t i = 0; i < count; ++i) {
-		int32_t value;
-		if(dop) {
-			// Exactly the carrier word, low byte clear.
-			value = (int32_t)(((uint32_t)(int32_t)llrint((double)input[i] * 2147483648.0)) & 0xFFFFFF00U);
-		} else if(input[i] >= 1.0f) {
-			value = (int32_t)(((uint32_t)INT32_MAX) & 0xFFFFFF00U);
-		} else if(input[i] <= -1.0f) {
-			value = INT32_MIN;
-		} else {
-			value = (int32_t)(((uint32_t)(int32_t)llrint((double)input[i] * 2147483647.0)) & 0xFFFFFF00U);
+/// `sample` as a signed integer of `bits` bits: scaled by 2^(bits-1), the
+/// exact inverse of how integers became float, rounded to nearest and
+/// clipped. Float holds at most 24 significant bits, so every integer of up
+/// to 24 bits, and every DoP word, comes back exactly.
+static inline int32_t sample_to_int(float sample, int bits) {
+	const double scale = (double)(1U << (bits - 1));
+	const double scaled = (double)sample * scale;
+	// Clipped before rounding, so nothing just short of full scale rounds
+	// past it and wraps; NaN is silence.
+	if(scaled != scaled) return 0;
+	if(scaled >= scale - 1.0) return (int32_t)(scale - 1.0);
+	if(scaled <= -scale) return (int32_t)-scale;
+	return (int32_t)llrint(scaled);
+}
+
+void cog_convert_samples(void *output, CogSampleFormat format, const float *input, size_t count) {
+	switch(format) {
+		case CogSampleFormatFloat32:
+			memcpy(output, input, count * sizeof(float));
+			break;
+		case CogSampleFormatInt32: {
+			int32_t *out = output;
+			for(size_t i = 0; i < count; ++i) {
+				out[i] = sample_to_int(input[i], 32);
+			}
+			break;
 		}
-		output[i] = value;
+		case CogSampleFormatInt24High: {
+			int32_t *out = output;
+			for(size_t i = 0; i < count; ++i) {
+				out[i] = (int32_t)((uint32_t)sample_to_int(input[i], 24) << 8);
+			}
+			break;
+		}
+		case CogSampleFormatInt24Low: {
+			int32_t *out = output;
+			for(size_t i = 0; i < count; ++i) {
+				out[i] = sample_to_int(input[i], 24);
+			}
+			break;
+		}
+		case CogSampleFormatInt24Packed: {
+			uint8_t *out = output;
+			for(size_t i = 0; i < count; ++i) {
+				const uint32_t value = (uint32_t)sample_to_int(input[i], 24);
+#if __LITTLE_ENDIAN__
+				out[i * 3] = (uint8_t)value;
+				out[i * 3 + 1] = (uint8_t)(value >> 8);
+				out[i * 3 + 2] = (uint8_t)(value >> 16);
+#else
+				out[i * 3] = (uint8_t)(value >> 16);
+				out[i * 3 + 1] = (uint8_t)(value >> 8);
+				out[i * 3 + 2] = (uint8_t)value;
+#endif
+			}
+			break;
+		}
+		case CogSampleFormatInt16: {
+			int16_t *out = output;
+			for(size_t i = 0; i < count; ++i) {
+				out[i] = (int16_t)sample_to_int(input[i], 16);
+			}
+			break;
+		}
+	}
+}
+
+/// Counts a device cycle that does not continue from the last one.
+static void renderer_note_device_time(CogRenderer *renderer, const AudioTimeStamp *timeStamp, UInt32 frames) {
+	if(!timeStamp || !(timeStamp->mFlags & kAudioTimeStampSampleTimeValid)) return;
+	if(atomic_load_explicit(&renderer->deviceTimeKnown, memory_order_relaxed) &&
+	   timeStamp->mSampleTime != renderer->nextDeviceTime) {
+		atomic_store_explicit(&renderer->lastDeviceJump, (int64_t)(timeStamp->mSampleTime - renderer->nextDeviceTime), memory_order_relaxed);
+		atomic_fetch_add_explicit(&renderer->deviceDiscontinuities, 1, memory_order_relaxed);
+	}
+	renderer->nextDeviceTime = timeStamp->mSampleTime + frames;
+	atomic_store_explicit(&renderer->deviceTimeKnown, true, memory_order_relaxed);
+}
+
+/// Renders `frames` frames into `out` in the output format, through the
+/// scratch buffer as many times as it takes when that is not float.
+static void renderer_fill(CogRenderer *renderer, void *out, UInt32 frames) {
+	const CogSampleFormat format = renderer->outputFormat;
+	if(format == CogSampleFormatFloat32) {
+		cog_renderer_render(renderer, (float *)out, frames);
+		return;
+	}
+	const uint32_t channels = cog_ring_channels(renderer->ring);
+	const size_t bytesPerFrame = cog_sample_format_bytes(format) * channels;
+	uint8_t *bytes = out;
+	while(frames) {
+		const UInt32 count = frames < renderer->integerScratchFrames ? frames : (UInt32)renderer->integerScratchFrames;
+		cog_renderer_render(renderer, renderer->integerScratch, count);
+		cog_convert_samples(bytes, format, renderer->integerScratch, (size_t)count * channels);
+		bytes += count * bytesPerFrame;
+		frames -= count;
 	}
 }
 
@@ -565,29 +667,44 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
 	CogRenderer *renderer = (CogRenderer *)inRefCon;
 	if(!renderer || !ioData || !ioData->mNumberBuffers || !ioData->mBuffers[0].mData) return noErr;
 
-	if(inTimeStamp && (inTimeStamp->mFlags & kAudioTimeStampSampleTimeValid)) {
-		if(atomic_load_explicit(&renderer->deviceTimeKnown, memory_order_relaxed) &&
-		   inTimeStamp->mSampleTime != renderer->nextDeviceTime) {
-			atomic_store_explicit(&renderer->lastDeviceJump, (int64_t)(inTimeStamp->mSampleTime - renderer->nextDeviceTime), memory_order_relaxed);
-			atomic_fetch_add_explicit(&renderer->deviceDiscontinuities, 1, memory_order_relaxed);
-		}
-		renderer->nextDeviceTime = inTimeStamp->mSampleTime + inNumberFrames;
-		atomic_store_explicit(&renderer->deviceTimeKnown, true, memory_order_relaxed);
-	}
+	renderer_note_device_time(renderer, inTimeStamp, inNumberFrames);
 
 	const uint32_t channels = cog_ring_channels(renderer->ring);
-	const UInt32 bytesPerFrame = (UInt32)(sizeof(float) * channels);
+	const UInt32 bytesPerFrame = (UInt32)(cog_sample_format_bytes(renderer->outputFormat) * channels);
 	const UInt32 capacity = ioData->mBuffers[0].mDataByteSize / bytesPerFrame;
-	UInt32 frames = inNumberFrames < capacity ? inNumberFrames : capacity;
-	if(!renderer->integerScratch) {
-		cog_renderer_render(renderer, (float *)ioData->mBuffers[0].mData, frames);
-	} else {
-		if(frames > renderer->integerScratchFrames) frames = (UInt32)renderer->integerScratchFrames;
-		float *scratch = renderer->integerScratch;
-		cog_renderer_render(renderer, scratch, frames);
-		cog_convert_to_s32((int32_t *)ioData->mBuffers[0].mData, scratch, (size_t)frames * channels, renderer->dopActive);
-	}
+	const UInt32 frames = inNumberFrames < capacity ? inNumberFrames : capacity;
+	renderer_fill(renderer, ioData->mBuffers[0].mData, frames);
 	ioData->mBuffers[0].mDataByteSize = frames * bytesPerFrame;
+	return noErr;
+}
+
+OSStatus cog_renderer_device_io_proc(AudioObjectID inDevice,
+                                     const AudioTimeStamp *inNow,
+                                     const AudioBufferList *inInputData,
+                                     const AudioTimeStamp *inInputTime,
+                                     AudioBufferList *outOutputData,
+                                     const AudioTimeStamp *inOutputTime,
+                                     void *inClientData) {
+	(void)inDevice;
+	(void)inNow;
+	(void)inInputData;
+	(void)inInputTime;
+	CogRenderer *renderer = (CogRenderer *)inClientData;
+	if(!renderer || !outOutputData || !outOutputData->mNumberBuffers) return noErr;
+	AudioBuffer *buffer = &outOutputData->mBuffers[0];
+	if(!buffer->mData) return noErr;
+
+	const uint32_t channels = cog_ring_channels(renderer->ring);
+	if(buffer->mNumberChannels != channels) {
+		// Not the stream the renderer was set up for: play nothing rather
+		// than garbage.
+		memset(buffer->mData, 0, buffer->mDataByteSize);
+		return noErr;
+	}
+	const UInt32 bytesPerFrame = (UInt32)(cog_sample_format_bytes(renderer->outputFormat) * channels);
+	const UInt32 frames = buffer->mDataByteSize / bytesPerFrame;
+	renderer_note_device_time(renderer, inOutputTime, frames);
+	renderer_fill(renderer, buffer->mData, frames);
 	return noErr;
 }
 

@@ -264,16 +264,19 @@ final class DoPPipelineTests: XCTestCase {
 	}
 
 	func testWhatMayJoinAStream() {
-		let yes: (Double) -> Bool = { _ in true }
 		let dsd64: [AnyHashable: Any] = ["bitsPerSample": 1, "sampleRate": 2_822_400.0, "channels": 2]
 		let dsd128: [AnyHashable: Any] = ["bitsPerSample": 1, "sampleRate": 5_644_800.0, "channels": 2]
 		let cd: [AnyHashable: Any] = ["bitsPerSample": 16, "sampleRate": 44100.0, "channels": 2]
-		XCTAssertTrue(PlaybackEngine.admits(dsd64, into: 176_400, deviceChannels: 2, supports: yes))
-		XCTAssertFalse(PlaybackEngine.admits(dsd128, into: 176_400, deviceChannels: 2, supports: yes), "another carrier rate")
-		XCTAssertTrue(PlaybackEngine.admits(cd, into: 176_400, deviceChannels: 2, supports: yes), "PCM is resampled into a carrier stream")
-		XCTAssertFalse(PlaybackEngine.admits(dsd64, into: nil, deviceChannels: 2, supports: yes), "PCM stream, DSD wanting a carrier")
-		XCTAssertTrue(PlaybackEngine.admits(dsd64, into: nil, deviceChannels: 2) { _ in false }, "DSD the device cannot carry becomes PCM")
-		XCTAssertFalse(PlaybackEngine.admits(dsd128, into: 176_400, deviceChannels: 2) { $0 == 176_400 }, "but not inside a carrier stream")
+		let dop = PlaybackEngine.DevicePlanning(channels: 2, dop: true)
+		let noDoP = PlaybackEngine.DevicePlanning(channels: 2)
+		let only176k = PlaybackEngine.DevicePlanning(channels: 2, rates: [AudioValueRange(mMinimum: 176_400, mMaximum: 176_400)], dop: true)
+		let carrier = PlaybackEngine.OutputPlan(deviceRate: 176_400, dop: true, exclusive: true)
+		XCTAssertTrue(PlaybackEngine.admits(dsd64, into: carrier, device: dop))
+		XCTAssertFalse(PlaybackEngine.admits(dsd128, into: carrier, device: dop), "another carrier rate")
+		XCTAssertTrue(PlaybackEngine.admits(cd, into: carrier, device: dop), "PCM is resampled into a carrier stream")
+		XCTAssertFalse(PlaybackEngine.admits(dsd64, into: .shared, device: dop), "PCM stream, DSD wanting a carrier")
+		XCTAssertTrue(PlaybackEngine.admits(dsd64, into: .shared, device: noDoP), "DSD the device cannot carry becomes PCM")
+		XCTAssertFalse(PlaybackEngine.admits(dsd128, into: carrier, device: only176k), "but not inside a carrier stream")
 	}
 
 	func testATrackNeedingAnotherFormatEndsTheStreamAndWaits() throws {

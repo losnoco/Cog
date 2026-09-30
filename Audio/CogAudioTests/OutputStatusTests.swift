@@ -16,7 +16,8 @@ final class OutputStatusTests: XCTestCase {
 	}
 
 	private func status(_ source: SourceFormat?, render: StreamFormat = OutputStatusTests.stereo, integer: Bool = false, _ change: (inout OutputStatus) -> Void = { _ in }) -> OutputStatus {
-		var status = OutputStatus(source: source, render: render, integerRender: integer)
+		var status = OutputStatus(source: source, render: render,
+		                          renderFormat: integer ? DeviceOutput.integerASBD(render) : Pump.asbd(render))
 		change(&status)
 		return status
 	}
@@ -100,7 +101,7 @@ final class OutputStatusTests: XCTestCase {
 	}
 
 	func testFormatsTravelAsObjectiveCValues() {
-		let value = OutputStatus.value(DeviceOutput.renderFormat(Self.stereo, integer: false, exclusive: false))
+		let value = OutputStatus.value(Pump.asbd(Self.stereo))
 		var size = 0
 		NSGetSizeAndAlignment(value.objCType, &size, nil)
 		XCTAssertEqual(size, MemoryLayout<AudioStreamBasicDescription>.size)

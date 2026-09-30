@@ -48,6 +48,9 @@ final class RecordingHost: NSObject, PlaybackEngineHost {
 	func playbackEngineRestartAtCurrentPosition(_ userInfo: Any?) { log.append("restart") }
 	func playbackEngineBeginEqualizer(_ equalizer: CogEqualizer) { log.append("eq on") }
 	func playbackEngineEndEqualizer(_ equalizer: CogEqualizer) { log.append("eq off") }
+	/// Every output status sent, nil when nothing plays.
+	var outputStatuses: [[AnyHashable: Any]?] = []
+	func playbackEngineOutputStatusDidChange(_ status: [AnyHashable: Any]?) { outputStatuses.append(status) }
 }
 
 /// Plays through the machine's real default output at volume zero.
