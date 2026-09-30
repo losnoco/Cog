@@ -30,6 +30,9 @@ private final class OutputPrefs: ObservableObject {
     @Published var halveDSDVolume: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(halveDSDVolume, forKey: "halveDSDVolume") }
     }
+    @Published var enableDoP: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(enableDoP, forKey: "enableDoP") }
+    }
 
     deinit { isActive = false }
 
@@ -44,6 +47,7 @@ private final class OutputPrefs: ObservableObject {
         enableFading = d.object(forKey: "enableFading") as? Bool ?? true
         enableHdcd = d.object(forKey: "enableHDCD") as? Bool ?? true
         halveDSDVolume = d.object(forKey: "halveDSDVolume") as? Bool ?? false
+        enableDoP = d.bool(forKey: "enableDoP")
     }
 }
 
@@ -112,6 +116,11 @@ struct OutputPaneView: View {
                     "Halve volume for DSD",
                     isOn: $prefs.halveDSDVolume
                 )
+                Toggle(
+                    "Send DSD to the DAC as DoP (DSD over PCM)",
+                    isOn: $prefs.enableDoP
+                )
+                .help("Only for DACs that decode DoP. Others play it as noise, and there is no way to tell which kind is connected. When off, DSD is converted to PCM.")
             } header: {
                 Text("Advanced audio formats").bold()
             }

@@ -2127,6 +2127,17 @@
         }
       }
     },
+    "Only for DACs that decode DoP. Others play it as noise, and there is no way to tell which kind is connected. When off, DSD is converted to PCM." : {
+      "comment" : "Help text for the DoP toggle.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo para DAC que decodifican DoP. Los demás lo reproducen como ruido, y no hay forma de saber cuál está conectado. Si está desactivado, el DSD se convierte a PCM."
+          }
+        }
+      }
+    },
     "Output" : {
       "comment" : "Preference pane title",
       "localizations" : {
@@ -3029,6 +3040,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avanzar"
+          }
+        }
+      }
+    },
+    "Send DSD to the DAC as DoP (DSD over PCM)" : {
+      "comment" : "A toggle that sends DSD audio to the DAC packed as DoP instead of converting it to PCM.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar DSD al DAC como DoP (DSD sobre PCM)"
           }
         }
       }

@@ -463,7 +463,8 @@ static float db_to_scale(float db) {
 
 	rememberedLossless = lossless;
 
-	const BOOL outputDSDAsDoP = (inputFormat.mBitsPerChannel == 1 &&
+	const BOOL outputDSDAsDoP = ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableDoP"] &&
+	                             inputFormat.mBitsPerChannel == 1 &&
 	                             inputFormat.mChannelsPerFrame == outputFormat.mChannelsPerFrame &&
 	                             fabs(outputFormat.mSampleRate - (inputFormat.mSampleRate / 16.0)) < 1e-7);
 	[[previousNode buffer] setOutputDSDAsDoP:outputDSDAsDoP];

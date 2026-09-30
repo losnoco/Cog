@@ -466,6 +466,11 @@ current_device_listener(AudioObjectID inObjectID, UInt32 inNumberAddresses, cons
 }
 
 static BOOL inputFormatUsesDoPCarrierRate(AudioStreamBasicDescription inputFormat) {
+	// There is no way to tell whether the DAC decodes DoP; one that does not
+	// plays it as noise, so it is opt-in.
+	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"enableDoP"]) {
+		return NO;
+	}
 	if(inputFormat.mBitsPerChannel == 1) {
 		return YES;
 	}
