@@ -39,7 +39,7 @@
 		17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DD30B8D0F7000A34E87 /* PluginController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.mm */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		83084F012F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83084F002F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm */; };
+		83084F012F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83084F002F5864AB00EC1777 /* DSPSignalsmithStretchNode.mm */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		83084F032F5864C800EC1777 /* DSPSignalsmithStretchNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83084F022F5864C800EC1777 /* DSPSignalsmithStretchNode.h */; };
 		831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 831A50132865A7FD0049CFE4 /* rsstate.hpp */; };
 		831A50162865A8800049CFE4 /* rsstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831A50152865A8800049CFE4 /* rsstate.cpp */; };
@@ -295,6 +295,9 @@
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		835C7022306CD07D003A9DEB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			additionalCompilerFlagsByRelativePath = {
+				Core/CogSignalsmith.cpp = "-O3";
+			};
 			membershipExceptions = (
 				Internal/CogAudioEngineInternal.h,
 				PLAN.md,
