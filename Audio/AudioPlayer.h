@@ -8,28 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <CogAudio/CogSemaphore.h>
-
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <CoreAudio/CoreAudio.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
-#import <stdatomic.h>
-
-@class BufferChain;
-@class OutputNode;
-
 @interface AudioPlayer : NSObject {
-	BufferChain *bufferChain;
-	OutputNode *output;
-
 	double volume;
-	double pitch;
-	double tempo;
-
-	NSMutableArray *chainQueue;
 
 	NSURL *nextStream;
 	id nextStreamUserInfo;
@@ -39,19 +25,7 @@
 
 	id delegate;
 
-	BOOL outputLaunched;
-	BOOL endOfInputReached;
-	BOOL startedPaused;
-	BOOL initialBufferFilled;
-
-	Semaphore *semaphore;
-
-	atomic_bool resettingNow;
-	atomic_int refCount;
-
 	int currentPlaybackStatus;
-
-	BOOL shouldContinue;
 }
 
 - (id)init;
@@ -101,37 +75,23 @@
 
 @interface AudioPlayer (Private) // Dont use this stuff!
 
-- (OutputNode *)output;
-- (BufferChain *)bufferChain;
-- (id)initWithDelegate:(id)d;
-
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait;
 - (void)setPlaybackStatus:(int)s;
 
 - (void)requestNextStream:(id)userInfo;
-- (void)requestNextStreamMainThread:(id)userInfo;
 
 - (void)notifyStreamChanged:(id)userInfo;
-- (void)notifyStreamChangedMainThread:(id)userInfo;
 
 - (void)beginEqualizer:(void *)eq;
 - (void)refreshEqualizer:(void *)eq;
 - (void)endEqualizer:(void *)eq;
 
-- (BOOL)endOfInputReached:(BufferChain *)sender;
-- (void)setShouldContinue:(BOOL)s;
-//- (BufferChain *)bufferChain;
-- (void)launchOutputThread;
-- (BOOL)selectNextBuffer;
-- (void)endOfInputPlayed;
 - (void)reportPlayCount;
 - (void)reportScrobble;
 - (void)setError:(BOOL)status forTrack:(id)userInfo;
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj withObject:(id)obj2 waitUntilDone:(BOOL)wait;
-
-- (BOOL)chainQueueHasTracks;
 @end
 
 @protocol AudioPlayerDelegate

@@ -209,7 +209,7 @@
 		8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyAdvanced.xcodeproj; path = ../../Frameworks/HighlyAdvanced/HighlyAdvanced.xcodeproj; sourceTree = "<group>"; };
 		834379A717F9818400584396 /* HCDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HCDecoder.mm; sourceTree = "<group>"; };
 		8343EB912F3781E20068AB0B /* snes9x.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = snes9x.xcodeproj; path = ../../Frameworks/snes9x/snes9x.xcodeproj; sourceTree = "<group>"; };
-		834A42B6287AF99600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42B6287AF99600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834D19022D7F94C800F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8360EEE417F92AC8005208A4 /* HighlyComplete.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HighlyComplete.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8360EEE717F92AC8005208A4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };

@@ -1035,7 +1035,7 @@
 		833D0C2427C4ABB80060E16A /* ScriptAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptAdditions.m; sourceTree = "<group>"; };
 		833F68251CDBCAA800AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = es; path = es.lproj/Credits.html; sourceTree = "<group>"; };
 		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
-		834A42C4287B01B600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = Audio/Chain/AudioChunk.h; sourceTree = SOURCE_ROOT; };
+		834A42C4287B01B600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = Audio/Shared/AudioChunk.h; sourceTree = SOURCE_ROOT; };
 		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
 		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };

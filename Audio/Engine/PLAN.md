@@ -386,6 +386,16 @@ Each stage ships on its own and leaves the old engine working.
      unless changed meanwhile. It is released when the pipeline is torn
      down. No exclusive access means PCM.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
+   *Done:* the chain engine, its nodes, `OutputCoreAudio` and the unused
+   `OutputAVFoundation` are gone, and with them `enableNewAudioEngine`.
+   What the engine and the plugins still use moved to `Audio/Shared/` (a
+   synchronized folder, public headers listed in its exception set):
+   `AudioChunk`, `ChunkList` (float conversion, HDCD, DSD decimation and
+   DoP packing), `Downmix`, `FSurroundFilter`, `HeadphoneFilter`, and the
+   `CogEqualizer` protocol in a header of its own. `AudioPlayer` is a thin
+   shell over `PlaybackEngine` with its public interface unchanged, and
+   every plugin project's `AudioChunk.h` reference points at the new
+   folder. The old per-track converter's seam test went with it.
 
 ## Open questions
 

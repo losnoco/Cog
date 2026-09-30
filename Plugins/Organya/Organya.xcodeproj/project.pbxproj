@@ -20,7 +20,7 @@
 
 /* Begin PBXFileReference section */
 		8327DB7D293C90E300CD0580 /* Organya.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Organya.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		8327DB8B293C913100CD0580 /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		8327DB8B293C913100CD0580 /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		8327DB8C293C915500CD0580 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = "<group>"; };
 		8327DB8D293C916400CD0580 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8327DB95293C926F00CD0580 /* OrganyaDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OrganyaDecoder.mm; sourceTree = "<group>"; };

@@ -34,7 +34,7 @@
 
 /* Begin PBXFileReference section */
 		8307D31A286070EA000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
-		834A42B0287AF4BF00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42B0287AF4BF00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834D18F82D7F945D00F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8359009717FEF6490060F3ED /* ArchiveSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveSource.h; sourceTree = "<group>"; };
 		8359009817FEF6490060F3ED /* ArchiveSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveSource.m; sourceTree = "<group>"; };

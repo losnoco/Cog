@@ -94,7 +94,7 @@
 		83095D942F81DA0100DDA4B4 /* SpessaPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SpessaPlayer.mm; sourceTree = "<group>"; };
 		833F68431CDBCABE00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8346D3B52F867F4A00F3F5EC /* spessasynth_core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = spessasynth_core.xcodeproj; path = MIDI/spessasynth_core/spessasynth_core.xcodeproj; sourceTree = "<group>"; };
-		834A42BC287AFC7F00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42BC287AFC7F00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834BE9191DE407CB00A07DCD /* resampler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resampler.c; sourceTree = "<group>"; };
 		834BE91A1DE407CB00A07DCD /* resampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resampler.h; sourceTree = "<group>"; };
 		834D190B2D7F954100F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };

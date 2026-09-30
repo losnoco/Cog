@@ -1,4 +1,3 @@
-
 //  AudioController.m
 //  Cog
 //
@@ -7,9 +6,7 @@
 //
 
 #import "AudioPlayer.h"
-#import "BufferChain.h"
 #import "Helper.h"
-#import "OutputNode.h"
 #import "PluginController.h"
 #import "Status.h"
 
@@ -17,65 +14,18 @@
 
 #import "CogAudio-Swift.h"
 
-static NSURL *streamURLWithoutFragment(NSURL *url) {
-	if(!url || ![[url fragment] length]) {
-		return url;
-	}
-
-	NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-	components.fragment = nil;
-	return components.URL;
-}
-
-static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL) {
-	NSURL *firstResource = streamURLWithoutFragment(firstURL);
-	NSURL *secondResource = streamURLWithoutFragment(secondURL);
-	if(!firstResource || !secondResource) {
-		return NO;
-	}
-	return [firstResource isEqualTo:secondResource];
-}
-
-// The new engine (Audio/Engine) runs behind this class unless the hidden
-// enableNewAudioEngine default is set to NO, which selects the chain engine
-// until it is removed. It reports back through PlaybackEngineHost, which maps
-// onto the same delegate messages the chain engine sends, so the playlist
-// side cannot tell them apart.
-static BOOL newAudioEngineEnabled(void) {
-	NSNumber *enabled = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableNewAudioEngine"];
-	return !enabled || [enabled boolValue];
-}
-
+// Playback runs in the engine (Audio/Engine). It reports back through
+// PlaybackEngineHost, which this class turns into the delegate messages the
+// playlist side has always received.
 @interface AudioPlayer () <PlaybackEngineHost>
 @end
 
 @implementation AudioPlayer {
-	BOOL stoppedRecently;
 	PlaybackEngine *engine;
 }
 
 - (id)init {
-	self = [super init];
-	if(self) {
-		output = NULL;
-		bufferChain = nil;
-		outputLaunched = NO;
-		endOfInputReached = NO;
-		stoppedRecently = NO;
-
-		// Safety
-		pitch = 1.0;
-		tempo = 1.0;
-
-		chainQueue = [NSMutableArray new];
-
-		semaphore = [Semaphore new];
-
-		atomic_init(&resettingNow, false);
-		atomic_init(&refCount, 0);
-	}
-
-	return self;
+	return [super init];
 }
 
 - (void)setDelegate:(id)d {
@@ -105,184 +55,35 @@ static BOOL newAudioEngineEnabled(void) {
 }
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time {
-	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:time andResumeInterval:NO];
-}
-
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time andResumeInterval:(BOOL)resumeInterval {
 	ALog(@"Opening file for playback: %@ at seek offset %f%@", url, time, (paused) ? @", starting paused" : @"");
 
-	if(newAudioEngineEnabled()) {
-		[self playWithEngine:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:time notify:!resumeInterval];
-		return;
+	if(!engine) {
+		engine = [PlaybackEngine new];
+		engine.host = self;
 	}
-	if(engine) {
-		[engine stop];
-		engine = nil;
-	}
+	engine.volume = volume;
 
-	[self waitUntilCallbacksExit];
-	if(output) {
-		[output fadeOutBackground];
-	}
-	BOOL shouldFadeIn = resumeInterval || stoppedRecently || !output;
-	if(!output) {
-		output = [[OutputNode alloc] initWithController:self previous:nil];
-		if(![output setupWithInterval:resumeInterval]) {
-			return;
-		}
-	}
-	[output setVolume:volume];
-	@synchronized(chainQueue) {
-		for(id anObject in chainQueue) {
-			[anObject setShouldContinue:NO];
-		}
-		[chainQueue removeAllObjects];
-		endOfInputReached = NO;
-		if(bufferChain) {
-			[bufferChain setShouldContinue:NO];
-
-			bufferChain = nil;
-		}
-	}
-
-	bufferChain = [[BufferChain alloc] initWithController:self];
-	if(!resumeInterval) {
-		[self notifyStreamChanged:userInfo];
-	}
-
-	NSURL *failedFragmentResource = nil;
-	BOOL advancedPastFailedStream = NO;
-	while(YES) {
-		BOOL skipRepeatedProbe = failedFragmentResource && streamURLsShareUnderlyingResource(failedFragmentResource, url);
-		if(!skipRepeatedProbe && [bufferChain open:url withOutputFormat:[output format] withUserInfo:userInfo withRGInfo:rgi resetBuffers:YES]) {
-			break;
-		}
-
-		if(skipRepeatedProbe) {
-			DLog(@"Skipping another logical track from failed source: %@", url);
-		} else {
-			// Logical tracks with different fragments share one decoder source. If
-			// that source cannot be opened, probing every remaining fragment repeats
-			// the same expensive failure while this method blocks the main thread.
-			failedFragmentResource = [[url fragment] length] ? streamURLWithoutFragment(url) : nil;
-		}
-		[self setError:YES forTrack:userInfo];
-		bufferChain = nil;
-
-		[self requestNextStream:userInfo];
-
-		if([nextStream isEqualTo:url]) {
-			return;
-		}
-
-		url = nextStream;
-		if(url == nil) {
-			return;
-		}
-
-		userInfo = nextStreamUserInfo;
-		rgi = nextStreamRGInfo;
-		advancedPastFailedStream = YES;
-
-		bufferChain = [[BufferChain alloc] initWithController:self];
-	}
-	if(advancedPastFailedStream) {
-		// Do not present every failed fallback as the current track. Publish only
-		// the first stream that actually opened.
-		[self notifyStreamChanged:userInfo];
-	}
-
-	if(resumeInterval || time > 0.0) {
-		[output seek:time];
-		[bufferChain seek:time];
-	}
-
-	[self setShouldContinue:YES];
-
-	if(!resumeInterval) {
-		outputLaunched = NO;
-	}
-	startedPaused = paused;
-	initialBufferFilled = NO;
+	[self notifyStreamChanged:userInfo];
 	previousUserInfo = userInfo;
 
-	[bufferChain launchThreads];
-
-	if(paused) {
-		[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
-		if(time > 0.0) {
-			[self updatePosition:userInfo];
-		}
-	} else if(shouldFadeIn) {
-		[output faderFadeIn];
+	if(![engine play:url userInfo:userInfo rgInfo:rgi startPaused:paused seekTo:time]) {
+		ALog(@"The audio engine could not open the output device");
+		[self setError:YES forTrack:userInfo];
+		engine = nil;
+		[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
 	}
 }
 
 - (void)stop {
-	if(engine) {
-		[engine stop];
-		stoppedRecently = YES;
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			self->stoppedRecently = NO;
-		});
-		return;
-	}
-
-	// Set shouldoContinue to NO on all things
-	[self setShouldContinue:NO];
-	[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
-
-	@synchronized(chainQueue) {
-		for(id anObject in chainQueue) {
-			[anObject setShouldContinue:NO];
-		}
-		[chainQueue removeAllObjects];
-		endOfInputReached = NO;
-		if(bufferChain) {
-			bufferChain = nil;
-		}
-	}
-	if(output) {
-		[output setShouldContinue:NO];
-		[output close];
-	}
-	output = nil;
-	stoppedRecently = YES;
-
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-		self->stoppedRecently = NO;
-	});
+	[engine stop];
 }
 
 - (void)pause {
-	if(engine) {
-		[engine pause];
-		return;
-	}
-
-	[output fadeOut];
-	[output timeOut];
-
-	[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
+	[engine pause];
 }
 
 - (void)resume {
-	if(engine) {
-		startedPaused = NO;
-		[engine resume];
-		return;
-	}
-
-	if(startedPaused) {
-		startedPaused = NO;
-		if(initialBufferFilled)
-			[self launchOutputThread];
-	}
-
-	[output fadeIn];
-	[output resume];
-
-	[self setPlaybackStatus:CogStatusPlaying waitUntilDone:YES];
+	[engine resume];
 }
 
 - (void)seekToTimeBG:(NSNumber *)time {
@@ -290,55 +91,13 @@ static BOOL newAudioEngineEnabled(void) {
 }
 
 - (void)seekToTime:(double)time {
-	if(engine) {
-		[engine seekTo:time];
-		[self updatePosition:previousUserInfo];
-		return;
-	}
-
-	if(endOfInputReached) {
-		// This is a dirty hack in case the playback has finished with the track
-		// that the user thinks they're seeking into
-		CogStatus status = (CogStatus)currentPlaybackStatus;
-		NSURL *url;
-		id userInfo;
-		NSDictionary *rgi;
-
-		@synchronized(chainQueue) {
-			url = [bufferChain streamURL];
-			userInfo = [bufferChain userInfo];
-			rgi = [bufferChain rgInfo];
-		}
-
-		[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:(status == CogStatusPaused) andSeekTo:time andResumeInterval:YES];
-	} else {
-		[output fadeOutBackground];
-		[output beginSeek];
-
-		[output seek:time];
-		[bufferChain seek:time];
-
-		CogStatus status = (CogStatus)currentPlaybackStatus;
-		BOOL paused = status == CogStatusPaused;
-		id userInfo;
-
-		@synchronized(chainQueue) {
-			userInfo = [bufferChain userInfo];
-		}
-
-		if(paused) {
-			[self setPlaybackStatus:CogStatusPaused waitUntilDone:YES];
-		}
-		[self updatePosition:userInfo];
-		[output faderFadeIn];
-	}
+	[engine seekTo:time];
+	[self updatePosition:previousUserInfo];
 }
 
 - (void)setVolume:(double)v {
 	volume = v;
-
 	engine.volume = v;
-	[output setVolume:v];
 }
 
 - (double)volume {
@@ -352,31 +111,13 @@ static BOOL newAudioEngineEnabled(void) {
 
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
 	nextStream = url;
-
 	nextStreamUserInfo = userInfo;
-
 	nextStreamRGInfo = rgi;
 }
 
 // Called when the playlist changed before we actually started playing a requested stream. We will re-request.
 - (void)resetNextStreams {
-	if(engine) {
-		[engine resetNextStreams];
-		return;
-	}
-
-	[self waitUntilCallbacksExit];
-
-	@synchronized(chainQueue) {
-		for(id anObject in chainQueue) {
-			[anObject setShouldContinue:NO];
-		}
-		[chainQueue removeAllObjects];
-
-		if(endOfInputReached) {
-			[self endOfInputReached:bufferChain];
-		}
-	}
+	[engine resetNextStreams];
 }
 
 - (void)restartPlaybackAtCurrentPosition {
@@ -389,20 +130,7 @@ static BOOL newAudioEngineEnabled(void) {
 
 - (void)setRGInfo:(NSDictionary *)rgi forTrack:(id)userInfo {
 	if(!userInfo) return;
-	if(engine) {
-		[engine updateReplayGain:rgi forTrack:userInfo];
-		return;
-	}
-	@synchronized(chainQueue) {
-		if([bufferChain userInfo] == userInfo) {
-			[bufferChain setRGInfo:rgi];
-		}
-		for(BufferChain *chain in chainQueue) {
-			if([chain userInfo] == userInfo) {
-				[chain setRGInfo:rgi];
-			}
-		}
-	}
+	[engine updateReplayGain:rgi forTrack:userInfo];
 	if(nextStreamUserInfo == userInfo) {
 		nextStreamRGInfo = rgi;
 	}
@@ -416,38 +144,16 @@ static BOOL newAudioEngineEnabled(void) {
 	[self sendDelegateMethod:@selector(audioPlayer:reportPlayCountForTrack:) withObject:userInfo waitUntilDone:NO];
 }
 
-- (void)setShouldContinue:(BOOL)s {
-	shouldContinue = s;
-
-	if(bufferChain)
-		[bufferChain setShouldContinue:s];
-
-	if(output)
-		[output setShouldContinue:s];
-}
-
 - (double)amountPlayed {
-	if(engine) return engine.amountPlayed;
-	return [output amountPlayed];
+	return engine.amountPlayed;
 }
 
 - (double)amountPlayedInterval {
-	if(engine) return engine.amountPlayedInterval;
-	return [output amountPlayedInterval];
+	return engine.amountPlayedInterval;
 }
 
 - (void)setScrobbleThreshold:(double)threshold {
 	[engine setScrobbleThreshold:threshold];
-	[output setScrobbleThreshold:threshold];
-}
-
-- (void)launchOutputThread {
-	initialBufferFilled = YES;
-	if(outputLaunched == NO && startedPaused == NO) {
-		[self setPlaybackStatus:CogStatusPlaying];
-		[output launchThread];
-		outputLaunched = YES;
-	}
 }
 
 - (void)requestNextStream:(id)userInfo {
@@ -474,209 +180,6 @@ static BOOL newAudioEngineEnabled(void) {
 	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 
-- (void)addChainToQueue:(BufferChain *)newChain {
-	[newChain setShouldContinue:YES];
-	[newChain launchThreads];
-
-	[chainQueue insertObject:newChain atIndex:[chainQueue count]];
-}
-
-- (BOOL)endOfInputReached:(BufferChain *)sender // Sender is a BufferChain
-{
-	previousUserInfo = [sender userInfo];
-
-	BufferChain *newChain = nil;
-
-	if(atomic_load_explicit(&resettingNow, memory_order_relaxed))
-		return YES;
-
-	atomic_fetch_add(&refCount, 1);
-
-	@synchronized(chainQueue) {
-		// No point in constructing new chain for the next playlist entry
-		// if there's already one at the head of chainQueue... r-r-right?
-		for(BufferChain *chain in chainQueue) {
-			if([chain isRunning]) {
-				if(output)
-					[output setShouldPlayOutBuffer:YES];
-				atomic_fetch_sub(&refCount, 1);
-				return YES;
-			}
-		}
-
-		// We don't want to do this, it may happen with a lot of short files
-		// if ([chainQueue count] >= 5)
-		//{
-		//    return YES;
-		//}
-	}
-
-	double duration = 0.0;
-
-	@synchronized(chainQueue) {
-		for(BufferChain *chain in chainQueue) {
-			duration += [chain secondsBuffered];
-		}
-	}
-
-	while(duration >= 30.0 && shouldContinue) {
-		[semaphore wait];
-		if(atomic_load_explicit(&resettingNow, memory_order_relaxed)) {
-			if(output)
-				[output setShouldPlayOutBuffer:YES];
-			atomic_fetch_sub(&refCount, 1);
-			return YES;
-		}
-		@synchronized(chainQueue) {
-			duration = 0.0;
-			for(BufferChain *chain in chainQueue) {
-				duration += [chain secondsBuffered];
-			}
-		}
-	}
-
-	nextStreamUserInfo = [sender userInfo];
-
-	nextStreamRGInfo = [sender rgInfo];
-
-	// This call can sometimes lead to invoking a chainQueue block on another thread
-	[self requestNextStream:nextStreamUserInfo];
-
-	if(!nextStream) {
-		if(output)
-			[output setShouldPlayOutBuffer:YES];
-		atomic_fetch_sub(&refCount, 1);
-		return YES;
-	}
-
-	BufferChain *lastChain;
-
-	@synchronized(chainQueue) {
-		newChain = [[BufferChain alloc] initWithController:self];
-
-		endOfInputReached = YES;
-
-		lastChain = [chainQueue lastObject];
-		if(lastChain == nil) {
-			lastChain = bufferChain;
-			if(lastChain == nil) {
-				/* Perhaps this should be the default anyway, since the chain that just
-				 * finished is explicitly calling us */
-				lastChain = sender;
-			}
-		}
-	}
-
-	BOOL pathsEqual = NO;
-
-	if(!lastChain || ![lastChain isKindOfClass:[BufferChain class]] ||
-	   ![lastChain streamURL] || ![[lastChain streamURL] isKindOfClass:[NSURL class]] ||
-	   !nextStream || ![nextStream isKindOfClass:[NSURL class]]) {
-		DLog(@"Previous chain or next stream references broken, or invalid classes");
-		if(!nextStream || ![nextStream isKindOfClass:[NSURL class]]) {
-			// Terminate playback
-			nextStream = nil;
-			atomic_fetch_sub(&refCount, 1);
-			return YES;
-		}
-	} else if([nextStream isFileURL] && [[lastChain streamURL] isFileURL]) {
-		NSString *unixPathNext = [nextStream path];
-		NSString *unixPathPrev = [[lastChain streamURL] path];
-
-		if([unixPathNext isEqualToString:unixPathPrev])
-			pathsEqual = YES;
-	} else if(![nextStream isFileURL] && ![[lastChain streamURL] isFileURL]) {
-		@try {
-			NSURL *lastURL = [lastChain streamURL];
-			NSString *nextScheme = [nextStream scheme];
-			NSString *lastScheme = [lastURL scheme];
-			NSString *nextHost = [nextStream host];
-			NSString *lastHost = [lastURL host];
-			NSString *nextPath = [nextStream path];
-			NSString *lastPath = [lastURL path];
-			if(nextScheme && lastScheme && [nextScheme isEqualToString:lastScheme]) {
-				if((!nextHost && !lastHost) ||
-				   (nextHost && lastHost && [nextHost isEqualToString:lastHost])) {
-					if(nextPath && lastPath && [nextPath isEqualToString:lastPath]) {
-						pathsEqual = YES;
-					}
-				}
-			}
-		}
-		@catch(NSException *e) {
-			DLog(@"Exception thrown checking file match: %@", e);
-		}
-	}
-
-	if(pathsEqual) {
-		if([lastChain setTrack:nextStream] && [newChain openWithInput:[lastChain inputNode] withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo resetBuffers:NO]) {
-			[newChain setStreamURL:nextStream];
-
-			@synchronized(chainQueue) {
-				[self addChainToQueue:newChain];
-			}
-			DLog(@"TRACK SET!!! %@", newChain);
-			// Keep on-playin
-			newChain = nil;
-
-			atomic_fetch_sub(&refCount, 1);
-			return NO;
-		}
-	}
-
-	lastChain = nil;
-
-	NSURL *url = nextStream;
-
-	while(shouldContinue && ![newChain open:url withOutputFormat:[output format] withUserInfo:nextStreamUserInfo withRGInfo:nextStreamRGInfo resetBuffers:NO]) {
-		if(nextStream == nil) {
-			newChain = nil;
-			if(output)
-				[output setShouldPlayOutBuffer:YES];
-			atomic_fetch_sub(&refCount, 1);
-			return YES;
-		}
-
-		newChain = nil;
-		[self requestNextStream:nextStreamUserInfo];
-
-		if([nextStream isEqualTo:url]) {
-			newChain = nil;
-			if(output)
-				[output setShouldPlayOutBuffer:YES];
-			atomic_fetch_sub(&refCount, 1);
-			return YES;
-		}
-
-		url = nextStream;
-
-		newChain = [[BufferChain alloc] initWithController:self];
-	}
-
-	@synchronized(chainQueue) {
-		[self addChainToQueue:newChain];
-	}
-
-	newChain = nil;
-
-	// I'm stupid and can't hold too much stuff in my head all at once, so writing it here.
-	//
-	// Once we get here:
-	// - buffer chain for previous stream finished reading
-	// - there are (probably) some bytes of the previous stream in the output buffer which haven't been played
-	//   (by output node) yet
-	// - self.bufferChain == previous playlist entry's buffer chain
-	// - self.nextStream == next playlist entry's URL
-	// - self.nextStreamUserInfo == next playlist entry
-	// - head of chainQueue is the buffer chain for the next entry (which has launched its threads already)
-
-	if(output)
-		[output setShouldPlayOutBuffer:YES];
-
-	atomic_fetch_sub(&refCount, 1);
-	return YES;
-}
-
 - (void)reportPlayCount {
 	[self reportPlayCountForTrack:previousUserInfo];
 }
@@ -687,79 +190,6 @@ static BOOL newAudioEngineEnabled(void) {
 
 - (void)reportScrobbleForTrack:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:reportScrobbleForTrack:) withObject:userInfo waitUntilDone:NO];
-}
-
-- (void)schedulePlaybackStopAfterOutputLatency {
-	double latency = 0;
-	if(output) latency = [output latency];
-
-	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, latency * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-		[self stop];
-
-		self->bufferChain = nil;
-
-		[self notifyPlaybackStopped:nil];
-	});
-}
-
-- (BOOL)selectNextBuffer {
-	BOOL signalStopped = NO;
-	BufferChain *selectedChain = nil;
-	do {
-		@synchronized(chainQueue) {
-			endOfInputReached = NO;
-
-			if([chainQueue count] <= 0) {
-				// End of playlist
-				signalStopped = YES;
-				break;
-			}
-
-			[bufferChain setShouldContinue:NO];
-			bufferChain = nil;
-			selectedChain = [chainQueue objectAtIndex:0];
-			bufferChain = selectedChain;
-
-			[chainQueue removeObjectAtIndex:0];
-			DLog(@"New!!! %@ %@", bufferChain, [[bufferChain inputNode] decoder]);
-
-			[semaphore signal];
-		}
-	} while(0);
-
-	if(signalStopped) {
-		[self schedulePlaybackStopAfterOutputLatency];
-		return YES;
-	}
-
-	AudioStreamBasicDescription inputFormat = [selectedChain inputFormat];
-	if(![output prepareForInputFormat:inputFormat]) {
-		ALog(@"Unable to prepare the output device for the next track format");
-		[selectedChain setError:YES];
-		[selectedChain setShouldContinue:NO];
-		[self schedulePlaybackStopAfterOutputLatency];
-		return YES;
-	}
-
-	[output setEndOfStream:NO];
-
-	return NO;
-}
-
-- (void)endOfInputPlayed {
-	// Once we get here:
-	// - the buffer chain for the next playlist entry (started in endOfInputReached) have been working for some time
-	//   already, so that there is some decoded and converted data to play
-	// - the buffer chain for the next entry is the first item in chainQueue
-	previousUserInfo = [bufferChain userInfo];
-	[self notifyStreamChanged:previousUserInfo];
-}
-
-- (BOOL)chainQueueHasTracks {
-	@synchronized(chainQueue) {
-		return [chainQueue count] > 0;
-	}
-	return NO;
 }
 
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait {
@@ -799,30 +229,15 @@ static BOOL newAudioEngineEnabled(void) {
 - (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait {
 	currentPlaybackStatus = status;
 
-	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:[bufferChain userInfo] waitUntilDone:wait];
-}
-
-- (void)sustainHDCD {
-//	[self sendDelegateMethod:@selector(audioPlayer:sustainHDCD:) withObject:[bufferChain userInfo] waitUntilDone:NO];
+	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:previousUserInfo waitUntilDone:wait];
 }
 
 - (void)setError:(BOOL)status forTrack:(id)userInfo {
-	// Buffer chains overlap while tracks are preloaded and switched. Preserve
-	// the chain's own track here; consulting the current global bufferChain when
-	// this asynchronous callback runs can apply a late error to the next track.
 	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:@(status) withObject:userInfo waitUntilDone:NO];
 }
 
 - (void)setPlaybackStatus:(int)status {
 	[self setPlaybackStatus:status waitUntilDone:NO];
-}
-
-- (BufferChain *)bufferChain {
-	return bufferChain;
-}
-
-- (OutputNode *)output {
-	return output;
 }
 
 + (NSArray *)containerTypes {
@@ -882,44 +297,7 @@ static BOOL newAudioEngineEnabled(void) {
 	return newVolume;
 }
 
-#pragma mark - New engine
-
-- (void)playWithEngine:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time notify:(BOOL)notify {
-	if(output || bufferChain) {
-		// Switching from the chain engine mid-session.
-		[self setShouldContinue:NO];
-		@synchronized(chainQueue) {
-			for(id anObject in chainQueue) {
-				[anObject setShouldContinue:NO];
-			}
-			[chainQueue removeAllObjects];
-			endOfInputReached = NO;
-			bufferChain = nil;
-		}
-		[output setShouldContinue:NO];
-		[output close];
-		output = nil;
-	}
-
-	if(!engine) {
-		engine = [PlaybackEngine new];
-		engine.host = self;
-	}
-	engine.volume = volume;
-
-	if(notify) {
-		[self notifyStreamChanged:userInfo];
-	}
-	previousUserInfo = userInfo;
-	startedPaused = paused;
-
-	if(![engine play:url userInfo:userInfo rgInfo:rgi startPaused:paused seekTo:time]) {
-		ALog(@"The new audio engine could not open the output device");
-		[self setError:YES forTrack:userInfo];
-		engine = nil;
-		[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
-	}
-}
+#pragma mark - PlaybackEngineHost
 
 - (EngineTrack *)playbackEngineNextTrackAfter:(id)userInfo {
 	[self requestNextStream:userInfo];
@@ -969,26 +347,6 @@ static BOOL newAudioEngineEnabled(void) {
 
 - (void)playbackEngineRestartAtCurrentPosition:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:userInfo waitUntilDone:NO];
-}
-
-#pragma mark -
-
-- (void)waitUntilCallbacksExit {
-	// This sucks! And since the thread that's inside the function can be calling
-	// event dispatches, we have to pump the message queue if we're on the main
-	// thread. Damn.
-	if(atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
-		BOOL mainThread = (dispatch_queue_get_label(dispatch_get_main_queue()) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL));
-		atomic_store(&resettingNow, true);
-		while(atomic_load_explicit(&refCount, memory_order_relaxed) != 0) {
-			[semaphore signal]; // Gotta poke this periodically
-			if(mainThread)
-				[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-			else
-				usleep(500);
-		}
-		atomic_store(&resettingNow, false);
-	}
 }
 
 @end

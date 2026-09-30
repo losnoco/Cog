@@ -49,7 +49,7 @@
 
 /* Begin PBXFileReference section */
 		833A899B286FF3150022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		834A42BE287AFDC300EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42BE287AFDC300EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834D190D2D7F955800F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83747C182862DB2F0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83E5EFA31FFEF78100659F0F /* OpenMPT.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenMPT.bundle; sourceTree = BUILT_PRODUCTS_DIR; };

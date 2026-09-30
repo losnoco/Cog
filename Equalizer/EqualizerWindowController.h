@@ -12,7 +12,7 @@
 #import <AudioUnit/AudioUnit.h>
 #import <AudioUnit/AudioUnitCarbonView.h>
 
-#import <CogAudio/DSPEqualizerNode.h>
+#import <CogAudio/CogEqualizer.h>
 
 void equalizerApplyGenre(id<CogEqualizer> _Nullable eq, const NSString *_Nonnull genre);
 void equalizerLoadPreset(id<CogEqualizer> _Nullable eq);

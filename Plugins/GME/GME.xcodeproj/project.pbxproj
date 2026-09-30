@@ -64,7 +64,7 @@
 		8319C74E237629D300BFFAE0 /* GamePropertiesReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamePropertiesReader.h; sourceTree = "<group>"; };
 		8319C74F237629D400BFFAE0 /* GamePropertiesReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GamePropertiesReader.m; sourceTree = "<group>"; };
 		833F68351CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		834A42B5287AF8FE00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42B5287AF8FE00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834D19002D7F94AF00F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		835C888F22CC1883001B4B3F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		83747C452862DCD90021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };

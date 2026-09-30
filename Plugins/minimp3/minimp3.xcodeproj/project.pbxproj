@@ -14,7 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		834A42BB287AFB0700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42BB287AFB0700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		8372C92327C785BD00E250C9 /* minimp3.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = minimp3.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8372C93327C7861300E250C9 /* MP3Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MP3Decoder.h; sourceTree = "<group>"; };
 		8372C93427C7861300E250C9 /* MP3Decoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP3Decoder.m; sourceTree = "<group>"; };

@@ -33,7 +33,7 @@
 		83186314285CEC91001422CC /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../../../Utils/NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		83186315285CEC91001422CC /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../../../Utils/NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		833F68411CDBCABC00AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		834A42BF287AFE2600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Chain/AudioChunk.h; sourceTree = "<group>"; };
+		834A42BF287AFE2600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834D190F2D7F956400F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8356BD1B27B469B80074E50C /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
 		836EF0CE27BB952F00BF35B2 /* libopusfile.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopusfile.0.dylib; path = ../../ThirdParty/opusfile/lib/libopusfile.0.dylib; sourceTree = "<group>"; };
