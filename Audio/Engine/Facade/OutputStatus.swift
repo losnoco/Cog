@@ -52,16 +52,26 @@ struct OutputStatus: Equatable {
 	var volume: Double = 100
 	var deviceID = AudioDeviceID(kAudioObjectUnknown)
 	var followsSystemDefault = false
-	/// The format rendered for the device, and how.
+	/// The format rendered for the device, and the sample words Core Audio
+	/// takes it in.
 	var render = StreamFormat(sampleRate: 0, channels: 0)
-	var integerRender = false
+	var renderFormat = AudioStreamBasicDescription()
 	var exclusive = false
 
 	/// As the renderer applies it.
 	var unityVolume: Bool { Float(volume * 0.01) == 1 }
 
-	var renderFormat: AudioStreamBasicDescription {
-		DeviceOutput.renderFormat(render, integer: integerRender, exclusive: exclusive)
+	/// Whether Cog hands Core Audio integers rather than float.
+	var integerRender: Bool {
+		renderFormat.mFormatID == kAudioFormatLinearPCM && renderFormat.mFormatFlags & kAudioFormatFlagIsFloat == 0
+	}
+
+	static func == (lhs: Self, rhs: Self) -> Bool {
+		lhs.source == rhs.source && lhs.decodesHDCD == rhs.decodesHDCD && lhs.processing == rhs.processing &&
+			lhs.stageModifications == rhs.stageModifications && lhs.trackGain == rhs.trackGain && lhs.volume == rhs.volume &&
+			lhs.deviceID == rhs.deviceID && lhs.followsSystemDefault == rhs.followsSystemDefault && lhs.render == rhs.render &&
+			lhs.exclusive == rhs.exclusive &&
+			withUnsafeBytes(of: lhs.renderFormat) { lhs in withUnsafeBytes(of: rhs.renderFormat) { rhs in lhs.elementsEqual(rhs) } }
 	}
 
 	/// How the decoded samples are changed before Core Audio has them, in
@@ -102,13 +112,15 @@ struct OutputStatus: Equatable {
 	}
 
 	/// Everything is converted to Float32, which holds integers of up to 24
-	/// bits exactly but rounds anything wider; a DoP carrier's integer output
-	/// then holds 24-bit integers exactly and rounds any other float.
+	/// bits exactly but rounds anything wider. Integer output then holds as
+	/// many bits as it has (24 for a DoP carrier; a device held exclusively
+	/// may run at 16) and rounds any other float.
 	private func losesPrecision(_ source: SourceFormat) -> Bool {
 		if source.isFloat {
 			return source.asbd.mBitsPerChannel > 32 || integerRender
 		}
-		return source.asbd.mBitsPerChannel > 24
+		let kept = integerRender ? min(24, renderFormat.mBitsPerChannel) : 24
+		return source.asbd.mBitsPerChannel > kept
 	}
 
 	/// The notification's userInfo, with the device's name and stream formats

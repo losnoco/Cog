@@ -33,6 +33,13 @@ private final class OutputPrefs: ObservableObject {
     @Published var enableDoP: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableDoP, forKey: "enableDoP") }
     }
+    // The fork's key names, so the settings carry over.
+    @Published var exclusiveOutput: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(exclusiveOutput, forKey: "exclusiveIntegerOutput") }
+    }
+    @Published var fullDeviceVolume: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(fullDeviceVolume, forKey: "setDeviceVolumeTo100ForExclusiveOutput") }
+    }
 
     deinit { isActive = false }
 
@@ -48,6 +55,8 @@ private final class OutputPrefs: ObservableObject {
         enableHdcd = d.object(forKey: "enableHDCD") as? Bool ?? true
         halveDSDVolume = d.object(forKey: "halveDSDVolume") as? Bool ?? false
         enableDoP = d.bool(forKey: "enableDoP")
+        exclusiveOutput = d.bool(forKey: "exclusiveIntegerOutput")
+        fullDeviceVolume = d.bool(forKey: "setDeviceVolumeTo100ForExclusiveOutput")
     }
 }
 
@@ -107,6 +116,20 @@ struct OutputPaneView: View {
             Toggle("Limit volume to prevent clipping", isOn: $prefs.volumeLimit)
             Toggle("Suspend output when paused", isOn: $prefs.suspendOutputOnPause)
             Toggle("Fade playback transitions", isOn: $prefs.enableFading)
+            Section {
+                Toggle("Use exclusive mode when supported", isOn: $prefs.exclusiveOutput)
+                Toggle(
+                    "Set device volume to 100% for exclusive output",
+                    isOn: $prefs.fullDeviceVolume
+                )
+                .disabled(!prefs.exclusiveOutput)
+                .help("Turns the device's own volume control, if it has one, all the way up while Cog holds the device, and back down afterwards, so that it does not change the samples either. Check the level first: Cog's volume and your amplifier's are then all that is left.")
+                Text("Needs a specific output device, not the system default. While playing, Cog takes the device for itself, so other apps cannot play through it; runs it at each track's sample rate; and sends it integer samples when it takes them, unchanged when nothing in Cog alters the sound. A device that cannot be taken plays shared, as before.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } header: {
+                Text("Output ownership").bold()
+            }
             Section {
                 Toggle(
                     "Enable HDCD Peak and Low Level Range Extend",

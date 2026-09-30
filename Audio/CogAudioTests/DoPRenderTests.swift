@@ -147,20 +147,22 @@ final class DoPRenderTests: XCTestCase {
 		XCTAssertEqual(cog_ring_readable(ring), 100)
 	}
 
+	/// The carrier word, low byte clear, in every layout that can hold it.
 	func testIntegerConversionKeepsTheCarrierWordExactly() {
 		let input = carrier(64)
-		var output = [Int32](repeating: 0, count: input.count)
-		output.withUnsafeMutableBufferPointer { out in
-			input.withUnsafeBufferPointer { cog_convert_to_s32(out.baseAddress!, $0.baseAddress!, input.count, true) }
+		let words = input.map { Int32(Double($0) * 2147483648.0) }
+		XCTAssertTrue(words.allSatisfy { $0 & 0xFF == 0 })
+
+		var int32 = [Int32](repeating: 0, count: input.count)
+		var high = [Int32](repeating: 0, count: input.count)
+		var low = [Int32](repeating: 0, count: input.count)
+		input.withUnsafeBufferPointer { samples in
+			cog_convert_samples(&int32, .int32, samples.baseAddress!, input.count)
+			cog_convert_samples(&high, .int24High, samples.baseAddress!, input.count)
+			cog_convert_samples(&low, .int24Low, samples.baseAddress!, input.count)
 		}
-		for (sample, word) in zip(input, output) {
-			XCTAssertEqual(word, Int32(Double(sample) * 2147483648.0))
-			XCTAssertEqual(word & 0xFF, 0)
-		}
-		var pcm = [Int32](repeating: 0, count: 3)
-		pcm.withUnsafeMutableBufferPointer { out in
-			[Float(2), -2, 0.5].withUnsafeBufferPointer { cog_convert_to_s32(out.baseAddress!, $0.baseAddress!, 3, false) }
-		}
-		XCTAssertEqual(pcm, [Int32(bitPattern: 0x7FFF_FF00), Int32.min, 0x4000_0000])
+		XCTAssertEqual(int32, words)
+		XCTAssertEqual(high, words)
+		XCTAssertEqual(low, words.map { $0 >> 8 })
 	}
 }

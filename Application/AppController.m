@@ -770,6 +770,8 @@ static BOOL consentLastEnabled = NO;
 
 	[userDefaultsValuesDict setObject:@YES forKey:@"suspendOutputOnPause"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"enableFading"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"exclusiveIntegerOutput"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"setDeviceVolumeTo100ForExclusiveOutput"];
 
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];

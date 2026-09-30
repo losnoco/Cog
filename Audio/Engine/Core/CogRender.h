@@ -102,12 +102,35 @@ void cog_renderer_set_held(CogRenderer *renderer, bool held);
 /// when fades are turned off, and for DoP, which cannot be mixed.
 void cog_renderer_set_crossfade_enabled(CogRenderer *renderer, bool enabled);
 
-/// Renders to 24-bit integer, high-aligned in 32 bits, instead of float: the
-/// DoP carrier format. DoP passes bit-exact; anything else is converted and
-/// clipped. `maximumFrames` is the most frames the device asks for at once.
-/// Allocates, so call only while the renderer is not running; zero goes
-/// back to float.
-bool cog_renderer_set_integer_output(CogRenderer *renderer, size_t maximumFrames);
+/// The sample words the renderer hands the device: float, or one of the
+/// integer layouts a device held exclusively runs at (all signed, native
+/// endian, interleaved).
+typedef CF_ENUM(uint32_t, CogSampleFormat) {
+	CogSampleFormatFloat32 = 0,
+	/// 32 significant bits.
+	CogSampleFormatInt32,
+	/// 24 bits in the high three bytes of a 32-bit word, the low byte zero.
+	CogSampleFormatInt24High,
+	/// 24 bits in the low three bytes of a 32-bit word, sign-extended.
+	CogSampleFormatInt24Low,
+	/// 24 bits in three bytes.
+	CogSampleFormatInt24Packed,
+	CogSampleFormatInt16,
+};
+
+/// Bytes one sample takes in `format`.
+size_t cog_sample_format_bytes(CogSampleFormat format);
+
+/// Renders `format` instead of float. The conversion undoes the engine's
+/// integer-to-float scaling exactly (a sample of n bits, n up to 24, became
+/// s / 2^(n-1)), so integer audio nothing changed comes out as the integers
+/// it went in as, and DoP carrier words pass exactly in any 24- or 32-bit
+/// layout; anything else is rounded to nearest and clipped. `maximumFrames`
+/// is the most frames the device asks for at once. Allocates, so call only
+/// while the renderer is not running.
+bool cog_renderer_set_output_format(CogRenderer *renderer, CogSampleFormat format, size_t maximumFrames);
+
+CogSampleFormat cog_renderer_output_format(const CogRenderer *renderer);
 
 /// Render thread: fills `frames` frames of `out` (in the ring's channel
 /// count) and returns how many came from the ring; the rest are silence.
@@ -120,7 +143,8 @@ bool cog_renderer_set_integer_output(CogRenderer *renderer, size_t maximumFrames
 size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames);
 
 /// An AURenderCallback for an output unit whose input format is interleaved
-/// float in the ring's channel count; `inRefCon` is the CogRenderer. Plain C
+/// in the ring's channel count, in the renderer's output format;
+/// `inRefCon` is the CogRenderer. Plain C
 /// on purpose: the device's I/O thread must run no Objective-C or Swift, whose
 /// runtime locks another thread can hold (loading a bundle does) for tens of
 /// milliseconds.
@@ -131,9 +155,23 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
                                         UInt32 inNumberFrames,
                                         AudioBufferList *_Nullable ioData);
 
-/// Converts rendered floats to 24-bit integer high-aligned in 32 bits: DoP
-/// words exactly, PCM rounded and clipped.
-void cog_convert_to_s32(int32_t *output, const float *input, size_t count, bool dop);
+/// An AudioDeviceIOProc for a device held exclusively, rendering straight
+/// into its one output stream, which must run in the renderer's output
+/// format with the ring's channel count; `inClientData` is the CogRenderer.
+/// AUHAL will not drive a device whose stream is non-mixable (it moves to
+/// another device instead), so exclusive output bypasses it; with no unit in
+/// the way, nothing converts the samples after the renderer.
+OSStatus cog_renderer_device_io_proc(AudioObjectID inDevice,
+                                     const AudioTimeStamp *inNow,
+                                     const AudioBufferList *inInputData,
+                                     const AudioTimeStamp *inInputTime,
+                                     AudioBufferList *outOutputData,
+                                     const AudioTimeStamp *inOutputTime,
+                                     void *_Nullable inClientData);
+
+/// Converts `count` rendered float samples to `format` in `output`, as
+/// `cog_renderer_set_output_format` describes.
+void cog_convert_samples(void *output, CogSampleFormat format, const float *input, size_t count);
 
 /// Frames delivered to the device, audio and silence alike.
 uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer);

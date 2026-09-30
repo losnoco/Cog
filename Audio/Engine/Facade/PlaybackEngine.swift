@@ -122,17 +122,36 @@ import Foundation
 		UserDefaults.standard.addObserver(self, forKeyPath: "outputDevice", options: [], context: &Self.outputDeviceContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: "volumeScaling", options: [], context: &Self.volumeScalingContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: "suspendOutputOnPause", options: [], context: &Self.suspendContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: Self.exclusiveKey, options: [], context: &Self.exclusiveContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: DeviceOutput.fullVolumeKey, options: [], context: &Self.fullVolumeContext)
+		// A device left held by a crash is put back before anything plays.
+		DeviceOutput.recoverAbandonedSession()
 	}
 
 	deinit {
 		UserDefaults.standard.removeObserver(self, forKeyPath: "outputDevice", context: &Self.outputDeviceContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: "volumeScaling", context: &Self.volumeScalingContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: "suspendOutputOnPause", context: &Self.suspendContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: Self.exclusiveKey, context: &Self.exclusiveContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: DeviceOutput.fullVolumeKey, context: &Self.fullVolumeContext)
 	}
 
 	private static var outputDeviceContext = 0
 	private static var volumeScalingContext = 0
 	private static var suspendContext = 0
+	private static var exclusiveContext = 0
+	private static var fullVolumeContext = 0
+
+	/// Hold the output device exclusively for PCM, at each track's own rate,
+	/// when it can be. The fork's name, kept so the setting carries over.
+	static let exclusiveKey = "exclusiveIntegerOutput"
+
+	/// Puts back an output device Cog held when it last quit without giving
+	/// it back (a crash), where no other app can play through it; for
+	/// launch, before anything plays.
+	@objc public static func recoverAbandonedExclusiveOutput() {
+		DeviceOutput.recoverAbandonedSession()
+	}
 
 	// MARK: - ReplayGain
 
@@ -185,6 +204,22 @@ import Foundation
 			}
 			return
 		}
+		if context == &Self.exclusiveContext {
+			if Thread.isMainThread {
+				exclusiveSettingChanged()
+			} else {
+				DispatchQueue.main.async { self.exclusiveSettingChanged() }
+			}
+			return
+		}
+		if context == &Self.fullVolumeContext {
+			if Thread.isMainThread {
+				output?.applyDeviceVolumeSetting()
+			} else {
+				DispatchQueue.main.async { self.output?.applyDeviceVolumeSetting() }
+			}
+			return
+		}
 		guard context == &Self.outputDeviceContext else {
 			super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
 			return
@@ -219,8 +254,11 @@ import Foundation
 		if !startPaused && switchInPlace(to: track, decoder: decoder, seekTo: seconds) {
 			return true
 		}
-		tearDown()
+		// A device held exclusively stays held into the new pipeline, if it
+		// wants it too, rather than going back to the system in between.
+		tearDown(releasingDevice: false)
 		guard build(for: track, decoder: decoder, offset: seconds, startPaused: startPaused) else {
+			output?.releaseExclusive()
 			decoder?.close()
 			clearOutputStatus()
 			return false
@@ -238,8 +276,12 @@ import Foundation
 		return true
 	}
 
-	/// The DoP carrier rate the current pipeline runs at, or nil for PCM.
-	private var carrierRate: Double?
+	/// How the current pipeline drives the device.
+	private var outputPlan = OutputPlan.shared
+	/// A device that could not be held exclusively (another process holds
+	/// it, or it would not start): planned as shared until playback stops or
+	/// the setting changes, so that not every track tries again.
+	private var exclusiveRefused: AudioDeviceID?
 
 	/// Lets a test keep the machine's device at its rate: a track needing a
 	/// DoP carrier then gets one only if the device already runs at it.
@@ -247,6 +289,9 @@ import Foundation
 	/// Lets a test try DoP on the default device without taking it
 	/// exclusively, which DoP otherwise needs.
 	var requiresExclusiveDoP = true
+
+	/// Float frames the renderer converts at a time for integer output.
+	private static let integerScratchFrames = 4096
 
 	/// Builds the device side, feeder, pump and renderer for `track`, with its
 	/// decoder if already opened, and starts them from `offset`.
@@ -267,44 +312,46 @@ import Foundation
 		}
 		guard let output else { return false }
 
-		// A DoP carrier needs the device at its rate, rendering integers.
-		var carrier = decoder.flatMap { carrierRate(for: $0.properties() ?? [:], output: output) }
-		if let properties = decoder?.properties() {
-			logCarrierDecision(properties, output: output, carrier: carrier)
+		// What the track wants of the device, falling back until the device
+		// can do it: DoP to PCM, a device held exclusively to one shared.
+		let properties = decoder?.properties() ?? [:]
+		var device = planning(for: output)
+		var plan = decoder == nil ? .shared : Self.plan(for: properties, device: device)
+		if decoder != nil {
+			logPlan(properties, output: output, plan: plan)
 		}
-		if let rate = carrier, !(allowsDeviceRateChanges ? output.setNominalSampleRate(rate) : abs(output.nominalSampleRate - rate) < 1) {
-			EngineLog.logger.notice("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz for DoP; converting to PCM")
-			carrier = nil
+		while !prepare(output, for: plan) {
+			if plan.dop {
+				EngineLog.logger.notice("No DoP carrier at \(plan.deviceRate ?? 0, format: .fixed(precision: 0)) Hz; converting to PCM")
+				device.dop = false
+			} else if plan.exclusive {
+				EngineLog.logger.notice("The device cannot be held exclusively at \(plan.deviceRate ?? 0, format: .fixed(precision: 0)) Hz; playing through shared output")
+				device.exclusive = false
+			} else {
+				return false
+			}
+			if exclusiveRefused == output.deviceID {
+				device.exclusive = false
+				device.dop = device.dop && !device.dopExclusive
+			}
+			plan = Self.plan(for: properties, device: device)
 		}
-		if let rate = carrier, requiresExclusiveDoP, !output.takeExclusive(rate: rate) {
-			EngineLog.logger.notice("No exclusive access to the device for DoP; converting to PCM")
-			carrier = nil
-		}
-		if carrier == nil {
-			output.releaseExclusive()
-		}
-		// Always from the device as it is now: a rebuild after a rate change
-		// made elsewhere must render at the new rate, and ask again for the
-		// I/O buffer the change reset.
-		do {
-			try output.refreshFormat(integer: carrier != nil, sampleRate: carrier)
-		} catch {
-			return false
-		}
-		carrierRate = carrier
+		outputPlan = plan
 
-		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: carrier != nil),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf], carrier: carrier != nil,
+		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: plan.dop),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf], carrier: plan.dop,
 		                      captureDirectory: EngineCapture.directory),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
 		}
-		if carrier != nil {
-			guard cog_renderer_set_integer_output(renderer, output.maximumFramesPerSlice) else {
-				cog_renderer_destroy(renderer)
-				return false
-			}
-			EngineLog.logger.notice("DoP carrier at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, 24-bit integer output")
+		guard cog_renderer_set_output_format(renderer, output.sampleFormat, Self.integerScratchFrames) else {
+			cog_renderer_destroy(renderer)
+			return false
+		}
+		if plan.dop {
+			EngineLog.logger.notice("DoP carrier at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, rendering \(DeviceOutput.describe(output.renderFormat), privacy: .public)")
+		} else if output.isExclusive {
+			EngineLog.logger.notice("Holding the device exclusively, rendering \(DeviceOutput.describe(output.renderFormat), privacy: .public)")
 		}
 		self.feeder = feeder
 		self.pump = pump
@@ -321,10 +368,9 @@ import Foundation
 		currentStart = 0
 		currentRatio = 1
 
-		let deviceChannels = output.format.channels
-		let supports = carrierSupport(output)
+		// Later tracks are planned as this one was, fallbacks and all.
 		feeder.admits = { decoder in
-			Self.admits(decoder.properties() ?? [:], into: carrier, deviceChannels: deviceChannels, supports: supports)
+			Self.admits(decoder.properties() ?? [:], into: plan, device: device)
 		}
 		feeder.delegate = self
 		feeder.start(with: track, offset: offset, decoder: decoder)
@@ -335,6 +381,122 @@ import Foundation
 		RunLoop.main.add(monitor, forMode: .common)
 		self.monitor = monitor
 		return true
+	}
+
+	/// Sets the device up for `plan` (its rate, whether it is held, the
+	/// render format); false if it cannot be done.
+	private func prepare(_ output: DeviceOutput, for plan: OutputPlan) -> Bool {
+		if let rate = plan.deviceRate {
+			if !allowsDeviceRateChanges && abs(output.nominalSampleRate - rate) >= 1 {
+				EngineLog.logger.notice("The device is not at \(rate, format: .fixed(precision: 0)) Hz, and may not be changed")
+				return false
+			}
+			if plan.exclusive {
+				switch output.takeExclusive(rate: rate, integerBits: plan.dop ? 24 : 0) {
+				case .taken:
+					break
+				case .unavailable:
+					exclusiveRefused = output.deviceID
+					return false
+				case .unsupportedFormat:
+					return false
+				}
+			} else {
+				output.releaseExclusive()
+				guard output.setNominalSampleRate(rate) else {
+					EngineLog.logger.notice("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz")
+					return false
+				}
+			}
+		} else {
+			output.releaseExclusive()
+		}
+		// Always from the device as it is now: a rebuild after a rate change
+		// made elsewhere must render at the new rate, and ask again for the
+		// I/O buffer the change reset.
+		do {
+			try output.refreshFormat(integer: plan.dop && !plan.exclusive, sampleRate: plan.deviceRate)
+		} catch {
+			EngineLog.logger.error("Could not set the render format: \(error.localizedDescription, privacy: .public)")
+			output.releaseExclusive()
+			return false
+		}
+		return true
+	}
+
+	/// Why a track got the plan it did; kept by the system log.
+	private func logPlan(_ properties: [AnyHashable: Any], output: DeviceOutput, plan: OutputPlan) {
+		let bits = (properties["bitsPerSample"] as? NSNumber)?.intValue ?? 0
+		let rate = (properties["sampleRate"] as? NSNumber)?.doubleValue ?? 0
+		let channels = (properties["channels"] as? NSNumber)?.intValue ?? 0
+		let floating = (properties["floatingPoint"] as? NSNumber)?.boolValue ?? false
+		let defaults = UserDefaults.standard
+		EngineLog.logger.notice("Output plan: DoP setting \(defaults.bool(forKey: "enableDoP")), exclusive setting \(defaults.bool(forKey: Self.exclusiveKey)), device \(output.deviceID) following the system default \(output.followsSystemDefault), holdable \(output.exclusiveStream != nil), \(output.format.channels) channels at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz; track \(bits) bits\(floating ? " float" : "", privacy: .public), \(rate, format: .fixed(precision: 0)) Hz, \(channels) channels; device rate \(plan.deviceRate ?? 0, format: .fixed(precision: 0)) Hz\(plan.dop ? ", DoP" : "", privacy: .public)\(plan.exclusive ? ", exclusive" : "", privacy: .public)")
+	}
+
+	// MARK: - Output plans
+
+	/// How a pipeline drives the device.
+	struct OutputPlan: Equatable {
+		/// The rate the device is set to; nil leaves it at its own, which
+		/// everything is resampled to.
+		var deviceRate: Double?
+		/// DSD goes to the device as DoP, `deviceRate` being its carrier rate.
+		var dop = false
+		/// The device is held for this process alone (`takeExclusive`).
+		var exclusive = false
+
+		/// Shared with other apps, at the device's own rate.
+		static let shared = OutputPlan()
+	}
+
+	/// What planning needs to know of the device and the settings: a value,
+	/// taken on the main thread, so that the feeder thread can plan the next
+	/// track with it too.
+	struct DevicePlanning {
+		var channels: Int
+		/// The rates the device lists; empty if it does not say.
+		var rates: [AudioValueRange] = []
+		/// DSD may go out as DoP (`enableDoP`, and the device can be held,
+		/// as DoP needs).
+		var dop = false
+		/// DoP holds the device exclusively.
+		var dopExclusive = true
+		/// PCM holds the device exclusively at a rate of its own
+		/// (`exclusiveIntegerOutput`, and the device can be held).
+		var exclusive = false
+	}
+
+	private func planning(for output: DeviceOutput) -> DevicePlanning {
+		let holdable = output.exclusiveStream != nil && exclusiveRefused != output.deviceID
+		let defaults = UserDefaults.standard
+		return DevicePlanning(channels: output.format.channels, rates: output.availableSampleRates,
+		                      dop: defaults.bool(forKey: "enableDoP") && (!requiresExclusiveDoP || holdable),
+		                      dopExclusive: requiresExclusiveDoP,
+		                      exclusive: defaults.bool(forKey: Self.exclusiveKey) && holdable)
+	}
+
+	/// The plan for a track with these decoder properties: a DoP carrier if
+	/// it wants one and may have it; else, for PCM (and DSD made PCM) with
+	/// exclusive output on, the device held at the track's own rate, or the
+	/// closest it offers (`DeviceOutput.deviceRate`); else shared.
+	static func plan(for properties: [AnyHashable: Any], device: DevicePlanning) -> OutputPlan {
+		let dopRate = carrierRate(for: properties, deviceChannels: device.channels) { rate in
+			device.dop && DeviceOutput.supports(rate, among: device.rates)
+		}
+		if let dopRate {
+			return OutputPlan(deviceRate: dopRate, dop: true, exclusive: device.dopExclusive)
+		}
+		guard device.exclusive, let rate = pcmRate(of: properties) else { return .shared }
+		return OutputPlan(deviceRate: DeviceOutput.deviceRate(for: rate, among: device.rates), exclusive: true)
+	}
+
+	/// The rate a track reaches the output at as PCM: its own, or an eighth
+	/// of it for DSD, which the feeder decimates.
+	static func pcmRate(of properties: [AnyHashable: Any]) -> Double? {
+		let rate = (properties["sampleRate"] as? NSNumber)?.doubleValue ?? 0
+		guard rate > 0 else { return nil }
+		return (properties["bitsPerSample"] as? NSNumber)?.intValue == 1 ? rate / 8 : rate
 	}
 
 	/// The DoP carrier rate a track with these decoder properties wants, if
@@ -359,38 +521,19 @@ import Foundation
 		return supports(carrier) ? carrier : nil
 	}
 
-	private func carrierRate(for properties: [AnyHashable: Any], output: DeviceOutput) -> Double? {
-		Self.carrierRate(for: properties, deviceChannels: output.format.channels, supports: carrierSupport(output))
-	}
-
-	/// Why a track did or did not get a DoP carrier; kept by the system log.
-	private func logCarrierDecision(_ properties: [AnyHashable: Any], output: DeviceOutput, carrier: Double?) {
-		let bits = (properties["bitsPerSample"] as? NSNumber)?.intValue ?? 0
-		let rate = (properties["sampleRate"] as? NSNumber)?.doubleValue ?? 0
-		let channels = (properties["channels"] as? NSNumber)?.intValue ?? 0
-		let floating = (properties["floatingPoint"] as? NSNumber)?.boolValue ?? false
-		EngineLog.logger.notice("DoP decision: setting \(UserDefaults.standard.bool(forKey: "enableDoP")), device \(output.deviceID) following the system default \(output.followsSystemDefault), \(output.format.channels) channels at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz; track \(bits) bits\(floating ? " float" : "", privacy: .public), \(rate, format: .fixed(precision: 0)) Hz, \(channels) channels; carrier \(carrier ?? 0, format: .fixed(precision: 0)) Hz")
-	}
-
-	/// Whether the device can carry DoP at a rate: never while the DoP
-	/// setting is off (there is no telling whether the DAC decodes it, and
-	/// one that does not plays it as noise), nor on the system default
-	/// device, which cannot be taken exclusively as DoP needs; DSD then
-	/// becomes PCM.
-	private func carrierSupport(_ output: DeviceOutput) -> (Double) -> Bool {
-		let enabled = UserDefaults.standard.bool(forKey: "enableDoP") && (!requiresExclusiveDoP || !output.followsSystemDefault)
-		return { enabled && output.supportsSampleRate($0) }
-	}
-
-	/// Whether a track can join a stream running with DoP carrier `current`
-	/// (nil for PCM). One wanting another carrier cannot, and neither can DSD
-	/// that would have to become PCM in a carrier stream, which packs DSD as
-	/// DoP. PCM wanting no carrier joins anything, resampled.
-	static func admits(_ properties: [AnyHashable: Any], into current: Double?, deviceChannels: Int, supports: (Double) -> Bool) -> Bool {
-		let wanted = carrierRate(for: properties, deviceChannels: deviceChannels, supports: supports)
+	/// Whether a track can join a stream running on `current`: one wanting
+	/// the same plan can; so can PCM wanting none of its own (resampled to
+	/// the stream's rate), and PCM wanting the device held at the rate a held
+	/// stream already runs at (a DoP carrier stream renders PCM as integers
+	/// too). DSD cannot become PCM in a DoP stream, which packs DSD as DoP.
+	/// Anything else ends the stream before it, and the engine rebuilds for
+	/// it: not gapless, as the device's rate or format changes.
+	static func admits(_ properties: [AnyHashable: Any], into current: OutputPlan, device: DevicePlanning) -> Bool {
+		let wanted = plan(for: properties, device: device)
 		if wanted == current { return true }
-		let dsd = (properties["bitsPerSample"] as? NSNumber)?.intValue == 1
-		return wanted == nil && !(dsd && current != nil)
+		if (properties["bitsPerSample"] as? NSNumber)?.intValue == 1 && current.dop { return false }
+		if wanted == .shared { return true }
+		return wanted.exclusive && !wanted.dop && current.exclusive && wanted.deviceRate == current.deviceRate
 	}
 
 	/// Times `play` built a new pipeline rather than switching in place.
@@ -409,7 +552,7 @@ import Foundation
 		      !output.wouldChange(for: UserDefaults.standard.dictionary(forKey: "outputDevice")) else {
 			return false
 		}
-		if let decoder, !Self.admits(decoder.properties() ?? [:], into: carrierRate, deviceChannels: output.format.channels, supports: carrierSupport(output)) {
+		if let decoder, !Self.admits(decoder.properties() ?? [:], into: outputPlan, device: planning(for: output)) {
 			return false
 		}
 		EngineLog.logger.info("Switch to \(track.url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s in place, track gain \(track.gain, format: .fixed(precision: 4))")
@@ -435,8 +578,11 @@ import Foundation
 	private func handOff(to next: (track: EngineTrack, decoder: CogDecoder)) {
 		let heard = (currentTrack, currentHeard)
 		EngineLog.logger.info("Rebuilding for \(next.track.url.lastPathComponent, privacy: .public)")
-		tearDown()
+		// Held across the rebuild: another app could take the device, or
+		// the system its default, in between.
+		tearDown(releasingDevice: false)
 		guard build(for: next.track, decoder: next.decoder, offset: 0, startPaused: false) else {
+			output?.releaseExclusive()
 			next.decoder.close()
 			clearOutputStatus()
 			host?.playbackEngineSetError(true, forTrack: next.track.userInfo)
@@ -462,6 +608,7 @@ import Foundation
 	@objc public func stop() {
 		let userInfo = currentTrack?.userInfo
 		tearDown()
+		exclusiveRefused = nil
 		clearOutputStatus()
 		host?.playbackEngineDidChangeStatus(.stopped, userInfo: userInfo)
 	}
@@ -488,7 +635,7 @@ import Foundation
 		case .paused, .pausing:
 			cancelSuspend()
 			cog_renderer_set_held(renderer, false)
-			try? output?.start()
+			startDevice()
 			rampTransport(renderer, to: 1, frames: fadeFrames)
 			phase = .playing
 		default:
@@ -565,6 +712,34 @@ import Foundation
 		suspendTimer = nil
 	}
 
+	/// Starts the device. One held exclusively that will not start is given
+	/// up and playback restarts through shared output, so asking for
+	/// exclusive output never turns a playable track into silence.
+	private func startDevice() {
+		guard let output else { return }
+		do {
+			try output.start()
+		} catch {
+			EngineLog.logger.error("The device would not start: \(error.localizedDescription, privacy: .public)")
+			guard output.isExclusive, !rebuildRequested else { return }
+			exclusiveRefused = output.deviceID
+			rebuildRequested = true
+			host?.playbackEngineRestartAtCurrentPosition(currentTrack?.userInfo)
+		}
+	}
+
+	/// Exclusive output was turned on or off: a pipeline it changes restarts
+	/// at the current position, as for a device change.
+	private func exclusiveSettingChanged() {
+		exclusiveRefused = nil
+		guard feeder != nil, !rebuildRequested, let output, let track = currentTrack else { return }
+		let wanted = Self.plan(for: track.sourceProperties ?? [:], device: planning(for: output))
+		guard wanted != outputPlan else { return }
+		EngineLog.logger.info("Exclusive output setting changed; restarting at the current position")
+		rebuildRequested = true
+		host?.playbackEngineRestartAtCurrentPosition(track.userInfo)
+	}
+
 	/// The setting changed while paused: start or stop the clock, and run
 	/// the device again if it may no longer be suspended.
 	private func suspendSettingChanged() {
@@ -573,11 +748,14 @@ import Foundation
 			scheduleSuspend()
 		} else {
 			cancelSuspend()
-			try? output?.start()
+			startDevice()
 		}
 	}
 
-	private func tearDown() {
+	/// Stops and drops the pipeline. The device is given back unless the
+	/// caller builds another straight away (`releasingDevice` false), which
+	/// holds it again or gives it back as it needs.
+	private func tearDown(releasingDevice: Bool = true) {
 		cancelSuspend()
 		monitor?.invalidate()
 		monitor = nil
@@ -600,9 +778,11 @@ import Foundation
 		initialTrack = nil
 		seekPending = false
 		rebuildRequested = false
-		carrierRate = nil
-		// Other apps may play again.
-		output?.releaseExclusive()
+		outputPlan = .shared
+		if releasingDevice {
+			// Other apps may play again.
+			output?.releaseExclusive()
+		}
 		phase = .idle
 	}
 
@@ -615,7 +795,7 @@ import Foundation
 		case let .prebuffering(paused):
 			let ready = cog_ring_readable(pump.ring) >= Int(output.format.sampleRate * Self.prebufferSeconds)
 			if !paused && (ready || feeder.map(isFinished) == true) {
-				try? output.start()
+				startDevice()
 				// The fade-in starts from silence whatever the gain last was.
 				rampTransport(renderer, from: fadeFrames > 0 ? 0 : 1, to: 1, frames: fadeFrames)
 				phase = .playing
@@ -674,6 +854,7 @@ import Foundation
 				finishTrack()
 				let userInfo = currentTrack?.userInfo
 				tearDown()
+				exclusiveRefused = nil
 				clearOutputStatus()
 				host?.playbackEngineDidChangeStatus(.stopped, userInfo: userInfo)
 				host?.playbackEngineDidStopNaturally(userInfo)
@@ -710,7 +891,7 @@ import Foundation
 		                          deviceID: output.deviceID,
 		                          followsSystemDefault: output.followsSystemDefault,
 		                          render: output.format,
-		                          integerRender: output.integerRender,
+		                          renderFormat: output.renderFormat,
 		                          exclusive: output.isExclusive)
 		guard status != publishedStatus else { return }
 		publishedStatus = status
@@ -921,10 +1102,10 @@ import Foundation
 	/// the new system default). Only a device rendering at the same rate and
 	/// channel count can take over without a rebuild; true if it did. The
 	/// switch stands either way, so a rebuild finds the device selected. A
-	/// DoP pipeline, holding its device exclusively at its carrier rate,
-	/// always rebuilds.
+	/// pipeline setting the device's rate (a DoP carrier, or a device held
+	/// exclusively) always rebuilds.
 	private func switchDeviceInPlace(_ output: DeviceOutput) -> Bool {
-		guard carrierRate == nil, let pump else { return false }
+		guard outputPlan == .shared, let pump else { return false }
 		do {
 			try selectSavedDevice()
 		} catch {
