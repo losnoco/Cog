@@ -213,6 +213,26 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	return got;
 }
 
+OSStatus cog_renderer_audio_unit_render(void *inRefCon,
+                                        AudioUnitRenderActionFlags *ioActionFlags,
+                                        const AudioTimeStamp *inTimeStamp,
+                                        UInt32 inBusNumber,
+                                        UInt32 inNumberFrames,
+                                        AudioBufferList *ioData) {
+	(void)ioActionFlags;
+	(void)inTimeStamp;
+	(void)inBusNumber;
+	CogRenderer *renderer = (CogRenderer *)inRefCon;
+	if(!renderer || !ioData || !ioData->mNumberBuffers || !ioData->mBuffers[0].mData) return noErr;
+
+	const UInt32 bytesPerFrame = (UInt32)(sizeof(float) * cog_ring_channels(renderer->ring));
+	const UInt32 capacity = ioData->mBuffers[0].mDataByteSize / bytesPerFrame;
+	const UInt32 frames = inNumberFrames < capacity ? inNumberFrames : capacity;
+	cog_renderer_render(renderer, (float *)ioData->mBuffers[0].mData, frames);
+	ioData->mBuffers[0].mDataByteSize = frames * bytesPerFrame;
+	return noErr;
+}
+
 uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer) {
 	return atomic_load_explicit(&renderer->framesRendered, memory_order_relaxed);
 }

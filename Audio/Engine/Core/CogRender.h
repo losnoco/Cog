@@ -12,6 +12,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <AudioToolbox/AudioToolbox.h>
+
 #include <CogAudio/CogRing.h>
 
 #ifdef __cplusplus
@@ -66,6 +68,18 @@ CogGain *cog_renderer_transport(const CogRenderer *renderer);
 /// Render thread: fills `frames` frames of `out` (in the ring's channel
 /// count) and returns how many came from the ring; the rest are silence.
 size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames);
+
+/// An AURenderCallback for an output unit whose input format is interleaved
+/// float in the ring's channel count; `inRefCon` is the CogRenderer. Plain C
+/// on purpose: the device's I/O thread must run no Objective-C or Swift, whose
+/// runtime locks another thread can hold (loading a bundle does) for tens of
+/// milliseconds.
+OSStatus cog_renderer_audio_unit_render(void *inRefCon,
+                                        AudioUnitRenderActionFlags *ioActionFlags,
+                                        const AudioTimeStamp *inTimeStamp,
+                                        UInt32 inBusNumber,
+                                        UInt32 inNumberFrames,
+                                        AudioBufferList *_Nullable ioData);
 
 /// Frames delivered to the device, audio and silence alike.
 uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer);

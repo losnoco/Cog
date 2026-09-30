@@ -6,18 +6,20 @@
 //
 
 import AudioToolbox
-import AVFoundation
 import CoreAudio
 import Foundation
 
-/// The device side of the engine: an AUHAL output unit whose render block
-/// pulls from a `CogRenderer`.
+/// The device side of the engine: an AUHAL output unit whose render
+/// callback pulls from a `CogRenderer`.
 ///
-/// The render block captures only the renderer's C pointer and plain
-/// integers, so the real-time thread sees no ARC, locks or Objective-C. It
-/// renders interleaved float at the device's rate and channel count (at most
-/// eight, as Cog always has), and AUHAL converts to whatever the hardware
-/// takes.
+/// The unit is driven through the C AudioUnit API with a C render callback
+/// (`cog_renderer_audio_unit_render`), not through `AUAudioUnit`: the latter
+/// runs Objective-C on the device's I/O thread, and loading a bundle (opening
+/// the preferences for the first time, say) holds the Objective-C runtime's
+/// lock long enough to make the device miss its deadline. On this path the
+/// I/O thread runs no Objective-C or Swift at all. It renders interleaved
+/// float at the device's rate and channel count (at most eight, as Cog always
+/// has), and AUHAL converts to whatever the hardware takes.
 ///
 /// Device selection follows Cog's `outputDevice` setting: a saved device is
 /// found by ID, then by name, and otherwise the system default is used and
@@ -25,7 +27,7 @@ import Foundation
 /// or its disappearance, are reported through `onDeviceChange`; the engine
 /// decides what to do (usually rebuild at the current position).
 ///
-/// Control methods are for one thread at a time (the engine's control queue).
+/// Control methods are for one thread at a time (the engine's main thread).
 public final class DeviceOutput {
 	public enum Change {
 		/// The device's nominal rate or stream format changed.
@@ -50,24 +52,50 @@ public final class DeviceOutput {
 
 	public private(set) var isRunning = false
 
-	private let unit: AUAudioUnit
+	private let unit: AudioComponentInstance
+	private var initialized = false
 	private var renderer: OpaquePointer?
 	private let listenerQueue = DispatchQueue(label: "Cog DeviceOutput listeners")
 	private var listeners: [(AudioObjectID, AudioObjectPropertyAddress, AudioObjectPropertyListenerBlock)] = []
 
 	public init() throws {
-		let description = AudioComponentDescription(componentType: kAudioUnitType_Output,
+		var description = AudioComponentDescription(componentType: kAudioUnitType_Output,
 		                                            componentSubType: kAudioUnitSubType_HALOutput,
 		                                            componentManufacturer: kAudioUnitManufacturer_Apple,
 		                                            componentFlags: 0,
 		                                            componentFlagsMask: 0)
-		unit = try AUAudioUnit(componentDescription: description)
+		guard let component = AudioComponentFindNext(nil, &description) else {
+			throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioUnitErr_NoConnection))
+		}
+		var instance: AudioComponentInstance?
+		try Self.check(AudioComponentInstanceNew(component, &instance))
+		unit = instance!
 	}
 
 	deinit {
 		stop()
 		removeListeners()
-		unit.deallocateRenderResources()
+		if initialized {
+			AudioUnitUninitialize(unit)
+		}
+		AudioComponentInstanceDispose(unit)
+	}
+
+	static func check(_ status: OSStatus) throws {
+		if status != noErr {
+			throw NSError(domain: NSOSStatusErrorDomain, code: Int(status))
+		}
+	}
+
+	private func setProperty<Value>(_ property: AudioUnitPropertyID, scope: AudioUnitScope, _ value: inout Value) throws {
+		try Self.check(AudioUnitSetProperty(unit, property, scope, 0, &value, UInt32(MemoryLayout<Value>.size)))
+	}
+
+	private func uninitialize() {
+		if initialized {
+			AudioUnitUninitialize(unit)
+			initialized = false
+		}
 	}
 
 	// MARK: - Device selection
@@ -117,7 +145,9 @@ public final class DeviceOutput {
 		}
 		let wasRunning = isRunning
 		if wasRunning { stop() }
-		try unit.setDeviceID(id)
+		uninitialize()
+		var device = id
+		try setProperty(kAudioOutputUnitProperty_CurrentDevice, scope: kAudioUnitScope_Global, &device)
 		deviceID = id
 		followsSystemDefault = followingDefault
 		try refreshFormat()
@@ -125,29 +155,47 @@ public final class DeviceOutput {
 		if wasRunning { try start() }
 	}
 
+	/// The device side of the unit: the hardware's current format.
+	private func hardwareFormat() -> AudioStreamBasicDescription? {
+		var asbd = AudioStreamBasicDescription()
+		var size = UInt32(MemoryLayout<AudioStreamBasicDescription>.size)
+		guard AudioUnitGetProperty(unit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &asbd, &size) == noErr else {
+			return nil
+		}
+		return asbd
+	}
+
 	/// Re-reads the device format and sets the render format to match.
 	/// Call after `onDeviceChange(.format)` before rebuilding the renderer.
 	public func refreshFormat() throws {
-		let hardware = unit.outputBusses[0].format
-		let channels = min(Int(hardware.channelCount), 8)
-		guard hardware.sampleRate > 0, channels > 0 else {
+		let wasRunning = isRunning
+		if wasRunning { stop() }
+		uninitialize()
+
+		guard let hardware = hardwareFormat(), hardware.mSampleRate > 0, hardware.mChannelsPerFrame > 0 else {
 			throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioUnitErr_FormatNotSupported))
 		}
-		let layout = AVAudioChannelLayout(layoutTag: Self.layoutTag(channels: channels))!
-		let render = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: hardware.sampleRate, interleaved: true, channelLayout: layout)
-		if unit.renderResourcesAllocated {
-			unit.deallocateRenderResources()
-		}
-		try unit.inputBusses[0].setFormat(render)
-		format = StreamFormat(sampleRate: hardware.sampleRate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
+		let channels = min(Int(hardware.mChannelsPerFrame), 8)
+		let render = StreamFormat(sampleRate: hardware.mSampleRate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
+		var asbd = Pump.asbd(render)
+		try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
+		var layout = AudioChannelLayout()
+		layout.mChannelLayoutTag = Self.layoutTag(channels: channels)
+		// Not every device takes a layout; the stream format is what matters.
+		_ = AudioUnitSetProperty(unit, kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, 0, &layout, UInt32(MemoryLayout<AudioChannelLayout>.size))
+		try Self.check(AudioUnitInitialize(unit))
+		initialized = true
+
+		format = render
 		latencyFrames = Self.presentationLatency(of: deviceID)
+		if wasRunning { try start() }
 	}
 
 	/// Whether the device's rate or channel count no longer matches the
 	/// render format.
 	public func hardwareFormatDiffers() -> Bool {
-		let hardware = unit.outputBusses[0].format
-		return hardware.sampleRate != format.sampleRate || min(Int(hardware.channelCount), 8) != format.channels
+		guard let hardware = hardwareFormat() else { return true }
+		return hardware.mSampleRate != format.sampleRate || min(Int(hardware.mChannelsPerFrame), 8) != format.channels
 	}
 
 	// MARK: - Rendering
@@ -156,30 +204,29 @@ public final class DeviceOutput {
 	/// channels. The renderer must outlive this output or be replaced first.
 	public func attach(_ renderer: OpaquePointer) {
 		precondition(Int(cog_ring_channels(cog_renderer_ring(renderer))) == format.channels)
+		let wasRunning = isRunning
+		if wasRunning { stop() }
 		self.renderer = renderer
-		let bytesPerFrame = UInt32(MemoryLayout<Float>.size * format.channels)
-		unit.outputProvider = { _, _, frameCount, _, inputData in
-			let buffers = UnsafeMutableAudioBufferListPointer(inputData)
-			guard let data = buffers[0].mData else { return noErr }
-			buffers[0].mDataByteSize = frameCount * bytesPerFrame
-			cog_renderer_render(renderer, data.assumingMemoryBound(to: Float.self), Int(frameCount))
-			return noErr
-		}
+		var callback = AURenderCallbackStruct(inputProc: cog_renderer_audio_unit_render,
+		                                      inputProcRefCon: UnsafeMutableRawPointer(renderer))
+		try? setProperty(kAudioUnitProperty_SetRenderCallback, scope: kAudioUnitScope_Input, &callback)
+		if wasRunning { try? start() }
 	}
 
 	public func start() throws {
 		guard renderer != nil, !isRunning else { return }
-		if !unit.renderResourcesAllocated {
-			try unit.allocateRenderResources()
+		if !initialized {
+			try Self.check(AudioUnitInitialize(unit))
+			initialized = true
 		}
-		try unit.startHardware()
+		try Self.check(AudioOutputUnitStart(unit))
 		isRunning = true
 	}
 
 	/// Stops the hardware. The renderer stays attached, so `start()` resumes.
 	public func stop() {
 		guard isRunning else { return }
-		unit.stopHardware()
+		AudioOutputUnitStop(unit)
 		isRunning = false
 	}
 
