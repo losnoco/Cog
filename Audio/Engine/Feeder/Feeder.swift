@@ -532,7 +532,24 @@ public final class Feeder {
 		guard let source, let decoder = AudioDecoder.audioDecoder(for: source), decoder.open(source) else {
 			return nil
 		}
+		EngineLog.logger.notice("Opened \(url.lastPathComponent, privacy: .public) with \(Self.decoderName(decoder), privacy: .public)")
 		return decoder
+	}
+
+	/// The plugin doing the decoding, looking inside the wrapper that tries
+	/// several in turn.
+	private static func decoderName(_ decoder: CogDecoder) -> String {
+		let outer = String(describing: type(of: decoder))
+		// Only the wrappers have an inner decoder; asking anything else
+		// would throw.
+		let key: String
+		switch outer {
+		case "CogDecoderMulti": key = "theDecoder"
+		case "CueSheetDecoder": key = "decoder"
+		default: return outer
+		}
+		guard let inner = (decoder as? NSObject)?.value(forKey: key) as? CogDecoder else { return outer }
+		return "\(decoderName(inner)) via \(outer)"
 	}
 }
 
