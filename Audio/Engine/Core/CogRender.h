@@ -125,7 +125,9 @@ size_t cog_sample_format_bytes(CogSampleFormat format);
 /// integer-to-float scaling exactly (a sample of n bits, n up to 24, became
 /// s / 2^(n-1)), so integer audio nothing changed comes out as the integers
 /// it went in as, and DoP carrier words pass exactly in any 24- or 32-bit
-/// layout; anything else is rounded to nearest and clipped. `maximumFrames`
+/// layout; anything else is rounded to nearest and clipped. Int16 output is
+/// dithered where samples fall between its steps, as processing leaves them.
+/// `maximumFrames`
 /// is the most frames the device asks for at once. Allocates, so call only
 /// while the renderer is not running.
 bool cog_renderer_set_output_format(CogRenderer *renderer, CogSampleFormat format, size_t maximumFrames);
