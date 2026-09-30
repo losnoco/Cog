@@ -132,4 +132,30 @@ final class CogRenderTests: XCTestCase {
 		XCTAssertEqual(samples[98], 0.5 + 49.0 / 100.0, accuracy: 1e-5)
 		XCTAssertEqual(cog_gain_current(volume), 1.0)
 	}
+
+	/// The start of playback: the renderer has not run yet when the engine
+	/// asks for a fade-in, so the fade must carry its own starting level.
+	/// Before, "jump to 0" then "ramp to 1" coalesced into a ramp from
+	/// wherever the gain had been (1), and the track started at full level.
+	func testAFadeInRequestedBeforeTheFirstRenderStartsFromSilence() {
+		let transport = cog_renderer_transport(renderer)
+		cog_gain_ramp_to(transport, 0, 0)
+		cog_gain_ramp(transport, 0, 1, 100)
+		fill(200)
+		let (_, samples) = render(200)
+		XCTAssertEqual(samples[0], 0, accuracy: 1e-6, "starts silent")
+		XCTAssertEqual(samples[50 * 2], 0.5, accuracy: 1e-5, "rises linearly")
+		XCTAssertEqual(samples[150 * 2], 1)
+	}
+
+	func testARampWithoutAStartLevelContinuesFromTheCurrentOne() {
+		let volume = cog_renderer_volume(renderer)
+		cog_gain_ramp_to(volume, 0.5, 0)
+		fill(10)
+		_ = render(10)
+		cog_gain_ramp(volume, .nan, 1, 10)
+		fill(10)
+		let (_, samples) = render(10)
+		XCTAssertEqual(samples[0], 0.5, accuracy: 1e-5)
+	}
 }

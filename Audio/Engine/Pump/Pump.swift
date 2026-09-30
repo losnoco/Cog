@@ -196,6 +196,7 @@ public final class Pump {
 				gainTrack = track
 				appliedGain = track.gain
 				rampTarget = appliedGain
+				EngineLog.logger.info("Track start: \(track.url.lastPathComponent, privacy: .public) at \(offset, format: .fixed(precision: 2)) s, gain \(track.gain, format: .fixed(precision: 4))")
 			case .endOfStream:
 				endOfStream = true
 			}
@@ -248,6 +249,7 @@ public final class Pump {
 	private func applyGain(frames: Int, channels: Int) {
 		let target = gainTrack?.gain ?? 1
 		if target != rampTarget {
+			EngineLog.logger.info("Track gain changed: \(self.appliedGain, format: .fixed(precision: 4)) -> \(target, format: .fixed(precision: 4))")
 			rampTarget = target
 			let rampFrames = max(1, outputFormat.sampleRate * Self.gainRampSeconds)
 			rampStep = (target - appliedGain) / Float(rampFrames)
@@ -270,7 +272,12 @@ public final class Pump {
 			}
 		}
 		appliedGain = level
+		publishedGain.withLock { $0 = level }
 	}
+
+	/// The track gain as last applied, for diagnostics.
+	private let publishedGain = LockedValue<Float>(1)
+	var currentTrackGain: Float { publishedGain.withLock { $0 } }
 
 	private func configure(for format: StreamFormat) {
 		inputFormat = format

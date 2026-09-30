@@ -36,6 +36,14 @@ void cog_gain_destroy(CogGain *_Nullable gain);
 /// frames; zero jumps on the next render.
 void cog_gain_ramp_to(CogGain *gain, float target, uint32_t frames);
 
+/// Ramps from `from` to `target` over `frames` frames, as one request: the
+/// render thread applies only the latest request, so "jump to 0" followed by
+/// "ramp to 1" before a render would otherwise lose the jump. NaN for
+/// `from` means wherever the gain is.
+///
+/// Requests come from one controlling thread at a time.
+void cog_gain_ramp(CogGain *gain, float from, float target, uint32_t frames);
+
 /// The most recently requested target.
 float cog_gain_target(const CogGain *gain);
 
@@ -90,6 +98,10 @@ uint64_t cog_renderer_silent_frames(const CogRenderer *renderer);
 
 /// Times the ring ran dry after having had audio.
 uint64_t cog_renderer_underrun_events(const CogRenderer *renderer);
+
+/// The largest absolute sample delivered to the device since the last call,
+/// after all gains; above 1.0 is louder than full scale. Resets it.
+float cog_renderer_take_peak(CogRenderer *renderer);
 
 #pragma clang assume_nonnull end
 

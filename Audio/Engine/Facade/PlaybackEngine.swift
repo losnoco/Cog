@@ -216,6 +216,7 @@ import Foundation
 
 		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
 		register(track)
+		EngineLog.logger.info("Play \(url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s\(startPaused ? " paused" : "", privacy: .public): volume \(self.volumeLevel, format: .fixed(precision: 1)), fade \(self.fadeFrames) frames, track gain \(track.gain, format: .fixed(precision: 4)), rgInfo \(String(describing: rgInfo ?? [:]), privacy: .public)")
 		initialTrack = track
 		currentTrack = track
 		currentOffset = seconds
@@ -238,6 +239,15 @@ import Foundation
 		return true
 	}
 
+	/// Transport ramps, logged for diagnosing level problems.
+	/// Ramps the transport gain from `from` (nil: wherever it is) to
+	/// `target`, as one request to the renderer.
+	private func rampTransport(_ renderer: OpaquePointer, from: Float? = nil, to target: Float, frames: UInt32) {
+		let transport = cog_renderer_transport(renderer)
+		EngineLog.logger.info("Transport \(from ?? cog_gain_current(transport), format: .fixed(precision: 3)) -> \(target, format: .fixed(precision: 3)) over \(frames) frames (phase \(String(describing: self.phase), privacy: .public))")
+		cog_gain_ramp(transport, from ?? .nan, target, frames)
+	}
+
 	@objc public func stop() {
 		let userInfo = currentTrack?.userInfo
 		tearDown()
@@ -250,7 +260,7 @@ import Foundation
 		case .prebuffering:
 			phase = .prebuffering(paused: true)
 		case .playing:
-			cog_gain_ramp_to(cog_renderer_transport(renderer), 0, fadeFrames)
+			rampTransport(renderer, to: 0, frames: fadeFrames)
 			phase = .pausing
 		default:
 			return
@@ -265,7 +275,7 @@ import Foundation
 			phase = .prebuffering(paused: false)
 		case .paused, .pausing:
 			try? output?.start()
-			cog_gain_ramp_to(cog_renderer_transport(renderer), 1, fadeFrames)
+			rampTransport(renderer, to: 1, frames: fadeFrames)
 			phase = .playing
 		default:
 			return
@@ -289,6 +299,7 @@ import Foundation
 	@objc public var volume: Double {
 		get { volumeLevel }
 		set {
+			EngineLog.logger.info("Volume \(self.volumeLevel, format: .fixed(precision: 1)) -> \(newValue, format: .fixed(precision: 1))")
 			volumeLevel = newValue
 			if let renderer, let rate = output?.format.sampleRate {
 				cog_gain_ramp_to(cog_renderer_volume(renderer), Float(newValue * 0.01), UInt32(rate * 0.01))
@@ -329,7 +340,8 @@ import Foundation
 			let ready = cog_ring_readable(pump.ring) >= Int(output.format.sampleRate * Self.prebufferSeconds)
 			if !paused && (ready || feeder.map(isFinished) == true) {
 				try? output.start()
-				cog_gain_ramp_to(cog_renderer_transport(renderer), 1, fadeFrames)
+				// The fade-in starts from silence whatever the gain last was.
+				rampTransport(renderer, from: fadeFrames > 0 ? 0 : 1, to: 1, frames: fadeFrames)
 				phase = .playing
 			}
 		case .pausing:
@@ -417,8 +429,10 @@ import Foundation
 		let shortfallMs = elapsed * 1000 - pulledMs
 		let shallowMs = Double(cog_ring_readable(pump.ring)) / rate * 1000
 		let deepMs = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate * 1000
-		let message = String(format: "Heartbeat: device pulled %.1f ms in %.1f ms, shallow %.1f ms, deep %.0f ms, underruns %llu",
-		                     pulledMs, elapsed * 1000, shallowMs, deepMs, cog_renderer_underrun_events(renderer))
+		let message = String(format: "Heartbeat: device pulled %.1f ms in %.1f ms, shallow %.1f ms, deep %.0f ms, underruns %llu; peak out %.3f, gains transport %.3f volume %.3f track %.4f",
+		                     pulledMs, elapsed * 1000, shallowMs, deepMs, cog_renderer_underrun_events(renderer),
+		                     cog_renderer_take_peak(renderer), cog_gain_current(cog_renderer_transport(renderer)),
+		                     cog_gain_current(cog_renderer_volume(renderer)), pump.currentTrackGain)
 		if abs(shortfallMs) > 30 {
 			EngineLog.logger.error("\(message, privacy: .public) — device shortfall \(shortfallMs, format: .fixed(precision: 1)) ms")
 		} else {
@@ -442,7 +456,7 @@ import Foundation
 			// The start of playback, or a seek within the same track.
 			if seekPending, let renderer {
 				seekPending = false
-				cog_gain_ramp_to(cog_renderer_transport(renderer), 1, fadeFrames)
+				rampTransport(renderer, to: 1, frames: fadeFrames)
 			}
 			initialTrack = nil
 		} else {

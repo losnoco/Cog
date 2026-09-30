@@ -32,3 +32,17 @@ final class UnfairLock {
 		return try body()
 	}
 }
+
+/// A value guarded by an `UnfairLock`.
+final class LockedValue<Value> {
+	private let lock = UnfairLock()
+	private var value: Value
+
+	init(_ value: Value) {
+		self.value = value
+	}
+
+	func withLock<Result>(_ body: (inout Value) throws -> Result) rethrows -> Result {
+		try lock.withLock { try body(&value) }
+	}
+}

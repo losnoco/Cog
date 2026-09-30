@@ -7,6 +7,8 @@
 
 #include "CogRender.h"
 
+#include <math.h>
+
 #include <stdatomic.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,14 +16,17 @@
 // MARK: - Gain
 
 struct CogGain {
-	// Written by the controlling thread. The command packs the target's bits
-	// and the ramp length into one word so the render thread never sees a
-	// target from one request with the length of another.
-	_Atomic uint64_t command;
-	_Atomic uint64_t generation;
+	// Written by the controlling thread under a sequence lock: the sequence is
+	// odd while a request is being written, and the render thread takes a
+	// request only if it reads the same even sequence before and after it,
+	// so it never mixes the fields of two requests.
+	_Atomic uint32_t sequence;
+	_Atomic uint32_t fromBits;
+	_Atomic uint32_t targetBits;
+	_Atomic uint32_t frames;
 
 	// Owned by the render thread.
-	uint64_t seenGeneration;
+	uint32_t seenSequence;
 	float level;
 	float step;
 	float rampTarget;
@@ -32,23 +37,25 @@ struct CogGain {
 	_Atomic bool settled;
 };
 
-static uint64_t pack_command(float target, uint32_t frames) {
+static uint32_t float_bits(float value) {
 	uint32_t bits;
-	memcpy(&bits, &target, sizeof(bits));
-	return ((uint64_t)bits << 32) | frames;
+	memcpy(&bits, &value, sizeof(bits));
+	return bits;
 }
 
-static void unpack_command(uint64_t command, float *target, uint32_t *frames) {
-	const uint32_t bits = (uint32_t)(command >> 32);
-	memcpy(target, &bits, sizeof(bits));
-	*frames = (uint32_t)command;
+static float bits_float(uint32_t bits) {
+	float value;
+	memcpy(&value, &bits, sizeof(value));
+	return value;
 }
 
 CogGain *cog_gain_create(float initial) {
 	CogGain *gain = calloc(1, sizeof(CogGain));
 	if(!gain) return NULL;
-	atomic_init(&gain->command, pack_command(initial, 0));
-	atomic_init(&gain->generation, 0);
+	atomic_init(&gain->sequence, 0);
+	atomic_init(&gain->fromBits, float_bits(NAN));
+	atomic_init(&gain->targetBits, float_bits(initial));
+	atomic_init(&gain->frames, 0);
 	gain->level = initial;
 	gain->rampTarget = initial;
 	atomic_init(&gain->published, initial);
@@ -60,17 +67,23 @@ void cog_gain_destroy(CogGain *gain) {
 	free(gain);
 }
 
-void cog_gain_ramp_to(CogGain *gain, float target, uint32_t frames) {
-	atomic_store_explicit(&gain->command, pack_command(target, frames), memory_order_relaxed);
+void cog_gain_ramp(CogGain *gain, float from, float target, uint32_t frames) {
+	const uint32_t sequence = atomic_load_explicit(&gain->sequence, memory_order_relaxed);
+	atomic_store_explicit(&gain->sequence, sequence + 1, memory_order_relaxed);
+	atomic_thread_fence(memory_order_release);
+	atomic_store_explicit(&gain->fromBits, float_bits(from), memory_order_relaxed);
+	atomic_store_explicit(&gain->targetBits, float_bits(target), memory_order_relaxed);
+	atomic_store_explicit(&gain->frames, frames, memory_order_relaxed);
 	atomic_store_explicit(&gain->settled, false, memory_order_relaxed);
-	atomic_fetch_add_explicit(&gain->generation, 1, memory_order_release);
+	atomic_store_explicit(&gain->sequence, sequence + 2, memory_order_release);
+}
+
+void cog_gain_ramp_to(CogGain *gain, float target, uint32_t frames) {
+	cog_gain_ramp(gain, NAN, target, frames);
 }
 
 float cog_gain_target(const CogGain *gain) {
-	float target;
-	uint32_t frames;
-	unpack_command(atomic_load_explicit(&gain->command, memory_order_relaxed), &target, &frames);
-	return target;
+	return bits_float(atomic_load_explicit(&gain->targetBits, memory_order_relaxed));
 }
 
 float cog_gain_current(const CogGain *gain) {
@@ -82,13 +95,22 @@ bool cog_gain_settled(const CogGain *gain) {
 }
 
 static void gain_take_command(CogGain *gain) {
-	const uint64_t generation = atomic_load_explicit(&gain->generation, memory_order_acquire);
-	if(generation == gain->seenGeneration) return;
-	gain->seenGeneration = generation;
+	const uint32_t before = atomic_load_explicit(&gain->sequence, memory_order_acquire);
+	if(before == gain->seenSequence || (before & 1)) return;
 
-	float target;
-	uint32_t frames;
-	unpack_command(atomic_load_explicit(&gain->command, memory_order_relaxed), &target, &frames);
+	const float from = bits_float(atomic_load_explicit(&gain->fromBits, memory_order_relaxed));
+	const float target = bits_float(atomic_load_explicit(&gain->targetBits, memory_order_relaxed));
+	const uint32_t frames = atomic_load_explicit(&gain->frames, memory_order_relaxed);
+	atomic_thread_fence(memory_order_acquire);
+	if(atomic_load_explicit(&gain->sequence, memory_order_relaxed) != before) {
+		// Rewritten while being read; take it on the next render.
+		return;
+	}
+	gain->seenSequence = before;
+
+	if(!isnan(from)) {
+		gain->level = from;
+	}
 	gain->rampTarget = target;
 	if(!frames || gain->level == target) {
 		gain->level = target;
@@ -133,7 +155,7 @@ void cog_gain_apply(CogGain *gain, float *frames, size_t count, uint32_t channel
 	}
 
 	atomic_store_explicit(&gain->published, gain->level, memory_order_relaxed);
-	if(!gain->remaining && gain->seenGeneration == atomic_load_explicit(&gain->generation, memory_order_relaxed)) {
+	if(!gain->remaining && gain->seenSequence == atomic_load_explicit(&gain->sequence, memory_order_relaxed)) {
 		atomic_store_explicit(&gain->settled, true, memory_order_release);
 	}
 }
@@ -150,6 +172,7 @@ struct CogRenderer {
 	_Atomic uint64_t framesRendered;
 	_Atomic uint64_t silentFrames;
 	_Atomic uint64_t underrunEvents;
+	_Atomic float peak;
 };
 
 CogRenderer *cog_renderer_create(CogRing *ring) {
@@ -167,6 +190,7 @@ CogRenderer *cog_renderer_create(CogRing *ring) {
 	atomic_init(&renderer->framesRendered, 0);
 	atomic_init(&renderer->silentFrames, 0);
 	atomic_init(&renderer->underrunEvents, 0);
+	atomic_init(&renderer->peak, 0.0f);
 	return renderer;
 }
 
@@ -209,6 +233,17 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	cog_gain_apply(renderer->transport, out, frames, channels);
 	cog_gain_apply(renderer->volume, out, frames, channels);
 
+	float peak = atomic_load_explicit(&renderer->peak, memory_order_relaxed);
+	const float before = peak;
+	const size_t samples = frames * channels;
+	for(size_t i = 0; i < samples; ++i) {
+		const float magnitude = out[i] < 0.0f ? -out[i] : out[i];
+		if(magnitude > peak) peak = magnitude;
+	}
+	if(peak > before) {
+		atomic_store_explicit(&renderer->peak, peak, memory_order_relaxed);
+	}
+
 	atomic_fetch_add_explicit(&renderer->framesRendered, frames, memory_order_relaxed);
 	return got;
 }
@@ -239,6 +274,10 @@ uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer) {
 
 uint64_t cog_renderer_silent_frames(const CogRenderer *renderer) {
 	return atomic_load_explicit(&renderer->silentFrames, memory_order_relaxed);
+}
+
+float cog_renderer_take_peak(CogRenderer *renderer) {
+	return atomic_exchange_explicit(&renderer->peak, 0.0f, memory_order_relaxed);
 }
 
 uint64_t cog_renderer_underrun_events(const CogRenderer *renderer) {
