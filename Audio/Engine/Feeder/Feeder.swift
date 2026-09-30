@@ -280,6 +280,15 @@ public final class Feeder {
 			return
 		}
 		var candidate = delegate?.feeder(self, nextTrackAfter: finishedTrack)
+		if let next = candidate, let decoder, Self.sameFile(finishedTrack.url, next.url), decoder.setTrack?(next.url) == true {
+			// Another track of the same file (a cue sheet's, say): the decoder
+			// carries on from where the last one ended, with no reopening or
+			// seeking, as AudioPlayer arranged with `setTrack:`.
+			track = next
+			trackStartPending = (next, 0)
+			previousTrack = finishedTrack
+			return
+		}
 		var attempts = 0
 		while let next = candidate, isRunning {
 			if let nextDecoder = opener(next) {
@@ -304,6 +313,12 @@ public final class Feeder {
 			candidate = attempts < 16 ? delegate?.feeder(self, nextTrackAfter: next) : nil
 		}
 		finish()
+	}
+
+	/// Whether two track URLs name the same file, fragments (cue sheet track
+	/// numbers) aside, as AudioPlayer compared them.
+	static func sameFile(_ a: URL, _ b: URL) -> Bool {
+		a.scheme == b.scheme && a.host == b.host && a.path == b.path && !a.path.isEmpty
 	}
 
 	private func finish() {

@@ -297,6 +297,10 @@ Each stage ships on its own and leaves the old engine working.
      pushed it as soon as the decoder changed, up to the whole buffer early
      (about ten seconds in this engine's deep ring), so a stream title
      changed before the song did.
+   - Cue sheets: when the next track is in the same file (URLs equal but
+     for the fragment) and the decoder takes `setTrack:`, the feeder keeps
+     it, as AudioPlayer arranged: the next track carries straight on from
+     the last one's end, with no reopening or seeking.
    - Device changes: a new device (by setting, or a new system default
      while following it) is switched under the running pipeline first; if
      it renders the same rate and channel count, playback carries on
