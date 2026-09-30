@@ -105,7 +105,11 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 @synthesize faded;
 @end
 
-@implementation PlaybackController
+@implementation PlaybackController {
+	// Bumped by every play or stop, so a start deferred until an entry's
+	// tags load is dropped if something else happened meanwhile.
+	NSUInteger startToken;
+}
 
 #define DEFAULT_SEEK 5
 
@@ -265,6 +269,7 @@ static double reverseSpeedScale(double input, double min, double max) {
 }
 
 - (IBAction)stop:(id)sender {
+	++startToken;
 	[[NSUserDefaults standardUserDefaults] setInteger:CogStatusStopped forKey:@"lastPlaybackStatus"];
 
 	[self audioPlayer:audioPlayer removeEqualizer:_eq];
@@ -381,11 +386,40 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 #else
 	// Let's do it this way instead
 	if([pe metadataLoaded] != YES && loadData == YES) {
+		// Start once the tags are in: the ReplayGain and whether the track can
+		// be resumed part-way come from them. Starting without them played
+		// the track at the wrong level, and from the top, until they arrived.
+		// A file whose tags never load still starts, after a moment.
+		NSUInteger token = ++startToken;
+		__block id observer = nil;
+		void (^start)(void) = ^{
+			if(observer) {
+				[[NSNotificationCenter defaultCenter] removeObserver:observer];
+				observer = nil;
+			}
+			if(token != self->startToken) return;
+			++self->startToken;
+			[self startPlayingEntry:pe startPaused:paused andSeekTo:offset];
+		};
+		observer = [[NSNotificationCenter defaultCenter] addObserverForName:CogPlaylistEntryMetadataLoadedNotification
+		                                                             object:pe
+		                                                              queue:[NSOperationQueue mainQueue]
+		                                                         usingBlock:^(NSNotification *notification) {
+			start();
+		}];
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), dispatch_get_main_queue(), start);
+
 		NSArray *entries = @[pe];
 		[playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
+		return;
 	}
 #endif
 
+	++startToken;
+	[self startPlayingEntry:pe startPaused:paused andSeekTo:offset];
+}
+
+- (void)startPlayingEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused andSeekTo:(id)offset {
 	[self sendMetaData];
 
 	double seekTime = pe.seekable ? [offset doubleValue] : 0.0;
