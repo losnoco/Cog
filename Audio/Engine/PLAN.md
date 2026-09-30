@@ -312,9 +312,11 @@ Each stage ships on its own and leaves the old engine working.
      With fades off, or while paused, a seek cuts, as it will for DoP. The
      old engine used linear ramps and ran the fading audio through its own
      copy of the HRTF, downmix and fader; the tail here has already been
-     through the chain. Still to come: the old engine also crossfaded a
-     manual track change (`play:` while playing), which the new engine
-     starts from scratch.
+     through the chain.
+   - Manual track changes crossfade the same way: `play:` while playing on
+     the same device moves the running feeder to the new track as a seek
+     would, instead of building a new pipeline. Paused, prebuffering,
+     starting paused, or after a device change, it rebuilds as before.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
 
 ## Open questions

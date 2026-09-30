@@ -114,6 +114,43 @@ final class PlaybackEngineTests: XCTestCase {
 		XCTAssertFalse(host.stopped, "a user stop is not a natural stop")
 	}
 
+	/// Playing another track while one plays switches the running pipeline
+	/// to it (and crossfades) instead of building a new one.
+	func testANewTrackWhilePlayingSwitchesInPlace() throws {
+		let long = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
+		let short = SeamSignal.loopable(frames: 144000, sampleRate: 48000) // 3 s
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { track in
+			MemoryDecoder(samples: track.url.host == "b" ? short : long, sampleRate: 48000, channels: 2)
+		}
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://a")!, userInfo: "a", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+		XCTAssertGreaterThan(engine.amountPlayed, 0.3)
+
+		XCTAssertTrue(engine.play(URL(string: "memory://b")!, userInfo: "b", rgInfo: nil, startPaused: false, seekTo: 2))
+		XCTAssertEqual(engine.pipelineBuilds, 1, "switched in place")
+		XCTAssertEqual(engine.amountPlayed, 2)
+		runMainLoop(until: { engine.amountPlayed > 2.2 }, timeout: 5)
+		XCTAssertGreaterThan(engine.amountPlayed, 2.2)
+		XCTAssertLessThan(engine.amountPlayed, 3)
+
+		runMainLoop(until: { host.stopped }, timeout: 5)
+		XCTAssertTrue(host.stopped, "the new track plays to its end")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played b", "stopped after b"], "a is not counted, b is")
+
+		// Paused, a new track is a fresh start, as before.
+		XCTAssertTrue(engine.play(URL(string: "memory://a")!, userInfo: "a", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+		engine.pause()
+		XCTAssertTrue(engine.play(URL(string: "memory://b")!, userInfo: "b", rgInfo: nil, startPaused: false, seekTo: 0))
+		XCTAssertEqual(engine.pipelineBuilds, 3)
+		engine.stop()
+	}
+
 	/// At tempo 2 the playback position runs at twice the wall clock: the
 	/// stretch map, not the rendered frame count, gives track time.
 	func testThePositionFollowsTheTempo() throws {

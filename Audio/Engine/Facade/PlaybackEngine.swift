@@ -191,7 +191,11 @@ import Foundation
 	/// Starts `url` from `seconds`. Returns false if the device could not be
 	/// opened.
 	@objc public func play(_ url: URL, userInfo: Any?, rgInfo: [AnyHashable: Any]?, startPaused: Bool, seekTo seconds: Double) -> Bool {
+		if !startPaused && switchInPlace(to: url, userInfo: userInfo, rgInfo: rgInfo, seekTo: seconds) {
+			return true
+		}
 		tearDown()
+		pipelineBuilds += 1
 
 		do {
 			if output == nil {
@@ -247,6 +251,40 @@ import Foundation
 		let monitor = Timer(timeInterval: 0.02, repeats: true) { [weak self] _ in self?.tick() }
 		RunLoop.main.add(monitor, forMode: .common)
 		self.monitor = monitor
+		return true
+	}
+
+	/// Times `play` built a new pipeline rather than switching in place.
+	private(set) var pipelineBuilds = 0
+	/// A device change asked the app to restart playback: the next `play`
+	/// must rebuild for the new device, not switch in place.
+	private var rebuildRequested = false
+
+	/// A new track while one is playing on the same device: the running
+	/// feeder moves to it as it would seek, and the renderer crossfades from
+	/// what was about to be heard, as the old engine did. Returns false when
+	/// a rebuild is needed instead.
+	private func switchInPlace(to url: URL, userInfo: Any?, rgInfo: [AnyHashable: Any]?, seekTo seconds: Double) -> Bool {
+		guard case .playing = phase, !rebuildRequested, let feeder, let renderer, let output,
+		      !output.wouldChange(for: UserDefaults.standard.dictionary(forKey: "outputDevice")) else {
+			return false
+		}
+		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
+		register(track)
+		EngineLog.logger.info("Switch to \(url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s in place, track gain \(track.gain, format: .fixed(precision: 4))")
+		cog_renderer_set_crossfade_enabled(renderer, Self.fadesEnabled)
+		// Heard like the start of playback: announced by the app, not by
+		// the engine, once its first frame reaches the device.
+		initialTrack = track
+		currentTrack = track
+		currentOffset = seconds
+		currentHeard = false
+		seekPending = true
+		amountPlayed = seconds
+		resetInterval()
+		scrobbleReported = false
+		feeder.seek(to: seconds, in: track)
+		host?.playbackEngineDidChangeStatus(.playing, userInfo: userInfo)
 		return true
 	}
 
@@ -345,6 +383,7 @@ import Foundation
 		currentTrack = nil
 		initialTrack = nil
 		seekPending = false
+		rebuildRequested = false
 		phase = .idle
 	}
 
@@ -597,6 +636,7 @@ import Foundation
 			}
 		}
 		EngineLog.logger.info("Output \(String(describing: change), privacy: .public) changed; restarting at the current position")
+		rebuildRequested = true
 		host?.playbackEngineRestartAtCurrentPosition(currentTrack?.userInfo)
 	}
 
