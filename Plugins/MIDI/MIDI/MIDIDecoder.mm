@@ -14,6 +14,7 @@
 #import "SpessaPlayer.h"
 
 #import "Logging.h"
+#import "MIDIPluginState.h"
 
 #import <spessasynth_core/file.h>
 #import <spessasynth_core/midi.h>
@@ -341,12 +342,9 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 					soundFontsAssigned = YES;
 				}
 
-				NSDictionary *midiPluginSettings = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"midiPluginSettings"];
-				if(midiPluginSettings) {
-					NSDictionary *theSettings = [midiPluginSettings objectForKey:plugin];
-					if(theSettings) {
-						auplayer->setPreset(theSettings);
-					}
+				NSDictionary *theSettings = MIDIPluginStateLoad(plugin);
+				if(theSettings) {
+					auplayer->setPreset(theSettings);
 				}
 
 				player = auplayer;

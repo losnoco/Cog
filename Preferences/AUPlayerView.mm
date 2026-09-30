@@ -15,6 +15,8 @@
 
 #import "AUPlayerView.h"
 
+#import "MIDIPluginState.h"
+
 @interface NSWindowDeleter : NSWindow<NSWindowDelegate> {
 	AUPluginUI *parent;
 }
@@ -58,18 +60,15 @@ AUPluginUI::AUPluginUI(NSString *_name, AVAudioUnit *_node)
 	au = [node audioUnit];
 	auUnit = [node AUAudioUnit];
 
-	NSDictionary *midiPluginSettings = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"midiPluginSettings"];
-	if(midiPluginSettings) {
-		NSDictionary *theSettings = [midiPluginSettings objectForKey:name];
-		if(theSettings) {
-			CFDictionaryRef cdict = (__bridge CFDictionaryRef)theSettings;
-			AudioUnitSetProperty(au,
-			                     kAudioUnitProperty_ClassInfo,
-			                     kAudioUnitScope_Global,
-			                     0,
-			                     &cdict,
-			                     sizeof(cdict));
-		}
+	NSDictionary *theSettings = MIDIPluginStateLoad(name);
+	if(theSettings) {
+		CFDictionaryRef cdict = (__bridge CFDictionaryRef)theSettings;
+		AudioUnitSetProperty(au,
+		                     kAudioUnitProperty_ClassInfo,
+		                     kAudioUnitScope_Global,
+		                     0,
+		                     &cdict,
+		                     sizeof(cdict));
 	}
 
 	open();
@@ -93,10 +92,6 @@ AUPluginUI::~AUPluginUI() {
 void AUPluginUI::save_settings() {
 	if(!au) return;
 
-	NSMutableDictionary *midiPluginSettings = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] objectForKey:@"midiPluginSettings"] mutableCopy];
-	if(!midiPluginSettings) {
-		midiPluginSettings = [NSMutableDictionary new];
-	}
 	CFDictionaryRef outClassInfo = nil;
 	UInt32 objectSize = sizeof(outClassInfo);
 	OSErr err = AudioUnitGetProperty(au,
@@ -107,8 +102,7 @@ void AUPluginUI::save_settings() {
 	                                 &objectSize);
 	if(err == noErr && outClassInfo) {
 		NSDictionary *dict = (__bridge NSDictionary *)outClassInfo;
-		[midiPluginSettings setObject:dict forKey:name];
-		[[[NSUserDefaultsController sharedUserDefaultsController] defaults] setObject:midiPluginSettings forKey:@"midiPluginSettings"];
+		MIDIPluginStateSave(name, dict);
 		dict = nil;
 		CFRelease(outClassInfo);
 	}

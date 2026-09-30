@@ -18,6 +18,7 @@
 
 #import "DualWindow.h"
 #import "Logging.h"
+#import "MIDIPluginState.h"
 
 #import "Shortcuts.h"
 #import <MASShortcut/Shortcut.h>
@@ -178,6 +179,13 @@ static AppController *kAppController = nil;
 static BOOL consentLastEnabled = NO;
 
 - (void)awakeFromNib {
+	// Large MIDI synth state used to live in the defaults, making every
+	// settings write slow enough to hang the app; move it out before the user
+	// can open anything that writes settings.
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+		MIDIPluginStateMigrate();
+	});
+
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"sentryConsented": @NO,
 															   @"sentryAskedConsent": @NO,
 															   @"trashAskedConsent": @NO}];

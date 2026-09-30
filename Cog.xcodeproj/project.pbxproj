@@ -259,6 +259,7 @@
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */; };
 		F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */; };
+		8D1A2B3E00000012 /* MIDIPluginState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A2B3E00000011 /* MIDIPluginState.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1200,6 +1201,8 @@
 		F56961334CC939A7158B7470 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
+		8D1A2B3E00000010 /* MIDIPluginState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIDIPluginState.h; sourceTree = "<group>"; };
+		8D1A2B3E00000011 /* MIDIPluginState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDIPluginState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1390,6 +1393,8 @@
 				832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */,
 				83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */,
 				8381A09027C5F72F00A1C530 /* SHA256Digest.h */,
+				8D1A2B3E00000010 /* MIDIPluginState.h */,
+				8D1A2B3E00000011 /* MIDIPluginState.m */,
 				8370D739277419D200245CE0 /* SQLiteStore.h */,
 				8370D73C277419F700245CE0 /* SQLiteStore.m */,
 				17FAEBAA0F662985007C8707 /* ToolTipTextField.h */,
@@ -2945,6 +2950,7 @@
 				179D03270E0CB2500064A77A /* PathWatcher.m in Sources */,
 				8399AFC22F6B8E20005F4A39 /* MIDIConfig.mm in Sources */,
 				8399AFC32F6B8E20005F4A39 /* AUPlayerView.mm in Sources */,
+				8D1A2B3E00000012 /* MIDIPluginState.m in Sources */,
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,

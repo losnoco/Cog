@@ -32,6 +32,7 @@
 		83DFCDBA2E8533DC009E3DF1 /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83DFCDB82E8533B8009E3DF1 /* nuked_sc55.framework */; };
 		83E83F7B2D9654470054365C /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E83F7A2D9654470054365C /* Accelerate.framework */; };
 		83E973471C4378880007F413 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83E973451C4378880007F413 /* AUPlayer.mm */; };
+		8D1A2B3C00000012 /* MIDIPluginState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A2B3C00000011 /* MIDIPluginState.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +150,8 @@
 		83E973451C4378880007F413 /* AUPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AUPlayer.mm; sourceTree = "<group>"; };
 		83E973461C4378880007F413 /* AUPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AUPlayer.h; sourceTree = "<group>"; };
 		83FAF8A618ADD60100057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		8D1A2B3C00000010 /* MIDIPluginState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIPluginState.h; path = ../../../Utils/MIDIPluginState.h; sourceTree = "<group>"; };
+		8D1A2B3C00000011 /* MIDIPluginState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MIDIPluginState.m; path = ../../../Utils/MIDIPluginState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,6 +309,8 @@
 				83C35700180EDB74007E9DF0 /* MIDIContainer.mm */,
 				83C35701180EDB74007E9DF0 /* MIDIContainer.h */,
 				83B06724180D792E008E3612 /* Logging.h */,
+				8D1A2B3C00000010 /* MIDIPluginState.h */,
+				8D1A2B3C00000011 /* MIDIPluginState.m */,
 				83B06723180D714F008E3612 /* Plugin.h */,
 				83B06720180D70FE008E3612 /* MIDIDecoder.h */,
 				83B06721180D70FE008E3612 /* MIDIDecoder.mm */,
@@ -439,6 +444,7 @@
 				83B06709180D64DA008E3612 /* MIDIPlayer.cpp in Sources */,
 				83A09F631CFA83F2001E7D2D /* opl3midi.cpp in Sources */,
 				83B06722180D70FE008E3612 /* MIDIDecoder.mm in Sources */,
+				8D1A2B3C00000012 /* MIDIPluginState.m in Sources */,
 				83A09F6F1CFA8D6B001E7D2D /* MSPlayer.cpp in Sources */,
 				83C35702180EDB74007E9DF0 /* MIDIContainer.mm in Sources */,
 				83A09F651CFA83F2001E7D2D /* opl3class.cpp in Sources */,

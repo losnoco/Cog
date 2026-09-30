@@ -53,6 +53,7 @@
 		8E15A86C0B894768006DC802 /* updates.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E15A86B0B894768006DC802 /* updates.png */; };
 		8E6C123A0AACAEF200819171 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E6C12390AACAEF200819171 /* Carbon.framework */; };
 		99F1813F0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 99F1813E0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m */; };
+		8D1A2B3D00000012 /* MIDIPluginState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A2B3D00000011 /* MIDIPluginState.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -177,6 +178,8 @@
 		99F1813E0DE01D7A00FD5FFB /* PlaylistBehaviorArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistBehaviorArrayController.m; sourceTree = "<group>"; };
 		ED69CBA725BE32500090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = ../../Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
 		ED69CF0B25BE75330090B90D /* Shortcuts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Shortcuts.h; path = ../Shortcuts.h; sourceTree = "<group>"; };
+		8D1A2B3D00000010 /* MIDIPluginState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MIDIPluginState.h; path = ../../Utils/MIDIPluginState.h; sourceTree = "<group>"; };
+		8D1A2B3D00000011 /* MIDIPluginState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MIDIPluginState.m; path = ../../Utils/MIDIPluginState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +330,8 @@
 			isa = PBXGroup;
 			children = (
 				83A0CBD22E838B5E007C429D /* SHA256Digest.h */,
+				8D1A2B3D00000010 /* MIDIPluginState.h */,
+				8D1A2B3D00000011 /* MIDIPluginState.m */,
 				ED69CF0B25BE75330090B90D /* Shortcuts.h */,
 				32DBCF630370AF2F00C91783 /* Preferences_Prefix.pch */,
 			);
@@ -534,6 +539,7 @@
 				83B8FE292D59D059005854C1 /* RubberbandPane.m in Sources */,
 				83726F022CF41B3200F15FBF /* AppearancePane.m in Sources */,
 				83E83F7E2D96780E0054365C /* AUPlayerView.mm in Sources */,
+				8D1A2B3D00000012 /* MIDIPluginState.m in Sources */,
 				83651DA527322C8700A2C097 /* MIDIFlavorBehaviorArrayController.m in Sources */,
 				83B06729180D85B8008E3612 /* MIDIPane.mm in Sources */,
 				8E07AA880AAC8EA200A4B32F /* HotKeyPane.m in Sources */,
