@@ -285,23 +285,23 @@ public final class Feeder {
 		joins.removeAll()
 		previousTrack = nil
 
+		// A decoder just opened is already at the start; one that has been
+		// read from must be told, even to go back to 0.
+		var fresh = false
 		if seekTrack !== track || decoder == nil {
-			closeDecoder()
-			guard let opened = opener(seekTrack) else {
-				delegate?.feeder(self, couldNotOpen: seekTrack)
-				track = seekTrack
-				advance()
-				return
-			}
-			decoder = opened
-			track = seekTrack
+			guard reopen(seekTrack) else { return }
+			fresh = true
 		}
 
 		var offset = 0.0
-		if seconds > 0, let decoder {
+		if (seconds > 0 || !fresh), let decoder {
 			let rate = (decoder.properties()["sampleRate"] as? NSNumber)?.doubleValue ?? 0
 			if rate > 0, decoder.seek(Int(seconds * rate)) >= 0 {
 				offset = seconds
+			} else if !fresh {
+				// Refused: start the track over rather than carry on from
+				// wherever the decoder was while claiming the start.
+				guard reopen(seekTrack) else { return }
 			}
 		}
 		trackStartPending = (seekTrack, offset)
@@ -335,6 +335,19 @@ public final class Feeder {
 			advance()
 			return
 		}
+	}
+
+	/// Opens `seekTrack` afresh, or moves on past it if it cannot be opened.
+	private func reopen(_ seekTrack: EngineTrack) -> Bool {
+		closeDecoder()
+		track = seekTrack
+		guard let opened = opener(seekTrack) else {
+			delegate?.feeder(self, couldNotOpen: seekTrack)
+			advance()
+			return false
+		}
+		decoder = opened
+		return true
 	}
 
 	private func closeDecoder() {

@@ -142,6 +142,37 @@ final class PumpTests: XCTestCase {
 		XCTAssertEqual(Array(heard.prefix(8)), Array(samples[(432000 * 2)..<(432000 * 2 + 8)]))
 	}
 
+	/// Back to the start of the track playing: the decoder has read well
+	/// past it, so it must be told to seek even though the target is 0.
+	func testASeekBackToTheStartRestartsTheDecoder() throws {
+		// Longer than the deep ring, so the feeder is still mid-track.
+		let samples = SeamSignal.loopable(frames: 960000, sampleRate: 48000)
+		let track = (EngineTrack(url: URL(string: "memory://start")!), MemoryDecoder(samples: samples, sampleRate: 48000, channels: 2))
+		let feeder = makeFeeder(outputRate: 48000, tracks: [track])
+		let delegate = ScriptedTracks([])
+		feeder.delegate = delegate
+		let pump = try XCTUnwrap(Pump(feeder: feeder, outputFormat: StreamFormat(sampleRate: 48000, channels: 2, channelConfig: UInt32(AudioConfigStereo))))
+		let renderer = try XCTUnwrap(cog_renderer_create(pump.ring))
+		defer { cog_renderer_destroy(renderer) }
+
+		feeder.start(with: track.0)
+		pump.start()
+		var played = Played()
+		play(pump, renderer: renderer, into: &played) { $0.samples.count >= 48000 * 2 }
+		feeder.seek(to: 0, in: track.0)
+		var afterSeek = Played()
+		play(pump, renderer: renderer, into: &afterSeek) { $0.ended }
+		pump.stop()
+		feeder.stop()
+
+		let seekStart = try XCTUnwrap(trackStarts(afterSeek).last)
+		XCTAssertEqual(seekStart.2, 0)
+		let readBefore = Int(cog_ring_read_position(pump.ring)) - afterSeek.samples.count / 2
+		let heard = Array(afterSeek.samples[((Int(seekStart.0) - readBefore) * 2)...])
+		XCTAssertEqual(heard.count, samples.count, "the whole track again")
+		XCTAssertEqual(Array(heard.prefix(8)), Array(samples.prefix(8)))
+	}
+
 	// MARK: - ReplayGain
 
 	/// A constant signal makes the applied gain directly visible.
