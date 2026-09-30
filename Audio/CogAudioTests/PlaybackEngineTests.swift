@@ -170,6 +170,7 @@ final class PlaybackEngineTests: XCTestCase {
 		let engine = PlaybackEngine()
 		engine.host = host
 		engine.allowsDeviceRateChanges = false
+		engine.requiresExclusiveDoP = false
 		engine.opener = { track in
 			track.url.host == "dsd" ? DSDMemoryDecoder(bytes: dsd, bitRate: rate * 16, channels: channels)
 				: MemoryDecoder(samples: pcm, sampleRate: 48000, channels: 2)
@@ -181,6 +182,7 @@ final class PlaybackEngineTests: XCTestCase {
 
 		XCTAssertTrue(host.stopped)
 		XCTAssertEqual(engine.pipelineBuilds, 2, "rebuilt for the DSD track")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
 
 		// With DoP off, the DSD is converted to PCM in the same stream.
 		UserDefaults.standard.set(false, forKey: "enableDoP")
@@ -191,12 +193,18 @@ final class PlaybackEngineTests: XCTestCase {
 		runMainLoop(until: { host.stopped }, timeout: 10)
 		XCTAssertEqual(engine.pipelineBuilds, 3, "one pipeline for both")
 		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
-		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, [
-			"played pcm",
-			"begin dsd",
-			"played dsd",
-			"stopped after dsd",
-		])
+
+		// DoP needs the device exclusively, which the system default device
+		// is never taken; so there, too, the DSD is PCM in the same stream.
+		UserDefaults.standard.set(true, forKey: "enableDoP")
+		engine.requiresExclusiveDoP = true
+		host.stopped = false
+		host.log.removeAll()
+		host.queue = [EngineTrack(url: URL(string: "memory://dsd")!, userInfo: "dsd", gain: 1)]
+		XCTAssertTrue(engine.play(URL(string: "memory://pcm")!, userInfo: "pcm", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { host.stopped }, timeout: 10)
+		XCTAssertEqual(engine.pipelineBuilds, 4, "not taken exclusively, so no DoP")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
 	}
 
 	/// At tempo 2 the playback position runs at twice the wall clock: the

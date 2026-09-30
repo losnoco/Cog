@@ -336,6 +336,15 @@ Each stage ships on its own and leaves the old engine working.
      resampled to its rate, as the old engine left the device rate alone.
      Unlike the old engine, a track whose carrier the device cannot take
      plays as PCM rather than failing.
+     DoP is opt-in (`enableDoP`, off by default: a DAC that does not decode
+     it plays noise, and there is no telling which kind is connected), and
+     needs a specific output device, not the system default. As Pine Player
+     does, the engine takes that device exclusively while playing DoP: hog
+     mode, mixing off, and the stream's physical format set to integer at
+     the carrier rate, with the unit's input matching it word for word.
+     Without that the system mixer's float stage sits in the path and
+     macOS DACs do not lock (seen on a FiiO KA11). It is released when the
+     pipeline is torn down. No exclusive access means PCM.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
 
 ## Open questions

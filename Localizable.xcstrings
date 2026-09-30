@@ -2127,13 +2127,13 @@
         }
       }
     },
-    "Only for DACs that decode DoP. Others play it as noise, and there is no way to tell which kind is connected. When off, DSD is converted to PCM." : {
+    "Only for DACs that decode DoP; others play it as noise, and there is no way to tell which kind is connected. Needs a specific output device, not the system default: Cog takes it for itself while playing DSD. Otherwise, DSD is converted to PCM." : {
       "comment" : "Help text for the DoP toggle.",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo para DAC que decodifican DoP. Los demás lo reproducen como ruido, y no hay forma de saber cuál está conectado. Si está desactivado, el DSD se convierte a PCM."
+            "value" : "Solo para DAC que decodifican DoP; los demás lo reproducen como ruido, y no hay forma de saber cuál está conectado. Requiere un dispositivo de salida concreto, no el predeterminado del sistema: Cog lo reserva para sí mientras reproduce DSD. En otro caso, el DSD se convierte a PCM."
           }
         }
       }

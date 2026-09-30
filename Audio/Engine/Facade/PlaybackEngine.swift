@@ -224,6 +224,9 @@ import Foundation
 	/// Lets a test keep the machine's device at its rate: a track needing a
 	/// DoP carrier then gets one only if the device already runs at it.
 	var allowsDeviceRateChanges = true
+	/// Lets a test try DoP on the default device without taking it
+	/// exclusively, which DoP otherwise needs.
+	var requiresExclusiveDoP = true
 
 	/// Builds the device side, feeder, pump and renderer for `track`, with its
 	/// decoder if already opened, and starts them from `offset`.
@@ -245,10 +248,17 @@ import Foundation
 		guard let output else { return false }
 
 		// A DoP carrier needs the device at its rate, rendering integers.
-		var carrier = decoder.flatMap { Self.carrierRate(for: $0.properties() ?? [:], output: output) }
+		var carrier = decoder.flatMap { carrierRate(for: $0.properties() ?? [:], output: output) }
 		if let rate = carrier, !(allowsDeviceRateChanges ? output.setNominalSampleRate(rate) : abs(output.nominalSampleRate - rate) < 1) {
 			EngineLog.logger.info("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz for DoP; converting to PCM")
 			carrier = nil
+		}
+		if let rate = carrier, requiresExclusiveDoP, !output.takeExclusive(rate: rate) {
+			EngineLog.logger.info("No exclusive access to the device for DoP; converting to PCM")
+			carrier = nil
+		}
+		if carrier == nil {
+			output.releaseExclusive()
 		}
 		if carrier != nil || output.integerRender {
 			do {
@@ -286,7 +296,7 @@ import Foundation
 		currentRatio = 1
 
 		let deviceChannels = output.format.channels
-		let supports = Self.carrierSupport(output)
+		let supports = carrierSupport(output)
 		feeder.admits = { decoder in
 			Self.admits(decoder.properties() ?? [:], into: carrier, deviceChannels: deviceChannels, supports: supports)
 		}
@@ -323,15 +333,17 @@ import Foundation
 		return supports(carrier) ? carrier : nil
 	}
 
-	private static func carrierRate(for properties: [AnyHashable: Any], output: DeviceOutput) -> Double? {
-		carrierRate(for: properties, deviceChannels: output.format.channels, supports: carrierSupport(output))
+	private func carrierRate(for properties: [AnyHashable: Any], output: DeviceOutput) -> Double? {
+		Self.carrierRate(for: properties, deviceChannels: output.format.channels, supports: carrierSupport(output))
 	}
 
 	/// Whether the device can carry DoP at a rate: never while the DoP
 	/// setting is off (there is no telling whether the DAC decodes it, and
-	/// one that does not plays it as noise), so DSD becomes PCM.
-	private static func carrierSupport(_ output: DeviceOutput) -> (Double) -> Bool {
-		let enabled = UserDefaults.standard.bool(forKey: "enableDoP")
+	/// one that does not plays it as noise), nor on the system default
+	/// device, which cannot be taken exclusively as DoP needs; DSD then
+	/// becomes PCM.
+	private func carrierSupport(_ output: DeviceOutput) -> (Double) -> Bool {
+		let enabled = UserDefaults.standard.bool(forKey: "enableDoP") && (!requiresExclusiveDoP || !output.followsSystemDefault)
 		return { enabled && output.supportsSampleRate($0) }
 	}
 
@@ -362,7 +374,7 @@ import Foundation
 		      !output.wouldChange(for: UserDefaults.standard.dictionary(forKey: "outputDevice")) else {
 			return false
 		}
-		if let decoder, !Self.admits(decoder.properties() ?? [:], into: carrierRate, deviceChannels: output.format.channels, supports: Self.carrierSupport(output)) {
+		if let decoder, !Self.admits(decoder.properties() ?? [:], into: carrierRate, deviceChannels: output.format.channels, supports: carrierSupport(output)) {
 			return false
 		}
 		EngineLog.logger.info("Switch to \(track.url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s in place, track gain \(track.gain, format: .fixed(precision: 4))")
@@ -499,6 +511,8 @@ import Foundation
 		seekPending = false
 		rebuildRequested = false
 		carrierRate = nil
+		// Other apps may play again.
+		output?.releaseExclusive()
 		phase = .idle
 	}
 

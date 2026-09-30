@@ -120,7 +120,7 @@ struct OutputPaneView: View {
                     "Send DSD to the DAC as DoP (DSD over PCM)",
                     isOn: $prefs.enableDoP
                 )
-                .help("Only for DACs that decode DoP. Others play it as noise, and there is no way to tell which kind is connected. When off, DSD is converted to PCM.")
+                .help("Only for DACs that decode DoP; others play it as noise, and there is no way to tell which kind is connected. Needs a specific output device, not the system default: Cog takes it for itself while playing DSD. Otherwise, DSD is converted to PCM.")
             } header: {
                 Text("Advanced audio formats").bold()
             }

@@ -47,6 +47,10 @@ public final class DeviceOutput {
 	/// device's rate, at most eight channels.
 	public private(set) var format = StreamFormat(sampleRate: 0, channels: 0)
 
+	/// Whether this process holds the device exclusively (hog mode, mixing
+	/// off), for DoP.
+	public private(set) var isExclusive = false
+
 	/// Whether the unit takes 24-bit integer (high-aligned in 32 bits) rather
 	/// than float: the DoP carrier format, set by `refreshFormat(integer:)`.
 	public private(set) var integerRender = false
@@ -88,6 +92,7 @@ public final class DeviceOutput {
 
 	deinit {
 		stop()
+		releaseExclusive()
 		removeListeners()
 		if initialized {
 			AudioUnitUninitialize(unit)
@@ -159,6 +164,7 @@ public final class DeviceOutput {
 		}
 		let wasRunning = isRunning
 		if wasRunning { stop() }
+		releaseExclusive()
 		uninitialize()
 		var device = id
 		try setProperty(kAudioOutputUnitProperty_CurrentDevice, scope: kAudioUnitScope_Global, &device)
@@ -196,7 +202,9 @@ public final class DeviceOutput {
 		let channels = min(Int(hardware.mChannelsPerFrame), 8)
 		let rate = sampleRate ?? hardware.mSampleRate
 		let render = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
-		var asbd = integer ? Self.integerASBD(render) : Pump.asbd(render)
+		// Held exclusively, the device's stream is integer and the unit's
+		// input matches it word for word; otherwise 24-bit high-aligned.
+		var asbd = integer ? (isExclusive ? Self.int32ASBD(render) : Self.integerASBD(render)) : Pump.asbd(render)
 		try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
 		integerRender = integer
 		var layout = AudioChannelLayout()
@@ -254,6 +262,80 @@ public final class DeviceOutput {
 		                                   mBytesPerPacket: bytesPerFrame, mFramesPerPacket: 1,
 		                                   mBytesPerFrame: bytesPerFrame, mChannelsPerFrame: UInt32(format.channels),
 		                                   mBitsPerChannel: 24, mReserved: 0)
+	}
+
+	static func int32ASBD(_ format: StreamFormat) -> AudioStreamBasicDescription {
+		var asbd = integerASBD(format)
+		asbd.mFormatFlags = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked | kAudioFormatFlagsNativeEndian
+		asbd.mBitsPerChannel = 32
+		return asbd
+	}
+
+	// MARK: - Exclusive access
+
+	/// Takes the device for this process alone, as DoP needs on macOS: hog
+	/// mode, mixing off, and the device's stream set to integer at `rate`, so
+	/// no system mixer, volume or float stage sits between the renderer and
+	/// the DAC. Only for a device chosen by name, never the system default,
+	/// which would silence every other app. Call `refreshFormat` afterwards.
+	public func takeExclusive(rate: Double) -> Bool {
+		guard !followsSystemDefault else { return false }
+		if !isExclusive {
+			var pid = getpid()
+			guard Self.setProperty(deviceID, kAudioDevicePropertyHogMode, &pid) else { return false }
+			var owner: pid_t = -1
+			guard Self.getProperty(deviceID, kAudioDevicePropertyHogMode, &owner), owner == getpid() else {
+				EngineLog.logger.info("Could not take the device exclusively; it belongs to process \(owner)")
+				return false
+			}
+			isExclusive = true
+			var mixing: UInt32 = 0
+			if !Self.setProperty(deviceID, kAudioDevicePropertySupportsMixing, &mixing) {
+				EngineLog.logger.info("The device would not turn mixing off")
+			}
+		}
+		setIntegerPhysicalFormat(rate: rate)
+		EngineLog.logger.info("Holding the device exclusively at \(rate, format: .fixed(precision: 0)) Hz")
+		return true
+	}
+
+	/// Gives the device back to the system mixer.
+	public func releaseExclusive() {
+		guard isExclusive else { return }
+		var mixing: UInt32 = 1
+		_ = Self.setProperty(deviceID, kAudioDevicePropertySupportsMixing, &mixing)
+		var none: pid_t = -1
+		_ = Self.setProperty(deviceID, kAudioDevicePropertyHogMode, &none)
+		isExclusive = false
+		EngineLog.logger.info("Released the device")
+	}
+
+	/// Sets the output streams to the widest integer format they offer at
+	/// `rate` with the render channel count (32 bits, else 24).
+	private func setIntegerPhysicalFormat(rate: Double) {
+		var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreams, mScope: kAudioObjectPropertyScopeOutput, mElement: kAudioObjectPropertyElementMain)
+		var size: UInt32 = 0
+		guard AudioObjectGetPropertyDataSize(deviceID, &address, 0, nil, &size) == noErr, size > 0 else { return }
+		var streams = [AudioStreamID](repeating: 0, count: Int(size) / MemoryLayout<AudioStreamID>.size)
+		guard AudioObjectGetPropertyData(deviceID, &address, 0, nil, &size, &streams) == noErr else { return }
+		for stream in streams {
+			var formatsAddress = AudioObjectPropertyAddress(mSelector: kAudioStreamPropertyAvailablePhysicalFormats, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+			var formatsSize: UInt32 = 0
+			guard AudioObjectGetPropertyDataSize(stream, &formatsAddress, 0, nil, &formatsSize) == noErr, formatsSize > 0 else { continue }
+			var formats = [AudioStreamRangedDescription](repeating: AudioStreamRangedDescription(), count: Int(formatsSize) / MemoryLayout<AudioStreamRangedDescription>.size)
+			guard AudioObjectGetPropertyData(stream, &formatsAddress, 0, nil, &formatsSize, &formats) == noErr else { continue }
+			let candidates = formats.map(\.mFormat).filter {
+				$0.mFormatID == kAudioFormatLinearPCM && $0.mFormatFlags & kAudioFormatFlagIsFloat == 0 &&
+					abs($0.mSampleRate - rate) < 1 && Int($0.mChannelsPerFrame) == format.channels && $0.mBitsPerChannel >= 24
+			}
+			guard var best = candidates.max(by: { $0.mBitsPerChannel < $1.mBitsPerChannel }) else {
+				EngineLog.logger.info("Stream \(stream) offers no integer format at \(rate, format: .fixed(precision: 0)) Hz")
+				continue
+			}
+			if !Self.setProperty(stream, kAudioStreamPropertyPhysicalFormat, &best) {
+				EngineLog.logger.info("Stream \(stream) would not take \(best.mBitsPerChannel)-bit integer")
+			}
+		}
 	}
 
 	// MARK: - Device rate
@@ -432,6 +514,12 @@ public final class DeviceOutput {
 			}
 		}
 		return Int(deviceLatency + safetyOffset + bufferSize + streamLatency)
+	}
+
+	@discardableResult
+	static func setProperty<Value>(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector, _ value: inout Value, scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal) -> Bool {
+		var address = AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)
+		return AudioObjectSetPropertyData(object, &address, 0, nil, UInt32(MemoryLayout<Value>.size), &value) == noErr
 	}
 
 	@discardableResult
