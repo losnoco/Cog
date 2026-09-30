@@ -186,7 +186,11 @@ int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 
 	if(nativeFrequency != frequency && bitsPerSample == 8) {
 		isDSD = YES;
-		dsdDoPReverseBits = !!(WavpackGetQualifyMode(wpc) & QMODE_DSD_LSB_FIRST);
+		// The library hands DSD back with the earliest bit in the most
+		// significant place whatever the source was; QMODE_DSD_LSB_FIRST only
+		// records that the source was a DSF, so it can be restored as one.
+		// Treating it as the order of these bytes reversed them twice.
+		dsdDoPReverseBits = NO;
 		frequency = nativeFrequency;
 		bitsPerSample = 1;
 		totalFrames *= 8;
