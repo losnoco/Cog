@@ -264,10 +264,15 @@ Each stage ships on its own and leaves the old engine working.
      blocks, the half-block lag removed and the tail drained, so the
      output is exactly as long as the input (the old node zero-padded short
      chunks mid-stream).
+   - `HRTFStage`: `HeadphoneFilter` with the SADIE D02 set, primed from an
+     LPC backward extrapolation after each start or seek; any layout in,
+     binaural stereo out. Head tracking moves to a Swift `HeadTracker`
+     (`CMHeadphoneMotionManager`, macOS 14+, same matrix conventions and
+     `CogPlaybackDidResetHeadTracking` reset).
    - Known gap: stage latency is not yet subtracted from presentation
      events, so with FreeSurround on, track changes are announced about
      2048 frames early.
-   - Still to port: HRTF, Rubber Band, Signalsmith (with a stretch map for
+   - Still to port: Rubber Band, Signalsmith (with a stretch map for
      positions), the visualization tap.
 
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
