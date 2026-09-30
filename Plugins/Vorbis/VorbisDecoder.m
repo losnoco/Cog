@@ -285,7 +285,11 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 }
 
 - (long)seek:(long)frame {
-	ov_pcm_seek(&vorbisRef, frame);
+	if(ov_pcm_seek(&vorbisRef, frame) != 0) {
+		// Refused (an unseekable stream, or a read error): the decoder is
+		// still where it was, so say so rather than claim the new position.
+		return -1;
+	}
 
 	self->frame = frame;
 
