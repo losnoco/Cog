@@ -18,6 +18,8 @@ public enum PresentationEvent {
 	case rate(Double)
 	/// `track`'s properties and metadata changed, as heard from here.
 	case info([AnyHashable: Any], EngineTrack)
+	/// The DSP thread treats the audio differently from here.
+	case processing(Pump.Processing)
 }
 
 /// Events placed at absolute positions in the shallow ring. The shallow
@@ -102,6 +104,26 @@ public final class Pump {
 	/// Gain changes within a track take this long, so they do not click.
 	static let gainRampSeconds = 0.02
 	private var fittedBuffer: [Float] = []
+
+	/// What the pump does to the samples it passes on, for telling whether
+	/// they reach the device as decoded.
+	public struct Processing: Equatable {
+		/// The stages that ran, in chain order.
+		public var stages: [ObjectIdentifier] = []
+		/// The format the stages were given.
+		public var input = StreamFormat(sampleRate: 0, channels: 0)
+		/// The format the stages produced.
+		public var output = StreamFormat(sampleRate: 0, channels: 0)
+		/// The chain's output was remapped to the device's channels.
+		public var fitsChannels = false
+		/// A track gain other than unity was applied.
+		public var appliesGain = false
+		/// DSD over PCM went through untouched.
+		public var passesDoP = false
+	}
+
+	/// Processing as last put on the presentation queue.
+	private var reportedProcessing: Processing?
 
 	/// Frames read and written per pass.
 	static let blockFrames = 4096
@@ -219,6 +241,8 @@ public final class Pump {
 			entriesTakenAt = nil
 			skip = nil
 			presentation.discard(before: cog_ring_write_position(ring))
+			// That may have taken the last processing report with it.
+			reportedProcessing = nil
 			cog_ring_request_flush(ring)
 			// Filter history belongs to audio that will never be heard.
 			for stage in stages {
@@ -291,17 +315,30 @@ public final class Pump {
 		feeder.consumerDidRead()
 		captureInput(block)
 
+		let position = eventPosition
 		if carrier && channels == outputFormat.channels && isDoP(block) {
 			// DSD over PCM: any gain, filter or channel mapping would corrupt
 			// it, so it goes to the device as decoded.
 			block.samples.withUnsafeBufferPointer { write($0.baseAddress!, frames: got) }
+			report(Processing(passesDoP: true), at: position)
 			return true
 		}
 
 		applyGain(frames: got, channels: channels)
 		runStages()
 		emit()
+		report(Processing(stages: configuredChain?.stages ?? [], input: configuredChain?.input ?? format, output: fitSource ?? format,
+		                  fitsChannels: downmix != nil, appliesGain: appliedGain != 1 || rampTarget != 1),
+		       at: position)
 		return true
+	}
+
+	/// Tells the listener, from where this block will be heard, when the
+	/// block was treated differently from the one before.
+	private func report(_ processing: Processing, at position: UInt64) {
+		guard processing != reportedProcessing else { return }
+		reportedProcessing = processing
+		presentation.append(.processing(processing), at: position)
 	}
 
 	private func isDoP(_ buffer: DSPBuffer) -> Bool {

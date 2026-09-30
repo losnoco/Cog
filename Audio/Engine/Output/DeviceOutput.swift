@@ -55,6 +55,34 @@ public final class DeviceOutput {
 	/// than float: the DoP carrier format, set by `refreshFormat(integer:)`.
 	public private(set) var integerRender = false
 
+	/// What the unit takes from the renderer for `format`: float, or for a
+	/// DoP carrier 24-bit integer, which a device held exclusively takes as
+	/// its stream's own 32-bit words.
+	static func renderFormat(_ format: StreamFormat, integer: Bool, exclusive: Bool) -> AudioStreamBasicDescription {
+		integer ? (exclusive ? int32ASBD(format) : integerASBD(format)) : Pump.asbd(format)
+	}
+
+	/// The device's name, as the device menu shows it.
+	public var deviceName: String? {
+		var name: Unmanaged<CFString>?
+		guard Self.getProperty(deviceID, kAudioDevicePropertyDeviceNameCFString, &name) else { return nil }
+		return name?.takeRetainedValue() as String?
+	}
+
+	/// The formats of the device's output streams as Core Audio reports them:
+	/// the virtual format the system mixes in, or the physical format the
+	/// hardware runs at.
+	public func streamFormats(physical: Bool) -> [AudioStreamBasicDescription] {
+		Self.outputStreams(of: deviceID).compactMap { stream in
+			var asbd = AudioStreamBasicDescription()
+			guard Self.getProperty(stream, physical ? kAudioStreamPropertyPhysicalFormat : kAudioStreamPropertyVirtualFormat, &asbd),
+			      asbd.mFormatID != 0 else {
+				return nil
+			}
+			return asbd
+		}
+	}
+
 	/// The most frames the unit asks the renderer for at once.
 	public var maximumFramesPerSlice: Int {
 		var frames: UInt32 = 0
@@ -206,7 +234,7 @@ public final class DeviceOutput {
 		let render = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
 		// Held exclusively, the device's stream is integer and the unit's
 		// input matches it word for word; otherwise 24-bit high-aligned.
-		var asbd = integer ? (isExclusive ? Self.int32ASBD(render) : Self.integerASBD(render)) : Pump.asbd(render)
+		var asbd = Self.renderFormat(render, integer: integer, exclusive: isExclusive)
 		try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
 		integerRender = integer
 		var layout = AudioChannelLayout()
@@ -601,6 +629,16 @@ public final class DeviceOutput {
 			}
 		}
 		return Int(deviceLatency + safetyOffset + bufferSize + streamLatency)
+	}
+
+	/// A device's output streams.
+	static func outputStreams(of id: AudioDeviceID) -> [AudioStreamID] {
+		var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreams, mScope: kAudioDevicePropertyScopeOutput, mElement: kAudioObjectPropertyElementMain)
+		var size: UInt32 = 0
+		guard AudioObjectGetPropertyDataSize(id, &address, 0, nil, &size) == noErr, size >= MemoryLayout<AudioStreamID>.size else { return [] }
+		var streams = [AudioStreamID](repeating: 0, count: Int(size) / MemoryLayout<AudioStreamID>.size)
+		guard AudioObjectGetPropertyData(id, &address, 0, nil, &size, &streams) == noErr else { return [] }
+		return streams
 	}
 
 	@discardableResult

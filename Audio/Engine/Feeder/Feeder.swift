@@ -458,6 +458,9 @@ public final class Feeder {
 		while !floatConverter.isEmpty() {
 			let floats = floatConverter.removeSamples(asFloat32: 4096)
 			guard floats.frameCount() > 0 else { break }
+			if floats.isHDCD(), let track, !track.hdcdDetected {
+				track.hdcdDetected = true
+			}
 			let asbd = floats.format
 			let format = StreamFormat(sampleRate: asbd.mSampleRate, channels: Int(asbd.mChannelsPerFrame), channelConfig: floats.channelConfig)
 			let frames = floats.frameCount()
@@ -492,6 +495,7 @@ public final class Feeder {
 			joins.append((frame, before))
 		}
 		previousTrack = nil
+		track.sourceProperties = decoder?.properties()
 		timeline.append(.trackStart(track, offset: offset), at: frame, epoch: epoch)
 	}
 

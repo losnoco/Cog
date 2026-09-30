@@ -4431,6 +4431,18 @@
         }
       }
     },
+    "Dac-Fm-Cell.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Output: —\"; ObjectID = \"Dac-Fm-Cell\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Output: —"
+          }
+        }
+      }
+    },
     "Eds-my-DQr.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Properties\"; ObjectID = \"Eds-my-DQr\";",
       "extractionState" : "extracted_with_value",
