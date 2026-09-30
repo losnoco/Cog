@@ -288,7 +288,8 @@ import Foundation
 		carrierRate = carrier
 
 		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: carrier != nil),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf], carrier: carrier != nil),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf], carrier: carrier != nil,
+		                      captureDirectory: EngineCapture.directory),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
 		}

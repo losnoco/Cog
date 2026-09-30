@@ -113,7 +113,9 @@ public final class Pump {
 	///     setting change is heard, so it is kept short.
 	///   - stages: the DSP chain, run in order on every block.
 	///   - carrier: pass DoP blocks through bit-exact.
-	public init?(feeder: Feeder, outputFormat: StreamFormat, stages: [DSPStage] = [], carrier: Bool = false, seconds: Double = 0.2) {
+	///   - captureDirectory: record the audio read from the feeder and the
+	///     audio sent toward the device there (see `EngineCapture`).
+	public init?(feeder: Feeder, outputFormat: StreamFormat, stages: [DSPStage] = [], carrier: Bool = false, seconds: Double = 0.2, captureDirectory: URL? = nil) {
 		guard outputFormat.sampleRate == feeder.outputRate,
 		      let ring = cog_ring_create(max(Int(outputFormat.sampleRate * seconds), Self.blockFrames * 2), UInt32(outputFormat.channels)) else {
 			return nil
@@ -123,6 +125,25 @@ public final class Pump {
 		self.outputFormat = outputFormat
 		self.stages = stages
 		self.carrier = carrier
+		self.captureDirectory = captureDirectory
+		if let captureDirectory {
+			outputCapture = EngineCapture(point: "output", format: outputFormat, directory: captureDirectory)
+		}
+	}
+
+	// Diagnostic captures, pump thread only once running.
+	private let captureDirectory: URL?
+	private var inputCapture: EngineCapture?
+	private var outputCapture: EngineCapture?
+
+	/// Records a block read from the feeder, in a file per input format.
+	private func captureInput(_ buffer: DSPBuffer) {
+		guard let captureDirectory else { return }
+		if inputCapture?.format != buffer.format {
+			inputCapture?.finish()
+			inputCapture = EngineCapture(point: "input", format: buffer.format, directory: captureDirectory)
+		}
+		buffer.samples.withUnsafeBufferPointer { inputCapture?.record($0.baseAddress!, frames: buffer.frames) }
 	}
 
 	deinit {
@@ -153,6 +174,8 @@ public final class Pump {
 			return threadExited
 		}
 		exited?.wait()
+		inputCapture?.finish()
+		outputCapture?.finish()
 	}
 
 	private var isRunning: Bool {
@@ -228,6 +251,11 @@ public final class Pump {
 				configure(for: format)
 			case let .trackStart(track, offset):
 				presentation.append(.trackStart(track, offset: offset), at: eventPosition)
+				if inputCapture != nil || outputCapture != nil {
+					let name = track.url.lastPathComponent.isEmpty ? track.url.absoluteString : track.url.lastPathComponent
+					inputCapture?.mark("track start \(name) at \(offset) s")
+					outputCapture?.mark("track start \(name) at \(offset) s", at: eventPosition)
+				}
 				// A new track's gain starts exactly on its first frame.
 				gainTrack = track
 				appliedGain = track.gain
@@ -261,6 +289,7 @@ public final class Pump {
 		block.frames = got
 		frames += UInt64(got)
 		feeder.consumerDidRead()
+		captureInput(block)
 
 		if carrier && channels == outputFormat.channels && isDoP(block) {
 			// DSD over PCM: any gain, filter or channel mapping would corrupt
@@ -418,6 +447,7 @@ public final class Pump {
 	}
 
 	private func write(_ samples: UnsafePointer<Float>, frames: Int) {
+		outputCapture?.record(samples, frames: frames)
 		var written = 0
 		while written < frames {
 			written += cog_ring_write(ring, samples + written * outputFormat.channels, frames - written)
