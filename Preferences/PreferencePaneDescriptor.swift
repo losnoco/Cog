@@ -36,20 +36,7 @@ struct PreferencePaneDescriptor: Identifiable {
                 icon: paneIcon(system: "gearshape.fill", legacy: "general"),
                 body: AnyView(GeneralPaneView()),
                 showPathSuggesterAction: { window in
-                    let suggester = PathSuggester()
-                    suggester.beginSuggestion(window)
-                    // Observe PathSuggester window close to notify GeneralPaneView
-                    if let w = suggester.window {
-                        NotificationCenter.default.addObserver(
-                            forName: NSWindow.willCloseNotification,
-                            object: w,
-                            queue: .main
-                        ) { _ in
-                            NotificationCenter.default.post(
-                                name: .cogSandboxPathsChanged, object: nil
-                            )
-                        }
-                    }
+                    PathSuggesterPresenter.show(from: window)
                 }
             ),
             PreferencePaneDescriptor(
@@ -104,4 +91,39 @@ struct PreferencePaneDescriptor: Identifiable {
 
 extension Notification.Name {
     static let cogSandboxPathsChanged = Notification.Name("CogSandboxPathsChanged")
+}
+
+/// Keeps the path suggester alive while its window is open. Nothing else
+/// holds its window controller, and once that goes, so do the list feeding
+/// its table and the controller that saves the folders chosen.
+@MainActor
+enum PathSuggesterPresenter {
+    private static var suggester: PathSuggester?
+    private static var closeObserver: NSObjectProtocol?
+
+    static func show(from window: NSWindow) {
+        if let suggester {
+            // Already open: suggest afresh, from what is granted now.
+            suggester.beginSuggestion(window)
+            return
+        }
+        let suggester = PathSuggester()
+        self.suggester = suggester
+        suggester.beginSuggestion(window)
+        closeObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: suggester.window,
+            queue: .main
+        ) { _ in
+            MainActor.assumeIsolated {
+                if let closeObserver {
+                    NotificationCenter.default.removeObserver(closeObserver)
+                }
+                closeObserver = nil
+                self.suggester = nil
+                // The General pane lists what was granted.
+                NotificationCenter.default.post(name: .cogSandboxPathsChanged, object: nil)
+            }
+        }
+    }
 }
