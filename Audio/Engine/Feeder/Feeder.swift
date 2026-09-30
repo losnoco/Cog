@@ -119,7 +119,20 @@ public final class Feeder {
 		decoder?.interrupt?()
 		spaceAvailable.signal()
 		idle.signal()
-		exited.wait()
+		Self.wait(for: exited)
+	}
+
+	/// Waits for `semaphore`. On the main thread the run loop keeps turning
+	/// meanwhile: the feeder may itself be waiting on the main thread (asking
+	/// for the next track), and blocking here would deadlock the two.
+	static func wait(for semaphore: DispatchSemaphore) {
+		guard Thread.isMainThread else {
+			semaphore.wait()
+			return
+		}
+		while semaphore.wait(timeout: .now()) == .timedOut {
+			RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.005))
+		}
 	}
 
 	/// Moves playback to `seconds` into `track`, which need not be the track

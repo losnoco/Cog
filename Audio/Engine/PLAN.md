@@ -213,6 +213,42 @@ Each stage ships on its own and leaves the old engine working.
 4. **Output.** AUHAL render through the C core; device format, device change
    and default-device handling ported from `OutputCoreAudio`. With stages 2–4
    the new engine plays audio with no DSP — flip the hidden default and A/B.
+
+   *Done:*
+   - `DeviceOutput`: AUHAL unit rendering interleaved float at the device
+     rate (≤ 8 channels, Cog's layouts) from `CogRenderer`; the render block
+     captures only the C pointer. Device chosen by ID, then name, else the
+     followed system default; block listeners for default-device, alive,
+     nominal-rate and stream-format changes. Reports presentation latency
+     (device + stream latency, safety offset, one I/O buffer).
+   - `Pump`: the DSP thread's skeleton — deep ring to shallow ring,
+     frame-accurate against the timeline, channel fit via
+     `DownmixProcessor`, track starts and end of stream turned into
+     presentation events at absolute shallow-ring positions; a seek flushes
+     the shallow ring and drops unheard events.
+   - `PlaybackEngine` facade behind `AudioPlayer` when the hidden default
+     `enableNewAudioEngine` is set (`defaults write org.cogx.cog
+     enableNewAudioEngine -bool YES`). `AudioPlayer` implements
+     `PlaybackEngineHost` with its existing delegate messages. A main-thread
+     monitor announces tracks as they are heard (read position less device
+     latency, or the latency in wall time once the ring runs dry), keeps
+     `amountPlayed` with `OutputNode`'s rules, and reports play counts and
+     scrobbles. Transport fades use the renderer's gain ramp; the device
+     starts once 0.1 s is buffered. ReplayGain comes from `rgInfo` via a
+     port of `refreshVolumeScaling`.
+   - `Feeder.stop()` pumps the main run loop when called there, as
+     `waitUntilCallbacksExit` does, so a feeder blocked asking the main
+     thread for the next track cannot deadlock a stop.
+   - Tests: `DeviceOutputTests` and `PlaybackEngineTests` run on the real
+     default device (silently); `PumpTests` offline.
+
+   *Not yet behind the switch:* DSP (EQ, HRTF, FreeSurround, time-stretch),
+   visualization, DoP, HDCD indicator, `resetNextStreams` (a playlist edit
+   after the next track has started decoding only applies from the track
+   after it), seek crossfade (seeks duck for 5 ms instead), live
+   `volumeScaling` changes, suspend-on-pause idle timer, and device changes
+   rebuild playback through `restartPlaybackAtCurrentPosition` rather than
+   in place.
 5. **DSP thread.** Port stages as in-place transforms, one at a time: fader
    (transport + seek crossfade), downmix, EQ (re-home the EQ window's
    coupling), FreeSurround, HRTF, Rubber Band, Signalsmith. Visualization tap.

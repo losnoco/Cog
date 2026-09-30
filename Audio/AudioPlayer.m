@@ -15,6 +15,8 @@
 
 #import "Logging.h"
 
+#import "CogAudio-Swift.h"
+
 static NSURL *streamURLWithoutFragment(NSURL *url) {
 	if(!url || ![[url fragment] length]) {
 		return url;
@@ -34,8 +36,20 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 	return [firstResource isEqualTo:secondResource];
 }
 
+// The new engine (Audio/Engine) runs behind this class when the hidden
+// enableNewAudioEngine default is set. It reports back through
+// PlaybackEngineHost, which maps onto the same delegate messages the chain
+// engine sends, so the playlist side cannot tell them apart.
+static BOOL newAudioEngineEnabled(void) {
+	return [[NSUserDefaults standardUserDefaults] boolForKey:@"enableNewAudioEngine"];
+}
+
+@interface AudioPlayer () <PlaybackEngineHost>
+@end
+
 @implementation AudioPlayer {
 	BOOL stoppedRecently;
+	PlaybackEngine *engine;
 }
 
 - (id)init {
@@ -94,6 +108,15 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time andResumeInterval:(BOOL)resumeInterval {
 	ALog(@"Opening file for playback: %@ at seek offset %f%@", url, time, (paused) ? @", starting paused" : @"");
+
+	if(newAudioEngineEnabled()) {
+		[self playWithEngine:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:time notify:!resumeInterval];
+		return;
+	}
+	if(engine) {
+		[engine stop];
+		engine = nil;
+	}
 
 	[self waitUntilCallbacksExit];
 	if(output) {
@@ -194,6 +217,15 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 }
 
 - (void)stop {
+	if(engine) {
+		[engine stop];
+		stoppedRecently = YES;
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+			self->stoppedRecently = NO;
+		});
+		return;
+	}
+
 	// Set shouldoContinue to NO on all things
 	[self setShouldContinue:NO];
 	[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
@@ -221,6 +253,11 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 }
 
 - (void)pause {
+	if(engine) {
+		[engine pause];
+		return;
+	}
+
 	[output fadeOut];
 	[output timeOut];
 
@@ -228,6 +265,12 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 }
 
 - (void)resume {
+	if(engine) {
+		startedPaused = NO;
+		[engine resume];
+		return;
+	}
+
 	if(startedPaused) {
 		startedPaused = NO;
 		if(initialBufferFilled)
@@ -245,6 +288,12 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 }
 
 - (void)seekToTime:(double)time {
+	if(engine) {
+		[engine seekTo:time];
+		[self updatePosition:previousUserInfo];
+		return;
+	}
+
 	if(endOfInputReached) {
 		// This is a dirty hack in case the playback has finished with the track
 		// that the user thinks they're seeking into
@@ -286,6 +335,7 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 - (void)setVolume:(double)v {
 	volume = v;
 
+	engine.volume = v;
 	[output setVolume:v];
 }
 
@@ -308,6 +358,13 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 
 // Called when the playlist changed before we actually started playing a requested stream. We will re-request.
 - (void)resetNextStreams {
+	if(engine) {
+		// TODO: have the feeder abandon a next track it has already started
+		// decoding (engine stage 6). Until then the playlist change applies
+		// from the track after it.
+		return;
+	}
+
 	[self waitUntilCallbacksExit];
 
 	@synchronized(chainQueue) {
@@ -349,14 +406,17 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 }
 
 - (double)amountPlayed {
+	if(engine) return engine.amountPlayed;
 	return [output amountPlayed];
 }
 
 - (double)amountPlayedInterval {
+	if(engine) return engine.amountPlayedInterval;
 	return [output amountPlayedInterval];
 }
 
 - (void)setScrobbleThreshold:(double)threshold {
+	[engine setScrobbleThreshold:threshold];
 	[output setScrobbleThreshold:threshold];
 }
 
@@ -800,6 +860,85 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 	[self setVolume:newVolume];
 	return newVolume;
 }
+
+#pragma mark - New engine
+
+- (void)playWithEngine:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time notify:(BOOL)notify {
+	if(output || bufferChain) {
+		// Switching from the chain engine mid-session.
+		[self setShouldContinue:NO];
+		@synchronized(chainQueue) {
+			for(id anObject in chainQueue) {
+				[anObject setShouldContinue:NO];
+			}
+			[chainQueue removeAllObjects];
+			endOfInputReached = NO;
+			bufferChain = nil;
+		}
+		[output setShouldContinue:NO];
+		[output close];
+		output = nil;
+	}
+
+	if(!engine) {
+		engine = [PlaybackEngine new];
+		engine.host = self;
+	}
+	engine.volume = volume;
+
+	if(notify) {
+		[self notifyStreamChanged:userInfo];
+	}
+	previousUserInfo = userInfo;
+	startedPaused = paused;
+
+	if(![engine play:url userInfo:userInfo rgInfo:rgi startPaused:paused seekTo:time]) {
+		ALog(@"The new audio engine could not open the output device");
+		[self setError:YES forTrack:userInfo];
+		engine = nil;
+		[self setPlaybackStatus:CogStatusStopped waitUntilDone:YES];
+	}
+}
+
+- (EngineTrack *)playbackEngineNextTrackAfter:(id)userInfo {
+	[self requestNextStream:userInfo];
+	if(!nextStream) {
+		return nil;
+	}
+	return [[EngineTrack alloc] initWithUrl:nextStream userInfo:nextStreamUserInfo rgInfo:nextStreamRGInfo];
+}
+
+- (void)playbackEngineDidBeginTrack:(id)userInfo {
+	previousUserInfo = userInfo;
+	[self notifyStreamChanged:userInfo];
+}
+
+- (void)playbackEngineDidChangeStatus:(CogStatus)status userInfo:(id)userInfo {
+	currentPlaybackStatus = status;
+	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:userInfo waitUntilDone:YES];
+}
+
+- (void)playbackEngineDidStopNaturally:(id)userInfo {
+	[self notifyPlaybackStopped:userInfo];
+}
+
+- (void)playbackEngineReportPlayCount:(id)userInfo {
+	[self reportPlayCountForTrack:userInfo];
+}
+
+- (void)playbackEngineReportScrobble:(id)userInfo {
+	[self reportScrobbleForTrack:userInfo];
+}
+
+- (void)playbackEngineSetError:(BOOL)error forTrack:(id)userInfo {
+	[self setError:error forTrack:userInfo];
+}
+
+- (void)playbackEngineRestartAtCurrentPosition:(id)userInfo {
+	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:userInfo waitUntilDone:NO];
+}
+
+#pragma mark -
 
 - (void)waitUntilCallbacksExit {
 	// This sucks! And since the thread that's inside the function can be calling
