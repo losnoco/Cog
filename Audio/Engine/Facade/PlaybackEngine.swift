@@ -221,6 +221,8 @@ import Foundation
 		output.attach(renderer)
 		cog_gain_ramp_to(cog_renderer_volume(renderer), Float(volumeLevel * 0.01), 0)
 		cog_gain_ramp_to(cog_renderer_transport(renderer), fadeFrames > 0 ? 0 : 1, 0)
+		// Room for a seek's crossfade, allocated before the device runs.
+		_ = cog_renderer_set_crossfade_frames(renderer, Int(output.format.sampleRate * Self.fadeSeconds))
 
 		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
 		register(track)
@@ -295,14 +297,12 @@ import Foundation
 	/// Seeks within the track being heard.
 	@objc public func seek(to seconds: Double) {
 		guard let feeder, let renderer, let track = currentTrack else { return }
-		// Duck briefly so the cut to the new position is not a step; the
-		// transport comes back up when the new position is heard.
-		cog_gain_ramp_to(cog_renderer_transport(renderer), 0, UInt32((output?.format.sampleRate ?? 48000) * 0.005))
+		// The renderer crossfades from what it was about to play to the new
+		// position as it honours the flush; with fades off, it cuts.
+		cog_renderer_set_crossfade_enabled(renderer, Self.fadesEnabled)
 		seekPending = true
 		amountPlayed = seconds
-		DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(6)) {
-			feeder.seek(to: seconds, in: track)
-		}
+		feeder.seek(to: seconds, in: track)
 	}
 
 	@objc public var volume: Double {
@@ -495,10 +495,7 @@ import Foundation
 	private func trackHeard(_ track: EngineTrack, offset: Double, at position: UInt64) {
 		if track === currentTrack && (seekPending || track === initialTrack) {
 			// The start of playback, or a seek within the same track.
-			if seekPending, let renderer {
-				seekPending = false
-				rampTransport(renderer, to: 1, frames: fadeFrames)
-			}
+			seekPending = false
 			initialTrack = nil
 		} else {
 			finishTrack()

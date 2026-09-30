@@ -169,6 +169,19 @@ struct CogRenderer {
 
 	bool starved;
 
+	// Seek crossfade, owned by the render thread once running.
+	size_t fadeFrames;
+	/// cos(pi/2 * k / fadeFrames) for k in 0...fadeFrames.
+	float *fadeTable;
+	/// The discarded audio fading out, and a buffer to build the next in.
+	float *tail;
+	float *scratch;
+	size_t tailLength;
+	size_t tailPosition;
+	/// Frames of new audio faded in so far; fadeFrames when not fading in.
+	size_t fadeInPosition;
+	_Atomic bool crossfadeEnabled;
+
 	_Atomic uint64_t framesRendered;
 	_Atomic uint64_t silentFrames;
 	_Atomic uint64_t underrunEvents;
@@ -191,11 +204,120 @@ CogRenderer *cog_renderer_create(CogRing *ring) {
 	atomic_init(&renderer->silentFrames, 0);
 	atomic_init(&renderer->underrunEvents, 0);
 	atomic_init(&renderer->peak, 0.0f);
+	atomic_init(&renderer->crossfadeEnabled, true);
 	return renderer;
+}
+
+static void renderer_free_crossfade(CogRenderer *renderer) {
+	free(renderer->fadeTable);
+	free(renderer->tail);
+	free(renderer->scratch);
+	renderer->fadeTable = NULL;
+	renderer->tail = NULL;
+	renderer->scratch = NULL;
+	renderer->fadeFrames = 0;
+	renderer->tailLength = 0;
+	renderer->tailPosition = 0;
+	renderer->fadeInPosition = 0;
+}
+
+bool cog_renderer_set_crossfade_frames(CogRenderer *renderer, size_t frames) {
+	renderer_free_crossfade(renderer);
+	if(!frames) return true;
+
+	const size_t channels = cog_ring_channels(renderer->ring);
+	renderer->fadeTable = malloc((frames + 1) * sizeof(float));
+	renderer->tail = calloc(frames * channels, sizeof(float));
+	renderer->scratch = calloc(frames * channels, sizeof(float));
+	if(!renderer->fadeTable || !renderer->tail || !renderer->scratch) {
+		renderer_free_crossfade(renderer);
+		return false;
+	}
+	for(size_t k = 0; k <= frames; ++k) {
+		renderer->fadeTable[k] = (float)cos(M_PI_2 * (double)k / (double)frames);
+	}
+	renderer->fadeTable[frames] = 0.0f;
+	renderer->fadeFrames = frames;
+	renderer->fadeInPosition = frames;
+	return true;
+}
+
+void cog_renderer_set_crossfade_enabled(CogRenderer *renderer, bool enabled) {
+	atomic_store_explicit(&renderer->crossfadeEnabled, enabled, memory_order_relaxed);
+}
+
+/// The fade-out gain `position` frames into a tail of `length` frames.
+static float fade_out_gain(const CogRenderer *renderer, size_t position, size_t length) {
+	return renderer->fadeTable[(uint64_t)position * renderer->fadeFrames / length];
+}
+
+/// The fade-in gain `position` frames into the new audio.
+static float fade_in_gain(const CogRenderer *renderer, size_t position) {
+	return position >= renderer->fadeFrames ? 1.0f : renderer->fadeTable[renderer->fadeFrames - position];
+}
+
+/// Honours a pending flush of the ring, keeping what it discards to fade out
+/// when crossfading.
+static void renderer_take_flush(CogRenderer *renderer, uint32_t channels) {
+	CogRing *ring = renderer->ring;
+	const size_t fadeFrames = renderer->fadeFrames;
+	// A paused transport has nothing audible to fade out.
+	const bool crossfade = fadeFrames && renderer->transport->level > 0.0f &&
+	                       atomic_load_explicit(&renderer->crossfadeEnabled, memory_order_relaxed);
+
+	const uint64_t before = cog_ring_flush_acknowledged(ring);
+	size_t kept = 0;
+	const size_t discarded = cog_ring_honour_flush_keeping(ring, crossfade ? renderer->scratch : NULL, crossfade ? fadeFrames : 0, &kept);
+	if(cog_ring_flush_acknowledged(ring) == before) return;
+
+	// Emptied on purpose, so running dry now is not an underrun.
+	if(discarded) renderer->starved = true;
+
+	if(!crossfade) {
+		renderer->tailLength = 0;
+		renderer->tailPosition = 0;
+		renderer->fadeInPosition = fadeFrames;
+		return;
+	}
+
+	// The new tail is what was about to be heard, as it would have been:
+	// the kept frames at the fade-in gain if one was under way, plus the rest
+	// of an earlier tail still fading out. It then fades out from there, so
+	// a seek during a crossfade does not step either.
+	size_t earlier = renderer->tailLength - renderer->tailPosition;
+	if(earlier > fadeFrames) earlier = fadeFrames;
+	const size_t length = kept > earlier ? kept : earlier;
+	for(size_t k = 0; k < length; ++k) {
+		float *frame = renderer->scratch + k * channels;
+		if(k < kept) {
+			const float in = fade_in_gain(renderer, renderer->fadeInPosition + k);
+			for(uint32_t channel = 0; channel < channels; ++channel) {
+				frame[channel] *= in;
+			}
+		} else {
+			memset(frame, 0, channels * sizeof(float));
+		}
+		if(k < earlier) {
+			const size_t position = renderer->tailPosition + k;
+			const float out = fade_out_gain(renderer, position, renderer->tailLength);
+			const float *old = renderer->tail + position * channels;
+			for(uint32_t channel = 0; channel < channels; ++channel) {
+				frame[channel] += old[channel] * out;
+			}
+		}
+	}
+
+	float *swap = renderer->tail;
+	renderer->tail = renderer->scratch;
+	renderer->scratch = swap;
+	renderer->tailLength = length;
+	renderer->tailPosition = 0;
+	renderer->fadeInPosition = 0;
 }
 
 void cog_renderer_destroy(CogRenderer *renderer) {
 	if(!renderer) return;
+	renderer_free_crossfade(renderer);
 	cog_gain_destroy(renderer->volume);
 	cog_gain_destroy(renderer->transport);
 	free(renderer);
@@ -217,7 +339,7 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	CogRing *ring = renderer->ring;
 	const uint32_t channels = cog_ring_channels(ring);
 
-	cog_ring_honour_flush(ring);
+	renderer_take_flush(renderer, channels);
 	const size_t got = cog_ring_read(ring, out, frames);
 	if(got < frames) {
 		memset(out + got * channels, 0, (frames - got) * channels * sizeof(float));
@@ -229,6 +351,26 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 		}
 	}
 	renderer->starved = got < frames;
+
+	// The new audio fades in from its first frame, however late it arrives.
+	size_t frame = 0;
+	while(frame < got && renderer->fadeInPosition < renderer->fadeFrames) {
+		const float in = fade_in_gain(renderer, renderer->fadeInPosition++);
+		float *sample = out + frame++ * channels;
+		for(uint32_t channel = 0; channel < channels; ++channel) {
+			sample[channel] *= in;
+		}
+	}
+	// The discarded audio fades out on its own clock, over any silence too.
+	for(frame = 0; frame < frames && renderer->tailPosition < renderer->tailLength; ++frame) {
+		const size_t position = renderer->tailPosition++;
+		const float gain = fade_out_gain(renderer, position, renderer->tailLength);
+		const float *old = renderer->tail + position * channels;
+		float *sample = out + frame * channels;
+		for(uint32_t channel = 0; channel < channels; ++channel) {
+			sample[channel] += old[channel] * gain;
+		}
+	}
 
 	cog_gain_apply(renderer->transport, out, frames, channels);
 	cog_gain_apply(renderer->volume, out, frames, channels);

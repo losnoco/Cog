@@ -245,7 +245,7 @@ Each stage ships on its own and leaves the old engine working.
    *Not yet behind the switch:* DSP (EQ, HRTF, FreeSurround, time-stretch),
    visualization, DoP, HDCD indicator, `resetNextStreams` (a playlist edit
    after the next track has started decoding only applies from the track
-   after it), seek crossfade (seeks duck for 5 ms instead), live
+   after it), seek crossfade, live
    `volumeScaling` changes, suspend-on-pause idle timer, and device changes
    rebuild playback through `restartPlaybackAtCurrentPosition` rather than
    in place.
@@ -303,6 +303,18 @@ Each stage ships on its own and leaves the old engine working.
      converter at the join and asks the delegate again for the track after
      the one before it. A join already reached is left alone and the next
      one tried, so a track that has begun playing is never cut.
+   - Seek crossfade: the renderer does it, in C, as it honours the shallow
+     ring's flush. It keeps up to 200 ms of the discarded frames (what was
+     about to be heard) and fades them out on an equal-power curve while
+     the new audio fades in on the matching one from its first frame, so a
+     slow seek fades out into silence rather than stopping. A seek during a
+     crossfade folds the one under way into the new tail, so nothing steps.
+     With fades off, or while paused, a seek cuts, as it will for DoP. The
+     old engine used linear ramps and ran the fading audio through its own
+     copy of the HRTF, downmix and fader; the tail here has already been
+     through the chain. Still to come: the old engine also crossfaded a
+     manual track change (`play:` while playing), which the new engine
+     starts from scratch.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
 
 ## Open questions

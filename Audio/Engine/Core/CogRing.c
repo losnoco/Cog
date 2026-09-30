@@ -132,6 +132,17 @@ uint64_t cog_ring_flush_acknowledged(const CogRing *ring) {
 
 // MARK: - Consumer
 
+/// Copies `count` unread frames starting at position `from`.
+static void copy_out(const CogRing *ring, uint64_t from, float *frames, size_t count) {
+	const size_t start = (size_t)from & ring->mask;
+	const size_t first = (count < ring->capacity - start) ? count : ring->capacity - start;
+	const size_t channels = ring->channels;
+	memcpy(frames, ring->storage + start * channels, first * channels * sizeof(float));
+	if(count > first) {
+		memcpy(frames + first * channels, ring->storage, (count - first) * channels * sizeof(float));
+	}
+}
+
 size_t cog_ring_readable(const CogRing *ring) {
 	const uint64_t write = atomic_load_explicit(&ring->writePosition, memory_order_acquire);
 	const uint64_t read = atomic_load_explicit(&ring->readPosition, memory_order_relaxed);
@@ -146,13 +157,7 @@ size_t cog_ring_read(CogRing *ring, float *frames, size_t count) {
 	if(!count) return 0;
 
 	if(frames) {
-		const size_t start = (size_t)read & ring->mask;
-		const size_t first = (count < ring->capacity - start) ? count : ring->capacity - start;
-		const size_t channels = ring->channels;
-		memcpy(frames, ring->storage + start * channels, first * channels * sizeof(float));
-		if(count > first) {
-			memcpy(frames + first * channels, ring->storage, (count - first) * channels * sizeof(float));
-		}
+		copy_out(ring, read, frames, count);
 	}
 
 	atomic_store_explicit(&ring->readPosition, read + count, memory_order_release);
@@ -164,6 +169,11 @@ uint64_t cog_ring_read_position(const CogRing *ring) {
 }
 
 size_t cog_ring_honour_flush(CogRing *ring) {
+	return cog_ring_honour_flush_keeping(ring, NULL, 0, NULL);
+}
+
+size_t cog_ring_honour_flush_keeping(CogRing *ring, float *kept, size_t maxKept, size_t *keptCount) {
+	if(keptCount) *keptCount = 0;
 	const uint64_t requested = atomic_load_explicit(&ring->flushRequested, memory_order_acquire);
 	if(requested == atomic_load_explicit(&ring->flushAcknowledged, memory_order_relaxed)) {
 		return 0;
@@ -174,6 +184,12 @@ size_t cog_ring_honour_flush(CogRing *ring) {
 	size_t discarded = 0;
 	if(target > read) {
 		discarded = (size_t)(target - read);
+		if(kept && maxKept) {
+			// Still unread, so the producer cannot have overwritten them.
+			const size_t count = discarded < maxKept ? discarded : maxKept;
+			copy_out(ring, read, kept, count);
+			if(keptCount) *keptCount = count;
+		}
 		atomic_store_explicit(&ring->readPosition, target, memory_order_release);
 	}
 	atomic_store_explicit(&ring->flushAcknowledged, requested, memory_order_release);

@@ -80,6 +80,11 @@ uint64_t cog_ring_read_position(const CogRing *ring);
 /// frames discarded. Call before reading.
 size_t cog_ring_honour_flush(CogRing *ring);
 
+/// As `cog_ring_honour_flush`, first copying up to `maxKept` of the
+/// discarded frames (the ones that would have been read next) into `kept`
+/// and setting `keptCount` to how many.
+size_t cog_ring_honour_flush_keeping(CogRing *ring, float *_Nullable kept, size_t maxKept, size_t *_Nullable keptCount);
+
 #pragma clang assume_nonnull end
 
 #ifdef __cplusplus

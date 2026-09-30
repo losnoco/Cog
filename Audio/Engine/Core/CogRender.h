@@ -73,6 +73,18 @@ CogGain *cog_renderer_volume(const CogRenderer *renderer);
 /// Pause, resume and stop fades.
 CogGain *cog_renderer_transport(const CogRenderer *renderer);
 
+/// Seek crossfades. When the renderer honours a flush of its ring while the
+/// transport is audible, it keeps up to `frames` of the frames it discards
+/// (the ones about to be heard) and fades them out on an equal-power curve
+/// over the new audio, which fades in on the matching curve from its first
+/// frame. Zero turns this off. Allocates, so call only while the renderer is
+/// not running.
+bool cog_renderer_set_crossfade_frames(CogRenderer *renderer, size_t frames);
+
+/// Whether the next flushes crossfade or cut; from any thread. A cut is for
+/// when fades are turned off, and for DoP, which cannot be mixed.
+void cog_renderer_set_crossfade_enabled(CogRenderer *renderer, bool enabled);
+
 /// Render thread: fills `frames` frames of `out` (in the ring's channel
 /// count) and returns how many came from the ring; the rest are silence.
 size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames);
