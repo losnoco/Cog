@@ -16,6 +16,8 @@ public enum PresentationEvent {
 	/// From here each output frame covers `ratio` frames of the track
 	/// (time-stretching).
 	case rate(Double)
+	/// `track`'s properties and metadata changed, as heard from here.
+	case info([AnyHashable: Any], EngineTrack)
 }
 
 /// Events placed at absolute positions in the shallow ring. The shallow
@@ -231,6 +233,8 @@ public final class Pump {
 				appliedGain = track.gain
 				rampTarget = appliedGain
 				EngineLog.logger.info("Track start: \(track.url.lastPathComponent, privacy: .public) at \(offset, format: .fixed(precision: 2)) s, gain \(track.gain, format: .fixed(precision: 4))")
+			case let .info(info, track):
+				presentation.append(.info(info, track), at: eventPosition)
 			case .endOfStream:
 				endOfStream = true
 			}

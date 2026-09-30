@@ -21,6 +21,9 @@ import Foundation
 	func playbackEngineReportPlayCount(_ userInfo: Any?)
 	func playbackEngineReportScrobble(_ userInfo: Any?)
 	func playbackEngineSetError(_ error: Bool, forTrack userInfo: Any?)
+	/// Main thread: the track's properties and metadata changed (a stream
+	/// title, say), as heard now.
+	func playbackEnginePushInfo(_ info: [AnyHashable: Any], toTrack userInfo: Any?)
 	/// The output device changed in a way that needs playback rebuilt.
 	func playbackEngineRestartAtCurrentPosition(_ userInfo: Any?)
 
@@ -577,6 +580,8 @@ import Foundation
 					currentStart = position
 				}
 				currentRatio = ratio
+			case let .info(info, track):
+				host?.playbackEnginePushInfo(info, toTrack: track.userInfo)
 			case .endOfStream:
 				if let next = feeder?.takeHandoff() {
 					handOff(to: next)

@@ -70,8 +70,11 @@ public final class Feeder {
 			let current = decoder
 			lock.withLock { interruptible = current }
 			decoderIsLossless = (current?.properties()?["encoding"] as? String) == "lossless"
+			metadataObserver = current.map { MetadataObserver(watching: $0) }
 		}
 	}
+	/// Notices the decoder's metadata changing (from whichever thread).
+	private var metadataObserver: MetadataObserver?
 	/// As InputNode marked every chunk: ChunkList only looks for HDCD in
 	/// lossless audio.
 	private var decoderIsLossless = false
@@ -408,6 +411,14 @@ public final class Feeder {
 
 	private func feed(_ chunk: AudioChunk) {
 		chunk.lossless = decoderIsLossless
+		if let decoder, let track, metadataObserver?.takeChange() == true {
+			// Heard from the audio decoded after the change.
+			var info = decoder.properties() ?? [:]
+			for (key, value) in decoder.metadata() ?? [:] {
+				info[key] = value
+			}
+			timeline.append(.info(info, track), at: converter.outputPositionOfNextInput, epoch: epoch)
+		}
 		floatConverter.add(chunk)
 		while !floatConverter.isEmpty() {
 			let floats = floatConverter.removeSamples(asFloat32: 4096)
@@ -487,5 +498,40 @@ public final class Feeder {
 			return nil
 		}
 		return decoder
+	}
+}
+
+/// Watches a decoder's `metadata` through KVO, as InputNode did. Decoders
+/// may announce a change from any thread, so the change is only noted, and
+/// the feeder picks it up between chunks.
+private final class MetadataObserver: NSObject {
+	private let decoder: NSObject?
+	private let changed = LockedValue(false)
+	private static var context = 0
+
+	init(watching decoder: CogDecoder) {
+		self.decoder = decoder as? NSObject
+		super.init()
+		self.decoder?.addObserver(self, forKeyPath: "metadata", options: [], context: &Self.context)
+	}
+
+	deinit {
+		decoder?.removeObserver(self, forKeyPath: "metadata", context: &Self.context)
+	}
+
+	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+		guard context == &Self.context else {
+			super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+			return
+		}
+		changed.withLock { $0 = true }
+	}
+
+	/// Whether the metadata changed since the last call.
+	func takeChange() -> Bool {
+		changed.withLock { value in
+			defer { value = false }
+			return value
+		}
 	}
 }

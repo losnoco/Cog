@@ -949,6 +949,10 @@ static BOOL newAudioEngineEnabled(void) {
 	[self reportScrobbleForTrack:userInfo];
 }
 
+- (void)playbackEnginePushInfo:(NSDictionary *)info toTrack:(id)userInfo {
+	[self pushInfo:info toTrack:userInfo];
+}
+
 - (void)playbackEngineSetError:(BOOL)error forTrack:(id)userInfo {
 	[self setError:error forTrack:userInfo];
 }

@@ -61,6 +61,9 @@ public enum TimelineEvent {
 	/// `track` becomes audible here, `offset` seconds into it (non-zero after
 	/// a seek).
 	case trackStart(EngineTrack, offset: Double)
+	/// The decoder's properties and metadata merged, as they changed here
+	/// (a stream title, say), for `track`.
+	case info([AnyHashable: Any], EngineTrack)
 	/// Nothing follows.
 	case endOfStream
 }

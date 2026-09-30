@@ -132,7 +132,7 @@ final class FeederTests: XCTestCase {
 				switch entry.event {
 				case let .format(format): channels = format.channels
 				case .endOfStream: ended = true
-				case .trackStart: break
+				case .trackStart, .info: break
 				}
 			}
 			if ended && cog_ring_readable(ring) == 0 { return false }

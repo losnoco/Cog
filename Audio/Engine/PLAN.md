@@ -293,6 +293,14 @@ Each stage ships on its own and leaves the old engine working.
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote
    Control and MCP paths. Flip the default.
+   - Metadata changes (`pushInfo`): the feeder watches the decoder's
+     `metadata` through KVO, as InputNode did, and puts the merged
+     properties and metadata on the timeline at the first frame decoded
+     after the change; the pump turns it into a presentation event, and the
+     monitor pushes it to the app when that audio is heard. InputNode
+     pushed it as soon as the decoder changed, up to the whole buffer early
+     (about ten seconds in this engine's deep ring), so a stream title
+     changed before the song did.
    - HDCD: decoding comes with ChunkList, which only looks for it in
      lossless audio, so the feeder marks each chunk lossless or not from
      the decoder's `encoding`, as InputNode did (most decoders already

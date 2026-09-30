@@ -34,6 +34,9 @@ final class RecordingHost: NSObject, PlaybackEngineHost {
 	func playbackEngineReportPlayCount(_ userInfo: Any?) { log.append("played \(name(userInfo))") }
 	func playbackEngineReportScrobble(_ userInfo: Any?) { log.append("scrobble \(name(userInfo))") }
 	func playbackEngineSetError(_ error: Bool, forTrack userInfo: Any?) { log.append("error \(name(userInfo))") }
+	func playbackEnginePushInfo(_ info: [AnyHashable: Any], toTrack userInfo: Any?) {
+		log.append("info \(name(userInfo)): \(info["title"] as? String ?? "?")")
+	}
 	func playbackEngineRestartAtCurrentPosition(_ userInfo: Any?) { log.append("restart") }
 	func playbackEngineBeginEqualizer(_ equalizer: CogEqualizer) { log.append("eq on") }
 	func playbackEngineEndEqualizer(_ equalizer: CogEqualizer) { log.append("eq off") }
