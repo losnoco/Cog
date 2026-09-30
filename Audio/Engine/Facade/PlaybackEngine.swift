@@ -249,6 +249,9 @@ import Foundation
 
 		// A DoP carrier needs the device at its rate, rendering integers.
 		var carrier = decoder.flatMap { carrierRate(for: $0.properties() ?? [:], output: output) }
+		if let properties = decoder?.properties() {
+			logCarrierDecision(properties, output: output, carrier: carrier)
+		}
 		if let rate = carrier, !(allowsDeviceRateChanges ? output.setNominalSampleRate(rate) : abs(output.nominalSampleRate - rate) < 1) {
 			EngineLog.logger.notice("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz for DoP; converting to PCM")
 			carrier = nil
@@ -335,6 +338,15 @@ import Foundation
 
 	private func carrierRate(for properties: [AnyHashable: Any], output: DeviceOutput) -> Double? {
 		Self.carrierRate(for: properties, deviceChannels: output.format.channels, supports: carrierSupport(output))
+	}
+
+	/// Why a track did or did not get a DoP carrier; kept by the system log.
+	private func logCarrierDecision(_ properties: [AnyHashable: Any], output: DeviceOutput, carrier: Double?) {
+		let bits = (properties["bitsPerSample"] as? NSNumber)?.intValue ?? 0
+		let rate = (properties["sampleRate"] as? NSNumber)?.doubleValue ?? 0
+		let channels = (properties["channels"] as? NSNumber)?.intValue ?? 0
+		let floating = (properties["floatingPoint"] as? NSNumber)?.boolValue ?? false
+		EngineLog.logger.notice("DoP decision: setting \(UserDefaults.standard.bool(forKey: "enableDoP")), device \(output.deviceID) following the system default \(output.followsSystemDefault), \(output.format.channels) channels at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz; track \(bits) bits\(floating ? " float" : "", privacy: .public), \(rate, format: .fixed(precision: 0)) Hz, \(channels) channels; carrier \(carrier ?? 0, format: .fixed(precision: 0)) Hz")
 	}
 
 	/// Whether the device can carry DoP at a rate: never while the DoP
