@@ -26,7 +26,9 @@ static void *kChunkListContext = &kChunkListContext;
  * DSD 2 PCM: Stage 1:
  * Decimate by factor 8
  * (one byte (8 samples) -> one float sample)
- * The bits are processed from least signicifant to most signicicant.
+ * Each byte holds its earliest sample in the most significant bit, as
+ * DSDIFF stores it; least-significant-first bytes (DSF's order) are
+ * reversed on the way in when the chunk says so.
  * @author Sebastian Gesemann
  */
 
@@ -224,7 +226,7 @@ static int dsd2pcm_latency(void *_state) {
 		return 0;
 }
 
-static void dsd2pcm_process(void *_state, const uint8_t *src, size_t sofs, size_t sinc, float *dest, size_t dofs, size_t dinc, size_t len) {
+static void dsd2pcm_process(void *_state, const uint8_t *src, size_t sofs, size_t sinc, float *dest, size_t dofs, size_t dinc, size_t len, BOOL reverseBits) {
 	struct dsd2pcm_state *state = (struct dsd2pcm_state *)_state;
 	int bite1, bite2, temp;
 	float sample;
@@ -236,7 +238,7 @@ static void dsd2pcm_process(void *_state, const uint8_t *src, size_t sofs, size_
 	int fpos = state->fpos;
 	while(len > 0) {
 		fifo[fpos] = REVERSE_BITS[fifo[fpos]] & 0xFF;
-		fifo[(fpos + FILT_LOOKUP_PARTS) & FIFO_OFS_MASK] = src[sofs] & 0xFF;
+		fifo[(fpos + FILT_LOOKUP_PARTS) & FIFO_OFS_MASK] = (reverseBits ? REVERSE_BITS[src[sofs]] : src[sofs]) & 0xFF;
 		sofs += sinc;
 		temp = (fpos + 1) & FIFO_OFS_MASK;
 		sample = 0;
@@ -255,18 +257,21 @@ static void dsd2pcm_process(void *_state, const uint8_t *src, size_t sofs, size_
 	state->fpos = fpos;
 }
 
-static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels, void **dsd2pcm) {
+static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels, BOOL reverseBits, void **dsd2pcm) {
 	for(size_t channel = 0; channel < channels; ++channel) {
-		dsd2pcm_process(dsd2pcm[channel], input, channel, channels, output, channel, channels, count);
+		dsd2pcm_process(dsd2pcm[channel], input, channel, channels, output, channel, channels, count, reverseBits);
 	}
 }
 #else
-static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels) {
+static uint8_t reverse_bits8(uint8_t value);
+
+static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels, BOOL reverseBits) {
 	const uint8_t *iptr = input;
 	float *optr = output;
 	for(size_t index = 0; index < count; ++index) {
 		for(size_t channel = 0; channel < channels; ++channel) {
 			uint8_t sample = *iptr++;
+			if(reverseBits) sample = reverse_bits8(sample);
 			cblas_scopy(8, &dsd2float[sample][0], 1, optr++, (int)channels);
 		}
 		optr += channels * 7;
@@ -927,7 +932,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				inputBuffer = &tempData[buffer_adder];
 				inputChanged = YES;
 			} else {
-				convert_dsd_to_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame
+				convert_dsd_to_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, [inChunk dsdDoPReverseBits]
 #if DSD_DECIMATE
 							   ,
 							   dsd2pcm
