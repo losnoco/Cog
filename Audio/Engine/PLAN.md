@@ -243,7 +243,7 @@ Each stage ships on its own and leaves the old engine working.
      default device (silently); `PumpTests` offline.
 
    *Not yet behind the switch:* DSP (EQ, HRTF, FreeSurround, time-stretch),
-   visualization, HDCD indicator, `resetNextStreams` (a playlist edit
+   visualization, `resetNextStreams` (a playlist edit
    after the next track has started decoding only applies from the track
    after it), seek crossfade, live
    `volumeScaling` changes, suspend-on-pause idle timer, and device changes
@@ -293,6 +293,11 @@ Each stage ships on its own and leaves the old engine working.
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote
    Control and MCP paths. Flip the default.
+   - HDCD: decoding comes with ChunkList, which only looks for it in
+     lossless audio, so the feeder marks each chunk lossless or not from
+     the decoder's `encoding`, as InputNode did (most decoders already
+     do). There is no indicator to port: the UI's was removed, and the old
+     engine's sustain calls end in a commented-out delegate method.
    - `resetNextStreams`: the feeder remembers each join (the deep-ring
      frame where a track began after another, and the end of stream). On a
      playlist edit it asks the pump, through the timeline, to abandon from

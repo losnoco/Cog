@@ -69,8 +69,12 @@ public final class Feeder {
 		didSet {
 			let current = decoder
 			lock.withLock { interruptible = current }
+			decoderIsLossless = (current?.properties()?["encoding"] as? String) == "lossless"
 		}
 	}
+	/// As InputNode marked every chunk: ChunkList only looks for HDCD in
+	/// lossless audio.
+	private var decoderIsLossless = false
 	private var track: EngineTrack?
 	private var epoch: UInt64 = 0
 	private var writtenFormat: StreamFormat?
@@ -403,6 +407,7 @@ public final class Feeder {
 	// MARK: - Conversion
 
 	private func feed(_ chunk: AudioChunk) {
+		chunk.lossless = decoderIsLossless
 		floatConverter.add(chunk)
 		while !floatConverter.isEmpty() {
 			let floats = floatConverter.removeSamples(asFloat32: 4096)
