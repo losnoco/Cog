@@ -325,7 +325,12 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 }
 
 + (float)priority {
-	return 1.0;
+	// Ahead of the CoreAudio plugin, which also takes Ogg Vorbis now that
+	// macOS decodes it: Apple's decoder gets the ends of the stream wrong,
+	// fading out the last ~20 ms and misplacing the start, so a looped
+	// track pops at the join. At equal priority, which of the two opened a
+	// file was down to chance.
+	return 2.0;
 }
 
 + (NSArray *)fileTypeAssociations {
