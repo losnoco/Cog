@@ -30,6 +30,11 @@ import Foundation
 	/// Main thread: the equalizer started or stopped being used.
 	func playbackEngineBeginEqualizer(_ equalizer: CogEqualizer)
 	func playbackEngineEndEqualizer(_ equalizer: CogEqualizer)
+
+	/// Main thread: what reaches the device changed, as heard now, described
+	/// with the keys of `CogAudioOutputStatusDidChangeNotification`; nil once
+	/// nothing is playing.
+	@objc optional func playbackEngineOutputStatusDidChange(_ status: [AnyHashable: Any]?)
 }
 
 /// The new engine behind `AudioPlayer`: feeder and DSP threads, the device
@@ -217,6 +222,7 @@ import Foundation
 		tearDown()
 		guard build(for: track, decoder: decoder, offset: seconds, startPaused: startPaused) else {
 			decoder?.close()
+			clearOutputStatus()
 			return false
 		}
 
@@ -432,6 +438,7 @@ import Foundation
 		tearDown()
 		guard build(for: next.track, decoder: next.decoder, offset: 0, startPaused: false) else {
 			next.decoder.close()
+			clearOutputStatus()
 			host?.playbackEngineSetError(true, forTrack: next.track.userInfo)
 			host?.playbackEngineDidChangeStatus(.stopped, userInfo: heard.0?.userInfo)
 			host?.playbackEngineDidStopNaturally(heard.0?.userInfo)
@@ -455,6 +462,7 @@ import Foundation
 	@objc public func stop() {
 		let userInfo = currentTrack?.userInfo
 		tearDown()
+		clearOutputStatus()
 		host?.playbackEngineDidChangeStatus(.stopped, userInfo: userInfo)
 	}
 
@@ -585,6 +593,9 @@ import Foundation
 		feeder = nil
 		pump = nil
 		renderer = nil
+		// The output status stays until the next pipeline's is heard, so a
+		// rebuild does not blank it; stopping clears it.
+		heardProcessing = nil
 		currentTrack = nil
 		initialTrack = nil
 		seekPending = false
@@ -653,6 +664,8 @@ import Foundation
 				currentRatio = ratio
 			case let .info(info, track):
 				host?.playbackEnginePushInfo(info, toTrack: track.userInfo)
+			case let .processing(processing):
+				heardProcessing = processing
 			case .endOfStream:
 				if let next = feeder?.takeHandoff() {
 					handOff(to: next)
@@ -661,6 +674,7 @@ import Foundation
 				finishTrack()
 				let userInfo = currentTrack?.userInfo
 				tearDown()
+				clearOutputStatus()
 				host?.playbackEngineDidChangeStatus(.stopped, userInfo: userInfo)
 				host?.playbackEngineDidStopNaturally(userInfo)
 				return
@@ -671,6 +685,68 @@ import Foundation
 			let seconds = currentOffset + Double(heard - currentStart) / output.format.sampleRate * currentRatio
 			advanceAmountPlayed(to: seconds, of: track)
 		}
+
+		updateOutputStatus(output: output)
+	}
+
+	// MARK: - Output status
+
+	/// What the DSP thread did to the audio being heard.
+	private var heardProcessing: Pump.Processing?
+	/// The status last sent to the host; nil sends the next one regardless.
+	private var publishedStatus: OutputStatus?
+	/// Whether the host has been sent a status since it was last told of none.
+	private var outputStatusShown = false
+
+	/// Tells the host what is being heard, whenever any of it changed.
+	private func updateOutputStatus(output: DeviceOutput) {
+		guard let processing = heardProcessing, let track = currentTrack, currentHeard else { return }
+		let status = OutputStatus(source: SourceFormat(properties: track.sourceProperties),
+		                          decodesHDCD: track.hdcdDetected && UserDefaults.standard.bool(forKey: "enableHDCD"),
+		                          processing: processing,
+		                          stageModifications: stageModifications(processing),
+		                          trackGain: track.gain,
+		                          volume: volumeLevel,
+		                          deviceID: output.deviceID,
+		                          followsSystemDefault: output.followsSystemDefault,
+		                          render: output.format,
+		                          integerRender: output.integerRender,
+		                          exclusive: output.isExclusive)
+		guard status != publishedStatus else { return }
+		publishedStatus = status
+		outputStatusShown = true
+		host?.playbackEngineOutputStatusDidChange?(status.userInfo(deviceName: output.deviceName,
+		                                                           virtualFormats: output.streamFormats(physical: false),
+		                                                           physicalFormats: output.streamFormats(physical: true)))
+	}
+
+	/// The modifications of the stages that ran and changed the audio, in
+	/// chain order.
+	private func stageModifications(_ processing: Pump.Processing) -> [String] {
+		let ran = Set(processing.stages)
+		var modifications: [String] = []
+		if ran.contains(ObjectIdentifier(timeStretch)) {
+			modifications.append(CogAudioOutputModificationTimeStretch)
+		}
+		// FreeSurround upmixes stereo and passes anything else through.
+		if ran.contains(ObjectIdentifier(freeSurround)) && processing.input.channels == 2 {
+			modifications.append(CogAudioOutputModificationFreeSurround)
+		}
+		if ran.contains(ObjectIdentifier(equalizer)) {
+			modifications.append(CogAudioOutputModificationEqualizer)
+		}
+		if ran.contains(ObjectIdentifier(hrtf)) {
+			modifications.append(CogAudioOutputModificationHRTF)
+		}
+		return modifications
+	}
+
+	/// Tells the host nothing is playing any more.
+	private func clearOutputStatus() {
+		publishedStatus = nil
+		guard outputStatusShown else { return }
+		outputStatusShown = false
+		host?.playbackEngineOutputStatusDidChange?(nil)
 	}
 
 	/// Tells the spectrum and oscilloscope how far behind the device the
@@ -868,6 +944,8 @@ import Foundation
 		guard feeder != nil, let output else { return }
 		switch change {
 		case .format:
+			// A stream's format may have changed under the same render format.
+			publishedStatus = nil
 			guard output.hardwareFormatDiffers() else {
 				// Whatever changed, the I/O buffer may have been reset.
 				output.reassertBufferSize()

@@ -16,6 +16,22 @@ public final class EngineTrack: NSObject {
 	private let lock = UnfairLock()
 	private var storedGain: Float
 	private var storedRGInfo: [AnyHashable: Any]?
+	private var storedSourceProperties: [AnyHashable: Any]?
+	private var storedHDCD = false
+
+	/// The decoder's properties as the track started, which describe what it
+	/// decodes to. Set by the feeder; readable from any thread.
+	public internal(set) var sourceProperties: [AnyHashable: Any]? {
+		get { lock.withLock { storedSourceProperties } }
+		set { lock.withLock { storedSourceProperties = newValue } }
+	}
+
+	/// Whether HDCD has been found in the track's audio. Set by the feeder;
+	/// readable from any thread.
+	public internal(set) var hdcdDetected: Bool {
+		get { lock.withLock { storedHDCD } }
+		set { lock.withLock { storedHDCD = newValue } }
+	}
 
 	/// Linear ReplayGain (or volume scaling), applied on the DSP thread so a
 	/// change is heard within the shallow ring rather than after the deep

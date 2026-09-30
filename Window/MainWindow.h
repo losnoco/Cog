@@ -11,6 +11,7 @@
 @interface MainWindow : NSWindow {
 	IBOutlet NSView *playlistView;
 	IBOutlet NSToolbar *mainToolbar;
+	IBOutlet NSTextField *outputFormatField;
 	IBOutlet NSSearchField *searchField;
 }
 

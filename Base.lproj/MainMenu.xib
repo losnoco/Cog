@@ -892,32 +892,55 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                     </scrollView>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="778">
-                        <rect key="frame" x="531" y="4" width="261" height="14"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="center" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
-                            <font key="font" metaFont="controlContent" size="11"/>
-                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                        <connections>
-                            <binding destination="218" name="displayPatternValue2" keyPath="currentStatus" previousBinding="Kih-ky-A1h" id="5bQ-Qy-2KR">
-                                <dictionary key="options">
-                                    <string key="NSDisplayPattern">%{value1}@%{value2}@</string>
-                                </dictionary>
-                            </binding>
-                            <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="Kih-ky-A1h">
-                                <dictionary key="options">
-                                    <string key="NSDisplayPattern">%{value1}@%{value2}@</string>
-                                    <string key="NSValueTransformerName">TotalTimeTransformer</string>
-                                </dictionary>
-                            </binding>
-                        </connections>
-                    </textField>
+                    <view translatesAutoresizingMaskIntoConstraints="NO" id="Dac-Fm-Bar" userLabel="Bottom Status Bar">
+                        <rect key="frame" x="0.0" y="0.0" width="1281" height="22"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="778">
+                                <rect key="frame" x="8" y="4" width="261" height="14"/>
+                                <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="left" title="Total Duration: 00 hours 00 minutes 00 seconds" bezelStyle="round" id="1473">
+                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="218" name="displayPatternValue2" keyPath="currentStatus" previousBinding="Kih-ky-A1h" id="5bQ-Qy-2KR">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayPattern">%{value1}@%{value2}@</string>
+                                        </dictionary>
+                                    </binding>
+                                    <binding destination="218" name="displayPatternValue1" keyPath="totalTime" id="Kih-ky-A1h">
+                                        <dictionary key="options">
+                                            <string key="NSDisplayPattern">%{value1}@%{value2}@</string>
+                                            <string key="NSValueTransformerName">TotalTimeTransformer</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dac-Fm-Lbl" userLabel="Core Audio Output Format">
+                                <rect key="frame" x="281" y="4" width="992" height="14"/>
+                                <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Output: —" id="Dac-Fm-Cell">
+                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="22" id="Dac-Fm-Hgt"/>
+                            <constraint firstItem="778" firstAttribute="leading" secondItem="Dac-Fm-Bar" secondAttribute="leading" constant="8" id="Dac-Fm-Leading"/>
+                            <constraint firstItem="778" firstAttribute="centerY" secondItem="Dac-Fm-Bar" secondAttribute="centerY" id="Dac-Fm-CtrY"/>
+                            <constraint firstItem="Dac-Fm-Lbl" firstAttribute="leading" secondItem="778" secondAttribute="trailing" constant="12" id="Dac-Fm-Gap"/>
+                            <constraint firstAttribute="trailing" secondItem="Dac-Fm-Lbl" secondAttribute="trailing" constant="8" id="Dac-Fm-Trailing"/>
+                            <constraint firstItem="Dac-Fm-Lbl" firstAttribute="centerY" secondItem="Dac-Fm-Bar" secondAttribute="centerY" id="Dac-Fm-LabelY"/>
+                        </constraints>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="206" secondAttribute="trailing" id="cHp-aQ-EyQ"/>
-                    <constraint firstAttribute="bottom" secondItem="778" secondAttribute="bottom" constant="4" id="ecR-9t-bvJ"/>
+                    <constraint firstAttribute="bottom" secondItem="Dac-Fm-Bar" secondAttribute="bottom" id="ecR-9t-bvJ"/>
+                    <constraint firstAttribute="trailing" secondItem="Dac-Fm-Bar" secondAttribute="trailing" id="Dac-Fm-BarTrailing"/>
                     <constraint firstItem="206" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="wrv-PH-gyc"/>
+                    <constraint firstItem="Dac-Fm-Bar" firstAttribute="leading" secondItem="2" secondAttribute="leading" id="Dac-Fm-BarLeading"/>
                 </constraints>
                 <visibilityPriorities>
                     <integer value="1000"/>
@@ -1249,6 +1272,7 @@
                 <outlet property="delegate" destination="226" id="481"/>
                 <outlet property="initialFirstResponder" destination="207" id="720"/>
                 <outlet property="mainToolbar" destination="1523" id="J2X-YK-xV0"/>
+                <outlet property="outputFormatField" destination="Dac-Fm-Lbl" id="Dac-Fm-Outlet"/>
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
                 <outlet property="searchField" destination="1531" id="Lh4-Bw-6Ex"/>
             </connections>

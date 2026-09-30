@@ -14,6 +14,35 @@
 
 #import "CogAudio-Swift.h"
 
+NSNotificationName const CogAudioOutputStatusDidChangeNotification = @"CogAudioOutputStatusDidChangeNotification";
+
+NSString *const CogAudioOutputSourceFormatKey = @"sourceFormat";
+NSString *const CogAudioOutputSourceCodecKey = @"sourceCodec";
+NSString *const CogAudioOutputSourceEncodingKey = @"sourceEncoding";
+NSString *const CogAudioOutputRenderFormatKey = @"renderFormat";
+NSString *const CogAudioOutputDoPKey = @"dop";
+NSString *const CogAudioOutputDeviceNameKey = @"deviceName";
+NSString *const CogAudioOutputSystemDefaultKey = @"systemDefault";
+NSString *const CogAudioOutputExclusiveKey = @"exclusive";
+NSString *const CogAudioOutputVirtualFormatsKey = @"virtualFormats";
+NSString *const CogAudioOutputPhysicalFormatsKey = @"physicalFormats";
+NSString *const CogAudioOutputModificationsKey = @"modifications";
+NSString *const CogAudioOutputTrackGainKey = @"trackGain";
+NSString *const CogAudioOutputFittedChannelsKey = @"fittedChannels";
+NSString *const CogAudioOutputVolumeKey = @"volume";
+
+NSString *const CogAudioOutputModificationDSDToPCM = @"dsdToPCM";
+NSString *const CogAudioOutputModificationHDCD = @"hdcd";
+NSString *const CogAudioOutputModificationPrecision = @"precision";
+NSString *const CogAudioOutputModificationResampling = @"resampling";
+NSString *const CogAudioOutputModificationTrackGain = @"trackGain";
+NSString *const CogAudioOutputModificationTimeStretch = @"timeStretch";
+NSString *const CogAudioOutputModificationFreeSurround = @"freeSurround";
+NSString *const CogAudioOutputModificationEqualizer = @"equalizer";
+NSString *const CogAudioOutputModificationHRTF = @"hrtf";
+NSString *const CogAudioOutputModificationChannelLayout = @"channelLayout";
+NSString *const CogAudioOutputModificationVolume = @"volume";
+
 // Playback runs in the engine (Audio/Engine). It reports back through
 // PlaybackEngineHost, which this class turns into the delegate messages the
 // playlist side has always received.
@@ -347,6 +376,10 @@
 
 - (void)playbackEngineRestartAtCurrentPosition:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:userInfo waitUntilDone:NO];
+}
+
+- (void)playbackEngineOutputStatusDidChange:(NSDictionary *)status {
+	[[NSNotificationCenter defaultCenter] postNotificationName:CogAudioOutputStatusDidChangeNotification object:self userInfo:status];
 }
 
 @end

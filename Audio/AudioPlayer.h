@@ -14,6 +14,58 @@
 #import <CoreAudio/CoreAudio.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
+// What playback sends to the output device, as heard. Posted on the main
+// thread by the AudioPlayer whenever any of it changes (a new track, a DSP
+// setting, the device), and with no userInfo once nothing is playing.
+FOUNDATION_EXPORT NSNotificationName const CogAudioOutputStatusDidChangeNotification;
+
+// NSValue (AudioStreamBasicDescription): the track as its decoder produces
+// it. Missing if the decoder did not describe it.
+FOUNDATION_EXPORT NSString *const CogAudioOutputSourceFormatKey;
+// NSString: the track's codec and encoding ("lossless", "lossy" or
+// "synthesized"), as its decoder names them, if it does.
+FOUNDATION_EXPORT NSString *const CogAudioOutputSourceCodecKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputSourceEncodingKey;
+// NSValue (AudioStreamBasicDescription): what Cog renders for Core Audio.
+FOUNDATION_EXPORT NSString *const CogAudioOutputRenderFormatKey;
+// NSNumber (BOOL): the render format carries DSD over PCM.
+FOUNDATION_EXPORT NSString *const CogAudioOutputDoPKey;
+// NSString: the output device's name, if it has one.
+FOUNDATION_EXPORT NSString *const CogAudioOutputDeviceNameKey;
+// NSNumber (BOOL): Cog follows the system's default output device.
+FOUNDATION_EXPORT NSString *const CogAudioOutputSystemDefaultKey;
+// NSNumber (BOOL): Cog holds the device exclusively (hog mode, mixing off).
+FOUNDATION_EXPORT NSString *const CogAudioOutputExclusiveKey;
+// NSArray of NSValue (AudioStreamBasicDescription): the device's output
+// streams as Core Audio mixes into them, and as the hardware runs.
+FOUNDATION_EXPORT NSString *const CogAudioOutputVirtualFormatsKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputPhysicalFormatsKey;
+// NSArray of the modifications below, in signal order: how Cog changes the
+// decoded samples before Core Audio has them. Empty if it passes them on as
+// decoded; missing if that cannot be told (no source format).
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationsKey;
+// NSNumber (double), with CogAudioOutputModificationTrackGain: the track's
+// gain in dB.
+FOUNDATION_EXPORT NSString *const CogAudioOutputTrackGainKey;
+// NSNumber (int), with CogAudioOutputModificationChannelLayout: the channels
+// the DSP chain produced before they were fitted to the device.
+FOUNDATION_EXPORT NSString *const CogAudioOutputFittedChannelsKey;
+// NSNumber (double), with CogAudioOutputModificationVolume: Cog's volume in
+// percent.
+FOUNDATION_EXPORT NSString *const CogAudioOutputVolumeKey;
+
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationDSDToPCM;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationHDCD;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationPrecision;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationResampling;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationTrackGain;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationTimeStretch;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationFreeSurround;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationEqualizer;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationHRTF;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationChannelLayout;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
+
 @interface AudioPlayer : NSObject {
 	double volume;
 
