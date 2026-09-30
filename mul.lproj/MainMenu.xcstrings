@@ -2173,6 +2173,18 @@
         }
       }
     },
+    "1608.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSSlider\"; ibShadowedToolTip = \"Volume\"; ObjectID = \"1608\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Volume"
+          }
+        }
+      }
+    },
     "1610.label" : {
       "comment" : "Class = \"NSToolbarItem\"; label = \"Volume\"; ObjectID = \"1610\";",
       "extractionState" : "extracted_with_value",
@@ -3379,6 +3391,18 @@
         }
       }
     },
+    "2289.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSSlider\"; ibShadowedToolTip = \"Volume\"; ObjectID = \"2289\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Volume"
+          }
+        }
+      }
+    },
     "2292.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"0:00\"; ObjectID = \"2292\";",
       "extractionState" : "extracted_with_value",
@@ -4180,6 +4204,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Volumen"
+          }
+        }
+      }
+    },
+    "3114.ibShadowedToolTip" : {
+      "comment" : "Class = \"NSSlider\"; ibShadowedToolTip = \"Volume\"; ObjectID = \"3114\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Volume"
           }
         }
       }

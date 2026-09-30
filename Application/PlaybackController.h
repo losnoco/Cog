@@ -47,6 +47,8 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	IBOutlet EqualizerWindowController *equalizerWindowController;
 
 	IBOutlet NSSlider *volumeSlider;
+	IBOutlet NSSlider *miniVolumeSlider;
+	IBOutlet NSSlider *miniPlusVolumeSlider;
 	IBOutlet NSSlider *pitchSlider;
 	IBOutlet NSSlider *tempoSlider;
 	IBOutlet NSButton *lockButton;
