@@ -133,7 +133,7 @@ final class EqualizerStage: NSObject, DSPStage, CogEqualizer {
 		let channels = buffer.format.channels
 		let (preamp, newGains) = lock.withLock { () -> (Float, [Float]?) in
 			defer { gainsChanged = false }
-			return (preamp, gainsChanged ? gains : nil)
+			return (self.preamp, gainsChanged ? gains : nil)
 		}
 		if let newGains {
 			updateCoefficients(newGains, sampleRate: buffer.format.sampleRate, channels: channels)
