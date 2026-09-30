@@ -183,12 +183,46 @@ public final class DeviceOutput {
 		layout.mChannelLayoutTag = Self.layoutTag(channels: channels)
 		// Not every device takes a layout; the stream format is what matters.
 		_ = AudioUnitSetProperty(unit, kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, 0, &layout, UInt32(MemoryLayout<AudioChannelLayout>.size))
+		configureBufferSize(sampleRate: hardware.mSampleRate)
 		try Self.check(AudioUnitInitialize(unit))
 		initialized = true
 
 		format = render
 		latencyFrames = Self.presentationLatency(of: deviceID)
 		if wasRunning { try start() }
+	}
+
+	/// The I/O buffer to ask for, in milliseconds (hidden setting
+	/// `outputBufferMilliseconds`).
+	static var bufferMilliseconds: Double {
+		let setting = UserDefaults.standard.double(forKey: "outputBufferMilliseconds")
+		return setting > 0 ? setting : 20
+	}
+
+	/// Asks the device for an I/O buffer of about `bufferMilliseconds`.
+	///
+	/// Devices default to 512 frames whatever their rate, which at 384 kHz is
+	/// a 1.33 ms deadline: any scheduling hiccup (WindowServer compositing a
+	/// newly shown view is enough) overloads the I/O cycle, and CoreAudio
+	/// logs "Overload possibly due to client timeout". A player has no use
+	/// for that little latency, so trade it for headroom. The request is
+	/// clamped to what the device allows; the render unit must accept slices
+	/// that large too.
+	private func configureBufferSize(sampleRate: Double) {
+		var range = AudioValueRange()
+		var frames = UInt32(max(512, (sampleRate * Self.bufferMilliseconds / 1000).rounded()))
+		if Self.getProperty(deviceID, kAudioDevicePropertyBufferFrameSizeRange, &range, scope: kAudioDevicePropertyScopeOutput), range.mMaximum > 0 {
+			frames = UInt32(min(max(Double(frames), range.mMinimum), range.mMaximum))
+		}
+		var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyBufferFrameSize, mScope: kAudioDevicePropertyScopeOutput, mElement: kAudioObjectPropertyElementMain)
+		var requested = frames
+		let status = AudioObjectSetPropertyData(deviceID, &address, 0, nil, UInt32(MemoryLayout<UInt32>.size), &requested)
+		var slice = max(frames, 4096)
+		_ = AudioUnitSetProperty(unit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &slice, UInt32(MemoryLayout<UInt32>.size))
+
+		var actual: UInt32 = 0
+		_ = Self.getProperty(deviceID, kAudioDevicePropertyBufferFrameSize, &actual, scope: kAudioDevicePropertyScopeOutput)
+		EngineLog.logger.info("I/O buffer: asked for \(frames) frames (\(Double(frames) / sampleRate * 1000, format: .fixed(precision: 1)) ms), status \(status), device now \(actual) frames")
 	}
 
 	/// Whether the device's rate or channel count no longer matches the
