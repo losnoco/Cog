@@ -269,11 +269,21 @@ Each stage ships on its own and leaves the old engine working.
      binaural stereo out. Head tracking moves to a Swift `HeadTracker`
      (`CMHeadphoneMotionManager`, macOS 14+, same matrix conventions and
      `CogPlaybackDidResetHeadTracking` reset).
-   - Known gap: stage latency is not yet subtracted from presentation
-     events, so with FreeSurround on, track changes are announced about
-     2048 frames early.
-   - Still to port: Rubber Band, Signalsmith (with a stretch map for
-     positions), the visualization tap.
+   - `TimeStretchStage`: Rubber Band (R2 `faster`, R3 `finer`, through its C
+     API with the node's options mapping and live option changes) or
+     Signalsmith (through a small C wrapper, `CogSignalsmith`), chosen by
+     `rubberbandEngine`. Active only while `tempo` or `pitch` is off 1, so
+     unity playback is untouched (the nodes always ran; entering or leaving
+     unity mid-track restarts the stretcher, a brief glitch). Output is
+     exactly `round(input / tempo)` frames. Rubber Band's start delay is
+     reported in input frames and is now converted before being dropped;
+     the node dropped it unconverted, shifting the start at any tempo but 1.
+   - Stages report `pendingFrames`, and the pump places track starts and
+     the end of stream after them, so announcements line up with the audio
+     through FreeSurround's block and a stretcher's latency. The pump emits
+     `.rate` presentation events when the chain's time ratio changes, and
+     the monitor keeps a piecewise stretch map for `amountPlayed`.
+   - Still to port: the visualization tap.
 
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote

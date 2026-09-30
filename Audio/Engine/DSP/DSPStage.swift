@@ -53,9 +53,21 @@ public protocol DSPStage: AnyObject {
 	/// latency, or input waiting for a full block), because nothing more
 	/// will follow in this format: the end of the stream, or a format change.
 	func drain(_ buffer: DSPBuffer)
+
+	/// Track time per output frame: the tempo for a time stretcher, 1 for
+	/// everything else.
+	var timeRatio: Double { get }
+
+	/// Output frames the stage still owes for input it has already taken
+	/// (FreeSurround's block, a stretcher's latency). Events are placed
+	/// after them so they line up with the audio.
+	var pendingFrames: Int { get }
 }
 
 public extension DSPStage {
+	var timeRatio: Double { 1 }
+	var pendingFrames: Int { 0 }
+
 	/// Stages that hold nothing back just process.
 	func drain(_ buffer: DSPBuffer) {
 		process(buffer)

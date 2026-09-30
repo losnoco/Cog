@@ -50,6 +50,7 @@ import Foundation
 
 	/// One equalizer for the engine's lifetime: the app keeps an unretained
 	/// reference to whichever equalizer it was last given.
+	private let timeStretch = TimeStretchStage()
 	private let freeSurround = FreeSurroundStage()
 	private let hrtf = HRTFStage()
 
@@ -87,8 +88,11 @@ import Foundation
 
 	// What is being heard.
 	private var currentTrack: EngineTrack?
+	/// Track time at `currentStart`, and track frames per output frame from
+	/// there (the tempo while time-stretching): a piecewise stretch map.
 	private var currentOffset: Double = 0
 	private var currentStart: UInt64 = 0
+	private var currentRatio: Double = 1
 	private var initialTrack: EngineTrack?
 	/// Whether `currentTrack` has actually been heard (a first track that
 	/// fails to open never is, and must not be counted as played).
@@ -203,7 +207,7 @@ import Foundation
 		}
 		guard let output,
 		      let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [freeSurround, equalizer, hrtf]),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, hrtf]),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
 		}
@@ -224,6 +228,7 @@ import Foundation
 		currentTrack = track
 		currentOffset = seconds
 		currentStart = 0
+		currentRatio = 1
 		currentHeard = false
 		amountPlayed = seconds
 		resetInterval()
@@ -374,6 +379,13 @@ import Foundation
 			switch event {
 			case let .trackStart(track, offset):
 				trackHeard(track, offset: offset, at: position)
+			case let .rate(ratio):
+				// Close the segment at the old ratio and start one at the new.
+				if position > currentStart {
+					currentOffset += Double(position - currentStart) / output.format.sampleRate * currentRatio
+					currentStart = position
+				}
+				currentRatio = ratio
 			case .endOfStream:
 				finishTrack()
 				let userInfo = currentTrack?.userInfo
@@ -385,7 +397,7 @@ import Foundation
 		}
 
 		if let track = currentTrack, !seekPending, heard >= currentStart {
-			let seconds = currentOffset + Double(heard - currentStart) / output.format.sampleRate
+			let seconds = currentOffset + Double(heard - currentStart) / output.format.sampleRate * currentRatio
 			advanceAmountPlayed(to: seconds, of: track)
 		}
 	}

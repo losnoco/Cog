@@ -13,6 +13,9 @@ public enum PresentationEvent {
 	case trackStart(EngineTrack, offset: Double)
 	/// Everything queued has been played.
 	case endOfStream
+	/// From here each output frame covers `ratio` frames of the track
+	/// (time-stretching).
+	case rate(Double)
 }
 
 /// Events placed at absolute positions in the shallow ring. The shallow
@@ -194,7 +197,7 @@ public final class Pump {
 				drainChain()
 				configure(for: format)
 			case let .trackStart(track, offset):
-				presentation.append(.trackStart(track, offset: offset), at: cog_ring_write_position(ring))
+				presentation.append(.trackStart(track, offset: offset), at: eventPosition)
 				// A new track's gain starts exactly on its first frame.
 				gainTrack = track
 				appliedGain = track.gain
@@ -206,7 +209,7 @@ public final class Pump {
 		}
 		if endOfStream {
 			drainChain()
-			presentation.append(.endOfStream, at: cog_ring_write_position(ring))
+			presentation.append(.endOfStream, at: eventPosition)
 		}
 
 		guard let format = inputFormat else { return false }
@@ -229,6 +232,21 @@ public final class Pump {
 		emit()
 		return true
 	}
+
+	/// Where an event at the chain's input will be heard: after everything
+	/// written, and after what the active stages still owe.
+	private var eventPosition: UInt64 {
+		var owed = 0
+		if let chain = configuredChain {
+			for stage in stages where chain.stages.contains(ObjectIdentifier(stage)) {
+				owed += stage.pendingFrames
+			}
+		}
+		return cog_ring_write_position(ring) + UInt64(owed)
+	}
+
+	/// The time ratio last announced.
+	private var announcedRatio = 1.0
 
 	/// Pushes out whatever the configured chain still holds, as at the end of
 	/// the stream or before a format change.
@@ -257,6 +275,13 @@ public final class Pump {
 		}
 		for stage in active {
 			stage.process(block)
+		}
+
+		// Tell the position bookkeeping when the tempo changes.
+		let ratio = active.reduce(1.0) { $0 * $1.timeRatio }
+		if ratio != announcedRatio {
+			announcedRatio = ratio
+			presentation.append(.rate(ratio), at: eventPosition)
 		}
 	}
 

@@ -59,6 +59,10 @@ final class FreeSurroundStage: NSObject, DSPStage {
 		lock.withLock { enabled }
 	}
 
+	var pendingFrames: Int {
+		filter == nil ? 0 : max(0, framesIn - framesOut)
+	}
+
 	func configure(input: StreamFormat) -> StreamFormat {
 		inputFormat = input
 		pending.removeAll(keepingCapacity: true)

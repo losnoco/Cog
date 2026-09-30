@@ -113,4 +113,29 @@ final class PlaybackEngineTests: XCTestCase {
 		XCTAssertEqual(host.statuses.last, .stopped)
 		XCTAssertFalse(host.stopped, "a user stop is not a natural stop")
 	}
+
+	/// At tempo 2 the playback position runs at twice the wall clock: the
+	/// stretch map, not the rendered frame count, gives track time.
+	func testThePositionFollowsTheTempo() throws {
+		UserDefaults.standard.set("faster", forKey: "rubberbandEngine")
+		UserDefaults.standard.set(2.0, forKey: "tempo")
+		defer {
+			UserDefaults.standard.removeObject(forKey: "rubberbandEngine")
+			UserDefaults.standard.removeObject(forKey: "tempo")
+		}
+		let samples = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { _ in MemoryDecoder(samples: samples, sampleRate: 48000, channels: 2) }
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://fast")!, userInfo: "fast", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.5 }, timeout: 5)
+		let start = (Date(), engine.amountPlayed)
+		runMainLoop(until: { false }, timeout: 1.5)
+		let rate = (engine.amountPlayed - start.1) / Date().timeIntervalSince(start.0)
+		engine.stop()
+		XCTAssertEqual(rate, 2, accuracy: 0.25, "track seconds per wall-clock second")
+	}
 }

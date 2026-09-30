@@ -13,5 +13,7 @@
 #include <stddef.h>
 
 #include "../../ThirdParty/lvqcl/lpc.h"
+#include "../../../ThirdParty/rubberband/include/rubberband/rubberband-c.h"
+#include "../Core/CogSignalsmith.h"
 
 #endif /* CogAudioEngineInternal_h */
