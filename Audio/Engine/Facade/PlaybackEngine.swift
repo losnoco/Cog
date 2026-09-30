@@ -50,6 +50,8 @@ import Foundation
 
 	/// One equalizer for the engine's lifetime: the app keeps an unretained
 	/// reference to whichever equalizer it was last given.
+	private let freeSurround = FreeSurroundStage()
+
 	private lazy var equalizer: EqualizerStage = {
 		let equalizer = EqualizerStage()
 		equalizer.onActivation = { [weak self] active in
@@ -200,7 +202,7 @@ import Foundation
 		}
 		guard let output,
 		      let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [equalizer]),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [freeSurround, equalizer]),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
 		}

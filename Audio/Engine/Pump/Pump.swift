@@ -189,6 +189,9 @@ public final class Pump {
 		for entry in feeder.timeline.take(through: frames, epoch: epoch) {
 			switch entry.event {
 			case let .format(format):
+				// Stages holding audio back (FreeSurround's block) give it up
+				// before the chain is reconfigured for the new format.
+				drainChain()
 				configure(for: format)
 			case let .trackStart(track, offset):
 				presentation.append(.trackStart(track, offset: offset), at: cog_ring_write_position(ring))
@@ -202,6 +205,7 @@ public final class Pump {
 			}
 		}
 		if endOfStream {
+			drainChain()
 			presentation.append(.endOfStream, at: cog_ring_write_position(ring))
 		}
 
@@ -224,6 +228,19 @@ public final class Pump {
 		runStages()
 		emit()
 		return true
+	}
+
+	/// Pushes out whatever the configured chain still holds, as at the end of
+	/// the stream or before a format change.
+	private func drainChain() {
+		guard let chain = configuredChain else { return }
+		block.resize(frames: 0, format: chain.input)
+		for stage in stages where chain.stages.contains(ObjectIdentifier(stage)) {
+			stage.drain(block)
+		}
+		if block.frames > 0 {
+			emit()
+		}
 	}
 
 	/// Runs the active stages over `block`, reconfiguring the chain when the

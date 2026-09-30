@@ -48,4 +48,16 @@ public protocol DSPStage: AnyObject {
 
 	/// Forgets filter history, as after a seek.
 	func reset()
+
+	/// Processes `buffer` and appends everything the stage still holds (its
+	/// latency, or input waiting for a full block), because nothing more
+	/// will follow in this format: the end of the stream, or a format change.
+	func drain(_ buffer: DSPBuffer)
+}
+
+public extension DSPStage {
+	/// Stages that hold nothing back just process.
+	func drain(_ buffer: DSPBuffer) {
+		process(buffer)
+	}
 }

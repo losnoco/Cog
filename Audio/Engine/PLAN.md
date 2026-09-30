@@ -252,6 +252,24 @@ Each stage ships on its own and leaves the old engine working.
 5. **DSP thread.** Port stages as in-place transforms, one at a time: fader
    (transport + seek crossfade), downmix, EQ (re-home the EQ window's
    coupling), FreeSurround, HRTF, Rubber Band, Signalsmith. Visualization tap.
+   *In progress:*
+   - The pump runs `DSPStage`s in order between the track gain and the
+     channel fit, reconfiguring on a format or active-set change, resetting
+     on seek, and draining them (`drain(_:)`) at the end of the stream and
+     before a format change.
+   - `EqualizerStage`: the 31-band `vDSP_biquadm` EQ, driven by the EQ
+     window through the `CogEqualizer` protocol; band changes no longer
+     reset the filter state.
+   - `FreeSurroundStage`: stereo to 5.1 through a FIFO of full 4096-frame
+     blocks, the half-block lag removed and the tail drained, so the
+     output is exactly as long as the input (the old node zero-padded short
+     chunks mid-stream).
+   - Known gap: stage latency is not yet subtracted from presentation
+     events, so with FreeSurround on, track changes are announced about
+     2048 frames early.
+   - Still to port: HRTF, Rubber Band, Signalsmith (with a stretch map for
+     positions), the visualization tap.
+
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote
    Control and MCP paths. Flip the default.
