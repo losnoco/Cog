@@ -253,8 +253,10 @@ final class ExclusiveDeviceTests: XCTestCase {
 		UserDefaults.standard.setVolatileDomain(settings, forName: UserDefaults.argumentDomain)
 		defer { UserDefaults.standard.setVolatileDomain(arguments, forName: UserDefaults.argumentDomain) }
 		let silence = [Int32](repeating: 0, count: 44100 * 2 * 10)
+		// Kept here: the engine holds its host weakly.
+		let host = RecordingHost()
 		let engine = PlaybackEngine()
-		engine.host = RecordingHost()
+		engine.host = host
 		engine.opener = { _ in IntegerMemoryDecoder(samples: silence, bits: 16, sampleRate: 44100) }
 
 		XCTAssertTrue(engine.play(URL(string: "memory://a")!, userInfo: "a", rgInfo: nil, startPaused: false, seekTo: 0))
@@ -277,5 +279,6 @@ final class ExclusiveDeviceTests: XCTestCase {
 		XCTAssertEqual(hogOwner(), getpid(), "still held")
 		queue.sync {}
 		XCTAssertEqual(lock.withLock { reconfigurations }, 0, "the stream left as it was")
+		XCTAssertFalse(host.log.contains("restart"), "the held device started")
 	}
 }
