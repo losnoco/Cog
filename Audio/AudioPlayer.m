@@ -36,12 +36,14 @@ static BOOL streamURLsShareUnderlyingResource(NSURL *firstURL, NSURL *secondURL)
 	return [firstResource isEqualTo:secondResource];
 }
 
-// The new engine (Audio/Engine) runs behind this class when the hidden
-// enableNewAudioEngine default is set. It reports back through
-// PlaybackEngineHost, which maps onto the same delegate messages the chain
-// engine sends, so the playlist side cannot tell them apart.
+// The new engine (Audio/Engine) runs behind this class unless the hidden
+// enableNewAudioEngine default is set to NO, which selects the chain engine
+// until it is removed. It reports back through PlaybackEngineHost, which maps
+// onto the same delegate messages the chain engine sends, so the playlist
+// side cannot tell them apart.
 static BOOL newAudioEngineEnabled(void) {
-	return [[NSUserDefaults standardUserDefaults] boolForKey:@"enableNewAudioEngine"];
+	NSNumber *enabled = [[NSUserDefaults standardUserDefaults] objectForKey:@"enableNewAudioEngine"];
+	return !enabled || [enabled boolValue];
 }
 
 @interface AudioPlayer () <PlaybackEngineHost>

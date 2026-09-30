@@ -289,6 +289,8 @@ Each stage ships on its own and leaves the old engine working.
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote
    Control and MCP paths. Flip the default.
+   *Done:* the new engine is the default; `enableNewAudioEngine` set to NO
+   selects the chain engine until stage 7 removes it.
    - Metadata changes (`pushInfo`): the feeder watches the decoder's
      `metadata` through KVO, as InputNode did, and puts the merged
      properties and metadata on the timeline at the first frame decoded
