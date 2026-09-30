@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -66,6 +66,8 @@
 		834FD4F027AF93680063BC83 /* ChunkList.h in Headers */ = {isa = PBXBuildFile; fileRef = 834FD4EE27AF93680063BC83 /* ChunkList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		834FD4F127AF93680063BC83 /* ChunkList.m in Sources */ = {isa = PBXBuildFile; fileRef = 834FD4EF27AF93680063BC83 /* ChunkList.m */; };
 		8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8350416C28646149006B32CC /* CoreMedia.framework */; };
+		835C701D306CD07D003A9DEB /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* CogAudio.framework */; };
+		835C701E306CD07D003A9DEB /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */; };
 		835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AF279811A500E28EAE /* hdcd_decode2.h */; };
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
 		835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */; };
@@ -95,7 +97,6 @@
 		839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E42879450300DFB5F4 /* IHrtfData.h */; };
 		839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E928794F6300DFB5F4 /* HrtfTypes.h */; };
 		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
-		83C0F1A12E4C1B0100C0F1A0 /* CogURLNormalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C0F1A22E4C1B0100C0F1A0 /* CogURLNormalization.h */; };
 		839E899E2D5DB9D500A13526 /* VisualizationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E899D2D5DB9D500A13526 /* VisualizationNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		839E89A02D5DBA1700A13526 /* VisualizationNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 839E899F2D5DBA1700A13526 /* VisualizationNode.m */; };
 		83A3496A2D5C3F430096D530 /* DSPRubberbandNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83A349682D5C3F430096D530 /* DSPRubberbandNode.m */; };
@@ -109,6 +110,7 @@
 		83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */; };
 		83C090B32E4F7967006687EB /* DSPFaderNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 83C090B22E4F7967006687EB /* DSPFaderNode.m */; };
 		83C090B42E4F7967006687EB /* DSPFaderNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C090B12E4F7967006687EB /* DSPFaderNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83C0F1A12E4C1B0100C0F1A0 /* CogURLNormalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C0F1A22E4C1B0100C0F1A0 /* CogURLNormalization.h */; };
 		83CB56652E06464D003DD379 /* NSDictionary+Optional.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CB56632E06464D003DD379 /* NSDictionary+Optional.h */; };
 		83CB56662E06464D003DD379 /* NSDictionary+Optional.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CB56642E06464D003DD379 /* NSDictionary+Optional.m */; };
 		83CFA5462E52E7F0008BC289 /* FadedBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 83CFA5452E52E7EA008BC289 /* FadedBuffer.h */; };
@@ -130,6 +132,16 @@
 		B0575F2D0D687A0800411D77 /* Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = B0575F2C0D687A0800411D77 /* Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0575F300D687A4000411D77 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0575F2F0D687A4000411D77 /* Helper.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		835C701F306CD07D003A9DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = CogAudio;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		83725A8D27AA0DDB0003F694 /* CopyFiles */ = {
@@ -206,6 +218,7 @@
 		834FD4EE27AF93680063BC83 /* ChunkList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChunkList.h; sourceTree = "<group>"; };
 		834FD4EF27AF93680063BC83 /* ChunkList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChunkList.m; sourceTree = "<group>"; };
 		8350416C28646149006B32CC /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		835C7016306CD07D003A9DEB /* CogAudioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogAudioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		835C88AF279811A500E28EAE /* hdcd_decode2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdcd_decode2.h; sourceTree = "<group>"; };
 		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
 		835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutputCoreAudio.m; sourceTree = "<group>"; };
@@ -237,7 +250,6 @@
 		839E56E42879450300DFB5F4 /* IHrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHrtfData.h; sourceTree = "<group>"; };
 		839E56E928794F6300DFB5F4 /* HrtfTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfTypes.h; sourceTree = "<group>"; };
 		839E56F6287974A100DFB5F4 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../Utils/SandboxBroker.h; sourceTree = "<group>"; };
-		83C0F1A22E4C1B0100C0F1A0 /* CogURLNormalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CogURLNormalization.h; path = ../Utils/CogURLNormalization.h; sourceTree = "<group>"; };
 		839E899D2D5DB9D500A13526 /* VisualizationNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationNode.h; sourceTree = "<group>"; };
 		839E899F2D5DBA1700A13526 /* VisualizationNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationNode.m; sourceTree = "<group>"; };
 		83A349672D5C3F430096D530 /* DSPRubberbandNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPRubberbandNode.h; sourceTree = "<group>"; };
@@ -251,6 +263,7 @@
 		83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CogAudio-Bridging-Header.h"; sourceTree = "<group>"; };
 		83C090B12E4F7967006687EB /* DSPFaderNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSPFaderNode.h; sourceTree = "<group>"; };
 		83C090B22E4F7967006687EB /* DSPFaderNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSPFaderNode.m; sourceTree = "<group>"; };
+		83C0F1A22E4C1B0100C0F1A0 /* CogURLNormalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CogURLNormalization.h; path = ../Utils/CogURLNormalization.h; sourceTree = "<group>"; };
 		83CB56632E06464D003DD379 /* NSDictionary+Optional.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Optional.h"; path = "../Utils/NSDictionary+Optional.h"; sourceTree = SOURCE_ROOT; };
 		83CB56642E06464D003DD379 /* NSDictionary+Optional.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Optional.m"; path = "../Utils/NSDictionary+Optional.m"; sourceTree = SOURCE_ROOT; };
 		83CFA5452E52E7EA008BC289 /* FadedBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FadedBuffer.h; sourceTree = "<group>"; };
@@ -277,7 +290,20 @@
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		835C7017306CD07D003A9DEB /* CogAudioTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CogAudioTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		835C7013306CD07D003A9DEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				835C701D306CD07D003A9DEB /* CogAudio.framework in Frameworks */,
+				835C701E306CD07D003A9DEB /* libsoxr.0.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -303,6 +329,7 @@
 			isa = PBXGroup;
 			children = (
 				8DC2EF5B0486A6940098B216 /* CogAudio.framework */,
+				835C7016306CD07D003A9DEB /* CogAudioTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -313,6 +340,7 @@
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
+				835C7017306CD07D003A9DEB /* CogAudioTests */,
 				83907FD02E88E37500D5D683 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -681,6 +709,29 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		835C7015306CD07D003A9DEB /* CogAudioTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 835C701C306CD07D003A9DEB /* Build configuration list for PBXNativeTarget "CogAudioTests" */;
+			buildPhases = (
+				835C7012306CD07D003A9DEB /* Sources */,
+				835C7013306CD07D003A9DEB /* Frameworks */,
+				835C7014306CD07D003A9DEB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				835C7020306CD07D003A9DEB /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				835C7017306CD07D003A9DEB /* CogAudioTests */,
+			);
+			name = CogAudioTests;
+			packageProductDependencies = (
+			);
+			productName = CogAudioTests;
+			productReference = 835C7016306CD07D003A9DEB /* CogAudioTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8DC2EF4F0486A6940098B216 /* CogAudio */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CogAudio" */;
@@ -708,7 +759,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					835C7015306CD07D003A9DEB = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "CogAudio" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -724,11 +781,19 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* CogAudio */,
+				835C7015306CD07D003A9DEB /* CogAudioTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		835C7014306CD07D003A9DEB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -739,6 +804,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		835C7012306CD07D003A9DEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -796,6 +868,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		835C7020306CD07D003A9DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* CogAudio */;
+			targetProxy = 835C701F306CD07D003A9DEB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
@@ -978,6 +1058,111 @@
 			};
 			name = Release;
 		};
+		835C701A306CD07D003A9DEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					../ThirdParty/soxr/include,
+					../ThirdParty/lvqcl,
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+					"$(PROJECT_DIR)/../ThirdParty/soxr/lib",
+					"$(PROJECT_DIR)/../ThirdParty/rubberband/lib",
+				);
+				LIBRARY_SEARCH_PATHS = ../ThirdParty/soxr/lib;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogAudioTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "CogAudioTests/CogAudioTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		835C701B306CD07D003A9DEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					../ThirdParty/soxr/include,
+					../ThirdParty/lvqcl,
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+					"$(PROJECT_DIR)/../ThirdParty/soxr/lib",
+					"$(PROJECT_DIR)/../ThirdParty/rubberband/lib",
+				);
+				LIBRARY_SEARCH_PATHS = ../ThirdParty/soxr/lib;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogAudioTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "CogAudioTests/CogAudioTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -995,6 +1180,15 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		835C701C306CD07D003A9DEB /* Build configuration list for PBXNativeTarget "CogAudioTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				835C701A306CD07D003A9DEB /* Debug */,
+				835C701B306CD07D003A9DEB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
