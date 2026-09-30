@@ -831,6 +831,27 @@ import Foundation
 		DispatchQueue.main.async { self.deviceChanged(.device) }
 	}
 
+	/// Moves the running pipeline to the device the setting now names (or
+	/// the new system default). Only a device rendering at the same rate and
+	/// channel count can take over without a rebuild; true if it did. The
+	/// switch stands either way, so a rebuild finds the device selected. A
+	/// DoP pipeline, holding its device exclusively at its carrier rate,
+	/// always rebuilds.
+	private func switchDeviceInPlace(_ output: DeviceOutput) -> Bool {
+		guard carrierRate == nil, let pump else { return false }
+		do {
+			try selectSavedDevice()
+		} catch {
+			return false
+		}
+		guard output.format == pump.outputFormat else {
+			EngineLog.logger.info("The new device renders \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, \(output.format.channels) channels; rebuilding")
+			return false
+		}
+		EngineLog.logger.info("Moved playback to device \(output.deviceID) in place")
+		return true
+	}
+
 	/// The device or its format changed: rebuild at the current position,
 	/// unless nothing that matters to the render format actually changed.
 	private func deviceChanged(_ change: DeviceOutput.Change) {
@@ -847,6 +868,9 @@ import Foundation
 				EngineLog.logger.debug("Device notification without a change of device; ignored")
 				return
 			}
+		}
+		if case .device = change, switchDeviceInPlace(output) {
+			return
 		}
 		EngineLog.logger.info("Output \(String(describing: change), privacy: .public) changed; restarting at the current position")
 		rebuildRequested = true

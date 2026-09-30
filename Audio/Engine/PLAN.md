@@ -242,13 +242,9 @@ Each stage ships on its own and leaves the old engine working.
    - Tests: `DeviceOutputTests` and `PlaybackEngineTests` run on the real
      default device (silently); `PumpTests` offline.
 
-   *Not yet behind the switch:* DSP (EQ, HRTF, FreeSurround, time-stretch),
-   visualization, `resetNextStreams` (a playlist edit
-   after the next track has started decoding only applies from the track
-   after it), seek crossfade, live
-   `volumeScaling` changes, and device changes
-   rebuild playback through `restartPlaybackAtCurrentPosition` rather than
-   in place.
+   *Not behind the switch at this stage* (all since ported, in stages 5
+   and 6): DSP, visualization, `resetNextStreams`, the seek crossfade, live
+   `volumeScaling` changes, and device changes in place.
 5. **DSP thread.** Port stages as in-place transforms, one at a time: fader
    (transport + seek crossfade), downmix, EQ (re-home the EQ window's
    coupling), FreeSurround, HRTF, Rubber Band, Signalsmith. Visualization tap.
@@ -301,6 +297,11 @@ Each stage ships on its own and leaves the old engine working.
      pushed it as soon as the decoder changed, up to the whole buffer early
      (about ten seconds in this engine's deep ring), so a stream title
      changed before the song did.
+   - Device changes: a new device (by setting, or a new system default
+     while following it) is switched under the running pipeline first; if
+     it renders the same rate and channel count, playback carries on
+     without a rebuild. Otherwise, or on a format change, or for a DoP
+     pipeline, the app is asked to restart at the current position.
    - Suspend on pause: once the pause fade ends, the renderer is held
      (silence, or DoP silence, without reading the ring) and the device
      keeps running, so resuming does not restart it and a DoP DAC stays
