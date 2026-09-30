@@ -116,15 +116,18 @@ import Foundation
 		// for every write, and the preferences window writes plenty.
 		UserDefaults.standard.addObserver(self, forKeyPath: "outputDevice", options: [], context: &Self.outputDeviceContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: "volumeScaling", options: [], context: &Self.volumeScalingContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: "suspendOutputOnPause", options: [], context: &Self.suspendContext)
 	}
 
 	deinit {
 		UserDefaults.standard.removeObserver(self, forKeyPath: "outputDevice", context: &Self.outputDeviceContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: "volumeScaling", context: &Self.volumeScalingContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: "suspendOutputOnPause", context: &Self.suspendContext)
 	}
 
 	private static var outputDeviceContext = 0
 	private static var volumeScalingContext = 0
+	private static var suspendContext = 0
 
 	// MARK: - ReplayGain
 
@@ -167,6 +170,14 @@ import Foundation
 	public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
 		if context == &Self.volumeScalingContext {
 			volumeScalingChanged()
+			return
+		}
+		if context == &Self.suspendContext {
+			if Thread.isMainThread {
+				suspendSettingChanged()
+			} else {
+				DispatchQueue.main.async { self.suspendSettingChanged() }
+			}
 			return
 		}
 		guard context == &Self.outputDeviceContext else {
@@ -464,6 +475,8 @@ import Foundation
 		case .prebuffering:
 			phase = .prebuffering(paused: false)
 		case .paused, .pausing:
+			cancelSuspend()
+			cog_renderer_set_held(renderer, false)
 			try? output?.start()
 			rampTransport(renderer, to: 1, frames: fadeFrames)
 			phase = .playing
@@ -506,7 +519,55 @@ import Foundation
 		scrobbleReported = false
 	}
 
+	// MARK: - Suspending on pause
+
+	/// Stops the device a while into a pause, as OutputCoreAudio did.
+	private var suspendTimer: Timer?
+	/// As OutputCoreAudio's idle timer; shortened by tests.
+	var suspendDelay: TimeInterval = 10
+
+	/// Whether the device is running, for tests.
+	var isDeviceRunning: Bool { output?.isRunning ?? false }
+
+	/// `suspendOutputOnPause`, on unless turned off.
+	private static var suspendsOnPause: Bool {
+		(UserDefaults.standard.object(forKey: "suspendOutputOnPause") as? NSNumber)?.boolValue ?? true
+	}
+
+	/// Paused: the device keeps running on held silence, so resuming does
+	/// not restart it (and a DoP DAC stays locked), and is stopped after
+	/// `suspendDelay` if the setting says so.
+	private func scheduleSuspend() {
+		cancelSuspend()
+		guard Self.suspendsOnPause else { return }
+		let timer = Timer(timeInterval: suspendDelay, repeats: false) { [weak self] _ in
+			guard let self, case .paused = self.phase else { return }
+			EngineLog.logger.info("Suspending the output while paused")
+			self.output?.stop()
+		}
+		RunLoop.main.add(timer, forMode: .common)
+		suspendTimer = timer
+	}
+
+	private func cancelSuspend() {
+		suspendTimer?.invalidate()
+		suspendTimer = nil
+	}
+
+	/// The setting changed while paused: start or stop the clock, and run
+	/// the device again if it may no longer be suspended.
+	private func suspendSettingChanged() {
+		guard case .paused = phase else { return }
+		if Self.suspendsOnPause {
+			scheduleSuspend()
+		} else {
+			cancelSuspend()
+			try? output?.start()
+		}
+	}
+
 	private func tearDown() {
+		cancelSuspend()
 		monitor?.invalidate()
 		monitor = nil
 		if feeder != nil {
@@ -547,8 +608,9 @@ import Foundation
 			}
 		case .pausing:
 			if cog_gain_settled(cog_renderer_transport(renderer)) {
-				output.stop()
+				cog_renderer_set_held(renderer, true)
 				phase = .paused
+				scheduleSuspend()
 			}
 		default:
 			break

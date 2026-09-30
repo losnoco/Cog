@@ -128,6 +128,25 @@ final class DoPRenderTests: XCTestCase {
 		XCTAssertEqual(render(10), [Float](repeating: 0, count: 20), "and a dry ring is zeroes again")
 	}
 
+	func testAHeldRendererKeepsTheRingAndTheDACLocked() {
+		fill(carrier(1000))
+		_ = render(100)
+		cog_renderer_set_held(renderer, true)
+		XCTAssertEqual(cog_ring_readable(ring), 900)
+		XCTAssertTrue(isDoP(render(300)), "DoP silence while held")
+		XCTAssertEqual(cog_ring_readable(ring), 900, "nothing read while held")
+		XCTAssertEqual(cog_renderer_underrun_events(renderer), 0, "a pause is not an underrun")
+		cog_renderer_set_held(renderer, false)
+		XCTAssertEqual(render(900), Array(carrier(1000)[200...]), "resumes exactly where it held")
+	}
+
+	func testAHeldRendererIsSilentForPCM() {
+		fill([Float](repeating: 0.5, count: 200))
+		cog_renderer_set_held(renderer, true)
+		XCTAssertEqual(render(50), [Float](repeating: 0, count: 100))
+		XCTAssertEqual(cog_ring_readable(ring), 100)
+	}
+
 	func testIntegerConversionKeepsTheCarrierWordExactly() {
 		let input = carrier(64)
 		var output = [Int32](repeating: 0, count: input.count)

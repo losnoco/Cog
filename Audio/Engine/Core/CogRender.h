@@ -92,6 +92,12 @@ CogGain *cog_renderer_transport(const CogRenderer *renderer);
 /// not running.
 bool cog_renderer_set_crossfade_frames(CogRenderer *renderer, size_t frames);
 
+/// Paused with the device still running: renders silence (DoP silence while
+/// DoP is playing, so the DAC stays locked) without reading the ring, which
+/// keeps its audio for resuming. Flushes are still honoured. From any
+/// thread.
+void cog_renderer_set_held(CogRenderer *renderer, bool held);
+
 /// Whether the next flushes crossfade or cut; from any thread. A cut is for
 /// when fades are turned off, and for DoP, which cannot be mixed.
 void cog_renderer_set_crossfade_enabled(CogRenderer *renderer, bool enabled);

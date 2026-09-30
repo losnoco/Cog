@@ -246,7 +246,7 @@ Each stage ships on its own and leaves the old engine working.
    visualization, `resetNextStreams` (a playlist edit
    after the next track has started decoding only applies from the track
    after it), seek crossfade, live
-   `volumeScaling` changes, suspend-on-pause idle timer, and device changes
+   `volumeScaling` changes, and device changes
    rebuild playback through `restartPlaybackAtCurrentPosition` rather than
    in place.
 5. **DSP thread.** Port stages as in-place transforms, one at a time: fader
@@ -301,6 +301,12 @@ Each stage ships on its own and leaves the old engine working.
      pushed it as soon as the decoder changed, up to the whole buffer early
      (about ten seconds in this engine's deep ring), so a stream title
      changed before the song did.
+   - Suspend on pause: once the pause fade ends, the renderer is held
+     (silence, or DoP silence, without reading the ring) and the device
+     keeps running, so resuming does not restart it and a DoP DAC stays
+     locked. With `suspendOutputOnPause` on (the default) the device stops
+     ten seconds in, as OutputCoreAudio's idle timer did; changing the
+     setting while paused starts or stops that clock.
    - HDCD: decoding comes with ChunkList, which only looks for it in
      lossless audio, so the feeder marks each chunk lossless or not from
      the decoder's `encoding`, as InputNode did (most decoders already

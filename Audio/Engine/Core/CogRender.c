@@ -241,6 +241,7 @@ struct CogRenderer {
 	/// Frames of new audio faded in so far; fadeFrames when not fading in.
 	size_t fadeInPosition;
 	_Atomic bool crossfadeEnabled;
+	_Atomic bool held;
 
 	// DoP, owned by the render thread.
 	bool dopActive;
@@ -320,6 +321,10 @@ bool cog_renderer_set_crossfade_frames(CogRenderer *renderer, size_t frames) {
 	renderer->fadeFrames = frames;
 	renderer->fadeInPosition = frames;
 	return true;
+}
+
+void cog_renderer_set_held(CogRenderer *renderer, bool held) {
+	atomic_store_explicit(&renderer->held, held, memory_order_relaxed);
 }
 
 void cog_renderer_set_crossfade_enabled(CogRenderer *renderer, bool enabled) {
@@ -465,6 +470,13 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	const uint32_t channels = cog_ring_channels(ring);
 
 	renderer_take_flush(renderer, channels);
+	if(atomic_load_explicit(&renderer->held, memory_order_relaxed)) {
+		// Paused, device running: nothing is read, so nothing is lost.
+		memset(out, 0, frames * channels * sizeof(float));
+		renderer_render_dop(renderer, out, frames, 0, channels);
+		atomic_fetch_add_explicit(&renderer->framesRendered, frames, memory_order_relaxed);
+		return 0;
+	}
 	const size_t got = cog_ring_read(ring, out, frames);
 	if(got < frames) {
 		memset(out + got * channels, 0, (frames - got) * channels * sizeof(float));

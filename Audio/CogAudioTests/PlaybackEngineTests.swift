@@ -210,6 +210,41 @@ final class PlaybackEngineTests: XCTestCase {
 		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
 	}
 
+	/// Paused, the device keeps running on held silence until the suspend
+	/// delay passes (as OutputCoreAudio's idle timer), or indefinitely with
+	/// `suspendOutputOnPause` off; resuming carries on from the same place.
+	func testPausingHoldsTheDeviceThenSuspendsIt() throws {
+		let samples = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { _ in MemoryDecoder(samples: samples, sampleRate: 48000, channels: 2) }
+		engine.volume = 0
+		engine.suspendDelay = 0.5
+
+		XCTAssertTrue(engine.play(URL(string: "memory://long")!, userInfo: "long", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+		engine.pause()
+		runMainLoop(until: { false }, timeout: 0.3)
+		XCTAssertTrue(engine.isDeviceRunning, "held, not stopped")
+		let paused = engine.amountPlayed
+		runMainLoop(until: { !engine.isDeviceRunning }, timeout: 3)
+		XCTAssertFalse(engine.isDeviceRunning, "suspended after the delay")
+		XCTAssertEqual(engine.amountPlayed, paused, accuracy: 0.01)
+
+		engine.resume()
+		XCTAssertTrue(engine.isDeviceRunning)
+		runMainLoop(until: { engine.amountPlayed > paused + 0.2 }, timeout: 5)
+		XCTAssertGreaterThan(engine.amountPlayed, paused + 0.2)
+
+		UserDefaults.standard.set(false, forKey: "suspendOutputOnPause")
+		defer { UserDefaults.standard.removeObject(forKey: "suspendOutputOnPause") }
+		engine.pause()
+		runMainLoop(until: { false }, timeout: 1.2)
+		XCTAssertTrue(engine.isDeviceRunning, "never suspended with the setting off")
+		engine.stop()
+	}
+
 	/// At tempo 2 the playback position runs at twice the wall clock: the
 	/// stretch map, not the rendered frame count, gives track time.
 	func testThePositionFollowsTheTempo() throws {
