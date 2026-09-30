@@ -140,9 +140,22 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 		audioPlayer = [AudioPlayer new];
 		[audioPlayer setDelegate:self];
 		[self setPlaybackStatus:CogStatusStopped];
+
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(entryMetadataLoaded:) name:CogPlaylistEntryMetadataLoadedNotification object:nil];
 	}
 
 	return self;
+}
+
+// A track can start before its tags have loaded, and so without its
+// ReplayGain; hand the gain to the player once they arrive. The player
+// ignores entries it is not playing or holding queued.
+- (void)entryMetadataLoaded:(NSNotification *)notification {
+	PlaylistEntry *pe = notification.object;
+	dispatch_async_or_reentrant(dispatch_get_main_queue(), ^{
+		if(self->playbackStatus == CogStatusStopped) return;
+		[self->audioPlayer setRGInfo:makeRGInfo(pe) forTrack:pe];
+	});
 }
 
 - (void)initDefaults {

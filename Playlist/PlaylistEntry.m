@@ -20,6 +20,8 @@
 extern NSPersistentContainer *kPersistentContainer;
 extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
+NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlaylistEntryMetadataLoadedNotification";
+
 @implementation PlaylistEntry (Extension)
 
 // The following is needed for handling any tag names with periods in them, as KVE wants to treat these as nested objects
@@ -681,6 +683,8 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
 	}
 
 	[self setMetadataLoaded:YES];
+
+	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaylistEntryMetadataLoadedNotification object:self];
 }
 
 @dynamic playCountItem;

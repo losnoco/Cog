@@ -387,6 +387,27 @@ static BOOL newAudioEngineEnabled(void) {
 	[self sendDelegateMethod:@selector(audioPlayer:updatePosition:) withObject:userInfo waitUntilDone:NO];
 }
 
+- (void)setRGInfo:(NSDictionary *)rgi forTrack:(id)userInfo {
+	if(!userInfo) return;
+	if(engine) {
+		[engine updateReplayGain:rgi forTrack:userInfo];
+		return;
+	}
+	@synchronized(chainQueue) {
+		if([bufferChain userInfo] == userInfo) {
+			[bufferChain setRGInfo:rgi];
+		}
+		for(BufferChain *chain in chainQueue) {
+			if([chain userInfo] == userInfo) {
+				[chain setRGInfo:rgi];
+			}
+		}
+	}
+	if(nextStreamUserInfo == userInfo) {
+		nextStreamRGInfo = rgi;
+	}
+}
+
 - (void)pushInfo:(NSDictionary *)info toTrack:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:pushInfo:toTrack:) withObject:info withObject:userInfo waitUntilDone:NO];
 }

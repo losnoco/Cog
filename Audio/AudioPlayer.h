@@ -89,6 +89,10 @@
 
 - (void)pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 
+// New ReplayGain info for a track that is playing or queued, for example
+// once its tags have loaded after playback began.
+- (void)setRGInfo:(NSDictionary *)rgi forTrack:(id)userInfo;
+
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
 + (NSArray *)containerTypes;
