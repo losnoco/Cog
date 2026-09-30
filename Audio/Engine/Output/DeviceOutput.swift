@@ -281,25 +281,44 @@ public final class DeviceOutput {
 	public func takeExclusive(rate: Double) -> Bool {
 		guard !followsSystemDefault else { return false }
 		if !isExclusive {
-			var pid = getpid()
-			guard Self.setProperty(deviceID, kAudioDevicePropertyHogMode, &pid) else { return false }
-			var owner: pid_t = -1
-			guard Self.getProperty(deviceID, kAudioDevicePropertyHogMode, &owner), owner == getpid() else {
-				EngineLog.logger.info("Could not take the device exclusively; it belongs to process \(owner)")
+			// macOS will not hand a device over while it is the system's
+			// default output (or its sound-effects output), so move those
+			// elsewhere for as long as it is held, as Pine Player does.
+			guard moveSystemDefaultsAway() else { return false }
+			guard hog() else {
+				restoreSystemDefaults()
 				return false
 			}
 			isExclusive = true
 			var mixing: UInt32 = 0
 			if !Self.setProperty(deviceID, kAudioDevicePropertySupportsMixing, &mixing) {
-				EngineLog.logger.info("The device would not turn mixing off")
+				EngineLog.logger.notice("The device would not turn mixing off")
 			}
 		}
 		setIntegerPhysicalFormat(rate: rate)
-		EngineLog.logger.info("Holding the device exclusively at \(rate, format: .fixed(precision: 0)) Hz")
+		EngineLog.logger.notice("Holding the device exclusively at \(rate, format: .fixed(precision: 0)) Hz")
 		return true
 	}
 
-	/// Gives the device back to the system mixer.
+	/// Takes hog mode, allowing the system a moment to move other clients
+	/// off the device after its default role was taken away.
+	private func hog() -> Bool {
+		var owner: pid_t = -1
+		for _ in 0..<25 {
+			var pid = getpid()
+			let set = Self.setProperty(deviceID, kAudioDevicePropertyHogMode, &pid)
+			if Self.getProperty(deviceID, kAudioDevicePropertyHogMode, &owner), owner == getpid() {
+				return true
+			}
+			if !set && owner != -1 { break }
+			usleep(20000)
+		}
+		EngineLog.logger.notice("Could not take the device exclusively (owner \(owner))")
+		return false
+	}
+
+	/// Gives the device back to the system mixer, and the system its
+	/// defaults.
 	public func releaseExclusive() {
 		guard isExclusive else { return }
 		var mixing: UInt32 = 1
@@ -307,7 +326,60 @@ public final class DeviceOutput {
 		var none: pid_t = -1
 		_ = Self.setProperty(deviceID, kAudioDevicePropertyHogMode, &none)
 		isExclusive = false
-		EngineLog.logger.info("Released the device")
+		restoreSystemDefaults()
+		EngineLog.logger.notice("Released the device")
+	}
+
+	/// System defaults moved off the device while it is held, to put back.
+	private var movedDefaults: [(selector: AudioObjectPropertySelector, original: AudioDeviceID, replacement: AudioDeviceID)] = []
+
+	private static let defaultSelectors = [kAudioHardwarePropertyDefaultOutputDevice, kAudioHardwarePropertyDefaultSystemOutputDevice]
+
+	private func moveSystemDefaultsAway() -> Bool {
+		let system = AudioObjectID(kAudioObjectSystemObject)
+		for selector in Self.defaultSelectors {
+			var current = AudioDeviceID(kAudioObjectUnknown)
+			guard Self.getProperty(system, selector, &current), current == deviceID else { continue }
+			guard var replacement = Self.fallbackOutput(excluding: deviceID) else {
+				EngineLog.logger.notice("The device is the system default and there is no other output to move the default to")
+				restoreSystemDefaults()
+				return false
+			}
+			guard Self.setProperty(system, selector, &replacement) else {
+				EngineLog.logger.notice("Could not move the system default output off the device")
+				restoreSystemDefaults()
+				return false
+			}
+			movedDefaults.append((selector, current, replacement))
+			EngineLog.logger.notice("Moved a system default output to device \(replacement) while holding the device")
+		}
+		return true
+	}
+
+	/// Puts back the defaults moved away, unless they were changed since.
+	private func restoreSystemDefaults() {
+		let system = AudioObjectID(kAudioObjectSystemObject)
+		for moved in movedDefaults.reversed() {
+			var current = AudioDeviceID(kAudioObjectUnknown)
+			guard Self.getProperty(system, moved.selector, &current), current == moved.replacement, Self.isAliveOutput(moved.original) else { continue }
+			var original = moved.original
+			Self.setProperty(system, moved.selector, &original)
+		}
+		movedDefaults.removeAll()
+	}
+
+	/// Another output the system default can move to: built-in speakers if
+	/// there are any, else the first that can be a default.
+	static func fallbackOutput(excluding excluded: AudioDeviceID) -> AudioDeviceID? {
+		let candidates = outputDevices().map(\.id).filter { id in
+			var canBeDefault: UInt32 = 0
+			return id != excluded && getProperty(id, kAudioDevicePropertyDeviceCanBeDefaultDevice, &canBeDefault, scope: kAudioDevicePropertyScopeOutput) && canBeDefault != 0
+		}
+		let builtIn = candidates.first { id in
+			var transport: UInt32 = 0
+			return getProperty(id, kAudioDevicePropertyTransportType, &transport) && transport == kAudioDeviceTransportTypeBuiltIn
+		}
+		return builtIn ?? candidates.first
 	}
 
 	/// Sets the output streams to the widest integer format they offer at
@@ -329,11 +401,11 @@ public final class DeviceOutput {
 					abs($0.mSampleRate - rate) < 1 && Int($0.mChannelsPerFrame) == format.channels && $0.mBitsPerChannel >= 24
 			}
 			guard var best = candidates.max(by: { $0.mBitsPerChannel < $1.mBitsPerChannel }) else {
-				EngineLog.logger.info("Stream \(stream) offers no integer format at \(rate, format: .fixed(precision: 0)) Hz")
+				EngineLog.logger.notice("Stream \(stream) offers no integer format at \(rate, format: .fixed(precision: 0)) Hz")
 				continue
 			}
 			if !Self.setProperty(stream, kAudioStreamPropertyPhysicalFormat, &best) {
-				EngineLog.logger.info("Stream \(stream) would not take \(best.mBitsPerChannel)-bit integer")
+				EngineLog.logger.notice("Stream \(stream) would not take \(best.mBitsPerChannel)-bit integer")
 			}
 		}
 	}

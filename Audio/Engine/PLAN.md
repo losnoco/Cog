@@ -343,8 +343,12 @@ Each stage ships on its own and leaves the old engine working.
      mode, mixing off, and the stream's physical format set to integer at
      the carrier rate, with the unit's input matching it word for word.
      Without that the system mixer's float stage sits in the path and
-     macOS DACs do not lock (seen on a FiiO KA11). It is released when the
-     pipeline is torn down. No exclusive access means PCM.
+     macOS DACs do not lock (seen on a FiiO KA11). macOS will not hand
+     over a device that is the system's default output or sound-effects
+     output, so, as Pine Player does, those defaults move to another output
+     (built-in speakers first) while it is held and come back on release,
+     unless changed meanwhile. It is released when the pipeline is torn
+     down. No exclusive access means PCM.
 7. **Delete `Audio/Chain/`** and `OutputCoreAudio.m`.
 
 ## Open questions

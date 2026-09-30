@@ -250,11 +250,11 @@ import Foundation
 		// A DoP carrier needs the device at its rate, rendering integers.
 		var carrier = decoder.flatMap { carrierRate(for: $0.properties() ?? [:], output: output) }
 		if let rate = carrier, !(allowsDeviceRateChanges ? output.setNominalSampleRate(rate) : abs(output.nominalSampleRate - rate) < 1) {
-			EngineLog.logger.info("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz for DoP; converting to PCM")
+			EngineLog.logger.notice("The device cannot run at \(rate, format: .fixed(precision: 0)) Hz for DoP; converting to PCM")
 			carrier = nil
 		}
 		if let rate = carrier, requiresExclusiveDoP, !output.takeExclusive(rate: rate) {
-			EngineLog.logger.info("No exclusive access to the device for DoP; converting to PCM")
+			EngineLog.logger.notice("No exclusive access to the device for DoP; converting to PCM")
 			carrier = nil
 		}
 		if carrier == nil {
@@ -279,7 +279,7 @@ import Foundation
 				cog_renderer_destroy(renderer)
 				return false
 			}
-			EngineLog.logger.info("DoP carrier at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, 24-bit integer output")
+			EngineLog.logger.notice("DoP carrier at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, 24-bit integer output")
 		}
 		self.feeder = feeder
 		self.pump = pump

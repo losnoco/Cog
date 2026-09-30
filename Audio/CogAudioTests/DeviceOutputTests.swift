@@ -5,7 +5,7 @@
 //  Created by Christopher Snowhill on 9/29/26.
 //
 
-import CogAudio
+@testable import CogAudio
 import XCTest
 
 /// Runs against the machine's real default output device. Only silence is
@@ -66,5 +66,16 @@ final class DeviceOutputTests: XCTestCase {
 		XCTAssertFalse(found)
 		XCTAssertTrue(output.followsSystemDefault)
 		XCTAssertEqual(output.deviceID, DeviceOutput.systemDefaultOutput())
+	}
+
+	/// Where the system default goes while DoP holds its device: another
+	/// output that can be a default, never the held one.
+	func testTheFallbackForTheSystemDefaultIsAnotherOutput() throws {
+		let held = try XCTUnwrap(DeviceOutput.systemDefaultOutput())
+		guard let fallback = DeviceOutput.fallbackOutput(excluding: held) else {
+			throw XCTSkip("only one output device")
+		}
+		XCTAssertNotEqual(fallback, held)
+		XCTAssertTrue(DeviceOutput.outputDevices().contains { $0.id == fallback })
 	}
 }
