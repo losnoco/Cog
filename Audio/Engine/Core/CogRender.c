@@ -252,6 +252,8 @@ struct CogRenderer {
 	CogSampleFormat outputFormat;
 	float *integerScratch;
 	size_t integerScratchFrames;
+	/// Dither noise for 16-bit output, render thread only.
+	uint32_t ditherState;
 
 	_Atomic uint64_t framesRendered;
 	_Atomic uint64_t silentFrames;
@@ -282,6 +284,7 @@ CogRenderer *cog_renderer_create(CogRing *ring) {
 	atomic_init(&renderer->peak, 0.0f);
 	atomic_init(&renderer->crossfadeEnabled, true);
 	renderer->dopMarker = 0x05;
+	renderer->ditherState = 0x9E3779B9U;
 	return renderer;
 }
 
@@ -636,6 +639,30 @@ static void renderer_note_device_time(CogRenderer *renderer, const AudioTimeStam
 	atomic_store_explicit(&renderer->deviceTimeKnown, true, memory_order_relaxed);
 }
 
+/// A uniform value in [0, 1) from a xorshift generator.
+static inline float dither_uniform(uint32_t *state) {
+	uint32_t x = *state;
+	x ^= x << 13;
+	x ^= x >> 17;
+	x ^= x << 5;
+	*state = x;
+	return (float)(x >> 8) * (1.0f / 16777216.0f);
+}
+
+/// Adds triangular dither of one 16-bit step each way to the samples that
+/// fall between 16-bit steps, which only processing (the volume, a DSP
+/// stage) puts there: rounding them plainly would leave distortion that
+/// follows the music. Samples already on a step, as every one of a 16-bit
+/// track nothing changed is, are left exact, and silence silent.
+static void renderer_dither16(CogRenderer *renderer, float *samples, size_t count) {
+	for(size_t i = 0; i < count; ++i) {
+		const float step = samples[i] * 32768.0f;
+		if(step == rintf(step)) continue;
+		const float noise = dither_uniform(&renderer->ditherState) - dither_uniform(&renderer->ditherState);
+		samples[i] = (step + noise) * (1.0f / 32768.0f);
+	}
+}
+
 /// Renders `frames` frames into `out` in the output format, through the
 /// scratch buffer as many times as it takes when that is not float.
 static void renderer_fill(CogRenderer *renderer, void *out, UInt32 frames) {
@@ -650,6 +677,9 @@ static void renderer_fill(CogRenderer *renderer, void *out, UInt32 frames) {
 	while(frames) {
 		const UInt32 count = frames < renderer->integerScratchFrames ? frames : (UInt32)renderer->integerScratchFrames;
 		cog_renderer_render(renderer, renderer->integerScratch, count);
+		if(format == CogSampleFormatInt16) {
+			renderer_dither16(renderer, renderer->integerScratch, (size_t)count * channels);
+		}
 		cog_convert_samples(bytes, format, renderer->integerScratch, (size_t)count * channels);
 		bytes += count * bytesPerFrame;
 		frames -= count;

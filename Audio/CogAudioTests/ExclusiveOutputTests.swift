@@ -222,6 +222,33 @@ final class ExclusiveOutputTests: XCTestCase {
 		XCTAssertEqual(words(bytes, .int24Packed), (0..<400).map { Int32($0) })
 	}
 
+	/// 16-bit output dithers what processing left between its steps, and
+	/// nothing else: steps stay exact and silence silent.
+	func testSixteenBitOutputDithersOnlyBetweenSteps() {
+		let between = [Float](repeating: 0.3 / 32768, count: 3000)
+		let onSteps = (0..<200).map { Float($0 - 100) / 32768 }
+		let silence = [Float](repeating: 0, count: 200)
+		let (ring, renderer) = renderer(channels: 1, samples: between + onSteps + silence, format: .int16, scratch: 256)
+		defer {
+			cog_renderer_destroy(renderer)
+			cog_ring_destroy(ring)
+		}
+		var bytes = [UInt8](repeating: 0, count: 3400 * 2)
+		bytes.withUnsafeMutableBytes { raw in
+			var list = AudioBufferList(mNumberBuffers: 1, mBuffers: AudioBuffer(mNumberChannels: 1, mDataByteSize: UInt32(raw.count), mData: raw.baseAddress))
+			var input = AudioBufferList()
+			var (now, inputTime, outputTime) = (AudioTimeStamp(), AudioTimeStamp(), AudioTimeStamp())
+			_ = cog_renderer_device_io_proc(0, &now, &input, &inputTime, &list, &outputTime, UnsafeMutableRawPointer(renderer))
+		}
+		let out = words(bytes, .int16)
+		let dithered = out[0..<3000]
+		XCTAssertTrue(dithered.allSatisfy { (-1...1).contains($0) }, "within a step either way")
+		XCTAssertGreaterThan(Set(dithered).count, 1, "not merely rounded")
+		XCTAssertEqual(Double(dithered.reduce(0, +)) / 3000, 0.3, accuracy: 0.05, "the mean kept")
+		XCTAssertEqual(Array(out[3000..<3200]), (0..<200).map { Int32($0 - 100) }, "steps exact")
+		XCTAssertTrue(out[3200...].allSatisfy { $0 == 0 }, "silence silent")
+	}
+
 	// MARK: - Choosing the device's format
 
 	private func ranged(_ rate: Double, bits: UInt32, bytes: UInt32, flags: AudioFormatFlags, channels: UInt32 = 2) -> AudioStreamRangedDescription {

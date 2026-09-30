@@ -415,8 +415,23 @@ Each stage ships on its own and leaves the old engine working.
      integer (the system converts float to it, exactly for 24 bits), then
      float. Widest rather than the source's depth: every source up to 24 bits
      passes exactly through any of 24 bits or more, processed audio loses
-     least, and tracks of other depths at the same rate stay gapless. DoP
-     now goes through the same path, needing integer of 24 bits or more.
+     least, and tracks of other depths at the same rate stay gapless. Nor
+     does the format change when processing starts or stops mid-playback (the
+     volume, a DSP stage): the renderer rounds into the same words, at 32 or
+     24 bits below any DAC's own noise, and a return to unity gain is
+     bit-perfect again at once. Sending each track in its own depth was tried
+     and dropped: a device reconfiguration (on a USB DAC, a restart and
+     relock) at every change of depth, the choice resting on whether anything
+     processes the audio as playback starts, and a 16-bit stream losing a bit
+     of resolution to every 6 dB the volume is lowered, all for a word size
+     the samples do not need. A wider DSP path would end the same way, with
+     Cog converting its float to the device's widest integer itself: float
+     handed to Core Audio goes through the system mixer at 32 bits,
+     undithered, and DACs like the SMSL take no float at all. Where the
+     widest a device offers is 16 bits, samples that processing leaves
+     between its steps are dithered (triangular, a step each way); a 16-bit
+     track nothing changes stays exact, and silence silent. DoP now goes
+     through the same path, needing integer of 24 bits or more.
    - The device's rate is set through the stream's format alone. Setting
      the nominal rate first as well (as the DoP path did), two
      reconfigurations back to back, left an SMSL DAC unable to start I/O in
