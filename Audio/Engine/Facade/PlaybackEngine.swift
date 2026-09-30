@@ -286,9 +286,9 @@ import Foundation
 		currentRatio = 1
 
 		let deviceChannels = output.format.channels
-		feeder.admits = { [weak output] decoder in
-			guard let output else { return true }
-			return Self.admits(decoder.properties() ?? [:], into: carrier, deviceChannels: deviceChannels) { output.supportsSampleRate($0) }
+		let supports = Self.carrierSupport(output)
+		feeder.admits = { decoder in
+			Self.admits(decoder.properties() ?? [:], into: carrier, deviceChannels: deviceChannels, supports: supports)
 		}
 		feeder.delegate = self
 		feeder.start(with: track, offset: offset, decoder: decoder)
@@ -324,7 +324,15 @@ import Foundation
 	}
 
 	private static func carrierRate(for properties: [AnyHashable: Any], output: DeviceOutput) -> Double? {
-		carrierRate(for: properties, deviceChannels: output.format.channels) { output.supportsSampleRate($0) }
+		carrierRate(for: properties, deviceChannels: output.format.channels, supports: carrierSupport(output))
+	}
+
+	/// Whether the device can carry DoP at a rate: never while the DoP
+	/// setting is off (there is no telling whether the DAC decodes it, and
+	/// one that does not plays it as noise), so DSD becomes PCM.
+	private static func carrierSupport(_ output: DeviceOutput) -> (Double) -> Bool {
+		let enabled = UserDefaults.standard.bool(forKey: "enableDoP")
+		return { enabled && output.supportsSampleRate($0) }
 	}
 
 	/// Whether a track can join a stream running with DoP carrier `current`
@@ -354,7 +362,7 @@ import Foundation
 		      !output.wouldChange(for: UserDefaults.standard.dictionary(forKey: "outputDevice")) else {
 			return false
 		}
-		if let decoder, !Self.admits(decoder.properties() ?? [:], into: carrierRate, deviceChannels: output.format.channels, supports: { output.supportsSampleRate($0) }) {
+		if let decoder, !Self.admits(decoder.properties() ?? [:], into: carrierRate, deviceChannels: output.format.channels, supports: Self.carrierSupport(output)) {
 			return false
 		}
 		EngineLog.logger.info("Switch to \(track.url.lastPathComponent, privacy: .public) from \(seconds, format: .fixed(precision: 2)) s in place, track gain \(track.gain, format: .fixed(precision: 4))")

@@ -156,6 +156,8 @@ final class PlaybackEngineTests: XCTestCase {
 	/// is at 16 times the device's own rate, so the device keeps its rate,
 	/// and its payload is DoP idle, as the carrier ignores the volume.
 	func testADSDTrackAfterPCMIsHandedToANewPipeline() throws {
+		UserDefaults.standard.set(true, forKey: "enableDoP")
+		defer { UserDefaults.standard.removeObject(forKey: "enableDoP") }
 		let device = try DeviceOutput()
 		try device.selectDevice(nil)
 		let rate = device.format.sampleRate
@@ -179,6 +181,16 @@ final class PlaybackEngineTests: XCTestCase {
 
 		XCTAssertTrue(host.stopped)
 		XCTAssertEqual(engine.pipelineBuilds, 2, "rebuilt for the DSD track")
+
+		// With DoP off, the DSD is converted to PCM in the same stream.
+		UserDefaults.standard.set(false, forKey: "enableDoP")
+		host.stopped = false
+		host.log.removeAll()
+		host.queue = [EngineTrack(url: URL(string: "memory://dsd")!, userInfo: "dsd", gain: 1)]
+		XCTAssertTrue(engine.play(URL(string: "memory://pcm")!, userInfo: "pcm", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { host.stopped }, timeout: 10)
+		XCTAssertEqual(engine.pipelineBuilds, 3, "one pipeline for both")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
 		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, [
 			"played pcm",
 			"begin dsd",
