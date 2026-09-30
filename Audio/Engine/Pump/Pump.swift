@@ -70,6 +70,15 @@ public final class Pump {
 	private var inputFormat: StreamFormat?
 	private var downmix: DownmixProcessor?
 	private var readBuffer: [Float] = []
+
+	/// The track whose frames are being read, for its ReplayGain.
+	private var gainTrack: EngineTrack?
+	/// The gain last applied, ramped toward the track's current gain.
+	private var appliedGain: Float = 1
+	private var rampTarget: Float = 1
+	private var rampStep: Float = 0
+	/// Gain changes within a track take this long, so they do not click.
+	static let gainRampSeconds = 0.02
 	private var fittedBuffer: [Float] = []
 
 	/// Frames read and written per pass.
@@ -169,6 +178,10 @@ public final class Pump {
 				configure(for: format)
 			case let .trackStart(track, offset):
 				presentation.append(.trackStart(track, offset: offset), at: cog_ring_write_position(ring))
+				// A new track's gain starts exactly on its first frame.
+				gainTrack = track
+				appliedGain = track.gain
+				rampTarget = appliedGain
 			case .endOfStream:
 				endOfStream = true
 			}
@@ -192,8 +205,39 @@ public final class Pump {
 		frames += UInt64(got)
 		feeder.consumerDidRead()
 
+		applyGain(frames: got, channels: channels)
 		emit(got)
 		return true
+	}
+
+	/// Scales the block in `readBuffer` by the current track's gain. A
+	/// change within a track ramps linearly over `gainRampSeconds`, however
+	/// many blocks that spans.
+	private func applyGain(frames: Int, channels: Int) {
+		let target = gainTrack?.gain ?? 1
+		if target != rampTarget {
+			rampTarget = target
+			let rampFrames = max(1, outputFormat.sampleRate * Self.gainRampSeconds)
+			rampStep = (target - appliedGain) / Float(rampFrames)
+		}
+		if appliedGain == 1 && target == 1 { return }
+
+		var level = appliedGain
+		readBuffer.withUnsafeMutableBufferPointer { samples in
+			for frame in 0..<frames {
+				if level != target {
+					level += rampStep
+					if (rampStep > 0 && level > target) || (rampStep < 0 && level < target) || rampStep == 0 {
+						level = target
+					}
+				}
+				let base = frame * channels
+				for channel in 0..<channels {
+					samples[base + channel] *= level
+				}
+			}
+		}
+		appliedGain = level
 	}
 
 	private func configure(for format: StreamFormat) {

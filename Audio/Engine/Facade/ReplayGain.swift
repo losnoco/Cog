@@ -57,6 +57,7 @@ public extension EngineTrack {
 	/// A track whose gain comes from its ReplayGain info and the user's
 	/// volume scaling setting.
 	@objc convenience init(url: URL, userInfo: Any?, rgInfo: [AnyHashable: Any]?) {
-		self.init(url: url, userInfo: userInfo, gain: ReplayGain.linearGain(rgInfo: rgInfo))
+		self.init(url: url, userInfo: userInfo)
+		update(rgInfo: rgInfo)
 	}
 }

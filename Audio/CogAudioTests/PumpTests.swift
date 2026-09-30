@@ -141,4 +141,69 @@ final class PumpTests: XCTestCase {
 		XCTAssertEqual(heard.count, 48000 * 2)
 		XCTAssertEqual(Array(heard.prefix(8)), Array(samples[(432000 * 2)..<(432000 * 2 + 8)]))
 	}
+
+	// MARK: - ReplayGain
+
+	/// A constant signal makes the applied gain directly visible.
+	private func constant(_ frames: Int, _ value: Float = 0.5) -> [Float] {
+		[Float](repeating: value, count: frames * 2)
+	}
+
+	private func makePump(_ tracks: [(EngineTrack, MemoryDecoder)], next: [EngineTrack]) throws -> (Feeder, Pump, OpaquePointer, ScriptedTracks) {
+		let feeder = makeFeeder(outputRate: 48000, tracks: tracks)
+		let delegate = ScriptedTracks(next)
+		feeder.delegate = delegate
+		let pump = try XCTUnwrap(Pump(feeder: feeder, outputFormat: StreamFormat(sampleRate: 48000, channels: 2, channelConfig: UInt32(AudioConfigStereo))))
+		let renderer = try XCTUnwrap(cog_renderer_create(pump.ring))
+		return (feeder, pump, renderer, delegate)
+	}
+
+	func testEachTracksGainAppliesFromItsFirstFrame() throws {
+		let a = (EngineTrack(url: URL(string: "memory://a")!, gain: 0.5), MemoryDecoder(samples: constant(4800), sampleRate: 48000, channels: 2))
+		let b = (EngineTrack(url: URL(string: "memory://b")!, gain: 2), MemoryDecoder(samples: constant(4800), sampleRate: 48000, channels: 2))
+		let (feeder, pump, renderer, delegate) = try makePump([a, b], next: [b.0])
+		defer { cog_renderer_destroy(renderer) }
+		_ = delegate
+
+		feeder.start(with: a.0)
+		pump.start()
+		var played = Played()
+		play(pump, renderer: renderer, into: &played) { $0.ended }
+		pump.stop()
+		feeder.stop()
+
+		XCTAssertEqual(played.samples.count, 9600 * 2)
+		XCTAssertTrue(played.samples[0..<(4800 * 2)].allSatisfy { $0 == 0.25 }, "track A at gain 0.5 throughout")
+		XCTAssertTrue(played.samples[(4800 * 2)...].allSatisfy { $0 == 1.0 }, "track B at gain 2 from its first frame")
+	}
+
+	func testAGainChangeMidTrackRampsInsteadOfStepping() throws {
+		let track = (EngineTrack(url: URL(string: "memory://long")!, gain: 1), MemoryDecoder(samples: constant(96000), sampleRate: 48000, channels: 2))
+		let (feeder, pump, renderer, delegate) = try makePump([track], next: [])
+		defer { cog_renderer_destroy(renderer) }
+		_ = delegate
+
+		feeder.start(with: track.0)
+		pump.start()
+		var played = Played()
+		play(pump, renderer: renderer, into: &played) { $0.samples.count >= 1000 * 2 }
+		// As a late ReplayGain update or a new volume scaling setting would.
+		track.0.gain = 0.25
+		play(pump, renderer: renderer, into: &played) { $0.ended }
+		pump.stop()
+		feeder.stop()
+
+		let left = stride(from: 0, to: played.samples.count, by: 2).map { played.samples[$0] }
+		XCTAssertEqual(left.first, 0.5)
+		XCTAssertEqual(left.last!, 0.125, accuracy: 1e-6, "reaches the new gain")
+		var largestStep: Float = 0
+		for i in 1..<left.count {
+			largestStep = max(largestStep, abs(left[i] - left[i - 1]))
+		}
+		// 0.5 -> 0.125 over 20 ms (960 frames) is about 3.9e-4 per frame.
+		XCTAssertLessThan(largestStep, 1e-3, "no step")
+		let rampStart = try XCTUnwrap(left.firstIndex { $0 < 0.5 })
+		let rampEnd = try XCTUnwrap(left.firstIndex { abs($0 - 0.125) < 1e-6 })
+		XCTAssertEqual(rampEnd - rampStart, 960, accuracy: 2, "ramps over 20 ms")
+	}
 }

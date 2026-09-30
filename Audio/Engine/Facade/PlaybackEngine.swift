@@ -85,15 +85,60 @@ import Foundation
 		// Only the output device key: UserDefaults.didChangeNotification fires
 		// for every write, and the preferences window writes plenty.
 		UserDefaults.standard.addObserver(self, forKeyPath: "outputDevice", options: [], context: &Self.outputDeviceContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: "volumeScaling", options: [], context: &Self.volumeScalingContext)
 	}
 
 	deinit {
 		UserDefaults.standard.removeObserver(self, forKeyPath: "outputDevice", context: &Self.outputDeviceContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: "volumeScaling", context: &Self.volumeScalingContext)
 	}
 
 	private static var outputDeviceContext = 0
+	private static var volumeScalingContext = 0
+
+	// MARK: - ReplayGain
+
+	/// Tracks that may still be playing or queued, for gain updates. Weak, and
+	/// shared with the feeder thread (which adds next tracks).
+	private let liveTracksLock = UnfairLock()
+	private var liveTracks: [WeakTrack] = []
+
+	private struct WeakTrack {
+		weak var track: EngineTrack?
+	}
+
+	private func register(_ track: EngineTrack) {
+		liveTracksLock.withLock {
+			liveTracks.removeAll { $0.track == nil }
+			liveTracks.append(WeakTrack(track: track))
+		}
+	}
+
+	private var tracksInPlay: [EngineTrack] {
+		liveTracksLock.withLock { liveTracks.compactMap(\.track) }
+	}
+
+	/// New ReplayGain info for the playlist entry `userInfo`, for example
+	/// once its tags have loaded after playback began. Heard within the
+	/// shallow ring, with a short ramp.
+	@objc public func updateReplayGain(_ rgInfo: [AnyHashable: Any]?, forTrack userInfo: Any?) {
+		for track in tracksInPlay where track.belongs(to: userInfo) {
+			track.update(rgInfo: rgInfo)
+		}
+	}
+
+	/// The volume scaling setting changed: recompute every track's gain.
+	private func volumeScalingChanged() {
+		for track in tracksInPlay {
+			track.update(rgInfo: track.rgInfo)
+		}
+	}
 
 	public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+		if context == &Self.volumeScalingContext {
+			volumeScalingChanged()
+			return
+		}
 		guard context == &Self.outputDeviceContext else {
 			super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
 			return
@@ -150,6 +195,7 @@ import Foundation
 		cog_gain_ramp_to(cog_renderer_transport(renderer), fadeFrames > 0 ? 0 : 1, 0)
 
 		let track = EngineTrack(url: url, userInfo: userInfo, rgInfo: rgInfo)
+		register(track)
 		initialTrack = track
 		currentTrack = track
 		currentOffset = seconds
@@ -485,7 +531,11 @@ import Foundation
 	// MARK: - FeederDelegate
 
 	public func feeder(_ feeder: Feeder, nextTrackAfter track: EngineTrack) -> EngineTrack? {
-		host?.playbackEngineNextTrack(after: track.userInfo)
+		let next = host?.playbackEngineNextTrack(after: track.userInfo)
+		if let next {
+			register(next)
+		}
+		return next
 	}
 
 	public func feeder(_ feeder: Feeder, couldNotOpen track: EngineTrack) {

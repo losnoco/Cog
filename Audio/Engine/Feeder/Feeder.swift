@@ -292,10 +292,11 @@ public final class Feeder {
 				trackStartPending = nil
 			}
 
-			let gain = track?.gain ?? 1
+			// ReplayGain is applied on the DSP thread, where a change is heard
+			// within the shallow ring instead of after the deep one.
 			data.withUnsafeBytes { raw in
 				let samples = raw.bindMemory(to: Float.self)
-				converter.process(samples, format: format, gain: gain) { out, outFormat in
+				converter.process(samples, format: format) { out, outFormat in
 					write(out, format: outFormat)
 				}
 			}
