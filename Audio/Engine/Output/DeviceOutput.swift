@@ -200,7 +200,9 @@ public final class DeviceOutput {
 			throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioUnitErr_FormatNotSupported))
 		}
 		let channels = min(Int(hardware.mChannelsPerFrame), 8)
-		let rate = sampleRate ?? hardware.mSampleRate
+		// The device's nominal rate over the unit's, which can lag behind it.
+		let nominal = nominalSampleRate
+		let rate = sampleRate ?? (nominal > 0 ? nominal : hardware.mSampleRate)
 		let render = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
 		// Held exclusively, the device's stream is integer and the unit's
 		// input matches it word for word; otherwise 24-bit high-aligned.
@@ -452,9 +454,20 @@ public final class DeviceOutput {
 
 	/// Whether the device's rate or channel count no longer matches the
 	/// render format.
+	/// The rate is the device's own nominal rate: the unit's view of it lags a
+	/// change made elsewhere (Audio MIDI Setup), and a change read too early
+	/// would be missed.
 	public func hardwareFormatDiffers() -> Bool {
 		guard let hardware = hardwareFormat() else { return true }
-		return hardware.mSampleRate != format.sampleRate || min(Int(hardware.mChannelsPerFrame), 8) != format.channels
+		let rate = nominalSampleRate > 0 ? nominalSampleRate : hardware.mSampleRate
+		return abs(rate - format.sampleRate) >= 1 || min(Int(hardware.mChannelsPerFrame), 8) != format.channels
+	}
+
+	/// Asks again for the I/O buffer the engine wants. A rate change made
+	/// elsewhere resets the device to its default, 512 frames, which at
+	/// 384 kHz is too short a deadline and crackles.
+	public func reassertBufferSize() {
+		configureBufferSize(sampleRate: format.sampleRate)
 	}
 
 	// MARK: - Rendering

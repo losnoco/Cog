@@ -277,12 +277,13 @@ import Foundation
 		if carrier == nil {
 			output.releaseExclusive()
 		}
-		if carrier != nil || output.integerRender {
-			do {
-				try output.refreshFormat(integer: carrier != nil, sampleRate: carrier)
-			} catch {
-				return false
-			}
+		// Always from the device as it is now: a rebuild after a rate change
+		// made elsewhere must render at the new rate, and ask again for the
+		// I/O buffer the change reset.
+		do {
+			try output.refreshFormat(integer: carrier != nil, sampleRate: carrier)
+		} catch {
+			return false
 		}
 		carrierRate = carrier
 
@@ -859,7 +860,9 @@ import Foundation
 		switch change {
 		case .format:
 			guard output.hardwareFormatDiffers() else {
-				EngineLog.logger.debug("Device format notification without a change; ignored")
+				// Whatever changed, the I/O buffer may have been reset.
+				output.reassertBufferSize()
+				EngineLog.logger.debug("Device format notification without a change; kept the I/O buffer")
 				return
 			}
 		case .device:
