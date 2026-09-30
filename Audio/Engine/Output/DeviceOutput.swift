@@ -78,28 +78,43 @@ public final class DeviceOutput {
 	/// the system default is selected instead.
 	@discardableResult
 	public func selectDevice(_ description: [String: Any]?) throws -> Bool {
-		var found = true
+		let choice = Self.resolve(description)
+		guard let id = choice.id else {
+			throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioHardwareBadDeviceError))
+		}
+		try use(id, followingDefault: choice.followsDefault)
+		return choice.found
+	}
+
+	/// The device an `outputDevice` setting names, without selecting it:
+	/// by ID, then by name, else the system default (which is then followed).
+	/// `found` is false when a described device could not be found.
+	public static func resolve(_ description: [String: Any]?) -> (id: AudioDeviceID?, followsDefault: Bool, found: Bool) {
 		if let description {
 			let id = (description["deviceID"] as? NSNumber).map { AudioDeviceID($0.uint32Value) }
 			let name = description["name"] as? String
-			if let id, Self.isAliveOutput(id) {
-				try use(id, followingDefault: false)
-			} else if let name, let match = Self.outputDevices().first(where: { $0.name == name }) {
-				try use(match.id, followingDefault: false)
-			} else {
-				found = false
+			if let id, isAliveOutput(id) {
+				return (id, false, true)
 			}
-		}
-		if description == nil || !found {
-			guard let id = Self.systemDefaultOutput() else {
-				throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioHardwareBadDeviceError))
+			if let name, let match = outputDevices().first(where: { $0.name == name }) {
+				return (match.id, false, true)
 			}
-			try use(id, followingDefault: true)
+			return (systemDefaultOutput(), true, false)
 		}
-		return found
+		return (systemDefaultOutput(), true, true)
+	}
+
+	/// Whether selecting `description` would change the device in use.
+	public func wouldChange(for description: [String: Any]?) -> Bool {
+		let choice = Self.resolve(description)
+		return choice.id != deviceID || choice.followsDefault != followsSystemDefault
 	}
 
 	private func use(_ id: AudioDeviceID, followingDefault: Bool) throws {
+		if id == deviceID && followingDefault == followsSystemDefault && format.channels > 0 {
+			// Already selected: re-selecting would reset the unit for nothing.
+			return
+		}
 		let wasRunning = isRunning
 		if wasRunning { stop() }
 		try unit.setDeviceID(id)
@@ -126,6 +141,13 @@ public final class DeviceOutput {
 		try unit.inputBusses[0].setFormat(render)
 		format = StreamFormat(sampleRate: hardware.sampleRate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
 		latencyFrames = Self.presentationLatency(of: deviceID)
+	}
+
+	/// Whether the device's rate or channel count no longer matches the
+	/// render format.
+	public func hardwareFormatDiffers() -> Bool {
+		let hardware = unit.outputBusses[0].format
+		return hardware.sampleRate != format.sampleRate || min(Int(hardware.channelCount), 8) != format.channels
 	}
 
 	// MARK: - Rendering
@@ -226,7 +248,7 @@ public final class DeviceOutput {
 		}
 	}
 
-	static func isAliveOutput(_ id: AudioDeviceID) -> Bool {
+	public static func isAliveOutput(_ id: AudioDeviceID) -> Bool {
 		var alive: UInt32 = 0
 		guard getProperty(id, kAudioDevicePropertyDeviceIsAlive, &alive, scope: kAudioDevicePropertyScopeOutput), alive != 0 else { return false }
 		var address = AudioObjectPropertyAddress(mSelector: kAudioDevicePropertyStreamConfiguration, mScope: kAudioDevicePropertyScopeOutput, mElement: kAudioObjectPropertyElementMain)

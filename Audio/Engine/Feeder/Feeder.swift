@@ -67,6 +67,7 @@ public final class Feeder {
 	private var writtenFormat: StreamFormat?
 	private var trackStartPending: (track: EngineTrack, offset: Double)?
 	private var finished = false
+	private var waitNanoseconds: UInt64 = 0
 
 	/// Maximum channels a track may carry; sizes the deep ring.
 	public static let maximumChannels = 8
@@ -187,13 +188,22 @@ public final class Feeder {
 				continue
 			}
 
+			let start = EngineLog.now()
 			let chunk: AudioChunk? = autoreleasepool {
 				decoder?.readAudio()
 			}
+			let decodeMs = EngineLog.milliseconds(since: start)
 			if let chunk, chunk.frameCount() > 0 {
 				feed(chunk)
 			} else {
 				advance()
+			}
+			// Waiting for ring space is expected; only report time spent working.
+			let workMs = EngineLog.milliseconds(since: start) - Double(waitNanoseconds) / 1_000_000
+			waitNanoseconds = 0
+			if workMs > EngineLog.slowPass * 1000 {
+				let deepMs = Double(cog_ring_readable(ring)) / 2 / outputRate * 1000
+				EngineLog.logger.warning("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
 			}
 		}
 	}
@@ -318,7 +328,9 @@ public final class Feeder {
 			offset += written
 			if offset < samples.count {
 				if hasPendingSeek || !isRunning { return }
+				let waitStart = EngineLog.now()
 				_ = spaceAvailable.wait(timeout: .now() + .milliseconds(20))
+				waitNanoseconds += EngineLog.now() - waitStart
 			}
 		}
 	}

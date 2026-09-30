@@ -57,7 +57,9 @@ import Foundation
 		case pausing
 		case paused
 	}
-	private var phase = Phase.idle
+	private var phase = Phase.idle {
+		didSet { EngineLog.logger.info("Phase \(String(describing: self.phase), privacy: .public)") }
+	}
 
 	private var volumeLevel: Double = 100
 
@@ -80,11 +82,27 @@ import Foundation
 
 	@objc public override init() {
 		super.init()
-		NotificationCenter.default.addObserver(self, selector: #selector(outputDeviceSettingChanged), name: UserDefaults.didChangeNotification, object: nil)
+		// Only the output device key: UserDefaults.didChangeNotification fires
+		// for every write, and the preferences window writes plenty.
+		UserDefaults.standard.addObserver(self, forKeyPath: "outputDevice", options: [], context: &Self.outputDeviceContext)
 	}
 
 	deinit {
-		NotificationCenter.default.removeObserver(self)
+		UserDefaults.standard.removeObserver(self, forKeyPath: "outputDevice", context: &Self.outputDeviceContext)
+	}
+
+	private static var outputDeviceContext = 0
+
+	public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+		guard context == &Self.outputDeviceContext else {
+			super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+			return
+		}
+		if Thread.isMainThread {
+			outputDeviceSettingChanged()
+		} else {
+			DispatchQueue.main.async { self.outputDeviceSettingChanged() }
+		}
 	}
 
 	private static var fadesEnabled: Bool {
@@ -106,8 +124,8 @@ import Foundation
 		do {
 			if output == nil {
 				let device = try DeviceOutput()
-				device.onDeviceChange = { [weak self] _ in
-					DispatchQueue.main.async { self?.deviceChanged() }
+				device.onDeviceChange = { [weak self] change in
+					DispatchQueue.main.async { self?.deviceChanged(change) }
 				}
 				output = device
 			}
@@ -125,6 +143,8 @@ import Foundation
 		self.feeder = feeder
 		self.pump = pump
 		self.renderer = renderer
+		reportedUnderruns = 0
+		lastBeat = nil
 		output.attach(renderer)
 		cog_gain_ramp_to(cog_renderer_volume(renderer), Float(volumeLevel * 0.01), 0)
 		cog_gain_ramp_to(cog_renderer_transport(renderer), fadeFrames > 0 ? 0 : 1, 0)
@@ -255,6 +275,17 @@ import Foundation
 			break
 		}
 
+		let underruns = cog_renderer_underrun_events(renderer)
+		if underruns != reportedUnderruns {
+			reportedUnderruns = underruns
+			let rate = output.format.sampleRate
+			let shallowMs = Double(cog_ring_readable(pump.ring)) / rate * 1000
+			let deepMs = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate * 1000
+			EngineLog.logger.error("Underrun #\(underruns): shallow ring \(shallowMs, format: .fixed(precision: 1)) ms, deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
+		}
+
+		heartbeat(pump: pump, renderer: renderer, output: output)
+
 		let read = cog_ring_read_position(pump.ring)
 		let heard = heardPosition(read: read, dry: cog_ring_readable(pump.ring) == 0, output: output)
 
@@ -298,6 +329,37 @@ import Foundation
 	}
 
 	private var dryRead: (position: UInt64, since: Date)?
+
+	private var lastBeat: (time: UInt64, rendered: UInt64)?
+
+	/// Once a second: buffer levels, and whether the device pulled as many
+	/// frames as the wall clock says it should have. A shortfall there is a
+	/// device-side glitch even when no ring ran dry.
+	private func heartbeat(pump: Pump, renderer: OpaquePointer, output: DeviceOutput) {
+		let now = EngineLog.now()
+		let rendered = cog_renderer_frames_rendered(renderer)
+		guard let last = lastBeat else {
+			lastBeat = (now, rendered)
+			return
+		}
+		let elapsed = Double(now - last.time) / 1_000_000_000
+		guard elapsed >= 1 else { return }
+		lastBeat = (now, rendered)
+		guard output.isRunning else { return }
+		let rate = output.format.sampleRate
+		let pulledMs = Double(rendered - last.rendered) / rate * 1000
+		let shortfallMs = elapsed * 1000 - pulledMs
+		let shallowMs = Double(cog_ring_readable(pump.ring)) / rate * 1000
+		let deepMs = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate * 1000
+		let message = String(format: "Heartbeat: device pulled %.1f ms in %.1f ms, shallow %.1f ms, deep %.0f ms, underruns %llu",
+		                     pulledMs, elapsed * 1000, shallowMs, deepMs, cog_renderer_underrun_events(renderer))
+		if abs(shortfallMs) > 30 {
+			EngineLog.logger.error("\(message, privacy: .public) — device shortfall \(shortfallMs, format: .fixed(precision: 1)) ms")
+		} else {
+			EngineLog.logger.debug("\(message, privacy: .public)")
+		}
+	}
+	private var reportedUnderruns: UInt64 = 0
 
 	private var isOutputRunning: Bool {
 		if case .playing = phase { return true }
@@ -371,30 +433,52 @@ import Foundation
 
 	// MARK: - Devices
 
+	/// The output device setting as last seen, to skip identical rewrites.
+	private var lastSeenDeviceSetting: NSDictionary?
+
 	private func selectSavedDevice() throws {
 		guard let output else { return }
 		let saved = UserDefaults.standard.dictionary(forKey: "outputDevice")
+		lastSeenDeviceSetting = saved.map { $0 as NSDictionary }
 		if !(try output.selectDevice(saved)) {
 			UserDefaults.standard.removeObject(forKey: "outputDevice")
 		}
-		appliedDeviceSetting = UserDefaults.standard.dictionary(forKey: "outputDevice") as NSDictionary?
 	}
 
-	/// The `outputDevice` setting the current device was chosen from.
-	private var appliedDeviceSetting: NSDictionary?
-
-	/// Any setting changed; rebuild if it was the output device.
-	@objc private func outputDeviceSettingChanged() {
-		guard feeder != nil else { return }
-		let saved = UserDefaults.standard.dictionary(forKey: "outputDevice") as NSDictionary?
-		guard saved != appliedDeviceSetting else { return }
-		appliedDeviceSetting = saved
-		DispatchQueue.main.async { self.deviceChanged() }
+	/// The output device setting was written. Rebuild only if it now names a
+	/// different device than the one in use: the preferences window rewrites
+	/// the setting just by opening, as OutputCoreAudio also saw. The cheap
+	/// dictionary comparison comes first, so rewrites of the same value cost
+	/// no CoreAudio queries.
+	private func outputDeviceSettingChanged() {
+		guard feeder != nil, let output else { return }
+		let saved = UserDefaults.standard.dictionary(forKey: "outputDevice")
+		let savedObject = saved.map { $0 as NSDictionary }
+		guard savedObject != lastSeenDeviceSetting else { return }
+		lastSeenDeviceSetting = savedObject
+		guard output.wouldChange(for: saved) else { return }
+		EngineLog.logger.info("Output device setting now names another device; rebuilding")
+		DispatchQueue.main.async { self.deviceChanged(.device) }
 	}
 
-	/// The device or its format changed: rebuild at the current position.
-	private func deviceChanged() {
-		guard feeder != nil else { return }
+	/// The device or its format changed: rebuild at the current position,
+	/// unless nothing that matters to the render format actually changed.
+	private func deviceChanged(_ change: DeviceOutput.Change) {
+		guard feeder != nil, let output else { return }
+		switch change {
+		case .format:
+			guard output.hardwareFormatDiffers() else {
+				EngineLog.logger.debug("Device format notification without a change; ignored")
+				return
+			}
+		case .device:
+			let saved = UserDefaults.standard.dictionary(forKey: "outputDevice")
+			guard output.wouldChange(for: saved) || !DeviceOutput.isAliveOutput(output.deviceID) else {
+				EngineLog.logger.debug("Device notification without a change of device; ignored")
+				return
+			}
+		}
+		EngineLog.logger.info("Output \(String(describing: change), privacy: .public) changed; restarting at the current position")
 		host?.playbackEngineRestartAtCurrentPosition(currentTrack?.userInfo)
 	}
 

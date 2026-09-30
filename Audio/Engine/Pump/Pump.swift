@@ -57,6 +57,9 @@ public final class Pump {
 	public let outputFormat: StreamFormat
 
 	private let feeder: Feeder
+
+	/// The deep ring this pump reads (for diagnostics).
+	var feederRing: OpaquePointer { feeder.ring }
 	private let lock = UnfairLock()
 	private var running = false
 	private var threadExited = DispatchSemaphore(value: 0)
@@ -125,8 +128,18 @@ public final class Pump {
 
 	private func run() {
 		defer { lock.withLock { threadExited }.signal() }
+		var last = EngineLog.now()
 		while isRunning {
-			if !pass() {
+			let start = EngineLog.now()
+			let gap = EngineLog.milliseconds(since: last)
+			let worked = pass()
+			let took = EngineLog.milliseconds(since: start)
+			if gap > EngineLog.slowPass * 1000 || took > EngineLog.slowPass * 1000 {
+				let shallowMs = Double(cog_ring_readable(ring)) / outputFormat.sampleRate * 1000
+				EngineLog.logger.warning("DSP thread slow: \(gap, format: .fixed(precision: 1)) ms since last pass, pass took \(took, format: .fixed(precision: 1)) ms, shallow ring \(shallowMs, format: .fixed(precision: 1)) ms")
+			}
+			last = EngineLog.now()
+			if !worked {
 				// Nothing to read, or no room to write: the renderer drains the
 				// shallow ring at the device rate, so a short nap suffices.
 				Thread.sleep(forTimeInterval: 0.002)
