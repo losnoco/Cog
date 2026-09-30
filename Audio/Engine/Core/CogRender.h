@@ -12,7 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "CogRing.h"
+#include <CogAudio/CogRing.h>
 
 #ifdef __cplusplus
 extern "C" {

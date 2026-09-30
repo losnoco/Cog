@@ -11,7 +11,7 @@
 		07DB5F3F0ED353A900C2E3EF /* AudioMetadataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 07DB5F3D0ED353A900C2E3EF /* AudioMetadataWriter.m */; };
 		17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 17A2D3C30B8D1D37000778C4 /* AudioDecoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */; };
-		17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 17ADB13A0B97926D00257CA2 /* AudioSource.h */; };
+		17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 17ADB13A0B97926D00257CA2 /* AudioSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB13B0B97926D00257CA2 /* AudioSource.m */; };
 		17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 17B6192E0B909BC300BC003F /* AudioPropertiesReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17B619310B909BC300BC003F /* AudioPropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17B6192F0B909BC300BC003F /* AudioPropertiesReader.m */; };
@@ -68,6 +68,7 @@
 		8350416D28646149006B32CC /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8350416C28646149006B32CC /* CoreMedia.framework */; };
 		835C701D306CD07D003A9DEB /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* CogAudio.framework */; };
 		835C701E306CD07D003A9DEB /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */; };
+		835C7024306CD07D003A9DEB /* CogAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C7023306CD07D003A9DEB /* CogAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */ = {isa = PBXBuildFile; fileRef = 835C88AF279811A500E28EAE /* hdcd_decode2.h */; };
 		835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */ = {isa = PBXBuildFile; fileRef = 835C88B0279811A500E28EAE /* hdcd_decode2.c */; };
 		835DD2672ACAF1D90057E319 /* OutputCoreAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */; };
@@ -219,6 +220,7 @@
 		834FD4EF27AF93680063BC83 /* ChunkList.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChunkList.m; sourceTree = "<group>"; };
 		8350416C28646149006B32CC /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		835C7016306CD07D003A9DEB /* CogAudioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogAudioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		835C7023306CD07D003A9DEB /* CogAudio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CogAudio.h; sourceTree = "<group>"; };
 		835C88AF279811A500E28EAE /* hdcd_decode2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdcd_decode2.h; sourceTree = "<group>"; };
 		835C88B0279811A500E28EAE /* hdcd_decode2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdcd_decode2.c; sourceTree = "<group>"; };
 		835DD2652ACAF1D90057E319 /* OutputCoreAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutputCoreAudio.m; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 		835C7022306CD07D003A9DEB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Internal/CogAudioEngineInternal.h,
 				PLAN.md,
 			);
 			publicHeaders = (
@@ -374,6 +377,7 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				835C7023306CD07D003A9DEB /* CogAudio.h */,
 				83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */,
 				8377C64F27B8CAAB00E8BC0F /* Visualization */,
 				17F94DDC0B8D101100A34E87 /* Plugin.h */,
@@ -657,6 +661,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				835C7024306CD07D003A9DEB /* CogAudio.h in Headers */,
 				83084F032F5864C800EC1777 /* DSPSignalsmithStretchNode.h in Headers */,
 				83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */,
 				833442422D6EFA6700C51D38 /* VisualizationController.h in Headers */,
@@ -906,6 +911,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_MODULE_VERIFIER = YES;
@@ -931,6 +937,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WARNING_LDFLAGS = "";
@@ -946,6 +954,7 @@
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_MODULE_VERIFIER = YES;
@@ -969,6 +978,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_VERSION = 5.0;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
@@ -1020,10 +1031,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
 			};
 			name = Debug;
@@ -1068,11 +1077,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				PRODUCT_MODULE_NAME = CogAudio;
 				SDKROOT = macosx;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OBJC_BRIDGING_HEADER = "CogAudio-Bridging-Header.h";
 				SYMROOT = ../build;
 			};
 			name = Release;
@@ -1128,7 +1135,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "CogAudioTests/CogAudioTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -1177,7 +1183,6 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "CogAudioTests/CogAudioTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

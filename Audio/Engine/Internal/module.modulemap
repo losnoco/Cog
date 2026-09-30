@@ -1,0 +1,4 @@
+module CogAudioEngineInternal {
+	header "CogAudioEngineInternal.h"
+	export *
+}

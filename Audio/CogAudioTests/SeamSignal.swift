@@ -5,6 +5,7 @@
 //  Created by Christopher Snowhill on 9/29/26.
 //
 
+import CogAudio
 import XCTest
 
 /// Test material for track-boundary tests: a loopable stereo signal and the

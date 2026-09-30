@@ -12,7 +12,7 @@
 
 #import <CogAudio/DSPNode.h>
 
-#import "FadedBuffer.h"
+@class FadedBuffer;
 
 @interface DSPFaderNode : DSPNode
 

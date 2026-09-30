@@ -1,5 +1,5 @@
 //
-//  AudioDecoder.h
+//  AudioSource.h
 //  CogAudio
 //
 //  Created by Vincent Spader on 2/21/07.
@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "PluginController.h"
+#import <CogAudio/PluginController.h>
 
 @interface AudioSource : NSObject {
 }

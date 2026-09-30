@@ -5,6 +5,7 @@
 //  Created by Christopher Snowhill on 9/29/26.
 //
 
+import CogAudio
 import XCTest
 
 /// Drives the real `ConverterNode` across a track boundary, the way two

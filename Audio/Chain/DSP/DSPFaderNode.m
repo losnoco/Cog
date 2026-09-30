@@ -12,6 +12,7 @@
 #import "Logging.h"
 
 #import "DSPFaderNode.h"
+#import "FadedBuffer.h"
 
 @implementation DSPFaderNode {
 	NSLock *fadersLock;

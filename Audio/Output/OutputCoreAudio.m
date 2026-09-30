@@ -8,6 +8,7 @@
 
 #import "OutputCoreAudio.h"
 #import "OutputNode.h"
+#import "FadedBuffer.h"
 
 #ifdef _DEBUG
 #import "BadSampleCleaner.h"

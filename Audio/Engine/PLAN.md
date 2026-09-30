@@ -172,6 +172,44 @@ Each stage ships on its own and leaves the old engine working.
    HDCD, DSD, channel fit, persistent soxr with seam carry-over, ReplayGain,
    seam markers. Output to the deep ring.
 
+   *Done (first cut):*
+   - CogAudio is now a proper framework module: `DEFINES_MODULE`, umbrella
+     `Audio/CogAudio.h` listing every public header, no bridging header (the
+     old one only served `VisualizationController.swift`, which is not in the
+     target — the Objective-C `VisualizationController.m` is what builds), no
+     project-level `PRODUCT_MODULE_NAME` (it made the test bundle's module
+     `CogAudio` too). `DSPFaderNode.h` forward-declares `FadedBuffer` instead
+     of importing a project header; `AudioSource.h` is public.
+   - `SWIFT_INSTALL_OBJC_HEADER = NO`: the plugins build in parallel with
+     CogAudio without a dependency on it, and a module map naming the
+     late-generated `CogAudio-Swift.h` broke them. CogAudio's own Objective-C
+     can still `#import "CogAudio-Swift.h"` from derived sources.
+   - Private C for the engine's Swift goes through
+     `Engine/Internal/module.modulemap` (`CogAudioEngineInternal`, imported
+     `@_implementationOnly`); currently lvqcl's `lpc.h`.
+   - `Plugin.h` no longer declares `-dealloc` in `CogSource`/`CogDecoder`;
+     Swift cannot conform to a protocol that does, and it meant nothing.
+   - `StreamConverter`: one soxr run across same-rate, same-channel-count
+     tracks; drain with LPC forward extrapolation only on a format change or
+     at the end; LPC lead-in waits for a full prime length of input; bypass
+     at equal rates; ReplayGain applied to the input; exact seam positions
+     (`outputPositionOfNextInput`). Repeat-one seam error at 48k → 384k is
+     5.7e-7 against a continuous resample (interior: 6e-7), versus 1.4e-2
+     for `ConverterNode`.
+   - `Feeder`: one thread; opens decoders through the plugins (or an
+     injected opener), converts via `ChunkList.removeSamplesAsFloat32:`
+     (PCM, DSD, HDCD), resamples, and writes to a deep `CogRing` of single
+     samples (channel count may change between tracks) sized in seconds at
+     8 channels. `Timeline` carries `.format`, `.trackStart(track, offset)`
+     and `.endOfStream` at output-frame positions, stamped with the ring's
+     flush epoch. Seek flushes the ring, resets the converter and restarts
+     the frame count in a new epoch; it reopens the track if the feeder had
+     already moved on. Unopenable tracks are skipped.
+   - Tests: `StreamConverterTests`, `FeederTests` (with a Swift
+     `CogDecoder` fake); Thread Sanitizer clean.
+   - Still to do in the feeder: HDCD sustain notification, DoP passthrough,
+     cue-sheet `setTrack:` reuse, metadata/property change events, and the
+     ReplayGain calculation from `rgInfo` (currently `EngineTrack.gain`).
 4. **Output.** AUHAL render through the C core; device format, device change
    and default-device handling ported from `OutputCoreAudio`. With stages 2–4
    the new engine plays audio with no DSP — flip the hidden default and A/B.
