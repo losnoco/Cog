@@ -148,6 +148,26 @@ Each stage ships on its own and leaves the old engine working.
 2. **C core.** SPSC ring (power-of-two, whole frames, flush epoch), render loop,
    lock shim. Unit-tested from Swift.
 
+   *Done:* `Audio/Engine/Core/`, compiled into CogAudio through a
+   synchronized `Engine` folder (PLAN.md excluded; `CogRing.h` and
+   `CogRender.h` public).
+   - `CogRing`: SPSC interleaved float frames, power-of-two capacity,
+     64-bit frame positions that never wrap, producer and consumer counters
+     on separate 128-byte cache lines. Unlike XPCog's ring, a flush request
+     records the producer's write position and the consumer jumps to *that*
+     position, so the producer can keep writing post-seek audio without
+     waiting for the acknowledgement.
+   - `CogGain`: a per-frame linear ramp steered from any thread (target and
+     length packed into one atomic word), used for volume and transport
+     fades; lands exactly on its target and reports when settled.
+   - `CogRenderer`: the callback's inner loop — honour flush, read, zero-fill,
+     apply transport and volume gains, count rendered and silent frames and
+     underrun events. No allocation, locks or Objective-C.
+   - The lock shim is unnecessary: Swift uses `os_unfair_lock` through a
+     heap-allocated pointer off the real-time path.
+   - Tests: `CogRingTests` (including two-thread lossless-transfer and
+     flush-only-skips-forward stress) and `CogRenderTests`; clean under
+     Thread Sanitizer.
 3. **Feeder + converter in Swift.** Decoder open/advance, float conversion,
    HDCD, DSD, channel fit, persistent soxr with seam carry-over, ReplayGain,
    seam markers. Output to the deep ring.

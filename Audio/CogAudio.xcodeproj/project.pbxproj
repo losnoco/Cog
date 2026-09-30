@@ -290,8 +290,23 @@
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		835C7022306CD07D003A9DEB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				PLAN.md,
+			);
+			publicHeaders = (
+				Core/CogRender.h,
+				Core/CogRing.h,
+			);
+			target = 8DC2EF4F0486A6940098B216 /* CogAudio */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		835C7017306CD07D003A9DEB /* CogAudioTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CogAudioTests; sourceTree = "<group>"; };
+		835C7021306CD07D003A9DEB /* Engine */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (835C7022306CD07D003A9DEB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Engine; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -340,6 +355,7 @@
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
+				835C7021306CD07D003A9DEB /* Engine */,
 				835C7017306CD07D003A9DEB /* CogAudioTests */,
 				83907FD02E88E37500D5D683 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -745,6 +761,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				835C7021306CD07D003A9DEB /* Engine */,
 			);
 			name = CogAudio;
 			productInstallPath = "$(HOME)/Library/Frameworks";
