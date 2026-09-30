@@ -239,4 +239,43 @@ final class ExclusiveDeviceTests: XCTestCase {
 		}
 		XCTAssertTrue(host.outputStatuses.last.map { $0 == nil } ?? false, "cleared on stopping")
 	}
+
+	/// A track played while another plays on the held device takes over in
+	/// place, as every track the playlist switches to now does: the device
+	/// stays held, running, in the same format. Stopping first, as the
+	/// playlist did, gave it back and took it again, two reconfigurations
+	/// and 0.8 to 1.4 s of silence on an SMSL DAC.
+	func testANewTrackWhilePlayingKeepsTheHeldDeviceAsItIs() throws {
+		let arguments = UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)
+		var settings = arguments
+		settings["outputDevice"] = setting
+		settings[PlaybackEngine.exclusiveKey] = true
+		UserDefaults.standard.setVolatileDomain(settings, forName: UserDefaults.argumentDomain)
+		defer { UserDefaults.standard.setVolatileDomain(arguments, forName: UserDefaults.argumentDomain) }
+		let silence = [Int32](repeating: 0, count: 44100 * 2 * 10)
+		let engine = PlaybackEngine()
+		engine.host = RecordingHost()
+		engine.opener = { _ in IntegerMemoryDecoder(samples: silence, bits: 16, sampleRate: 44100) }
+
+		XCTAssertTrue(engine.play(URL(string: "memory://a")!, userInfo: "a", rgInfo: nil, startPaused: false, seekTo: 0))
+		defer { engine.stop() }
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+		XCTAssertEqual(hogOwner(), getpid())
+
+		let lock = UnfairLock()
+		var reconfigurations = 0
+		var address = AudioObjectPropertyAddress(mSelector: kAudioStreamPropertyPhysicalFormat, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+		let queue = DispatchQueue(label: "ExclusiveDeviceTests")
+		let listener: AudioObjectPropertyListenerBlock = { _, _ in lock.withLock { reconfigurations += 1 } }
+		XCTAssertEqual(AudioObjectAddPropertyListenerBlock(stream, &address, queue, listener), noErr)
+		defer { AudioObjectRemovePropertyListenerBlock(stream, &address, queue, listener) }
+
+		XCTAssertTrue(engine.play(URL(string: "memory://b")!, userInfo: "b", rgInfo: nil, startPaused: false, seekTo: 0))
+		XCTAssertEqual(engine.pipelineBuilds, 1, "switched in place")
+		runMainLoop(until: { engine.amountPlayed > 0.1 }, timeout: 1)
+		XCTAssertGreaterThan(engine.amountPlayed, 0.1, "the new track heard within a second")
+		XCTAssertEqual(hogOwner(), getpid(), "still held")
+		queue.sync {}
+		XCTAssertEqual(lock.withLock { reconfigurations }, 0, "the stream left as it was")
+	}
 }

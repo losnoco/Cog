@@ -353,6 +353,12 @@ Each stage ships on its own and leaves the old engine working.
      the same device moves the running feeder to the new track as a seek
      would, instead of building a new pipeline. Paused, prebuffering,
      starting paused, or after a device change, it rebuilds as before.
+     `PlaybackController` used to stop before every `play:`, so in the app
+     none of this happened: each manual change rebuilt, and a device held
+     exclusively was given back and taken again (two reconfigurations,
+     0.8 s for DoP and 1.4 s for 44.1 kHz PCM on an SMSL DAC, against
+     60–80 ms in place and 150 ms for a rebuild with the device kept). It
+     now stops first only for an entry with no URL.
    - DoP: `play:` opens the first track's decoder (as BufferChain did) to
      learn whether it wants a DoP carrier: a sixteenth of the rate for DSD,
      or the rate itself for integer PCM of 24 bits or more at 176.4 kHz or
