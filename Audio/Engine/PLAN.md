@@ -252,7 +252,8 @@ Each stage ships on its own and leaves the old engine working.
 5. **DSP thread.** Port stages as in-place transforms, one at a time: fader
    (transport + seek crossfade), downmix, EQ (re-home the EQ window's
    coupling), FreeSurround, HRTF, Rubber Band, Signalsmith. Visualization tap.
-   *In progress:*
+   *Done:* chain order is time-stretch, FreeSurround, EQ, visualization tap,
+   HRTF, then the channel fit to the device.
    - The pump runs `DSPStage`s in order between the track gain and the
      channel fit, reconfiguring on a format or active-set change, resetting
      on seek, and draining them (`drain(_:)`) at the end of the stream and
@@ -283,7 +284,11 @@ Each stage ships on its own and leaves the old engine working.
      through FreeSurround's block and a stretcher's latency. The pump emits
      `.rate` presentation events when the chain's time ratio changes, and
      the monitor keeps a piecewise stretch map for `amountPlayed`.
-   - Still to port: the visualization tap.
+   - `VisualizationTap`: a pass-through stage after the EQ (where the node
+     sat) that folds to mono with `DownmixProcessor`, resamples to 44.1 kHz
+     (soxr, quick quality) and posts to `VisualizationController`; the
+     monitor posts the latency from the shallow ring's write position to
+     what is heard, and the full latency with the deep ring added.
 
 6. **Parity and switch.** Seek, pause, stop, fades, DoP, HDCD sustain, cue
    `setTrack:` reuse, error handling, play-count/scrobble timing, Remote

@@ -53,6 +53,7 @@ import Foundation
 	private let timeStretch = TimeStretchStage()
 	private let freeSurround = FreeSurroundStage()
 	private let hrtf = HRTFStage()
+	private let visualization = VisualizationTap()
 
 	private lazy var equalizer: EqualizerStage = {
 		let equalizer = EqualizerStage()
@@ -207,7 +208,7 @@ import Foundation
 		}
 		guard let output,
 		      let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, hrtf]),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf]),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
 		}
@@ -323,6 +324,9 @@ import Foundation
 	private func tearDown() {
 		monitor?.invalidate()
 		monitor = nil
+		if feeder != nil {
+			VisualizationController.shared().reset()
+		}
 		output?.stop()
 		feeder?.stop()
 		pump?.stop()
@@ -371,6 +375,7 @@ import Foundation
 		}
 
 		heartbeat(pump: pump, renderer: renderer, output: output)
+		postVisualizationLatency(pump: pump, output: output)
 
 		let read = cog_ring_read_position(pump.ring)
 		let heard = heardPosition(read: read, dry: cog_ring_readable(pump.ring) == 0, output: output)
@@ -400,6 +405,21 @@ import Foundation
 			let seconds = currentOffset + Double(heard - currentStart) / output.format.sampleRate * currentRatio
 			advanceAmountPlayed(to: seconds, of: track)
 		}
+	}
+
+	/// Tells the spectrum and oscilloscope how far behind the device the
+	/// audio they were last given is: everything written to the shallow ring
+	/// but not yet heard. The full latency adds the deep ring.
+	private func postVisualizationLatency(pump: Pump, output: DeviceOutput) {
+		let rate = output.format.sampleRate
+		let read = cog_ring_read_position(pump.ring)
+		let heard = heardPosition(read: read, dry: cog_ring_readable(pump.ring) == 0, output: output)
+		let written = cog_ring_write_position(pump.ring)
+		let latency = Double(written > heard ? written - heard : 0) / rate
+		let deep = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate
+		let controller = VisualizationController.shared()
+		controller.postLatency(latency)
+		controller.postFullLatency(latency + deep)
 	}
 
 	/// The shallow-ring position now leaving the device. While audio flows
