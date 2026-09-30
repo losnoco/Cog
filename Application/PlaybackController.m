@@ -344,10 +344,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 }
 
 - (void)playEntry:(PlaylistEntry *)pe startPaused:(BOOL)paused andSeekTo:(id)offset {
-	if(playbackStatus != CogStatusStopped && playbackStatus != CogStatusStopping)
-		[self stop:self];
-
 	if(!pe.url) {
+		if(playbackStatus != CogStatusStopped && playbackStatus != CogStatusStopping)
+			[self stop:self];
 		pe.error = YES;
 		pe.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMessageBadFile", nil, [NSBundle bundleForClass:[self class]], @"");
 		[SentrySDK captureMessage:[NSString stringWithFormat:@"Attempted to play a bad file with no URL: %@", pe.urlString]];
@@ -355,6 +354,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
 	//[SentrySDK captureMessage:[NSString stringWithFormat:@"Playing track: %@", pe.url]];
+
+	// Not stopped first: the player moves to the new entry itself, in place
+	// while playing, and keeps an output device it holds exclusively.
+	// Stopping gave the device back and took it again, reconfiguring it
+	// twice (0.8 to 1.4 s of silence on a USB DAC). What plays goes on
+	// until the player moves, and the position it reports until then is
+	// not this entry's.
+	[positionTimer invalidate];
+	positionTimer = nil;
 
 	DLog(@"PLAYLIST CONTROLLER: %@", [playlistController class]);
 	[playlistController setCurrentEntry:pe];
