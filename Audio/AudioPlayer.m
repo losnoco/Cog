@@ -955,6 +955,14 @@ static BOOL newAudioEngineEnabled(void) {
 	[self setError:error forTrack:userInfo];
 }
 
+- (void)playbackEngineBeginEqualizer:(id<CogEqualizer>)equalizer {
+	[self beginEqualizer:(__bridge void *)equalizer];
+}
+
+- (void)playbackEngineEndEqualizer:(id<CogEqualizer>)equalizer {
+	[self endEqualizer:(__bridge void *)equalizer];
+}
+
 - (void)playbackEngineRestartAtCurrentPosition:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:userInfo waitUntilDone:NO];
 }

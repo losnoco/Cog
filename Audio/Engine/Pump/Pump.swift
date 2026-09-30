@@ -68,8 +68,16 @@ public final class Pump {
 	private var epoch: UInt64 = 0
 	private var frames: UInt64 = 0
 	private var inputFormat: StreamFormat?
+	private let block = DSPBuffer()
+
+	/// The DSP chain, in order. Each is skipped while inactive.
+	private let stages: [DSPStage]
+	/// The active stages and input format the chain was last configured for.
+	private var configuredChain: (stages: [ObjectIdentifier], input: StreamFormat)?
+
+	/// Channel fitting from the chain's output to the device.
 	private var downmix: DownmixProcessor?
-	private var readBuffer: [Float] = []
+	private var fitSource: StreamFormat?
 
 	/// The track whose frames are being read, for its ReplayGain.
 	private var gainTrack: EngineTrack?
@@ -89,7 +97,8 @@ public final class Pump {
 	///   - outputFormat: the device's render format.
 	///   - seconds: shallow ring length; this is the delay before a DSP
 	///     setting change is heard, so it is kept short.
-	public init?(feeder: Feeder, outputFormat: StreamFormat, seconds: Double = 0.2) {
+	///   - stages: the DSP chain, run in order on every block.
+	public init?(feeder: Feeder, outputFormat: StreamFormat, stages: [DSPStage] = [], seconds: Double = 0.2) {
 		guard outputFormat.sampleRate == feeder.outputRate,
 		      let ring = cog_ring_create(max(Int(outputFormat.sampleRate * seconds), Self.blockFrames * 2), UInt32(outputFormat.channels)) else {
 			return nil
@@ -97,6 +106,7 @@ public final class Pump {
 		self.ring = ring
 		self.feeder = feeder
 		self.outputFormat = outputFormat
+		self.stages = stages
 	}
 
 	deinit {
@@ -169,6 +179,10 @@ public final class Pump {
 			frames = 0
 			presentation.discard(before: cog_ring_write_position(ring))
 			cog_ring_request_flush(ring)
+			// Filter history belongs to audio that will never be heard.
+			for stage in stages {
+				stage.reset()
+			}
 		}
 
 		var endOfStream = false
@@ -199,15 +213,33 @@ public final class Pump {
 		}
 		guard count > 0 else { return false }
 
-		readBuffer.removeAll(keepingCapacity: true)
-		readBuffer.append(contentsOf: repeatElement(0, count: count * channels))
-		let got = readBuffer.withUnsafeMutableBufferPointer { cog_ring_read(deep, $0.baseAddress, count * channels) } / channels
+		block.resize(frames: count, format: format)
+		let got = block.samples.withUnsafeMutableBufferPointer { cog_ring_read(deep, $0.baseAddress, count * channels) } / channels
+		block.frames = got
 		frames += UInt64(got)
 		feeder.consumerDidRead()
 
 		applyGain(frames: got, channels: channels)
-		emit(got)
+		runStages()
+		emit()
 		return true
+	}
+
+	/// Runs the active stages over `block`, reconfiguring the chain when the
+	/// input format or the set of active stages changes.
+	private func runStages() {
+		let active = stages.filter(\.isActive)
+		let identifiers = active.map { ObjectIdentifier($0) }
+		if configuredChain?.stages != identifiers || configuredChain?.input != block.format {
+			var format = block.format
+			for stage in active {
+				format = stage.configure(input: format)
+			}
+			configuredChain = (identifiers, block.format)
+		}
+		for stage in active {
+			stage.process(block)
+		}
 	}
 
 	/// Scales the block in `readBuffer` by the current track's gain. A
@@ -223,7 +255,7 @@ public final class Pump {
 		if appliedGain == 1 && target == 1 { return }
 
 		var level = appliedGain
-		readBuffer.withUnsafeMutableBufferPointer { samples in
+		block.samples.withUnsafeMutableBufferPointer { samples in
 			for frame in 0..<frames {
 				if level != target {
 					level += rampStep
@@ -242,6 +274,12 @@ public final class Pump {
 
 	private func configure(for format: StreamFormat) {
 		inputFormat = format
+	}
+
+	/// Sets up channel fitting from `format` (the chain's output) to the
+	/// device's layout.
+	private func configureFit(from format: StreamFormat) {
+		fitSource = format
 		let inputConfig = format.channelConfig != 0 ? format.channelConfig : AudioChunk.guessChannelConfig(UInt32(format.channels))
 		if format.channels == outputFormat.channels && inputConfig == outputFormat.channelConfig {
 			downmix = nil
@@ -251,16 +289,20 @@ public final class Pump {
 		}
 	}
 
-	/// Fits `frames` frames of `readBuffer` to the device's channel layout
-	/// and writes them to the shallow ring, waiting for room.
-	private func emit(_ frames: Int) {
+	/// Fits `block` to the device's channel layout and writes it to the
+	/// shallow ring, waiting for room.
+	private func emit() {
+		if block.format != fitSource {
+			configureFit(from: block.format)
+		}
+		let frames = block.frames
 		guard let downmix else {
-			readBuffer.withUnsafeBufferPointer { write($0.baseAddress!, frames: frames) }
+			block.samples.withUnsafeBufferPointer { write($0.baseAddress!, frames: frames) }
 			return
 		}
 		fittedBuffer.removeAll(keepingCapacity: true)
 		fittedBuffer.append(contentsOf: repeatElement(0, count: frames * outputFormat.channels))
-		readBuffer.withUnsafeBufferPointer { input in
+		block.samples.withUnsafeBufferPointer { input in
 			fittedBuffer.withUnsafeMutableBufferPointer { output in
 				downmix.process(input.baseAddress!, frameCount: frames, output: output.baseAddress!)
 			}

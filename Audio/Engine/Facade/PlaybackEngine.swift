@@ -23,6 +23,10 @@ import Foundation
 	func playbackEngineSetError(_ error: Bool, forTrack userInfo: Any?)
 	/// The output device changed in a way that needs playback rebuilt.
 	func playbackEngineRestartAtCurrentPosition(_ userInfo: Any?)
+
+	/// Main thread: the equalizer started or stopped being used.
+	func playbackEngineBeginEqualizer(_ equalizer: CogEqualizer)
+	func playbackEngineEndEqualizer(_ equalizer: CogEqualizer)
 }
 
 /// The new engine behind `AudioPlayer`: feeder and DSP threads, the device
@@ -43,6 +47,21 @@ import Foundation
 	private static let prebufferSeconds = 0.1
 
 	private var output: DeviceOutput?
+
+	/// One equalizer for the engine's lifetime: the app keeps an unretained
+	/// reference to whichever equalizer it was last given.
+	private lazy var equalizer: EqualizerStage = {
+		let equalizer = EqualizerStage()
+		equalizer.onActivation = { [weak self] active in
+			guard let self else { return }
+			if active {
+				self.host?.playbackEngineBeginEqualizer(self.equalizer)
+			} else {
+				self.host?.playbackEngineEndEqualizer(self.equalizer)
+			}
+		}
+		return equalizer
+	}()
 	private var feeder: Feeder?
 	private var pump: Pump?
 	private var renderer: OpaquePointer?
@@ -181,13 +200,14 @@ import Foundation
 		}
 		guard let output,
 		      let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format),
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [equalizer]),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
 		}
 		self.feeder = feeder
 		self.pump = pump
 		self.renderer = renderer
+		equalizer.rearm()
 		reportedUnderruns = 0
 		lastBeat = nil
 		output.attach(renderer)

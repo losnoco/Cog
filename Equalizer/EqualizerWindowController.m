@@ -220,7 +220,7 @@ static void loadPresets(void) {
 	}
 }
 
-void equalizerApplyGenre(DSPEqualizerNode *eq, const NSString *genre) {
+void equalizerApplyGenre(id<CogEqualizer> eq, const NSString *genre) {
 	equalizerGenre = genre;
 	if([[NSUserDefaults standardUserDefaults] boolForKey:@"GraphicEQtrackgenre"]) {
 		loadPresets();
@@ -255,7 +255,7 @@ void equalizerApplyGenre(DSPEqualizerNode *eq, const NSString *genre) {
 	}
 }
 
-void equalizerLoadPreset(DSPEqualizerNode *eq) {
+void equalizerLoadPreset(id<CogEqualizer> eq) {
 	NSInteger index = [[NSUserDefaults standardUserDefaults] integerForKey:@"GraphicEQpreset"];
 	if(index >= 0 && index < [equalizer_presets_processed count]) {
 		NSDictionary *preset = [equalizer_presets_processed objectAtIndex:index];
@@ -277,7 +277,7 @@ void equalizerLoadPreset(DSPEqualizerNode *eq) {
 	}
 }
 
-void equalizerApplyPreset(DSPEqualizerNode *eq, const NSDictionary *preset) {
+void equalizerApplyPreset(id<CogEqualizer> eq, const NSDictionary *preset) {
 	if(preset) {
 		@synchronized(cog_equalizer_band_settings) {
 			if(!cog_equalizer_band_settings)
@@ -352,7 +352,7 @@ void equalizerApplyPreset(DSPEqualizerNode *eq, const NSDictionary *preset) {
 }
 
 - (void)setEQ:(void *)eq {
-	self->_eq = (__bridge DSPEqualizerNode *)eq;
+	self->_eq = (__bridge id<CogEqualizer>)eq;
 }
 
 - (IBAction)toggleWindow:(id)sender {

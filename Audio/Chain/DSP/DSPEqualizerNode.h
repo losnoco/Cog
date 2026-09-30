@@ -10,7 +10,15 @@
 
 #import <CogAudio/DSPNode.h>
 
-@interface DSPEqualizerNode : DSPNode
+/// The 31-band graphic equalizer as the EQ window drives it, whichever
+/// audio engine provides it.
+@protocol CogEqualizer <NSObject>
+- (void)setBandGain:(float)gainDB forIndex:(int)i;
+- (void)setAllBands:(float *_Nonnull)gainsDB;
+- (void)setPreamp:(float)preampDB;
+@end
+
+@interface DSPEqualizerNode : DSPNode <CogEqualizer>
 
 - (id _Nullable)initWithController:(id _Nonnull)c previous:(id _Nullable)p latency:(double)latency;
 

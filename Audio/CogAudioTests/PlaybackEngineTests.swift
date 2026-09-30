@@ -35,6 +35,8 @@ final class RecordingHost: NSObject, PlaybackEngineHost {
 	func playbackEngineReportScrobble(_ userInfo: Any?) { log.append("scrobble \(name(userInfo))") }
 	func playbackEngineSetError(_ error: Bool, forTrack userInfo: Any?) { log.append("error \(name(userInfo))") }
 	func playbackEngineRestartAtCurrentPosition(_ userInfo: Any?) { log.append("restart") }
+	func playbackEngineBeginEqualizer(_ equalizer: CogEqualizer) { log.append("eq on") }
+	func playbackEngineEndEqualizer(_ equalizer: CogEqualizer) { log.append("eq off") }
 }
 
 /// Plays through the machine's real default output at volume zero.

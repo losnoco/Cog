@@ -872,13 +872,13 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 	_eq = eq;
 
-	equalizerLoadPreset((__bridge DSPEqualizerNode *)eq);
+	equalizerLoadPreset((__bridge id<CogEqualizer>)eq);
 
 	[equalizerWindowController setEQ:eq];
 }
 
 - (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(void *)eq {
-	equalizerLoadPreset((__bridge DSPEqualizerNode *)eq);
+	equalizerLoadPreset((__bridge id<CogEqualizer>)eq);
 }
 
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(void *)eq {
@@ -930,7 +930,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[self sendMetaData];
 
 		if(pe && self->_eq) {
-			equalizerApplyGenre((__bridge DSPEqualizerNode *)self->_eq, [pe genre]);
+			equalizerApplyGenre((__bridge id<CogEqualizer>)self->_eq, [pe genre]);
 		}
 
 		self->lastPosition = -10;

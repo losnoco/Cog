@@ -14,9 +14,9 @@
 
 #import <CogAudio/DSPEqualizerNode.h>
 
-void equalizerApplyGenre(DSPEqualizerNode *_Nullable eq, const NSString *_Nonnull genre);
-void equalizerLoadPreset(DSPEqualizerNode *_Nullable eq);
-void equalizerApplyPreset(DSPEqualizerNode *_Nullable eq, const NSDictionary *_Nonnull preset);
+void equalizerApplyGenre(id<CogEqualizer> _Nullable eq, const NSString *_Nonnull genre);
+void equalizerLoadPreset(id<CogEqualizer> _Nullable eq);
+void equalizerApplyPreset(id<CogEqualizer> _Nullable eq, const NSDictionary *_Nonnull preset);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 	IBOutlet EqualizerSlider *eq12kHz;
 	IBOutlet EqualizerSlider *eq16kHz;
 	IBOutlet EqualizerSlider *eq20kHz;
-	__weak DSPEqualizerNode *_eq;
+	__weak id<CogEqualizer> _eq;
 }
 
 - (void)setEQ:(void *_Nullable)eq;
