@@ -486,7 +486,9 @@ public final class DeviceOutput {
 	}
 
 	public func start() throws {
-		guard renderer != nil, !isRunning else { return }
+		guard let renderer, !isRunning else { return }
+		// The device's sample time starts over with the unit.
+		cog_renderer_forget_device_time(renderer)
 		if !initialized {
 			try Self.check(AudioUnitInitialize(unit))
 			initialized = true

@@ -254,6 +254,11 @@ struct CogRenderer {
 	_Atomic uint64_t framesRendered;
 	_Atomic uint64_t silentFrames;
 	_Atomic uint64_t underrunEvents;
+	// The device's sample time, render thread only.
+	Float64 nextDeviceTime;
+	_Atomic bool deviceTimeKnown;
+	_Atomic uint64_t deviceDiscontinuities;
+	_Atomic int64_t lastDeviceJump;
 	_Atomic float peak;
 };
 
@@ -556,10 +561,19 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
                                         UInt32 inNumberFrames,
                                         AudioBufferList *ioData) {
 	(void)ioActionFlags;
-	(void)inTimeStamp;
 	(void)inBusNumber;
 	CogRenderer *renderer = (CogRenderer *)inRefCon;
 	if(!renderer || !ioData || !ioData->mNumberBuffers || !ioData->mBuffers[0].mData) return noErr;
+
+	if(inTimeStamp && (inTimeStamp->mFlags & kAudioTimeStampSampleTimeValid)) {
+		if(atomic_load_explicit(&renderer->deviceTimeKnown, memory_order_relaxed) &&
+		   inTimeStamp->mSampleTime != renderer->nextDeviceTime) {
+			atomic_store_explicit(&renderer->lastDeviceJump, (int64_t)(inTimeStamp->mSampleTime - renderer->nextDeviceTime), memory_order_relaxed);
+			atomic_fetch_add_explicit(&renderer->deviceDiscontinuities, 1, memory_order_relaxed);
+		}
+		renderer->nextDeviceTime = inTimeStamp->mSampleTime + inNumberFrames;
+		atomic_store_explicit(&renderer->deviceTimeKnown, true, memory_order_relaxed);
+	}
 
 	const uint32_t channels = cog_ring_channels(renderer->ring);
 	const UInt32 bytesPerFrame = (UInt32)(sizeof(float) * channels);
@@ -587,6 +601,18 @@ uint64_t cog_renderer_silent_frames(const CogRenderer *renderer) {
 
 float cog_renderer_take_peak(CogRenderer *renderer) {
 	return atomic_exchange_explicit(&renderer->peak, 0.0f, memory_order_relaxed);
+}
+
+uint64_t cog_renderer_device_discontinuities(const CogRenderer *renderer) {
+	return atomic_load_explicit(&renderer->deviceDiscontinuities, memory_order_relaxed);
+}
+
+int64_t cog_renderer_last_device_jump(const CogRenderer *renderer) {
+	return atomic_load_explicit(&renderer->lastDeviceJump, memory_order_relaxed);
+}
+
+void cog_renderer_forget_device_time(CogRenderer *renderer) {
+	atomic_store_explicit(&renderer->deviceTimeKnown, false, memory_order_relaxed);
 }
 
 uint64_t cog_renderer_underrun_events(const CogRenderer *renderer) {

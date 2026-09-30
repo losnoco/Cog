@@ -142,6 +142,18 @@ uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer);
 /// playback had not started, had ended, or had underrun.
 uint64_t cog_renderer_silent_frames(const CogRenderer *renderer);
 
+/// Times the device's sample time did not continue from the previous
+/// render: a cycle the device skipped or repeated, heard as a click even when
+/// the audio was on time. Counted by `cog_renderer_audio_unit_render`.
+uint64_t cog_renderer_device_discontinuities(const CogRenderer *renderer);
+
+/// How many frames the last discontinuity jumped (negative: backwards).
+int64_t cog_renderer_last_device_jump(const CogRenderer *renderer);
+
+/// Forgets the device's sample time, as when the unit starts again and the
+/// time legitimately starts over. Call while the unit is stopped.
+void cog_renderer_forget_device_time(CogRenderer *renderer);
+
 /// Times the ring ran dry after having had audio.
 uint64_t cog_renderer_underrun_events(const CogRenderer *renderer);
 

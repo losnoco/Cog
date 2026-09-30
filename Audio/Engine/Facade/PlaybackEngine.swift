@@ -305,6 +305,7 @@ import Foundation
 		self.renderer = renderer
 		equalizer.rearm()
 		reportedUnderruns = 0
+		reportedDiscontinuities = 0
 		lastBeat = nil
 		output.attach(renderer)
 		cog_gain_ramp_to(cog_renderer_volume(renderer), Float(volumeLevel * 0.01), 0)
@@ -618,6 +619,12 @@ import Foundation
 			break
 		}
 
+		let discontinuities = cog_renderer_device_discontinuities(renderer)
+		if discontinuities != reportedDiscontinuities {
+			reportedDiscontinuities = discontinuities
+			EngineLog.logger.error("Device sample time jumped by \(cog_renderer_last_device_jump(renderer)) frames (#\(discontinuities)): a cycle the device skipped or repeated")
+		}
+
 		let underruns = cog_renderer_underrun_events(renderer)
 		if underruns != reportedUnderruns {
 			reportedUnderruns = underruns
@@ -734,6 +741,7 @@ import Foundation
 		}
 	}
 	private var reportedUnderruns: UInt64 = 0
+	private var reportedDiscontinuities: UInt64 = 0
 
 	private var isOutputRunning: Bool {
 		if case .playing = phase { return true }
