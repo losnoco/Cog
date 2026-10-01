@@ -27,12 +27,16 @@ NSString *const HLSParserErrorDomain = @"HLSParserErrorDomain";
 // Read the full contents of a CogSource into memory, then decode as UTF-8.
 // HLS playlists are required to be UTF-8 (RFC 8216 §4).
 + (NSString *)readPlaylistString:(id<CogSource>)source error:(NSError **)error {
+	// Read straight into the end of the data: a buffer on the stack would
+	// overrun the frame size the build allows.
 	NSMutableData *data = [NSMutableData data];
-	uint8_t buffer[4096];
-	long bytesRead;
-
-	while((bytesRead = [source read:buffer amount:sizeof(buffer)]) > 0) {
-		[data appendBytes:buffer length:bytesRead];
+	const NSUInteger chunk = 4096;
+	for(;;) {
+		NSUInteger length = [data length];
+		[data setLength:length + chunk];
+		long bytesRead = [source read:(uint8_t *)[data mutableBytes] + length amount:chunk];
+		[data setLength:length + (bytesRead > 0 ? bytesRead : 0)];
+		if(bytesRead <= 0) break;
 	}
 
 	if([data length] == 0) {

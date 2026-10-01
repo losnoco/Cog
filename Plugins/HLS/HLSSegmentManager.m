@@ -151,11 +151,16 @@ static const NSInteger kMaxConsecutiveFailures = 5;
 		self.lastObservedMimeType = mime;
 	}
 
+	// Read straight into the end of the data: a buffer on the stack would
+	// overrun the frame size the build allows.
 	NSMutableData *data = [NSMutableData data];
-	uint8_t buf[16384];
-	long got;
-	while((got = [src read:buf amount:sizeof(buf)]) > 0) {
-		[data appendBytes:buf length:got];
+	const NSUInteger chunk = 16384;
+	for(;;) {
+		NSUInteger length = [data length];
+		[data setLength:length + chunk];
+		long got = [src read:(uint8_t *)[data mutableBytes] + length amount:chunk];
+		[data setLength:length + (got > 0 ? got : 0)];
+		if(got <= 0) break;
 	}
 	[src close];
 	[_cond lock];
