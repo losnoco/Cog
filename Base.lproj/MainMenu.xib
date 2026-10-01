@@ -955,8 +955,6 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="1552"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="1529"/>
-                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="1673"/>
-                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="1645"/>
                     <toolbarItem implicitItemIdentifier="A06F7688-72A2-4AAD-B9E1-C66720B2B0D3" label="Playback Control" paletteLabel="Playback Control" bordered="YES" visibilityPriority="15" sizingBehavior="auto" id="1539">
                         <nil key="toolTip"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="1537" customClass="PlaybackButtons">
@@ -1434,8 +1432,6 @@
                             <action selector="toggleWindow:" target="2422" id="2433"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="2225"/>
-                    <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="2229"/>
                     <toolbarItem implicitItemIdentifier="1A6385ED-7F2D-4752-8113-C8693E5DDC1C" label="Show Equalizer" paletteLabel="Show Equalizer" image="equalizerTemplate" bordered="YES" sizingBehavior="auto" id="ZOn-sB-FR3">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="pbi-yj-rqU">
