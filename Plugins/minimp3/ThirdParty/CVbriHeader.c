@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //               (C) copyright Fraunhofer - IIS (2000)
 //                        All Rights Reserved
@@ -26,7 +26,7 @@ enum offset {
 	DWORD = 4
 };
 
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //   Constructor: set position in buffer to parse and create a
 //                VbriHeaderTable
@@ -81,7 +81,9 @@ void freeVbriHeader(struct VbriHeader *pthis) {
 //
 //---------------------------------------------------------------------------/
 
+#if 0 /* unused */
 static int VbriGetSampleRate(const unsigned char *buffer);
+#endif
 static int VbriReadFromBuffer(struct VbriHeader *pthis, const unsigned char *HBuffer, int length);
 
 int readVbriHeader(struct VbriHeader **outHeader, const unsigned char *Hbuffer, size_t length) {
@@ -141,7 +143,7 @@ int readVbriHeader(struct VbriHeader **outHeader, const unsigned char *Hbuffer, 
 	return 0;
 }
 
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //   Method:   seekPointByTime
 //             Returns a point in the file to decode in bytes that is nearest
@@ -190,7 +192,7 @@ int CVbriHeader::seekPointByTime(float EntryTimeInMilliSeconds){
 }
 #endif
 
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //   Method:   seekTimeByPoint
 //             Returns a time in the file to decode in seconds that is
@@ -235,7 +237,7 @@ float CVbriHeader::seekTimeByPoint(unsigned int EntryPointInBytes){
 }
 #endif
 
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //   Method:   seekPointByPercent
 //             Returns a point in the file to decode in bytes that is
@@ -266,7 +268,7 @@ int CVbriHeader::seekPointByPercent(float percent){
 }
 #endif
 
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //   Method:   GetSampleRate
 //             Returns the sampling rate of the file to decode
@@ -277,6 +279,7 @@ int CVbriHeader::seekPointByPercent(float percent){
 //
 //---------------------------------------------------------------------------/
 
+#if 0 /* unused */
 int VbriGetSampleRate(const unsigned char *buffer) {
 	unsigned char id, idx, mpeg;
 
@@ -308,8 +311,9 @@ int VbriGetSampleRate(const unsigned char *buffer) {
 			return 0;
 	}
 }
+#endif
 
-//---------------------------------------------------------------------------\ 
+//---------------------------------------------------------------------------
 //
 //   Method:   readFromBuffer
 //             reads from a buffer a segment to an int value
