@@ -1,0 +1,11 @@
+// The directly distributed build of Cog: Sparkle for self-updating, plus the
+// donation menu, neither of which the App Store allows. The Cog scheme builds
+// and archives for the App Store; the Cog Direct scheme uses this.
+
+#include "Shared.xcconfig"
+
+COG_SPARKLE = YES
+EXCLUDED_SOURCE_FILE_NAMES =
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COG_SPARKLE=1
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) COG_SPARKLE
+CODE_SIGN_ENTITLEMENTS = Cog-Direct.entitlements

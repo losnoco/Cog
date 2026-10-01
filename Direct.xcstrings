@@ -1,0 +1,61 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Check for updates automatically" : {
+      "comment" : "Automatic update checking setting name.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar actualizaciones automáticamente"
+          }
+        }
+      }
+    },
+    "Check for Updates..." : {
+      "comment" : "Application menu item that checks for a new version.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones..."
+          }
+        }
+      }
+    },
+    "Donate" : {
+      "comment" : "Application menu submenu of donation links.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donar"
+          }
+        }
+      }
+    },
+    "One time" : {
+      "comment" : "Donate submenu heading for one-off donation services.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez"
+          }
+        }
+      }
+    },
+    "Recurring" : {
+      "comment" : "Donate submenu heading for subscription donation services.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Periódica"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.3"
+}

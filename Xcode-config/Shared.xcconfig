@@ -71,3 +71,10 @@ LASTFM_API_KEY =
 LASTFM_API_SECRET =
 
 #include? "Secrets.xcconfig"
+
+// Sparkle, the donation links and their strings (Direct.xcstrings) are left
+// out of the App Store build.
+// Direct.xcconfig, used by the Release-Direct configuration of the Cog
+// target, puts them back for the self-updating build.
+EXCLUDED_SOURCE_FILE_NAMES = Sparkle.framework Direct.xcstrings
+COG_SPARKLE = NO

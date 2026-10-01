@@ -1,4 +1,7 @@
 import SwiftUI
+#if COG_SPARKLE
+import Sparkle
+#endif
 
 struct SandboxPathEntry: Identifiable {
     let id: Int
@@ -9,7 +12,7 @@ struct SandboxPathEntry: Identifiable {
 
 private let httpStreamingBufferSizeOptions = (16...27).map { 1 << $0 }
 
-private final class GeneralPrefs: ObservableObject {
+@MainActor private final class GeneralPrefs: ObservableObject {
     private var isActive = true
 
     @Published var allowInsecureSSL: Bool {
@@ -25,9 +28,11 @@ private final class GeneralPrefs: ObservableObject {
         didSet { guard isActive else { return }; UserDefaults.standard.set(sentryConsented, forKey: "sentryConsented") }
     }
 
-    @Published var suCheckAtStartup: Bool {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(suCheckAtStartup, forKey: "SUCheckAtStartup") }
+#if COG_SPARKLE
+    @Published var automaticallyChecksForUpdates: Bool {
+        didSet { guard isActive else { return }; SparkleBridge.sharedStandardUpdaterController()?.updater.automaticallyChecksForUpdates = automaticallyChecksForUpdates }
     }
+#endif
 
     deinit { isActive = false }
 
@@ -37,7 +42,9 @@ private final class GeneralPrefs: ObservableObject {
         httpStreamingBufferSize = d.integer(forKey: "httpStreamingBufferSize")
         enableLrclib = d.bool(forKey: "enableLrclib")
         sentryConsented = d.bool(forKey: "sentryConsented")
-        suCheckAtStartup = d.bool(forKey: "SUCheckAtStartup")
+#if COG_SPARKLE
+        automaticallyChecksForUpdates = SparkleBridge.sharedStandardUpdaterController()?.updater.automaticallyChecksForUpdates ?? false
+#endif
     }
 }
 
@@ -139,6 +146,14 @@ struct GeneralPaneView: View {
             Section {
                 Toggle("Send crash reports and usage data", isOn: $prefs.sentryConsented)
             }
+#if COG_SPARKLE
+            Section {
+                Toggle(
+                    String(localized: "Check for updates automatically", table: "Direct"),
+                    isOn: $prefs.automaticallyChecksForUpdates
+                )
+            }
+#endif
         }
     }
 

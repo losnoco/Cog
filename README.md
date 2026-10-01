@@ -25,15 +25,13 @@ play with Cog. It is not necessary to add either your default Music folder,
 your default Downloads folder, or your default Movies folder.
 
 
-ADDENDUM - 2022-06-22
+ADDENDUM - 2026-10-01
 
-This branch is the App Store version. The only real difference between it and
-the sparkle branch is that two commits which removed the Sparkle framework
-were reverted in that branch. This branch contains an update to the README
-and an extra empty commmit so that the version numbers sync up between the
-two.
-
-The App Store page for Cog is [here](https://apps.apple.com/us/app/cog-kode54/id1630499622), when it finally goes live.
+Both editions of Cog are built from this one branch. The Cog scheme builds the
+App Store version, which is available [here](https://apps.apple.com/us/app/cog-kode54/id1630499622).
+The Cog Direct scheme builds the Release-Direct configuration, which adds the
+Sparkle self-updater and the donation menu, for the version distributed
+directly.
 
 
 ADDENDUM - 2013-09-30

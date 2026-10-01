@@ -47,6 +47,15 @@ for plist in "$MACOS_PLIST_PATH"; do
 
 		"$PlistBuddy" -c "Add :BuildTime date $BUILD_TIME" "$plist"
 
+		# Sparkle's keys only belong in the directly distributed build
+		if [ "$COG_SPARKLE" != "YES" ]; then
+
+			for key in SUEnableInstallerLauncherService SUFeedURL SUPublicEDKey; do
+				"$PlistBuddy" -c "Delete :$key" "$plist"
+			done
+
+		fi
+
 	fi
 
 done

@@ -52,3 +52,16 @@ jobs:
         with:
           name: Cog
           path: ${{ env.XCODE_DERIVEDDATA_PATH }}/Cog.zip
+      - name: Check the directly distributed build
+        run: >
+          xcodebuild
+          -quiet
+          -project Cog.xcodeproj
+          -scheme "Cog Direct"
+          -configuration Release-Direct
+          -arch x86_64
+          -arch arm64
+          -derivedDataPath $XCODE_DERIVEDDATA_PATH
+          CODE_SIGNING_ALLOWED=NO
+          ONLY_ACTIVE_ARCH=NO
+          build

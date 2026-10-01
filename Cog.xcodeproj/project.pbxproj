@@ -126,6 +126,7 @@
 		832AE3B52FA063E000AFAB72 /* tg300b.sflist.json in Resources */ = {isa = PBXBuildFile; fileRef = 832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
 		8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 833125092E817A63005C8895 /* InfoPlist.xcstrings */; };
+		C06D1E0100000000000D0004 /* Direct.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C06D1E0100000000000D0003 /* Direct.xcstrings */; };
 		8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8331250B2E817A63005C8895 /* Localizable.xcstrings */; };
 		833A70D02FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
@@ -180,6 +181,8 @@
 		838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33802D06CF4100D0D770 /* SpectrumViewCG.m */; };
 		838A33842D06CF4100D0D770 /* SpectrumWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33822D06CF4100D0D770 /* SpectrumWindowController.m */; };
 		838A33872D06CFCA00D0D770 /* SpeedButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33862D06CFCA00D0D770 /* SpeedButton.m */; };
+		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
+		838F851F256B4E8B00C3E614 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		839080562E88F5DE00D5D683 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 839080512E88F5DE00D5D683 /* Cocoa.framework */; };
 		83922FBA286B1AA900A0B039 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83922FB6286B1AA900A0B039 /* WebKit.framework */; };
 		839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 839614AB286EDA5C00D3EEDB /* SpectrumWindow.xib */; };
@@ -842,6 +845,7 @@
 				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in Copy Files */,
 				8305963C277F013200EBFAAE /* File_Extractor.framework in Copy Files */,
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */,
+				838F851F256B4E8B00C3E614 /* Sparkle.framework in Copy Files */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */,
 			);
 			name = "Copy Files";
@@ -976,6 +980,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
+		C06D1E0100000000000D0001 /* Direct.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Direct.xcconfig; sourceTree = "<group>"; };
+		C06D1E0100000000000D0002 /* Cog-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Cog-Direct.entitlements"; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMAPI.swift; sourceTree = "<group>"; };
 		4218AC4F2E469BC30024810A /* AudioScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioScrobbler.swift; sourceTree = "<group>"; };
@@ -1041,6 +1047,7 @@
 		833125072E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/FileTree.xcstrings; sourceTree = "<group>"; };
 		833125082E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SpotlightPanel.xcstrings; sourceTree = "<group>"; };
 		833125092E817A63005C8895 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		C06D1E0100000000000D0003 /* Direct.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Direct.xcstrings; sourceTree = "<group>"; };
 		8331250B2E817A63005C8895 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		8331250D2E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/MainMenu.xcstrings; sourceTree = "<group>"; };
 		8331250E2E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SpectrumWindow.xcstrings; sourceTree = "<group>"; };
@@ -1119,6 +1126,7 @@
 		838A33852D06CFCA00D0D770 /* SpeedButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpeedButton.h; path = Window/SpeedButton.h; sourceTree = "<group>"; };
 		838A33862D06CFCA00D0D770 /* SpeedButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpeedButton.m; path = Window/SpeedButton.m; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
+		838F851D256B4E5E00C3E614 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = ThirdParty/Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		839080512E88F5DE00D5D683 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		83922FB6286B1AA900A0B039 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		839614AC286EDA5C00D3EEDB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpectrumWindow.xib; sourceTree = "<group>"; };
@@ -1247,6 +1255,7 @@
 				839080562E88F5DE00D5D683 /* Cocoa.framework in Frameworks */,
 				17BB5CFA0B8A86350009ACB1 /* CoreAudio.framework in Frameworks */,
 				8366CB352E869980007DB8D2 /* Metal.framework in Frameworks */,
+				838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */,
 				83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */,
 				17BB5CFB0B8A86350009ACB1 /* CoreAudioKit.framework in Frameworks */,
 				17BB5EA60B8A87850009ACB1 /* IOKit.framework in Frameworks */,
@@ -1313,6 +1322,7 @@
 			children = (
 				83DFCD982E8532C1009E3DF1 /* nuked-sc55.xcodeproj */,
 				ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */,
+				838F851D256B4E5E00C3E614 /* Sparkle.framework */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
 			);
 			name = "Linked Frameworks";
@@ -1649,6 +1659,7 @@
 				83CB1F592E74D83D001D6294 /* Play.icon */,
 				83D0380E24A40DF2004CF90F /* CogAssets.xcassets */,
 				83859520234FEB35004E9946 /* Cog.entitlements */,
+				C06D1E0100000000000D0002 /* Cog-Direct.entitlements */,
 				83B30F652FF7A5D9003D672B /* CogMCP.entitlements */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				CEC0CAFE000000000000E001 /* CogRemoteControl */,
@@ -1686,6 +1697,7 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				833125092E817A63005C8895 /* InfoPlist.xcstrings */,
 				8331250B2E817A63005C8895 /* Localizable.xcstrings */,
+				C06D1E0100000000000D0003 /* Direct.xcstrings */,
 				832923AE279FAC400048201E /* Cog.q1.json */,
 				831B99BE27C23E88005A969B /* Cog.sdef */,
 				8399AFC42F6BAAE4005F4A39 /* PathSuggester.xib */,
@@ -1726,6 +1738,7 @@
 			isa = PBXGroup;
 			children = (
 				3DDFC2472344EC6B000F1453 /* Shared.xcconfig */,
+				C06D1E0100000000000D0001 /* Direct.xcconfig */,
 			);
 			path = "Xcode-config";
 			sourceTree = "<group>";
@@ -2272,6 +2285,7 @@
 				177FD1000B90CB570011C3B5 /* CopyFiles */,
 				07DFC3930ECDF80100DA400D /* Copy Files */,
 				CEC0CAFE0000000000005006 /* Copy Executables */,
+				C06D1E0100000000000D0020 /* Keep each edition's products apart */,
 				83978E27285C5A4C0076ED21 /* Run Sentry symbol upload */,
 			);
 			buildRules = (
@@ -2838,6 +2852,7 @@
 				8399AFC62F6BAAE4005F4A39 /* PathSuggester.xib in Resources */,
 				17D1B2810CF8B2830028F5B5 /* song.icns in Resources */,
 				8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */,
+				C06D1E0100000000000D0004 /* Direct.xcstrings in Resources */,
 				832AE3B32FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 in Resources */,
 				831B99BF27C23E88005A969B /* Cog.sdef in Resources */,
 				832923AF279FAC400048201E /* Cog.q1.json in Resources */,
@@ -2891,6 +2906,26 @@
 			shellPath = /bin/sh;
 			shellScript = "$SCRIPT_INPUT_FILE_0 $SCRIPT_INPUT_FILE_1 $SCRIPT_OUTPUT_FILE_0\n";
 		};
+		C06D1E0100000000000D0020 /* Keep each edition's products apart */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Keep each edition's products apart";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Release and Release-Direct share a products directory, so a bundle\n# left over from a Release-Direct build may still carry Sparkle and the\n# Direct string table.\nif [ \"$COG_SPARKLE\" != \"YES\" ]; then\n\trm -rf \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n\trm -f \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"/*.lproj/Direct.strings*\nelse\n\t# The Swift packages still build into Release-Direct, so an xcframework\n\t# from a package leaves its signature in both directories, and archiving\n\t# fails copying the second one into the archive.\n\tfor signature in \"$BUILD_DIR/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\"/*.signature; do\n\t\t[ -e \"$signature\" ] && rm -f \"$BUILT_PRODUCTS_DIR/$(basename \"$signature\")\"\n\tdone\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		83978E27285C5A4C0076ED21 /* Run Sentry symbol upload */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -2909,7 +2944,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script is responsible for uploading debug symbols and source context for Sentry.\nif [[ \"x${SENTRY_ORG}\" != \"x\" ]] && [[ \"x${SENTRY_PROJECT}\" != \"x\" ]] && [[ \"x${SENTRY_AUTH_TOKEN}\" != \"x\" ]]; then\n  if [[ \"${CONFIGURATION}\" = \"Release\" ]] || [[ \"${CONFIGURATION}\" = \"Adhoc\" ]]; then\n    if [[ \"$(uname -m)\" == arm64 ]]; then\n      export PATH=\"/opt/homebrew/bin:$PATH\"\n    fi\n\n    if which sentry-cli >/dev/null; then\n      ERROR=$(sentry-cli --auth-token \"$SENTRY_AUTH_TOKEN\" debug-files upload --org \"$SENTRY_ORG\" --project \"$SENTRY_PROJECT\" --include-sources \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\n      if [ ! $? -eq 0 ]; then\n        echo \"warning: sentry-cli - $ERROR\"\n      fi\n    else\n      echo \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\n    fi\n  else\n    echo \"Skipping symbol upload.\"\n  fi\nelse\n  echo \"Sentry not configured.\"\nfi\n";
+			shellScript = "# This script is responsible for uploading debug symbols and source context for Sentry.\nif [[ \"x${SENTRY_ORG}\" != \"x\" ]] && [[ \"x${SENTRY_PROJECT}\" != \"x\" ]] && [[ \"x${SENTRY_AUTH_TOKEN}\" != \"x\" ]]; then\n  if [[ \"${CONFIGURATION}\" = \"Release\" ]] || [[ \"${CONFIGURATION}\" = \"Release-Direct\" ]] || [[ \"${CONFIGURATION}\" = \"Adhoc\" ]]; then\n    if [[ \"$(uname -m)\" == arm64 ]]; then\n      export PATH=\"/opt/homebrew/bin:$PATH\"\n    fi\n\n    if which sentry-cli >/dev/null; then\n      ERROR=$(sentry-cli --auth-token \"$SENTRY_AUTH_TOKEN\" debug-files upload --org \"$SENTRY_ORG\" --project \"$SENTRY_PROJECT\" --include-sources \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\n      if [ ! $? -eq 0 ]; then\n        echo \"warning: sentry-cli - $ERROR\"\n      fi\n    else\n      echo \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\n    fi\n  else\n    echo \"Skipping symbol upload.\"\n  fi\nelse\n  echo \"Sentry not configured.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3523,6 +3558,85 @@
 			};
 			name = Release;
 		};
+		C06D1E0100000000000D0010 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C06D1E0100000000000D0001 /* Direct.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				AUTOMATION_APPLE_EVENTS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
+				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INSTALL_PATH = /Applications;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ThirdParty/avif/lib",
+					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
+					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/ThirdParty/rubberband/lib",
+				);
+				OTHER_CFLAGS = (
+					"-D__MACOSX__",
+					"-DHAVE_CONFIG_H",
+					"-Wframe-larger-than=4000",
+				);
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					CogAudio,
+					"-weak_framework",
+					MediaPlayer,
+					"-weak_framework",
+					UserNotifications,
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog;
+				PRODUCT_NAME = Cog;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Cog-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Release-Direct";
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
@@ -3619,6 +3733,58 @@
 			};
 			name = Release;
 		};
+		C06D1E0100000000000D0011 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
+				SWIFT_INCLUDE_PATHS = (
+					"$(inherited)",
+					"$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+				);
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = "Release-Direct";
+		};
 		CEC0CAFE000000000000C001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
@@ -3686,6 +3852,39 @@
 			};
 			name = Release;
 		};
+		C06D1E0100000000000D0012 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.RemoteControl;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = "Release-Direct";
+		};
 		CEC0CAFE000000000000C101 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
@@ -3749,6 +3948,37 @@
 			};
 			name = Release;
 		};
+		C06D1E0100000000000D0013 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
+				PRODUCT_NAME = "cog-mcp";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Release-Direct";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3757,6 +3987,7 @@
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
 				C01FCF4C08A954540054247B /* Release */,
+				C06D1E0100000000000D0010 /* Release-Direct */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3766,6 +3997,7 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+				C06D1E0100000000000D0011 /* Release-Direct */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3775,6 +4007,7 @@
 			buildConfigurations = (
 				CEC0CAFE000000000000C001 /* Debug */,
 				CEC0CAFE000000000000C002 /* Release */,
+				C06D1E0100000000000D0012 /* Release-Direct */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3784,6 +4017,7 @@
 			buildConfigurations = (
 				CEC0CAFE000000000000C101 /* Debug */,
 				CEC0CAFE000000000000C102 /* Release */,
+				C06D1E0100000000000D0013 /* Release-Direct */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

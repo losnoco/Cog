@@ -24,6 +24,10 @@
 #import <MASShortcut/Shortcut.h>
 #import <MASShortcut/MASDictionaryTransformer.h>
 
+#ifdef COG_SPARKLE
+#import <Sparkle/Sparkle.h>
+#endif
+
 #import "PreferencesController.h"
 
 #import "FeedbackController.h"
@@ -36,6 +40,20 @@ void *kAppControllerContext = &kAppControllerContext;
 BOOL kAppControllerShuttingDown = NO;
 
 static AppController *kAppController = nil;
+
+#ifdef COG_SPARKLE
+@implementation SparkleBridge
+
++ (SPUStandardUpdaterController *)sharedStandardUpdaterController {
+	static SPUStandardUpdaterController *sharedStandardUpdaterController_ = nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		sharedStandardUpdaterController_ = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate: nil userDriverDelegate: nil];
+	});
+	return sharedStandardUpdaterController_;
+}
+@end
+#endif
 
 // It is the application's delegate (set in MainMenu.xib). Saying so lets
 // application:delegateHandlesKey: match the protocol's declaration instead of
@@ -199,6 +217,14 @@ static BOOL consentLastEnabled = NO;
 															   @"trashAskedConsent": @NO}];
 
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.sentryConsented" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kAppControllerContext];
+
+#ifdef COG_SPARKLE
+#ifdef DEBUG
+	// Prevent updates automatically in debug builds
+	[[[SparkleBridge sharedStandardUpdaterController] updater] setAutomaticallyChecksForUpdates:NO];
+#endif
+	[[[SparkleBridge sharedStandardUpdaterController] updater] setUpdateCheckInterval:3600];
+#endif
 
 	// Wrap the xib-defined window content in an NSSplitViewController so the
 	// file tree becomes a native sidebar split view item
@@ -704,6 +730,70 @@ static BOOL consentLastEnabled = NO;
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
+#ifdef COG_SPARKLE
+// The updater and donation items exist only in the directly distributed
+// build, so they are added here rather than in MainMenu.xib, which the App
+// Store build shares.
+- (void)applicationWillFinishLaunching:(NSNotification *)notification {
+	NSMenu *appMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
+
+	NSMenuItem *updatesItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedStringFromTable(@"Check for Updates...", @"Direct", @"Application menu item that checks for a new version.") action:@selector(checkForUpdates:) keyEquivalent:@""];
+	updatesItem.target = self;
+	if(@available(macOS 26, *)) {
+		updatesItem.image = [NSImage imageWithSystemSymbolName:@"arrow.trianglehead.2.counterclockwise.rotate.90" accessibilityDescription:nil];
+	}
+	// Directly below About Cog
+	[appMenu insertItem:updatesItem atIndex:1];
+
+	NSMenu *donateMenu = [[NSMenu alloc] initWithTitle:NSLocalizedStringFromTable(@"Donate", @"Direct", @"Application menu submenu of donation links.")];
+	donateMenu.autoenablesItems = NO;
+	NSMenuItem * (^addLink)(NSString *, SEL) = ^NSMenuItem *(NSString *title, SEL action) {
+		NSMenuItem *item = [donateMenu addItemWithTitle:title action:action keyEquivalent:@""];
+		item.target = self;
+		return item;
+	};
+	NSMenuItem * (^addHeading)(NSString *) = ^NSMenuItem *(NSString *title) {
+		NSMenuItem *item = [donateMenu addItemWithTitle:title action:nil keyEquivalent:@""];
+		item.enabled = NO;
+		return item;
+	};
+	addLink(@"LiberaPay", @selector(openLiberapayPage:));
+	[donateMenu addItem:[NSMenuItem separatorItem]];
+	addHeading(NSLocalizedStringFromTable(@"One time", @"Direct", @"Donate submenu heading for one-off donation services."));
+	addLink(@"PayPal", @selector(openPaypalPage:));
+	[donateMenu addItem:[NSMenuItem separatorItem]];
+	addHeading(NSLocalizedStringFromTable(@"Recurring", @"Direct", @"Donate submenu heading for subscription donation services."));
+	addLink(@"Ko-fi", @selector(openKofiPage:));
+	addLink(@"Patreon", @selector(openPatreonPage:));
+
+	NSMenuItem *donateItem = [[NSMenuItem alloc] initWithTitle:donateMenu.title action:nil keyEquivalent:@""];
+	donateItem.submenu = donateMenu;
+	// Directly above Send Feedback...
+	NSInteger feedbackIndex = [appMenu indexOfItemWithTarget:self andAction:@selector(feedback:)];
+	[appMenu insertItem:donateItem atIndex:(feedbackIndex >= 0 ? feedbackIndex : appMenu.numberOfItems)];
+}
+
+- (IBAction)openLiberapayPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://liberapay.com/kode54"]];
+}
+
+- (IBAction)openPaypalPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.paypal.com/paypalme/kode54"]];
+}
+
+- (IBAction)openKofiPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://ko-fi.com/kode54"]];
+}
+
+- (IBAction)openPatreonPage:(id)sender {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.patreon.com/kode54"]];
+}
+
+- (IBAction)checkForUpdates:(id)sender {
+	[[SparkleBridge sharedStandardUpdaterController] checkForUpdates:[[NSApplication sharedApplication] delegate]];
+}
+#endif
+
 - (IBAction)privacyPolicy:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:NSLocalizedString(@"PrivacyPolicyURL", @"Privacy policy URL from Iubenda.")]];
 }
@@ -734,9 +824,6 @@ static BOOL consentLastEnabled = NO;
 	float fFontSize = [NSFont systemFontSizeForControlSize:NSControlSizeRegular];
 	NSNumber *fontSize = @(fFontSize);
 	[userDefaultsValuesDict setObject:fontSize forKey:@"fontSize"];
-
-	NSString *feedURLdefault = @"https://cogcdn.cog.losno.co/mercury.xml";
-	[userDefaultsValuesDict setObject:feedURLdefault forKey:@"SUFeedURL"];
 
 	[userDefaultsValuesDict setObject:@"enqueueAndPlay" forKey:@"openingFilesBehavior"];
 	[userDefaultsValuesDict setObject:@"enqueue" forKey:@"openingFilesAlteredBehavior"];
@@ -791,18 +878,6 @@ static BOOL consentLastEnabled = NO;
 	// Register and sync defaults
 	[[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-
-	// And if the existing feed URL is broken due to my ineptitude with the above defaults, fix it
-	NSSet<NSString *> *brokenFeedURLs = [NSSet setWithObjects:
-	                                           @"https://kode54.net/cog/stable.xml",
-	                                           @"https://kode54.net/cog/mercury.xml"
-	                                           @"https://www.kode54.net/cog/mercury.xml",
-	                                           @"https://f.losno.co/cog/mercury.xml",
-	                                           nil];
-	NSString *feedURL = [[NSUserDefaults standardUserDefaults] stringForKey:@"SUFeedURL"];
-	if([brokenFeedURLs containsObject:feedURL]) {
-		[[NSUserDefaults standardUserDefaults] setValue:feedURLdefault forKey:@"SUFeedURL"];
-	}
 
 	NSString *oldMidiPlugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midi.plugin"];
 	if(oldMidiPlugin) {

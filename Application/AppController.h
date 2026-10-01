@@ -2,6 +2,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+#ifdef COG_SPARKLE
+@class SPUStandardUpdaterController;
+
+@interface SparkleBridge : NSObject
++ (SPUStandardUpdaterController *)sharedStandardUpdaterController;
+@end
+#endif
+
 @class FileTreeViewController;
 @class MainSplitViewController;
 @class PlaybackController;
@@ -79,6 +87,13 @@
 - (IBAction)savePlaylist:(id)sender;
 - (IBAction)savePlaylistFromSelection:(id)sender;
 
+#ifdef COG_SPARKLE
+- (IBAction)openLiberapayPage:(id)sender;
+- (IBAction)openPaypalPage:(id)sender;
+- (IBAction)openKofiPage:(id)sender;
+- (IBAction)openPatreonPage:(id)sender;
+#endif
+
 - (IBAction)privacyPolicy:(id)sender;
 
 - (IBAction)feedback:(id)sender;
@@ -121,6 +136,10 @@
 
 - (IBAction)showRubberbandSettings:(id)sender;
 + (void)globalShowRubberbandSettings;
+
+#ifdef COG_SPARKLE
+- (IBAction)checkForUpdates:(id)sender;
+#endif
 
 @property NSWindow *mainWindow;
 @property NSWindow *miniWindow;
