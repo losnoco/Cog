@@ -5,6 +5,15 @@
 // with the following build setting:
 // DEVELOPMENT_TEAM = [Your TeamID]
 
+// The application group (group.org.cogx.cog) in Cog.entitlements and
+// CogMCP.entitlements is registered to the upstream team, so automatic
+// signing with any other team fails with “An Application Group with
+// Identifier 'group.org.cogx.cog' is not available”.
+// Rather than renaming the group, also add this to DEVELOPMENT_TEAM.xcconfig:
+// PROVISIONING_PROFILE_SUPPORTED = NO
+// The app is then signed with your development certificate and keeps the
+// entitlement, but carries no provisioning profile.
+
 // One way to find your Team ID is to set the “Development Team”
 // build setting (Xcode key: "DEVELOPMENT_TEAM") and have a look
 // at the “Source Control” changes (menu item “Commit…”/⌥⌘C).
