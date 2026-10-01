@@ -29,6 +29,7 @@
 #import "FeedbackController.h"
 
 @import Sentry;
+@import UniformTypeIdentifiers;
 
 void *kAppControllerContext = &kAppControllerContext;
 
@@ -101,7 +102,7 @@ static AppController *kAppController = nil;
 
 	p = [NSOpenPanel openPanel];
 
-	[p setAllowedFileTypes:[playlistLoader acceptableFileTypes]];
+	[p setAllowedContentTypes:[CogContentTypes typesForExtensions:[playlistLoader acceptableFileTypes]]];
 	[p setCanChooseDirectories:YES];
 	[p setAllowsMultipleSelection:YES];
 	[p setResolvesAliases:YES];
@@ -124,10 +125,11 @@ static AppController *kAppController = nil;
 
 	p = [NSSavePanel savePanel];
 
-	/* Yes, this is deprecated. Yes, this is required to give the dialog
-	 * a default set of filename extensions to save, including adding an
-	 * extension if the user does not supply one. */
-	[p setAllowedFileTypes:@[@"m3u", @"pls"]];
+	/* Required to give the dialog a default set of filename extensions to
+	 * save, including adding an extension if the user does not supply one.
+	 * Each is the preferred type for its extension, so the panel adds
+	 * .m3u or .pls, not another extension the type also covers. */
+	[p setAllowedContentTypes:@[[UTType typeWithFilenameExtension:@"m3u"], [UTType typeWithFilenameExtension:@"pls"]]];
 
 	[p beginSheetModalForWindow:mainWindow
 	          completionHandler:^(NSInteger result) {

@@ -231,7 +231,7 @@ struct MIDIPaneView: View {
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
         panel.isFloatingPanel = true
-        panel.allowedFileTypes = ["sf2", "sf2pack", "sflist", "sf3", "sf4", "json", "dls"]  // deprecated in 12, still works
+        panel.allowedContentTypes = ContentTypes.types(forExtensions: ["sf2", "sf2pack", "sflist", "sf3", "sf4", "json", "dls"])
         if !prefs.soundFontPath.isEmpty {
             panel.directoryURL = URL(fileURLWithPath: prefs.soundFontPath).deletingLastPathComponent()
         }

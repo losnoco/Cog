@@ -20,6 +20,8 @@
 
 #import "SHA256Digest.h"
 
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+
 static NSNotificationName midiConfigNotification = @"CogMIDIConfigurePlugin";
 
 @implementation MIDIConfigHost
@@ -166,13 +168,18 @@ static NSString *nukedSc155mk2 = @"SC-155mk2";
 		return;
 	}
 
-	NSArray *fileTypes = @[@"zip", @"rar", @"7z"];
+	// Every type registered for each extension, as CogContentTypes does;
+	// that class is Swift, and its header cannot be imported into C++.
+	NSMutableArray<UTType *> *contentTypes = [NSMutableArray array];
+	for(NSString *extension in @[@"zip", @"rar", @"7z"]) {
+		[contentTypes addObjectsFromArray:[UTType typesWithTag:extension tagClass:UTTagClassFilenameExtension conformingToType:nil]];
+	}
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
 	[panel setAllowsMultipleSelection:NO];
 	[panel setCanChooseDirectories:YES];
 	[panel setCanChooseFiles:YES];
 	[panel setFloatingPanel:YES];
-	[panel setAllowedFileTypes:fileTypes];
+	[panel setAllowedContentTypes:contentTypes];
 	NSInteger result = [panel runModal];
 	if(result == NSModalResponseOK) {
 		NSURL *url = [panel URL];

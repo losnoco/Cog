@@ -111,7 +111,7 @@ struct AppearancePaneView: View {
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
         panel.isFloatingPanel = true
-        panel.allowedFileTypes = ["jpg", "jpeg", "png", "gif", "webp", "avif", "heic"]
+        panel.allowedContentTypes = ContentTypes.types(forExtensions: ["jpg", "jpeg", "png", "gif", "webp", "avif", "heic"])
         guard panel.runModal() == .OK, let url = panel.url else { return }
 
         guard let iconData = try? Data(contentsOf: url),

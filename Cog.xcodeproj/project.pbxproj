@@ -23,6 +23,7 @@
 		1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C36B0F59E00100F85F28 /* PlaybackButtons.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
+		CA11E7A10000000000000002 /* ContentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA11E7A10000000000000001 /* ContentTypes.swift */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
 		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
@@ -879,6 +880,7 @@
 		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		177042970B8BC53600B86321 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
+		CA11E7A10000000000000001 /* ContentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypes.swift; sourceTree = "<group>"; };
 		177042990B8BC53600B86321 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
 		1770429A0B8BC53600B86321 /* PlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaybackController.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
@@ -1343,6 +1345,7 @@
 			children = (
 				177042970B8BC53600B86321 /* AppController.h */,
 				177042980B8BC53600B86321 /* AppController.m */,
+				CA11E7A10000000000000001 /* ContentTypes.swift */,
 				177042990B8BC53600B86321 /* PlaybackController.h */,
 				1770429A0B8BC53600B86321 /* PlaybackController.m */,
 				1791FF8D0CB43A2C0070BC5C /* MediaKeysApplication.h */,
@@ -2916,6 +2919,7 @@
 				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,
 				838A33872D06CFCA00D0D770 /* SpeedButton.m in Sources */,
 				1770429C0B8BC53600B86321 /* AppController.m in Sources */,
+				CA11E7A10000000000000002 /* ContentTypes.swift in Sources */,
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
 				8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */,
 				83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */,
