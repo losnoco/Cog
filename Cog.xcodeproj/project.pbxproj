@@ -2923,7 +2923,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Release and Release-Direct share a products directory, so a bundle\n# left over from a Release-Direct build may still carry Sparkle and the\n# Direct string table.\nif [ \"$COG_SPARKLE\" != \"YES\" ]; then\n\trm -rf \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n\trm -f \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"/*.lproj/Direct.strings*\nelse\n\t# The Swift packages still build into Release-Direct, so an xcframework\n\t# from a package leaves its signature in both directories, and archiving\n\t# fails copying the second one into the archive.\n\tfor signature in \"$BUILD_DIR/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\"/*.signature; do\n\t\t[ -e \"$signature\" ] && rm -f \"$BUILT_PRODUCTS_DIR/$(basename \"$signature\")\"\n\tdone\nfi\n";
+			shellScript = "# Release and Release-Direct share a products directory, so a bundle\n# left over from a Release-Direct build may still carry Sparkle and the\n# Direct string table.\nif [ \"$COG_SPARKLE\" != \"YES\" ]; then\n\trm -rf \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n\trm -f \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"/*.lproj/Direct.strings*\nelse\n\t# The Swift packages still build into Release-Direct, so an xcframework\n\t# from a package leaves its signature in both directories, and archiving\n\t# fails copying the second one into the archive.\n\tfor signature in \"$BUILD_DIR/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\"/*.signature; do\n\t\tif [ -e \"$signature\" ]; then\n\t\t\trm -f \"$BUILT_PRODUCTS_DIR/$(basename \"$signature\")\"\n\t\tfi\n\tdone\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		83978E27285C5A4C0076ED21 /* Run Sentry symbol upload */ = {
