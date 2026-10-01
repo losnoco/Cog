@@ -322,7 +322,6 @@ static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t si
 		DLog(@"%s", meta);
 		const char *e = meta + size;
 		const char strtitle[] = "StreamTitle='";
-		char title[4096] = "";
 		while(meta < e) {
 			if(!memcmp(meta, strtitle, sizeof(strtitle) - 1)) {
 				meta += sizeof(strtitle) - 1;
@@ -333,10 +332,11 @@ static int http_parse_shoutcast_meta(HTTPSource *fp, const char *meta, size_t si
 				if(substr_end >= e) {
 					return -1; // end of string not found
 				}
+				// On the heap: metadata can run to 4080 bytes, past the stack
+				// frame size the build allows. Released with the pool.
 				size_t s = substr_end - meta;
-				s = MIN(sizeof(title) - 1, s);
+				char *title = [[NSMutableData dataWithLength:s + 1] mutableBytes];
 				memcpy(title, meta, s);
-				title[s] = 0;
 				DLog(@"got stream title: %s\n", title);
 				{
 					char *tit = strstr(title, " - ");
