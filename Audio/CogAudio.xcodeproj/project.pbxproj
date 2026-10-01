@@ -752,10 +752,10 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
+				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -794,10 +794,10 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
+				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
 				SKIP_INSTALL = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
