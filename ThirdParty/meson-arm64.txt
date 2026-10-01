@@ -16,7 +16,7 @@ ranlib = 'ranlib'
 
 [built-in options]
 prefix = '/usr/local'
-c_args = ['-arch', 'arm64', '-mmacosx-version-min=11.0']
-c_link_args = ['-arch', 'arm64', '-mmacosx-version-min=11.0']
+c_args = ['-arch', 'arm64', '-mmacosx-version-min=12.0']
+c_link_args = ['-arch', 'arm64', '-mmacosx-version-min=12.0']
 default_library = 'static'
 buildtype = 'release'

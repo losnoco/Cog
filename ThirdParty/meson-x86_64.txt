@@ -13,10 +13,13 @@ ld = 'ld'
 strip = 'strip'
 lipo = 'lipo'
 ranlib = 'ranlib'
+# Gives NASM-assembled objects a macOS build version, as clang does for C;
+# without it, ld warns that they have no platform load command.
+nasm = ['nasm', '--pragma', 'macho build_version macos, 12, 0']
 
 [built-in options]
 prefix = '/usr/local'
-c_args = ['-arch', 'x86_64', '-mmacosx-version-min=10.13']
-c_link_args = ['-arch', 'x86_64', '-mmacosx-version-min=10.13']
+c_args = ['-arch', 'x86_64', '-mmacosx-version-min=12.0']
+c_link_args = ['-arch', 'x86_64', '-mmacosx-version-min=12.0']
 default_library = 'static'
 buildtype = 'release'

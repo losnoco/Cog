@@ -4,7 +4,7 @@ https://code.videolan.org/videolan/dav1d.git - at revision: 1.5.1-0-g42b2b24
 https://chromium.googlesource.com/libyuv/libyuv - at revision: 4db2af62d
 https://github.com/AOMediaCodec/libavif - at revision: v1.3.0-46-g1540d752
 
-dav1d was built to two separate targets, using the meson crossfiles included in the root ThirdParty directory:
+dav1d was built to two separate targets, using the meson crossfiles included in the root ThirdParty directory. Both target macOS 12.0. The x86_64 crossfile has nasm write a macOS build version into the objects it assembles (`--pragma 'macho build_version macos, 12, 0'`, which needs NASM 2.16 or newer; built with NASM 3.02); without it, ld warns "no platform load command found" for every one of them:
 
 ```
 meson setup --cross-file=/path/to/meson-x86_64.txt --default-library=static --buildtype release -Denable_tools=false -Denable_tests=false build.x64 .
@@ -12,7 +12,7 @@ ninja -C build.x64
 ```
 
 ```
-meson setup --cross-file=/path/to/meson-arm64.txt --default-library=static --buildtype release -Denable_tools=false -Denable_tests=false build.x64 .
+meson setup --cross-file=/path/to/meson-arm64.txt --default-library=static --buildtype release -Denable_tools=false -Denable_tests=false build.arm .
 ninja -C build.arm
 ```
 
@@ -25,6 +25,8 @@ lipo -create -output libdav1d.a build.x64/src/libdav1d.a build.arm/src/libdav1d.
 cp libdav1d.a /usr/local/lib
 cp /usr/local/lib/pkgconfig/dav1d.pc /opt/homebrew/lib/pkgconfig
 ```
+
+To check: `otool -l` on each `lipo -thin` slice should show LC_BUILD_VERSION with minos 12.0 for every member.
 
 libyuv was build to two separate targets, using CMake options and arch direction to control the build flow:
 
