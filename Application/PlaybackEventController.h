@@ -12,7 +12,7 @@
 #import "PlaybackController.h"
 
 @interface PlaybackEventController
-: NSObject <NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate> {
+: NSObject <UNUserNotificationCenterDelegate> {
 	IBOutlet PlaybackController *playbackController;
 
 	IBOutlet NSWindow *mainWindow;

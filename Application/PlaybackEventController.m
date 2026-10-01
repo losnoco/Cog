@@ -82,8 +82,6 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
 		queue = [NSOperationQueue new];
 		[queue setMaxConcurrentOperationCount:1];
 
-		[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
-
 		entry = nil;
 	}
 
@@ -94,7 +92,7 @@ typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:
          (void (^)(UNNotificationPresentationOptions options))completionHandler {
-	UNNotificationPresentationOptions presentationOptions = UNNotificationPresentationOptionAlert;
+	UNNotificationPresentationOptions presentationOptions = UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionList;
 
 	completionHandler(presentationOptions);
 }
@@ -104,7 +102,26 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
 	if([[response actionIdentifier] isEqualToString:@"skip"]) {
 		[playbackController next:self];
+	} else if([[response actionIdentifier] isEqualToString:UNNotificationDefaultActionIdentifier]) {
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self showPlayerWindow];
+		});
 	}
+	completionHandler();
+}
+
+// Clicking a notification brings forward whichever player window is in use.
+- (void)showPlayerWindow {
+	NSWindow *window;
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniPlusMode"])
+		window = miniPlusWindow;
+	else if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"])
+		window = miniWindow;
+	else
+		window = mainWindow;
+
+	[NSApp activateIgnoringOtherApps:YES];
+	[window makeKeyAndOrderFront:self];
 }
 
 #if 0
@@ -323,31 +340,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 		[self performPlaybackDidStopActions];
 	}];
 	[queue addOperation:op];
-}
-
-- (void)userNotificationCenter:(NSUserNotificationCenter *)center
-       didActivateNotification:(NSUserNotification *)notification {
-	switch(notification.activationType) {
-		case NSUserNotificationActivationTypeActionButtonClicked:
-			[playbackController next:self];
-			break;
-
-		case NSUserNotificationActivationTypeContentsClicked: {
-			NSWindow *window;
-			if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniPlusMode"])
-				window = miniPlusWindow;
-			else if([[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"])
-				window = miniWindow;
-			else
-				window = mainWindow;
-
-			[NSApp activateIgnoringOtherApps:YES];
-			[window makeKeyAndOrderFront:self];
-		}; break;
-
-		default:
-			break;
-	}
 }
 
 @end
