@@ -33,7 +33,7 @@
 		83D6770F2653A05E00252130 /* mathops.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676DA2653A05D00252130 /* mathops.h */; };
 		83D677102653A05E00252130 /* vq.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676DB2653A05D00252130 /* vq.h */; };
 		83D677112653A05E00252130 /* entdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DC2653A05D00252130 /* entdec.c */; };
-		83D677122653A05E00252130 /* celt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DD2653A05D00252130 /* celt.c */; };
+		83D677122653A05E00252130 /* celt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DD2653A05D00252130 /* celt.c */; settings = {COMPILER_FLAGS = "-Wno-frame-larger-than"; }; };
 		83D677132653A05E00252130 /* cwrs.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676DE2653A05E00252130 /* cwrs.c */; };
 		83D677142653A05E00252130 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676DF2653A05E00252130 /* config.h */; };
 		83D677152653A05E00252130 /* entcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D676E02653A05E00252130 /* entcode.c */; };

@@ -17,7 +17,7 @@
 		8359000B17FEF40E0060F3ED /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7B17FEF40E0060F3ED /* 7zCrc.c */; };
 		8359000C17FEF40E0060F3ED /* 7zCrc.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF7C17FEF40E0060F3ED /* 7zCrc.h */; };
 		8359000D17FEF40E0060F3ED /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7D17FEF40E0060F3ED /* 7zCrcOpt.c */; };
-		8359000E17FEF40E0060F3ED /* 7zDec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7E17FEF40E0060F3ED /* 7zDec.c */; };
+		8359000E17FEF40E0060F3ED /* 7zDec.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359FF7E17FEF40E0060F3ED /* 7zDec.c */; settings = {COMPILER_FLAGS = "-Wno-frame-larger-than"; }; };
 		8359001017FEF40E0060F3ED /* 7zDecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF8017FEF40E0060F3ED /* 7zDecode.h */; };
 		8359001217FEF40E0060F3ED /* 7zExtract.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF8217FEF40E0060F3ED /* 7zExtract.h */; };
 		8359001417FEF40E0060F3ED /* 7zFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359FF8417FEF40E0060F3ED /* 7zFile.h */; };

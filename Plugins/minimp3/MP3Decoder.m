@@ -8,7 +8,12 @@
 
 #define MINIMP3_IMPLEMENTATION 1
 
+// minimp3 decodes a frame in large stack buffers by design; the frame size
+// warning is for Cog's own code.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wframe-larger-than"
 #import "MP3Decoder.h"
+#pragma clang diagnostic pop
 
 #import "HTTPSource.h"
 
