@@ -18,6 +18,9 @@ private final class GeneralPrefs: ObservableObject {
     @Published var httpStreamingBufferSize: Int {
         didSet { guard isActive else { return }; UserDefaults.standard.set(httpStreamingBufferSize, forKey: "httpStreamingBufferSize") }
     }
+    @Published var enableLrclib: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(enableLrclib, forKey: "enableLrclib") }
+    }
     @Published var sentryConsented: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(sentryConsented, forKey: "sentryConsented") }
     }
@@ -32,6 +35,7 @@ private final class GeneralPrefs: ObservableObject {
         let d = UserDefaults.standard
         allowInsecureSSL = d.bool(forKey: "allowInsecureSSL")
         httpStreamingBufferSize = d.integer(forKey: "httpStreamingBufferSize")
+        enableLrclib = d.bool(forKey: "enableLrclib")
         sentryConsented = d.bool(forKey: "sentryConsented")
         suCheckAtStartup = d.bool(forKey: "SUCheckAtStartup")
     }
@@ -123,6 +127,14 @@ struct GeneralPaneView: View {
                 }
             } header: {
                 Text("Network").bold()
+            }
+            Section {
+                Toggle("Look up missing lyrics on LRCLIB", isOn: $prefs.enableLrclib)
+                Text("Sends the artist, title, album and duration of tracks without lyrics to lrclib.net while the Lyrics window is open.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } header: {
+                Text("Lyrics").bold()
             }
             Section {
                 Toggle("Send crash reports and usage data", isOn: $prefs.sentryConsented)

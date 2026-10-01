@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @property(assign) id valueToDisplay;
+// The entry's own lyrics, or LRCLIB's when it has none.
+@property(readonly, nullable) NSString *lyricsText;
 
 - (IBAction)toggleWindow:(id)sender;
 

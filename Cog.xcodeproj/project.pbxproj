@@ -195,6 +195,8 @@
 		83AA7D07279EBCAF00087AA4 /* libswresample.6.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83B61E2429A8296500CD0580 /* LyricsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83B61E2229A8296500CD0580 /* LyricsWindow.xib */; };
+		C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6992B2B954E6728D9F5E814E /* LrclibClient.swift */; };
+		87D0EBAA0AA49F02DE82B80A /* LyricsLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983E24C795286EB454FFAC4 /* LyricsLookup.swift */; };
 		83B61E2829A82A0200CD0580 /* LyricsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B61E2729A82A0200CD0580 /* LyricsWindowController.m */; };
 		83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B73B602D8FC05A00A57F08 /* minimp3.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1138,6 +1140,8 @@
 		83B30F652FF7A5D9003D672B /* CogMCP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CogMCP.entitlements; sourceTree = "<group>"; };
 		83B61E2329A8296500CD0580 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LyricsWindow.xib; sourceTree = "<group>"; };
 		83B61E2629A82A0200CD0580 /* LyricsWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LyricsWindowController.h; sourceTree = "<group>"; };
+		6992B2B954E6728D9F5E814E /* LrclibClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LrclibClient.swift; sourceTree = "<group>"; };
+		E983E24C795286EB454FFAC4 /* LyricsLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsLookup.swift; sourceTree = "<group>"; };
 		83B61E2729A82A0200CD0580 /* LyricsWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LyricsWindowController.m; sourceTree = "<group>"; };
 		83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83BC5AB020E4C87100631CD4 /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualWindow.m; path = Window/DualWindow.m; sourceTree = "<group>"; };
@@ -2039,6 +2043,8 @@
 			children = (
 				83B61E2629A82A0200CD0580 /* LyricsWindowController.h */,
 				83B61E2729A82A0200CD0580 /* LyricsWindowController.m */,
+				E983E24C795286EB454FFAC4 /* LyricsLookup.swift */,
+				6992B2B954E6728D9F5E814E /* LrclibClient.swift */,
 			);
 			path = LyricsWindow;
 			sourceTree = "<group>";
@@ -2944,6 +2950,8 @@
 				838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */,
 				838A33842D06CF4100D0D770 /* SpectrumWindowController.m in Sources */,
 				83B61E2829A82A0200CD0580 /* LyricsWindowController.m in Sources */,
+				87D0EBAA0AA49F02DE82B80A /* LyricsLookup.swift in Sources */,
+				C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */,
 				83CB565E2E064607003DD379 /* NSDictionary+Optional.m in Sources */,
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,

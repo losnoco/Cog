@@ -426,6 +426,17 @@
         }
       }
     },
+    "Asking LRCLIB…" : {
+      "comment" : "Lyrics window placeholder while LRCLIB is queried",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultando LRCLIB…"
+          }
+        }
+      }
+    },
     "Audio output status" : {
       "comment" : "Audio output status accessibility label",
       "localizations" : {
@@ -919,6 +930,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No se pudo conectar a Last.fm. Intenta nuevamente."
+          }
+        }
+      }
+    },
+    "Could not reach LRCLIB." : {
+      "comment" : "Lyrics window: LRCLIB is unreachable or busy",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo contactar con LRCLIB."
           }
         }
       }
@@ -2057,6 +2079,17 @@
         }
       }
     },
+    "Look up missing lyrics on LRCLIB" : {
+      "comment" : "A toggle that lets the user fetch lyrics from LRCLIB for tracks without embedded lyrics.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar en LRCLIB las letras que falten"
+          }
+        }
+      }
+    },
     "lossless" : {
       "comment" : "How a track is encoded",
       "localizations" : {
@@ -2075,6 +2108,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "con pérdidas"
+          }
+        }
+      }
+    },
+    "LRCLIB could not answer for this track." : {
+      "comment" : "Lyrics window: LRCLIB returned an error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB no pudo responder por esta pista."
+          }
+        }
+      }
+    },
+    "LRCLIB has no lyrics for this track." : {
+      "comment" : "Lyrics window: LRCLIB has no record for the track",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB no tiene la letra de esta pista."
+          }
+        }
+      }
+    },
+    "LRCLIB lists this track as instrumental." : {
+      "comment" : "Lyrics window: LRCLIB says the track has no words",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB indica que esta pista es instrumental."
+          }
+        }
+      }
+    },
+    "Lyrics" : {
+      "comment" : "Preferences section header for lyrics settings",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letras"
           }
         }
       }
@@ -3467,6 +3544,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar DSD al DAC como DoP (DSD sobre PCM)"
+          }
+        }
+      }
+    },
+    "Sends the artist, title, album and duration of tracks without lyrics to lrclib.net while the Lyrics window is open." : {
+      "comment" : "Explains what the LRCLIB toggle sends over the network.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envía a lrclib.net el artista, el título, el álbum y la duración de las pistas sin letra mientras la ventana Letras está abierta."
           }
         }
       }

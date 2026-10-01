@@ -4,6 +4,19 @@
         <attribute name="artData" optional="YES" attributeType="Binary"/>
         <attribute name="artHash" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="LyricsCache" representedClassName="LyricsCache" syncable="YES" codeGenerationType="class">
+        <attribute name="fetchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="instrumental" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="key" optional="YES" attributeType="String"/>
+        <attribute name="known" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="plain" optional="YES" attributeType="String"/>
+        <attribute name="synced" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="key"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="PlayCount" representedClassName="PlayCount" syncable="YES" codeGenerationType="class">
         <attribute name="album" optional="YES" attributeType="String"/>
         <attribute name="artist" optional="YES" attributeType="String"/>

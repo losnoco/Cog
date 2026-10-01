@@ -756,6 +756,10 @@ static BOOL consentLastEnabled = NO;
 
 	[userDefaultsValuesDict setObject:@(0x40000) forKey:@"httpStreamingBufferSize"];
 
+	// Off by default: every lookup sends the track's tags to the server.
+	[userDefaultsValuesDict setObject:@NO forKey:@"enableLrclib"];
+	[userDefaultsValuesDict setObject:@"https://lrclib.net" forKey:@"lrclibUrl"];
+
 	[userDefaultsValuesDict setObject:@NO forKey:@"spectrumFreqMode"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumProjectionMode"];
 

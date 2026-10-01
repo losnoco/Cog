@@ -38,7 +38,7 @@
                                     <size key="maxSize" width="480" height="10000000"/>
                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <connections>
-                                        <binding destination="-2" name="value" keyPath="valueToDisplay.unsyncedlyrics" id="tSj-CA-G4Q">
+                                        <binding destination="-2" name="value" keyPath="lyricsText" id="tSj-CA-G4Q">
                                             <dictionary key="options">
                                                 <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
                                                 <bool key="NSConditionallySetsEditable" value="NO"/>
