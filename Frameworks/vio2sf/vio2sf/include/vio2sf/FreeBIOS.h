@@ -37,6 +37,12 @@ std::array<u8, ARM9BIOSSize> FreeBIOSGetNtrArm9(void);
 std::array<u8, ARM7BIOSSize> FreeBIOSGetNtrArm7(void);
 std::array<u8, DSiBIOSSize> FreeBIOSGetTwlArm9(void);
 std::array<u8, DSiBIOSSize> FreeBIOSGetTwlArm7(void);
+
+// The same images written into storage the caller already has. The
+// getters return 4 KB and 16 KB arrays by value, which put a copy on the
+// caller's stack even when the image is headed for the heap.
+void FreeBIOSFillNtrArm9(std::array<u8, ARM9BIOSSize> &bios);
+void FreeBIOSFillNtrArm7(std::array<u8, ARM7BIOSSize> &bios);
 }
 
 #endif // FREEBIOS_H

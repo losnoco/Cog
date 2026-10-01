@@ -42,6 +42,16 @@ std::array<u8, ARM7BIOSSize> FreeBIOSGetNtrArm7(void) {
   return result;
 }
 
+void FreeBIOSFillNtrArm9(std::array<u8, ARM9BIOSSize> &bios) {
+  bios.fill(0);
+  std::copy(std::begin(bios_ntr_arm9), std::end(bios_ntr_arm9), std::begin(bios));
+}
+
+void FreeBIOSFillNtrArm7(std::array<u8, ARM7BIOSSize> &bios) {
+  bios.fill(0);
+  std::copy(std::begin(bios_ntr_arm7), std::end(bios_ntr_arm7), std::begin(bios));
+}
+
 std::array<u8, DSiBIOSSize> FreeBIOSGetTwlArm9(void) {
   std::array<u8, DSiBIOSSize> result({0});
   std::copy(std::begin(bios_twl_arm9), std::end(bios_twl_arm9), std::begin(result));

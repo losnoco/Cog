@@ -1195,16 +1195,20 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 		fwrite(state.rom.get(), 1, state.rom_size, f);
 		fclose(f);*/
 
-		auto arm9bios = std::make_unique<melonDS::ARM9BIOSImage>(melonDS::FreeBIOSGetNtrArm9());
+		// Filled in place: copied from the getters, the 20 KB of images
+		// would pass through this frame on the way to the heap.
+		auto arm9bios = std::make_unique<melonDS::ARM9BIOSImage>();
 		if (!arm9bios) {
 			delete state;
 			return NO;
 		}
-		auto arm7bios = std::make_unique<melonDS::ARM7BIOSImage>(melonDS::FreeBIOSGetNtrArm7());
+		melonDS::FreeBIOSFillNtrArm9(*arm9bios);
+		auto arm7bios = std::make_unique<melonDS::ARM7BIOSImage>();
 		if (!arm7bios) {
 			delete state;
 			return NO;
 		}
+		melonDS::FreeBIOSFillNtrArm7(*arm7bios);
 		melonDS::Firmware _firmware = melonDS::Firmware(0);
 		auto firmware = std::make_optional(_firmware);
 		if (!firmware) {
