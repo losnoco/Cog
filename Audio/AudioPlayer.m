@@ -261,7 +261,7 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	[invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:wait];
 }
 
-- (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait {
+- (void)setPlaybackStatus:(CogStatus)status waitUntilDone:(BOOL)wait {
 	currentPlaybackStatus = status;
 
 	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:previousUserInfo waitUntilDone:wait];
@@ -271,7 +271,7 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:@(status) withObject:userInfo waitUntilDone:NO];
 }
 
-- (void)setPlaybackStatus:(int)status {
+- (void)setPlaybackStatus:(CogStatus)status {
 	[self setPlaybackStatus:status waitUntilDone:NO];
 }
 

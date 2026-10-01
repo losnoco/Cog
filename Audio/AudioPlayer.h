@@ -14,6 +14,8 @@
 #import <CoreAudio/CoreAudio.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
+#import <CogAudio/Status.h>
+
 // What playback sends to the output device, as heard. Posted on the main
 // thread by the AudioPlayer whenever any of it changes (a new track, a DSP
 // setting, the device), and with no userInfo once nothing is playing.
@@ -77,7 +79,7 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 
 	id delegate;
 
-	int currentPlaybackStatus;
+	CogStatus currentPlaybackStatus;
 }
 
 - (id)init;
@@ -127,8 +129,8 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 
 @interface AudioPlayer (Private) // Dont use this stuff!
 
-- (void)setPlaybackStatus:(int)status waitUntilDone:(BOOL)wait;
-- (void)setPlaybackStatus:(int)s;
+- (void)setPlaybackStatus:(CogStatus)status waitUntilDone:(BOOL)wait;
+- (void)setPlaybackStatus:(CogStatus)s;
 
 - (void)requestNextStream:(id)userInfo;
 
