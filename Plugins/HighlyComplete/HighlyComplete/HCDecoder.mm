@@ -37,7 +37,12 @@
 
 #undef ROR
 #define JIT_ENABLED 1
+// melonDS's x86-64 JIT header, reached through NDS.h, narrows a pointer
+// difference to int; it is upstream code, so the warning is silenced.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
 #import <vio2sf/NDS.h>
+#pragma clang diagnostic pop
 
 #import <lazyusf2/usf.h>
 

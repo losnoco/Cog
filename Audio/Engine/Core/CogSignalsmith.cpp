@@ -7,7 +7,12 @@
 
 #include "CogSignalsmith.h"
 
+// Signalsmith Stretch narrows a size_t to int; it is upstream code, so the
+// warning is silenced for it rather than patched.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
 #include <signalsmith-stretch/signalsmith-stretch.h>
+#pragma clang diagnostic pop
 
 using Stretch = signalsmith::stretch::SignalsmithStretch<float>;
 
