@@ -1074,6 +1074,21 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path) {
                                                                       album:self.album
                                                                 trackNumber:self.track
                                                                      length:[self.length doubleValue]];
+    // TagLib, FLAC, Vorbis and Opus lowercase the Picard names; FFmpeg keeps
+    // the MP4/ID3 spelling.
+    track.recordingMBID = [self readAllValuesAsString:@"musicbrainz_trackid"] ?: [self readAllValuesAsString:@"musicbrainz track id"];
+    track.releaseMBID = [self readAllValuesAsString:@"musicbrainz_albumid"] ?: [self readAllValuesAsString:@"musicbrainz album id"];
+    NSString *artistIDs = [self readAllValuesAsString:@"musicbrainz_artistid"] ?: [self readAllValuesAsString:@"musicbrainz artist id"];
+    if([artistIDs length]) {
+        NSMutableArray<NSString *> *ids = [NSMutableArray array];
+        for(NSString *part in [artistIDs componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@",/;"]]) {
+            NSString *trimmed = [part stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if([trimmed length]) {
+                [ids addObject:trimmed];
+            }
+        }
+        track.artistMBIDs = ids;
+    }
     return track;
 }
 @end

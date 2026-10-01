@@ -385,6 +385,9 @@ static BOOL consentLastEnabled = NO;
 	          context:kAppControllerContext];
 
 	[CogRemoteControlBootstrap bootstrap];
+
+	// Listens left waiting from the last run (offline, server down).
+	[[CogListenBrainzScrobbler shared] flush];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath

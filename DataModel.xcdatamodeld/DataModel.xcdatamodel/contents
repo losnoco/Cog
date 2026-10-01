@@ -17,6 +17,11 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="PendingListen" representedClassName="PendingListen" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="listenedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="payload" optional="YES" attributeType="Binary"/>
+    </entity>
     <entity name="PlayCount" representedClassName="PlayCount" syncable="YES" codeGenerationType="class">
         <attribute name="album" optional="YES" attributeType="String"/>
         <attribute name="artist" optional="YES" attributeType="String"/>

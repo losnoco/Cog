@@ -16,6 +16,10 @@ public class AudioScrobblerTrack: NSObject {
     public let album: String?
     public let trackNumber: Int
     public let length: TimeInterval
+    /// MusicBrainz identifiers from the file's tags, for ListenBrainz.
+    @objc public var recordingMBID: String?
+    @objc public var releaseMBID: String?
+    @objc public var artistMBIDs: [String] = []
 
     @objc
     public init(title: String, artist: String?, albumArtist: String?, album: String?, trackNumber: Int, length: TimeInterval) {

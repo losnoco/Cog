@@ -1071,7 +1071,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 - (void)audioPlayer:(AudioPlayer *)player reportScrobbleForTrack:(id)userInfo {
 	if(userInfo) {
 		PlaylistEntry *pe = (PlaylistEntry *)userInfo;
-		[[AudioScrobbler shared] scrobbleTrack:[pe audioScrobblerTrack]];
+		AudioScrobblerTrack *track = [pe audioScrobblerTrack];
+		[[AudioScrobbler shared] scrobbleTrack:track];
+		[[CogListenBrainzScrobbler shared] scrobble:track];
 	}
 }
 
@@ -1165,7 +1167,9 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
     if (entry) {
-        [[AudioScrobbler shared] updateNowPlaying:[entry audioScrobblerTrack]];
+        AudioScrobblerTrack *track = [entry audioScrobblerTrack];
+        [[AudioScrobbler shared] updateNowPlaying:track];
+        [[CogListenBrainzScrobbler shared] updateNowPlaying:track];
     }
 
 	switch(playbackStatus) {

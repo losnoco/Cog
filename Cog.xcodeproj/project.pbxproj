@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
+		0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */; };
+		0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */; };
+		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
 		0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78692F6B1ECF00537320 /* CreditsView.swift */; };
 		0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78682F6B1ECF00537320 /* AboutView.swift */; };
@@ -23,7 +26,6 @@
 		1752C36C0F59E00100F85F28 /* PlaybackButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 1752C36B0F59E00100F85F28 /* PlaybackButtons.m */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
-		CA11E7A10000000000000002 /* ContentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA11E7A10000000000000001 /* ContentTypes.swift */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
 		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
@@ -195,8 +197,6 @@
 		83AA7D07279EBCAF00087AA4 /* libswresample.6.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83B61E2429A8296500CD0580 /* LyricsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83B61E2229A8296500CD0580 /* LyricsWindow.xib */; };
-		C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6992B2B954E6728D9F5E814E /* LrclibClient.swift */; };
-		87D0EBAA0AA49F02DE82B80A /* LyricsLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983E24C795286EB454FFAC4 /* LyricsLookup.swift */; };
 		83B61E2829A82A0200CD0580 /* LyricsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83B61E2729A82A0200CD0580 /* LyricsWindowController.m */; };
 		83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B73B602D8FC05A00A57F08 /* minimp3.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -223,6 +223,7 @@
 		83F759E42FAB0706009DB584 /* HLS.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F759E32FAB0706009DB584 /* HLS.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 83F9FFEE2D6EB75B00026576 /* Sentry */; };
+		87D0EBAA0AA49F02DE82B80A /* LyricsLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983E24C795286EB454FFAC4 /* LyricsLookup.swift */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D1A2B3E00000012 /* MIDIPluginState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A2B3E00000011 /* MIDIPluginState.m */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
@@ -238,6 +239,8 @@
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56961334CC939A7158B7470 /* KeychainHelper.swift */; };
 		B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */; };
+		C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6992B2B954E6728D9F5E814E /* LrclibClient.swift */; };
+		CA11E7A10000000000000002 /* ContentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA11E7A10000000000000001 /* ContentTypes.swift */; };
 		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
 		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
 		CEC0CAFE000000000000B002 /* CogRemoteControl.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -862,6 +865,9 @@
 		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
+		0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzAPI.swift; sourceTree = "<group>"; };
+		0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzScrobbler.swift; sourceTree = "<group>"; };
+		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
 		0ABA78682F6B1ECF00537320 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutView.swift; path = Window/AboutView.swift; sourceTree = "<group>"; };
 		0ABA78692F6B1ECF00537320 /* CreditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreditsView.swift; path = Window/CreditsView.swift; sourceTree = "<group>"; };
@@ -882,7 +888,6 @@
 		1770424E0B8BC41800B86321 /* Cog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		177042970B8BC53600B86321 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		177042980B8BC53600B86321 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
-		CA11E7A10000000000000001 /* ContentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypes.swift; sourceTree = "<group>"; };
 		177042990B8BC53600B86321 /* PlaybackController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaybackController.h; sourceTree = "<group>"; };
 		1770429A0B8BC53600B86321 /* PlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaybackController.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
@@ -1005,6 +1010,7 @@
 		606000000000000000000002 /* SandboxPathBehaviorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SandboxPathBehaviorController.m; path = Preferences/SandboxPathBehaviorController.m; sourceTree = "<group>"; };
 		606000000000000000000003 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PathSuggester.h; path = Preferences/PathSuggester.h; sourceTree = "<group>"; };
 		606000000000000000000004 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PathSuggester.m; path = Preferences/PathSuggester.m; sourceTree = "<group>"; };
+		6992B2B954E6728D9F5E814E /* LrclibClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LrclibClient.swift; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		8307D30C28606148000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxBroker.h; sourceTree = "<group>"; };
 		8307D30D28606148000FF8EB /* SandboxBroker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SandboxBroker.m; sourceTree = "<group>"; };
@@ -1140,8 +1146,6 @@
 		83B30F652FF7A5D9003D672B /* CogMCP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CogMCP.entitlements; sourceTree = "<group>"; };
 		83B61E2329A8296500CD0580 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LyricsWindow.xib; sourceTree = "<group>"; };
 		83B61E2629A82A0200CD0580 /* LyricsWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LyricsWindowController.h; sourceTree = "<group>"; };
-		6992B2B954E6728D9F5E814E /* LrclibClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LrclibClient.swift; sourceTree = "<group>"; };
-		E983E24C795286EB454FFAC4 /* LyricsLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsLookup.swift; sourceTree = "<group>"; };
 		83B61E2729A82A0200CD0580 /* LyricsWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LyricsWindowController.m; sourceTree = "<group>"; };
 		83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83BC5AB020E4C87100631CD4 /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualWindow.m; path = Window/DualWindow.m; sourceTree = "<group>"; };
@@ -1192,6 +1196,7 @@
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFMPEG.xcodeproj; path = Plugins/FFMPEG/FFMPEG.xcodeproj; sourceTree = "<group>"; };
 		C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesModel.swift; path = Preferences/PreferencesModel.swift; sourceTree = "<group>"; };
+		CA11E7A10000000000000001 /* ContentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypes.swift; sourceTree = "<group>"; };
 		CCAA0001B590B10015000001 /* MiniPlayerPlusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindow.h; path = Window/MiniPlayerPlusWindow.h; sourceTree = "<group>"; };
 		CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindow.m; path = Window/MiniPlayerPlusWindow.m; sourceTree = "<group>"; };
 		CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindowController.h; path = Window/MiniPlayerPlusWindowController.h; sourceTree = "<group>"; };
@@ -1211,6 +1216,7 @@
 		CEC0CAFE000000000000F301 /* cog-mcp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cog-mcp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0CAFE000000000000F302 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesWindow.swift; path = Preferences/PreferencesWindow.swift; sourceTree = "<group>"; };
+		E983E24C795286EB454FFAC4 /* LyricsLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsLookup.swift; sourceTree = "<group>"; };
 		ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
 		EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSliderToolbarItem.swift; path = Window/PositionSliderToolbarItem.swift; sourceTree = "<group>"; };
 		F56961334CC939A7158B7470 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
@@ -1730,6 +1736,8 @@
 				420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */,
 				4218AC4F2E469BC30024810A /* AudioScrobbler.swift */,
 				F56961334CC939A7158B7470 /* KeychainHelper.swift */,
+				0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */,
+				0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */,
 			);
 			path = Scrobbler;
 			sourceTree = "<group>";
@@ -1751,6 +1759,7 @@
 				50500000000000000000000E /* LastFMPaneView.swift */,
 				CEC0CAFE000000000000F204 /* RemoteControlPaneView.swift */,
 				CEC0CAFE000000000000F205 /* RemoteControlPaneAvailableView.swift */,
+				0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */,
 			);
 			name = Panes;
 			path = Preferences/Panes;
@@ -2915,6 +2924,7 @@
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
 				83E998762F71325E0017AE33 /* ColorToValueTransformer.swift in Sources */,
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
+				0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */,
 				8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */,
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
@@ -2956,6 +2966,7 @@
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
+				0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */,
 				8325F5A32F71497F00400A88 /* ToggleQueueTitleTransformer.swift in Sources */,
 				8366CB142E8550C6007DB8D2 /* SCView.m in Sources */,
 				56DB084C0D6717DC00453B6A /* NSNumber+CogSort.m in Sources */,
@@ -3006,6 +3017,7 @@
 				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
 				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
+				0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */,
 				83E998722F7131140017AE33 /* TotalTimeTransformer.swift in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,
 				B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */,

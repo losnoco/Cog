@@ -70,6 +70,12 @@ struct PreferencePaneDescriptor: Identifiable {
                 body: AnyView(LastFMPaneView())
             ),
             PreferencePaneDescriptor(
+                title: "ListenBrainz",
+                localizedTitle: NSLocalizedString("ListenBrainz", comment: "Preference pane title"),
+                icon: paneIcon(system: "brain", legacy: "lastfm"),
+                body: AnyView(ListenBrainzPaneView())
+            ),
+            PreferencePaneDescriptor(
                 title: "Remote Control",
                 localizedTitle: NSLocalizedString("Remote Control", comment: "Preference pane title"),
                 icon: paneIcon(system: "network", legacy: "general"),
