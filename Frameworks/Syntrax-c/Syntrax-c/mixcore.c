@@ -64,7 +64,7 @@ static int32_t itpCubic(int16_t* buf, int32_t pos, int32_t incr, int32_t sizeMas
 	return ITP_T04_S16_I08_CUBIC(p, frac);
 }
 
-enum { radius = 2 };
+static const double radius = 2.0;
 static inline double lanczos(double d) {
 	if(d == 0.) return 1.;
 	if(fabs(d) > radius) return 0.;
