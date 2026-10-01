@@ -128,6 +128,27 @@ final class PlaybackEngineTests: XCTestCase {
 		XCTAssertFalse(host.stopped, "a user stop is not a natural stop")
 	}
 
+	/// Last.fm and ListenBrainz count a play once half the track (or 4
+	/// minutes) has been heard: seeking past the threshold is not listening,
+	/// and neither is reaching the end of a track that was mostly skipped.
+	func testSeekingPastTheScrobbleThresholdDoesNotScrobble() throws {
+		let samples = SeamSignal.loopable(frames: 192000, sampleRate: 48000) // 4 s
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { _ in MemoryDecoder(samples: samples, sampleRate: 48000, channels: 2) }
+		engine.volume = 0
+		engine.setScrobbleThreshold(2)
+
+		XCTAssertTrue(engine.play(URL(string: "memory://skipped")!, userInfo: "skipped", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.1 }, timeout: 5)
+		engine.seek(to: 3)
+		runMainLoop(until: { host.stopped }, timeout: 10)
+
+		XCTAssertTrue(host.stopped)
+		XCTAssertFalse(host.log.contains("scrobble skipped"), "about a second heard of a 2 s threshold")
+	}
+
 	/// Playing another track while one plays switches the running pipeline
 	/// to it (and crossfades) instead of building a new one.
 	func testANewTrackWhilePlayingSwitchesInPlace() throws {

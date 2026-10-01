@@ -114,6 +114,10 @@ import Foundation
 	private var intervalReported = false
 	private var scrobbleThreshold: Double = 0
 	private var scrobbleReported = false
+	/// Seconds of this track actually heard: seeks and jumps add nothing, so
+	/// the scrobble threshold means listening, as Last.fm and ListenBrainz
+	/// define it, not position.
+	private var scrobbleListened: Double = 0
 
 	@objc public override init() {
 		super.init()
@@ -272,6 +276,7 @@ import Foundation
 		amountPlayed = seconds
 		resetInterval()
 		scrobbleReported = false
+		scrobbleListened = 0
 		host?.playbackEngineDidChangeStatus(startPaused ? .paused : .playing, userInfo: userInfo)
 		return true
 	}
@@ -567,6 +572,7 @@ import Foundation
 		amountPlayed = seconds
 		resetInterval()
 		scrobbleReported = false
+		scrobbleListened = 0
 		feeder.seek(to: seconds, in: track, decoder: decoder)
 		host?.playbackEngineDidChangeStatus(.playing, userInfo: track.userInfo)
 		return true
@@ -675,6 +681,7 @@ import Foundation
 	@objc public func setScrobbleThreshold(_ threshold: Double) {
 		scrobbleThreshold = threshold
 		scrobbleReported = false
+		scrobbleListened = 0
 	}
 
 	// MARK: - Suspending on pause
@@ -1022,6 +1029,7 @@ import Foundation
 			seekPending = false
 			amountPlayed = offset
 			scrobbleReported = false
+			scrobbleListened = 0
 			host?.playbackEngineDidBeginTrack(track.userInfo)
 		}
 		currentOffset = offset
@@ -1036,10 +1044,8 @@ import Foundation
 			intervalReported = true
 			host?.playbackEngineReportPlayCount(track.userInfo)
 		}
-		if !scrobbleReported && scrobbleThreshold > 0 {
-			scrobbleReported = true
-			host?.playbackEngineReportScrobble(track.userInfo)
-		}
+		// No scrobble here: a track skipped before the threshold was not
+		// listened to, and one that reached it has been reported already.
 		resetInterval()
 	}
 
@@ -1055,11 +1061,12 @@ import Foundation
 		if delta > 0 && delta < 5 {
 			amountPlayed = seconds
 			amountPlayedInterval += delta
+			scrobbleListened += delta
 			if !intervalReported && amountPlayedInterval >= 60 {
 				intervalReported = true
 				host?.playbackEngineReportPlayCount(track.userInfo)
 			}
-			if !scrobbleReported && scrobbleThreshold > 0 && amountPlayed >= scrobbleThreshold {
+			if !scrobbleReported && scrobbleThreshold > 0 && scrobbleListened >= scrobbleThreshold {
 				scrobbleReported = true
 				host?.playbackEngineReportScrobble(track.userInfo)
 			}
