@@ -26,7 +26,7 @@
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url {
-	char errDescr[4096];
+	char errDescr[AV_ERROR_MAX_STRING_SIZE];
 
 	if([url fragment]) {
 		// input url already has fragment defined - no need to expand further
@@ -67,7 +67,7 @@
 
 		NSString *urlString = [url absoluteString];
 		if((errcode = avformat_open_input(&formatCtx, [urlString UTF8String], NULL, NULL)) < 0) {
-			av_strerror(errcode, errDescr, 4096);
+			av_strerror(errcode, errDescr, sizeof(errDescr));
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			goto exit;
 		}
@@ -95,14 +95,14 @@
 		formatCtx->pb = ioCtx;
 
 		if((errcode = avformat_open_input(&formatCtx, "", NULL, NULL)) < 0) {
-			av_strerror(errcode, errDescr, 4096);
+			av_strerror(errcode, errDescr, sizeof(errDescr));
 			ALog(@"Error opening file, errcode = %d, error = %s", errcode, errDescr);
 			goto exit;
 		}
 	}
 
 	if((errcode = avformat_find_stream_info(formatCtx, NULL)) < 0) {
-		av_strerror(errcode, errDescr, 4096);
+		av_strerror(errcode, errDescr, sizeof(errDescr));
 		ALog(@"Can't find stream info, errcode = %d, error = %s", errcode, errDescr);
 		goto exit;
 	}
