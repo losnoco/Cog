@@ -157,20 +157,40 @@ final class DoPPipelineTests: XCTestCase {
 	/// left in the audio band once the 1 kHz sine is taken out, relative to
 	/// the sine: the second-order noise shaping only works if the decimator
 	/// reads the bits in the right order.
-	private func inBandNoise(_ bytes: [UInt8], reverseBits: Bool) throws -> Double {
+	/// With `afterPCM`, 16-bit 44.1 kHz lossless PCM (a CD rip, which the
+	/// HDCD decoder watches) plays first and the DSD replaces it in place, as
+	/// a track chosen while another plays does.
+	private func inBandNoise(_ bytes: [UInt8], reverseBits: Bool, afterPCM: Bool = false) throws -> Double {
 		let rate = 352_800.0
-		let feeder = try XCTUnwrap(Feeder(outputRate: rate, opener: { _ in DSDMemoryDecoder(bytes: bytes, reverseBits: reverseBits) }))
+		let dsdDecoder = DSDMemoryDecoder(bytes: bytes, reverseBits: reverseBits)
+		let pcm = SeamSignal.loopable(frames: 44100 * 2, sampleRate: 44100).map { Int32(($0 * 16000).rounded()) }
+		let feeder = try XCTUnwrap(Feeder(outputRate: rate, opener: { _ in
+			afterPCM ? IntegerMemoryDecoder(samples: pcm, bits: 16, sampleRate: 44100) : dsdDecoder
+		}))
 		let delegate = ScriptedTracks([])
 		feeder.delegate = delegate
 		let pump = try XCTUnwrap(Pump(feeder: feeder, outputFormat: StreamFormat(sampleRate: rate, channels: 2, channelConfig: UInt32(AudioConfigStereo))))
 		let renderer = try XCTUnwrap(cog_renderer_create(pump.ring))
 		defer { cog_renderer_destroy(renderer) }
-		feeder.start(with: EngineTrack(url: URL(string: "memory://dsd")!))
+		feeder.start(with: EngineTrack(url: URL(string: afterPCM ? "memory://pcm" : "memory://dsd")!))
 		pump.start()
-		var left: [Double] = []
 		var buffer = [Float](repeating: 0, count: 4096 * 2)
-		let wanted = Int(rate * 0.4)
 		let deadline = Date().addingTimeInterval(20)
+		if afterPCM {
+			var played = 0
+			while played < Int(rate * 0.2) && Date() < deadline {
+				let got = buffer.withUnsafeMutableBufferPointer { cog_renderer_render(renderer, $0.baseAddress!, 4096) }
+				played += got
+				if got == 0 { Thread.sleep(forTimeInterval: 0.001) }
+			}
+			cog_renderer_set_crossfade_enabled(renderer, false)
+			feeder.seek(to: 0, in: EngineTrack(url: URL(string: "memory://dsd")!), decoder: dsdDecoder)
+			// Whatever was already on its way out of the shallow ring.
+			Thread.sleep(forTimeInterval: 0.2)
+			_ = buffer.withUnsafeMutableBufferPointer { cog_renderer_render(renderer, $0.baseAddress!, 4096) }
+		}
+		var left: [Double] = []
+		let wanted = Int(rate * 0.4)
 		while left.count < wanted && Date() < deadline {
 			let got = buffer.withUnsafeMutableBufferPointer { cog_renderer_render(renderer, $0.baseAddress!, 4096) }
 			for frame in 0..<got { left.append(Double(buffer[frame * 2])) }
@@ -214,6 +234,14 @@ final class DoPPipelineTests: XCTestCase {
 		print("in-band noise relative to the sine: MSB first \(right), bits reversed \(wrong)")
 		XCTAssertLessThan(right, 0.001, "MSB-first decimates cleanly")
 		XCTAssertGreaterThan(wrong, right * 10, "the measurement tells the orders apart")
+	}
+
+	func testDSDChosenWhilePCMPlaysDecimatesCleanly() throws {
+		let bytes = sigmaDelta(seconds: 0.6)
+		let fresh = try inBandNoise(bytes, reverseBits: false)
+		let switched = try inBandNoise(bytes, reverseBits: false, afterPCM: true)
+		print("in-band noise relative to the sine: fresh \(fresh), after PCM \(switched)")
+		XCTAssertLessThan(switched, 0.001, "DSD decimates as cleanly after PCM as from the start")
 	}
 
 	func testTheDecimatorHonoursTheReverseFlag() throws {

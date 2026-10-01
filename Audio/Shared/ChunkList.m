@@ -803,6 +803,13 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			return [AudioChunk new];
 		}
 
+		// The decoder treats whatever reaches it as 16-bit stereo, so one
+		// left from a CD rip would garble the next format (DSD after a
+		// track switched in place became static).
+		if(hdcd_decoder) {
+			free(hdcd_decoder);
+			hdcd_decoder = NULL;
+		}
 		// These are really placeholders, as we're doing everything internally now
 		if(inputLossless &&
 		   inputFormat.mBitsPerChannel == 16 &&
@@ -810,10 +817,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		   inputFormat.mSampleRate == 44100) {
 			// possibly HDCD, run through decoder
 			[self addObservers];
-			if(hdcd_decoder) {
-				free(hdcd_decoder);
-				hdcd_decoder = NULL;
-			}
 			hdcd_decoder = calloc(1, sizeof(hdcd_state_stereo_t));
 			hdcd_reset_stereo((hdcd_state_stereo_t *)hdcd_decoder, 44100);
 		}
