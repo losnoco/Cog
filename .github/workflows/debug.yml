@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build Universal Cog.app
-    runs-on: xcode-27
+    runs-on: self-hosted
     env:
       XCODE_DERIVEDDATA_PATH: build
     steps:
