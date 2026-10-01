@@ -121,7 +121,7 @@
 		8359008317FEF40E0060F3ED /* suballoc.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFF717FEF40E0060F3ED /* suballoc.hpp */; };
 		8359008517FEF40E0060F3ED /* unicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFF917FEF40E0060F3ED /* unicode.cpp */; };
 		8359008617FEF40E0060F3ED /* unicode.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFFA17FEF40E0060F3ED /* unicode.hpp */; };
-		8359008717FEF40E0060F3ED /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFB17FEF40E0060F3ED /* unpack.cpp */; };
+		8359008717FEF40E0060F3ED /* unpack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFB17FEF40E0060F3ED /* unpack.cpp */; settings = {COMPILER_FLAGS = "-Wno-shorten-64-to-32"; }; };
 		8359008817FEF40E0060F3ED /* unpack.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8359FFFC17FEF40E0060F3ED /* unpack.hpp */; };
 		8359008B17FEF40E0060F3ED /* unrar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8359FFFF17FEF40E0060F3ED /* unrar.cpp */; };
 		8359008C17FEF40E0060F3ED /* unrar.h in Headers */ = {isa = PBXBuildFile; fileRef = 8359000017FEF40E0060F3ED /* unrar.h */; };
@@ -129,7 +129,7 @@
 		8359009F17FF073E0060F3ED /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = 8359009E17FF073E0060F3ED /* 7zStream.c */; };
 		8359FF4A17FEF39F0060F3ED /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8359FF4817FEF39F0060F3ED /* InfoPlist.strings */; };
 		83756F621D23A95B003A7676 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83756F611D23A95B003A7676 /* CoreServices.framework */; };
-		83C2109719CD81F50093C461 /* headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2108E19CD81F50093C461 /* headers.cpp */; };
+		83C2109719CD81F50093C461 /* headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2108E19CD81F50093C461 /* headers.cpp */; settings = {COMPILER_FLAGS = "-Wno-nontrivial-memcall"; }; };
 		83C2109819CD81F50093C461 /* headers5.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 83C2108F19CD81F50093C461 /* headers5.hpp */; };
 		83C2109B19CD88A30093C461 /* secpassword.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2109A19CD88A30093C461 /* secpassword.cpp */; };
 		83C210A219CD89C70093C461 /* hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83C2109C19CD89C70093C461 /* hash.cpp */; };

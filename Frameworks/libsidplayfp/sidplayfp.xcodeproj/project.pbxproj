@@ -63,7 +63,7 @@
 		EDBE905C25E7E7A2001EB4A4 /* spline.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F6F25E7E7A0001EB4A4 /* spline.h */; };
 		EDBE905F25E7E7A2001EB4A4 /* resid-config.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F7225E7E7A0001EB4A4 /* resid-config.h */; };
 		EDBE906125E7E7A2001EB4A4 /* voice.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F7425E7E7A0001EB4A4 /* voice.cc */; };
-		EDBE906225E7E7A2001EB4A4 /* sid.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F7525E7E7A0001EB4A4 /* sid.cc */; };
+		EDBE906225E7E7A2001EB4A4 /* sid.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F7525E7E7A0001EB4A4 /* sid.cc */; settings = {COMPILER_FLAGS = "-Wno-enum-float-conversion -Wno-deprecated-enum-float-conversion"; }; };
 		EDBE906925E7E7A2001EB4A4 /* dac.cc in Sources */ = {isa = PBXBuildFile; fileRef = EDBE8F7C25E7E7A0001EB4A4 /* dac.cc */; };
 		EDBE906C25E7E7A2001EB4A4 /* pot.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F7F25E7E7A0001EB4A4 /* pot.h */; };
 		EDBE906F25E7E7A2001EB4A4 /* voice.h in Headers */ = {isa = PBXBuildFile; fileRef = EDBE8F8225E7E7A0001EB4A4 /* voice.h */; };

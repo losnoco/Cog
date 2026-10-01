@@ -46,7 +46,7 @@
 		83D6769326539A9500252130 /* celt_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6765B26539A9500252130 /* celt_header.h */; };
 		83D6769426539A9500252130 /* _kiss_fft_guts.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6765C26539A9500252130 /* _kiss_fft_guts.h */; };
 		83D6769526539A9500252130 /* entdec.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D6765D26539A9500252130 /* entdec.c */; };
-		83D6769626539A9500252130 /* pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D6765E26539A9500252130 /* pitch.c */; settings = {COMPILER_FLAGS = "-Wno-frame-larger-than"; }; };
+		83D6769626539A9500252130 /* pitch.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D6765E26539A9500252130 /* pitch.c */; settings = {COMPILER_FLAGS = "-Wno-frame-larger-than -Wno-gnu-folding-constant"; }; };
 		83D6769726539A9500252130 /* celt.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D6765F26539A9500252130 /* celt.c */; };
 		83D6769826539A9500252130 /* modes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6766026539A9500252130 /* modes.h */; };
 		83D6769926539A9500252130 /* kiss_fftr.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6766126539A9500252130 /* kiss_fftr.h */; };
