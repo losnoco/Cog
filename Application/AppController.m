@@ -37,6 +37,12 @@ BOOL kAppControllerShuttingDown = NO;
 
 static AppController *kAppController = nil;
 
+// It is the application's delegate (set in MainMenu.xib). Saying so lets
+// application:delegateHandlesKey: match the protocol's declaration instead of
+// the deprecated informal one on NSObject.
+@interface AppController () <NSApplicationDelegate>
+@end
+
 @implementation AppController {
 	BOOL _isFullToolbarStyle;
 }
