@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D69AF701B3DA2938BB1E0C6 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC0D5515441B9BE34FED706 /* CogAudio.framework */; };
 		99B98A1F0CC7E1CD00C256E9 /* APLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42360CBB0F9800135C1B /* APLDecoder.m */; };
 		99B98A200CC7E1CE00C256E9 /* APLFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B9863F0CC7A08600C256E9 /* APLFile.m */; };
 		99B98A260CC7E22500C256E9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1BC0D5515441B9BE34FED706 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -35,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D69AF701B3DA2938BB1E0C6 /* CogAudio.framework in Frameworks */,
 				99B98A260CC7E22500C256E9 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -97,6 +100,7 @@
 		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1BC0D5515441B9BE34FED706 /* CogAudio.framework */,
 				089C167FFE841241C02AAC07 /* AppKit.framework */,
 				D2F7E65807B2D6F200F64583 /* CoreData.framework */,
 				089C1672FE841209C02AAC07 /* Foundation.framework */,

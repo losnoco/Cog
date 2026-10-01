@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8771BAB516A7FAAD6E0ECF5E /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5475539DFF9516CD348790 /* CogAudio.framework */; };
 		83F9D8021A884C0B007ABEC2 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */; };
 		83F9D8031A884C0B007ABEC2 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D8011A884C0B007ABEC2 /* SilenceSource.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B5475539DFF9516CD348790 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		834A42C1287AFED700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		83747BFA2862D95C0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83F9D7E71A884B44007ABEC2 /* SilenceDecoder.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SilenceDecoder.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -30,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8771BAB516A7FAAD6E0ECF5E /* CogAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,6 +51,7 @@
 		83F9D7DE1A884B44007ABEC2 = {
 			isa = PBXGroup;
 			children = (
+				0B5475539DFF9516CD348790 /* CogAudio.framework */,
 				83747BF92862D95C0021245F /* Xcode-config */,
 				83F9D7E91A884B44007ABEC2 /* SilenceDecoder */,
 				83F9D7E81A884B44007ABEC2 /* Products */,

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FAA2064417F16FD1F3D944DE /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5DAB8EF617C39782981990 /* CogAudio.framework */; };
 		8372C93527C7861300E250C9 /* MP3Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372C93427C7861300E250C9 /* MP3Decoder.m */; };
 		8372C93F27C7904800E250C9 /* libid3tag.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C93E27C7904800E250C9 /* libid3tag.a */; };
 		8372C94227C7959000E250C9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C94127C7959000E250C9 /* libz.tbd */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5F5DAB8EF617C39782981990 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		834A42BB287AFB0700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		8372C92327C785BD00E250C9 /* minimp3.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = minimp3.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8372C93327C7861300E250C9 /* MP3Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MP3Decoder.h; sourceTree = "<group>"; };
@@ -36,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FAA2064417F16FD1F3D944DE /* CogAudio.framework in Frameworks */,
 				8372C94227C7959000E250C9 /* libz.tbd in Frameworks */,
 				8372C93F27C7904800E250C9 /* libid3tag.a in Frameworks */,
 			);
@@ -72,6 +75,7 @@
 		8372C94027C7959000E250C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F5DAB8EF617C39782981990 /* CogAudio.framework */,
 				8372C93E27C7904800E250C9 /* libid3tag.a */,
 				8372C94127C7959000E250C9 /* libz.tbd */,
 			);
