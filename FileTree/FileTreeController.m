@@ -10,6 +10,11 @@
 #import "PlaylistController.h"
 #import "FileTreeViewController.h"
 
+// validateMenuItem: belongs to NSMenuItemValidation now; without saying so,
+// it matches the deprecated informal declaration on NSObject.
+@interface FileTreeController () <NSMenuItemValidation>
+@end
+
 @implementation FileTreeController
 
 - (IBAction)addToPlaylist:(id)sender {

@@ -29,6 +29,11 @@ extern BOOL kAppControllerShuttingDown;
 
 NSPersistentContainer *kPersistentContainer = nil;
 
+// validateMenuItem: belongs to NSMenuItemValidation now; without saying so,
+// it matches the deprecated informal declaration on NSObject.
+@interface PlaylistController () <NSMenuItemValidation>
+@end
+
 @implementation PlaylistController
 
 @synthesize currentEntry;

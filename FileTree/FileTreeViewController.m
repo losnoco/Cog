@@ -12,6 +12,11 @@
 #import "PlaylistLoader.h"
 #import "SandboxBroker.h"
 
+// validateMenuItem: belongs to NSMenuItemValidation now; without saying so,
+// it matches the deprecated informal declaration on NSObject.
+@interface FileTreeViewController () <NSMenuItemValidation>
+@end
+
 @implementation FileTreeViewController {
 	CGFloat appliedSafeAreaTopInset;
 }
