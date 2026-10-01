@@ -20,8 +20,13 @@
 	// Create byte array of unsigned chars
 	unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
 
-	// Create 16 byte MD5 hash value, store in buffer
+	// Create 16 byte MD5 hash value, store in buffer. Only a key for album
+	// art in saved playlists, not for security, and kept as MD5 so playlists
+	// come out as they always have.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 	CC_MD5(ptr, (int)len, md5Buffer);
+#pragma clang diagnostic pop
 
 	// Convert MD5 value in the buffer to NSString of hex values
 	NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];

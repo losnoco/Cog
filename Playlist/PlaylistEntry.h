@@ -12,7 +12,7 @@
 
 // Posted (object: the entry) once an entry's metadata has been loaded, which
 // for a track that started playing first can bring its ReplayGain late.
-extern NSNotificationName const CogPlaylistEntryMetadataLoadedNotification;
+extern NSNotificationName _Nonnull const CogPlaylistEntryMetadataLoadedNotification;
 
 @interface PlaylistEntry (Extension)
 

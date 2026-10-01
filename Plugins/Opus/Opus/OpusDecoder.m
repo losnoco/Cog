@@ -20,7 +20,7 @@
 
 @implementation OpusFile
 
-static const int MAXCHANNELS = 8;
+enum { MAXCHANNELS = 8 };
 static const int chmap[MAXCHANNELS][MAXCHANNELS] = {
 	{
 	0,

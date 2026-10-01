@@ -372,6 +372,8 @@ static void cache_run() {
 	}
 }
 
+// Only for the Info.plist dump in printPluginInfo, which is compiled out.
+#if 0
 static NSString *xmlEscapeString(NSString * string) {
 	CFStringRef textXML = CFXMLCreateStringByEscapingEntities(kCFAllocatorDefault, (CFStringRef)string, nil);
 	if(textXML) {
@@ -381,6 +383,7 @@ static NSString *xmlEscapeString(NSString * string) {
 	}
 	return @"";
 }
+#endif
 
 - (void)printPluginInfo {
 	ALog(@"Sources: %@", self.sources);

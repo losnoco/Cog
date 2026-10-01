@@ -147,8 +147,6 @@ static uint8_t reverse_bits[0x100];
 	else
 		subsong = [[source.url fragment] intValue];
 
-	NSURL *url = [s url];
-
 	buffer = av_malloc(32 * 1024);
 	if(!buffer) {
 		ALog(@"Out of memory!");

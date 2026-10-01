@@ -299,7 +299,7 @@ namespace Organya {
 						//int sample = i.cur_wave[ unsigned(pos) % i.cur_wavesize ];
 						/* But since we have plenty of time, use neat Lanczos filtering. */
 						/* This improves especially the low rumble noises substantially. */
-						enum { radius = 2 };
+						static constexpr double radius = 2;
 						auto lanczos = [](double d) -> double
 						{
 							if(d == 0.) return 1.;
