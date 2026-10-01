@@ -16,7 +16,7 @@ class RubberbandEngineR3Transformer: ValueTransformer {
         }
         
         if let stringValue = value as? String {
-            if stringValue == "disabled" || stringValue == "signalsmith" || stringValue == "finer" {
+            if stringValue == "disabled" || stringValue == "signalsmith" || stringValue == "varispeed" || stringValue == "finer" {
                 return NSNumber(value: false)
             }
         }
@@ -41,7 +41,7 @@ class RubberbandEngineEnabledTransformer: ValueTransformer {
         }
         
         if let stringValue = value as? String {
-            if stringValue == "disabled" || stringValue == "signalsmith" {
+            if stringValue == "disabled" || stringValue == "signalsmith" || stringValue == "varispeed" {
                 return NSNumber(value: false)
             }
         }

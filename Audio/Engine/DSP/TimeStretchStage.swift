@@ -9,12 +9,15 @@
 import Foundation
 
 /// Tempo and pitch (as `DSPRubberbandNode` and `DSPSignalsmithStretchNode`),
-/// with the engine chosen by `rubberbandEngine`: `faster` (Rubber Band R2),
-/// `finer` (R3), `signalsmith`, or `disabled`.
+/// with the engine chosen by `rubberbandEngine`: `varispeed` (resampling,
+/// so the pitch follows the tempo, as when a record player runs fast), `faster` (Rubber
+/// Band R2), `finer` (R3), `signalsmith`, or `disabled`.
 ///
 /// Unlike those nodes, the stage runs only while `tempo` or `pitch` is off
-/// 1: at unity nothing touches the audio. It counts input in output frames,
-/// so it can say how many frames it still owes (for placing presentation
+/// 1: at unity nothing touches the audio. Varispeed is the exception once it
+/// has run: it glides through 1 rather than restarting, and goes back to
+/// bit-exact at the next reset. The stage counts input in output frames, so
+/// it can say how many frames it still owes (for placing presentation
 /// events) and trim its drain to exactly the stretched length.
 final class TimeStretchStage: NSObject, DSPStage {
 	private static let keys = ["rubberbandEngine", "tempo", "pitch", "rubberbandTransients", "rubberbandDetector", "rubberbandPhase",
@@ -30,9 +33,12 @@ final class TimeStretchStage: NSObject, DSPStage {
 
 		static func current() -> Settings {
 			let defaults = UserDefaults.standard
+			let engine = defaults.string(forKey: "rubberbandEngine") ?? "disabled"
 			let tempo = defaults.double(forKey: "tempo")
-			let pitch = defaults.double(forKey: "pitch")
-			return Settings(engine: defaults.string(forKey: "rubberbandEngine") ?? "disabled",
+			// Varispeed's pitch is its tempo; a pitch left over from another
+			// engine must not keep the stage running or restart it.
+			let pitch = engine == "varispeed" ? 1 : defaults.double(forKey: "pitch")
+			return Settings(engine: engine,
 			                tempo: tempo > 0 ? tempo : 1,
 			                pitch: pitch > 0 ? pitch : 1,
 			                rubberBandOptions: RubberBandBackend.options(from: defaults))
@@ -49,6 +55,8 @@ final class TimeStretchStage: NSObject, DSPStage {
 	private var output: [Float] = []
 	private var countIn = 0.0 // input consumed, in output frames
 	private var countOut = 0
+	/// Varispeed has had audio through it since the last start.
+	private var warm = false
 
 	override init() {
 		super.init()
@@ -82,6 +90,9 @@ final class TimeStretchStage: NSObject, DSPStage {
 
 	var isActive: Bool {
 		let settings = currentSettings
+		if settings.engine == "varispeed" && warm {
+			return true
+		}
 		return settings.engine != "disabled" && (abs(settings.tempo - 1) > 1e-6 || abs(settings.pitch - 1) > 1e-6)
 	}
 
@@ -104,7 +115,10 @@ final class TimeStretchStage: NSObject, DSPStage {
 		applied = settings
 		countIn = 0
 		countOut = 0
+		warm = false
 		switch settings.engine {
+		case "varispeed":
+			backend = VarispeedBackend(format: format, tempo: settings.tempo)
 		case "signalsmith":
 			backend = SignalsmithBackend(format: format, tempo: settings.tempo, pitch: settings.pitch)
 		default:
@@ -129,6 +143,7 @@ final class TimeStretchStage: NSObject, DSPStage {
 	func process(_ buffer: DSPBuffer) {
 		applySettings()
 		guard let backend, let format else { return }
+		warm = applied?.engine == "varispeed"
 		output.removeAll(keepingCapacity: true)
 		countIn += Double(buffer.frames) / (applied?.tempo ?? 1)
 		buffer.samples.withUnsafeBufferPointer { input in
@@ -494,5 +509,90 @@ private final class SignalsmithBackend: StretchBackend {
 		}
 		output.withPointers { cog_signalsmith_flush(stretch, $0, Int32(latency)) }
 		output.join(latency, into: &result)
+	}
+}
+
+/// Speed by resampling: soxr in variable-rate mode, with the input/output
+/// ratio set to the tempo. Ratio changes glide over a few thousand frames, so
+/// moving the slider doesn't click.
+private final class VarispeedBackend: StretchBackend {
+	/// The fastest ratio soxr is set up for; the sliders stop at 5×.
+	private static let maxRatio = 5.0
+	private static let minRatio = 0.2
+	private static let slewFrames = 4096
+
+	private let resampler: soxr_t
+	private let channels: Int
+	private var tempo: Double
+	private var scratch: [Float] = []
+
+	init?(format: StreamFormat, tempo: Double) {
+		var error: soxr_error_t?
+		var ioSpec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I)
+		var qualitySpec = soxr_quality_spec(UInt(SOXR_HQ), UInt(SOXR_VR))
+		// Under SOXR_VR the rates only bound the ratio.
+		guard let resampler = soxr_create(Self.maxRatio, 1, UInt32(format.channels), &error, &ioSpec, &qualitySpec, nil),
+		      error == nil else {
+			return nil
+		}
+		self.resampler = resampler
+		channels = format.channels
+		self.tempo = Self.clamp(tempo)
+		soxr_set_io_ratio(resampler, self.tempo, 0)
+	}
+
+	deinit {
+		soxr_delete(resampler)
+	}
+
+	private static func clamp(_ tempo: Double) -> Double {
+		min(max(tempo, minRatio), maxRatio)
+	}
+
+	func set(tempo: Double, pitch: Double, options: RubberBandOptions) {
+		let tempo = Self.clamp(tempo)
+		guard abs(tempo - self.tempo) > 1e-6 else { return }
+		self.tempo = tempo
+		soxr_set_io_ratio(resampler, tempo, Self.slewFrames)
+	}
+
+	func process(_ input: UnsafeBufferPointer<Float>, into output: inout [Float]) {
+		let frames = input.count / channels
+		var offset = 0
+		while offset < frames {
+			let remaining = frames - offset
+			// Enough for the slowest ratio, plus the filter's own slack.
+			let capacity = Int((Double(remaining) / Self.minRatio).rounded(.up)) + 256
+			if scratch.count < capacity * channels {
+				scratch = [Float](repeating: 0, count: capacity * channels)
+			}
+			var inputDone = 0
+			var outputDone = 0
+			scratch.withUnsafeMutableBufferPointer { scratch in
+				_ = soxr_process(resampler, input.baseAddress! + offset * channels, remaining, &inputDone,
+				                 scratch.baseAddress!, capacity, &outputDone)
+			}
+			output.append(contentsOf: scratch[0..<(outputDone * channels)])
+			offset += inputDone
+			if inputDone == 0 && outputDone == 0 {
+				break
+			}
+		}
+	}
+
+	func drain(into output: inout [Float]) {
+		let capacity = 4096
+		if scratch.count < capacity * channels {
+			scratch = [Float](repeating: 0, count: capacity * channels)
+		}
+		// A null input marks the end; soxr then gives up its filter tail.
+		while true {
+			var outputDone = 0
+			scratch.withUnsafeMutableBufferPointer { scratch in
+				_ = soxr_process(resampler, nil, 0, nil, scratch.baseAddress!, capacity, &outputDone)
+			}
+			guard outputDone > 0 else { break }
+			output.append(contentsOf: scratch[0..<(outputDone * channels)])
+		}
 	}
 }

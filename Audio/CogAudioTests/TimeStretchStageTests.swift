@@ -123,4 +123,43 @@ final class TimeStretchStageTests: XCTestCase {
 			}
 		}
 	}
+
+	// MARK: - Varispeed
+
+	func testVarispeedMovesPitchAndTempoTogether() {
+		for (tempo, expected) in [(2.0, 880.0), (0.5, 220.0)] {
+			set(engine: "varispeed", tempo: tempo, pitch: 1)
+			let stage = TimeStretchStage()
+			XCTAssertTrue(stage.isActive)
+			let output = run(stage, tone(440, frames: 48000))
+			XCTAssertEqual(stage.timeRatio, tempo)
+			XCTAssertEqual(output.count / 2, Int(48000 / tempo), "exact length at \(tempo)")
+			XCTAssertEqual(frequency(of: output), expected, accuracy: 25, "the pitch follows the tempo at \(tempo)")
+		}
+	}
+
+	func testVarispeedIgnoresALeftoverPitch() {
+		set(engine: "varispeed", tempo: 1, pitch: 1.5)
+		XCTAssertFalse(TimeStretchStage().isActive, "pitch belongs to the stretchers; at unity varispeed stays out of the way")
+	}
+
+	/// Once it has run, varispeed glides through unity instead of dropping
+	/// out (and restarting with a click), until the next reset.
+	func testVarispeedStaysActiveThroughUnityUntilReset() {
+		set(engine: "varispeed", tempo: 1.5, pitch: 1)
+		let stage = TimeStretchStage()
+		_ = stage.configure(input: stereo)
+		let buffer = DSPBuffer()
+		let input = tone(440, frames: 4096)
+		buffer.resize(frames: 4096, format: stereo)
+		for i in 0..<input.count {
+			buffer.samples[i] = input[i]
+		}
+		stage.process(buffer)
+
+		UserDefaults.standard.set(1.0, forKey: "tempo")
+		XCTAssertTrue(stage.isActive, "still holding audio, so it keeps running at 1×")
+		stage.reset()
+		XCTAssertFalse(stage.isActive, "bit-exact again after a reset")
+	}
 }

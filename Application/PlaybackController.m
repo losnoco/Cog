@@ -178,7 +178,7 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 		                                  @"enableHrtf": @NO,
 		                                  @"enableHeadTracking": @NO,
 		                                  @"enableHDCD": @NO,
-		                                  @"rubberbandEngine": @"disabled",
+		                                  @"rubberbandEngine": @"varispeed",
 		                                  @"rubberbandTransients": @"crisp",
 		                                  @"rubberbandDetector": @"compound",
 		                                  @"rubberbandPhase": @"laminar",
@@ -702,13 +702,17 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[self snapSpeeds];
 }
 
++ (BOOL)isVarispeed {
+	return [[[NSUserDefaults standardUserDefaults] stringForKey:@"rubberbandEngine"] isEqualToString:@"varispeed"];
+}
+
 - (IBAction)changeTempo:(id)sender {
 	const double tempo = speedScale([sender doubleValue], [tempoSlider minValue], [tempoSlider maxValue]);
 	DLog(@"TEMPO: %lf", tempo);
 
 	[[NSUserDefaults standardUserDefaults] setDouble:tempo forKey:@"tempo"];
 
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
+	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"] && ![PlaybackController isVarispeed]) {
 		[[NSUserDefaults standardUserDefaults] setDouble:tempo forKey:@"pitch"];
 	}
 

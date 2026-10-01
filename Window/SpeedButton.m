@@ -17,16 +17,64 @@ static double reverseSpeedScale(double input, double min, double max) {
 @implementation SpeedButton {
 	NSPopover *popover;
 	NSViewController *viewController;
+
+	// The two-slider layout from the nib, restored when leaving varispeed.
+	NSSize stretchSize;
+	NSRect tempoSliderFrame;
+	NSRect tempoLabelFrame;
+	NSRect resetButtonFrame;
+	NSRect noticeButtonFrame;
+	NSString *tempoLabelTitle;
 }
 
 - (void)awakeFromNib {
 	popover = [NSPopover new];
 	popover.behavior = NSPopoverBehaviorTransient;
-	[popover setContentSize:_popView.bounds.size];
+
+	stretchSize = _popView.bounds.size;
+	tempoSliderFrame = _TempoSlider.frame;
+	tempoLabelFrame = _TempoLabel.frame;
+	resetButtonFrame = _ResetButton.frame;
+	noticeButtonFrame = _NoticeButton.frame;
+	tempoLabelTitle = _TempoLabel.stringValue;
+}
+
+// Varispeed has no pitch of its own, so it gets a single speed slider; the
+// stretchers keep separate pitch and tempo sliders and the lock.
+- (void)layoutForEngine {
+	const BOOL varispeed = [PlaybackController isVarispeed];
+
+	_PitchSlider.hidden = varispeed;
+	_PitchLabel.hidden = varispeed;
+	_LockButton.hidden = varispeed;
+
+	NSSize size = stretchSize;
+	if(varispeed) {
+		size.width = 40;
+		const CGFloat center = size.width / 2;
+		_TempoSlider.frame = NSOffsetRect(tempoSliderFrame, center - NSMidX(tempoSliderFrame), 0);
+		_TempoLabel.frame = NSOffsetRect(tempoLabelFrame, center - NSMidX(tempoLabelFrame), 0);
+		_ResetButton.frame = NSMakeRect(2, resetButtonFrame.origin.y, size.width - 4, resetButtonFrame.size.height);
+		_NoticeButton.frame = NSMakeRect(0, noticeButtonFrame.origin.y, size.width, noticeButtonFrame.size.height);
+		_TempoLabel.stringValue = @"⏱";
+		_TempoLabel.toolTip = NSLocalizedString(@"Speed", @"Tooltip for the single varispeed slider");
+	} else {
+		_TempoSlider.frame = tempoSliderFrame;
+		_TempoLabel.frame = tempoLabelFrame;
+		_ResetButton.frame = resetButtonFrame;
+		_NoticeButton.frame = noticeButtonFrame;
+		_TempoLabel.stringValue = tempoLabelTitle;
+		_TempoLabel.toolTip = nil;
+	}
+
+	[_popView setFrameSize:size];
+	[popover setContentSize:size];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
 	[popover close];
+
+	[self layoutForEngine];
 
 	popover.contentViewController = nil;
 	viewController = [NSViewController new];

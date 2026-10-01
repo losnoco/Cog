@@ -40,7 +40,7 @@ private final class RubberbandPrefs: ObservableObject {
 
     init() {
         let d = UserDefaults.standard
-        engine     = d.string(forKey: "rubberbandEngine")     ?? "disabled"
+        engine     = d.string(forKey: "rubberbandEngine")     ?? "varispeed"
         transients = d.string(forKey: "rubberbandTransients") ?? "crisp"
         detector   = d.string(forKey: "rubberbandDetector")   ?? "compound"
         phase      = d.string(forKey: "rubberbandPhase")      ?? "laminar"
@@ -55,7 +55,7 @@ private final class RubberbandPrefs: ObservableObject {
 struct RubberbandPaneView: View {
     @StateObject private var prefs = RubberbandPrefs()
 
-    private var isEnabled: Bool { prefs.engine != "disabled" && prefs.engine != "signalsmith" }
+    private var isEnabled: Bool { prefs.engine != "disabled" && prefs.engine != "signalsmith" && prefs.engine != "varispeed" }
     private var isR3: Bool { prefs.engine == "finer" }
 
     var body: some View {
@@ -71,6 +71,7 @@ struct RubberbandPaneView: View {
             Picker("Engine:", selection: $prefs.engine) {
                 Text("Disabled").tag("disabled")
                 Divider()
+                Text("Varispeed").tag("varispeed")
                 Text("Signalsmith Stretch").tag("signalsmith")
                 Section {
                     Text("Faster").tag("faster")
@@ -78,6 +79,12 @@ struct RubberbandPaneView: View {
                 } header: {
                     Text("Rubber Band Engine", comment: "Engine name").bold()
                 }
+            }
+
+            if prefs.engine == "varispeed" {
+                Text("Varies the playback speed, like a record player: one speed slider, and the pitch follows it.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
 
             if (isEnabled) {

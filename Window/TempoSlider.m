@@ -143,7 +143,7 @@ static void *kTempoSliderContext = &kTempoSliderContext;
 	const double adjustedValue = ((value * value) * (5.0 - 0.2) / 10000.0) + 0.2;
 	double snapProgress = (adjustedValue - snapTarget);
 
-	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"];
+	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"] && ![PlaybackController isVarispeed];
 	if(speedLock) {
 		[_PitchSlider setDoubleValue:[self doubleValue]];
 	}
@@ -174,7 +174,7 @@ static void *kTempoSliderContext = &kTempoSliderContext;
 
 	[[self target] changeTempo:self];
 	
-	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"];
+	BOOL speedLock = [[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"] && ![PlaybackController isVarispeed];
 	if(speedLock) {
 		[_PitchSlider setDoubleValue:[self doubleValue]];
 

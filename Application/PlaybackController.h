@@ -90,6 +90,9 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (IBAction)pitchUp:(id)sender;
 
 - (IBAction)changeTempo:(id)sender;
+
+// The speed engine resamples, so pitch follows tempo and the lock means nothing.
++ (BOOL)isVarispeed;
 - (IBAction)tempoDown:(id)sender;
 - (IBAction)tempoUp:(id)sender;
 

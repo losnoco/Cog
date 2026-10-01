@@ -16,6 +16,9 @@
 	IBOutlet TempoSlider *_TempoSlider;
 	IBOutlet NSButton *_LockButton;
 	IBOutlet NSButton *_ResetButton;
+	IBOutlet NSButton *_NoticeButton;
+	IBOutlet NSTextField *_PitchLabel;
+	IBOutlet NSTextField *_TempoLabel;
 }
 
 - (IBAction)pressLock:(id)sender;

@@ -1076,9 +1076,12 @@
                             </buttonCell>
                             <connections>
                                 <outlet property="_LockButton" destination="OQS-2p-1yP" id="F1I-fb-SDQ"/>
+                                <outlet property="_NoticeButton" destination="yQh-Rt-nJL" id="qtG-mJ-LL6"/>
+                                <outlet property="_PitchLabel" destination="uVG-0w-rW4" id="R3l-6Y-zlc"/>
                                 <outlet property="_PitchSlider" destination="6P4-yi-9TK" id="Ni0-G0-USM"/>
                                 <outlet property="_ResetButton" destination="3Zc-Xv-g24" id="C7x-EU-QpA"/>
                                 <outlet property="_TempoSlider" destination="stI-oD-51s" id="Mt0-7i-R4f"/>
+                                <outlet property="_TempoLabel" destination="VUX-JL-rjr" id="khL-p0-vLD"/>
                                 <outlet property="_popView" destination="90w-7t-RYP" id="qfi-e0-UZc"/>
                             </connections>
                         </button>
