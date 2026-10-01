@@ -5,10 +5,26 @@
       "shouldTranslate" : false
     },
     " · Exclusive" : {
-      "comment" : "Exclusive audio transport status"
+      "comment" : "Exclusive audio transport status",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · Exclusivo"
+          }
+        }
+      }
     },
     " · Non-mixable" : {
-      "comment" : "Non-mixable Core Audio stream format"
+      "comment" : "Non-mixable Core Audio stream format",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · No se puede mezclar"
+          }
+        }
+      }
     },
     "%@ · %@%@" : {
       "comment" : "Signal integrity, Cog output format, and exclusive transport status",
@@ -19,7 +35,8 @@
             "value" : "%1$@ · %2$@%3$@"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "%@ in %u-bit words" : {
       "comment" : "A sample format stored in wider words, e.g. Int24 in 32-bit words",
@@ -29,11 +46,25 @@
             "state" : "new",
             "value" : "%1$@ in %2$u-bit words"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ en palabras de %2$u bits"
+          }
         }
       }
     },
     "%@, same format" : {
-      "comment" : "An output device whose format matches the line above"
+      "comment" : "An output device whose format matches the line above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, formato idéntico"
+          }
+        }
+      }
     },
     "%1d day(s)" : {
       "comment" : "day for total",
@@ -271,7 +302,15 @@
       }
     },
     "%u ch" : {
-      "comment" : "A number of audio channels, e.g. 6 ch"
+      "comment" : "A number of audio channels, e.g. 6 ch",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%u canales"
+          }
+        }
+      }
     },
     "Add other files in same folder" : {
       "comment" : "A toggle that lets the user decide whether to add files from the same folder as a playlist or not.",
@@ -388,7 +427,15 @@
       }
     },
     "Audio output status" : {
-      "comment" : "Audio output status accessibility label"
+      "comment" : "Audio output status accessibility label",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estado de la salida de audio"
+          }
+        }
+      }
     },
     "Audio Units" : {
       "localizations" : {
@@ -401,7 +448,15 @@
       }
     },
     "Audio: —" : {
-      "comment" : "No active audio output information"
+      "comment" : "No active audio output information",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio: —"
+          }
+        }
+      }
     },
     "Bar color:" : {
       "comment" : "A label displayed next to a color well in the Spectrum pane.",
@@ -464,10 +519,26 @@
       }
     },
     "Bit perfect" : {
-      "comment" : "Bit-perfect Cog signal-integrity state"
+      "comment" : "Bit-perfect Cog signal-integrity state",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bit-perfect"
+          }
+        }
+      }
     },
     "Bit perfect: Cog passes the decoded samples on unchanged." : {
-      "comment" : "Tooltip heading when Cog does not change the samples"
+      "comment" : "Tooltip heading when Cog does not change the samples",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Bit-perfect: Cog pasa las muestras decodificadas sin cambios."
+          }
+        }
+      }
     },
     "Bitrate" : {
       "comment" : "Bitrate title",
@@ -546,11 +617,25 @@
             "state" : "new",
             "value" : "Channels remapped from %1$@ to %2$@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canales reasignados de %1$@ a %2$@"
+          }
         }
       }
     },
     "Channels remapped to %@" : {
-      "comment" : "Cog signal-integrity reason: the device's channels"
+      "comment" : "Cog signal-integrity reason: the device's channels",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canales reasignados a %@"
+          }
+        }
+      }
     },
     "Channels:" : {
       "comment" : "A label for the \"Channels:\" picker in the RubberbandPaneView.",
@@ -610,13 +695,37 @@
       }
     },
     "Cog output: %@" : {
-      "comment" : "Tooltip line: what Cog renders for Core Audio"
+      "comment" : "Tooltip line: what Cog renders for Core Audio",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida de Cog: %@"
+          }
+        }
+      }
     },
     "Cog volume at %@" : {
-      "comment" : "Cog signal-integrity reason: Cog's volume in percent"
+      "comment" : "Cog signal-integrity reason: Cog's volume in percent",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volumen de Cog al %@"
+          }
+        }
+      }
     },
     "Cog volume is not 100%" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El volumen de Cog no está al 100%"
+          }
+        }
+      }
     },
     "CogTitle" : {
       "localizations" : {
@@ -787,7 +896,15 @@
       }
     },
     "Core Audio: %@" : {
-      "comment" : "Tooltip line: the formats the system mixes in"
+      "comment" : "Tooltip line: the formats the system mixes in",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Core Audio: %@"
+          }
+        }
+      }
     },
     "Could not connect to Last.FM. Please try again." : {
       "comment" : "Last.FM auth network error",
@@ -818,7 +935,15 @@
       }
     },
     "Covers Cog only; macOS and the device may still change the sound." : {
-      "comment" : "Tooltip note on what the signal-integrity verdict covers"
+      "comment" : "Tooltip note on what the signal-integrity verdict covers",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cubre solo la salida de Cog; macOS y el dispositivo podrían cambiar el sonido."
+          }
+        }
+      }
     },
     "CrashlyticsConsentTitle" : {
       "extractionState" : "manual",
@@ -951,7 +1076,15 @@
       }
     },
     "Device: %@" : {
-      "comment" : "Tooltip line: the output device and the format it runs at"
+      "comment" : "Tooltip line: the output device and the format it runs at",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo: %@"
+          }
+        }
+      }
     },
     "dhms" : {
       "comment" : "days, hours, minutes and seconds",
@@ -1016,7 +1149,15 @@
       }
     },
     "DSD converted to PCM" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DSD convertido a PCM"
+          }
+        }
+      }
     },
     "Enable FreeSurround decoder" : {
       "localizations" : {
@@ -1140,7 +1281,15 @@
       }
     },
     "Equalizer applied" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ecualizador activado"
+          }
+        }
+      }
     },
     "ErrorInvalidTrackId" : {
       "localizations" : {
@@ -1239,7 +1388,15 @@
       }
     },
     "exclusive" : {
-      "comment" : "Cog holds the output device for itself"
+      "comment" : "Cog holds the output device for itself",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "exclusivo"
+          }
+        }
+      }
     },
     "Fade" : {
       "localizations" : {
@@ -1660,7 +1817,15 @@
       }
     },
     "HDCD decoded" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HDCD decodificado"
+          }
+        }
+      }
     },
     "HH:MM:SS" : {
       "shouldTranslate" : false
@@ -1728,7 +1893,15 @@
       }
     },
     "HRTF headphone virtualization applied" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio binaural activado"
+          }
+        }
+      }
     },
     "HTTP/HTTPS streaming buffer" : {
       "localizations" : {
@@ -1885,10 +2058,26 @@
       }
     },
     "lossless" : {
-      "comment" : "How a track is encoded"
+      "comment" : "How a track is encoded",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sin pérdidas"
+          }
+        }
+      }
     },
     "lossy" : {
-      "comment" : "How a track is encoded"
+      "comment" : "How a track is encoded",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "con pérdidas"
+          }
+        }
+      }
     },
     "MCP client command" : {
       "comment" : "Remote Control preference",
@@ -1948,10 +2137,26 @@
       }
     },
     "Modified" : {
-      "comment" : "Modified Cog signal-integrity state"
+      "comment" : "Modified Cog signal-integrity state",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modificado"
+          }
+        }
+      }
     },
     "Modified by Cog:" : {
-      "comment" : "Tooltip heading before the ways Cog changes the samples"
+      "comment" : "Tooltip heading before the ways Cog changes the samples",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modificado por Cog:"
+          }
+        }
+      }
     },
     "Modifiers are either ⇧ or ⌃⌘" : {
       "comment" : "A description of the keyboard shortcuts used to open files.",
@@ -1966,7 +2171,15 @@
       }
     },
     "Mono" : {
-      "comment" : "One audio channel"
+      "comment" : "One audio channel",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mono"
+          }
+        }
+      }
     },
     "ms" : {
       "comment" : "minutes and seconds",
@@ -2035,7 +2248,15 @@
       }
     },
     "No active audio output." : {
-      "comment" : "No active audio output tooltip"
+      "comment" : "No active audio output tooltip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay salida de audio activa."
+          }
+        }
+      }
     },
     "No volume scaling" : {
       "comment" : "Label for the option that disables volume scaling.",
@@ -2953,10 +3174,26 @@
       }
     },
     "ReplayGain or tagged volume applied" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ReplayGain o volumen etiquetado activado"
+          }
+        }
+      }
     },
     "ReplayGain or tagged volume: %@ dB" : {
-      "comment" : "Cog signal-integrity reason: the track's gain"
+      "comment" : "Cog signal-integrity reason: the track's gain",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ReplayGain o volumen etiquetado: %@ dB"
+          }
+        }
+      }
     },
     "ReplayGain Track Gain" : {
       "comment" : "Label for a picker option in the output preferences view, allowing the user to select how the track gain from the audio file is applied to the output volume.",
@@ -3018,6 +3255,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Resampled from %1$@ to %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Remuestreado de %1$@ a %2$@"
           }
         }
       }
@@ -3136,7 +3379,15 @@
       }
     },
     "Sample precision reduced" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducción en la precisión de muestreos"
+          }
+        }
+      }
     },
     "Sample Rate" : {
       "comment" : "Sample Rate title",
@@ -3197,17 +3448,6 @@
         }
       }
     },
-    "Send DSD to the DAC as DoP (DSD over PCM)" : {
-      "comment" : "A toggle that sends DSD audio to the DAC packed as DoP instead of converting it to PCM.",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar DSD al DAC como DoP (DSD sobre PCM)"
-          }
-        }
-      }
-    },
     "Send crash reports and usage data" : {
       "comment" : "A toggle that lets the user consent to sending crash reports and usage data to Sentry.",
       "isCommentAutoGenerated" : true,
@@ -3216,6 +3456,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar informes de fallos y de uso"
+          }
+        }
+      }
+    },
+    "Send DSD to the DAC as DoP (DSD over PCM)" : {
+      "comment" : "A toggle that sends DSD audio to the DAC packed as DoP instead of converting it to PCM.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar DSD al DAC como DoP (DSD sobre PCM)"
           }
         }
       }
@@ -3275,7 +3526,15 @@
       }
     },
     "shared" : {
-      "comment" : "The output device plays other apps' audio too"
+      "comment" : "The output device plays other apps' audio too",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "compartido"
+          }
+        }
+      }
     },
     "Shifted" : {
       "localizations" : {
@@ -3422,7 +3681,15 @@
       "shouldTranslate" : false
     },
     "Source: %@" : {
-      "comment" : "Tooltip line: the track as decoded"
+      "comment" : "Tooltip line: the track as decoded",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente: %@"
+          }
+        }
+      }
     },
     "Spam" : {
       "comment" : "Description of a shortcut option.",
@@ -3527,7 +3794,15 @@
       }
     },
     "Stereo" : {
-      "comment" : "Two audio channels"
+      "comment" : "Two audio channels",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estéreo"
+          }
+        }
+      }
     },
     "Stop icon:" : {
       "comment" : "A label displayed next to a button that allows the user to choose a custom stop icon for the dock.",
@@ -3655,10 +3930,26 @@
       }
     },
     "synthesized" : {
-      "comment" : "How a track is encoded: rendered while playing, as MIDI or chiptunes are"
+      "comment" : "How a track is encoded: rendered while playing, as MIDI or chiptunes are",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sintetizado"
+          }
+        }
+      }
     },
     "system default" : {
-      "comment" : "The output device is the system's default"
+      "comment" : "The output device is the system's default",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "predeterminado del sistema"
+          }
+        }
+      }
     },
     "System Default Device" : {
       "comment" : "Name of the audio device when the user hasn't selected one yet.",
@@ -3673,7 +3964,15 @@
       }
     },
     "Tempo or pitch changed" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad y/o tempo cambiados"
+          }
+        }
+      }
     },
     "The Remote Control component could not be loaded." : {
       "comment" : "Remote Control error",
@@ -3868,19 +4167,59 @@
       }
     },
     "Unavailable" : {
-      "comment" : "A format Core Audio or the decoder did not report"
+      "comment" : "A format Core Audio or the decoder did not report",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No disponible"
+          }
+        }
+      }
     },
     "Unknown" : {
-      "comment" : "Unknown Cog signal-integrity state"
+      "comment" : "Unknown Cog signal-integrity state",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desconocido"
+          }
+        }
+      }
     },
     "Unknown: the decoder did not describe its samples." : {
-      "comment" : "Tooltip heading when Cog cannot tell whether it changes the samples"
+      "comment" : "Tooltip heading when Cog cannot tell whether it changes the samples",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desconocido: el decodificador no describe las muestras que entrega"
+          }
+        }
+      }
     },
     "Unnamed device" : {
-      "comment" : "An output device without a name"
+      "comment" : "An output device without a name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dispositivo sin nombre"
+          }
+        }
+      }
     },
     "Upmixed by FreeSurround" : {
-      "comment" : "Cog signal-integrity reason"
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FreeSurround activado"
+          }
+        }
+      }
     },
     "Use 3D rendered spectrum" : {
       "localizations" : {
@@ -4099,5 +4438,5 @@
       }
     }
   },
-  "version" : "1.1"
+  "version" : "1.3"
 }

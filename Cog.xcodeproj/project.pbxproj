@@ -221,6 +221,7 @@
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9FFEF2D6EB75B00026576 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 83F9FFEE2D6EB75B00026576 /* Sentry */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D1A2B3E00000012 /* MIDIPluginState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A2B3E00000011 /* MIDIPluginState.m */; };
 		8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E07AB770AAC930B00A4B32F /* PreferencesController.m */; };
 		8E1A2B032DDE000100000003 /* MainSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1A2B022DDE000100000002 /* MainSplitViewController.m */; };
 		8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752C09F31D5A0080F1EE /* DNDArrayController.m */; };
@@ -259,10 +260,16 @@
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */; };
 		F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */; };
-		8D1A2B3E00000012 /* MIDIPluginState.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A2B3E00000011 /* MIDIPluginState.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0A1EC04C306DE96E008662BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 835C7016306CD07D003A9DEB;
+			remoteInfo = CogAudioTests;
+		};
 		17643CBB0D5BD44900F0A9FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 566D32160D538550004466A5 /* APL.xcodeproj */;
@@ -1157,6 +1164,8 @@
 		83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniModeMenuTitleTransformer.swift; path = Window/MiniModeMenuTitleTransformer.swift; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8D1A2B3E00000010 /* MIDIPluginState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIDIPluginState.h; sourceTree = "<group>"; };
+		8D1A2B3E00000011 /* MIDIPluginState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDIPluginState.m; sourceTree = "<group>"; };
 		8E07AB760AAC930B00A4B32F /* PreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PreferencesController.h; path = Preferences/PreferencesController.h; sourceTree = "<group>"; };
 		8E07AB770AAC930B00A4B32F /* PreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = PreferencesController.m; path = Preferences/PreferencesController.m; sourceTree = "<group>"; };
 		8E1A2B012DDE000100000001 /* MainSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainSplitViewController.h; path = Window/MainSplitViewController.h; sourceTree = "<group>"; };
@@ -1201,8 +1210,6 @@
 		F56961334CC939A7158B7470 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
-		8D1A2B3E00000010 /* MIDIPluginState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIDIPluginState.h; sourceTree = "<group>"; };
-		8D1A2B3E00000011 /* MIDIPluginState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDIPluginState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1608,6 +1615,7 @@
 			isa = PBXGroup;
 			children = (
 				17F561330C3BD4DC0019975C /* CogAudio.framework */,
+				0A1EC04D306DE96E008662BA /* CogAudioTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2510,6 +2518,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		0A1EC04D306DE96E008662BA /* CogAudioTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CogAudioTests.xctest;
+			remoteRef = 0A1EC04C306DE96E008662BA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		17C808790C3BD167005707C4 /* FileSource.bundle */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -3336,6 +3351,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8WHB6LKY28;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
@@ -3418,6 +3434,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8WHB6LKY28;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
