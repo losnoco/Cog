@@ -147,7 +147,9 @@ extension Color {
         var green: CGFloat = 0
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
-        nsColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        // getRed(_:green:blue:alpha:) raises for catalog and pattern colors,
+        // so convert to sRGB first.
+        (nsColor.usingColorSpace(.sRGB) ?? .black).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         self.init(.sRGB, red: red, green: green, blue: blue, opacity: alpha)
     }
 }

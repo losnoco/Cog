@@ -44,7 +44,13 @@ struct AboutView: View {
             CreditsView()
             Divider()
 
-            Text(appCopyright).padding([.horizontal, .bottom], 10)
+            HStack(alignment: .firstTextBaseline) {
+                Text(appCopyright)
+                Spacer()
+                Button("Acknowledgements…") {
+                    AcknowledgementsWindowController.shared.showWindow(nil)
+                }
+            }.padding([.horizontal, .bottom], 10)
         }
         .onAppear(perform: loadBundleInfo)
         .frame(minWidth: 400, minHeight: 400)

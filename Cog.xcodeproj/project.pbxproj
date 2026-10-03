@@ -14,6 +14,8 @@
 		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
 		0A877A79307074CA000C7A1B /* InfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A877A78307074CA000C7A1B /* InfoWindowController.swift */; };
 		0A877A80307074E2000C7A1B /* InfoInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */; };
+		0A877F2630707A6A000C7A1B /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A877F2530707A6A000C7A1B /* Acknowledgements.json */; };
+		0A8783C730707A99000C7A1B /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
 		0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78692F6B1ECF00537320 /* CreditsView.swift */; };
 		0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78682F6B1ECF00537320 /* AboutView.swift */; };
@@ -873,6 +875,8 @@
 		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
 		0A877A78307074CA000C7A1B /* InfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InfoWindowController.swift; path = InfoInspector/InfoWindowController.swift; sourceTree = "<group>"; };
 		0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InfoInspectorView.swift; path = InfoInspector/InfoInspectorView.swift; sourceTree = "<group>"; };
+		0A877F2530707A6A000C7A1B /* Acknowledgements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = Acknowledgements.json; path = Acknowledgements/Acknowledgements.json; sourceTree = "<group>"; };
+		0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AcknowledgementsView.swift; path = Window/AcknowledgementsView.swift; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
 		0ABA78682F6B1ECF00537320 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutView.swift; path = Window/AboutView.swift; sourceTree = "<group>"; };
 		0ABA78692F6B1ECF00537320 /* CreditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreditsView.swift; path = Window/CreditsView.swift; sourceTree = "<group>"; };
@@ -1602,6 +1606,7 @@
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
 				83D4097B2E8CB335003CBCAE /* CogSearchField.h */,
 				83D4097C2E8CB335003CBCAE /* CogSearchField.m */,
+				0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */,
 			);
 			name = Window;
 			sourceTree = "<group>";
@@ -1707,6 +1712,7 @@
 				83B61E2229A8296500CD0580 /* LyricsWindow.xib */,
 				836DF61D298F7F6E00CD0580 /* Scenes.scnassets */,
 				8366CB1F2E857997007DB8D2 /* SCVisWindow.xib */,
+				0A877F2530707A6A000C7A1B /* Acknowledgements.json */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2837,6 +2843,7 @@
 				17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */,
 				833A70D02FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 in Resources */,
 				17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */,
+				0A877F2630707A6A000C7A1B /* Acknowledgements.json in Resources */,
 				83D0380F24A40DFB004CF90F /* CogAssets.xcassets in Resources */,
 				8384914018083E4E00E7332D /* filetype.icns in Resources */,
 				832AE3B52FA063E000AFAB72 /* tg300b.sflist.json in Resources */,
@@ -2972,6 +2979,7 @@
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
+				0A8783C730707A99000C7A1B /* AcknowledgementsView.swift in Sources */,
 				838770FA2D6F0996001455A0 /* FeedbackController.m in Sources */,
 				837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */,
 				0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */,
