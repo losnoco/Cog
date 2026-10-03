@@ -75,13 +75,6 @@
 			remoteGlobalIDString = 834378DD17F96E2600584396;
 			remoteInfo = HighlyQuixotic;
 		};
-		8343796817F97BDB00584396 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8343793517F97BDB00584396;
-			remoteInfo = HighlyAdvanced;
-		};
 		8343EB942F3781E20068AB0B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8343EB912F3781E20068AB0B /* snes9x.xcodeproj */;
@@ -206,7 +199,6 @@
 		8343784A17F93CB500584396 /* psflib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = psflib.xcodeproj; path = ../../Frameworks/psflib/psflib.xcodeproj; sourceTree = "<group>"; };
 		8343789C17F9658E00584396 /* HighlyTheoretical.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyTheoretical.xcodeproj; path = ../../Frameworks/HighlyTheoretical/HighlyTheoretical.xcodeproj; sourceTree = "<group>"; };
 		8343790C17F96E2600584396 /* HighlyQuixotic.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyQuixotic.xcodeproj; path = ../../Frameworks/HighlyQuixotic/HighlyQuixotic.xcodeproj; sourceTree = "<group>"; };
-		8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyAdvanced.xcodeproj; path = ../../Frameworks/HighlyAdvanced/HighlyAdvanced.xcodeproj; sourceTree = "<group>"; };
 		834379A717F9818400584396 /* HCDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HCDecoder.mm; sourceTree = "<group>"; };
 		8343EB912F3781E20068AB0B /* snes9x.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = snes9x.xcodeproj; path = ../../Frameworks/snes9x/snes9x.xcodeproj; sourceTree = "<group>"; };
 		834A42B6287AF99600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
@@ -276,14 +268,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8343796417F97BDB00584396 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8343796917F97BDB00584396 /* HighlyAdvanced.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8343EB922F3781E20068AB0B /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -323,7 +307,6 @@
 				8343784A17F93CB500584396 /* psflib.xcodeproj */,
 				8343789C17F9658E00584396 /* HighlyTheoretical.xcodeproj */,
 				8343790C17F96E2600584396 /* HighlyQuixotic.xcodeproj */,
-				8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */,
 				83848FE61807623F00E7332D /* SSEQPlayer.xcodeproj */,
 				83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */,
 				8360EEE917F92AC8005208A4 /* Other Frameworks */,
@@ -472,10 +455,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 8343796417F97BDB00584396 /* Products */;
-					ProjectRef = 8343796317F97BDB00584396 /* HighlyAdvanced.xcodeproj */;
-				},
-				{
 					ProductGroup = 83FC325A1BF5AB9000962B36 /* Products */;
 					ProjectRef = 83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */;
 				},
@@ -539,13 +518,6 @@
 			fileType = wrapper.framework;
 			path = HighlyQuixotic.framework;
 			remoteRef = 8343791117F96E2700584396 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8343796917F97BDB00584396 /* HighlyAdvanced.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = HighlyAdvanced.framework;
-			remoteRef = 8343796817F97BDB00584396 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8343EB982F3781E20068AB0B /* snes9x.framework */ = {
