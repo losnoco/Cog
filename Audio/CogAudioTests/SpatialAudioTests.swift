@@ -8,7 +8,7 @@
 @testable import CogAudio
 import XCTest
 
-/// Surround to headphones goes through Apple's spatial mixer: when it is
+/// Surround to a stereo device goes through Apple's spatial mixer: when it is
 /// planned, and that the mixer path renders on a real device.
 final class SpatialAudioTests: XCTestCase {
 	typealias Plan = PlaybackEngine.OutputPlan
@@ -41,12 +41,12 @@ final class SpatialAudioTests: XCTestCase {
 		XCTAssertEqual(PlaybackEngine.plan(for: mono, device: upmixing), .shared, "FreeSurround takes stereo only")
 	}
 
-	func testSpeakersAndTheSettingOffDownmix() {
-		var speakers = headphones
-		speakers.spatial = false
-		speakers.freeSurround = true
-		XCTAssertEqual(PlaybackEngine.plan(for: surround51, device: speakers), .shared)
-		XCTAssertEqual(PlaybackEngine.plan(for: stereo, device: speakers), .shared)
+	func testADeviceWithSpatialAudioOffDownmixes() {
+		var downmixing = headphones
+		downmixing.spatial = false
+		downmixing.freeSurround = true
+		XCTAssertEqual(PlaybackEngine.plan(for: surround51, device: downmixing), .shared)
+		XCTAssertEqual(PlaybackEngine.plan(for: stereo, device: downmixing), .shared)
 	}
 
 	func testHeldAndDoPOutputIsNeverSpatialized() {
@@ -70,15 +70,21 @@ final class SpatialAudioTests: XCTestCase {
 
 	// MARK: - Devices
 
-	func testHeadphonesAreBluetoothStereoOrTheHeadphoneJack() {
-		let hdpn = DeviceOutput.headphonesDataSource
-		XCTAssertTrue(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeBluetooth, outputChannels: 2, dataSource: nil))
-		XCTAssertTrue(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeBluetoothLE, outputChannels: 2, dataSource: nil))
-		XCTAssertFalse(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeBluetooth, outputChannels: 1, dataSource: nil), "a headset in call mode")
-		XCTAssertTrue(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeBuiltIn, outputChannels: 2, dataSource: hdpn))
-		XCTAssertFalse(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeBuiltIn, outputChannels: 2, dataSource: 0x6973_706B), "'ispk' speakers")
-		XCTAssertFalse(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeUSB, outputChannels: 2, dataSource: nil))
-		XCTAssertFalse(DeviceOutput.isHeadphones(transport: kAudioDeviceTransportTypeHDMI, outputChannels: 8, dataSource: nil))
+	func testAutomaticSpatialOutputGuessesFromTheTransport() {
+		typealias Output = DeviceOutput.SpatialOutput
+		func guess(_ transport: UInt32, _ channels: Int, _ source: UInt32? = nil) -> Output {
+			DeviceOutput.automaticSpatialOutput(transport: transport, outputChannels: channels, dataSource: source)
+		}
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeBluetooth, 2), .headphones)
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeBluetoothLE, 2), .headphones)
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeBluetooth, 1), .off, "a headset in call mode")
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeUSB, 2), .headphones, "a USB DAC")
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeUSB, 8), .off, "a surround interface")
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeBuiltIn, 2, DeviceOutput.headphonesDataSource), .headphones)
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeBuiltIn, 2), .headphones, "Apple silicon's headphone device")
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeBuiltIn, 2, DeviceOutput.speakersDataSource), .speakers)
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeHDMI, 2), .off)
+		XCTAssertEqual(guess(kAudioDeviceTransportTypeDisplayPort, 2), .off)
 	}
 
 	/// Whatever the default device is, the mixer path must render: the

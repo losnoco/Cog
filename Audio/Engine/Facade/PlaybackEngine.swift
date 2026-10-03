@@ -129,6 +129,7 @@ import Foundation
 		UserDefaults.standard.addObserver(self, forKeyPath: DeviceOutput.fullVolumeKey, options: [], context: &Self.fullVolumeContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: Self.spatialKey, options: [], context: &Self.spatialContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: Self.freeSurroundKey, options: [], context: &Self.spatialContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: DeviceOutput.spatialDevicesKey, options: [], context: &Self.spatialContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: DeviceOutput.headTrackingKey, options: [], context: &Self.headTrackingContext)
 		// A device left held by a crash is put back before anything plays.
 		DeviceOutput.recoverAbandonedSession()
@@ -142,6 +143,7 @@ import Foundation
 		UserDefaults.standard.removeObserver(self, forKeyPath: DeviceOutput.fullVolumeKey, context: &Self.fullVolumeContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: Self.spatialKey, context: &Self.spatialContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: Self.freeSurroundKey, context: &Self.spatialContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: DeviceOutput.spatialDevicesKey, context: &Self.spatialContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: DeviceOutput.headTrackingKey, context: &Self.headTrackingContext)
 	}
 
@@ -230,9 +232,9 @@ import Foundation
 		}
 		if context == &Self.spatialContext {
 			if Thread.isMainThread {
-				planSettingChanged("Spatial audio")
+				spatialSettingChanged()
 			} else {
-				DispatchQueue.main.async { self.planSettingChanged("Spatial audio") }
+				DispatchQueue.main.async { self.spatialSettingChanged() }
 			}
 			return
 		}
@@ -487,7 +489,7 @@ import Foundation
 		/// The device is held for this process alone (`takeExclusive`).
 		var exclusive = false
 		/// Surround is rendered as a 7.1 bed into the spatial mixer
-		/// (shared output to headphones only).
+		/// (shared output to a stereo device only).
 		var spatial = false
 
 		/// Shared with other apps, at the device's own rate.
@@ -510,7 +512,8 @@ import Foundation
 		/// (`exclusiveIntegerOutput`, and the device can be held).
 		var exclusive = false
 		/// Surround may be spatialized (`enableSpatialAudio`, and the device
-		/// is headphones).
+		/// is set to or taken for headphones or speakers,
+		/// `DeviceOutput.spatialOutput(of:)`).
 		var spatial = false
 		/// FreeSurround makes stereo surround (`enableFSurround`).
 		var freeSurround = false
@@ -523,7 +526,7 @@ import Foundation
 		                      dop: defaults.bool(forKey: "enableDoP") && (!requiresExclusiveDoP || holdable),
 		                      dopExclusive: requiresExclusiveDoP,
 		                      exclusive: defaults.bool(forKey: Self.exclusiveKey) && holdable,
-		                      spatial: defaults.bool(forKey: Self.spatialKey) && spatialRefused != output.deviceID && output.isHeadphones,
+		                      spatial: defaults.bool(forKey: Self.spatialKey) && spatialRefused != output.deviceID && output.spatialOutputType != nil,
 		                      freeSurround: defaults.bool(forKey: Self.freeSurroundKey))
 	}
 
@@ -531,8 +534,8 @@ import Foundation
 	/// it wants one and may have it; else, for PCM (and DSD made PCM) with
 	/// exclusive output on, the device held at the track's own rate, or the
 	/// closest it offers (`DeviceOutput.deviceRate`); else shared, and
-	/// spatial if it is surround (or FreeSurround will make it so) on
-	/// headphones.
+	/// spatial if it is surround (or FreeSurround will make it so) on a
+	/// device spatial audio is on for.
 	static func plan(for properties: [AnyHashable: Any], device: DevicePlanning) -> OutputPlan {
 		let dopRate = carrierRate(for: properties, deviceChannels: device.channels) { rate in
 			device.dop && DeviceOutput.supports(rate, among: device.rates)
@@ -588,7 +591,7 @@ import Foundation
 	/// the stream's rate), and PCM wanting the device held at the rate a held
 	/// stream already runs at (a DoP carrier stream renders PCM as integers
 	/// too). DSD cannot become PCM in a DoP stream, which packs DSD as DoP.
-	/// Surround and stereo do not share a stream to headphones: one is
+	/// Surround and stereo do not share a spatial stream: one is
 	/// spatialized and the other not. Anything else ends the stream before
 	/// it, and the engine rebuilds for it: not gapless, as the device's rate
 	/// or format changes.
@@ -800,6 +803,13 @@ import Foundation
 	private func exclusiveSettingChanged() {
 		exclusiveRefused = nil
 		planSettingChanged("Exclusive output")
+	}
+
+	/// A spatial setting changed: the plan may change, or only whether the
+	/// mixer renders for headphones or speakers, which it does live.
+	private func spatialSettingChanged() {
+		output?.updateSpatialOutputType()
+		planSettingChanged("Spatial audio")
 	}
 
 	/// A setting the output plan depends on changed: a pipeline it changes
@@ -1210,7 +1220,10 @@ import Foundation
 			// A stream's format may have changed under the same render format.
 			publishedStatus = nil
 			guard output.hardwareFormatDiffers() || wantsAnotherPlan() else {
-				// Whatever changed, the I/O buffer may have been reset.
+				// Built-in output may have moved between its speakers and
+				// headphone jack; whatever changed, the I/O buffer may have
+				// been reset.
+				output.updateSpatialOutputType()
 				output.reassertBufferSize()
 				EngineLog.logger.debug("Device format notification without a change; kept the I/O buffer")
 				return

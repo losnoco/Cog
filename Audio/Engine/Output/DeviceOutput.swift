@@ -27,10 +27,11 @@ import Foundation
 /// or its disappearance, are reported through `onDeviceChange`; the engine
 /// decides what to do (usually rebuild at the current position).
 ///
-/// On headphones, surround can be spatialized (`refreshFormat(spatial:)`):
+/// On a stereo device, surround can be spatialized (`refreshFormat(spatial:)`):
 /// the engine renders a 7.1 bed into Apple's `AUSpatialMixer`, which feeds
 /// the unit binaural stereo with the system's (personalized) HRTF and,
-/// optionally, AirPods head tracking. macOS never spatializes an AUHAL
+/// optionally, AirPods head tracking, or renders for speakers
+/// (`spatialOutput(of:)`). macOS never spatializes an AUHAL
 /// client's output itself, so this is how Cog reaches its renderer.
 ///
 /// A device can also be held exclusively (`takeExclusive`): hog mode, its
@@ -332,31 +333,109 @@ public final class DeviceOutput {
 		StreamFormat(sampleRate: sampleRate, channels: 8, channelConfig: UInt32(AudioConfig7Point1))
 	}
 
-	/// Whether a device is headphones, from its transport, output channels
-	/// and current output data source: a Bluetooth stereo device (AirPods
-	/// and the like, not a headset in its mono call mode), or built-in output
-	/// switched to its headphone jack.
-	static func isHeadphones(transport: UInt32, outputChannels: Int, dataSource: UInt32?) -> Bool {
+	/// How a device's spatial audio is rendered: for headphones, for
+	/// speakers (the Mac's own, or external ones), or not at all (a plain
+	/// downmix). Chosen per device in `spatialDevicesKey`, by its UID;
+	/// otherwise `automatic` guesses.
+	public enum SpatialOutput: String {
+		case headphones
+		case speakers
+		case off
+	}
+
+	/// Per-device choices, `[device UID: SpatialOutput.rawValue]`; a device
+	/// missing from it is `automatic`.
+	public static let spatialDevicesKey = "spatialAudioDevices"
+
+	/// The guess for a device with no choice of its own, from its transport,
+	/// output channels and current output data source. Only stereo devices
+	/// are spatialized: a device with more channels takes surround as it is,
+	/// and a Bluetooth headset in its mono call mode a downmix. Bluetooth and
+	/// USB devices are taken for headphones (Core Audio cannot tell what is
+	/// plugged into a USB DAC), as is built-in output on its headphone jack
+	/// or the separate headphone device of Apple silicon Macs; built-in
+	/// speakers are speakers. Anything else (HDMI, DisplayPort, AirPlay,
+	/// aggregate and virtual devices) is left alone unless chosen.
+	static func automaticSpatialOutput(transport: UInt32, outputChannels: Int, dataSource: UInt32?) -> SpatialOutput {
+		guard outputChannels == 2 else { return .off }
 		switch transport {
-		case kAudioDeviceTransportTypeBluetooth, kAudioDeviceTransportTypeBluetoothLE:
-			return outputChannels == 2
+		case kAudioDeviceTransportTypeBluetooth, kAudioDeviceTransportTypeBluetoothLE, kAudioDeviceTransportTypeUSB:
+			return .headphones
 		case kAudioDeviceTransportTypeBuiltIn:
-			return dataSource == Self.headphonesDataSource
+			switch dataSource {
+			case nil, Self.headphonesDataSource: return .headphones
+			case Self.speakersDataSource: return .speakers
+			default: return .off
+			}
 		default:
-			return false
+			return .off
 		}
 	}
 
 	static let headphonesDataSource: UInt32 = 0x6864_706E // 'hdpn'
+	static let speakersDataSource: UInt32 = 0x6973_706B // 'ispk'
 
-	/// Whether the selected device is headphones (`isHeadphones`).
-	public var isHeadphones: Bool {
+	/// A device's choice (`spatialDevicesKey`), else the automatic guess.
+	/// A device with other than two output channels is never spatialized.
+	public static func spatialOutput(of id: AudioDeviceID) -> SpatialOutput {
+		guard isStereo(id) else { return .off }
+		return chosenSpatialOutput(of: id) ?? automaticSpatialOutput(of: id)
+	}
+
+	/// Whether a device has two output channels, which spatial audio needs.
+	public static func isStereo(_ id: AudioDeviceID) -> Bool {
+		outputChannels(of: id)?.reduce(0, +) == 2
+	}
+
+	/// The choice made for a device; nil for automatic.
+	public static func chosenSpatialOutput(of id: AudioDeviceID) -> SpatialOutput? {
+		guard let uid = uid(of: id) else { return nil }
+		return (UserDefaults.standard.dictionary(forKey: spatialDevicesKey)?[uid] as? String).flatMap(SpatialOutput.init(rawValue:))
+	}
+
+	/// Makes a choice for a device, or (nil) leaves it automatic.
+	public static func choose(_ output: SpatialOutput?, for id: AudioDeviceID) {
+		guard let uid = uid(of: id) else { return }
+		var choices = UserDefaults.standard.dictionary(forKey: spatialDevicesKey) ?? [:]
+		choices[uid] = output?.rawValue
+		UserDefaults.standard.set(choices, forKey: spatialDevicesKey)
+	}
+
+	/// The guess `automaticSpatialOutput` makes for a device.
+	public static func automaticSpatialOutput(of id: AudioDeviceID) -> SpatialOutput {
 		var transport: UInt32 = 0
-		guard Self.getProperty(deviceID, kAudioDevicePropertyTransportType, &transport) else { return false }
+		guard getProperty(id, kAudioDevicePropertyTransportType, &transport) else { return .off }
 		var source: UInt32 = 0
-		let hasSource = Self.getProperty(deviceID, kAudioDevicePropertyDataSource, &source, scope: kAudioDevicePropertyScopeOutput)
-		let channels = Self.outputChannels(of: deviceID)?.reduce(0, +) ?? 0
-		return Self.isHeadphones(transport: transport, outputChannels: channels, dataSource: hasSource ? source : nil)
+		let hasSource = getProperty(id, kAudioDevicePropertyDataSource, &source, scope: kAudioDevicePropertyScopeOutput)
+		let channels = outputChannels(of: id)?.reduce(0, +) ?? 0
+		return automaticSpatialOutput(transport: transport, outputChannels: channels, dataSource: hasSource ? source : nil)
+	}
+
+	/// What the spatial mixer renders for on the selected device; nil when
+	/// its surround is downmixed instead.
+	public var spatialOutputType: AUSpatialMixerOutputType? {
+		switch Self.spatialOutput(of: deviceID) {
+		case .headphones:
+			return .spatialMixerOutputType_Headphones
+		case .speakers:
+			var transport: UInt32 = 0
+			let builtIn = Self.getProperty(deviceID, kAudioDevicePropertyTransportType, &transport) && transport == kAudioDeviceTransportTypeBuiltIn
+			return builtIn ? .spatialMixerOutputType_BuiltInSpeakers : .spatialMixerOutputType_ExternalSpeakers
+		case .off:
+			return nil
+		}
+	}
+
+	/// While spatial, renders for the device as it now is (headphones or
+	/// speakers), live: a choice changed, or built-in output switched
+	/// between its speakers and headphone jack.
+	public func updateSpatialOutputType() {
+		guard isSpatial, let mixer, let type = spatialOutputType else { return }
+		var value = type.rawValue
+		let status = AudioUnitSetProperty(mixer, kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, 0, &value, UInt32(MemoryLayout<UInt32>.size))
+		if status != noErr {
+			EngineLog.logger.error("Could not change the spatial mixer's output type: \(status)")
+		}
 	}
 
 	/// Turns the spatial mixer's head tracking on or off, live.
@@ -404,7 +483,7 @@ public final class DeviceOutput {
 		_ = try? set(kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Output, stereo)
 		try set(kAudioUnitProperty_SpatializationAlgorithm, kAudioUnitScope_Input, AUSpatializationAlgorithm.spatializationAlgorithm_UseOutputType.rawValue)
 		try set(kAudioUnitProperty_SpatialMixerSourceMode, kAudioUnitScope_Input, AUSpatialMixerSourceMode.spatialMixerSourceMode_AmbienceBed.rawValue)
-		try set(kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, AUSpatialMixerOutputType.spatialMixerOutputType_Headphones.rawValue)
+		try set(kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, (spatialOutputType ?? .spatialMixerOutputType_Headphones).rawValue)
 		if #available(macOS 13, *) {
 			_ = try? set(kAudioUnitProperty_SpatialMixerPersonalizedHRTFMode, kAudioUnitScope_Global, AUSpatialMixerPersonalizedHRTFMode.auto.rawValue)
 		}

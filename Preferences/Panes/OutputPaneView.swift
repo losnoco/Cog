@@ -1,3 +1,5 @@
+import CogAudio
+import CoreAudio
 import SwiftUI
 
 private final class OutputPrefs: ObservableObject {
@@ -60,6 +62,49 @@ private final class OutputPrefs: ObservableObject {
     }
 }
 
+/// The spatial audio choice for the output device selected in the pane (the
+/// system default's current device while following it), kept per device by
+/// `DeviceOutput`.
+private final class SpatialDeviceChoice: ObservableObject {
+    @Published private(set) var deviceName = ""
+    @Published private(set) var automatic: DeviceOutput.SpatialOutput = .off
+    @Published private(set) var isStereo = false
+    /// A `SpatialOutput` raw value, or "automatic".
+    @Published var choice = "automatic" {
+        didSet {
+            guard !loading, let deviceID else { return }
+            DeviceOutput.choose(DeviceOutput.SpatialOutput(rawValue: choice), for: deviceID)
+        }
+    }
+
+    private var deviceID: AudioDeviceID?
+    private var loading = false
+
+    func load(selected: Int) {
+        loading = true
+        defer { loading = false }
+        deviceID = selected < 0 ? DeviceOutput.systemDefaultOutput() : AudioDeviceID(selected)
+        guard let deviceID else {
+            deviceName = ""
+            isStereo = false
+            choice = "automatic"
+            return
+        }
+        deviceName = DeviceOutput.outputDevices().first { $0.id == deviceID }?.name ?? ""
+        isStereo = DeviceOutput.isStereo(deviceID)
+        automatic = DeviceOutput.automaticSpatialOutput(of: deviceID)
+        choice = DeviceOutput.chosenSpatialOutput(of: deviceID)?.rawValue ?? "automatic"
+    }
+
+    static func label(_ output: DeviceOutput.SpatialOutput) -> LocalizedStringKey {
+        switch output {
+        case .headphones: return "Headphones"
+        case .speakers: return "Speakers"
+        case .off: return "Off"
+        }
+    }
+}
+
 @MainActor private let volumeOptions: [(LocalizedStringKey, String, Int)] = [
     ("ReplayGain Album Gain with peak", "albumGainWithPeak", 0),
     ("ReplayGain Album Gain", "albumGain", 0),
@@ -73,13 +118,18 @@ private final class OutputPrefs: ObservableObject {
 struct OutputPaneView: View {
     @StateObject private var prefs = OutputPrefs()
     @StateObject private var deviceModel = AudioDeviceModel()
+    @StateObject private var spatialDevice = SpatialDeviceChoice()
 
     var body: some View {
-        if #available(macOS 13.0, *) {
-            formContent.formStyle(.grouped)
-        } else {
-            formContent.padding()
+        Group {
+            if #available(macOS 13.0, *) {
+                formContent.formStyle(.grouped)
+            } else {
+                formContent.padding()
+            }
         }
+        .onAppear { spatialDevice.load(selected: deviceModel.selectedDeviceID) }
+        .onChange(of: deviceModel.selectedDeviceID) { spatialDevice.load(selected: $0) }
     }
 
     private var volumeScalingIsReplayGain: Bool {
@@ -148,8 +198,20 @@ struct OutputPaneView: View {
                 Text("Advanced audio formats").bold()
             }
             Section {
-                Toggle("Spatialize surround on headphones", isOn: $prefs.enableSpatialAudio)
-                    .help("Surround plays through Apple's spatial audio on AirPods and other headphones, with your personalized spatial audio profile. Stereo plays as it is, unless FreeSurround upmixes it. Speakers get a plain downmix.")
+                Toggle("Spatialize surround on stereo devices", isOn: $prefs.enableSpatialAudio)
+                    .help("Surround plays through Apple's spatial audio on headphones, with your personalized spatial audio profile, or on stereo speakers. Stereo plays as it is, unless FreeSurround upmixes it. Devices with more channels take surround as it is.")
+                Picker(selection: $spatialDevice.choice) {
+                    Text("Automatic (\(Text(SpatialDeviceChoice.label(spatialDevice.automatic))))").tag("automatic")
+                    Text("Headphones").tag(DeviceOutput.SpatialOutput.headphones.rawValue)
+                    Text("Speakers").tag(DeviceOutput.SpatialOutput.speakers.rawValue)
+                    Text("Off").tag(DeviceOutput.SpatialOutput.off.rawValue)
+                } label: {
+                    Text("\(spatialDevice.deviceName) is:")
+                }
+                .disabled(!prefs.enableSpatialAudio || !spatialDevice.isStereo)
+                .help(spatialDevice.isStereo
+                      ? "What is connected to this device, which Cog cannot always tell: Bluetooth and USB devices are taken for headphones, and the Mac's own speakers for speakers. Off downmixes surround instead."
+                      : "Only stereo devices are spatialized; this one takes surround as it is.")
                 if #available(macOS 12.3, *) {
                     Toggle("Head tracking", isOn: $prefs.enableHeadTracking)
                         .disabled(!prefs.enableSpatialAudio)
