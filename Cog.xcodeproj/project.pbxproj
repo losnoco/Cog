@@ -12,6 +12,8 @@
 		0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */; };
 		0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */; };
 		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
+		0A877A79307074CA000C7A1B /* InfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A877A78307074CA000C7A1B /* InfoWindowController.swift */; };
+		0A877A80307074E2000C7A1B /* InfoInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
 		0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78692F6B1ECF00537320 /* CreditsView.swift */; };
 		0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78682F6B1ECF00537320 /* AboutView.swift */; };
@@ -60,7 +62,6 @@
 		17C8099A0C3BD233005707C4 /* FileSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C808790C3BD167005707C4 /* FileSource.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17C809E60C3BD487005707C4 /* CoreAudio.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C809E30C3BD46D005707C4 /* CoreAudio.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17C8F3CF0CBED66C008D969D /* GME.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17C8F3CD0CBED663008D969D /* GME.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D1B1000F63255200694C57 /* InfoWindowController.m */; };
 		17D1B27D0CF8B2830028F5B5 /* cue.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2760CF8B2830028F5B5 /* cue.icns */; };
 		17D1B27E0CF8B2830028F5B5 /* it.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2770CF8B2830028F5B5 /* it.icns */; };
 		17D1B27F0CF8B2830028F5B5 /* pls.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B2780CF8B2830028F5B5 /* pls.icns */; };
@@ -114,7 +115,6 @@
 		83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; };
 		83256B69286661FC0036D9C0 /* libmpg123.0.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8325F5902F713E3500400A88 /* StatusImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */; };
-		8325F5982F713F8000400A88 /* MissingAlbumArtTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F5972F713F8000400A88 /* MissingAlbumArtTransformer.swift */; };
 		8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F5992F713FF900400A88 /* SpotlightTransformers.swift */; };
 		8325F59C2F71412700400A88 /* RepeatTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F59B2F71412700400A88 /* RepeatTransformers.swift */; };
 		8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F59D2F71418600400A88 /* ShuffleTransformers.swift */; };
@@ -126,7 +126,6 @@
 		832AE3B52FA063E000AFAB72 /* tg300b.sflist.json in Resources */ = {isa = PBXBuildFile; fileRef = 832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */; };
 		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
 		8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 833125092E817A63005C8895 /* InfoPlist.xcstrings */; };
-		C06D1E0100000000000D0004 /* Direct.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C06D1E0100000000000D0003 /* Direct.xcstrings */; };
 		8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8331250B2E817A63005C8895 /* Localizable.xcstrings */; };
 		833A70D02FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */; };
 		833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 833D0C2427C4ABB80060E16A /* ScriptAdditions.m */; };
@@ -204,7 +203,6 @@
 		83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B73B602D8FC05A00A57F08 /* minimp3.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5AB020E4C87100631CD4 /* DualWindow.m */; };
-		83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B0D00F6320EA00694C57 /* InfoInspector.xib */; };
 		83BC5AC020E4CE7D00631CD4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTree.xib */; };
@@ -242,6 +240,7 @@
 		99EAACA80DD1BB7A00423C38 /* APL.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 566D321B0D538550004466A5 /* APL.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56961334CC939A7158B7470 /* KeychainHelper.swift */; };
 		B3D1D6060E7B49E78D1310B8 /* PreferencesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */; };
+		C06D1E0100000000000D0004 /* Direct.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C06D1E0100000000000D0003 /* Direct.xcstrings */; };
 		C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6992B2B954E6728D9F5E814E /* LrclibClient.swift */; };
 		CA11E7A10000000000000002 /* ContentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA11E7A10000000000000001 /* ContentTypes.swift */; };
 		CCAA0003B590B10015000003 /* MiniPlayerPlusWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0002B590B10015000002 /* MiniPlayerPlusWindow.m */; };
@@ -872,6 +871,8 @@
 		0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzAPI.swift; sourceTree = "<group>"; };
 		0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzScrobbler.swift; sourceTree = "<group>"; };
 		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
+		0A877A78307074CA000C7A1B /* InfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InfoWindowController.swift; path = InfoInspector/InfoWindowController.swift; sourceTree = "<group>"; };
+		0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InfoInspectorView.swift; path = InfoInspector/InfoInspectorView.swift; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
 		0ABA78682F6B1ECF00537320 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutView.swift; path = Window/AboutView.swift; sourceTree = "<group>"; };
 		0ABA78692F6B1ECF00537320 /* CreditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreditsView.swift; path = Window/CreditsView.swift; sourceTree = "<group>"; };
@@ -948,8 +949,6 @@
 		17C808B70C3BD1D2005707C4 /* VorbisPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VorbisPlugin.xcodeproj; path = Plugins/Vorbis/VorbisPlugin.xcodeproj; sourceTree = "<group>"; };
 		17C808C00C3BD1DD005707C4 /* WavPack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WavPack.xcodeproj; path = Plugins/WavPack/WavPack.xcodeproj; sourceTree = "<group>"; };
 		17C8F3C80CBED663008D969D /* GME.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GME.xcodeproj; path = Plugins/GME/GME.xcodeproj; sourceTree = "<group>"; };
-		17D1B0FF0F63255200694C57 /* InfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InfoWindowController.h; path = InfoInspector/InfoWindowController.h; sourceTree = "<group>"; };
-		17D1B1000F63255200694C57 /* InfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InfoWindowController.m; path = InfoInspector/InfoWindowController.m; sourceTree = "<group>"; };
 		17D1B2760CF8B2830028F5B5 /* cue.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = cue.icns; sourceTree = "<group>"; };
 		17D1B2770CF8B2830028F5B5 /* it.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = it.icns; sourceTree = "<group>"; };
 		17D1B2780CF8B2830028F5B5 /* pls.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = pls.icns; sourceTree = "<group>"; };
@@ -980,8 +979,6 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32CA4F630368D1EE00C91783 /* Cog_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cog_Prefix.pch; sourceTree = "<group>"; };
-		C06D1E0100000000000D0001 /* Direct.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Direct.xcconfig; sourceTree = "<group>"; };
-		C06D1E0100000000000D0002 /* Cog-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Cog-Direct.entitlements"; sourceTree = "<group>"; };
 		3DDFC2472344EC6B000F1453 /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFMAPI.swift; sourceTree = "<group>"; };
 		4218AC4F2E469BC30024810A /* AudioScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioScrobbler.swift; sourceTree = "<group>"; };
@@ -1029,7 +1026,6 @@
 		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
 		83256B672866617F0036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpg123.0.dylib; path = ThirdParty/mpg123/lib/libmpg123.0.dylib; sourceTree = "<group>"; };
 		8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusImageTransformer.swift; sourceTree = "<group>"; };
-		8325F5972F713F8000400A88 /* MissingAlbumArtTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MissingAlbumArtTransformer.swift; path = InfoInspector/MissingAlbumArtTransformer.swift; sourceTree = "<group>"; };
 		8325F5992F713FF900400A88 /* SpotlightTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotlightTransformers.swift; path = Spotlight/SpotlightTransformers.swift; sourceTree = "<group>"; };
 		8325F59B2F71412700400A88 /* RepeatTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RepeatTransformers.swift; path = Window/RepeatTransformers.swift; sourceTree = "<group>"; };
 		8325F59D2F71418600400A88 /* ShuffleTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShuffleTransformers.swift; path = Window/ShuffleTransformers.swift; sourceTree = "<group>"; };
@@ -1047,11 +1043,9 @@
 		833125072E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/FileTree.xcstrings; sourceTree = "<group>"; };
 		833125082E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SpotlightPanel.xcstrings; sourceTree = "<group>"; };
 		833125092E817A63005C8895 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
-		C06D1E0100000000000D0003 /* Direct.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Direct.xcstrings; sourceTree = "<group>"; };
 		8331250B2E817A63005C8895 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		8331250D2E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/MainMenu.xcstrings; sourceTree = "<group>"; };
 		8331250E2E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SpectrumWindow.xcstrings; sourceTree = "<group>"; };
-		8331250F2E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/InfoInspector.xcstrings; sourceTree = "<group>"; };
 		833125102E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/OpenURLPanel.xcstrings; sourceTree = "<group>"; };
 		833125112E817A64005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Feedback.xcstrings; sourceTree = "<group>"; };
 		833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeneralUserGS-Drums.sf3"; sourceTree = "<group>"; };
@@ -1158,7 +1152,6 @@
 		83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
 		83BC5AB020E4C87100631CD4 /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualWindow.m; path = Window/DualWindow.m; sourceTree = "<group>"; };
 		83BC5AB120E4C87100631CD4 /* DualWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DualWindow.h; path = Window/DualWindow.h; sourceTree = "<group>"; };
-		83BC5AB420E4C91100631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InfoInspector.xib; sourceTree = "<group>"; };
 		83BC5AB520E4C91200631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		83BC5AB620E4C91300631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
 		83BC5AB720E4C91400631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileTree.xib; sourceTree = "<group>"; };
@@ -1203,6 +1196,9 @@
 		8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+CreateFile.h"; sourceTree = "<group>"; };
 		8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+CreateFile.m"; sourceTree = "<group>"; };
 		B09E94300D747F7B0064F138 /* FFMPEG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FFMPEG.xcodeproj; path = Plugins/FFMPEG/FFMPEG.xcodeproj; sourceTree = "<group>"; };
+		C06D1E0100000000000D0001 /* Direct.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Direct.xcconfig; sourceTree = "<group>"; };
+		C06D1E0100000000000D0002 /* Cog-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Cog-Direct.entitlements"; sourceTree = "<group>"; };
+		C06D1E0100000000000D0003 /* Direct.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Direct.xcstrings; sourceTree = "<group>"; };
 		C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesModel.swift; path = Preferences/PreferencesModel.swift; sourceTree = "<group>"; };
 		CA11E7A10000000000000001 /* ContentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypes.swift; sourceTree = "<group>"; };
 		CCAA0001B590B10015000001 /* MiniPlayerPlusWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindow.h; path = Window/MiniPlayerPlusWindow.h; sourceTree = "<group>"; };
@@ -1529,9 +1525,8 @@
 		17D1B0FE0F63252900694C57 /* InfoInspector */ = {
 			isa = PBXGroup;
 			children = (
-				17D1B0FF0F63255200694C57 /* InfoWindowController.h */,
-				17D1B1000F63255200694C57 /* InfoWindowController.m */,
-				8325F5972F713F8000400A88 /* MissingAlbumArtTransformer.swift */,
+				0A877A78307074CA000C7A1B /* InfoWindowController.swift */,
+				0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */,
 			);
 			name = InfoInspector;
 			sourceTree = "<group>";
@@ -1702,7 +1697,6 @@
 				831B99BE27C23E88005A969B /* Cog.sdef */,
 				8399AFC42F6BAAE4005F4A39 /* PathSuggester.xib */,
 				830C379F27B95E3000E02BB0 /* Equalizer.xib */,
-				17D1B0D00F6320EA00694C57 /* InfoInspector.xib */,
 				17342A980D5FD20B00E8D854 /* MainMenu.xib */,
 				17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */,
 				17211A7C0D68B7C500911CA9 /* FileTree.xib */,
@@ -2822,7 +2816,6 @@
 				83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */,
 				83B61E2429A8296500CD0580 /* LyricsWindow.xib in Resources */,
 				83BC5AC020E4CE7D00631CD4 /* MainMenu.xib in Resources */,
-				83BC5ABF20E4CE7A00631CD4 /* InfoInspector.xib in Resources */,
 				17E41E070C130DFF00AC744D /* Credits.html in Resources */,
 				839614AD286EDA5C00D3EEDB /* SpectrumWindow.xib in Resources */,
 				171B57DD0C091F2B00F6AFAF /* flac.icns in Resources */,
@@ -2906,26 +2899,6 @@
 			shellPath = /bin/sh;
 			shellScript = "$SCRIPT_INPUT_FILE_0 $SCRIPT_INPUT_FILE_1 $SCRIPT_OUTPUT_FILE_0\n";
 		};
-		C06D1E0100000000000D0020 /* Keep each edition's products apart */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Keep each edition's products apart";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Release and Release-Direct share a products directory, so a bundle\n# left over from a Release-Direct build may still carry Sparkle and the\n# Direct string table.\nif [ \"$COG_SPARKLE\" != \"YES\" ]; then\n\trm -rf \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n\trm -f \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"/*.lproj/Direct.strings*\nelse\n\t# The Swift packages still build into Release-Direct, so an xcframework\n\t# from a package leaves its signature in both directories, and archiving\n\t# fails copying the second one into the archive.\n\tfor signature in \"$BUILD_DIR/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\"/*.signature; do\n\t\tif [ -e \"$signature\" ]; then\n\t\t\trm -f \"$BUILT_PRODUCTS_DIR/$(basename \"$signature\")\"\n\t\tfi\n\tdone\nfi\n";
-			showEnvVarsInLog = 0;
-		};
 		83978E27285C5A4C0076ED21 /* Run Sentry symbol upload */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -2946,6 +2919,26 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script is responsible for uploading debug symbols and source context for Sentry.\nif [[ \"x${SENTRY_ORG}\" != \"x\" ]] && [[ \"x${SENTRY_PROJECT}\" != \"x\" ]] && [[ \"x${SENTRY_AUTH_TOKEN}\" != \"x\" ]]; then\n  if [[ \"${CONFIGURATION}\" = \"Release\" ]] || [[ \"${CONFIGURATION}\" = \"Release-Direct\" ]] || [[ \"${CONFIGURATION}\" = \"Adhoc\" ]]; then\n    if [[ \"$(uname -m)\" == arm64 ]]; then\n      export PATH=\"/opt/homebrew/bin:$PATH\"\n    fi\n\n    if which sentry-cli >/dev/null; then\n      ERROR=$(sentry-cli --auth-token \"$SENTRY_AUTH_TOKEN\" debug-files upload --org \"$SENTRY_ORG\" --project \"$SENTRY_PROJECT\" --include-sources \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\n      if [ ! $? -eq 0 ]; then\n        echo \"warning: sentry-cli - $ERROR\"\n      fi\n    else\n      echo \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\n    fi\n  else\n    echo \"Skipping symbol upload.\"\n  fi\nelse\n  echo \"Sentry not configured.\"\nfi\n";
 		};
+		C06D1E0100000000000D0020 /* Keep each edition's products apart */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Keep each edition's products apart";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Release and Release-Direct share a products directory, so a bundle\n# left over from a Release-Direct build may still carry Sparkle and the\n# Direct string table.\nif [ \"$COG_SPARKLE\" != \"YES\" ]; then\n\trm -rf \"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/Sparkle.framework\"\n\trm -f \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"/*.lproj/Direct.strings*\nelse\n\t# The Swift packages still build into Release-Direct, so an xcframework\n\t# from a package leaves its signature in both directories, and archiving\n\t# fails copying the second one into the archive.\n\tfor signature in \"$BUILD_DIR/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\"/*.signature; do\n\t\tif [ -e \"$signature\" ]; then\n\t\t\trm -f \"$BUILT_PRODUCTS_DIR/$(basename \"$signature\")\"\n\t\tfi\n\tdone\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -2961,6 +2954,7 @@
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
 				0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */,
 				8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */,
+				0A877A80307074E2000C7A1B /* InfoInspectorView.swift in Sources */,
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
 				8E07AB790AAC930B00A4B32F /* PreferencesController.m in Sources */,
@@ -2991,7 +2985,6 @@
 				830C37A527B95EB300E02BB0 /* EqualizerWindowController.m in Sources */,
 				838A337D2D06C14200D0D770 /* TempoSlider.m in Sources */,
 				838A337E2D06C14200D0D770 /* PitchSlider.m in Sources */,
-				8325F5982F713F8000400A88 /* MissingAlbumArtTransformer.swift in Sources */,
 				838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */,
 				838A33842D06CF4100D0D770 /* SpectrumWindowController.m in Sources */,
 				83B61E2829A82A0200CD0580 /* LyricsWindowController.m in Sources */,
@@ -3008,6 +3001,7 @@
 				56DB08550D67185300453B6A /* NSArray+CogSort.m in Sources */,
 				830C37FC27B9956C00E02BB0 /* analyzer.c in Sources */,
 				179D031E0E0CB2500064A77A /* ContainedNode.m in Sources */,
+				0A877A79307074CA000C7A1B /* InfoWindowController.swift in Sources */,
 				179D031F0E0CB2500064A77A /* ContainerNode.m in Sources */,
 				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
 				83D4097D2E8CB335003CBCAE /* CogSearchField.m in Sources */,
@@ -3051,7 +3045,6 @@
 				8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */,
 				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
-				17D1B1010F63255200694C57 /* InfoWindowController.m in Sources */,
 				0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */,
 				83E998722F7131140017AE33 /* TotalTimeTransformer.swift in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,
@@ -3321,15 +3314,6 @@
 			name = SpotlightPanel.xib;
 			sourceTree = "<group>";
 		};
-		17D1B0D00F6320EA00694C57 /* InfoInspector.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				83BC5AB420E4C91100631CD4 /* Base */,
-				8331250F2E817A63005C8895 /* mul */,
-			);
-			name = InfoInspector.xib;
-			sourceTree = "<group>";
-		};
 		17D1B1DA0F6330D400694C57 /* Feedback.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3558,85 +3542,6 @@
 			};
 			name = Release;
 		};
-		C06D1E0100000000000D0010 /* Release-Direct */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C06D1E0100000000000D0001 /* Direct.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				AUTOMATION_APPLE_EVENTS = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				ENABLE_USER_SELECTED_FILES = readwrite;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
-				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
-				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
-				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Cog;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
-				INSTALL_PATH = /Applications;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/ThirdParty/avif/lib",
-					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
-					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/ThirdParty/rubberband/lib",
-				);
-				OTHER_CFLAGS = (
-					"-D__MACOSX__",
-					"-DHAVE_CONFIG_H",
-					"-Wframe-larger-than=4000",
-				);
-				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				OTHER_LDFLAGS = (
-					"-weak_framework",
-					CogAudio,
-					"-weak_framework",
-					MediaPlayer,
-					"-weak_framework",
-					UserNotifications,
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog;
-				PRODUCT_NAME = Cog;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				REGISTER_APP_GROUPS = YES;
-				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
-				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
-				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
-				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
-				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
-				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
-				SDKROOT = macosx;
-				SWIFT_OBJC_BRIDGING_HEADER = "Cog-Bridging-Header.h";
-				SWIFT_VERSION = 6.0;
-				WRAPPER_EXTENSION = app;
-			};
-			name = "Release-Direct";
-		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
@@ -3733,15 +3638,89 @@
 			};
 			name = Release;
 		};
+		C06D1E0100000000000D0010 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C06D1E0100000000000D0001 /* Direct.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = Play;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "Cog color";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				AUTOMATION_APPLE_EVENTS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
+				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INSTALL_PATH = /Applications;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ThirdParty/avif/lib",
+					"$(PROJECT_DIR)/ThirdParty/mpg123/lib",
+					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/ThirdParty/rubberband/lib",
+				);
+				OTHER_CFLAGS = (
+					"-D__MACOSX__",
+					"-DHAVE_CONFIG_H",
+					"-Wframe-larger-than=4000",
+				);
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					CogAudio,
+					"-weak_framework",
+					MediaPlayer,
+					"-weak_framework",
+					UserNotifications,
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog;
+				PRODUCT_NAME = Cog;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Cog-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Release-Direct";
+		};
 		C06D1E0100000000000D0011 /* Release-Direct */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
-				SWIFT_INCLUDE_PATHS = (
-					"$(inherited)",
-					"$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
-				);
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -3766,6 +3745,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = Cog.entitlements;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3782,6 +3762,71 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+			};
+			name = "Release-Direct";
+		};
+		C06D1E0100000000000D0012 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.RemoteControl;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = "Release-Direct";
+		};
+		C06D1E0100000000000D0013 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
+				PRODUCT_NAME = "cog-mcp";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-Direct";
 		};
@@ -3852,39 +3897,6 @@
 			};
 			name = Release;
 		};
-		C06D1E0100000000000D0012 /* Release-Direct */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.RemoteControl;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 6.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = "Release-Direct";
-		};
 		CEC0CAFE000000000000C101 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
@@ -3947,37 +3959,6 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
-		};
-		C06D1E0100000000000D0013 /* Release-Direct */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CogMCP.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
-				DEAD_CODE_STRIPPING = YES;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
-				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
-				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
-				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
-				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
-				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
-				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
-				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
-				ENABLE_RESOURCE_ACCESS_USB = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.cog-mcp";
-				PRODUCT_NAME = "cog-mcp";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = "Release-Direct";
 		};
 /* End XCBuildConfiguration section */
 
