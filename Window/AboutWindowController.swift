@@ -11,6 +11,11 @@ class AboutWindowController: NSWindowController {
 
     override func loadWindow() {
         let hostingController = AboutViewHostingController()
+        if #available(macOS 13.0, *) {
+            // Keep the hosting controller from resizing the window to the
+            // SwiftUI fitting size after it has been centered.
+            hostingController.sizingOptions = []
+        }
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 400, height: 600),
             styleMask: [.titled, .closable, .fullSizeContentView],
@@ -23,6 +28,10 @@ class AboutWindowController: NSWindowController {
         window.titleVisibility = .hidden
         window.isMovableByWindowBackground = true
         window.appearance = NSAppearance(named: .darkAqua)
+        // Setting contentViewController sizes the window to the view, so
+        // restore the intended size before centering.
+        window.setContentSize(NSSize(width: 400, height: 600))
+        window.center()
         self.window = window
     }
 
@@ -30,7 +39,6 @@ class AboutWindowController: NSWindowController {
         if window == nil {
             loadWindow()
         }
-        window?.center()
         super.showWindow(sender)
     }
 }
