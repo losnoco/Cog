@@ -65,8 +65,6 @@ public final class Pump {
 
 	private let feeder: Feeder
 
-	/// The deep ring this pump reads (for diagnostics).
-	var feederRing: OpaquePointer { feeder.ring }
 	private let lock = UnfairLock()
 	private var running = false
 	private var threadExited = DispatchSemaphore(value: 0)

@@ -17,6 +17,10 @@ enum EngineLog {
 	/// A worker pass taking longer than this is reported.
 	static let slowPass: TimeInterval = 0.02
 
+	/// A slow feeder pass is a warning only with less than this decoded
+	/// ahead in the deep ring; otherwise it is logged at debug level.
+	static let shallowDeepRing: TimeInterval = 0.5
+
 	static func now() -> UInt64 {
 		DispatchTime.now().uptimeNanoseconds
 	}

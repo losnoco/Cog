@@ -908,7 +908,7 @@ import Foundation
 			reportedUnderruns = underruns
 			let rate = output.format.sampleRate
 			let shallowMs = Double(cog_ring_readable(pump.ring)) / rate * 1000
-			let deepMs = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate * 1000
+			let deepMs = (feeder?.bufferedSeconds ?? 0) * 1000
 			EngineLog.logger.error("Underrun #\(underruns): shallow ring \(shallowMs, format: .fixed(precision: 1)) ms, deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
 		}
 
@@ -1027,7 +1027,7 @@ import Foundation
 		let heard = heardPosition(read: read, dry: cog_ring_readable(pump.ring) == 0, output: output)
 		let written = cog_ring_write_position(pump.ring)
 		let latency = Double(written > heard ? written - heard : 0) / rate
-		let deep = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate
+		let deep = feeder?.bufferedSeconds ?? 0
 		let controller = VisualizationController.shared()
 		controller.postLatency(latency)
 		controller.postFullLatency(latency + deep)
@@ -1074,7 +1074,7 @@ import Foundation
 		let pulledMs = Double(rendered - last.rendered) / rate * 1000
 		let shortfallMs = elapsed * 1000 - pulledMs
 		let shallowMs = Double(cog_ring_readable(pump.ring)) / rate * 1000
-		let deepMs = Double(cog_ring_readable(pump.feederRing)) / Double(max(1, pump.outputFormat.channels)) / rate * 1000
+		let deepMs = (feeder?.bufferedSeconds ?? 0) * 1000
 		let message = String(format: "Heartbeat: device pulled %.1f ms in %.1f ms, shallow %.1f ms, deep %.0f ms, underruns %llu; peak out %.3f, gains transport %.3f volume %.3f track %.4f",
 		                     pulledMs, elapsed * 1000, shallowMs, deepMs, cog_renderer_underrun_events(renderer),
 		                     cog_renderer_take_peak(renderer), cog_gain_current(cog_renderer_transport(renderer)),

@@ -89,6 +89,9 @@ public final class Feeder {
 	private var track: EngineTrack?
 	private var epoch: UInt64 = 0
 	private var writtenFormat: StreamFormat?
+	/// The channels `writtenFormat` has, for `bufferedSeconds` on other
+	/// threads; guarded by `lock`.
+	private var writtenChannels = 2
 	private var trackStartPending: (track: EngineTrack, offset: Double)?
 	/// The track the pending start follows, for recording the join.
 	private var previousTrack: EngineTrack?
@@ -232,6 +235,15 @@ public final class Feeder {
 		}
 	}
 
+	/// About how much audio the deep ring holds, in seconds. It holds each
+	/// track's own channels, before the DSP thread fits them to the device,
+	/// so this goes by the channels last written (only approximate while a
+	/// change of channels is still in the ring).
+	public var bufferedSeconds: Double {
+		let channels = lock.withLock { writtenChannels }
+		return Double(cog_ring_readable(ring)) / Double(channels) / outputRate
+	}
+
 	private var hasPendingSeek: Bool {
 		lock.withLock { pendingSeek != nil }
 	}
@@ -275,8 +287,14 @@ public final class Feeder {
 			let workMs = EngineLog.milliseconds(since: start) - Double(waitNanoseconds) / 1_000_000
 			waitNanoseconds = 0
 			if workMs > EngineLog.slowPass * 1000 {
-				let deepMs = Double(cog_ring_readable(ring)) / 2 / outputRate * 1000
-				EngineLog.logger.warning("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
+				let deepMs = bufferedSeconds * 1000
+				// A slow pass only threatens playback with little decoded
+				// ahead of it; with the ring deep, it is just a heavy decoder.
+				if deepMs < EngineLog.shallowDeepRing * 1000 {
+					EngineLog.logger.warning("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
+				} else {
+					EngineLog.logger.debug("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
+				}
 			}
 		}
 	}
@@ -506,6 +524,7 @@ public final class Feeder {
 			// The converter has already counted these frames as emitted.
 			timeline.append(.format(format), at: converter.outputFrames - UInt64(frames), epoch: epoch)
 			writtenFormat = format
+			lock.withLock { writtenChannels = max(format.channels, 1) }
 		}
 
 		var offset = 0
