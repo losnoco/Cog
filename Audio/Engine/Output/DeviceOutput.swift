@@ -27,6 +27,12 @@ import Foundation
 /// or its disappearance, are reported through `onDeviceChange`; the engine
 /// decides what to do (usually rebuild at the current position).
 ///
+/// On headphones, surround can be spatialized (`refreshFormat(spatial:)`):
+/// the engine renders a 7.1 bed into Apple's `AUSpatialMixer`, which feeds
+/// the unit binaural stereo with the system's (personalized) HRTF and,
+/// optionally, AirPods head tracking. macOS never spatializes an AUHAL
+/// client's output itself, so this is how Cog reaches its renderer.
+///
 /// A device can also be held exclusively (`takeExclusive`): hog mode, its
 /// stream set to the best format it offers at the rate asked for, integer
 /// if it has one, and rendered into directly by an IOProc on the device
@@ -57,6 +63,10 @@ public final class DeviceOutput {
 	/// Whether this process holds the device exclusively (hog mode, its
 	/// stream in a format of Cog's choosing), for DoP or for PCM.
 	public private(set) var isExclusive = false
+
+	/// Whether the render format is the spatial mixer's 7.1 bed rather than
+	/// the device's own channels.
+	public private(set) var isSpatial = false
 
 	/// The sample words the renderer hands Core Audio, set by
 	/// `refreshFormat`: float through the unit, 24-bit integer through it
@@ -101,6 +111,12 @@ public final class DeviceOutput {
 
 	private let unit: AudioComponentInstance
 	private var initialized = false
+	/// The `AUSpatialMixer` feeding the unit while spatial; kept once made.
+	private var mixer: AudioComponentInstance?
+	private var mixerInitialized = false
+	/// The device's channels as the unit takes them (at most eight), which
+	/// spatial rendering does not follow.
+	private var deviceChannels = 0
 	private var renderer: OpaquePointer?
 	/// Drives the renderer while the device is held exclusively.
 	private var ioProcID: AudioDeviceIOProcID?
@@ -129,6 +145,12 @@ public final class DeviceOutput {
 			AudioUnitUninitialize(unit)
 		}
 		AudioComponentInstanceDispose(unit)
+		if let mixer {
+			if mixerInitialized {
+				AudioUnitUninitialize(mixer)
+			}
+			AudioComponentInstanceDispose(mixer)
+		}
 	}
 
 	static func check(_ status: OSStatus) throws {
@@ -145,6 +167,10 @@ public final class DeviceOutput {
 		if initialized {
 			AudioUnitUninitialize(unit)
 			initialized = false
+		}
+		if let mixer, mixerInitialized {
+			AudioUnitUninitialize(mixer)
+			mixerInitialized = false
 		}
 	}
 
@@ -226,10 +252,18 @@ public final class DeviceOutput {
 	///
 	/// `sampleRate` overrides the rate read from the unit, which can lag a
 	/// moment behind a nominal rate just set.
-	public func refreshFormat(integer: Bool = false, sampleRate: Double? = nil) throws {
+	///
+	/// `spatial` (shared float output only) renders the 7.1 bed
+	/// (`spatialFormat`) into the spatial mixer instead of the device's own
+	/// channels.
+	public func refreshFormat(integer: Bool = false, sampleRate: Double? = nil, spatial: Bool = false) throws {
 		let wasRunning = isRunning
 		if wasRunning { stop() }
 		if isExclusive {
+			if isSpatial {
+				uninitialize()
+				disconnectMixer()
+			}
 			try refreshExclusiveFormat(sampleRate: sampleRate)
 			if wasRunning { try start() }
 			return
@@ -251,22 +285,166 @@ public final class DeviceOutput {
 		// The device's nominal rate over the unit's, which can lag behind it.
 		let nominal = nominalSampleRate
 		let rate = sampleRate ?? (nominal > 0 ? nominal : hardware.mSampleRate)
-		let render = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
-		var asbd = integer ? Self.integerASBD(render) : Pump.asbd(render)
-		try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
+		let spatial = spatial && !integer
+		if isSpatial && !spatial {
+			disconnectMixer()
+		}
+		let device = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
+		if spatial {
+			// The mixer gives the unit planar stereo, and takes the bed.
+			var asbd = Self.planarFloatASBD(sampleRate: rate, channels: 2)
+			try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
+			renderFormat = Pump.asbd(Self.spatialFormat(sampleRate: rate))
+			var layout = AudioChannelLayout()
+			layout.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo
+			_ = AudioUnitSetProperty(unit, kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, 0, &layout, UInt32(MemoryLayout<AudioChannelLayout>.size))
+		} else {
+			var asbd = integer ? Self.integerASBD(device) : Pump.asbd(device)
+			try setProperty(kAudioUnitProperty_StreamFormat, scope: kAudioUnitScope_Input, &asbd)
+			renderFormat = asbd
+			var layout = AudioChannelLayout()
+			layout.mChannelLayoutTag = Self.layoutTag(channels: channels)
+			// Not every device takes a layout; the stream format is what matters.
+			_ = AudioUnitSetProperty(unit, kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, 0, &layout, UInt32(MemoryLayout<AudioChannelLayout>.size))
+		}
 		sampleFormat = integer ? .int24High : .float32
-		renderFormat = asbd
-		var layout = AudioChannelLayout()
-		layout.mChannelLayoutTag = Self.layoutTag(channels: channels)
-		// Not every device takes a layout; the stream format is what matters.
-		_ = AudioUnitSetProperty(unit, kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, 0, &layout, UInt32(MemoryLayout<AudioChannelLayout>.size))
 		configureBufferSize(sampleRate: rate)
+		var mixerLatency = 0
+		if spatial {
+			mixerLatency = try connectMixer(sampleRate: rate)
+		}
 		try Self.check(AudioUnitInitialize(unit))
 		initialized = true
 
-		format = render
-		latencyFrames = Self.presentationLatency(of: deviceID)
+		isSpatial = spatial
+		deviceChannels = channels
+		format = spatial ? Self.spatialFormat(sampleRate: rate) : device
+		latencyFrames = Self.presentationLatency(of: deviceID) + mixerLatency
 		if wasRunning { try start() }
+	}
+
+	// MARK: - Spatial audio
+
+	/// What the engine renders for the spatial mixer: a 7.1 bed (WAVE order:
+	/// L R C LFE, back L R, side L R), which every surround layout up to
+	/// eight channels fits into, so tracks of different layouts share it.
+	public static func spatialFormat(sampleRate: Double) -> StreamFormat {
+		StreamFormat(sampleRate: sampleRate, channels: 8, channelConfig: UInt32(AudioConfig7Point1))
+	}
+
+	/// Whether a device is headphones, from its transport, output channels
+	/// and current output data source: a Bluetooth stereo device (AirPods
+	/// and the like, not a headset in its mono call mode), or built-in output
+	/// switched to its headphone jack.
+	static func isHeadphones(transport: UInt32, outputChannels: Int, dataSource: UInt32?) -> Bool {
+		switch transport {
+		case kAudioDeviceTransportTypeBluetooth, kAudioDeviceTransportTypeBluetoothLE:
+			return outputChannels == 2
+		case kAudioDeviceTransportTypeBuiltIn:
+			return dataSource == Self.headphonesDataSource
+		default:
+			return false
+		}
+	}
+
+	static let headphonesDataSource: UInt32 = 0x6864_706E // 'hdpn'
+
+	/// Whether the selected device is headphones (`isHeadphones`).
+	public var isHeadphones: Bool {
+		var transport: UInt32 = 0
+		guard Self.getProperty(deviceID, kAudioDevicePropertyTransportType, &transport) else { return false }
+		var source: UInt32 = 0
+		let hasSource = Self.getProperty(deviceID, kAudioDevicePropertyDataSource, &source, scope: kAudioDevicePropertyScopeOutput)
+		let channels = Self.outputChannels(of: deviceID)?.reduce(0, +) ?? 0
+		return Self.isHeadphones(transport: transport, outputChannels: channels, dataSource: hasSource ? source : nil)
+	}
+
+	/// Turns the spatial mixer's head tracking on or off, live.
+	public func setHeadTracking(_ enabled: Bool) {
+		guard let mixer else { return }
+		Self.setHeadTracking(enabled, on: mixer)
+	}
+
+	private static func setHeadTracking(_ enabled: Bool, on mixer: AudioComponentInstance) {
+		guard #available(macOS 12.3, *) else { return }
+		var value: UInt32 = enabled ? 1 : 0
+		_ = AudioUnitSetProperty(mixer, kAudioUnitProperty_SpatialMixerEnableHeadTracking, kAudioUnitScope_Global, 0, &value, UInt32(MemoryLayout<UInt32>.size))
+	}
+
+	/// The setting `setHeadTracking` follows, read when the mixer is set up.
+	public static let headTrackingKey = "enableHeadTracking"
+
+	static func planarFloatASBD(sampleRate: Double, channels: Int) -> AudioStreamBasicDescription {
+		AudioStreamBasicDescription(mSampleRate: sampleRate, mFormatID: kAudioFormatLinearPCM,
+		                            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved,
+		                            mBytesPerPacket: 4, mFramesPerPacket: 1, mBytesPerFrame: 4, mChannelsPerFrame: UInt32(channels),
+		                            mBitsPerChannel: 32, mReserved: 0)
+	}
+
+	/// Sets the spatial mixer up for the 7.1 bed at `sampleRate` and connects
+	/// it to the unit's input. Returns the mixer's latency in frames.
+	private func connectMixer(sampleRate: Double) throws -> Int {
+		let mixer = try self.mixer ?? Self.makeMixer()
+		self.mixer = mixer
+		func set<Value>(_ property: AudioUnitPropertyID, _ scope: AudioUnitScope, _ value: Value) throws {
+			var value = value
+			try Self.check(withUnsafeMutableBytes(of: &value) { AudioUnitSetProperty(mixer, property, scope, 0, $0.baseAddress, UInt32($0.count)) })
+		}
+		let bed = Self.spatialFormat(sampleRate: sampleRate)
+		try set(kAudioUnitProperty_ElementCount, kAudioUnitScope_Input, UInt32(1))
+		// Interleaved in, as the renderer writes; the mixer only gives planar.
+		try set(kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, Pump.asbd(bed))
+		try set(kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, Self.planarFloatASBD(sampleRate: sampleRate, channels: 2))
+		var layout = AudioChannelLayout()
+		layout.mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelBitmap
+		layout.mChannelBitmap = AudioChannelBitmap(rawValue: bed.channelConfig)
+		try set(kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Input, layout)
+		var stereo = AudioChannelLayout()
+		stereo.mChannelLayoutTag = kAudioChannelLayoutTag_Stereo
+		_ = try? set(kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Output, stereo)
+		try set(kAudioUnitProperty_SpatializationAlgorithm, kAudioUnitScope_Input, AUSpatializationAlgorithm.spatializationAlgorithm_UseOutputType.rawValue)
+		try set(kAudioUnitProperty_SpatialMixerSourceMode, kAudioUnitScope_Input, AUSpatialMixerSourceMode.spatialMixerSourceMode_AmbienceBed.rawValue)
+		try set(kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, AUSpatialMixerOutputType.spatialMixerOutputType_Headphones.rawValue)
+		if #available(macOS 13, *) {
+			_ = try? set(kAudioUnitProperty_SpatialMixerPersonalizedHRTFMode, kAudioUnitScope_Global, AUSpatialMixerPersonalizedHRTFMode.auto.rawValue)
+		}
+		Self.setHeadTracking(UserDefaults.standard.bool(forKey: Self.headTrackingKey), on: mixer)
+		var slice: UInt32 = 0
+		var sliceSize = UInt32(MemoryLayout<UInt32>.size)
+		if AudioUnitGetProperty(unit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &slice, &sliceSize) == noErr {
+			try set(kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, slice)
+		}
+		try Self.check(AudioUnitInitialize(mixer))
+		mixerInitialized = true
+
+		var connection = AudioUnitConnection(sourceAudioUnit: mixer, sourceOutputNumber: 0, destInputNumber: 0)
+		try setProperty(kAudioUnitProperty_MakeConnection, scope: kAudioUnitScope_Input, &connection)
+
+		var latency: Float64 = 0
+		var size = UInt32(MemoryLayout<Float64>.size)
+		guard AudioUnitGetProperty(mixer, kAudioUnitProperty_Latency, kAudioUnitScope_Global, 0, &latency, &size) == noErr else { return 0 }
+		return Int((latency * sampleRate).rounded())
+	}
+
+	/// Feeds the unit from the render callback again.
+	private func disconnectMixer() {
+		var connection = AudioUnitConnection(sourceAudioUnit: nil, sourceOutputNumber: 0, destInputNumber: 0)
+		_ = try? setProperty(kAudioUnitProperty_MakeConnection, scope: kAudioUnitScope_Input, &connection)
+		isSpatial = false
+	}
+
+	private static func makeMixer() throws -> AudioComponentInstance {
+		var description = AudioComponentDescription(componentType: kAudioUnitType_Mixer,
+		                                            componentSubType: kAudioUnitSubType_SpatialMixer,
+		                                            componentManufacturer: kAudioUnitManufacturer_Apple,
+		                                            componentFlags: 0,
+		                                            componentFlagsMask: 0)
+		guard let component = AudioComponentFindNext(nil, &description) else {
+			throw NSError(domain: NSOSStatusErrorDomain, code: Int(kAudioUnitErr_NoConnection))
+		}
+		var instance: AudioComponentInstance?
+		try check(AudioComponentInstanceNew(component, &instance))
+		return instance!
 	}
 
 	/// Held exclusively: the renderer writes the stream's own format, which
@@ -286,6 +464,7 @@ public final class DeviceOutput {
 		renderFormat = asbd
 		configureBufferSize(sampleRate: rate)
 		format = StreamFormat(sampleRate: rate, channels: channels, channelConfig: Self.channelConfig(channels: channels))
+		deviceChannels = channels
 		latencyFrames = Self.presentationLatency(of: deviceID)
 	}
 
@@ -950,7 +1129,7 @@ public final class DeviceOutput {
 		}
 		guard let hardware = hardwareFormat() else { return true }
 		let rate = nominalSampleRate > 0 ? nominalSampleRate : hardware.mSampleRate
-		return abs(rate - format.sampleRate) >= 1 || min(Int(hardware.mChannelsPerFrame), 8) != format.channels
+		return abs(rate - format.sampleRate) >= 1 || min(Int(hardware.mChannelsPerFrame), 8) != deviceChannels
 	}
 
 	/// Asks again for the I/O buffer the engine wants. A rate change made
@@ -972,7 +1151,12 @@ public final class DeviceOutput {
 		self.renderer = renderer
 		var callback = AURenderCallbackStruct(inputProc: cog_renderer_audio_unit_render,
 		                                      inputProcRefCon: UnsafeMutableRawPointer(renderer))
-		try? setProperty(kAudioUnitProperty_SetRenderCallback, scope: kAudioUnitScope_Input, &callback)
+		if isSpatial, let mixer {
+			// Plain C on the I/O thread still: the mixer pulls the renderer.
+			_ = AudioUnitSetProperty(mixer, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &callback, UInt32(MemoryLayout<AURenderCallbackStruct>.size))
+		} else {
+			try? setProperty(kAudioUnitProperty_SetRenderCallback, scope: kAudioUnitScope_Input, &callback)
+		}
 		if isExclusive {
 			destroyIOProc()
 			var id: AudioDeviceIOProcID?
@@ -997,6 +1181,10 @@ public final class DeviceOutput {
 			try Self.check(AudioDeviceStart(deviceID, ioProcID))
 			isRunning = true
 			return
+		}
+		if isSpatial, let mixer, !mixerInitialized {
+			try Self.check(AudioUnitInitialize(mixer))
+			mixerInitialized = true
 		}
 		if !initialized {
 			try Self.check(AudioUnitInitialize(unit))
@@ -1044,10 +1232,15 @@ public final class DeviceOutput {
 		addListener(deviceID, kAudioDevicePropertyStreamFormat) { [weak self] in
 			self?.onDeviceChange?(.format)
 		}
+		// Headphones plugged into or pulled from the jack: spatial audio
+		// comes or goes with them.
+		addListener(deviceID, kAudioDevicePropertyDataSource, scope: kAudioDevicePropertyScopeOutput) { [weak self] in
+			self?.onDeviceChange?(.format)
+		}
 	}
 
-	private func addListener(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector, _ action: @escaping () -> Void) {
-		var address = AudioObjectPropertyAddress(mSelector: selector, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+	private func addListener(_ object: AudioObjectID, _ selector: AudioObjectPropertySelector, scope: AudioObjectPropertyScope = kAudioObjectPropertyScopeGlobal, _ action: @escaping () -> Void) {
+		var address = AudioObjectPropertyAddress(mSelector: selector, mScope: scope, mElement: kAudioObjectPropertyElementMain)
 		let block: AudioObjectPropertyListenerBlock = { _, _ in action() }
 		if AudioObjectAddPropertyListenerBlock(object, &address, listenerQueue, block) == noErr {
 			listeners.append((object, address, block))

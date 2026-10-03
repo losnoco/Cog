@@ -193,7 +193,6 @@
 		8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399D4E01805A55000B503B1 /* XmlContainer.m */; };
 		839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */; };
 		839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */; };
-		839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */ = {isa = PBXBuildFile; fileRef = 839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */; };
 		83A360B220E4E81D00192DAB /* Flac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A30C20E4E3D000951EF8 /* Flac.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83AA7D04279EBCA900087AA4 /* libavcodec.62.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83AA7D05279EBCAB00087AA4 /* libavformat.62.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83AA7D03279EBC8300087AA4 /* libavformat.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1141,7 +1140,6 @@
 		839B837E286D7F8D00F529EE /* NumberHertzToStringTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NumberHertzToStringTransformer.swift; path = Transformers/NumberHertzToStringTransformer.swift; sourceTree = "<group>"; };
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
-		839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SADIE_D02-96000.mhr"; sourceTree = "<group>"; };
 		83A097362F7FF486007BAF78 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Credits.html; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
 		83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
@@ -1691,7 +1689,6 @@
 				832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */,
 				833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */,
 				832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */,
-				839E56F12879625100DFB5F4 /* SADIE_D02-96000.mhr */,
 				837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */,
 				8E75758E09F31D800080F1EE /* Icons */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -2829,7 +2826,6 @@
 				8366CB212E857997007DB8D2 /* SCVisWindow.xib in Resources */,
 				8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */,
 				83CB1F5E2E74D83D001D6294 /* Play.icon in Resources */,
-				839E56F52879625100DFB5F4 /* SADIE_D02-96000.mhr in Resources */,
 				830C37A127B95E3000E02BB0 /* Equalizer.xib in Resources */,
 				171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */,
 				171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */,

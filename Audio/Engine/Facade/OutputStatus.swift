@@ -102,7 +102,9 @@ struct OutputStatus: Equatable {
 			modifications.append(CogAudioOutputModificationTrackGain)
 		}
 		modifications += stageModifications
-		if processing.fitsChannels {
+		// Surround fitted into the spatial mixer's 7.1 bed loses nothing;
+		// the spatialization is the modification.
+		if processing.fitsChannels && !stageModifications.contains(CogAudioOutputModificationSpatialAudio) {
 			modifications.append(CogAudioOutputModificationChannelLayout)
 		}
 		if !unityVolume {

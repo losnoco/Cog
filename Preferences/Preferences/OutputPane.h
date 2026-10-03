@@ -13,10 +13,8 @@
 @interface OutputPane : GeneralPreferencePane {
 	IBOutlet OutputsArrayController *outputDevices;
 	IBOutlet NSButton *headTracking;
-	IBOutlet NSButton *headRecenter;
 }
 
 - (IBAction)takeDeviceID:(id)sender;
-- (IBAction)resetHeadTracking:(id)sender;
 
 @end

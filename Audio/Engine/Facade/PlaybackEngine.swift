@@ -60,7 +60,6 @@ import Foundation
 	/// reference to whichever equalizer it was last given.
 	private let timeStretch = TimeStretchStage()
 	private let freeSurround = FreeSurroundStage()
-	private let hrtf = HRTFStage()
 	private let visualization = VisualizationTap()
 
 	private lazy var equalizer: EqualizerStage = {
@@ -128,6 +127,9 @@ import Foundation
 		UserDefaults.standard.addObserver(self, forKeyPath: "suspendOutputOnPause", options: [], context: &Self.suspendContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: Self.exclusiveKey, options: [], context: &Self.exclusiveContext)
 		UserDefaults.standard.addObserver(self, forKeyPath: DeviceOutput.fullVolumeKey, options: [], context: &Self.fullVolumeContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: Self.spatialKey, options: [], context: &Self.spatialContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: Self.freeSurroundKey, options: [], context: &Self.spatialContext)
+		UserDefaults.standard.addObserver(self, forKeyPath: DeviceOutput.headTrackingKey, options: [], context: &Self.headTrackingContext)
 		// A device left held by a crash is put back before anything plays.
 		DeviceOutput.recoverAbandonedSession()
 	}
@@ -138,6 +140,9 @@ import Foundation
 		UserDefaults.standard.removeObserver(self, forKeyPath: "suspendOutputOnPause", context: &Self.suspendContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: Self.exclusiveKey, context: &Self.exclusiveContext)
 		UserDefaults.standard.removeObserver(self, forKeyPath: DeviceOutput.fullVolumeKey, context: &Self.fullVolumeContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: Self.spatialKey, context: &Self.spatialContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: Self.freeSurroundKey, context: &Self.spatialContext)
+		UserDefaults.standard.removeObserver(self, forKeyPath: DeviceOutput.headTrackingKey, context: &Self.headTrackingContext)
 	}
 
 	private static var outputDeviceContext = 0
@@ -145,6 +150,13 @@ import Foundation
 	private static var suspendContext = 0
 	private static var exclusiveContext = 0
 	private static var fullVolumeContext = 0
+	private static var spatialContext = 0
+	private static var headTrackingContext = 0
+
+	/// Spatialize surround on headphones through Apple's spatial mixer.
+	static let spatialKey = "enableSpatialAudio"
+	/// FreeSurround's upmix, which makes stereo surround (`FreeSurroundStage`).
+	static let freeSurroundKey = "enableFSurround"
 
 	/// Hold the output device exclusively for PCM, at each track's own rate,
 	/// when it can be. The fork's name, kept so the setting carries over.
@@ -213,6 +225,23 @@ import Foundation
 				exclusiveSettingChanged()
 			} else {
 				DispatchQueue.main.async { self.exclusiveSettingChanged() }
+			}
+			return
+		}
+		if context == &Self.spatialContext {
+			if Thread.isMainThread {
+				planSettingChanged("Spatial audio")
+			} else {
+				DispatchQueue.main.async { self.planSettingChanged("Spatial audio") }
+			}
+			return
+		}
+		if context == &Self.headTrackingContext {
+			let enabled = UserDefaults.standard.bool(forKey: DeviceOutput.headTrackingKey)
+			if Thread.isMainThread {
+				output?.setHeadTracking(enabled)
+			} else {
+				DispatchQueue.main.async { self.output?.setHeadTracking(enabled) }
 			}
 			return
 		}
@@ -287,6 +316,9 @@ import Foundation
 	/// it, or it would not start): planned as shared until playback stops or
 	/// the setting changes, so that not every track tries again.
 	private var exclusiveRefused: AudioDeviceID?
+	/// A device the spatial mixer could not be set up for, which downmixes
+	/// until playback stops, so that planning does not keep asking for it.
+	private var spatialRefused: AudioDeviceID?
 
 	/// Lets a test keep the machine's device at its rate: a track needing a
 	/// DoP carrier then gets one only if the device already runs at it.
@@ -332,6 +364,10 @@ import Foundation
 			} else if plan.exclusive {
 				EngineLog.logger.notice("The device cannot be held exclusively at \(plan.deviceRate ?? 0, format: .fixed(precision: 0)) Hz; playing through shared output")
 				device.exclusive = false
+			} else if plan.spatial {
+				EngineLog.logger.notice("The spatial mixer could not be set up; downmixing instead")
+				spatialRefused = output.deviceID
+				device.spatial = false
 			} else {
 				return false
 			}
@@ -344,7 +380,7 @@ import Foundation
 		outputPlan = plan
 
 		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: plan.dop),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization, hrtf], carrier: plan.dop,
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization], carrier: plan.dop,
 		                      captureDirectory: EngineCapture.directory),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
@@ -420,7 +456,7 @@ import Foundation
 		// made elsewhere must render at the new rate, and ask again for the
 		// I/O buffer the change reset.
 		do {
-			try output.refreshFormat(integer: plan.dop && !plan.exclusive, sampleRate: plan.deviceRate)
+			try output.refreshFormat(integer: plan.dop && !plan.exclusive, sampleRate: plan.deviceRate, spatial: plan.spatial)
 		} catch {
 			EngineLog.logger.error("Could not set the render format: \(error.localizedDescription, privacy: .public)")
 			output.releaseExclusive()
@@ -436,7 +472,7 @@ import Foundation
 		let channels = (properties["channels"] as? NSNumber)?.intValue ?? 0
 		let floating = (properties["floatingPoint"] as? NSNumber)?.boolValue ?? false
 		let defaults = UserDefaults.standard
-		EngineLog.logger.notice("Output plan: DoP setting \(defaults.bool(forKey: "enableDoP")), exclusive setting \(defaults.bool(forKey: Self.exclusiveKey)), device \(output.deviceID) following the system default \(output.followsSystemDefault), holdable \(output.exclusiveStream != nil), \(output.format.channels) channels at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz; track \(bits) bits\(floating ? " float" : "", privacy: .public), \(rate, format: .fixed(precision: 0)) Hz, \(channels) channels; device rate \(plan.deviceRate ?? 0, format: .fixed(precision: 0)) Hz\(plan.dop ? ", DoP" : "", privacy: .public)\(plan.exclusive ? ", exclusive" : "", privacy: .public)")
+		EngineLog.logger.notice("Output plan: DoP setting \(defaults.bool(forKey: "enableDoP")), exclusive setting \(defaults.bool(forKey: Self.exclusiveKey)), device \(output.deviceID) following the system default \(output.followsSystemDefault), holdable \(output.exclusiveStream != nil), \(output.format.channels) channels at \(output.format.sampleRate, format: .fixed(precision: 0)) Hz; track \(bits) bits\(floating ? " float" : "", privacy: .public), \(rate, format: .fixed(precision: 0)) Hz, \(channels) channels; device rate \(plan.deviceRate ?? 0, format: .fixed(precision: 0)) Hz\(plan.dop ? ", DoP" : "", privacy: .public)\(plan.exclusive ? ", exclusive" : "", privacy: .public)\(plan.spatial ? ", spatial" : "", privacy: .public)")
 	}
 
 	// MARK: - Output plans
@@ -450,6 +486,9 @@ import Foundation
 		var dop = false
 		/// The device is held for this process alone (`takeExclusive`).
 		var exclusive = false
+		/// Surround is rendered as a 7.1 bed into the spatial mixer
+		/// (shared output to headphones only).
+		var spatial = false
 
 		/// Shared with other apps, at the device's own rate.
 		static let shared = OutputPlan()
@@ -470,6 +509,11 @@ import Foundation
 		/// PCM holds the device exclusively at a rate of its own
 		/// (`exclusiveIntegerOutput`, and the device can be held).
 		var exclusive = false
+		/// Surround may be spatialized (`enableSpatialAudio`, and the device
+		/// is headphones).
+		var spatial = false
+		/// FreeSurround makes stereo surround (`enableFSurround`).
+		var freeSurround = false
 	}
 
 	private func planning(for output: DeviceOutput) -> DevicePlanning {
@@ -478,13 +522,17 @@ import Foundation
 		return DevicePlanning(channels: output.format.channels, rates: output.availableSampleRates,
 		                      dop: defaults.bool(forKey: "enableDoP") && (!requiresExclusiveDoP || holdable),
 		                      dopExclusive: requiresExclusiveDoP,
-		                      exclusive: defaults.bool(forKey: Self.exclusiveKey) && holdable)
+		                      exclusive: defaults.bool(forKey: Self.exclusiveKey) && holdable,
+		                      spatial: defaults.bool(forKey: Self.spatialKey) && spatialRefused != output.deviceID && output.isHeadphones,
+		                      freeSurround: defaults.bool(forKey: Self.freeSurroundKey))
 	}
 
 	/// The plan for a track with these decoder properties: a DoP carrier if
 	/// it wants one and may have it; else, for PCM (and DSD made PCM) with
 	/// exclusive output on, the device held at the track's own rate, or the
-	/// closest it offers (`DeviceOutput.deviceRate`); else shared.
+	/// closest it offers (`DeviceOutput.deviceRate`); else shared, and
+	/// spatial if it is surround (or FreeSurround will make it so) on
+	/// headphones.
 	static func plan(for properties: [AnyHashable: Any], device: DevicePlanning) -> OutputPlan {
 		let dopRate = carrierRate(for: properties, deviceChannels: device.channels) { rate in
 			device.dop && DeviceOutput.supports(rate, among: device.rates)
@@ -492,8 +540,17 @@ import Foundation
 		if let dopRate {
 			return OutputPlan(deviceRate: dopRate, dop: true, exclusive: device.dopExclusive)
 		}
-		guard device.exclusive, let rate = pcmRate(of: properties) else { return .shared }
+		guard device.exclusive, let rate = pcmRate(of: properties) else {
+			return OutputPlan(spatial: device.spatial && isSurround(properties, freeSurround: device.freeSurround))
+		}
 		return OutputPlan(deviceRate: DeviceOutput.deviceRate(for: rate, among: device.rates), exclusive: true)
+	}
+
+	/// Whether a track reaches the output as surround: more than two
+	/// channels, or stereo FreeSurround upmixes.
+	static func isSurround(_ properties: [AnyHashable: Any], freeSurround: Bool) -> Bool {
+		let channels = (properties["channels"] as? NSNumber)?.intValue ?? 0
+		return channels > 2 || (channels == 2 && freeSurround)
 	}
 
 	/// The rate a track reaches the output at as PCM: its own, or an eighth
@@ -531,13 +588,15 @@ import Foundation
 	/// the stream's rate), and PCM wanting the device held at the rate a held
 	/// stream already runs at (a DoP carrier stream renders PCM as integers
 	/// too). DSD cannot become PCM in a DoP stream, which packs DSD as DoP.
-	/// Anything else ends the stream before it, and the engine rebuilds for
-	/// it: not gapless, as the device's rate or format changes.
+	/// Surround and stereo do not share a stream to headphones: one is
+	/// spatialized and the other not. Anything else ends the stream before
+	/// it, and the engine rebuilds for it: not gapless, as the device's rate
+	/// or format changes.
 	static func admits(_ properties: [AnyHashable: Any], into current: OutputPlan, device: DevicePlanning) -> Bool {
 		let wanted = plan(for: properties, device: device)
 		if wanted == current { return true }
 		if (properties["bitsPerSample"] as? NSNumber)?.intValue == 1 && current.dop { return false }
-		if wanted == .shared { return true }
+		if wanted == .shared { return !current.spatial }
 		return wanted.exclusive && !wanted.dop && current.exclusive && wanted.deviceRate == current.deviceRate
 	}
 
@@ -615,6 +674,7 @@ import Foundation
 		let userInfo = currentTrack?.userInfo
 		tearDown()
 		exclusiveRefused = nil
+		spatialRefused = nil
 		clearOutputStatus()
 		host?.playbackEngineDidChangeStatus(.stopped, userInfo: userInfo)
 	}
@@ -739,12 +799,22 @@ import Foundation
 	/// at the current position, as for a device change.
 	private func exclusiveSettingChanged() {
 		exclusiveRefused = nil
-		guard feeder != nil, !rebuildRequested, let output, let track = currentTrack else { return }
-		let wanted = Self.plan(for: track.sourceProperties ?? [:], device: planning(for: output))
-		guard wanted != outputPlan else { return }
-		EngineLog.logger.info("Exclusive output setting changed; restarting at the current position")
+		planSettingChanged("Exclusive output")
+	}
+
+	/// A setting the output plan depends on changed: a pipeline it changes
+	/// restarts at the current position.
+	private func planSettingChanged(_ setting: String) {
+		guard feeder != nil, !rebuildRequested, wantsAnotherPlan(), let track = currentTrack else { return }
+		EngineLog.logger.info("\(setting, privacy: .public) setting changed; restarting at the current position")
 		rebuildRequested = true
 		host?.playbackEngineRestartAtCurrentPosition(track.userInfo)
+	}
+
+	/// Whether the track being heard would now be planned differently.
+	private func wantsAnotherPlan() -> Bool {
+		guard let output, let track = currentTrack else { return false }
+		return Self.plan(for: track.sourceProperties ?? [:], device: planning(for: output)) != outputPlan
 	}
 
 	/// The setting changed while paused: start or stop the clock, and run
@@ -862,6 +932,7 @@ import Foundation
 				let userInfo = currentTrack?.userInfo
 				tearDown()
 				exclusiveRefused = nil
+				spatialRefused = nil
 				clearOutputStatus()
 				host?.playbackEngineDidChangeStatus(.stopped, userInfo: userInfo)
 				host?.playbackEngineDidStopNaturally(userInfo)
@@ -923,8 +994,8 @@ import Foundation
 		if ran.contains(ObjectIdentifier(equalizer)) {
 			modifications.append(CogAudioOutputModificationEqualizer)
 		}
-		if ran.contains(ObjectIdentifier(hrtf)) {
-			modifications.append(CogAudioOutputModificationHRTF)
+		if outputPlan.spatial {
+			modifications.append(CogAudioOutputModificationSpatialAudio)
 		}
 		return modifications
 	}
@@ -1122,6 +1193,10 @@ import Foundation
 			EngineLog.logger.info("The new device renders \(output.format.sampleRate, format: .fixed(precision: 0)) Hz, \(output.format.channels) channels; rebuilding")
 			return false
 		}
+		guard !wantsAnotherPlan() else {
+			EngineLog.logger.info("The new device plans the track differently; rebuilding")
+			return false
+		}
 		EngineLog.logger.info("Moved playback to device \(output.deviceID) in place")
 		return true
 	}
@@ -1134,7 +1209,7 @@ import Foundation
 		case .format:
 			// A stream's format may have changed under the same render format.
 			publishedStatus = nil
-			guard output.hardwareFormatDiffers() else {
+			guard output.hardwareFormatDiffers() || wantsAnotherPlan() else {
 				// Whatever changed, the I/O buffer may have been reset.
 				output.reassertBufferSize()
 				EngineLog.logger.debug("Device format notification without a change; kept the I/O buffer")

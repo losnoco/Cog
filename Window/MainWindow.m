@@ -223,7 +223,7 @@ static NSString *modificationDescription(NSString *modification, NSDictionary *s
 		CogAudioOutputModificationTimeStretch: NSLocalizedString(@"Tempo or pitch changed", @"Cog signal-integrity reason"),
 		CogAudioOutputModificationFreeSurround: NSLocalizedString(@"Upmixed by FreeSurround", @"Cog signal-integrity reason"),
 		CogAudioOutputModificationEqualizer: NSLocalizedString(@"Equalizer applied", @"Cog signal-integrity reason"),
-		CogAudioOutputModificationHRTF: NSLocalizedString(@"HRTF headphone virtualization applied", @"Cog signal-integrity reason"),
+		CogAudioOutputModificationSpatialAudio: NSLocalizedString(@"Spatialized for headphones by macOS", @"Cog signal-integrity reason"),
 	};
 	return descriptions[modification] ?: modification;
 }

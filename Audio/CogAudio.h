@@ -35,7 +35,6 @@ FOUNDATION_EXPORT const unsigned char CogAudioVersionString[];
 #import <CogAudio/CogEqualizer.h>
 #import <CogAudio/Downmix.h>
 #import <CogAudio/FSurroundFilter.h>
-#import <CogAudio/HeadphoneFilter.h>
 
 // Visualization
 #import <CogAudio/MIDIVisualizationController.h>

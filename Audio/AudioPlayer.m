@@ -39,7 +39,7 @@ NSString *const CogAudioOutputModificationTrackGain = @"trackGain";
 NSString *const CogAudioOutputModificationTimeStretch = @"timeStretch";
 NSString *const CogAudioOutputModificationFreeSurround = @"freeSurround";
 NSString *const CogAudioOutputModificationEqualizer = @"equalizer";
-NSString *const CogAudioOutputModificationHRTF = @"hrtf";
+NSString *const CogAudioOutputModificationSpatialAudio = @"spatialAudio";
 NSString *const CogAudioOutputModificationChannelLayout = @"channelLayout";
 NSString *const CogAudioOutputModificationVolume = @"volume";
 

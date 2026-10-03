@@ -266,6 +266,13 @@ Each stage ships on its own and leaves the old engine working.
      binaural stereo out. Head tracking moves to a Swift `HeadTracker`
      (`CMHeadphoneMotionManager`, macOS 14+, same matrix conventions and
      `CogPlaybackDidResetHeadTracking` reset).
+     *Later replaced:* Cog no longer virtualizes headphones itself. On
+     headphones (Bluetooth stereo, or the built-in headphone jack), shared
+     output renders surround (and FreeSurround's upmix) as a 7.1 bed into
+     Apple's `AUSpatialMixer` in front of AUHAL (`DeviceOutput`,
+     `OutputPlan.spatial`), with the system's personalized HRTF and its
+     AirPods head tracking (`enableSpatialAudio`, `enableHeadTracking`).
+     macOS never spatializes an AUHAL client's output on its own.
    - `TimeStretchStage`: Rubber Band (R2 `faster`, R3 `finer`, through its C
      API with the node's options mapping and live option changes) or
      Signalsmith (through a small C wrapper, `CogSignalsmith`), chosen by

@@ -72,11 +72,6 @@
 		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
-		839E56E52879450300DFB5F4 /* HrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E12879450300DFB5F4 /* HrtfData.h */; };
-		839E56E62879450300DFB5F4 /* Endianness.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E22879450300DFB5F4 /* Endianness.h */; };
-		839E56E72879450300DFB5F4 /* HrtfData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839E56E32879450300DFB5F4 /* HrtfData.cpp */; };
-		839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E42879450300DFB5F4 /* IHrtfData.h */; };
-		839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56E928794F6300DFB5F4 /* HrtfTypes.h */; };
 		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
 		83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */; };
 		83C0F1A12E4C1B0100C0F1A0 /* CogURLNormalization.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C0F1A22E4C1B0100C0F1A0 /* CogURLNormalization.h */; };
@@ -182,11 +177,6 @@
 		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../Utils/NSDictionary+Merge.h"; sourceTree = SOURCE_ROOT; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../Utils/NSDictionary+Merge.m"; sourceTree = SOURCE_ROOT; };
-		839E56E12879450300DFB5F4 /* HrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfData.h; sourceTree = "<group>"; };
-		839E56E22879450300DFB5F4 /* Endianness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Endianness.h; sourceTree = "<group>"; };
-		839E56E32879450300DFB5F4 /* HrtfData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HrtfData.cpp; sourceTree = "<group>"; };
-		839E56E42879450300DFB5F4 /* IHrtfData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IHrtfData.h; sourceTree = "<group>"; };
-		839E56E928794F6300DFB5F4 /* HrtfTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HrtfTypes.h; sourceTree = "<group>"; };
 		839E56F6287974A100DFB5F4 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		83B74280289E027F005AAC28 /* CogAudio-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CogAudio-Bridging-Header.h"; sourceTree = "<group>"; };
 		83C0F1A22E4C1B0100C0F1A0 /* CogURLNormalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CogURLNormalization.h; path = ../Utils/CogURLNormalization.h; sourceTree = "<group>"; };
@@ -213,7 +203,6 @@
 				CogEqualizer.h,
 				Downmix.h,
 				FSurroundFilter.h,
-				HeadphoneFilter.h,
 			);
 			target = 8DC2EF4F0486A6940098B216 /* CogAudio */;
 		};
@@ -345,7 +334,6 @@
 				83F9FFF52D6EC43900026576 /* soxr */,
 				835DD2692ACAF5AD0057E319 /* lvqcl */,
 				834A41A4287A90AB00EB9D9B /* fsurround */,
-				839E56E02879450300DFB5F4 /* hrtf */,
 				831A50152865A8800049CFE4 /* rsstate.cpp */,
 				831A50172865A8B30049CFE4 /* rsstate.h */,
 				831A50132865A7FD0049CFE4 /* rsstate.hpp */,
@@ -476,18 +464,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		839E56E02879450300DFB5F4 /* hrtf */ = {
-			isa = PBXGroup;
-			children = (
-				839E56E22879450300DFB5F4 /* Endianness.h */,
-				839E56E32879450300DFB5F4 /* HrtfData.cpp */,
-				839E56E12879450300DFB5F4 /* HrtfData.h */,
-				839E56E928794F6300DFB5F4 /* HrtfTypes.h */,
-				839E56E42879450300DFB5F4 /* IHrtfData.h */,
-			);
-			path = hrtf;
-			sourceTree = "<group>";
-		};
 		83F9FFF12D6EC43900026576 /* include */ = {
 			isa = PBXGroup;
 			children = (
@@ -525,7 +501,6 @@
 				835C7024306CD07D003A9DEB /* CogAudio.h in Headers */,
 				83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */,
 				833442422D6EFA6700C51D38 /* VisualizationController.h in Headers */,
-				839E56E82879450300DFB5F4 /* IHrtfData.h in Headers */,
 				831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */,
 				834A41AC287A90AB00EB9D9B /* channelmaps.h in Headers */,
 				83CB56652E06464D003DD379 /* NSDictionary+Optional.h in Headers */,
@@ -533,11 +508,9 @@
 				835DD2732ACAF5AD0057E319 /* util.h in Headers */,
 				8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */,
 				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
-				839E56E52879450300DFB5F4 /* HrtfData.h in Headers */,
 				83F9FFF62D6EC43900026576 /* soxr.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
 				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
-				839E56E62879450300DFB5F4 /* Endianness.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				835DD2722ACAF5AD0057E319 /* lpc.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
@@ -562,7 +535,6 @@
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
 				07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */,
-				839E56EA28794F6300DFB5F4 /* HrtfTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,7 +666,6 @@
 				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
-				839E56E72879450300DFB5F4 /* HrtfData.cpp in Sources */,
 				17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */,
 				8328995827CB51B700D7F028 /* SHA256Digest.m in Sources */,
 				17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */,

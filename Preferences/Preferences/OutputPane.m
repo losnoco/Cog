@@ -8,8 +8,6 @@
 
 #import "OutputPane.h"
 
-static NSNotificationName CogPlaybackDidResetHeadTracking = @"CogPlaybackDidResetHeadTracking";
-
 @implementation OutputPane
 
 - (NSString *)title {
@@ -17,11 +15,10 @@ static NSNotificationName CogPlaybackDidResetHeadTracking = @"CogPlaybackDidRese
 }
 
 - (NSImage *)icon {
-	if(@available(macOS 14.0, *)) {
+	if(@available(macOS 12.3, *)) {
 		/* do nothing */
 	} else {
 		[headTracking setHidden:YES];
-		[headRecenter setHidden:YES];
 	}
 	if(@available(macOS 11.0, *))
 		return [NSImage imageWithSystemSymbolName:@"hifispeaker.2.fill" accessibilityDescription:nil];
@@ -31,10 +28,6 @@ static NSNotificationName CogPlaybackDidResetHeadTracking = @"CogPlaybackDidRese
 - (IBAction)takeDeviceID:(id)sender {
 	NSDictionary *device = [[outputDevices selectedObjects] objectAtIndex:0];
 	[[NSUserDefaults standardUserDefaults] setObject:device forKey:@"outputDevice"];
-}
-
-- (IBAction)resetHeadTracking:(id)sender {
-	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackDidResetHeadTracking object:nil];
 }
 
 @end

@@ -578,24 +578,6 @@
         }
       }
     },
-    "aQP-kn-fMB.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Recenter\"; ObjectID = \"aQP-kn-fMB\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Recenter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recalibrar"
-          }
-        }
-      }
-    },
     "AQZ-ku-F8u.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Default play time:\"; ObjectID = \"AQZ-ku-F8u\";",
       "extractionState" : "extracted_with_value",
@@ -1432,19 +1414,19 @@
       }
     },
     "NGx-0c-WVR.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Enable HRTF filter\"; ObjectID = \"NGx-0c-WVR\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Spatialize surround on headphones\"; ObjectID = \"NGx-0c-WVR\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Enable HRTF filter"
+            "value" : "Spatialize surround on headphones"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activar filtro HRTF"
+            "value" : "Espacializar el sonido envolvente en audífonos"
           }
         }
       }

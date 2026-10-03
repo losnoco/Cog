@@ -175,7 +175,7 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 		                                  @"GraphicEQpreset": @(-1),
 		                                  @"GraphicEQtrackgenre": @NO,
 		                                  @"volumeLimit": @YES,
-		                                  @"enableHrtf": @NO,
+		                                  @"enableSpatialAudio": @YES,
 		                                  @"enableHeadTracking": @NO,
 		                                  @"enableHDCD": @NO,
 		                                  @"rubberbandEngine": @"varispeed",

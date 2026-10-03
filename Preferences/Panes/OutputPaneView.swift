@@ -6,8 +6,8 @@ private final class OutputPrefs: ObservableObject {
     @Published var volumeScaling: String {
         didSet { guard isActive else { return }; UserDefaults.standard.set(volumeScaling, forKey: "volumeScaling") }
     }
-    @Published var enableHrtf: Bool {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(enableHrtf, forKey: "enableHrtf") }
+    @Published var enableSpatialAudio: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(enableSpatialAudio, forKey: "enableSpatialAudio") }
     }
     @Published var enableFSurround: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableFSurround, forKey: "enableFSurround") }
@@ -46,7 +46,7 @@ private final class OutputPrefs: ObservableObject {
     init() {
         let d = UserDefaults.standard
         volumeScaling = d.string(forKey: "volumeScaling") ?? "albumGainWithPeak"
-        enableHrtf = d.bool(forKey: "enableHrtf")
+        enableSpatialAudio = d.bool(forKey: "enableSpatialAudio")
         enableHeadTracking = d.bool(forKey: "enableHeadTracking")
         enableFSurround = d.bool(forKey: "enableFSurround")
         volumeLimit = d.object(forKey: "volumeLimit") as? Bool ?? true
@@ -148,24 +148,20 @@ struct OutputPaneView: View {
                 Text("Advanced audio formats").bold()
             }
             Section {
-                Toggle("Enable HRTF / Binaural", isOn: $prefs.enableHrtf)
+                Toggle("Spatialize surround on headphones", isOn: $prefs.enableSpatialAudio)
+                    .help("Surround plays through Apple's spatial audio on AirPods and other headphones, with your personalized spatial audio profile. Stereo plays as it is, unless FreeSurround upmixes it. Speakers get a plain downmix.")
+                if #available(macOS 12.3, *) {
+                    Toggle("Head tracking", isOn: $prefs.enableHeadTracking)
+                        .disabled(!prefs.enableSpatialAudio)
+                        .help("Keeps the sound in place as you turn your head, on AirPods that support it.")
+                }
                 Toggle(
                     "Enable FreeSurround decoder",
                     isOn: $prefs.enableFSurround
                 )
-                if #available(macOS 14.0, *) {
-                    Toggle("Enable head tracking", isOn: $prefs.enableHeadTracking)
-                        .disabled(!prefs.enableHrtf)
-                    Button("Recenter head tracking") {
-                        NotificationCenter.default.post(
-                            name: Notification.Name("CogPlaybackDidResetHeadTracking"),
-                            object: nil
-                        )
-                    }
-                    .disabled(!prefs.enableHrtf || !prefs.enableHeadTracking)
-                }
+                .help("Upmixes stereo to 5.1, for surround speakers or for spatial audio on headphones.")
             } header: {
-                Text("Binaural audio").bold()
+                Text("Spatial audio").bold()
             }
         }
     }

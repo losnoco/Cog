@@ -64,7 +64,7 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationTrackGain;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationTimeStretch;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationFreeSurround;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationEqualizer;
-FOUNDATION_EXPORT NSString *const CogAudioOutputModificationHRTF;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationSpatialAudio;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationChannelLayout;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 
