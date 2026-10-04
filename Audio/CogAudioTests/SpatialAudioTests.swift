@@ -123,4 +123,73 @@ final class SpatialAudioTests: XCTestCase {
 		XCTAssertFalse(output.isSpatial)
 		XCTAssertEqual(output.format, deviceFormat, "back to the device's own channels")
 	}
+
+	// MARK: - Pausing
+
+	/// Whether any process has the device's I/O running.
+	private func deviceIsRunningSomewhere(_ id: AudioDeviceID) -> Bool {
+		var running: UInt32 = 0
+		DeviceOutput.getProperty(id, kAudioDevicePropertyDeviceIsRunningSomewhere, &running)
+		return running != 0
+	}
+
+	private func runMainLoop(until condition: () -> Bool, timeout: TimeInterval) {
+		let deadline = Date().addingTimeInterval(timeout)
+		while !condition() && Date() < deadline {
+			RunLoop.main.run(mode: .default, before: Date(timeIntervalSinceNow: 0.01))
+		}
+	}
+
+	/// Whether this process has output running on any device, as Core
+	/// Audio sees it; nil before macOS 14.
+	private func thisProcessIsRunningOutput() -> Bool? {
+		guard #available(macOS 14, *) else { return nil }
+		var pid = getpid()
+		var process = AudioObjectID(kAudioObjectUnknown)
+		var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyTranslatePIDToProcessObject, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
+		var size = UInt32(MemoryLayout<AudioObjectID>.size)
+		guard AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject), &address, UInt32(MemoryLayout<pid_t>.size), &pid, &size, &process) == noErr,
+		      process != kAudioObjectUnknown else { return nil }
+		var running: UInt32 = 0
+		guard DeviceOutput.getProperty(process, kAudioProcessPropertyIsRunningOutput, &running) else { return nil }
+		return running != 0
+	}
+
+	/// Paused surround through the spatial mixer is suspended like any
+	/// other output: the device itself stops, so it no longer keeps the
+	/// machine awake. Another process can keep the device running (an app
+	/// recording from it, as FineTune does while anything plays); then the
+	/// test only checks that this process let go.
+	func testPausedSpatialOutputSuspendsTheDevice() throws {
+		let device = try XCTUnwrap(DeviceOutput.systemDefaultOutput())
+		try XCTSkipUnless(DeviceOutput.spatialOutput(of: device) != .off, "the default device is not spatialized")
+		try XCTSkipIf(deviceIsRunningSomewhere(device), "another app is playing")
+		UserDefaults.standard.set(true, forKey: PlaybackEngine.spatialKey)
+		defer { UserDefaults.standard.removeObject(forKey: PlaybackEngine.spatialKey) }
+
+		let frames = 480_000 // 10 s
+		let samples = (0..<(frames * 6)).map { Float(sin(Double($0 / 6) * 0.05)) * 0.1 }
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { _ in MemoryDecoder(samples: samples, sampleRate: 48000, channels: 6) }
+		engine.volume = 0
+		engine.suspendDelay = 0.5
+		defer { engine.stop() }
+
+		XCTAssertTrue(engine.play(URL(string: "memory://surround")!, userInfo: "surround", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+		XCTAssertTrue(host.outputStatuses.compactMap { $0 }.contains { ($0[CogAudioOutputModificationsKey] as? [String])?.contains(CogAudioOutputModificationSpatialAudio) == true },
+		              "played through the spatial mixer")
+		XCTAssertTrue(deviceIsRunningSomewhere(device))
+
+		engine.pause()
+		runMainLoop(until: { !engine.isDeviceRunning }, timeout: 3)
+		XCTAssertFalse(engine.isDeviceRunning, "suspended after the delay")
+		runMainLoop(until: { !deviceIsRunningSomewhere(device) }, timeout: 2)
+		guard deviceIsRunningSomewhere(device) else { return }
+		let ours = try XCTUnwrap(thisProcessIsRunningOutput(), "the device kept running, and this macOS cannot say by whom")
+		XCTAssertFalse(ours, "this process still runs output")
+		throw XCTSkip("this process let go, but another holds the device running")
+	}
 }
