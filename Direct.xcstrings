@@ -3,6 +3,7 @@
   "strings" : {
     "Check for updates automatically" : {
       "comment" : "Automatic update checking setting name.",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
