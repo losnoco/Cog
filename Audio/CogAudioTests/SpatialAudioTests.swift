@@ -159,11 +159,11 @@ final class SpatialAudioTests: XCTestCase {
 	/// other output: the device itself stops, so it no longer keeps the
 	/// machine awake. Another process can keep the device running (an app
 	/// recording from it, as FineTune does while anything plays); then the
-	/// test only checks that this process let go.
+	/// test only checks, through Core Audio's process objects, that this
+	/// process let go.
 	func testPausedSpatialOutputSuspendsTheDevice() throws {
 		let device = try XCTUnwrap(DeviceOutput.systemDefaultOutput())
 		try XCTSkipUnless(DeviceOutput.spatialOutput(of: device) != .off, "the default device is not spatialized")
-		try XCTSkipIf(deviceIsRunningSomewhere(device), "another app is playing")
 		UserDefaults.standard.set(true, forKey: PlaybackEngine.spatialKey)
 		defer { UserDefaults.standard.removeObject(forKey: PlaybackEngine.spatialKey) }
 
@@ -181,15 +181,55 @@ final class SpatialAudioTests: XCTestCase {
 		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
 		XCTAssertTrue(host.outputStatuses.compactMap { $0 }.contains { ($0[CogAudioOutputModificationsKey] as? [String])?.contains(CogAudioOutputModificationSpatialAudio) == true },
 		              "played through the spatial mixer")
-		XCTAssertTrue(deviceIsRunningSomewhere(device))
+		XCTAssertEqual(thisProcessIsRunningOutput(), true, "this process plays")
 
 		engine.pause()
 		runMainLoop(until: { !engine.isDeviceRunning }, timeout: 3)
 		XCTAssertFalse(engine.isDeviceRunning, "suspended after the delay")
 		runMainLoop(until: { !deviceIsRunningSomewhere(device) }, timeout: 2)
+		XCTAssertEqual(thisProcessIsRunningOutput(), false, "this process let go")
 		guard deviceIsRunningSomewhere(device) else { return }
-		let ours = try XCTUnwrap(thisProcessIsRunningOutput(), "the device kept running, and this macOS cannot say by whom")
-		XCTAssertFalse(ours, "this process still runs output")
+		throw XCTSkip("this process let go, but another holds the device running")
+	}
+
+	/// After surround through the spatial mixer, the engine rebuilds for a
+	/// stereo track (not spatialized, and resampled to the device); pausing
+	/// that must suspend the device just the same.
+	func testPausedStereoAfterSpatialSurroundSuspendsTheDevice() throws {
+		let device = try XCTUnwrap(DeviceOutput.systemDefaultOutput())
+		try XCTSkipUnless(DeviceOutput.spatialOutput(of: device) != .off, "the default device is not spatialized")
+		UserDefaults.standard.set(true, forKey: PlaybackEngine.spatialKey)
+		defer { UserDefaults.standard.removeObject(forKey: PlaybackEngine.spatialKey) }
+
+		let surround = (0..<(48000 * 6)).map { Float(sin(Double($0 / 6) * 0.05)) * 0.1 } // 1 s
+		let stereo = (0..<(96000 * 10 * 2)).map { Float(sin(Double($0 / 2) * 0.03)) * 0.1 } // 10 s at 96 kHz
+		let host = RecordingHost()
+		host.queue = [EngineTrack(url: URL(string: "memory://stereo")!, userInfo: "stereo", gain: 1)]
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { track in
+			track.url.host == "stereo"
+				? MemoryDecoder(samples: stereo, sampleRate: 96000, channels: 2)
+				: MemoryDecoder(samples: surround, sampleRate: 48000, channels: 6)
+		}
+		engine.volume = 0
+		engine.suspendDelay = 0.5
+		defer { engine.stop() }
+
+		XCTAssertTrue(engine.play(URL(string: "memory://surround")!, userInfo: "surround", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { host.log.contains("begin stereo") && engine.amountPlayed > 0.5 }, timeout: 8)
+		XCTAssertTrue(host.log.contains("begin stereo"), "moved on to the stereo track")
+		let spatial = host.outputStatuses.compactMap { $0 }.map { ($0[CogAudioOutputModificationsKey] as? [String])?.contains(CogAudioOutputModificationSpatialAudio) == true }
+		XCTAssertEqual(spatial.first, true, "surround was spatialized")
+		XCTAssertEqual(spatial.last, false, "stereo is not")
+		XCTAssertEqual(thisProcessIsRunningOutput(), true, "this process plays")
+
+		engine.pause()
+		runMainLoop(until: { !engine.isDeviceRunning }, timeout: 3)
+		XCTAssertFalse(engine.isDeviceRunning, "suspended after the delay")
+		runMainLoop(until: { !deviceIsRunningSomewhere(device) }, timeout: 2)
+		XCTAssertEqual(thisProcessIsRunningOutput(), false, "this process let go")
+		guard deviceIsRunningSomewhere(device) else { return }
 		throw XCTSkip("this process let go, but another holds the device running")
 	}
 }
