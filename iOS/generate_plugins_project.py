@@ -1,0 +1,411 @@
+#!/usr/bin/env python3
+"""Generates iOS/CogPlugins.xcodeproj.
+
+On macOS each plugin is a loadable bundle built by its own project under
+Plugins/. iOS loads no code bundles, so there the plugins are compiled from
+the same sources into one framework, CogPlugins, which the app links;
+PluginController finds their classes at launch.
+
+To add a plugin, add it to PLUGINS (and its libraries, if any) and run this
+script again. Do not edit the generated project by hand.
+"""
+
+import hashlib
+import os
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+PROJECT = HERE / 'CogPlugins.xcodeproj'
+
+IOS_DEPLOYMENT_TARGET = '18.0'
+
+# Each plugin: its source directory (relative to the repository), and
+# optionally files there to leave out.
+PLUGINS = [
+	{'name': 'CoreAudio', 'dir': 'Plugins/CoreAudio'},
+	{'name': 'CueSheet', 'dir': 'Plugins/CueSheet'},
+	{'name': 'FileSource', 'dir': 'Plugins/FileSource'},
+	{'name': 'M3u', 'dir': 'Plugins/M3u'},
+	{'name': 'Pls', 'dir': 'Plugins/Pls'},
+	{'name': 'SilenceDecoder', 'dir': 'Plugins/SilenceDecoder/SilenceDecoder'},
+]
+
+# Header search paths shared by all plugins, relative to the repository.
+HEADER_SEARCH_PATHS = [
+	'Audio',
+	'Audio/Shared',
+	'Audio/Utils',
+	'Utils',
+	'Playlist',
+]
+
+# Other projects whose framework the plugins link: (name, project path,
+# target ID, product ID) — the IDs are those in the other project.
+SUBPROJECTS = [
+	('CogAudio', 'Audio/CogAudio.xcodeproj', '8DC2EF4F0486A6940098B216', '8DC2EF5B0486A6940098B216'),
+	('File_Extractor', 'Frameworks/File_Extractor/File_Extractor.xcodeproj', '8359FF3B17FEF39F0060F3ED', '8359FF3C17FEF39F0060F3ED'),
+]
+
+SYSTEM_FRAMEWORKS = ['AudioToolbox', 'AVFoundation', 'Foundation']
+
+SOURCE_TYPES = {
+	'.m': 'sourcecode.c.objc',
+	'.mm': 'sourcecode.cpp.objcpp',
+	'.c': 'sourcecode.c.c',
+	'.cpp': 'sourcecode.cpp.cpp',
+	'.cc': 'sourcecode.cpp.cpp',
+	'.swift': 'sourcecode.swift',
+}
+HEADER_TYPES = {'.h': 'sourcecode.c.h', '.hpp': 'sourcecode.cpp.h'}
+
+
+def uid(*parts):
+	return hashlib.md5('\x1f'.join(parts).encode()).hexdigest()[:24].upper()
+
+
+def quote(value):
+	value = str(value)
+	if value and all(c.isalnum() or c in '._/' for c in value) and not value[0].isdigit():
+		return value
+	return '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'
+
+
+def rel(path):
+	"""A repository path as seen from the project directory."""
+	return os.path.relpath(ROOT / path, HERE)
+
+
+objects = {}  # section -> list of (id, comment, body)
+
+
+def add(section, ident, comment, body):
+	objects.setdefault(section, []).append((ident, comment, body))
+
+
+class Ref(str):
+	"""An object reference, rendered with its comment."""
+	def __new__(cls, ident, comment):
+		return super().__new__(cls, f'{ident} /* {comment} */')
+
+
+# MARK: - Files
+
+plugin_groups = []
+plugin_sources = []  # build file refs for the Sources phase
+for plugin in PLUGINS:
+	directory = ROOT / plugin['dir']
+	exclude = set(plugin.get('exclude', []))
+	children = []
+	for path in sorted(directory.rglob('*')):
+		if not path.is_file() or any(part.endswith(('.xcodeproj', '.lproj')) for part in path.parts):
+			continue
+		relative = path.relative_to(ROOT).as_posix()
+		if path.name in exclude or relative in exclude:
+			continue
+		ext = path.suffix
+		if ext not in SOURCE_TYPES and ext not in HEADER_TYPES:
+			continue
+		file_id = uid('file', relative)
+		add('PBXFileReference', file_id, path.name, {
+			'isa': 'PBXFileReference', 'fileEncoding': '4',
+			'lastKnownFileType': SOURCE_TYPES.get(ext) or HEADER_TYPES[ext],
+			'name': path.name, 'path': rel(relative), 'sourceTree': 'SOURCE_ROOT'})
+		children.append(Ref(file_id, path.name))
+		if ext in SOURCE_TYPES:
+			build_id = uid('build', relative)
+			add('PBXBuildFile', build_id, f'{path.name} in Sources', {
+				'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, path.name)})
+			plugin_sources.append(Ref(build_id, f'{path.name} in Sources'))
+	group_id = uid('group', plugin['name'])
+	add('PBXGroup', group_id, plugin['name'], {
+		'isa': 'PBXGroup', 'children': children, 'name': plugin['name'], 'sourceTree': '<group>'})
+	plugin_groups.append(Ref(group_id, plugin['name']))
+
+# Support files, in iOS/CogPlugins
+support_children = []
+for name, kind in [('CogPlugins_Prefix.pch', 'sourcecode.c.h'), ('CogPlugins.xcconfig', 'text.xcconfig')]:
+	file_id = uid('support', name)
+	add('PBXFileReference', file_id, name, {
+		'isa': 'PBXFileReference', 'fileEncoding': '4', 'lastKnownFileType': kind,
+		'path': f'CogPlugins/{name}', 'sourceTree': '<group>'})
+	support_children.append(Ref(file_id, name))
+XCCONFIG = Ref(uid('support', 'CogPlugins.xcconfig'), 'CogPlugins.xcconfig')
+
+# Tests, in iOS/CogPluginsTests
+test_children = []
+test_sources = []
+for path in sorted((HERE / 'CogPluginsTests').glob('*.swift')):
+	file_id = uid('test', path.name)
+	add('PBXFileReference', file_id, path.name, {
+		'isa': 'PBXFileReference', 'fileEncoding': '4', 'lastKnownFileType': 'sourcecode.swift',
+		'path': f'CogPluginsTests/{path.name}', 'sourceTree': '<group>'})
+	test_children.append(Ref(file_id, path.name))
+	build_id = uid('testbuild', path.name)
+	add('PBXBuildFile', build_id, f'{path.name} in Sources', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, path.name)})
+	test_sources.append(Ref(build_id, f'{path.name} in Sources'))
+
+# MARK: - Frameworks
+
+framework_children = []
+plugin_links = []
+test_links = []
+for name in SYSTEM_FRAMEWORKS:
+	file_id = uid('sysfw', name)
+	add('PBXFileReference', file_id, f'{name}.framework', {
+		'isa': 'PBXFileReference', 'lastKnownFileType': 'wrapper.framework', 'name': f'{name}.framework',
+		'path': f'System/Library/Frameworks/{name}.framework', 'sourceTree': 'SDKROOT'})
+	framework_children.append(Ref(file_id, f'{name}.framework'))
+	build_id = uid('sysfwbuild', name)
+	add('PBXBuildFile', build_id, f'{name}.framework in Frameworks', {
+		'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, f'{name}.framework')})
+	plugin_links.append(Ref(build_id, f'{name}.framework in Frameworks'))
+
+TARGET_ID = uid('target', 'CogPlugins')
+TEST_TARGET_ID = uid('target', 'CogPluginsTests')
+PRODUCT_ID = uid('product', 'CogPlugins')
+TEST_PRODUCT_ID = uid('product', 'CogPluginsTests')
+PROJECT_ID = uid('project', 'CogPlugins')
+
+project_references = []
+plugin_dependencies = []
+subproject_children = []
+for name, path, target_id, product_id in SUBPROJECTS:
+	project_file = uid('subproject', name)
+	add('PBXFileReference', project_file, f'{name}.xcodeproj', {
+		'isa': 'PBXFileReference', 'lastKnownFileType': 'wrapper.pb-project', 'name': f'{name}.xcodeproj',
+		'path': rel(path), 'sourceTree': 'SOURCE_ROOT'})
+	subproject_children.append(Ref(project_file, f'{name}.xcodeproj'))
+	product_proxy = uid('productproxy', name)
+	add('PBXContainerItemProxy', product_proxy, 'PBXContainerItemProxy', {
+		'isa': 'PBXContainerItemProxy', 'containerPortal': Ref(project_file, f'{name}.xcodeproj'),
+		'proxyType': '2', 'remoteGlobalIDString': product_id, 'remoteInfo': name})
+	reference_proxy = uid('referenceproxy', name)
+	add('PBXReferenceProxy', reference_proxy, f'{name}.framework', {
+		'isa': 'PBXReferenceProxy', 'fileType': 'wrapper.framework', 'path': f'{name}.framework',
+		'remoteRef': Ref(product_proxy, 'PBXContainerItemProxy'), 'sourceTree': 'BUILT_PRODUCTS_DIR'})
+	products_group = uid('productsgroup', name)
+	add('PBXGroup', products_group, 'Products', {
+		'isa': 'PBXGroup', 'children': [Ref(reference_proxy, f'{name}.framework')], 'name': 'Products',
+		'sourceTree': '<group>'})
+	project_references.append({'ProductGroup': Ref(products_group, 'Products'), 'ProjectRef': Ref(project_file, f'{name}.xcodeproj')})
+	target_proxy = uid('targetproxy', name)
+	add('PBXContainerItemProxy', target_proxy, 'PBXContainerItemProxy', {
+		'isa': 'PBXContainerItemProxy', 'containerPortal': Ref(project_file, f'{name}.xcodeproj'),
+		'proxyType': '1', 'remoteGlobalIDString': target_id, 'remoteInfo': name})
+	dependency = uid('dependency', name)
+	add('PBXTargetDependency', dependency, 'PBXTargetDependency', {
+		'isa': 'PBXTargetDependency', 'name': name, 'targetProxy': Ref(target_proxy, 'PBXContainerItemProxy')})
+	plugin_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
+	build_id = uid('subprojectbuild', name)
+	add('PBXBuildFile', build_id, f'{name}.framework in Frameworks', {
+		'isa': 'PBXBuildFile', 'fileRef': Ref(reference_proxy, f'{name}.framework')})
+	plugin_links.append(Ref(build_id, f'{name}.framework in Frameworks'))
+	if name == 'CogAudio':
+		test_build = uid('testlink', name)
+		add('PBXBuildFile', test_build, f'{name}.framework in Frameworks', {
+			'isa': 'PBXBuildFile', 'fileRef': Ref(reference_proxy, f'{name}.framework')})
+		test_links.append(Ref(test_build, f'{name}.framework in Frameworks'))
+
+add('PBXFileReference', PRODUCT_ID, 'CogPlugins.framework', {
+	'isa': 'PBXFileReference', 'explicitFileType': 'wrapper.framework', 'includeInIndex': '0',
+	'path': 'CogPlugins.framework', 'sourceTree': 'BUILT_PRODUCTS_DIR'})
+add('PBXFileReference', TEST_PRODUCT_ID, 'CogPluginsTests.xctest', {
+	'isa': 'PBXFileReference', 'explicitFileType': 'wrapper.cfbundle', 'includeInIndex': '0',
+	'path': 'CogPluginsTests.xctest', 'sourceTree': 'BUILT_PRODUCTS_DIR'})
+test_link_plugins = uid('testlink', 'CogPlugins')
+add('PBXBuildFile', test_link_plugins, 'CogPlugins.framework in Frameworks', {
+	'isa': 'PBXBuildFile', 'fileRef': Ref(PRODUCT_ID, 'CogPlugins.framework')})
+test_links.append(Ref(test_link_plugins, 'CogPlugins.framework in Frameworks'))
+
+# MARK: - Groups
+
+groups = [
+	('Plugins', plugin_groups, None),
+	('CogPlugins', support_children, None),
+	('CogPluginsTests', test_children, None),
+	('Projects', subproject_children, None),
+	('Frameworks', framework_children, None),
+	('Products', [Ref(PRODUCT_ID, 'CogPlugins.framework'), Ref(TEST_PRODUCT_ID, 'CogPluginsTests.xctest')], None),
+]
+main_children = []
+for name, children, _ in groups:
+	group_id = uid('maingroup', name)
+	add('PBXGroup', group_id, name, {'isa': 'PBXGroup', 'children': children, 'name': name, 'sourceTree': '<group>'})
+	main_children.append(Ref(group_id, name))
+MAIN_GROUP = uid('maingroup', '')
+add('PBXGroup', MAIN_GROUP, '', {'isa': 'PBXGroup', 'children': main_children, 'sourceTree': '<group>'})
+PRODUCTS_GROUP = Ref(uid('maingroup', 'Products'), 'Products')
+
+# MARK: - Phases
+
+def phase(isa, name, target, files):
+	ident = uid('phase', target, name)
+	add(isa, ident, name, {'isa': isa, 'buildActionMask': '2147483647', 'files': files,
+	                       'runOnlyForDeploymentPostprocessing': '0'})
+	return Ref(ident, name)
+
+
+plugin_phases = [
+	phase('PBXSourcesBuildPhase', 'Sources', 'CogPlugins', plugin_sources),
+	phase('PBXFrameworksBuildPhase', 'Frameworks', 'CogPlugins', plugin_links),
+]
+test_phases = [
+	phase('PBXSourcesBuildPhase', 'Sources', 'CogPluginsTests', test_sources),
+	phase('PBXFrameworksBuildPhase', 'Frameworks', 'CogPluginsTests', test_links),
+]
+
+# MARK: - Configurations
+
+def configurations(owner, common, debug, release, base=None):
+	ids = []
+	for name, extra in [('Debug', debug), ('Release', release)]:
+		ident = uid('config', owner, name)
+		body = {'isa': 'XCBuildConfiguration'}
+		if base:
+			body['baseConfigurationReference'] = base
+		body['buildSettings'] = dict(sorted({**common, **extra}.items()))
+		body['name'] = name
+		add('XCBuildConfiguration', ident, name, body)
+		ids.append(Ref(ident, name))
+	list_id = uid('configlist', owner)
+	add('XCConfigurationList', list_id, f'Build configuration list for {owner}', {
+		'isa': 'XCConfigurationList', 'buildConfigurations': ids,
+		'defaultConfigurationIsVisible': '0', 'defaultConfigurationName': 'Release'})
+	return Ref(list_id, f'Build configuration list for {owner}')
+
+
+project_settings = {
+	'ALWAYS_SEARCH_USER_PATHS': 'NO',
+	'CLANG_CXX_LANGUAGE_STANDARD': 'gnu++17',
+	'CLANG_ENABLE_MODULES': 'YES',
+	'CLANG_ENABLE_OBJC_ARC': 'YES',
+	'GCC_C_LANGUAGE_STANDARD': 'gnu17',
+	'IPHONEOS_DEPLOYMENT_TARGET': IOS_DEPLOYMENT_TARGET,
+	'OTHER_CFLAGS': '-Wframe-larger-than=4000',
+	'OTHER_CPLUSPLUSFLAGS': '-Wframe-larger-than=16000',
+	'SDKROOT': 'iphoneos',
+	'SUPPORTED_PLATFORMS': 'iphoneos iphonesimulator',
+	'SUPPORTS_MACCATALYST': 'NO',
+	'SWIFT_VERSION': '5.0',
+	'TARGETED_DEVICE_FAMILY': '1,2',
+}
+project_config = configurations('PBXProject "CogPlugins"', project_settings,
+                                {'DEBUG_INFORMATION_FORMAT': 'dwarf', 'ENABLE_TESTABILITY': 'YES', 'GCC_OPTIMIZATION_LEVEL': '0',
+                                 'GCC_PREPROCESSOR_DEFINITIONS': ['DEBUG=1', '$(inherited)'], 'ONLY_ACTIVE_ARCH': 'YES',
+                                 'SWIFT_ACTIVE_COMPILATION_CONDITIONS': 'DEBUG', 'SWIFT_OPTIMIZATION_LEVEL': '-Onone'},
+                                {'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym', 'SWIFT_COMPILATION_MODE': 'wholemodule'},
+                                base=XCCONFIG)
+plugin_config = configurations('PBXNativeTarget "CogPlugins"', {
+	'CODE_SIGN_STYLE': 'Automatic',
+	'DEFINES_MODULE': 'NO',
+	'DYLIB_INSTALL_NAME_BASE': '@rpath',
+	'GCC_PRECOMPILE_PREFIX_HEADER': 'YES',
+	'GCC_PREFIX_HEADER': 'CogPlugins/CogPlugins_Prefix.pch',
+	'GENERATE_INFOPLIST_FILE': 'YES',
+	'HEADER_SEARCH_PATHS': ['$(inherited)'] + [rel(p) for p in HEADER_SEARCH_PATHS],
+	'INSTALL_PATH': '$(LOCAL_LIBRARY_DIR)/Frameworks',
+	'LD_RUNPATH_SEARCH_PATHS': ['$(inherited)', '@executable_path/Frameworks', '@loader_path/Frameworks'],
+	'PRODUCT_BUNDLE_IDENTIFIER': 'org.cogx.CogPlugins',
+	'PRODUCT_NAME': '$(TARGET_NAME)',
+	'SKIP_INSTALL': 'YES',
+}, {}, {})
+test_config = configurations('PBXNativeTarget "CogPluginsTests"', {
+	'CODE_SIGN_STYLE': 'Automatic',
+	'GENERATE_INFOPLIST_FILE': 'YES',
+	'LD_RUNPATH_SEARCH_PATHS': ['$(inherited)', '@executable_path/Frameworks', '@loader_path/Frameworks'],
+	'PRODUCT_BUNDLE_IDENTIFIER': 'org.cogx.CogPluginsTests',
+	'PRODUCT_NAME': '$(TARGET_NAME)',
+}, {}, {})
+
+# MARK: - Targets and project
+
+test_dependency_proxy = uid('testproxy', 'CogPlugins')
+add('PBXContainerItemProxy', test_dependency_proxy, 'PBXContainerItemProxy', {
+	'isa': 'PBXContainerItemProxy', 'containerPortal': Ref(PROJECT_ID, 'Project object'),
+	'proxyType': '1', 'remoteGlobalIDString': TARGET_ID, 'remoteInfo': 'CogPlugins'})
+test_dependency = uid('testdependency', 'CogPlugins')
+add('PBXTargetDependency', test_dependency, 'PBXTargetDependency', {
+	'isa': 'PBXTargetDependency', 'target': Ref(TARGET_ID, 'CogPlugins'),
+	'targetProxy': Ref(test_dependency_proxy, 'PBXContainerItemProxy')})
+
+add('PBXNativeTarget', TARGET_ID, 'CogPlugins', {
+	'isa': 'PBXNativeTarget', 'buildConfigurationList': plugin_config, 'buildPhases': plugin_phases,
+	'buildRules': [], 'dependencies': plugin_dependencies, 'name': 'CogPlugins', 'productName': 'CogPlugins',
+	'productReference': Ref(PRODUCT_ID, 'CogPlugins.framework'),
+	'productType': 'com.apple.product-type.framework'})
+add('PBXNativeTarget', TEST_TARGET_ID, 'CogPluginsTests', {
+	'isa': 'PBXNativeTarget', 'buildConfigurationList': test_config, 'buildPhases': test_phases,
+	'buildRules': [], 'dependencies': [Ref(test_dependency, 'PBXTargetDependency')], 'name': 'CogPluginsTests',
+	'productName': 'CogPluginsTests', 'productReference': Ref(TEST_PRODUCT_ID, 'CogPluginsTests.xctest'),
+	'productType': 'com.apple.product-type.bundle.unit-test'})
+add('PBXProject', PROJECT_ID, 'Project object', {
+	'isa': 'PBXProject',
+	'attributes': {'BuildIndependentTargetsInParallel': 'YES', 'LastUpgradeCheck': '2700'},
+	'buildConfigurationList': project_config, 'compatibilityVersion': 'Xcode 15.0', 'developmentRegion': 'en',
+	'hasScannedForEncodings': '0', 'knownRegions': ['en', 'Base'], 'mainGroup': Ref(MAIN_GROUP, ''),
+	'productRefGroup': PRODUCTS_GROUP, 'projectDirPath': '', 'projectReferences': project_references,
+	'projectRoot': '', 'targets': [Ref(TARGET_ID, 'CogPlugins'), Ref(TEST_TARGET_ID, 'CogPluginsTests')]})
+
+# MARK: - Writing
+
+
+def render(value, indent):
+	if isinstance(value, list):
+		inner = ''.join(f'{indent}\t{render(v, indent + chr(9))},\n' for v in value)
+		return f'(\n{inner}{indent})'
+	if isinstance(value, dict):
+		inner = ''.join(f'{indent}\t{quote(k)} = {render(v, indent + chr(9))};\n' for k, v in value.items())
+		return f'{{\n{inner}{indent}}}'
+	return value if isinstance(value, Ref) else quote(value)
+
+
+def render_inline(body):
+	return '{' + ''.join(f'{quote(k)} = {v if isinstance(v, Ref) else quote(v)}; ' for k, v in body.items()) + '}'
+
+
+INLINE = {'PBXBuildFile', 'PBXFileReference'}
+out = ['// !$*UTF8*$!', '{', '\tarchiveVersion = 1;', '\tclasses = {', '\t};', '\tobjectVersion = 77;', '\tobjects = {']
+for section in sorted(objects):
+	out.append('')
+	out.append(f'/* Begin {section} section */')
+	for ident, comment, body in sorted(objects[section]):
+		label = f'{ident} /* {comment} */' if comment else ident
+		if section in INLINE:
+			out.append(f'\t\t{label} = {render_inline(body)};')
+		else:
+			out.append(f'\t\t{label} = {render(body, chr(9) * 2)};')
+	out.append(f'/* End {section} section */')
+out += ['\t};', f'\trootObject = {PROJECT_ID} /* Project object */;', '}', '']
+
+PROJECT.mkdir(exist_ok=True)
+(PROJECT / 'project.pbxproj').write_text('\n'.join(out))
+
+# A shared scheme, so the tests run with the framework.
+scheme_dir = PROJECT / 'xcshareddata' / 'xcschemes'
+scheme_dir.mkdir(parents=True, exist_ok=True)
+(scheme_dir / 'CogPlugins.xcscheme').write_text(f'''<?xml version="1.0" encoding="UTF-8"?>
+<Scheme LastUpgradeVersion = "2700" version = "1.7">
+   <BuildAction parallelizeBuildables = "YES" buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry buildForTesting = "YES" buildForRunning = "YES" buildForProfiling = "YES" buildForArchiving = "YES" buildForAnalyzing = "YES">
+            <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "{TARGET_ID}" BuildableName = "CogPlugins.framework" BlueprintName = "CogPlugins" ReferencedContainer = "container:CogPlugins.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference skipped = "NO">
+            <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "{TEST_TARGET_ID}" BuildableName = "CogPluginsTests.xctest" BlueprintName = "CogPluginsTests" ReferencedContainer = "container:CogPlugins.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" launchStyle = "0" useCustomWorkingDirectory = "NO" ignoresPersistentStateOnLaunch = "NO" debugDocumentVersioning = "YES" debugServiceExtension = "internal" allowLocationSimulation = "YES">
+   </LaunchAction>
+   <ArchiveAction buildConfiguration = "Release" revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
+''')
+print(f'Wrote {PROJECT.relative_to(ROOT)} with {len(PLUGINS)} plugins, {len(plugin_sources)} source files')

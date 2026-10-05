@@ -6,7 +6,7 @@
 //  Copyright 2015 __NoWork, LLC__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import "Plugin.h"
 

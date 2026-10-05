@@ -62,7 +62,7 @@
 		83E5FE701FFF010C00659F0F /* OMPTMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OMPTMetadataReader.mm; path = OpenMPT/OMPTMetadataReader.mm; sourceTree = "<group>"; };
 		83E5FE711FFF010C00659F0F /* OMPTDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPTDecoder.h; path = OpenMPT/OMPTDecoder.h; sourceTree = "<group>"; };
 		83E5FE721FFF010C00659F0F /* OMPTMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPTMetadataReader.h; path = OpenMPT/OMPTMetadataReader.h; sourceTree = "<group>"; };
-		83E5FE761FFF076F00659F0F /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83E5FE761FFF076F00659F0F /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83F30A81286EBB420005EF06 /* libOpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libOpenMPT.xcodeproj; path = ../../Frameworks/OpenMPT/libOpenMPT.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,7 +131,7 @@
 			children = (
 				834A42BE287AFDC300EB9D9B /* AudioChunk.h */,
 				83E5FE6B1FFF004D00659F0F /* Logging.h */,
-				83E5FE761FFF076F00659F0F /* PlaylistController.h */,
+				83E5FE761FFF076F00659F0F /* PlaylistControllerEnums.h */,
 				83E5FE6C1FFF006400659F0F /* Plugin.h */,
 				83E5FE6E1FFF010B00659F0F /* OMPTContainer.h */,
 				83E5FE6F1FFF010B00659F0F /* OMPTContainer.mm */,

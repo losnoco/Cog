@@ -217,7 +217,7 @@
 		83CA241E1D7BC47C00F2EA53 /* mGBA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mGBA.xcodeproj; path = ../../Frameworks/mGBA/mGBA.xcodeproj; sourceTree = "<group>"; };
 		83DE0C34180A9BD400269051 /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = "<group>"; };
 		83E2F4C923566B0C006F7A41 /* lazyusf2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf2.xcodeproj; path = ../../Frameworks/lazyusf2/lazyusf2.xcodeproj; sourceTree = "<group>"; };
-		83FAF8A318ADD27F00057CAF /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83FAF8A318ADD27F00057CAF /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83FC32591BF5AB9000962B36 /* HighlyExperimental.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HighlyExperimental.xcodeproj; path = ../../Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -329,7 +329,7 @@
 			children = (
 				834A42B6287AF99600EB9D9B /* AudioChunk.h */,
 				83AA660827B7CCB00098D4B8 /* Logging.h */,
-				83FAF8A318ADD27F00057CAF /* PlaylistController.h */,
+				83FAF8A318ADD27F00057CAF /* PlaylistControllerEnums.h */,
 				8324C584181513A10046F78F /* circular_buffer.h */,
 				834379A717F9818400584396 /* HCDecoder.mm */,
 				8343780E17F932C900584396 /* Plugin.h */,

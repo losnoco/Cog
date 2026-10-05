@@ -1,0 +1,593 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		047936E2A7D9B145CBD7CD44 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */; };
+		071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9308F951DA638F9E5B02C00E /* SilenceDecoder.m */; };
+		32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */; };
+		34D69FC1E7A6ABDD55218E47 /* CueSheetTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */; };
+		48425FFBE7EB53E2878E8481 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D59C40E79B719FEE54AFFC5 /* FileSource.m */; };
+		50422BFAAA0E6F6A3162E91F /* CogPlugins.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 681B3E839D0E192A690222C4 /* CogPlugins.framework */; };
+		585BE524744AFAB5FD34DCF9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 644D14A6CEF05A0105659361 /* AVFoundation.framework */; };
+		64EC393750B363CE76930218 /* CueSheetContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = F1C4050E39C2119A3C00A9DB /* CueSheetContainer.m */; };
+		6CD61659FAED49553B90D4C1 /* CueSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 845B6053B44E8F976EA1CD63 /* CueSheet.m */; };
+		730A757E6B41EFC05D036AA0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70BA5804918B7E26B3153C57 /* Foundation.framework */; };
+		8835465D38CE202A5C6E177C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */; };
+		96C620C58FBCD1274E68E55C /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2F05F10D669068268BFDB49 /* File_Extractor.framework */; };
+		9F0A7709E99F218847E32BAA /* CueSheetDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = E78010C72519F5A112D4C253 /* CueSheetDecoder.m */; };
+		AEB74DDB94DDF68C9A8B51E3 /* PlsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = CB795B83652675999BA2E14A /* PlsContainer.m */; };
+		CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */; };
+		DF53D2FA4E49D9D41FF4D40C /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; };
+		E39766458029347F10556148 /* CoreAudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = EF0FACC695E239425D91B99E /* CoreAudioDecoder.m */; };
+		EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFD3F22F9E7637573E710E1 /* SilenceSource.m */; };
+		EE98248FAA390B167A40962C /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		22684EFD2A9AA1E7A62BBE25 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E5D20029BB08A770C67678AB /* CogAudio.xcodeproj */;
+			proxyType = "2";
+			remoteGlobalIDString = "8DC2EF5B0486A6940098B216";
+			remoteInfo = CogAudio;
+		};
+		2650FE9B2F5054E51E5DCFEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */;
+			proxyType = "2";
+			remoteGlobalIDString = "8359FF3C17FEF39F0060F3ED";
+			remoteInfo = File_Extractor;
+		};
+		4E65AE08DB20DF25CDF3512E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E5D20029BB08A770C67678AB /* CogAudio.xcodeproj */;
+			proxyType = "1";
+			remoteGlobalIDString = "8DC2EF4F0486A6940098B216";
+			remoteInfo = CogAudio;
+		};
+		BCBB9980B2D29584156F4945 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */;
+			proxyType = "1";
+			remoteGlobalIDString = "8359FF3B17FEF39F0060F3ED";
+			remoteInfo = File_Extractor;
+		};
+		CCAF42218D9F3E9BFE614269 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F645D9CC326A0E3B95AB895D /* Project object */;
+			proxyType = "1";
+			remoteGlobalIDString = B32B5CFB1D4DDD922EDF335C;
+			remoteInfo = CogPlugins;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = M3uContainer.m; path = ../Plugins/M3u/M3uContainer.m; sourceTree = SOURCE_ROOT; };
+		0C74EC760C0B2BA53F2E1952 /* FileSource.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = FileSource.h; path = ../Plugins/FileSource/FileSource.h; sourceTree = SOURCE_ROOT; };
+		1FFD3F22F9E7637573E710E1 /* SilenceSource.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = SilenceSource.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.m; sourceTree = SOURCE_ROOT; };
+		36B62CBA5DF0861A0D61221E /* CueSheetTrack.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetTrack.h; path = ../Plugins/CueSheet/CueSheetTrack.h; sourceTree = SOURCE_ROOT; };
+		5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetTrack.m; path = ../Plugins/CueSheet/CueSheetTrack.m; sourceTree = SOURCE_ROOT; };
+		644D14A6CEF05A0105659361 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = SOURCE_ROOT; };
+		6739A24254BD6309F1C3012B /* CueSheetDecoder.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetDecoder.h; path = ../Plugins/CueSheet/CueSheetDecoder.h; sourceTree = SOURCE_ROOT; };
+		67777D9ADE0A0782BF47BEB3 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CoreAudioDecoder.h; path = ../Plugins/CoreAudio/CoreAudioDecoder.h; sourceTree = SOURCE_ROOT; };
+		681B3E839D0E192A690222C4 /* CogPlugins.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = "0"; path = CogPlugins.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BD6A7D12B87C90E04D4422C /* M3uContainer.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = M3uContainer.h; path = ../Plugins/M3u/M3uContainer.h; sourceTree = SOURCE_ROOT; };
+		70BA5804918B7E26B3153C57 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		773B19AABC4C60A7B58C1BFF /* CogPlugins.xcconfig */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = text.xcconfig; path = CogPlugins/CogPlugins.xcconfig; sourceTree = "<group>"; };
+		783180A04EB4285BC9562947 /* CueSheet.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheet.h; path = ../Plugins/CueSheet/CueSheet.h; sourceTree = SOURCE_ROOT; };
+		7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/CogPluginsTests.swift; sourceTree = "<group>"; };
+		7D59C40E79B719FEE54AFFC5 /* FileSource.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = FileSource.m; path = ../Plugins/FileSource/FileSource.m; sourceTree = SOURCE_ROOT; };
+		845B6053B44E8F976EA1CD63 /* CueSheet.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheet.m; path = ../Plugins/CueSheet/CueSheet.m; sourceTree = SOURCE_ROOT; };
+		9308F951DA638F9E5B02C00E /* SilenceDecoder.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = SilenceDecoder.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.m; sourceTree = SOURCE_ROOT; };
+		95EC8BD6B14741F3FB74D1E3 /* PlsContainer.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = PlsContainer.h; path = ../Plugins/Pls/PlsContainer.h; sourceTree = SOURCE_ROOT; };
+		AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		BA2BF1FDEF092A338DE5ECE7 /* CogPluginsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = "0"; path = CogPluginsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB795B83652675999BA2E14A /* PlsContainer.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = PlsContainer.m; path = ../Plugins/Pls/PlsContainer.m; sourceTree = SOURCE_ROOT; };
+		D05BA07425A81304D0F2D4D1 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetMetadataReader.h; path = ../Plugins/CueSheet/CueSheetMetadataReader.h; sourceTree = SOURCE_ROOT; };
+		D412D3B51432C84D9D139D1C /* CogPlugins_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; path = CogPlugins/CogPlugins_Prefix.pch; sourceTree = "<group>"; };
+		DA91D2B3C88BFDC3BA2B16C9 /* CueSheetContainer.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetContainer.h; path = ../Plugins/CueSheet/CueSheetContainer.h; sourceTree = SOURCE_ROOT; };
+		DC5F720C7292C42B874C271A /* SilenceSource.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = SilenceSource.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.h; sourceTree = SOURCE_ROOT; };
+		DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetMetadataReader.m; path = ../Plugins/CueSheet/CueSheetMetadataReader.m; sourceTree = SOURCE_ROOT; };
+		E5D20029BB08A770C67678AB /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = ../Audio/CogAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
+		E78010C72519F5A112D4C253 /* CueSheetDecoder.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetDecoder.m; path = ../Plugins/CueSheet/CueSheetDecoder.m; sourceTree = SOURCE_ROOT; };
+		ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = SilenceDecoder.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.h; sourceTree = SOURCE_ROOT; };
+		EF0FACC695E239425D91B99E /* CoreAudioDecoder.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CoreAudioDecoder.m; path = ../Plugins/CoreAudio/CoreAudioDecoder.m; sourceTree = SOURCE_ROOT; };
+		F1C4050E39C2119A3C00A9DB /* CueSheetContainer.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetContainer.m; path = ../Plugins/CueSheet/CueSheetContainer.m; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		503EF349BCAD785A0D5B9BEC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+				8835465D38CE202A5C6E177C /* AudioToolbox.framework in Frameworks */,
+				585BE524744AFAB5FD34DCF9 /* AVFoundation.framework in Frameworks */,
+				730A757E6B41EFC05D036AA0 /* Foundation.framework in Frameworks */,
+				EE98248FAA390B167A40962C /* CogAudio.framework in Frameworks */,
+				96C620C58FBCD1274E68E55C /* File_Extractor.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		57A03F65DF5671453B4C1932 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+				DF53D2FA4E49D9D41FF4D40C /* CogAudio.framework in Frameworks */,
+				50422BFAAA0E6F6A3162E91F /* CogPlugins.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		09FB65929E45C33881EE159D /* Pls */ = {
+			isa = PBXGroup;
+			children = (
+				95EC8BD6B14741F3FB74D1E3 /* PlsContainer.h */,
+				CB795B83652675999BA2E14A /* PlsContainer.m */,
+			);
+			name = Pls;
+			sourceTree = "<group>";
+		};
+		2A6226D713451825F5D0FA9A /* CueSheet */ = {
+			isa = PBXGroup;
+			children = (
+				783180A04EB4285BC9562947 /* CueSheet.h */,
+				845B6053B44E8F976EA1CD63 /* CueSheet.m */,
+				DA91D2B3C88BFDC3BA2B16C9 /* CueSheetContainer.h */,
+				F1C4050E39C2119A3C00A9DB /* CueSheetContainer.m */,
+				6739A24254BD6309F1C3012B /* CueSheetDecoder.h */,
+				E78010C72519F5A112D4C253 /* CueSheetDecoder.m */,
+				D05BA07425A81304D0F2D4D1 /* CueSheetMetadataReader.h */,
+				DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */,
+				36B62CBA5DF0861A0D61221E /* CueSheetTrack.h */,
+				5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */,
+			);
+			name = CueSheet;
+			sourceTree = "<group>";
+		};
+		46717A1406EF8263C68BC2FC /* SilenceDecoder */ = {
+			isa = PBXGroup;
+			children = (
+				ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */,
+				9308F951DA638F9E5B02C00E /* SilenceDecoder.m */,
+				DC5F720C7292C42B874C271A /* SilenceSource.h */,
+				1FFD3F22F9E7637573E710E1 /* SilenceSource.m */,
+			);
+			name = SilenceDecoder;
+			sourceTree = "<group>";
+		};
+		4B61BC1B6061EF76787C5C5C /* CogPluginsTests */ = {
+			isa = PBXGroup;
+			children = (
+				7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */,
+			);
+			name = CogPluginsTests;
+			sourceTree = "<group>";
+		};
+		5143B165C3A158FCD40B9764 /* CoreAudio */ = {
+			isa = PBXGroup;
+			children = (
+				67777D9ADE0A0782BF47BEB3 /* CoreAudioDecoder.h */,
+				EF0FACC695E239425D91B99E /* CoreAudioDecoder.m */,
+			);
+			name = CoreAudio;
+			sourceTree = "<group>";
+		};
+		536FF2DFDC50F2D3E0A6D37C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B2F05F10D669068268BFDB49 /* File_Extractor.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		637555C3ADEBE470681DB225 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				843D758B5E3FD2015CBD376D /* CogAudio.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		63E898C4BE2CD09D8A4F7020 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */,
+				644D14A6CEF05A0105659361 /* AVFoundation.framework */,
+				70BA5804918B7E26B3153C57 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6A8A12D6FEDB56B73FDC2EE8 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				E5D20029BB08A770C67678AB /* CogAudio.xcodeproj */,
+				64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */,
+			);
+			name = Projects;
+			sourceTree = "<group>";
+		};
+		85514594C2C1BD9484FA5B6F = {
+			isa = PBXGroup;
+			children = (
+				CDC2EAA91EBF67C04F5EF8EB /* Plugins */,
+				95C9F60062F89B47684BE265 /* CogPlugins */,
+				4B61BC1B6061EF76787C5C5C /* CogPluginsTests */,
+				6A8A12D6FEDB56B73FDC2EE8 /* Projects */,
+				63E898C4BE2CD09D8A4F7020 /* Frameworks */,
+				94DB297A6BD378178E6FD519 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		94DB297A6BD378178E6FD519 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				681B3E839D0E192A690222C4 /* CogPlugins.framework */,
+				BA2BF1FDEF092A338DE5ECE7 /* CogPluginsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		95C9F60062F89B47684BE265 /* CogPlugins */ = {
+			isa = PBXGroup;
+			children = (
+				D412D3B51432C84D9D139D1C /* CogPlugins_Prefix.pch */,
+				773B19AABC4C60A7B58C1BFF /* CogPlugins.xcconfig */,
+			);
+			name = CogPlugins;
+			sourceTree = "<group>";
+		};
+		CDC2EAA91EBF67C04F5EF8EB /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				5143B165C3A158FCD40B9764 /* CoreAudio */,
+				2A6226D713451825F5D0FA9A /* CueSheet */,
+				FD156574ED82A2097C5149CA /* FileSource */,
+				FD8033E3D338F3C15332594D /* M3u */,
+				09FB65929E45C33881EE159D /* Pls */,
+				46717A1406EF8263C68BC2FC /* SilenceDecoder */,
+			);
+			name = Plugins;
+			sourceTree = "<group>";
+		};
+		FD156574ED82A2097C5149CA /* FileSource */ = {
+			isa = PBXGroup;
+			children = (
+				0C74EC760C0B2BA53F2E1952 /* FileSource.h */,
+				7D59C40E79B719FEE54AFFC5 /* FileSource.m */,
+			);
+			name = FileSource;
+			sourceTree = "<group>";
+		};
+		FD8033E3D338F3C15332594D /* M3u */ = {
+			isa = PBXGroup;
+			children = (
+				6BD6A7D12B87C90E04D4422C /* M3uContainer.h */,
+				01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */,
+			);
+			name = M3u;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2D253B2854ABFC01F796BE91 /* CogPluginsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8C0337A91FD3F2721933229 /* Build configuration list for PBXNativeTarget "CogPluginsTests" */;
+			buildPhases = (
+				E985C94B75D8827DBC113FE8 /* Sources */,
+				57A03F65DF5671453B4C1932 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E44029ADE565F8FA94BCA66C /* PBXTargetDependency */,
+			);
+			name = CogPluginsTests;
+			productName = CogPluginsTests;
+			productReference = BA2BF1FDEF092A338DE5ECE7 /* CogPluginsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B32B5CFB1D4DDD922EDF335C /* CogPlugins */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7609FDCD7D47B94D382A1100 /* Build configuration list for PBXNativeTarget "CogPlugins" */;
+			buildPhases = (
+				60C795295582B3F48139D00F /* Sources */,
+				503EF349BCAD785A0D5B9BEC /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7CAC8AEFC2A9A05E08A5B8B0 /* PBXTargetDependency */,
+				B7CD3FC11CD5415623A559BD /* PBXTargetDependency */,
+			);
+			name = CogPlugins;
+			productName = CogPlugins;
+			productReference = 681B3E839D0E192A690222C4 /* CogPlugins.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F645D9CC326A0E3B95AB895D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = "2700";
+			};
+			buildConfigurationList = EC824BBED3A5A053760B5601 /* Build configuration list for PBXProject "CogPlugins" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = "0";
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 85514594C2C1BD9484FA5B6F /*  */;
+			productRefGroup = 94DB297A6BD378178E6FD519 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 637555C3ADEBE470681DB225 /* Products */;
+					ProjectRef = E5D20029BB08A770C67678AB /* CogAudio.xcodeproj */;
+				},
+				{
+					ProductGroup = 536FF2DFDC50F2D3E0A6D37C /* Products */;
+					ProjectRef = 64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				B32B5CFB1D4DDD922EDF335C /* CogPlugins */,
+				2D253B2854ABFC01F796BE91 /* CogPluginsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		843D758B5E3FD2015CBD376D /* CogAudio.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CogAudio.framework;
+			remoteRef = 22684EFD2A9AA1E7A62BBE25 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B2F05F10D669068268BFDB49 /* File_Extractor.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = File_Extractor.framework;
+			remoteRef = 2650FE9B2F5054E51E5DCFEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		60C795295582B3F48139D00F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+				E39766458029347F10556148 /* CoreAudioDecoder.m in Sources */,
+				6CD61659FAED49553B90D4C1 /* CueSheet.m in Sources */,
+				64EC393750B363CE76930218 /* CueSheetContainer.m in Sources */,
+				9F0A7709E99F218847E32BAA /* CueSheetDecoder.m in Sources */,
+				047936E2A7D9B145CBD7CD44 /* CueSheetMetadataReader.m in Sources */,
+				34D69FC1E7A6ABDD55218E47 /* CueSheetTrack.m in Sources */,
+				48425FFBE7EB53E2878E8481 /* FileSource.m in Sources */,
+				CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */,
+				AEB74DDB94DDF68C9A8B51E3 /* PlsContainer.m in Sources */,
+				071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */,
+				EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		E985C94B75D8827DBC113FE8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+				32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7CAC8AEFC2A9A05E08A5B8B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CogAudio;
+			targetProxy = 4E65AE08DB20DF25CDF3512E /* PBXContainerItemProxy */;
+		};
+		B7CD3FC11CD5415623A559BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = File_Extractor;
+			targetProxy = BCBB9980B2D29584156F4945 /* PBXContainerItemProxy */;
+		};
+		E44029ADE565F8FA94BCA66C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B32B5CFB1D4DDD922EDF335C /* CogPlugins */;
+			targetProxy = CCAF42218D9F3E9BFE614269 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		20B209F8A8DD727926FBEBF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = NO;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CogPlugins/CogPlugins_Prefix.pch;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					../Audio,
+					../Audio/Shared,
+					../Audio/Utils,
+					../Utils,
+					../Playlist,
+				);
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlugins;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		42519682AFB23908C76A2D58 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = NO;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CogPlugins/CogPlugins_Prefix.pch;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					../Audio,
+					../Audio/Shared,
+					../Audio/Utils,
+					../Utils,
+					../Playlist,
+				);
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlugins;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		61D89E252EE7E301ED6D3CFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPluginsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		6EEA6F08E8D7E18CF6841B4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 773B19AABC4C60A7B58C1BFF /* CogPlugins.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = "18.0";
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = "5.0";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E94C8E41CB187F5421A81657 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPluginsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FD44FDF504ECD30D7F364CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 773B19AABC4C60A7B58C1BFF /* CogPlugins.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = "0";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = "18.0";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wframe-larger-than=4000";
+				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = "5.0";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7609FDCD7D47B94D382A1100 /* Build configuration list for PBXNativeTarget "CogPlugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20B209F8A8DD727926FBEBF2 /* Debug */,
+				42519682AFB23908C76A2D58 /* Release */,
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = Release;
+		};
+		EC824BBED3A5A053760B5601 /* Build configuration list for PBXProject "CogPlugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD44FDF504ECD30D7F364CBF /* Debug */,
+				6EEA6F08E8D7E18CF6841B4F /* Release */,
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = Release;
+		};
+		F8C0337A91FD3F2721933229 /* Build configuration list for PBXNativeTarget "CogPluginsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E94C8E41CB187F5421A81657 /* Debug */,
+				61D89E252EE7E301ED6D3CFC /* Release */,
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F645D9CC326A0E3B95AB895D /* Project object */;
+}

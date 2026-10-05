@@ -208,37 +208,39 @@ static SInt64 getSizeProc(void *clientData) {
 
 	err = AudioFileGetPropertyInfo(afi, kAudioFilePropertyChannelLayout, &size, NULL);
 	if(err != noErr || size == 0) {
-		/*err =*/ ExtAudioFileDispose(_in);
-		return NO;
-	}
-	AudioChannelLayout *acl = malloc(size);
-	err = AudioFileGetProperty(afi, kAudioFilePropertyChannelLayout, &size, acl);
-	if(err != noErr) {
-		free(acl);
-		/*err =*/ ExtAudioFileDispose(_in);
-		return NO;
-	}
-
-	uint32_t config = 0;
-	for(uint32_t i = 0; i < acl->mNumberChannelDescriptions; ++i) {
-		int channelNumber = ffat_get_channel_id(acl->mChannelDescriptions[i].mChannelLabel);
-		if(channelNumber >= 0 && channelNumber <= 31) {
-			if(config & (1U << channelNumber)) {
-				free(acl);
-				/*err =*/ ExtAudioFileDispose(_in);
-				return NO;
-			}
-			config |= 1 << channelNumber;
-		} else {
+		// No layout in the file (a plain WAV or AIFF): the usual one for its
+		// channel count.
+		channelConfig = [AudioChunk guessChannelConfig:asbd.mChannelsPerFrame];
+	} else {
+		AudioChannelLayout *acl = malloc(size);
+		err = AudioFileGetProperty(afi, kAudioFilePropertyChannelLayout, &size, acl);
+		if(err != noErr) {
 			free(acl);
 			/*err =*/ ExtAudioFileDispose(_in);
 			return NO;
 		}
+
+		uint32_t config = 0;
+		for(uint32_t i = 0; i < acl->mNumberChannelDescriptions; ++i) {
+			int channelNumber = ffat_get_channel_id(acl->mChannelDescriptions[i].mChannelLabel);
+			if(channelNumber >= 0 && channelNumber <= 31) {
+				if(config & (1U << channelNumber)) {
+					free(acl);
+					/*err =*/ ExtAudioFileDispose(_in);
+					return NO;
+				}
+				config |= 1 << channelNumber;
+			} else {
+				free(acl);
+				/*err =*/ ExtAudioFileDispose(_in);
+				return NO;
+			}
+		}
+
+		channelConfig = config;
+
+		free(acl);
 	}
-
-	channelConfig = config;
-
-	free(acl);
 
 	bitrate = (_bitrate + 500) / 1000;
 

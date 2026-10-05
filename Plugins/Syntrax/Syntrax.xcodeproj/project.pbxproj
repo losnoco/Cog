@@ -56,7 +56,7 @@
 		83EEAB0E1C965324002761C5 /* jxsDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsDecoder.m; sourceTree = "<group>"; };
 		83EEAB121C965379002761C5 /* Syntrax_c.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax_c.xcodeproj; path = "../../Frameworks/Syntrax-c/Syntrax_c.xcodeproj"; sourceTree = "<group>"; };
 		83EEAB1A1C9653AA002761C5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
-		83EEAB1B1C9653C3002761C5 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83EEAB1B1C9653C3002761C5 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83EEAB1C1C965835002761C5 /* jxsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsContainer.h; sourceTree = "<group>"; };
 		83EEAB1D1C965835002761C5 /* jxsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jxsContainer.m; sourceTree = "<group>"; };
 		83EEAB1F1C965A4F002761C5 /* jxsMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jxsMetadataReader.h; sourceTree = "<group>"; };
@@ -100,7 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				83EEAB271C965D2E002761C5 /* Logging.h */,
-				83EEAB1B1C9653C3002761C5 /* PlaylistController.h */,
+				83EEAB1B1C9653C3002761C5 /* PlaylistControllerEnums.h */,
 				83EEAB1A1C9653AA002761C5 /* Plugin.h */,
 				83EEAB1C1C965835002761C5 /* jxsContainer.h */,
 				83EEAB1D1C965835002761C5 /* jxsContainer.m */,

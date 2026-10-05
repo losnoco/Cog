@@ -22,10 +22,6 @@
 @class PlaybackController;
 @class AppController;
 
-static inline BOOL IsRepeatOneSet(void) {
-	return [[NSUserDefaults standardUserDefaults] integerForKey:@"repeat"] == RepeatModeRepeatOne;
-}
-
 @interface PlaylistController : DNDArrayController <NSTableViewDelegate> {
 	IBOutlet PlaylistLoader *playlistLoader;
 	IBOutlet SpotlightWindowController *spotlightWindowController;

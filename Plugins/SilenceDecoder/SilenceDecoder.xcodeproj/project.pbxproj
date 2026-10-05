@@ -22,7 +22,7 @@
 		83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SilenceDecoder.m; sourceTree = "<group>"; };
 		83F9D8001A884C0B007ABEC2 /* SilenceSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilenceSource.h; sourceTree = "<group>"; };
 		83F9D8011A884C0B007ABEC2 /* SilenceSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SilenceSource.m; sourceTree = "<group>"; };
-		83F9D8041A884C23007ABEC2 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83F9D8041A884C23007ABEC2 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83F9D8081A884C93007ABEC2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83F9D8091A884CB5007ABEC2 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,7 +72,7 @@
 				834A42C1287AFED700EB9D9B /* AudioChunk.h */,
 				83F9D8091A884CB5007ABEC2 /* Logging.h */,
 				83F9D8081A884C93007ABEC2 /* Plugin.h */,
-				83F9D8041A884C23007ABEC2 /* PlaylistController.h */,
+				83F9D8041A884C23007ABEC2 /* PlaylistControllerEnums.h */,
 				83F9D7FE1A884C0B007ABEC2 /* SilenceDecoder.h */,
 				83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */,
 				83F9D8001A884C0B007ABEC2 /* SilenceSource.h */,

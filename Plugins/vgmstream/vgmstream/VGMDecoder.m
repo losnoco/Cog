@@ -11,7 +11,7 @@
 
 #import <libvgmstream/libvgmstream.h>
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #include <stdlib.h>
 

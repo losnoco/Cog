@@ -10,7 +10,7 @@
 
 #import "Logging.h"
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #import <libvgm/emu/EmuCores.h>
 #import <libvgm/emu/Resampler.h>

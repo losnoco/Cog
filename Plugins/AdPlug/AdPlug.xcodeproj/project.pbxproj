@@ -60,7 +60,7 @@
 		83D3C5F6201C674D005564CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83D3C603201C6775005564CB /* libAdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libAdPlug.xcodeproj; path = ../../Frameworks/AdPlug/libAdPlug.xcodeproj; sourceTree = "<group>"; };
 		83D3C650201C6DE9005564CB /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
-		83D3C651201C6E00005564CB /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83D3C651201C6E00005564CB /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83D3C652201C6E10005564CB /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83D3C653201C6E23005564CB /* AdPlugDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdPlugDecoder.h; sourceTree = "<group>"; };
 		83D3C654201C6E24005564CB /* AdPlugContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AdPlugContainer.mm; sourceTree = "<group>"; };
@@ -136,7 +136,7 @@
 				83D3C655201C6E24005564CB /* AdPlugMetadataReader.h */,
 				83D3C656201C6E24005564CB /* AdPlugMetadataReader.mm */,
 				83D3C650201C6DE9005564CB /* Logging.h */,
-				83D3C651201C6E00005564CB /* PlaylistController.h */,
+				83D3C651201C6E00005564CB /* PlaylistControllerEnums.h */,
 				83D3C652201C6E10005564CB /* Plugin.h */,
 				83D3C5F6201C674D005564CB /* Info.plist */,
 				83D3C669201C70E7005564CB /* fileprovider.h */,

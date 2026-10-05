@@ -69,7 +69,7 @@
 		836F705A18BDC40E0095E648 /* VGMDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VGMDecoder.h; sourceTree = "<group>"; };
 		836F705B18BDC40E0095E648 /* VGMDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMDecoder.m; sourceTree = "<group>"; };
 		836F706018BDC84D0095E648 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
-		836F706118BDC8650095E648 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		836F706118BDC8650095E648 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83747BF02862D9260021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83AA5D281F6E30080020821C /* VGMInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMInterface.m; sourceTree = "<group>"; };
 		83AA5D2A1F6E30080020821C /* VGMContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VGMContainer.m; sourceTree = "<group>"; };
@@ -142,7 +142,7 @@
 				83AA5D2A1F6E30080020821C /* VGMContainer.m */,
 				83AA5D2B1F6E30080020821C /* VGMInterface.h */,
 				83AA5D281F6E30080020821C /* VGMInterface.m */,
-				836F706118BDC8650095E648 /* PlaylistController.h */,
+				836F706118BDC8650095E648 /* PlaylistControllerEnums.h */,
 				836F705A18BDC40E0095E648 /* VGMDecoder.h */,
 				836F705B18BDC40E0095E648 /* VGMDecoder.m */,
 				83AA5D2F1F6E301B0020821C /* Logging.h */,

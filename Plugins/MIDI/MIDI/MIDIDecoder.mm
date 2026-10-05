@@ -19,7 +19,7 @@
 #import <spessasynth_core/file.h>
 #import <spessasynth_core/midi.h>
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #import "SandboxBroker.h"
 

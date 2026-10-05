@@ -54,7 +54,7 @@
 
 #include <dlfcn.h>
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #include <signal.h>
 

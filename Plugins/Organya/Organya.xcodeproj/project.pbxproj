@@ -32,7 +32,7 @@
 		8327DB9D293CACCC00CD0580 /* fx99.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx99.pxt; sourceTree = "<group>"; };
 		8327DB9E293CACCC00CD0580 /* wavetable.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = wavetable.dat; sourceTree = "<group>"; };
 		8327DB9F293CACCC00CD0580 /* fx97.pxt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fx97.pxt; sourceTree = "<group>"; };
-		8327DBAA293CADCE00CD0580 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		8327DBAA293CADCE00CD0580 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		8327DBAC293CAE3F00CD0580 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -73,7 +73,7 @@
 				8327DB8B293C913100CD0580 /* AudioChunk.h */,
 				8327DB8D293C916400CD0580 /* Logging.h */,
 				8327DB97293C92A300CD0580 /* OrganyaDecoder.h */,
-				8327DBAA293CADCE00CD0580 /* PlaylistController.h */,
+				8327DBAA293CADCE00CD0580 /* PlaylistControllerEnums.h */,
 				8327DB8C293C915500CD0580 /* Plugin.h */,
 			);
 			name = Headers;

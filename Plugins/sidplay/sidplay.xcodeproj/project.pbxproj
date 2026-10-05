@@ -51,7 +51,7 @@
 		8314D8081A35654900EEE8E6 /* SidContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SidContainer.mm; sourceTree = SOURCE_ROOT; };
 		8314D80C1A35657700EEE8E6 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		8314D80D1A35658C00EEE8E6 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
-		8314D80E1A3565AC00EEE8E6 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		8314D80E1A3565AC00EEE8E6 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		833A8996286FF2E30022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		834A42A6287AEAAB00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		834D19112D7F957300F13B89 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,7 +99,7 @@
 				834A42A6287AEAAB00EB9D9B /* AudioChunk.h */,
 				836F5BEA1A357915002730CC /* roms.cpp */,
 				836F5BEB1A357915002730CC /* roms.hpp */,
-				8314D80E1A3565AC00EEE8E6 /* PlaylistController.h */,
+				8314D80E1A3565AC00EEE8E6 /* PlaylistControllerEnums.h */,
 				8314D80D1A35658C00EEE8E6 /* Logging.h */,
 				8314D80C1A35657700EEE8E6 /* Plugin.h */,
 				8314D8031A35654900EEE8E6 /* SidDecoder.h */,

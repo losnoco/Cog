@@ -12,6 +12,10 @@
 
 #import "CogURLNormalization.h"
 
+#if TARGET_OS_IPHONE
+#import <objc/runtime.h>
+#endif
+
 #import <chrono>
 #import <map>
 #import <mutex>
@@ -70,7 +74,7 @@ static void cache_insert_properties(NSURL *url, BOOL skipCue, NSDictionary *prop
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	std::string path = cache_key(url, skipCue);
-	properties = [Cache_Data_Store coalesceEntryInfo:properties];
+	if(Cache_Data_Store) properties = [Cache_Data_Store coalesceEntryInfo:properties];
 
 	Cached_Metadata &entry = Cache_List[path];
 
@@ -84,7 +88,7 @@ static void cache_insert_metadata(NSURL *url, BOOL skipCue, NSDictionary *metada
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
 	std::string path = cache_key(url, skipCue);
-	metadata = [Cache_Data_Store coalesceEntryInfo:metadata];
+	if(Cache_Data_Store) metadata = [Cache_Data_Store coalesceEntryInfo:metadata];
 
 	Cached_Metadata &entry = Cache_List[path];
 
@@ -219,7 +223,12 @@ static void cache_run() {
 }
 
 - (void)bundleDidLoad:(NSNotification *)notification {
-	NSArray *classNames = [[notification userInfo] objectForKey:@"NSLoadedClasses"];
+	[self registerClassNames:[[notification userInfo] objectForKey:@"NSLoadedClasses"]];
+}
+
+/// Registers the plugin classes among `classNames`, the classes of one
+/// plugin: none of them if any fails its OS version check.
+- (void)registerClassNames:(NSArray<NSString *> *)classNames {
 	for(NSString *className in classNames) {
 		Class bundleClass = NSClassFromString(className);
 		if([bundleClass conformsToProtocol:@protocol(CogVersionCheck)]) {
@@ -265,6 +274,42 @@ static void cache_run() {
 	}
 }
 
+#if TARGET_OS_IPHONE
+/// iOS loads no code bundles: the plugins are linked into the app
+/// (CogPlugins.framework), so their classes are found among those of the
+/// images loaded with it, leaving out the system's.
+- (void)loadPlugins {
+	Protocol *pluginProtocols[] = { @protocol(CogContainer), @protocol(CogDecoder), @protocol(CogMetadataReader),
+		                            @protocol(CogPropertiesReader), @protocol(CogSource) };
+	unsigned int imageCount = 0;
+	const char **images = objc_copyImageNames(&imageCount);
+	for(unsigned int i = 0; i < imageCount; ++i) {
+		if(strstr(images[i], "/System/Library/") || strstr(images[i], "/usr/lib/")) continue;
+		unsigned int classCount = 0;
+		const char **classNames = objc_copyClassNamesForImage(images[i], &classCount);
+		for(unsigned int j = 0; j < classCount; ++j) {
+			// The runtime's own check, through superclasses: messaging the
+			// class would run +initialize on every class of the image.
+			BOOL plugin = NO;
+			for(Class cls = objc_getClass(classNames[j]); cls && !plugin; cls = class_getSuperclass(cls)) {
+				for(Protocol *protocol : pluginProtocols) {
+					if(class_conformsToProtocol(cls, protocol)) {
+						plugin = YES;
+						break;
+					}
+				}
+			}
+			if(plugin) {
+				// One at a time: a class failing its version check leaves out
+				// only itself.
+				[self registerClassNames:@[@(classNames[j])]];
+			}
+		}
+		free(classNames);
+	}
+	free(images);
+}
+#else
 - (void)loadPlugins {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
@@ -272,6 +317,7 @@ static void cache_run() {
 	[self loadPluginsAtPath:[[NSBundle mainBundle] builtInPlugInsPath]];
 	[self loadPluginsAtPath:[basePath stringByAppendingPathComponent:@"Plugins"]];
 }
+#endif
 
 - (void)setupContainer:(NSString *)className {
 	Class container = NSClassFromString(className);

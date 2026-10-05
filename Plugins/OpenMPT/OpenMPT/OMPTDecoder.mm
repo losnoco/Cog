@@ -10,7 +10,7 @@
 
 #import "Logging.h"
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 static void g_push_archive_extensions(std::vector<std::string> &list) {
 	try {

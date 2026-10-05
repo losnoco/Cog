@@ -10,7 +10,7 @@
 #import "OrganyaDecoder.h"
 
 #import "AudioChunk.h"
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #import <cstdio>
 #import <cstring>
