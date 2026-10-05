@@ -36,6 +36,9 @@ final class EqualizerStage: NSObject, DSPStage, CogEqualizer {
 	private var configured: StreamFormat?
 	private var coefficients: [Double] = []
 	private var announcedActive = false
+	/// The preamp and band gains last applied, for `inspection`.
+	private var appliedPreamp: Float = 1
+	private var appliedGains = [Float](repeating: 0, count: 31)
 
 	override init() {
 		let defaults = UserDefaults.standard
@@ -137,7 +140,9 @@ final class EqualizerStage: NSObject, DSPStage, CogEqualizer {
 		}
 		if let newGains {
 			updateCoefficients(newGains, sampleRate: buffer.format.sampleRate, channels: channels)
+			appliedGains = newGains
 		}
+		appliedPreamp = preamp
 		guard let setup else { return }
 
 		let count = buffer.frames * channels
@@ -160,6 +165,10 @@ final class EqualizerStage: NSObject, DSPStage, CogEqualizer {
 		if let setup {
 			vDSP_biquadm_ResetState(setup)
 		}
+	}
+
+	var inspection: StageInspection? {
+		.equalizer(preampDB: 20 * log10f(appliedPreamp), gainsDB: appliedGains)
 	}
 
 	/// Peaking EQ sections (RBJ cookbook), one per band, copied per channel.

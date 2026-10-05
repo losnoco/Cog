@@ -63,6 +63,11 @@ final class FreeSurroundStage: NSObject, DSPStage {
 		filter == nil ? 0 : max(0, framesIn - framesOut)
 	}
 
+	var inspection: StageInspection? {
+		guard let outputFormat else { return nil }
+		return .freeSurround(upmixes: filter != nil, output: outputFormat)
+	}
+
 	func configure(input: StreamFormat) -> StreamFormat {
 		inputFormat = input
 		pending.removeAll(keepingCapacity: true)

@@ -30,6 +30,30 @@ NSString *const CogAudioOutputModificationsKey = @"modifications";
 NSString *const CogAudioOutputTrackGainKey = @"trackGain";
 NSString *const CogAudioOutputFittedChannelsKey = @"fittedChannels";
 NSString *const CogAudioOutputVolumeKey = @"volume";
+NSString *const CogAudioOutputResamplerKey = @"resampler";
+NSString *const CogAudioOutputTimeStretchKey = @"timeStretch";
+NSString *const CogAudioOutputFreeSurroundKey = @"freeSurround";
+NSString *const CogAudioOutputEqualizerKey = @"equalizer";
+NSString *const CogAudioOutputSpatialKey = @"spatial";
+NSString *const CogAudioOutputStageActiveKey = @"active";
+NSString *const CogAudioOutputStageInputRateKey = @"inputRate";
+NSString *const CogAudioOutputStageOutputRateKey = @"outputRate";
+NSString *const CogAudioOutputStageQualityKey = @"quality";
+NSString *const CogAudioOutputStageEngineKey = @"engine";
+NSString *const CogAudioOutputStageTempoKey = @"tempo";
+NSString *const CogAudioOutputStagePitchKey = @"pitch";
+NSString *const CogAudioOutputStageChannelsKey = @"channels";
+NSString *const CogAudioOutputStageChannelConfigKey = @"channelConfig";
+NSString *const CogAudioOutputStagePreampKey = @"preamp";
+NSString *const CogAudioOutputStageBandFrequenciesKey = @"bandFrequencies";
+NSString *const CogAudioOutputStageBandGainsKey = @"bandGains";
+NSString *const CogAudioOutputStageSpatialOutputKey = @"spatialOutput";
+NSString *const CogAudioOutputStageHeadTrackingKey = @"headTracking";
+NSString *const CogAudioOutputTrackGainSourceKey = @"trackGainSource";
+NSString *const CogAudioOutputTrackGainPeakLimitedKey = @"trackGainPeakLimited";
+NSString *const CogAudioOutputSpatialRefusedKey = @"spatialRefused";
+NSString *const CogAudioOutputBufferFramesKey = @"bufferFrames";
+NSString *const CogAudioOutputLatencyFramesKey = @"latencyFrames";
 
 NSString *const CogAudioOutputModificationDSDToPCM = @"dsdToPCM";
 NSString *const CogAudioOutputModificationHDCD = @"hdcd";
@@ -95,6 +119,7 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	if(!engine) {
 		engine = [PlaybackEngine new];
 		engine.host = self;
+		engine.meteringEnabled = _meteringEnabled;
 	}
 	engine.volume = volume;
 
@@ -137,6 +162,15 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 
 - (double)volume {
 	return volume;
+}
+
+- (void)setMeteringEnabled:(BOOL)meteringEnabled {
+	_meteringEnabled = meteringEnabled;
+	engine.meteringEnabled = meteringEnabled;
+}
+
+- (SignalMetrics *)signalMetrics {
+	return [engine signalMetrics];
 }
 
 // This is called by the delegate DURING a requestNextStream request.

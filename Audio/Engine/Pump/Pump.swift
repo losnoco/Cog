@@ -108,6 +108,8 @@ public final class Pump {
 	public struct Processing: Equatable {
 		/// The stages that ran, in chain order.
 		public var stages: [ObjectIdentifier] = []
+		/// What those that describe themselves applied, in chain order.
+		public var inspections: [StageInspection] = []
 		/// The format the stages were given.
 		public var input = StreamFormat(sampleRate: 0, channels: 0)
 		/// The format the stages produced.
@@ -325,8 +327,8 @@ public final class Pump {
 		applyGain(frames: got, channels: channels)
 		runStages()
 		emit()
-		report(Processing(stages: configuredChain?.stages ?? [], input: configuredChain?.input ?? format, output: fitSource ?? format,
-		                  fitsChannels: downmix != nil, appliesGain: appliedGain != 1 || rampTarget != 1),
+		report(Processing(stages: configuredChain?.stages ?? [], inspections: activeInspections(), input: configuredChain?.input ?? format,
+		                  output: fitSource ?? format, fitsChannels: downmix != nil, appliesGain: appliedGain != 1 || rampTarget != 1),
 		       at: position)
 		return true
 	}
@@ -337,6 +339,12 @@ public final class Pump {
 		guard processing != reportedProcessing else { return }
 		reportedProcessing = processing
 		presentation.append(.processing(processing), at: position)
+	}
+
+	/// The settings the configured chain's stages applied to the last block.
+	private func activeInspections() -> [StageInspection] {
+		guard let chain = configuredChain else { return [] }
+		return stages.filter { chain.stages.contains(ObjectIdentifier($0)) }.compactMap(\.inspection)
 	}
 
 	private func isDoP(_ buffer: DSPBuffer) -> Bool {

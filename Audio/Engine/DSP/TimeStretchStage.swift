@@ -104,6 +104,10 @@ final class TimeStretchStage: NSObject, DSPStage {
 		max(0, Int(countIn.rounded()) - countOut)
 	}
 
+	var inspection: StageInspection? {
+		applied.map { .timeStretch(engine: $0.engine, tempo: $0.tempo, pitch: $0.pitch) }
+	}
+
 	func configure(input: StreamFormat) -> StreamFormat {
 		format = input
 		start(with: currentSettings)

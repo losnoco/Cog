@@ -162,4 +162,20 @@ final class TimeStretchStageTests: XCTestCase {
 		stage.reset()
 		XCTAssertFalse(stage.isActive, "bit-exact again after a reset")
 	}
+
+	/// The output status learns the settings the stretcher applied, as they
+	/// change while it runs.
+	func testInspectionFollowsTheAppliedSettings() {
+		set(engine: "finer", tempo: 1.25, pitch: 1)
+		let stage = TimeStretchStage()
+		XCTAssertNil(stage.inspection, "nothing applied before the first block")
+		_ = stage.configure(input: stereo)
+		XCTAssertEqual(stage.inspection, .timeStretch(engine: "finer", tempo: 1.25, pitch: 1))
+
+		set(engine: "finer", tempo: 1.5, pitch: 2)
+		let buffer = DSPBuffer()
+		buffer.resize(frames: 1024, format: stereo)
+		stage.process(buffer)
+		XCTAssertEqual(stage.inspection, .timeStretch(engine: "finer", tempo: 1.5, pitch: 2))
+	}
 }
