@@ -201,6 +201,31 @@ uint64_t cog_renderer_underrun_events(const CogRenderer *renderer);
 /// after all gains; above 1.0 is louder than full scale. Resets it.
 float cog_renderer_take_peak(CogRenderer *renderer);
 
+// MARK: - Metering
+
+/// Channels metered separately; any beyond share the last.
+#define COG_METER_CHANNELS 8
+
+/// The audio delivered to the device since the last take, per channel and
+/// after all gains, as `cog_renderer_take_meter` reports it.
+typedef struct CogMeterSnapshot {
+	/// Largest absolute sample; above 1.0 is louder than full scale.
+	float peak[COG_METER_CHANNELS];
+	/// Sum of squared samples, for RMS over `frames`.
+	double sumOfSquares[COG_METER_CHANNELS];
+	/// Frames metered: audio only, not silence while held, dry or DoP.
+	uint64_t frames;
+	/// Samples beyond full scale, which integer output clips.
+	uint64_t clippedSamples;
+} CogMeterSnapshot;
+
+/// Starts or stops metering. Off, the render callback does no metering work.
+void cog_renderer_set_metering(CogRenderer *renderer, bool enabled);
+
+/// What was metered since the last take; resets it. Lock-free, for any
+/// thread while the renderer runs.
+void cog_renderer_take_meter(CogRenderer *renderer, CogMeterSnapshot *snapshot);
+
 #pragma clang assume_nonnull end
 
 #ifdef __cplusplus

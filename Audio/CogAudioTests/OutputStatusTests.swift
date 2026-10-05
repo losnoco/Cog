@@ -100,6 +100,97 @@ final class OutputStatusTests: XCTestCase {
 		XCTAssertNil(untouched[CogAudioOutputVolumeKey])
 	}
 
+	func testTheResamplerIsDescribedWhereverPCMReachesIt() throws {
+		let resampled = status(source(rate: 48000, bits: 16)).userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])
+		let resampler = try XCTUnwrap(resampled[CogAudioOutputResamplerKey] as? [String: Any])
+		XCTAssertEqual(resampler[CogAudioOutputStageActiveKey] as? Bool, true)
+		XCTAssertEqual(resampler[CogAudioOutputStageInputRateKey] as? Double, 48000)
+		XCTAssertEqual(resampler[CogAudioOutputStageOutputRateKey] as? Double, 44100)
+
+		let bypassed = status(source(bits: 16)).userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])
+		XCTAssertEqual((bypassed[CogAudioOutputResamplerKey] as? [String: Any])?[CogAudioOutputStageActiveKey] as? Bool, false,
+		               "equal rates bypass soxr, bit-exact")
+
+		// DSD64 is decimated to 352.8 kHz PCM before the resampler.
+		let dsd = status(source(rate: 2_822_400, bits: 1)).userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])
+		XCTAssertEqual((dsd[CogAudioOutputResamplerKey] as? [String: Any])?[CogAudioOutputStageInputRateKey] as? Double, 352_800)
+
+		let dop = status(source(rate: 2_822_400, bits: 1)) { $0.processing.passesDoP = true }
+		XCTAssertNil(dop.userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])[CogAudioOutputResamplerKey])
+	}
+
+	func testEachStageCarriesItsSettings() throws {
+		let surround = StreamFormat(sampleRate: 44100, channels: 6, channelConfig: 0x3F)
+		var gains = [Float](repeating: 0, count: 31)
+		gains[0] = 2
+		let staged = status(source(bits: 16)) {
+			$0.processing.inspections = [.timeStretch(engine: "finer", tempo: 1.25, pitch: 1),
+			                             .freeSurround(upmixes: true, output: surround),
+			                             .equalizer(preampDB: -3, gainsDB: gains)]
+			$0.gainSource = .album
+			$0.gainPeakLimited = true
+			$0.bufferFrames = 882
+			$0.latencyFrames = 1500
+		}
+		let userInfo = staged.userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])
+		let stretch = try XCTUnwrap(userInfo[CogAudioOutputTimeStretchKey] as? [String: Any])
+		XCTAssertEqual(stretch[CogAudioOutputStageEngineKey] as? String, "finer")
+		XCTAssertEqual(stretch[CogAudioOutputStageTempoKey] as? Double, 1.25)
+		let upmix = try XCTUnwrap(userInfo[CogAudioOutputFreeSurroundKey] as? [String: Any])
+		XCTAssertEqual(upmix[CogAudioOutputStageChannelsKey] as? Int, 6)
+		XCTAssertEqual(upmix[CogAudioOutputStageChannelConfigKey] as? UInt32, 0x3F)
+		let equalizer = try XCTUnwrap(userInfo[CogAudioOutputEqualizerKey] as? [String: Any])
+		XCTAssertEqual(equalizer[CogAudioOutputStagePreampKey] as? Double, -3)
+		XCTAssertEqual((equalizer[CogAudioOutputStageBandGainsKey] as? [Double])?.first, 2)
+		XCTAssertEqual((equalizer[CogAudioOutputStageBandFrequenciesKey] as? [Double])?.count, 31)
+		XCTAssertEqual(userInfo[CogAudioOutputTrackGainSourceKey] as? String, "album")
+		XCTAssertEqual(userInfo[CogAudioOutputTrackGainPeakLimitedKey] as? Bool, true)
+		XCTAssertEqual(userInfo[CogAudioOutputBufferFramesKey] as? Int, 882)
+		XCTAssertEqual(userInfo[CogAudioOutputLatencyFramesKey] as? Int, 1500)
+		XCTAssertNil(userInfo[CogAudioOutputSpatialKey])
+	}
+
+	/// A setting changed within a stage is news, though the same stages run.
+	func testChangedSettingsMakeANewStatus() {
+		let slower = status(source(bits: 16)) { $0.processing.inspections = [.timeStretch(engine: "finer", tempo: 1.25, pitch: 1)] }
+		let faster = status(source(bits: 16)) { $0.processing.inspections = [.timeStretch(engine: "finer", tempo: 1.5, pitch: 1)] }
+		XCTAssertNotEqual(slower, faster)
+		XCTAssertNotEqual(status(source(bits: 16)), status(source(bits: 16)) { $0.headTracking = true })
+	}
+
+	func testSpatialRenderingIsDescribed() throws {
+		let spatial = status(source(bits: 16, channels: 6)) {
+			$0.stageModifications = [CogAudioOutputModificationSpatialAudio]
+			$0.spatialRendering = .spatialMixerOutputType_Headphones
+			$0.headTracking = true
+		}
+		let described = try XCTUnwrap(spatial.userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])[CogAudioOutputSpatialKey] as? [String: Any])
+		XCTAssertEqual(described[CogAudioOutputStageSpatialOutputKey] as? String, "headphones")
+		XCTAssertEqual(described[CogAudioOutputStageHeadTrackingKey] as? Bool, true)
+
+		let refused = status(source(bits: 16, channels: 6)) { $0.spatialRefused = true }
+		XCTAssertEqual(refused.userInfo(deviceName: nil, virtualFormats: [], physicalFormats: [])[CogAudioOutputSpatialRefusedKey] as? Bool, true)
+	}
+
+	func testMetricsGiveEachChannelItsLevel() {
+		var snapshot = CogMeterSnapshot()
+		snapshot.frames = 100
+		snapshot.peak.0 = 0.5
+		snapshot.sumOfSquares.0 = 100 * 0.25
+		snapshot.peak.1 = 0.1
+		snapshot.sumOfSquares.1 = 100 * 0.01
+		let metrics = SignalMetrics(snapshot: snapshot, channels: 2, channelConfig: UInt32(AudioConfigStereo), clippedSamples: 3, underruns: 1,
+		                            discontinuities: 0, shallowBufferSeconds: 0.2, deepBufferSeconds: 10, outputLatencySeconds: 0.03)
+		XCTAssertEqual(metrics.peaks.map(\.floatValue), [0.5, 0.1])
+		XCTAssertEqual(metrics.rms[0].doubleValue, 0.5, accuracy: 1e-9)
+		XCTAssertEqual(metrics.rms[1].doubleValue, 0.1, accuracy: 1e-9)
+		XCTAssertEqual(metrics.clippedSamples, 3)
+
+		let idle = SignalMetrics(snapshot: CogMeterSnapshot(), channels: 2, channelConfig: 0, clippedSamples: 0, underruns: 0,
+		                         discontinuities: 0, shallowBufferSeconds: 0, deepBufferSeconds: 0, outputLatencySeconds: 0)
+		XCTAssertTrue(idle.peaks.isEmpty, "nothing metered, no levels")
+	}
+
 	func testFormatsTravelAsObjectiveCValues() {
 		let value = OutputStatus.value(Pump.asbd(Self.stereo))
 		var size = 0

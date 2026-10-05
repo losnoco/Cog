@@ -50,4 +50,21 @@ final class ReplayGainTests: XCTestCase {
 		XCTAssertEqual(ReplayGain.linearGain(rgInfo: loud, scaling: "albumGain"), db(6), accuracy: 1e-6)
 		XCTAssertEqual(ReplayGain.linearGain(rgInfo: loud, scaling: "albumGainWithPeak"), 1 / 0.9, accuracy: 1e-6)
 	}
+
+	func testTheSourceIsTheOneThatApplied() {
+		XCTAssertNil(ReplayGain.resolve(rgInfo: info, scaling: "none").source)
+		XCTAssertEqual(ReplayGain.resolve(rgInfo: info, scaling: "volumeScale").source, .volume)
+		XCTAssertEqual(ReplayGain.resolve(rgInfo: info, scaling: "soundcheck").source, .soundcheck)
+		XCTAssertEqual(ReplayGain.resolve(rgInfo: info, scaling: "trackGain").source, .track)
+		XCTAssertEqual(ReplayGain.resolve(rgInfo: info, scaling: "albumGain").source, .album)
+		let trackOnly: [AnyHashable: Any] = ["replayGainTrackGain": -6.0, "volume": 0.8]
+		XCTAssertEqual(ReplayGain.resolve(rgInfo: trackOnly, scaling: "albumGain").source, .track, "the fallback is named")
+	}
+
+	func testPeakLimitingIsReported() {
+		let loud: [AnyHashable: Any] = ["replayGainAlbumGain": 6.0, "replayGainAlbumPeak": 0.9]
+		XCTAssertFalse(ReplayGain.resolve(rgInfo: loud, scaling: "albumGain").peakLimited)
+		XCTAssertTrue(ReplayGain.resolve(rgInfo: loud, scaling: "albumGainWithPeak").peakLimited)
+		XCTAssertFalse(ReplayGain.resolve(rgInfo: info, scaling: "trackGainWithPeak").peakLimited, "a gain under the peak is left alone")
+	}
 }

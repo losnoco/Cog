@@ -264,6 +264,13 @@ struct CogRenderer {
 	_Atomic uint64_t deviceDiscontinuities;
 	_Atomic int64_t lastDeviceJump;
 	_Atomic float peak;
+
+	// Metering, written by the render thread, taken by anyone.
+	_Atomic bool metering;
+	_Atomic float meterPeak[COG_METER_CHANNELS];
+	_Atomic double meterSumOfSquares[COG_METER_CHANNELS];
+	_Atomic uint64_t meterFrames;
+	_Atomic uint64_t meterClipped;
 };
 
 CogRenderer *cog_renderer_create(CogRing *ring) {
@@ -282,6 +289,13 @@ CogRenderer *cog_renderer_create(CogRing *ring) {
 	atomic_init(&renderer->silentFrames, 0);
 	atomic_init(&renderer->underrunEvents, 0);
 	atomic_init(&renderer->peak, 0.0f);
+	atomic_init(&renderer->metering, false);
+	for(int channel = 0; channel < COG_METER_CHANNELS; ++channel) {
+		atomic_init(&renderer->meterPeak[channel], 0.0f);
+		atomic_init(&renderer->meterSumOfSquares[channel], 0.0);
+	}
+	atomic_init(&renderer->meterFrames, 0);
+	atomic_init(&renderer->meterClipped, 0);
 	atomic_init(&renderer->crossfadeEnabled, true);
 	renderer->dopMarker = 0x05;
 	renderer->ditherState = 0x9E3779B9U;
@@ -493,6 +507,51 @@ static bool renderer_render_dop(CogRenderer *renderer, float *out, size_t frames
 	return true;
 }
 
+// MARK: - Metering
+
+/// Adds `count` frames to the meter: summed locally, then added with
+/// compare-and-swap, since a take may reset the totals at any moment.
+static void renderer_meter(CogRenderer *renderer, const float *frames, size_t count, uint32_t channels) {
+	float peak[COG_METER_CHANNELS] = { 0 };
+	double sum[COG_METER_CHANNELS] = { 0 };
+	uint64_t clipped = 0;
+	for(size_t frame = 0; frame < count; ++frame) {
+		const float *sample = frames + frame * channels;
+		for(uint32_t channel = 0; channel < channels; ++channel) {
+			const int slot = channel < COG_METER_CHANNELS ? (int)channel : COG_METER_CHANNELS - 1;
+			const float magnitude = fabsf(sample[channel]);
+			if(magnitude > peak[slot]) peak[slot] = magnitude;
+			sum[slot] += (double)sample[channel] * sample[channel];
+			if(magnitude > 1.0f) ++clipped;
+		}
+	}
+	const uint32_t slots = channels < COG_METER_CHANNELS ? channels : COG_METER_CHANNELS;
+	for(uint32_t slot = 0; slot < slots; ++slot) {
+		float previousPeak = atomic_load_explicit(&renderer->meterPeak[slot], memory_order_relaxed);
+		while(peak[slot] > previousPeak &&
+		      !atomic_compare_exchange_weak_explicit(&renderer->meterPeak[slot], &previousPeak, peak[slot], memory_order_relaxed, memory_order_relaxed)) {
+		}
+		double previousSum = atomic_load_explicit(&renderer->meterSumOfSquares[slot], memory_order_relaxed);
+		while(!atomic_compare_exchange_weak_explicit(&renderer->meterSumOfSquares[slot], &previousSum, previousSum + sum[slot], memory_order_relaxed, memory_order_relaxed)) {
+		}
+	}
+	atomic_fetch_add_explicit(&renderer->meterClipped, clipped, memory_order_relaxed);
+	atomic_fetch_add_explicit(&renderer->meterFrames, count, memory_order_relaxed);
+}
+
+void cog_renderer_set_metering(CogRenderer *renderer, bool enabled) {
+	atomic_store_explicit(&renderer->metering, enabled, memory_order_relaxed);
+}
+
+void cog_renderer_take_meter(CogRenderer *renderer, CogMeterSnapshot *snapshot) {
+	for(int channel = 0; channel < COG_METER_CHANNELS; ++channel) {
+		snapshot->peak[channel] = atomic_exchange_explicit(&renderer->meterPeak[channel], 0.0f, memory_order_relaxed);
+		snapshot->sumOfSquares[channel] = atomic_exchange_explicit(&renderer->meterSumOfSquares[channel], 0.0, memory_order_relaxed);
+	}
+	snapshot->frames = atomic_exchange_explicit(&renderer->meterFrames, 0, memory_order_relaxed);
+	snapshot->clippedSamples = atomic_exchange_explicit(&renderer->meterClipped, 0, memory_order_relaxed);
+}
+
 size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	CogRing *ring = renderer->ring;
 	const uint32_t channels = cog_ring_channels(ring);
@@ -554,6 +613,9 @@ size_t cog_renderer_render(CogRenderer *renderer, float *out, size_t frames) {
 	}
 	if(peak > before) {
 		atomic_store_explicit(&renderer->peak, peak, memory_order_relaxed);
+	}
+	if(got && atomic_load_explicit(&renderer->metering, memory_order_relaxed)) {
+		renderer_meter(renderer, out, got, channels);
 	}
 
 	atomic_fetch_add_explicit(&renderer->framesRendered, frames, memory_order_relaxed);

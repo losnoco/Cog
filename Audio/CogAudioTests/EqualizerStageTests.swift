@@ -85,4 +85,20 @@ final class EqualizerStageTests: XCTestCase {
 		UserDefaults.standard.set(false, forKey: "GraphicEQenable")
 		XCTAssertFalse(stage.isActive)
 	}
+
+	/// The output status learns the gains as the DSP thread applies them.
+	func testInspectionReportsTheAppliedGains() {
+		let stage = EqualizerStage()
+		var gains = [Float](repeating: 0, count: 31)
+		gains[4] = 3
+		gains.withUnsafeMutableBufferPointer { stage.setAllBands($0.baseAddress!) }
+		stage.setPreamp(-6)
+		guard case .equalizer(_, let before)? = stage.inspection else { return XCTFail("an equalizer inspection") }
+		XCTAssertEqual(before, [Float](repeating: 0, count: 31), "not applied until a block runs")
+
+		_ = peak(through: stage, frequency: 1000)
+		guard case let .equalizer(preamp, after)? = stage.inspection else { return XCTFail("an equalizer inspection") }
+		XCTAssertEqual(preamp, -6, accuracy: 1e-4)
+		XCTAssertEqual(after, gains)
+	}
 }

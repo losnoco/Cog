@@ -62,14 +62,33 @@ public protocol DSPStage: AnyObject {
 	/// (FreeSurround's block, a stretcher's latency). Events are placed
 	/// after them so they line up with the audio.
 	var pendingFrames: Int { get }
+
+	/// The settings the stage applied to the last block, for the output
+	/// status; nil for a stage that does not change the audio. DSP thread.
+	var inspection: StageInspection? { get }
 }
 
 public extension DSPStage {
 	var timeRatio: Double { 1 }
 	var pendingFrames: Int { 0 }
+	var inspection: StageInspection? { nil }
 
 	/// Stages that hold nothing back just process.
 	func drain(_ buffer: DSPBuffer) {
 		process(buffer)
 	}
+}
+
+/// What a stage did to a block, as the output status describes it. Kept
+/// small and comparable: the pump reports processing again whenever it
+/// changes, so it must not change with every block.
+public enum StageInspection: Equatable {
+	/// The time stretcher's engine (`rubberbandEngine`), and the tempo and
+	/// pitch it applied (pitch 1 for varispeed, whose pitch is its tempo).
+	case timeStretch(engine: String, tempo: Double, pitch: Double)
+	/// FreeSurround: `upmixes` is false while the input is not stereo, which
+	/// passes through; `output` is what it produced.
+	case freeSurround(upmixes: Bool, output: StreamFormat)
+	/// The equalizer's preamp and its 31 band gains, in dB.
+	case equalizer(preampDB: Float, gainsDB: [Float])
 }

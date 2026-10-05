@@ -158,4 +158,86 @@ final class CogRenderTests: XCTestCase {
 		let (_, samples) = render(10)
 		XCTAssertEqual(samples[0], 0.5, accuracy: 1e-5)
 	}
+
+	// MARK: - Metering
+
+	private func peaks(_ snapshot: CogMeterSnapshot) -> [Float] {
+		withUnsafeBytes(of: snapshot.peak) { Array($0.bindMemory(to: Float.self)) }
+	}
+
+	private func sums(_ snapshot: CogMeterSnapshot) -> [Double] {
+		withUnsafeBytes(of: snapshot.sumOfSquares) { Array($0.bindMemory(to: Double.self)) }
+	}
+
+	private func takeMeter() -> CogMeterSnapshot {
+		var snapshot = CogMeterSnapshot()
+		cog_renderer_take_meter(renderer, &snapshot)
+		return snapshot
+	}
+
+	func testNothingIsMeteredUntilMeteringIsOn() {
+		fill(256, value: 0.5)
+		_ = render(256)
+		let snapshot = takeMeter()
+		XCTAssertEqual(snapshot.frames, 0)
+		XCTAssertEqual(peaks(snapshot)[0], 0)
+	}
+
+	func testEachChannelIsMeteredAfterTheGainsAndTakingResets() {
+		cog_renderer_set_metering(renderer, true)
+		// Left a full-scale square wave, right silent.
+		var samples = [Float](repeating: 0, count: 512)
+		for frame in 0..<256 {
+			samples[frame * 2] = frame % 2 == 0 ? 0.8 : -0.8
+		}
+		XCTAssertEqual(samples.withUnsafeBufferPointer { cog_ring_write(ring, $0.baseAddress!, 256) }, 256)
+		cog_gain_ramp_to(cog_renderer_volume(renderer), 0.5, 0)
+		_ = render(256)
+
+		let snapshot = takeMeter()
+		XCTAssertEqual(snapshot.frames, 256)
+		XCTAssertEqual(peaks(snapshot)[0], 0.4, accuracy: 1e-6)
+		XCTAssertEqual(peaks(snapshot)[1], 0)
+		XCTAssertEqual((sums(snapshot)[0] / 256).squareRoot(), 0.4, accuracy: 1e-6, "a square wave's RMS is its peak")
+		XCTAssertEqual(snapshot.clippedSamples, 0)
+
+		let again = takeMeter()
+		XCTAssertEqual(again.frames, 0, "taken, so reset")
+		XCTAssertEqual(peaks(again)[0], 0)
+	}
+
+	func testSilenceFromARunningDryRingIsNotMetered() {
+		cog_renderer_set_metering(renderer, true)
+		fill(100, value: 0.25)
+		_ = render(256)
+		XCTAssertEqual(takeMeter().frames, 100)
+	}
+
+	func testSamplesBeyondFullScaleAreCountedAsClipped() {
+		cog_renderer_set_metering(renderer, true)
+		fill(64, value: 0.9)
+		cog_gain_ramp_to(cog_renderer_volume(renderer), 2, 0)
+		_ = render(64)
+		let snapshot = takeMeter()
+		XCTAssertEqual(snapshot.clippedSamples, 128)
+		XCTAssertEqual(peaks(snapshot)[0], 1.8, accuracy: 1e-6)
+	}
+
+	func testChannelsBeyondTheMeterShareItsLastSlot() throws {
+		let wide = try XCTUnwrap(cog_ring_create(256, 10))
+		defer { cog_ring_destroy(wide) }
+		let wideRenderer = try XCTUnwrap(cog_renderer_create(wide))
+		defer { cog_renderer_destroy(wideRenderer) }
+		cog_renderer_set_metering(wideRenderer, true)
+		var frame = [Float](repeating: 0.1, count: 10)
+		frame[9] = 0.7
+		XCTAssertEqual(frame.withUnsafeBufferPointer { cog_ring_write(wide, $0.baseAddress!, 1) }, 1)
+		var out = [Float](repeating: 0, count: 10)
+		_ = out.withUnsafeMutableBufferPointer { cog_renderer_render(wideRenderer, $0.baseAddress!, 1) }
+
+		var snapshot = CogMeterSnapshot()
+		cog_renderer_take_meter(wideRenderer, &snapshot)
+		XCTAssertEqual(peaks(snapshot)[7], 0.7, accuracy: 1e-6)
+		XCTAssertEqual(sums(snapshot)[7], 0.01 + 0.01 + 0.49, accuracy: 1e-6, "channels 8 to 10 summed together")
+	}
 }

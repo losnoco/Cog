@@ -56,6 +56,65 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputFittedChannelsKey;
 // percent.
 FOUNDATION_EXPORT NSString *const CogAudioOutputVolumeKey;
 
+// Each stage's settings, for inspecting the signal path. A stage's
+// dictionary is present while the stage is in the chain, which it may be
+// without changing anything (CogAudioOutputStageActiveKey NO): FreeSurround
+// given anything but stereo, or the resampler at equal rates.
+//
+// NSDictionary: the resampler, while the track reaches it as PCM. Input and
+// output rates, quality ("HQ", soxr's), active.
+FOUNDATION_EXPORT NSString *const CogAudioOutputResamplerKey;
+// NSDictionary: tempo and pitch, while they are off unity. Engine (the
+// rubberbandEngine setting: "varispeed", "faster", "finer" or
+// "signalsmith"), tempo and pitch as ratios.
+FOUNDATION_EXPORT NSString *const CogAudioOutputTimeStretchKey;
+// NSDictionary: FreeSurround, while it is on. Active, and the channels and
+// channel config it produces.
+FOUNDATION_EXPORT NSString *const CogAudioOutputFreeSurroundKey;
+// NSDictionary: the equalizer, while it is on. Preamp, band frequencies and
+// band gains.
+FOUNDATION_EXPORT NSString *const CogAudioOutputEqualizerKey;
+// NSDictionary: the spatial mixer, while it renders the track. Spatial
+// output ("headphones", "builtInSpeakers" or "externalSpeakers") and head
+// tracking.
+FOUNDATION_EXPORT NSString *const CogAudioOutputSpatialKey;
+
+// The keys of those dictionaries.
+// NSNumber (BOOL): the stage changes the audio.
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageActiveKey;
+// NSNumber (double), Hz.
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageInputRateKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageOutputRateKey;
+// NSString.
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageQualityKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageEngineKey;
+// NSNumber (double), a ratio: 1 is unchanged.
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageTempoKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStagePitchKey;
+// NSNumber (int, and uint32 channel config bits).
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageChannelsKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageChannelConfigKey;
+// NSNumber (double), dB; NSArray of NSNumber (double), Hz and dB.
+FOUNDATION_EXPORT NSString *const CogAudioOutputStagePreampKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageBandFrequenciesKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageBandGainsKey;
+// NSString; NSNumber (BOOL).
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageSpatialOutputKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageHeadTrackingKey;
+
+// NSString: where the track's gain comes from ("album", "track",
+// "soundcheck" or "volume"), if anywhere.
+FOUNDATION_EXPORT NSString *const CogAudioOutputTrackGainSourceKey;
+// NSNumber (BOOL): the gain was lowered so the track's peak cannot clip.
+FOUNDATION_EXPORT NSString *const CogAudioOutputTrackGainPeakLimitedKey;
+// NSNumber (BOOL): spatial audio is on for the device, but the spatial
+// mixer could not be set up, so surround is downmixed instead.
+FOUNDATION_EXPORT NSString *const CogAudioOutputSpatialRefusedKey;
+// NSNumber (int): the device's I/O buffer, and the frames between Cog
+// handing audio over and it being heard, at the render rate.
+FOUNDATION_EXPORT NSString *const CogAudioOutputBufferFramesKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputLatencyFramesKey;
+
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationDSDToPCM;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationHDCD;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationPrecision;
@@ -67,6 +126,8 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationEqualizer;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationSpatialAudio;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationChannelLayout;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
+
+@class SignalMetrics;
 
 @interface AudioPlayer : NSObject {
 	double volume;
@@ -120,6 +181,13 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 // New ReplayGain info for a track that is playing or queued, for example
 // once its tags have loaded after playback began.
 - (void)setRGInfo:(NSDictionary *)rgi forTrack:(id)userInfo;
+
+// Meters what reaches the output device, for -signalMetrics. Off by
+// default; leave it off when nobody is looking.
+@property(nonatomic) BOOL meteringEnabled;
+// The output since the last call, and the state of the buffers; nil while
+// nothing plays. Main thread.
+- (SignalMetrics *)signalMetrics;
 
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
