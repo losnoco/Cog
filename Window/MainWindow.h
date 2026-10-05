@@ -13,6 +13,8 @@
 	IBOutlet NSToolbar *mainToolbar;
 	IBOutlet NSTextField *outputFormatField;
 	IBOutlet NSSearchField *searchField;
+	// The SignalInspectorWindowController, opened by clicking the output status.
+	IBOutlet id signalInspector;
 }
 
 - (IBAction)openSearch:(id)sender;
