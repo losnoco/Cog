@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
+		0A0E707E307416E400EF30D0 /* SignalStatusModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E707D307416E400EF30D0 /* SignalStatusModel.swift */; };
+		0A0E70853074175600EF30D0 /* SignalInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E70843074175600EF30D0 /* SignalInspectorView.swift */; };
+		0A0E70873074176A00EF30D0 /* SignalInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */; };
 		0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */; };
 		0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */; };
 		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
@@ -869,6 +872,9 @@
 		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
+		0A0E707D307416E400EF30D0 /* SignalStatusModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalStatusModel.swift; sourceTree = "<group>"; };
+		0A0E70843074175600EF30D0 /* SignalInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalInspectorView.swift; sourceTree = "<group>"; };
+		0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalInspectorWindowController.swift; sourceTree = "<group>"; };
 		0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzAPI.swift; sourceTree = "<group>"; };
 		0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzScrobbler.swift; sourceTree = "<group>"; };
 		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
@@ -1311,8 +1317,19 @@
 				177EC0110B8BC2CF0000BC8C /* Utils */,
 				177EBF770B8BC2A70000BC8C /* ThirdParty */,
 				07D973050ED1E8F200E7602E /* ID3TagEditor */,
+				0A0E707C307416E400EF30D0 /* SignalInspector */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		0A0E707C307416E400EF30D0 /* SignalInspector */ = {
+			isa = PBXGroup;
+			children = (
+				0A0E707D307416E400EF30D0 /* SignalStatusModel.swift */,
+				0A0E70843074175600EF30D0 /* SignalInspectorView.swift */,
+				0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */,
+			);
+			path = SignalInspector;
 			sourceTree = "<group>";
 		};
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
@@ -2996,6 +3013,7 @@
 				C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */,
 				83CB565E2E064607003DD379 /* NSDictionary+Optional.m in Sources */,
 				56462EB20D634206000AB68C /* SpotlightPlaylistController.m in Sources */,
+				0A0E70873074176A00EF30D0 /* SignalInspectorWindowController.swift in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
 				0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */,
@@ -3058,6 +3076,7 @@
 				CEC0CAFE000000000000B203 /* RemoteControlObjCBootstrap.swift in Sources */,
 				CEC0CAFE000000000000B204 /* RemoteControlPaneView.swift in Sources */,
 				CEC0CAFE000000000000B205 /* RemoteControlPaneAvailableView.swift in Sources */,
+				0A0E70853074175600EF30D0 /* SignalInspectorView.swift in Sources */,
 				E20C8ADB5FA449AD83F40538 /* PreferencesRootView.swift in Sources */,
 				62FE80E521E14AFB9C8B48E5 /* PreferencesWindow.swift in Sources */,
 				515000000000000000000001 /* PreferencePaneDescriptor.swift in Sources */,
@@ -3066,6 +3085,7 @@
 				515000000000000000000004 /* RubberbandPaneView.swift in Sources */,
 				515000000000000000000005 /* OutputPaneView.swift in Sources */,
 				515000000000000000000006 /* AppearancePaneView.swift in Sources */,
+				0A0E707E307416E400EF30D0 /* SignalStatusModel.swift in Sources */,
 				83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */,
 				515000000000000000000007 /* GeneralPaneView.swift in Sources */,
 				8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */,

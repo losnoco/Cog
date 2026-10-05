@@ -582,6 +582,10 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[miniPlusVolumeSlider setDoubleValue:value];
 }
 
+- (AudioPlayer *)audioPlayer {
+	return audioPlayer;
+}
+
 - (double)volume {
 	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
 	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;

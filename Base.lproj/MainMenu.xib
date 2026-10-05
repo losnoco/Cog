@@ -1276,6 +1276,7 @@
                 <outlet property="outputFormatField" destination="Dac-Fm-Lbl" id="Dac-Fm-Outlet"/>
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
                 <outlet property="searchField" destination="1531" id="Lh4-Bw-6Ex"/>
+                <outlet property="signalInspector" destination="Sig-In-Ctl" id="Sig-In-Out"/>
             </connections>
             <point key="canvasLocation" x="270.5" y="131"/>
         </window>
@@ -1871,6 +1872,12 @@
                             <menuItem title="Show Info Inspector" secondaryImage="info" catalog="system" keyEquivalent="i" id="2453">
                                 <connections>
                                     <action selector="toggleWindow:" target="2422" id="2454"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Signal Inspector" secondaryImage="waveform.path.ecg" catalog="system" keyEquivalent="i" id="Sig-In-Mnu">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleWindow:" target="Sig-In-Ctl" id="Sig-In-Act"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Show Lyrics" secondaryImage="quote.bubble" catalog="system" keyEquivalent="L" id="Tkb-7M-OiA">
@@ -2930,6 +2937,11 @@ Gw
             <connections>
                 <outlet property="playbackController" destination="705" id="2452"/>
                 <outlet property="playlistLoader" destination="1319" id="2179"/>
+            </connections>
+        </customObject>
+        <customObject id="Sig-In-Ctl" customClass="SignalInspectorWindowController">
+            <connections>
+                <outlet property="playbackController" destination="705" id="Sig-In-Pbc"/>
             </connections>
         </customObject>
         <customObject id="2422" customClass="InfoWindowController">

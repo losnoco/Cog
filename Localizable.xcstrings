@@ -26,57 +26,6 @@
         }
       }
     },
-    "%@ · %@%@" : {
-      "comment" : "Signal integrity, Cog output format, and exclusive transport status",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@%3$@"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
-    "%@ in %u-bit words" : {
-      "comment" : "A sample format stored in wider words, e.g. Int24 in 32-bit words",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ in %2$u-bit words"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ en palabras de %2$u bits"
-          }
-        }
-      }
-    },
-    "%@ is:" : {
-      "comment" : "A label for the picker of what is connected to the output device; the argument is the device's name.",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ es:"
-          }
-        }
-      }
-    },
-    "%@, same format" : {
-      "comment" : "An output device whose format matches the line above",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, formato idéntico"
-          }
-        }
-      }
-    },
     "%1d day(s)" : {
       "comment" : "day for total",
       "localizations" : {
@@ -300,6 +249,147 @@
         }
       }
     },
+    "%@ in %u-bit words" : {
+      "comment" : "A sample format stored in wider words, e.g. Int24 in 32-bit words",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ in %2$u-bit words"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ en palabras de %2$u bits"
+          }
+        }
+      }
+    },
+    "%@ is:" : {
+      "comment" : "A label for the picker of what is connected to the output device; the argument is the device's name.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ es:"
+          }
+        }
+      }
+    },
+    "%@ ms" : {
+      "comment" : "A duration in milliseconds",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ms"
+          }
+        }
+      }
+    },
+    "%@ ms buffer, %@ ms latency" : {
+      "comment" : "Signal Inspector: the device's I/O buffer and output latency",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ ms buffer, %2$@ ms latency"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "búfer de %@ ms, latencia de %@ ms"
+          }
+        }
+      }
+    },
+    "%@ ms processed, %@ s decoded" : {
+      "comment" : "Signal Inspector: shallow and deep buffer levels",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ ms processed, %2$@ s decoded"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ms procesados, %@ s decodificados"
+          }
+        }
+      }
+    },
+    "%@ packed for the DAC, untouched" : {
+      "comment" : "Signal Inspector: DoP; the DSD rate name, e.g. DSD64",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ empaquetado para el DAC, sin cambios"
+          }
+        }
+      }
+    },
+    "%@ to %@ PCM" : {
+      "comment" : "Signal Inspector: DSD rate name to a PCM sample rate",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ to %2$@ PCM"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a PCM de %@"
+          }
+        }
+      }
+    },
+    "%@ · %@%@" : {
+      "comment" : "Signal integrity, Cog output format, and exclusive transport status",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@%3$@"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "%@, same format" : {
+      "comment" : "An output device whose format matches the line above",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, formato idéntico"
+          }
+        }
+      }
+    },
+    "%ld of %ld bands, %@ to %@ dB" : {
+      "comment" : "Signal Inspector: equalizer bands moved, and their range in dB",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$ld of %2$ld bands, %3$@ to %4$@ dB"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%ld de %ld bandas, de %@ a %@ dB"
+          }
+        }
+      }
+    },
     "%lld Hz" : {
       "comment" : "A picker option for selecting the sample rate of a synthesizer. The value is presented as a string with the sample rate in Hertz.",
       "isCommentAutoGenerated" : true,
@@ -319,6 +409,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%u canales"
+          }
+        }
+      }
+    },
+    "100%, unity" : {
+      "comment" : "Signal Inspector: Cog's volume does not change the samples",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "100 %, sin cambios"
+          }
+        }
+      }
+    },
+    "API address" : {
+      "comment" : "ListenBrainz server address field",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección de la API"
           }
         }
       }
@@ -358,18 +470,6 @@
         }
       }
     },
-    "Add…" : {
-      "comment" : "A button that allows the user to add a new sandbox-accessible path.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir..."
-          }
-        }
-      }
-    },
     "AddButtonTooltip" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -404,6 +504,18 @@
         }
       }
     },
+    "Add…" : {
+      "comment" : "A button that allows the user to add a new sandbox-accessible path.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir..."
+          }
+        }
+      }
+    },
     "Advanced audio formats" : {
       "comment" : "A section header in the output preferences view, describing advanced audio formats.",
       "isCommentAutoGenerated" : true,
@@ -424,6 +536,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Artista del álbum:"
+          }
+        }
+      }
+    },
+    "Album gain" : {
+      "comment" : "Signal Inspector: the gain comes from the album's ReplayGain",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganancia del álbum"
           }
         }
       }
@@ -469,17 +592,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aparte"
-          }
-        }
-      }
-    },
-    "API address" : {
-      "comment" : "ListenBrainz server address field",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dirección de la API"
           }
         }
       }
@@ -542,6 +654,16 @@
         }
       }
     },
+    "Audio Units" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio Units"
+          }
+        }
+      }
+    },
     "Audio output status" : {
       "comment" : "Audio output status accessibility label",
       "localizations" : {
@@ -549,16 +671,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estado de la salida de audio"
-          }
-        }
-      }
-    },
-    "Audio Units" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Audio Units"
           }
         }
       }
@@ -725,6 +837,18 @@
         }
       }
     },
+    "Buffered" : {
+      "comment" : "A label for the amount of time a signal has been buffered.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En búfer"
+          }
+        }
+      }
+    },
     "Built-in to Cog" : {
       "comment" : "A section header for built-in MIDI synthesizers.",
       "isCommentAutoGenerated" : true,
@@ -733,6 +857,48 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Integrados en Cog"
+          }
+        }
+      }
+    },
+    "Bypassed" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitido"
+          }
+        }
+      }
+    },
+    "Bypassed at %@, bit-exact" : {
+      "comment" : "Signal Inspector: the resampler is not needed at equal rates",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitido a %@, bit a bit"
+          }
+        }
+      }
+    },
+    "Changes the samples" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia las muestras"
+          }
+        }
+      }
+    },
+    "Channel mapping" : {
+      "comment" : "Signal Inspector stage: channels fitted to the device",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapeo de canales"
           }
         }
       }
@@ -822,6 +988,41 @@
         }
       }
     },
+    "Click to open the Signal Inspector." : {
+      "comment" : "Tooltip note: clicking the audio output status opens the Signal Inspector",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haz clic para abrir el inspector de señal."
+          }
+        }
+      }
+    },
+    "Clipped" : {
+      "comment" : "A label for a clipped signal.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saturado"
+          }
+        }
+      }
+    },
+    "Clipped samples" : {
+      "comment" : "A label for the number of samples that have been clipped.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestras saturadas"
+          }
+        }
+      }
+    },
     "Codec" : {
       "comment" : "Codec title",
       "localizations" : {
@@ -857,6 +1058,27 @@
         }
       }
     },
+    "Cog changes the samples at the highlighted stages." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog cambia las muestras en las etapas destacadas."
+          }
+        }
+      }
+    },
+    "Cog output" : {
+      "comment" : "Signal Inspector stage: what Cog hands Core Audio",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salida de Cog"
+          }
+        }
+      }
+    },
     "Cog output: %@" : {
       "comment" : "Tooltip line: what Cog renders for Core Audio",
       "localizations" : {
@@ -864,6 +1086,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salida de Cog: %@"
+          }
+        }
+      }
+    },
+    "Cog passes the decoded samples on unchanged." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog entrega las muestras decodificadas sin cambios."
           }
         }
       }
@@ -1059,17 +1291,6 @@
         }
       }
     },
-    "Copy command" : {
-      "comment" : "Remote Control preference",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copiar comando"
-          }
-        }
-      }
-    },
     "Copy Version" : {
       "comment" : "A menu item that copies the current app version to the clipboard.",
       "isCommentAutoGenerated" : true,
@@ -1082,6 +1303,17 @@
         }
       }
     },
+    "Copy command" : {
+      "comment" : "Remote Control preference",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar comando"
+          }
+        }
+      }
+    },
     "Core Audio: %@" : {
       "comment" : "Tooltip line: the formats the system mixes in",
       "localizations" : {
@@ -1089,6 +1321,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Core Audio: %@"
+          }
+        }
+      }
+    },
+    "Could not be set up; downmixed instead" : {
+      "comment" : "Signal Inspector: the spatial mixer failed, so surround is downmixed",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo configurar; se mezcla a menos canales"
           }
         }
       }
@@ -1139,6 +1382,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No se pudieron guardar las credenciales al llavero."
+          }
+        }
+      }
+    },
+    "Counts are for the track playing; clipped samples are counted only while this panel is open." : {
+      "comment" : "A description of the clipped samples count.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los conteos son de la pista en reproducción; las muestras saturadas solo se cuentan mientras este panel está abierto."
           }
         }
       }
@@ -1199,6 +1454,39 @@
         }
       }
     },
+    "DSD converted to PCM" : {
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DSD convertido a PCM"
+          }
+        }
+      }
+    },
+    "DSD over PCM" : {
+      "comment" : "Signal Inspector stage: DSD packed into PCM words for the DAC",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DSD sobre PCM"
+          }
+        }
+      }
+    },
+    "DSD to PCM" : {
+      "comment" : "Signal Inspector stage: DSD decimated to PCM",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DSD a PCM"
+          }
+        }
+      }
+    },
     "Date" : {
       "comment" : "Date title",
       "localizations" : {
@@ -1218,6 +1506,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fecha:"
+          }
+        }
+      }
+    },
+    "Decoder" : {
+      "comment" : "Signal Inspector stage: the track's decoder",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decodificador"
           }
         }
       }
@@ -1308,6 +1607,16 @@
         }
       }
     },
+    "Device glitches" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fallos del dispositivo"
+          }
+        }
+      }
+    },
     "Device: %@" : {
       "comment" : "Tooltip line: the output device and the format it runs at",
       "localizations" : {
@@ -1315,23 +1624,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dispositivo: %@"
-          }
-        }
-      }
-    },
-    "dhms" : {
-      "comment" : "days, hours, minutes and seconds",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@, %@ and %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@, %@ y %@"
           }
         }
       }
@@ -1377,17 +1669,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Color del punto:"
-          }
-        }
-      }
-    },
-    "DSD converted to PCM" : {
-      "comment" : "Cog signal-integrity reason",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DSD convertido a PCM"
           }
         }
       }
@@ -1512,6 +1793,17 @@
         }
       }
     },
+    "Equalizer" : {
+      "comment" : "Signal Inspector stage: the graphic equalizer",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ecualizador"
+          }
+        }
+      }
+    },
     "Equalizer applied" : {
       "comment" : "Cog signal-integrity reason",
       "localizations" : {
@@ -1615,17 +1907,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error"
-          }
-        }
-      }
-    },
-    "exclusive" : {
-      "comment" : "Cog holds the output device for itself",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "exclusivo"
           }
         }
       }
@@ -1786,6 +2067,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mejor calidad"
+          }
+        }
+      }
+    },
+    "Float32, exact" : {
+      "comment" : "Signal Inspector: the samples convert to Float32 without loss",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Float32, exacto"
+          }
+        }
+      }
+    },
+    "For built-in speakers" : {
+      "comment" : "Signal Inspector: the spatial mixer renders for the Mac's speakers",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para los parlantes integrados"
+          }
+        }
+      }
+    },
+    "For external speakers" : {
+      "comment" : "Signal Inspector: the spatial mixer renders for external speakers",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para parlantes externos"
+          }
+        }
+      }
+    },
+    "For headphones" : {
+      "comment" : "Signal Inspector: the spatial mixer renders for headphones",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para audífonos"
           }
         }
       }
@@ -2083,14 +2408,13 @@
         }
       }
     },
-    "Halve volume for DSD" : {
-      "comment" : "A toggle that allows the user to halve the volume when playing DSD audio.",
-      "isCommentAutoGenerated" : true,
+    "HDCD" : {
+      "comment" : "Signal Inspector stage: HDCD decoding",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reducir volumen de DSD a la mitad"
+            "value" : "HDCD"
           }
         }
       }
@@ -2102,6 +2426,31 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "HDCD decodificado"
+          }
+        }
+      }
+    },
+    "HH:MM:SS" : {
+      "shouldTranslate" : false
+    },
+    "HTTP/HTTPS streaming buffer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buffer de transmisión HTTP/HTTPS"
+          }
+        }
+      }
+    },
+    "Halve volume for DSD" : {
+      "comment" : "A toggle that allows the user to halve the volume when playing DSD audio.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducir volumen de DSD a la mitad"
           }
         }
       }
@@ -2128,9 +2477,6 @@
           }
         }
       }
-    },
-    "HH:MM:SS" : {
-      "shouldTranslate" : false
     },
     "High Consistency" : {
       "comment" : "A choice for the pitch setting in the RubberbandPaneView.",
@@ -2166,23 +2512,6 @@
         }
       }
     },
-    "hms" : {
-      "comment" : "hours, minutes and seconds",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@ and %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@ y %@"
-          }
-        }
-      }
-    },
     "Hot Keys" : {
       "comment" : "Preference pane title",
       "localizations" : {
@@ -2190,16 +2519,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Teclas rápidas"
-          }
-        }
-      }
-    },
-    "HTTP/HTTPS streaming buffer" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buffer de transmisión HTTP/HTTPS"
           }
         }
       }
@@ -2281,6 +2600,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mantiene el sonido en su lugar al girar la cabeza, en AirPods compatibles."
+          }
+        }
+      }
+    },
+    "LRCLIB could not answer for this track." : {
+      "comment" : "Lyrics window: LRCLIB returned an error",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB no pudo responder por esta pista."
+          }
+        }
+      }
+    },
+    "LRCLIB has no lyrics for this track." : {
+      "comment" : "Lyrics window: LRCLIB has no record for the track",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB no tiene la letra de esta pista."
+          }
+        }
+      }
+    },
+    "LRCLIB lists this track as instrumental." : {
+      "comment" : "Lyrics window: LRCLIB says the track has no words",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB indica que esta pista es instrumental."
           }
         }
       }
@@ -2429,6 +2781,18 @@
         }
       }
     },
+    "Live" : {
+      "comment" : "A heading for the live audio data.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En vivo"
+          }
+        }
+      }
+    },
     "Long" : {
       "localizations" : {
         "es" : {
@@ -2446,61 +2810,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buscar en LRCLIB las letras que falten"
-          }
-        }
-      }
-    },
-    "lossless" : {
-      "comment" : "How a track is encoded",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sin pérdidas"
-          }
-        }
-      }
-    },
-    "lossy" : {
-      "comment" : "How a track is encoded",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "con pérdidas"
-          }
-        }
-      }
-    },
-    "LRCLIB could not answer for this track." : {
-      "comment" : "Lyrics window: LRCLIB returned an error",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LRCLIB no pudo responder por esta pista."
-          }
-        }
-      }
-    },
-    "LRCLIB has no lyrics for this track." : {
-      "comment" : "Lyrics window: LRCLIB has no record for the track",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LRCLIB no tiene la letra de esta pista."
-          }
-        }
-      }
-    },
-    "LRCLIB lists this track as instrumental." : {
-      "comment" : "Lyrics window: LRCLIB says the track has no words",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LRCLIB indica que esta pista es instrumental."
           }
         }
       }
@@ -2630,23 +2939,6 @@
         }
       }
     },
-    "ms" : {
-      "comment" : "minutes and seconds",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ and %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ y %@"
-          }
-        }
-      }
-    },
     "Needs a specific output device, not the system default. While playing, Cog takes the device for itself, so other apps cannot play through it; runs it at each track's sample rate; and sends it integer samples when it takes them, unchanged when nothing in Cog alters the sound. A device that cannot be taken plays shared, as before." : {
       "comment" : "Explanation under the exclusive mode toggle.",
       "localizations" : {
@@ -2707,6 +2999,18 @@
         }
       }
     },
+    "No levels while paused" : {
+      "comment" : "A message displayed when there are no levels to show.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin niveles en pausa"
+          }
+        }
+      }
+    },
     "No volume scaling" : {
       "comment" : "Label for the option that disables volume scaling.",
       "isCommentAutoGenerated" : true,
@@ -2731,6 +3035,27 @@
         }
       }
     },
+    "Not applied to DoP" : {
+      "comment" : "Signal Inspector: volume cannot change DSD over PCM",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se aplica a DoP"
+          }
+        }
+      }
+    },
+    "Not clipped" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin saturación"
+          }
+        }
+      }
+    },
     "Not stated in source" : {
       "comment" : "A license that is not stated in the source.",
       "isCommentAutoGenerated" : true,
@@ -2739,6 +3064,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No indicada en el código fuente"
+          }
+        }
+      }
+    },
+    "Nothing playing" : {
+      "comment" : "A message displayed when no audio is playing.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada en reproducción"
           }
         }
       }
@@ -2988,6 +3325,18 @@
         }
       }
     },
+    "Output latency" : {
+      "comment" : "A label for the latency of the audio output.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latencia de salida"
+          }
+        }
+      }
+    },
     "Output ownership" : {
       "comment" : "Header of the output preferences section on holding the output device exclusively.",
       "localizations" : {
@@ -2995,6 +3344,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uso exclusivo de la salida"
+          }
+        }
+      }
+    },
+    "Passes the samples unchanged" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrega las muestras sin cambios"
           }
         }
       }
@@ -3046,6 +3405,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pausar"
+          }
+        }
+      }
+    },
+    "Peak and RMS of what Cog hands Core Audio, after every gain. Click to clear the clip lamps." : {
+      "comment" : "A description of the meter view.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pico y RMS de lo que Cog entrega a Core Audio, después de todas las ganancias. Haz clic para apagar los indicadores de saturación."
           }
         }
       }
@@ -3234,6 +3605,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estado"
+          }
+        }
+      }
+    },
+    "Preamp %@ dB" : {
+      "comment" : "Signal Inspector: the equalizer's preamp",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preamplificador %@ dB"
           }
         }
       }
@@ -3657,28 +4039,6 @@
         }
       }
     },
-    "ReplayGain or tagged volume applied" : {
-      "comment" : "Cog signal-integrity reason",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "ReplayGain o volumen etiquetado activado"
-          }
-        }
-      }
-    },
-    "ReplayGain or tagged volume: %@ dB" : {
-      "comment" : "Cog signal-integrity reason: the track's gain",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "machine_translated",
-            "value" : "ReplayGain o volumen etiquetado: %@ dB"
-          }
-        }
-      }
-    },
     "ReplayGain Track Gain" : {
       "comment" : "Label for a picker option in the output preferences view, allowing the user to select how the track gain from the audio file is applied to the output volume.",
       "isCommentAutoGenerated" : true,
@@ -3715,6 +4075,28 @@
         }
       }
     },
+    "ReplayGain or tagged volume applied" : {
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ReplayGain o volumen etiquetado activado"
+          }
+        }
+      }
+    },
+    "ReplayGain or tagged volume: %@ dB" : {
+      "comment" : "Cog signal-integrity reason: the track's gain",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "ReplayGain o volumen etiquetado: %@ dB"
+          }
+        }
+      }
+    },
     "ReplayGain:" : {
       "comment" : "Label for the ReplayGain field in the Info Inspector.",
       "isCommentAutoGenerated" : true,
@@ -3723,23 +4105,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ReplayGain:"
-          }
-        }
-      }
-    },
-    "replayGainAlbumGain" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The volume level of playback output will be detected through enumeration, \n\t\t\t\t\t\t re"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El nivel de volumen de la salida de reproducción se detectará a través de la enumeración, \n\t\t\t\t\t\t re"
           }
         }
       }
@@ -3757,6 +4122,17 @@
           "stringUnit" : {
             "state" : "machine_translated",
             "value" : "Remuestreado de %1$@ a %2$@"
+          }
+        }
+      }
+    },
+    "Resampler" : {
+      "comment" : "Signal Inspector stage: sample rate conversion",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remuestreador"
           }
         }
       }
@@ -3874,17 +4250,6 @@
         }
       }
     },
-    "Sample precision reduced" : {
-      "comment" : "Cog signal-integrity reason",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reducción en la precisión de muestreos"
-          }
-        }
-      }
-    },
     "Sample Rate" : {
       "comment" : "Sample Rate title",
       "localizations" : {
@@ -3896,8 +4261,8 @@
         }
       }
     },
-    "Sample rate:" : {
-      "comment" : "A label for the sample rate setting in the MIDI pane.",
+    "Sample Rate:" : {
+      "comment" : "Label for the sample rate of the audio file.",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "es" : {
@@ -3908,8 +4273,30 @@
         }
       }
     },
-    "Sample Rate:" : {
-      "comment" : "Label for the sample rate of the audio file.",
+    "Sample conversion" : {
+      "comment" : "Signal Inspector stage: samples converted to Float32 for processing",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversión de muestras"
+          }
+        }
+      }
+    },
+    "Sample precision reduced" : {
+      "comment" : "Cog signal-integrity reason",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reducción en la precisión de muestreos"
+          }
+        }
+      }
+    },
+    "Sample rate:" : {
+      "comment" : "A label for the sample rate setting in the MIDI pane.",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "es" : {
@@ -3980,6 +4367,17 @@
         }
       }
     },
+    "Send DSD to the DAC as DoP (DSD over PCM)" : {
+      "comment" : "A toggle that sends DSD audio to the DAC packed as DoP instead of converting it to PCM.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar DSD al DAC como DoP (DSD sobre PCM)"
+          }
+        }
+      }
+    },
     "Send crash reports and usage data" : {
       "comment" : "A toggle that lets the user consent to sending crash reports and usage data to Sentry.",
       "isCommentAutoGenerated" : true,
@@ -3988,17 +4386,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar informes de fallos y de uso"
-          }
-        }
-      }
-    },
-    "Send DSD to the DAC as DoP (DSD over PCM)" : {
-      "comment" : "A toggle that sends DSD audio to the DAC packed as DoP instead of converting it to PCM.",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar DSD al DAC como DoP (DSD sobre PCM)"
           }
         }
       }
@@ -4090,17 +4477,6 @@
         }
       }
     },
-    "shared" : {
-      "comment" : "The output device plays other apps' audio too",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "compartido"
-          }
-        }
-      }
-    },
     "Shifted" : {
       "localizations" : {
         "es" : {
@@ -4159,6 +4535,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Modo aleatorio"
+          }
+        }
+      }
+    },
+    "Signal Inspector" : {
+      "comment" : "Signal Inspector window title",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inspector de señal"
+          }
+        }
+      }
+    },
+    "Signal path" : {
+      "comment" : "A heading for the signal path of a signal.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruta de la señal"
           }
         }
       }
@@ -4228,6 +4627,17 @@
         }
       }
     },
+    "Sound Check" : {
+      "comment" : "Signal Inspector: the gain comes from iTunes Sound Check",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sound Check"
+          }
+        }
+      }
+    },
     "SoundCheck" : {
       "comment" : "Text for a volume scaling option called \"SoundCheck\".",
       "isCommentAutoGenerated" : true,
@@ -4269,8 +4679,7 @@
       }
     },
     "Spatial audio" : {
-      "comment" : "A section in the output pane of the app.",
-      "isCommentAutoGenerated" : true,
+      "comment" : "Signal Inspector stage: Apple's spatial mixer",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -4425,6 +4834,17 @@
         }
       }
     },
+    "Stereo upmixed to %@" : {
+      "comment" : "Signal Inspector: FreeSurround's output, e.g. 6 ch",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estéreo expandido a %@"
+          }
+        }
+      }
+    },
     "Stop icon:" : {
       "comment" : "A label displayed next to a button that allows the user to choose a custom stop icon for the dock.",
       "isCommentAutoGenerated" : true,
@@ -4573,28 +4993,6 @@
         }
       }
     },
-    "synthesized" : {
-      "comment" : "How a track is encoded: rendered while playing, as MIDI or chiptunes are",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sintetizado"
-          }
-        }
-      }
-    },
-    "system default" : {
-      "comment" : "The output device is the system's default",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "predeterminado del sistema"
-          }
-        }
-      }
-    },
     "System Default Device" : {
       "comment" : "Name of the audio device when the user hasn't selected one yet.",
       "isCommentAutoGenerated" : true,
@@ -4603,6 +5001,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dispositivo del sistema"
+          }
+        }
+      }
+    },
+    "Tagged volume" : {
+      "comment" : "Signal Inspector: the gain comes from a volume tag",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volumen etiquetado"
           }
         }
       }
@@ -4629,6 +5038,17 @@
         }
       }
     },
+    "The decoder did not describe its samples." : {
+      "comment" : "Signal Inspector: the source format is unknown",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El decodificador no describió sus muestras."
+          }
+        }
+      }
+    },
     "The shared app-group folder is unavailable." : {
       "comment" : "Remote Control error",
       "localizations" : {
@@ -4636,6 +5056,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "La carpeta compartida del grupo de apps no está disponible."
+          }
+        }
+      }
+    },
+    "Time stretch" : {
+      "comment" : "Signal Inspector stage: tempo and pitch",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estiramiento de tiempo"
           }
         }
       }
@@ -4754,6 +5185,17 @@
         }
       }
     },
+    "Track gain" : {
+      "comment" : "Signal Inspector stage: ReplayGain or tagged volume\nSignal Inspector: the gain comes from the track's ReplayGain",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganancia de la pista"
+          }
+        }
+      }
+    },
     "Track:" : {
       "comment" : "Label for the track number in the entry details.",
       "isCommentAutoGenerated" : true,
@@ -4845,6 +5287,18 @@
         }
       }
     },
+    "Underruns" : {
+      "comment" : "A label for the number of times the input device underruns.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaciados del búfer"
+          }
+        }
+      }
+    },
     "Unknown" : {
       "comment" : "Unknown Cog signal-integrity state",
       "localizations" : {
@@ -4885,6 +5339,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "FreeSurround activado"
+          }
+        }
+      }
+    },
+    "Upmixes stereo only; passes this through" : {
+      "comment" : "Signal Inspector: FreeSurround is on but the audio is not stereo",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo expande estéreo; esto pasa sin cambios"
           }
         }
       }
@@ -5012,7 +5477,7 @@
       }
     },
     "Varispeed" : {
-      "comment" : "Speed engine that resamples, so the pitch follows the speed",
+      "comment" : "Time stretch engine: resampling, so the pitch follows the tempo",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5030,6 +5495,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Versión %@"
+          }
+        }
+      }
+    },
+    "Volume" : {
+      "comment" : "Signal Inspector stage: Cog's volume",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volumen"
           }
         }
       }
@@ -5066,23 +5542,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escalado de volumen:"
-          }
-        }
-      }
-    },
-    "wdhms" : {
-      "comment" : "weeks, days, hours, minutes and seconds",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@, %@, %@ and %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@, %@, %@, %@ y %@"
           }
         }
       }
@@ -5157,6 +5616,251 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Retención de orden cero"
+          }
+        }
+      }
+    },
+    "bands flat" : {
+      "comment" : "Signal Inspector: no equalizer band is moved",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bandas planas"
+          }
+        }
+      }
+    },
+    "dhms" : {
+      "comment" : "days, hours, minutes and seconds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@, %@ and %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@, %@ y %@"
+          }
+        }
+      }
+    },
+    "exclusive" : {
+      "comment" : "Cog holds the output device for itself",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "exclusivo"
+          }
+        }
+      }
+    },
+    "head tracking off" : {
+      "comment" : "Signal Inspector: the spatial mixer does not follow the listener's head",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seguimiento de cabeza desactivado"
+          }
+        }
+      }
+    },
+    "head tracking on" : {
+      "comment" : "Signal Inspector: the spatial mixer follows the listener's head",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seguimiento de cabeza activado"
+          }
+        }
+      }
+    },
+    "hms" : {
+      "comment" : "hours, minutes and seconds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@ and %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@ y %@"
+          }
+        }
+      }
+    },
+    "limited by the peak" : {
+      "comment" : "Signal Inspector: the gain was lowered so the track cannot clip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "limitada por el pico"
+          }
+        }
+      }
+    },
+    "lossless" : {
+      "comment" : "How a track is encoded",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sin pérdidas"
+          }
+        }
+      }
+    },
+    "lossy" : {
+      "comment" : "How a track is encoded",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "con pérdidas"
+          }
+        }
+      }
+    },
+    "ms" : {
+      "comment" : "minutes and seconds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ and %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ y %@"
+          }
+        }
+      }
+    },
+    "pitch %@ st" : {
+      "comment" : "Signal Inspector: a pitch shift in semitones, e.g. pitch +2.0 st",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tono %@ st"
+          }
+        }
+      }
+    },
+    "replayGainAlbumGain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The volume level of playback output will be detected through enumeration, \n\t\t\t\t\t\t re"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nivel de volumen de la salida de reproducción se detectará a través de la enumeración, \n\t\t\t\t\t\t re"
+          }
+        }
+      }
+    },
+    "shared" : {
+      "comment" : "The output device plays other apps' audio too",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "compartido"
+          }
+        }
+      }
+    },
+    "soxr %@ · %@ to %@" : {
+      "comment" : "Signal Inspector: resampler quality, input and output rates",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "soxr %1$@ · %2$@ to %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "soxr %@ · %@ a %@"
+          }
+        }
+      }
+    },
+    "synthesized" : {
+      "comment" : "How a track is encoded: rendered while playing, as MIDI or chiptunes are",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sintetizado"
+          }
+        }
+      }
+    },
+    "system default" : {
+      "comment" : "The output device is the system's default",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "predeterminado del sistema"
+          }
+        }
+      }
+    },
+    "tempo %@×" : {
+      "comment" : "Signal Inspector: a tempo ratio, e.g. tempo 1.25×",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tempo %@×"
+          }
+        }
+      }
+    },
+    "unity" : {
+      "comment" : "Signal Inspector: a gain of exactly 0 dB",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sin cambios"
+          }
+        }
+      }
+    },
+    "wdhms" : {
+      "comment" : "weeks, days, hours, minutes and seconds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@, %@, %@ and %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@, %@, %@ y %@"
           }
         }
       }

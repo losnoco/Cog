@@ -3709,6 +3709,24 @@
         }
       }
     },
+    "Sig-In-Mnu.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Signal Inspector\"; ObjectID = \"Sig-In-Mnu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Signal Inspector"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar inspector de señal"
+          }
+        }
+      }
+    },
     "2456.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Enter Full Screen\"; ObjectID = \"2456\";",
       "extractionState" : "extracted_with_value",

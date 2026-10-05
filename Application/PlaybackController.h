@@ -77,6 +77,10 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 @property NSProgress *progressOverall;
 @property NSProgress *progressJob;
 
+// The player, for what it reports beyond playback (the Signal Inspector's
+// meters).
+- (AudioPlayer *)audioPlayer;
+
 - (IBAction)changeVolume:(id)sender;
 - (IBAction)volumeDown:(id)sender;
 - (IBAction)volumeUp:(id)sender;

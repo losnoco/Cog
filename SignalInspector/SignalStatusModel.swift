@@ -27,10 +27,12 @@ import CogAudio
 
 	private override init() {
 		super.init()
-		NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: CogAudioOutputStatusDidChangeNotification), object: nil, queue: .main) { [weak self] notification in
-			let status = notification.userInfo
-			MainActor.assumeIsolated { self?.update(status) }
-		}
+		// Posted on the main thread.
+		NotificationCenter.default.addObserver(self, selector: #selector(outputStatusDidChange(_:)), name: .CogAudioOutputStatusDidChange, object: nil)
+	}
+
+	@objc private func outputStatusDidChange(_ notification: Notification) {
+		update(notification.userInfo)
 	}
 
 	func update(_ status: [AnyHashable: Any]?) {
