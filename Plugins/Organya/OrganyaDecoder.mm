@@ -344,7 +344,7 @@ namespace Organya {
 - (BOOL)open:(id<CogSource>)s {
 	[self setSource:s];
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
@@ -356,8 +356,8 @@ namespace Organya {
 		return NO;
 	}
 	
-	long loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] intValue];
-	double fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	long loopCount = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultLoopCount"] intValue];
+	double fadeTime = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 	if(fadeTime < 0.0) {
 		fadeTime = 0.0;
 	}

@@ -46,6 +46,23 @@ final class CogPluginsTests: XCTestCase {
 		return url
 	}
 
+	/// A 24-bit stereo FLAC of one second of a 1 kHz sine at 48 kHz.
+	private func writeFLAC(named name: String) throws -> URL {
+		let url = directory.appendingPathComponent(name)
+		let settings: [String: Any] = [AVFormatIDKey: kAudioFormatFLAC, AVSampleRateKey: 48000.0, AVNumberOfChannelsKey: 2,
+		                               AVLinearPCMBitDepthKey: 24]
+		let file = try AVAudioFile(forWriting: url, settings: settings, commonFormat: .pcmFormatFloat32, interleaved: false)
+		let buffer = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: 48000))
+		buffer.frameLength = 48000
+		for channel in 0..<2 {
+			for frame in 0..<48000 {
+				buffer.floatChannelData![channel][frame] = 0.25 * sin(2 * .pi * 1000 * Float(frame) / 48000)
+			}
+		}
+		try file.write(from: buffer)
+		return url
+	}
+
 	private func names(_ value: Any?) -> String {
 		String(describing: value ?? "nil")
 	}
@@ -57,6 +74,7 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertTrue(names(plugins.decodersByExtension()["m4a"]).contains("CoreAudioDecoder"))
 		XCTAssertTrue(names(plugins.sources()["file"]).contains("FileSource"))
 		XCTAssertTrue(names(plugins.sources()["silence"]).contains("SilenceSource"))
+		XCTAssertTrue(names(plugins.sources()["https"]).contains("HTTPSource"))
 		XCTAssertTrue(names(plugins.containers()["cue"]).contains("CueSheetContainer"))
 		XCTAssertTrue(names(plugins.containers()["m3u"]).contains("M3uContainer"))
 		XCTAssertTrue(names(plugins.containers()["pls"]).contains("PlsContainer"))
@@ -85,6 +103,73 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertEqual(frames, 44100)
 	}
 
+	/// libFLAC through the Flac plugin, not Core Audio (which reads FLAC too).
+	func testAFLACFileDecodesThroughTheFlacPlugin() throws {
+		XCTAssertTrue(names(plugins.decodersByExtension()["flac"]).contains("FlacDecoder"))
+		let url = try writeFLAC(named: "sine.flac")
+
+		let source = try XCTUnwrap(plugins.audioSource(for: url))
+		XCTAssertTrue(source.open(url))
+		let decoderClass = try XCTUnwrap(NSClassFromString("FlacDecoder") as? NSObject.Type)
+		let decoder = try XCTUnwrap(decoderClass.init() as? CogDecoder)
+		guard decoder.open(source) else {
+			return XCTFail("the Flac plugin would not open the file")
+		}
+		let properties = decoder.properties() ?? [:]
+		XCTAssertEqual((properties["sampleRate"] as? NSNumber)?.doubleValue, 48000)
+		XCTAssertEqual((properties["bitsPerSample"] as? NSNumber)?.intValue, 24)
+		XCTAssertEqual(properties["codec"] as? String, "FLAC")
+		var frames = 0
+		while let chunk = decoder.readAudio(), chunk.frameCount() > 0 {
+			frames += Int(chunk.frameCount())
+		}
+		decoder.close()
+		XCTAssertEqual(frames, 48000)
+	}
+
+	/// FFmpeg (with fdk-aac) through the FFMPEG plugin, on AAC in MP4.
+	func testAnAACFileDecodesThroughTheFFmpegPlugin() throws {
+		XCTAssertTrue(names(plugins.decodersByExtension()["m4a"]).contains("FFMPEGDecoder"))
+		let url = directory.appendingPathComponent("sine.m4a")
+		do {
+			let settings: [String: Any] = [AVFormatIDKey: kAudioFormatMPEG4AAC, AVSampleRateKey: 44100.0, AVNumberOfChannelsKey: 2,
+			                               AVEncoderBitRateKey: 128000]
+			let file = try AVAudioFile(forWriting: url, settings: settings, commonFormat: .pcmFormatFloat32, interleaved: false)
+			let buffer = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: 44100))
+			buffer.frameLength = 44100
+			for channel in 0..<2 {
+				for frame in 0..<44100 {
+					buffer.floatChannelData![channel][frame] = 0.25 * sin(2 * .pi * 440 * Float(frame) / 44100)
+				}
+			}
+			try file.write(from: buffer)
+		}
+
+		let source = try XCTUnwrap(plugins.audioSource(for: url))
+		XCTAssertTrue(source.open(url))
+		let decoder = try XCTUnwrap((NSClassFromString("FFMPEGDecoder") as? NSObject.Type)?.init() as? CogDecoder)
+		guard decoder.open(source) else {
+			return XCTFail("the FFMPEG plugin would not open the file")
+		}
+		let properties = decoder.properties() ?? [:]
+		XCTAssertEqual((properties["sampleRate"] as? NSNumber)?.doubleValue, 44100)
+		XCTAssertEqual((properties["channels"] as? NSNumber)?.intValue, 2)
+		XCTAssertEqual((properties["codec"] as? String)?.lowercased(), "aac", names(properties))
+		var frames = 0
+		var peak: Float = 0
+		while let chunk = decoder.readAudio(), chunk.frameCount() > 0 {
+			frames += Int(chunk.frameCount())
+			if chunk.format.mFormatFlags & kAudioFormatFlagIsFloat != 0 {
+				let data = chunk.removeSamples(chunk.frameCount())
+				data.withUnsafeBytes { peak = max(peak, $0.bindMemory(to: Float.self).map(abs).max() ?? 0) }
+			}
+		}
+		decoder.close()
+		// AAC trims its priming, so the length is the original's, near enough.
+		XCTAssertEqual(Double(frames), 44100, accuracy: 2048)
+		XCTAssertEqual(peak, 0.25, accuracy: 0.05, "the sine, not silence")
+	}
+
 	func testACueSheetListsItsTracks() throws {
 		let audio = try writeWAV(named: "album.wav", seconds: 2)
 		let cue = directory.appendingPathComponent("album.cue")
@@ -102,6 +187,39 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertEqual(tracks.count, 2)
 		XCTAssertEqual(tracks.first?.fragment, "01")
 		XCTAssertTrue(plugins.dependencyUrls(forContainerURL: cue).contains { ($0 as? URL)?.lastPathComponent == audio.lastPathComponent })
+	}
+
+	// MARK: - Tags
+
+	/// Puts a Vorbis comment block with `comments` ("TITLE=…") into a FLAC
+	/// file, straight after its STREAMINFO block.
+	private func addVorbisComments(_ comments: [String], to url: URL) throws {
+		var data = try Data(contentsOf: url)
+		XCTAssertEqual(data.prefix(4), Data("fLaC".utf8))
+		func le32(_ value: Int) -> Data { withUnsafeBytes(of: UInt32(value).littleEndian) { Data($0) } }
+		var body = le32(3) + Data("Cog".utf8) + le32(comments.count)
+		for comment in comments {
+			body += le32(comment.utf8.count) + Data(comment.utf8)
+		}
+		// STREAMINFO is 4 + 34 bytes in; if it was the last block, ours is.
+		let streamInfoLast = data[4] & 0x80 != 0
+		data[4] &= 0x7F
+		let header = Data([(streamInfoLast ? 0x80 : 0) | 4, UInt8(body.count >> 16 & 0xFF), UInt8(body.count >> 8 & 0xFF), UInt8(body.count & 0xFF)])
+		data.insert(contentsOf: header + body, at: 4 + 4 + 34)
+		try data.write(to: url)
+	}
+
+	func testTagLibReadsTags() throws {
+		let url = try writeFLAC(named: "tagged.flac")
+		try addVorbisComments(["TITLE=Sine", "ARTIST=Cog"], to: url)
+		let reader = try XCTUnwrap(NSClassFromString("TagLibMetadataReader") as? CogMetadataReader.Type)
+		let metadata = reader.metadata(for: url) ?? [:]
+		XCTAssertTrue(names(metadata["title"]).contains("Sine"), names(metadata))
+		XCTAssertTrue(names(metadata["artist"]).contains("Cog"), names(metadata))
+		// The file still decodes: the block went in whole.
+		let source = try XCTUnwrap(plugins.audioSource(for: url))
+		XCTAssertTrue(source.open(url))
+		XCTAssertTrue(try XCTUnwrap(plugins.audioDecoder(for: source, skipCue: false)).open(source))
 	}
 
 	// MARK: - Playing

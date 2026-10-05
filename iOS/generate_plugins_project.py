@@ -12,6 +12,7 @@ script again. Do not edit the generated project by hand.
 
 import hashlib
 import os
+import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -21,14 +22,29 @@ PROJECT = HERE / 'CogPlugins.xcodeproj'
 IOS_DEPLOYMENT_TARGET = '18.0'
 
 # Each plugin: its source directory (relative to the repository), and
-# optionally files there to leave out.
+# optionally files there to leave out ('exclude'), header search paths
+# ('headers'), the iOS libraries it links ('libraries': xcframeworks that
+# Scripts/build-ios-libraries.sh builds, relative to the repository) and
+# other linker flags ('ldflags', for system libraries).
 PLUGINS = [
 	{'name': 'CoreAudio', 'dir': 'Plugins/CoreAudio'},
 	{'name': 'CueSheet', 'dir': 'Plugins/CueSheet'},
+	{'name': 'FFMPEG', 'dir': 'Plugins/FFMPEG',
+	 'headers': ['ThirdParty/ffmpeg/include'],
+	 'libraries': ['ThirdParty/ffmpeg/ios/libavcodec.xcframework', 'ThirdParty/ffmpeg/ios/libavformat.xcframework',
+	               'ThirdParty/ffmpeg/ios/libavutil.xcframework', 'ThirdParty/ffmpeg/ios/libswresample.xcframework',
+	               'ThirdParty/fdk-aac/ios/libfdk-aac.xcframework'],
+	 'ldflags': ['-lz', '-lbz2', '-liconv']},
 	{'name': 'FileSource', 'dir': 'Plugins/FileSource'},
+	{'name': 'Flac', 'dir': 'Plugins/Flac',
+	 'headers': ['ThirdParty/flac/include', 'ThirdParty/ogg/include'],
+	 'libraries': ['ThirdParty/flac/ios/libFLAC.xcframework', 'ThirdParty/ogg/ios/libogg.xcframework']},
+	{'name': 'HTTPSource', 'dir': 'Plugins/HTTPSource'},
 	{'name': 'M3u', 'dir': 'Plugins/M3u'},
 	{'name': 'Pls', 'dir': 'Plugins/Pls'},
 	{'name': 'SilenceDecoder', 'dir': 'Plugins/SilenceDecoder/SilenceDecoder'},
+	{'name': 'TagLib', 'dir': 'Plugins/TagLib',
+	 'libraries': ['ThirdParty/taglib/ios/libtag.xcframework'], 'ldflags': ['-lz']},
 ]
 
 # Header search paths shared by all plugins, relative to the repository.
@@ -47,7 +63,7 @@ SUBPROJECTS = [
 	('File_Extractor', 'Frameworks/File_Extractor/File_Extractor.xcodeproj', '8359FF3B17FEF39F0060F3ED', '8359FF3C17FEF39F0060F3ED'),
 ]
 
-SYSTEM_FRAMEWORKS = ['AudioToolbox', 'AVFoundation', 'Foundation']
+SYSTEM_FRAMEWORKS = ['AudioToolbox', 'AVFoundation', 'CoreMedia', 'Foundation', 'Security']
 
 SOURCE_TYPES = {
 	'.m': 'sourcecode.c.objc',
@@ -58,6 +74,17 @@ SOURCE_TYPES = {
 	'.swift': 'sourcecode.swift',
 }
 HEADER_TYPES = {'.h': 'sourcecode.c.h', '.hpp': 'sourcecode.cpp.h'}
+
+
+def explicit_file_types(directory):
+	"""File types the plugin's macOS project sets by hand (an .m compiled as
+	Objective-C++, say), by file name."""
+	types = {}
+	for project in list(directory.glob('*.xcodeproj')) + list(directory.parent.glob('*.xcodeproj')):
+		text = (project / 'project.pbxproj').read_text(errors='replace')
+		for match in re.finditer(r'/\* ([^*]+) \*/ = \{isa = PBXFileReference; explicitFileType = ([\w.+-]+);', text):
+			types[match.group(1)] = match.group(2)
+	return types
 
 
 def uid(*parts):
@@ -96,6 +123,7 @@ plugin_sources = []  # build file refs for the Sources phase
 for plugin in PLUGINS:
 	directory = ROOT / plugin['dir']
 	exclude = set(plugin.get('exclude', []))
+	explicit = explicit_file_types(directory)
 	children = []
 	for path in sorted(directory.rglob('*')):
 		if not path.is_file() or any(part.endswith(('.xcodeproj', '.lproj')) for part in path.parts):
@@ -107,9 +135,10 @@ for plugin in PLUGINS:
 		if ext not in SOURCE_TYPES and ext not in HEADER_TYPES:
 			continue
 		file_id = uid('file', relative)
+		kind = ('explicitFileType', explicit[path.name]) if path.name in explicit else \
+			('lastKnownFileType', SOURCE_TYPES.get(ext) or HEADER_TYPES[ext])
 		add('PBXFileReference', file_id, path.name, {
-			'isa': 'PBXFileReference', 'fileEncoding': '4',
-			'lastKnownFileType': SOURCE_TYPES.get(ext) or HEADER_TYPES[ext],
+			'isa': 'PBXFileReference', kind[0]: kind[1], 'fileEncoding': '4',
 			'name': path.name, 'path': rel(relative), 'sourceTree': 'SOURCE_ROOT'})
 		children.append(Ref(file_id, path.name))
 		if ext in SOURCE_TYPES:
@@ -150,6 +179,16 @@ for path in sorted((HERE / 'CogPluginsTests').glob('*.swift')):
 framework_children = []
 plugin_links = []
 test_links = []
+for library in sorted({library for plugin in PLUGINS for library in plugin.get('libraries', [])}):
+	name = Path(library).name
+	file_id = uid('library', library)
+	add('PBXFileReference', file_id, name, {
+		'isa': 'PBXFileReference', 'lastKnownFileType': 'wrapper.xcframework', 'name': name,
+		'path': rel(library), 'sourceTree': 'SOURCE_ROOT'})
+	framework_children.append(Ref(file_id, name))
+	build_id = uid('librarybuild', library)
+	add('PBXBuildFile', build_id, f'{name} in Frameworks', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, name)})
+	plugin_links.append(Ref(build_id, f'{name} in Frameworks'))
 for name in SYSTEM_FRAMEWORKS:
 	file_id = uid('sysfw', name)
 	add('PBXFileReference', file_id, f'{name}.framework', {
@@ -303,8 +342,10 @@ plugin_config = configurations('PBXNativeTarget "CogPlugins"', {
 	'GCC_PRECOMPILE_PREFIX_HEADER': 'YES',
 	'GCC_PREFIX_HEADER': 'CogPlugins/CogPlugins_Prefix.pch',
 	'GENERATE_INFOPLIST_FILE': 'YES',
-	'HEADER_SEARCH_PATHS': ['$(inherited)'] + [rel(p) for p in HEADER_SEARCH_PATHS],
+	'HEADER_SEARCH_PATHS': ['$(inherited)'] + [rel(p) for p in HEADER_SEARCH_PATHS +
+	                                            sorted({h for plugin in PLUGINS for h in plugin.get('headers', [])})],
 	'INSTALL_PATH': '$(LOCAL_LIBRARY_DIR)/Frameworks',
+	'OTHER_LDFLAGS': ['$(inherited)', '-lc++'] + sorted({f for plugin in PLUGINS for f in plugin.get('ldflags', [])}),
 	'LD_RUNPATH_SEARCH_PATHS': ['$(inherited)', '@executable_path/Frameworks', '@loader_path/Frameworks'],
 	'PRODUCT_BUNDLE_IDENTIFIER': 'org.cogx.CogPlugins',
 	'PRODUCT_NAME': '$(TARGET_NAME)',

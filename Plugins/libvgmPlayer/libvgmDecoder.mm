@@ -114,21 +114,21 @@ const int masterVol = 0x10000; // Fixed point 16.16
 		return NO;
 	}
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
 		sampleRate = 192000.0;
 	}
 
-	loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] longValue];
+	loopCount = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultLoopCount"] longValue];
 	if(loopCount < 1) {
 		loopCount = 1;
 	} else if(loopCount > 10) {
 		loopCount = 10;
 	}
 
-	fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	fadeTime = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 
 	BOOL repeatOne = IsRepeatOneSet();
 	uint32_t maxLoops = repeatOne ? 0 : (uint32_t)loopCount;

@@ -1453,8 +1453,8 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 	tagFadeMs = info.tag_fade_ms;
 
 	if(!tagLengthMs) {
-		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
-		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 		if(defaultLength < 0) {
 			defaultLength = 150.0;
 		}

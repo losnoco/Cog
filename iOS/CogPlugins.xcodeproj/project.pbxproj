@@ -9,23 +9,41 @@
 /* Begin PBXBuildFile section */
 		047936E2A7D9B145CBD7CD44 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */; };
 		071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9308F951DA638F9E5B02C00E /* SilenceDecoder.m */; };
+		0A15409EDDA66A149604706D /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590D39E029664596A83F93F2 /* CoreMedia.framework */; };
+		1308F6D95900A128A5837309 /* TagLibMetadataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 24016156BE6366200B66E312 /* TagLibMetadataWriter.m */; };
+		27E6ABBA7EE4507B599809ED /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */; };
+		3209B7B5D3E8600D7C4E5046 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 257DDCB0DE45D16012EFFB48 /* libavformat.xcframework */; };
 		32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */; };
 		34D69FC1E7A6ABDD55218E47 /* CueSheetTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */; };
+		354C0600F4B6C913FEDAF961 /* FFMPEGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1BEB480338F1E8DEDA80D4 /* FFMPEGDecoder.m */; };
+		390160FF89C3F13D205848DB /* libogg.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78516014F8B59511921B7B1 /* libogg.xcframework */; };
+		39CEE9B810B723B118BA8E55 /* TagLibMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C9A4FFC588A2137FC04653 /* TagLibMetadataReader.m */; };
+		3F860854465B9CD43B175049 /* libfdk-aac.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E645023FA3DDE611F15C07E7 /* libfdk-aac.xcframework */; };
 		48425FFBE7EB53E2878E8481 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D59C40E79B719FEE54AFFC5 /* FileSource.m */; };
 		50422BFAAA0E6F6A3162E91F /* CogPlugins.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 681B3E839D0E192A690222C4 /* CogPlugins.framework */; };
 		585BE524744AFAB5FD34DCF9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 644D14A6CEF05A0105659361 /* AVFoundation.framework */; };
 		64EC393750B363CE76930218 /* CueSheetContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = F1C4050E39C2119A3C00A9DB /* CueSheetContainer.m */; };
+		67489D436528C31D3E07DAE1 /* FFMPEGContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4520989D7C14143251CB34 /* FFMPEGContainer.m */; };
+		69AF174D336D6C81E423E641 /* TagLibID3v2Reader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 25D2EFA388124EFF9477D200 /* TagLibID3v2Reader.mm */; };
 		6CD61659FAED49553B90D4C1 /* CueSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 845B6053B44E8F976EA1CD63 /* CueSheet.m */; };
 		730A757E6B41EFC05D036AA0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70BA5804918B7E26B3153C57 /* Foundation.framework */; };
 		8835465D38CE202A5C6E177C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */; };
 		96C620C58FBCD1274E68E55C /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2F05F10D669068268BFDB49 /* File_Extractor.framework */; };
 		9F0A7709E99F218847E32BAA /* CueSheetDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = E78010C72519F5A112D4C253 /* CueSheetDecoder.m */; };
+		A1EB73295137F55BF6524993 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FC21F8478D9D2DE1142CB77 /* libswresample.xcframework */; };
 		AEB74DDB94DDF68C9A8B51E3 /* PlsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = CB795B83652675999BA2E14A /* PlsContainer.m */; };
+		C1D600A66C6D55C9BC838DC5 /* libtag.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6DC7906614491BDF2E01CF7 /* libtag.xcframework */; };
 		CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */; };
+		CB5E8E6F1C26CBA6CE94B750 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */; };
 		DF53D2FA4E49D9D41FF4D40C /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; };
 		E39766458029347F10556148 /* CoreAudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = EF0FACC695E239425D91B99E /* CoreAudioDecoder.m */; };
 		EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFD3F22F9E7637573E710E1 /* SilenceSource.m */; };
+		ED19795381C4FB5B8A325493 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = BA59E2A752A1601EDB9602EC /* cuesheet.m */; };
+		ED746F9B78109FB6C4CC8938 /* libFLAC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2735D67CD372EF14E5D1456A /* libFLAC.xcframework */; };
 		EE98248FAA390B167A40962C /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; };
+		EFE5EB9974F03606FF2700F7 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */; };
+		F61150A6AD40CD07316B17E3 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B48234EB136E9F658AB65827 /* HTTPSource.m */; };
+		FEB15A1D1133453EDC90E978 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75A1B068B2B5BA2E5031E915 /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,38 +85,63 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = M3uContainer.m; path = ../Plugins/M3u/M3uContainer.m; sourceTree = SOURCE_ROOT; };
-		0C74EC760C0B2BA53F2E1952 /* FileSource.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = FileSource.h; path = ../Plugins/FileSource/FileSource.h; sourceTree = SOURCE_ROOT; };
-		1FFD3F22F9E7637573E710E1 /* SilenceSource.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = SilenceSource.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.m; sourceTree = SOURCE_ROOT; };
-		36B62CBA5DF0861A0D61221E /* CueSheetTrack.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetTrack.h; path = ../Plugins/CueSheet/CueSheetTrack.h; sourceTree = SOURCE_ROOT; };
-		5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetTrack.m; path = ../Plugins/CueSheet/CueSheetTrack.m; sourceTree = SOURCE_ROOT; };
+		01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = M3uContainer.m; path = ../Plugins/M3u/M3uContainer.m; sourceTree = SOURCE_ROOT; };
+		0C74EC760C0B2BA53F2E1952 /* FileSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FileSource.h; path = ../Plugins/FileSource/FileSource.h; sourceTree = SOURCE_ROOT; };
+		1FFD3F22F9E7637573E710E1 /* SilenceSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = SilenceSource.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.m; sourceTree = SOURCE_ROOT; };
+		24016156BE6366200B66E312 /* TagLibMetadataWriter.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibMetadataWriter.m; path = ../Plugins/TagLib/TagLibMetadataWriter.m; sourceTree = SOURCE_ROOT; };
+		25045C25194DB3B51B023D69 /* FFMPEGContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FFMPEGContainer.h; path = ../Plugins/FFMPEG/FFMPEGContainer.h; sourceTree = SOURCE_ROOT; };
+		257DDCB0DE45D16012EFFB48 /* libavformat.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavformat.xcframework; path = ../ThirdParty/ffmpeg/ios/libavformat.xcframework; sourceTree = SOURCE_ROOT; };
+		25D2EFA388124EFF9477D200 /* TagLibID3v2Reader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibID3v2Reader.mm; path = ../Plugins/TagLib/TagLibID3v2Reader.mm; sourceTree = SOURCE_ROOT; };
+		2735D67CD372EF14E5D1456A /* libFLAC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libFLAC.xcframework; path = ../ThirdParty/flac/ios/libFLAC.xcframework; sourceTree = SOURCE_ROOT; };
+		36B62CBA5DF0861A0D61221E /* CueSheetTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetTrack.h; path = ../Plugins/CueSheet/CueSheetTrack.h; sourceTree = SOURCE_ROOT; };
+		3E1BEB480338F1E8DEDA80D4 /* FFMPEGDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FFMPEGDecoder.m; path = ../Plugins/FFMPEG/FFMPEGDecoder.m; sourceTree = SOURCE_ROOT; };
+		590D39E029664596A83F93F2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CueSheetTrack.m; path = ../Plugins/CueSheet/CueSheetTrack.m; sourceTree = SOURCE_ROOT; };
+		5FC21F8478D9D2DE1142CB77 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = ../ThirdParty/ffmpeg/ios/libswresample.xcframework; sourceTree = SOURCE_ROOT; };
 		644D14A6CEF05A0105659361 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = SOURCE_ROOT; };
-		6739A24254BD6309F1C3012B /* CueSheetDecoder.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetDecoder.h; path = ../Plugins/CueSheet/CueSheetDecoder.h; sourceTree = SOURCE_ROOT; };
-		67777D9ADE0A0782BF47BEB3 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CoreAudioDecoder.h; path = ../Plugins/CoreAudio/CoreAudioDecoder.h; sourceTree = SOURCE_ROOT; };
+		667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = ../ThirdParty/ffmpeg/ios/libavutil.xcframework; sourceTree = SOURCE_ROOT; };
+		6739A24254BD6309F1C3012B /* CueSheetDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetDecoder.h; path = ../Plugins/CueSheet/CueSheetDecoder.h; sourceTree = SOURCE_ROOT; };
+		67777D9ADE0A0782BF47BEB3 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CoreAudioDecoder.h; path = ../Plugins/CoreAudio/CoreAudioDecoder.h; sourceTree = SOURCE_ROOT; };
 		681B3E839D0E192A690222C4 /* CogPlugins.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = "0"; path = CogPlugins.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6BD6A7D12B87C90E04D4422C /* M3uContainer.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = M3uContainer.h; path = ../Plugins/M3u/M3uContainer.h; sourceTree = SOURCE_ROOT; };
+		6BD6A7D12B87C90E04D4422C /* M3uContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = M3uContainer.h; path = ../Plugins/M3u/M3uContainer.h; sourceTree = SOURCE_ROOT; };
 		70BA5804918B7E26B3153C57 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		75A1B068B2B5BA2E5031E915 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		773B19AABC4C60A7B58C1BFF /* CogPlugins.xcconfig */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = text.xcconfig; path = CogPlugins/CogPlugins.xcconfig; sourceTree = "<group>"; };
-		783180A04EB4285BC9562947 /* CueSheet.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheet.h; path = ../Plugins/CueSheet/CueSheet.h; sourceTree = SOURCE_ROOT; };
+		783180A04EB4285BC9562947 /* CueSheet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheet.h; path = ../Plugins/CueSheet/CueSheet.h; sourceTree = SOURCE_ROOT; };
+		78C1545958E1781C08633FCA /* FFMPEGDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FFMPEGDecoder.h; path = ../Plugins/FFMPEG/FFMPEGDecoder.h; sourceTree = SOURCE_ROOT; };
 		7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/CogPluginsTests.swift; sourceTree = "<group>"; };
-		7D59C40E79B719FEE54AFFC5 /* FileSource.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = FileSource.m; path = ../Plugins/FileSource/FileSource.m; sourceTree = SOURCE_ROOT; };
-		845B6053B44E8F976EA1CD63 /* CueSheet.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheet.m; path = ../Plugins/CueSheet/CueSheet.m; sourceTree = SOURCE_ROOT; };
-		9308F951DA638F9E5B02C00E /* SilenceDecoder.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = SilenceDecoder.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.m; sourceTree = SOURCE_ROOT; };
-		95EC8BD6B14741F3FB74D1E3 /* PlsContainer.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = PlsContainer.h; path = ../Plugins/Pls/PlsContainer.h; sourceTree = SOURCE_ROOT; };
+		7D59C40E79B719FEE54AFFC5 /* FileSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FileSource.m; path = ../Plugins/FileSource/FileSource.m; sourceTree = SOURCE_ROOT; };
+		845B6053B44E8F976EA1CD63 /* CueSheet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CueSheet.m; path = ../Plugins/CueSheet/CueSheet.m; sourceTree = SOURCE_ROOT; };
+		869D93F89309673B0DBB2361 /* TagLibMetadataWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = TagLibMetadataWriter.h; path = ../Plugins/TagLib/TagLibMetadataWriter.h; sourceTree = SOURCE_ROOT; };
+		9308F951DA638F9E5B02C00E /* SilenceDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = SilenceDecoder.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.m; sourceTree = SOURCE_ROOT; };
+		95EC8BD6B14741F3FB74D1E3 /* PlsContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = PlsContainer.h; path = ../Plugins/Pls/PlsContainer.h; sourceTree = SOURCE_ROOT; };
+		A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = ../ThirdParty/ffmpeg/ios/libavcodec.xcframework; sourceTree = SOURCE_ROOT; };
+		A6DC7906614491BDF2E01CF7 /* libtag.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libtag.xcframework; path = ../ThirdParty/taglib/ios/libtag.xcframework; sourceTree = SOURCE_ROOT; };
+		A7C9A4FFC588A2137FC04653 /* TagLibMetadataReader.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibMetadataReader.m; path = ../Plugins/TagLib/TagLibMetadataReader.m; sourceTree = SOURCE_ROOT; };
 		AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		B48234EB136E9F658AB65827 /* HTTPSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HTTPSource.m; path = ../Plugins/HTTPSource/HTTPSource.m; sourceTree = SOURCE_ROOT; };
 		BA2BF1FDEF092A338DE5ECE7 /* CogPluginsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = "0"; path = CogPluginsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB795B83652675999BA2E14A /* PlsContainer.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = PlsContainer.m; path = ../Plugins/Pls/PlsContainer.m; sourceTree = SOURCE_ROOT; };
-		D05BA07425A81304D0F2D4D1 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetMetadataReader.h; path = ../Plugins/CueSheet/CueSheetMetadataReader.h; sourceTree = SOURCE_ROOT; };
+		BA59E2A752A1601EDB9602EC /* cuesheet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = cuesheet.m; path = ../Plugins/Flac/cuesheet.m; sourceTree = SOURCE_ROOT; };
+		BB4520989D7C14143251CB34 /* FFMPEGContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FFMPEGContainer.m; path = ../Plugins/FFMPEG/FFMPEGContainer.m; sourceTree = SOURCE_ROOT; };
+		C57E459CBA8EB64564AEBAE3 /* TagLibMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = TagLibMetadataReader.h; path = ../Plugins/TagLib/TagLibMetadataReader.h; sourceTree = SOURCE_ROOT; };
+		CB795B83652675999BA2E14A /* PlsContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = PlsContainer.m; path = ../Plugins/Pls/PlsContainer.m; sourceTree = SOURCE_ROOT; };
+		CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FlacDecoder.m; path = ../Plugins/Flac/FlacDecoder.m; sourceTree = SOURCE_ROOT; };
+		D05BA07425A81304D0F2D4D1 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetMetadataReader.h; path = ../Plugins/CueSheet/CueSheetMetadataReader.h; sourceTree = SOURCE_ROOT; };
 		D412D3B51432C84D9D139D1C /* CogPlugins_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; path = CogPlugins/CogPlugins_Prefix.pch; sourceTree = "<group>"; };
-		DA91D2B3C88BFDC3BA2B16C9 /* CueSheetContainer.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = CueSheetContainer.h; path = ../Plugins/CueSheet/CueSheetContainer.h; sourceTree = SOURCE_ROOT; };
-		DC5F720C7292C42B874C271A /* SilenceSource.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = SilenceSource.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.h; sourceTree = SOURCE_ROOT; };
-		DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetMetadataReader.m; path = ../Plugins/CueSheet/CueSheetMetadataReader.m; sourceTree = SOURCE_ROOT; };
+		D56B596439AD7E621B1B7E81 /* TagLibID3v2Reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = TagLibID3v2Reader.h; path = ../Plugins/TagLib/TagLibID3v2Reader.h; sourceTree = SOURCE_ROOT; };
+		DA91D2B3C88BFDC3BA2B16C9 /* CueSheetContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetContainer.h; path = ../Plugins/CueSheet/CueSheetContainer.h; sourceTree = SOURCE_ROOT; };
+		DC5F720C7292C42B874C271A /* SilenceSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceSource.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.h; sourceTree = SOURCE_ROOT; };
+		DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CueSheetMetadataReader.m; path = ../Plugins/CueSheet/CueSheetMetadataReader.m; sourceTree = SOURCE_ROOT; };
 		E5D20029BB08A770C67678AB /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = ../Audio/CogAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
-		E78010C72519F5A112D4C253 /* CueSheetDecoder.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetDecoder.m; path = ../Plugins/CueSheet/CueSheetDecoder.m; sourceTree = SOURCE_ROOT; };
-		ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; name = SilenceDecoder.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.h; sourceTree = SOURCE_ROOT; };
-		EF0FACC695E239425D91B99E /* CoreAudioDecoder.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CoreAudioDecoder.m; path = ../Plugins/CoreAudio/CoreAudioDecoder.m; sourceTree = SOURCE_ROOT; };
-		F1C4050E39C2119A3C00A9DB /* CueSheetContainer.m */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.objc; name = CueSheetContainer.m; path = ../Plugins/CueSheet/CueSheetContainer.m; sourceTree = SOURCE_ROOT; };
+		E645023FA3DDE611F15C07E7 /* libfdk-aac.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libfdk-aac.xcframework"; path = "../ThirdParty/fdk-aac/ios/libfdk-aac.xcframework"; sourceTree = SOURCE_ROOT; };
+		E78010C72519F5A112D4C253 /* CueSheetDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CueSheetDecoder.m; path = ../Plugins/CueSheet/CueSheetDecoder.m; sourceTree = SOURCE_ROOT; };
+		E78516014F8B59511921B7B1 /* libogg.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libogg.xcframework; path = ../ThirdParty/ogg/ios/libogg.xcframework; sourceTree = SOURCE_ROOT; };
+		ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceDecoder.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.h; sourceTree = SOURCE_ROOT; };
+		ED20D914936F1B2443FA8739 /* FlacDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FlacDecoder.h; path = ../Plugins/Flac/FlacDecoder.h; sourceTree = SOURCE_ROOT; };
+		EF0FACC695E239425D91B99E /* CoreAudioDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CoreAudioDecoder.m; path = ../Plugins/CoreAudio/CoreAudioDecoder.m; sourceTree = SOURCE_ROOT; };
+		F1C4050E39C2119A3C00A9DB /* CueSheetContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CueSheetContainer.m; path = ../Plugins/CueSheet/CueSheetContainer.m; sourceTree = SOURCE_ROOT; };
+		F3E21729D79E5C9F65246A24 /* HTTPSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HTTPSource.h; path = ../Plugins/HTTPSource/HTTPSource.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,9 +149,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = "2147483647";
 			files = (
+				3F860854465B9CD43B175049 /* libfdk-aac.xcframework in Frameworks */,
+				CB5E8E6F1C26CBA6CE94B750 /* libavcodec.xcframework in Frameworks */,
+				3209B7B5D3E8600D7C4E5046 /* libavformat.xcframework in Frameworks */,
+				27E6ABBA7EE4507B599809ED /* libavutil.xcframework in Frameworks */,
+				A1EB73295137F55BF6524993 /* libswresample.xcframework in Frameworks */,
+				ED746F9B78109FB6C4CC8938 /* libFLAC.xcframework in Frameworks */,
+				390160FF89C3F13D205848DB /* libogg.xcframework in Frameworks */,
+				C1D600A66C6D55C9BC838DC5 /* libtag.xcframework in Frameworks */,
 				8835465D38CE202A5C6E177C /* AudioToolbox.framework in Frameworks */,
 				585BE524744AFAB5FD34DCF9 /* AVFoundation.framework in Frameworks */,
+				0A15409EDDA66A149604706D /* CoreMedia.framework in Frameworks */,
 				730A757E6B41EFC05D036AA0 /* Foundation.framework in Frameworks */,
+				FEB15A1D1133453EDC90E978 /* Security.framework in Frameworks */,
 				EE98248FAA390B167A40962C /* CogAudio.framework in Frameworks */,
 				96C620C58FBCD1274E68E55C /* File_Extractor.framework in Frameworks */,
 			);
@@ -188,6 +241,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		5832EF36B2B196297A37DE75 /* Flac */ = {
+			isa = PBXGroup;
+			children = (
+				ED20D914936F1B2443FA8739 /* FlacDecoder.h */,
+				CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */,
+				BA59E2A752A1601EDB9602EC /* cuesheet.m */,
+			);
+			name = Flac;
+			sourceTree = "<group>";
+		};
 		637555C3ADEBE470681DB225 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,9 +262,19 @@
 		63E898C4BE2CD09D8A4F7020 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E645023FA3DDE611F15C07E7 /* libfdk-aac.xcframework */,
+				A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */,
+				257DDCB0DE45D16012EFFB48 /* libavformat.xcframework */,
+				667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */,
+				5FC21F8478D9D2DE1142CB77 /* libswresample.xcframework */,
+				2735D67CD372EF14E5D1456A /* libFLAC.xcframework */,
+				E78516014F8B59511921B7B1 /* libogg.xcframework */,
+				A6DC7906614491BDF2E01CF7 /* libtag.xcframework */,
 				AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */,
 				644D14A6CEF05A0105659361 /* AVFoundation.framework */,
+				590D39E029664596A83F93F2 /* CoreMedia.framework */,
 				70BA5804918B7E26B3153C57 /* Foundation.framework */,
+				75A1B068B2B5BA2E5031E915 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -245,17 +318,54 @@
 			name = CogPlugins;
 			sourceTree = "<group>";
 		};
+		B4C32D02E35BD112C24A509F /* HTTPSource */ = {
+			isa = PBXGroup;
+			children = (
+				F3E21729D79E5C9F65246A24 /* HTTPSource.h */,
+				B48234EB136E9F658AB65827 /* HTTPSource.m */,
+			);
+			name = HTTPSource;
+			sourceTree = "<group>";
+		};
 		CDC2EAA91EBF67C04F5EF8EB /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
 				5143B165C3A158FCD40B9764 /* CoreAudio */,
 				2A6226D713451825F5D0FA9A /* CueSheet */,
+				F8AD8A2B542534D1A41300C7 /* FFMPEG */,
 				FD156574ED82A2097C5149CA /* FileSource */,
+				5832EF36B2B196297A37DE75 /* Flac */,
+				B4C32D02E35BD112C24A509F /* HTTPSource */,
 				FD8033E3D338F3C15332594D /* M3u */,
 				09FB65929E45C33881EE159D /* Pls */,
 				46717A1406EF8263C68BC2FC /* SilenceDecoder */,
+				ECB52566840D07C61DB2A343 /* TagLib */,
 			);
 			name = Plugins;
+			sourceTree = "<group>";
+		};
+		ECB52566840D07C61DB2A343 /* TagLib */ = {
+			isa = PBXGroup;
+			children = (
+				D56B596439AD7E621B1B7E81 /* TagLibID3v2Reader.h */,
+				25D2EFA388124EFF9477D200 /* TagLibID3v2Reader.mm */,
+				C57E459CBA8EB64564AEBAE3 /* TagLibMetadataReader.h */,
+				A7C9A4FFC588A2137FC04653 /* TagLibMetadataReader.m */,
+				869D93F89309673B0DBB2361 /* TagLibMetadataWriter.h */,
+				24016156BE6366200B66E312 /* TagLibMetadataWriter.m */,
+			);
+			name = TagLib;
+			sourceTree = "<group>";
+		};
+		F8AD8A2B542534D1A41300C7 /* FFMPEG */ = {
+			isa = PBXGroup;
+			children = (
+				25045C25194DB3B51B023D69 /* FFMPEGContainer.h */,
+				BB4520989D7C14143251CB34 /* FFMPEGContainer.m */,
+				78C1545958E1781C08633FCA /* FFMPEGDecoder.h */,
+				3E1BEB480338F1E8DEDA80D4 /* FFMPEGDecoder.m */,
+			);
+			name = FFMPEG;
 			sourceTree = "<group>";
 		};
 		FD156574ED82A2097C5149CA /* FileSource */ = {
@@ -380,11 +490,19 @@
 				9F0A7709E99F218847E32BAA /* CueSheetDecoder.m in Sources */,
 				047936E2A7D9B145CBD7CD44 /* CueSheetMetadataReader.m in Sources */,
 				34D69FC1E7A6ABDD55218E47 /* CueSheetTrack.m in Sources */,
+				67489D436528C31D3E07DAE1 /* FFMPEGContainer.m in Sources */,
+				354C0600F4B6C913FEDAF961 /* FFMPEGDecoder.m in Sources */,
 				48425FFBE7EB53E2878E8481 /* FileSource.m in Sources */,
+				EFE5EB9974F03606FF2700F7 /* FlacDecoder.m in Sources */,
+				ED19795381C4FB5B8A325493 /* cuesheet.m in Sources */,
+				F61150A6AD40CD07316B17E3 /* HTTPSource.m in Sources */,
 				CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */,
 				AEB74DDB94DDF68C9A8B51E3 /* PlsContainer.m in Sources */,
 				071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */,
 				EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */,
+				69AF174D336D6C81E423E641 /* TagLibID3v2Reader.mm in Sources */,
+				39CEE9B810B723B118BA8E55 /* TagLibMetadataReader.m in Sources */,
+				1308F6D95900A128A5837309 /* TagLibMetadataWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
 		};
@@ -433,12 +551,22 @@
 					../Audio/Utils,
 					../Utils,
 					../Playlist,
+					../ThirdParty/ffmpeg/include,
+					../ThirdParty/flac/include,
+					../ThirdParty/ogg/include,
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+					"-lbz2",
+					"-liconv",
+					"-lz",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlugins;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -462,12 +590,22 @@
 					../Audio/Utils,
 					../Utils,
 					../Playlist,
+					../ThirdParty/ffmpeg/include,
+					../ThirdParty/flac/include,
+					../ThirdParty/ogg/include,
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lc++",
+					"-lbz2",
+					"-liconv",
+					"-lz",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlugins;
 				PRODUCT_NAME = "$(TARGET_NAME)";

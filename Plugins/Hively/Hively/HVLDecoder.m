@@ -35,7 +35,7 @@ static void oneTimeInit(void) {
 	if(size > UINT_MAX)
 		return NO;
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
@@ -71,7 +71,7 @@ static void oneTimeInit(void) {
 		++loops;
 	}
 
-	double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 	if(defaultFade < 0.0) {
 		defaultFade = 0.0;
 	}

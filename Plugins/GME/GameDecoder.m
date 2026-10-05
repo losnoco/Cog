@@ -53,7 +53,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		return NO;
 	}
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
@@ -114,7 +114,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		length = info->length;
 	} else if(info->loop_length > 0) {
 		DLog(@"Using loop length: %i", info->loop_length);
-		int loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] intValue];
+		int loopCount = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultLoopCount"] intValue];
 		if(loopCount < 0) {
 			loopCount = 1;
 		} else if(loopCount > 10) {
@@ -122,7 +122,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		}
 		length = info->intro_length + loopCount * info->loop_length;
 	} else {
-		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
 		if(defaultLength < 0) {
 			defaultLength = 150.0;
 		}
@@ -133,7 +133,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	if(info->fade_length >= 0) {
 		fade = info->fade_length;
 	} else {
-		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 		if(defaultFade < 0) {
 			defaultFade = 0;
 		}

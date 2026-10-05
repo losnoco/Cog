@@ -47,7 +47,7 @@ static CAdPlugDatabase *g_database = NULL;
 - (BOOL)open:(id<CogSource>)s {
 	[self setSource:s];
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {

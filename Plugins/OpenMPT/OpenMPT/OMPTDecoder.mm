@@ -43,7 +43,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {

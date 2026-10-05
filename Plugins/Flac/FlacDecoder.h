@@ -7,7 +7,7 @@
 //
 
 #import "FLAC/all.h"
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #define SAMPLES_PER_WRITE 512
 #define SAMPLE_blockBuffer_SIZE ((FLAC__MAX_BLOCK_SIZE + SAMPLES_PER_WRITE) * FLAC__MAX_CHANNELS * (FLAC__MAX_BITS_PER_SAMPLE / 8))
