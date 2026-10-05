@@ -19,7 +19,7 @@
 				isEmpty = [val length] == 0;
 			} else if([objTarget isKindOfClass:[NSNumber class]]) {
 				NSNumber *val = (NSNumber *)objTarget;
-				isEmpty = [val isEqualTo:@(0)];
+				isEmpty = [val isEqualToNumber:@(0)];
 			} else if([objTarget isKindOfClass:[NSData class]]) {
 				NSData *val = (NSData *)objTarget;
 				isEmpty = [val length] == 0;

@@ -8,7 +8,7 @@
 #ifndef AudioChunk_h
 #define AudioChunk_h
 
-#import <CoreAudio/CoreAudio.h>
+#import <CoreAudio/CoreAudioTypes.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

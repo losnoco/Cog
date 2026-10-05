@@ -5,7 +5,7 @@
 //  Created by Christopher Snowhill on 2/5/22.
 //
 
-#import <CoreAudio/CoreAudio.h>
+#import <CoreAudio/CoreAudioTypes.h>
 #import <Foundation/Foundation.h>
 
 #import <CogAudio/AudioChunk.h>

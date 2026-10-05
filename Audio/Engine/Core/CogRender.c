@@ -708,6 +708,7 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
 	return noErr;
 }
 
+#if TARGET_OS_OSX
 OSStatus cog_renderer_device_io_proc(AudioObjectID inDevice,
                                      const AudioTimeStamp *inNow,
                                      const AudioBufferList *inInputData,
@@ -737,6 +738,7 @@ OSStatus cog_renderer_device_io_proc(AudioObjectID inDevice,
 	renderer_fill(renderer, buffer->mData, frames);
 	return noErr;
 }
+#endif
 
 uint64_t cog_renderer_frames_rendered(const CogRenderer *renderer) {
 	return atomic_load_explicit(&renderer->framesRendered, memory_order_relaxed);

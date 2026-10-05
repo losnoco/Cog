@@ -53,3 +53,5 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/vorbis/lib/libvorbis.0.dylib
 /ThirdParty/soxr/lib/libsoxr.0.dylib
 /ThirdParty/WavPack/lib/libwavpack.a
+# iOS builds of the libraries, from Scripts/build-ios-audio-deps.sh
+/ThirdParty/*/ios/

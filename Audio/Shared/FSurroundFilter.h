@@ -8,7 +8,7 @@
 #ifndef FSurroundFilter_h
 #define FSurroundFilter_h
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import <stdint.h>
 

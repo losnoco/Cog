@@ -1,6 +1,6 @@
 /* PluginController */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import <CogAudio/Plugin.h>
 

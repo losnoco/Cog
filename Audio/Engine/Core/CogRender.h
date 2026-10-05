@@ -157,6 +157,7 @@ OSStatus cog_renderer_audio_unit_render(void *inRefCon,
                                         UInt32 inNumberFrames,
                                         AudioBufferList *_Nullable ioData);
 
+#if TARGET_OS_OSX
 /// An AudioDeviceIOProc for a device held exclusively, rendering straight
 /// into its one output stream, which must run in the renderer's output
 /// format with the ring's channel count; `inClientData` is the CogRenderer.
@@ -170,6 +171,7 @@ OSStatus cog_renderer_device_io_proc(AudioObjectID inDevice,
                                      AudioBufferList *outOutputData,
                                      const AudioTimeStamp *inOutputTime,
                                      void *_Nullable inClientData);
+#endif
 
 /// Converts `count` rendered float samples to `format` in `output`, as
 /// `cog_renderer_set_output_format` describes.
