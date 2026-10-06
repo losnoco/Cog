@@ -386,15 +386,26 @@ static NSString *xmlEscapeString(NSString * string) {
 #endif
 
 - (void)printPluginInfo {
-	ALog(@"Sources: %@", self.sources);
-	ALog(@"Containers: %@", self.containers);
-	ALog(@"Metadata Readers: %@", self.metadataReaders);
+	// Thousands of entries take seconds to log: off the launch path, from
+	// copies, as the registry is complete by now.
+	NSDictionary *sources = [self.sources copy];
+	NSDictionary *containers = [self.containers copy];
+	NSDictionary *metadataReaders = [self.metadataReaders copy];
+	NSDictionary *propertiesReadersByExtension = [self.propertiesReadersByExtension copy];
+	NSDictionary *propertiesReadersByMimeType = [self.propertiesReadersByMimeType copy];
+	NSDictionary *decodersByExtension = [self.decodersByExtension copy];
+	NSDictionary *decodersByMimeType = [self.decodersByMimeType copy];
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+		ALog(@"Sources: %@", sources);
+		ALog(@"Containers: %@", containers);
+		ALog(@"Metadata Readers: %@", metadataReaders);
 
-	ALog(@"Properties Readers By Extension: %@", self.propertiesReadersByExtension);
-	ALog(@"Properties Readers By Mime Type: %@", self.propertiesReadersByMimeType);
+		ALog(@"Properties Readers By Extension: %@", propertiesReadersByExtension);
+		ALog(@"Properties Readers By Mime Type: %@", propertiesReadersByMimeType);
 
-	ALog(@"Decoders by Extension: %@", self.decodersByExtension);
-	ALog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
+		ALog(@"Decoders by Extension: %@", decodersByExtension);
+		ALog(@"Decoders by Mime Type: %@", decodersByMimeType);
+	});
 
 #if 0
     // XXX Keep in sync with Info.plist on disk!

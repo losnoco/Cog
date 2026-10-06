@@ -159,8 +159,17 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 @implementation SidDecoder
 
-// Need this static initializer to create the static global tables that sidplayfp doesn't really lock access to
-+ (void)initialize {
+// Creates the static global tables that sidplayfp doesn't really lock
+// access to, once, before the first tune opens: not in +initialize, which
+// runs as plugins register at launch, where the tables cost most of a second.
++ (void)createSharedTables {
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		[self buildSharedTables];
+	});
+}
+
++ (void)buildSharedTables {
 	try {
 		ReSIDfpBuilder *builder = new ReSIDfpBuilder("ReSIDfp");
 
@@ -180,6 +189,8 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 }
 
 - (BOOL)open:(id<CogSource>)s {
+	[SidDecoder createSharedTables];
+
 	if(![s seekable])
 		return NO;
 
