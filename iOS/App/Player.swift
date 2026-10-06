@@ -40,6 +40,18 @@ final class Player: NSObject, ObservableObject {
 
 	private var positionTimer: Timer?
 	private var routeObserver: NSObjectProtocol?
+	private var defaultsObserver: NSObjectProtocol?
+	/// The rate the lock screen last heard, which the tempo sets.
+	private var reportedRate = 1.0
+
+	/// How fast playback runs through the track: the tempo, unless the
+	/// stretch is off.
+	private var tempo: Double {
+		let defaults = UserDefaults.standard
+		guard defaults.string(forKey: "rubberbandEngine") != "disabled" else { return 1 }
+		let tempo = defaults.double(forKey: "tempo")
+		return tempo > 0 ? tempo : 1
+	}
 
 	init(model: PlaylistModel) {
 		self.model = model
@@ -56,6 +68,13 @@ final class Player: NSObject, ObservableObject {
 			let reason = (note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt).flatMap(AVAudioSession.RouteChangeReason.init(rawValue:))
 			guard reason == .oldDeviceUnavailable else { return }
 			MainActor.assumeIsolated { self?.pause() }
+		}
+		// A new tempo moves the lock screen's clock at a new rate.
+		defaultsObserver = NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			MainActor.assumeIsolated {
+				guard let self, self.tempo != self.reportedRate else { return }
+				self.updateNowPlaying()
+			}
 		}
 	}
 
@@ -186,8 +205,10 @@ final class Player: NSObject, ObservableObject {
 			MPMediaItemPropertyTitle: entry.title,
 			MPMediaItemPropertyPlaybackDuration: entry.length,
 			MPNowPlayingInfoPropertyElapsedPlaybackTime: position,
-			MPNowPlayingInfoPropertyPlaybackRate: status == .playing ? 1.0 : 0.0,
+			MPNowPlayingInfoPropertyPlaybackRate: status == .playing ? tempo : 0.0,
+			MPNowPlayingInfoPropertyDefaultPlaybackRate: tempo,
 		]
+		reportedRate = tempo
 		if let artist = entry.artist { info[MPMediaItemPropertyArtist] = artist }
 		if let album = entry.album { info[MPMediaItemPropertyAlbumTitle] = album }
 		MPNowPlayingInfoCenter.default().nowPlayingInfo = info

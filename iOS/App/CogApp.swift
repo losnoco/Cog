@@ -13,6 +13,8 @@ struct CogApp: App {
 	@StateObject private var locations: MusicLocations
 
 	init() {
+		// Before the engine reads them.
+		Speed.registerDefaults()
 		// The plugins register now rather than on the first play.
 		_ = PluginController.shared()
 		let store: PlaylistStore

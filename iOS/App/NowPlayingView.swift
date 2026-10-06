@@ -50,6 +50,10 @@ struct NowPlayingView: View {
 	@Environment(\.colorScheme) private var colorScheme
 	@State private var showsEqualizer = false
 	@State private var showsLyrics = false
+	@State private var showsSpeed = false
+	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
+	@AppStorage("tempo") private var tempo = 1.0
+	@AppStorage("pitch") private var pitch = 1.0
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
@@ -91,6 +95,11 @@ struct NowPlayingView: View {
 			.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
 			.sheet(isPresented: $showsEqualizer) {
 				EqualizerView()
+					.environment(\.colorScheme, colorScheme)
+					.tint(.accentColor)
+			}
+			.sheet(isPresented: $showsSpeed) {
+				SpeedView()
 					.environment(\.colorScheme, colorScheme)
 					.tint(.accentColor)
 			}
@@ -172,7 +181,7 @@ struct NowPlayingView: View {
 			}
 			.font(compact ? .title : .largeTitle)
 
-			// Each button an equal share of the width, which seven need on a
+			// Each button an equal share of the width, which eight need on a
 			// phone held upright.
 			HStack(spacing: 0) {
 				Button("Shuffle", systemImage: "shuffle") { model.toggleShuffle() }
@@ -196,6 +205,9 @@ struct NowPlayingView: View {
 					.frame(maxWidth: .infinity)
 				Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
 					.foregroundStyle(state(equalizer.isEnabled))
+					.frame(maxWidth: .infinity)
+				Button("Speed", systemImage: "gauge.with.needle") { showsSpeed = true }
+					.foregroundStyle(state(Speed.isChanged(engine: speedEngine, tempo: tempo, pitch: pitch)))
 					.frame(maxWidth: .infinity)
 				Button(showsVisualizer ? "Hide Visualizer" : "Show Visualizer", systemImage: "waveform") { showsVisualizer.toggle() }
 					.foregroundStyle(state(showsVisualizer))
