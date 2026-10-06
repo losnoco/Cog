@@ -1,0 +1,8 @@
+// Signing for device builds, as the macOS projects take it
+// (see Xcode-config/Shared.xcconfig).
+#include? "../../Xcode-config/DEVELOPMENT_TEAM.xcconfig"
+
+// The Last.fm key, if there is one (see Xcode-config/Secrets.template.xcconfig).
+LASTFM_API_KEY =
+LASTFM_API_SECRET =
+#include? "../../Xcode-config/Secrets.xcconfig"

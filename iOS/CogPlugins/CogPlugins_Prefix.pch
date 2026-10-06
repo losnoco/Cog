@@ -1,0 +1,8 @@
+//
+// Prefix header for the plugins compiled into CogPlugins.framework on iOS,
+// in place of each macOS plugin bundle's own prefix header.
+//
+
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+#endif

@@ -1,0 +1,79 @@
+diff --git a/spessasynth_core.xcodeproj/project.pbxproj b/spessasynth_core.xcodeproj/project.pbxproj
+index 3dfa6f1..80123d2 100644
+--- a/spessasynth_core.xcodeproj/project.pbxproj
++++ b/spessasynth_core.xcodeproj/project.pbxproj
+@@ -7,9 +7,13 @@
+ 	objects = {
+ 
+ /* Begin PBXBuildFile section */
+-		83B7F5C32F8696E000C57C20 /* libFLAC.14.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B7F5C22F8696E000C57C20 /* libFLAC.14.dylib */; };
+-		83C37A4D2F9A0A4F0032167A /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C37A4C2F9A0A4F0032167A /* libvorbisfile.3.dylib */; };
++		83B7F5C32F8696E000C57C20 /* libFLAC.14.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B7F5C22F8696E000C57C20 /* libFLAC.14.dylib */; platformFilters = (macos, ); };
++		83C37A4D2F9A0A4F0032167A /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C37A4C2F9A0A4F0032167A /* libvorbisfile.3.dylib */; platformFilters = (macos, ); };
+ 		83C6A4B62F9C928E0067BA93 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83C6A4B52F9C928E0067BA93 /* libz.tbd */; };
++		A3B3AED29992B7AAF952C7F9 /* libFLAC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42E9EA76ABEA827A2845F1F1 /* libFLAC.xcframework */; platformFilters = (ios, ); };
++		50BC3D54FD69058C07948544 /* libvorbisfile.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE890E87FD9CF75CA2458523 /* libvorbisfile.xcframework */; platformFilters = (ios, ); };
++		B612C97917ED459601D3E039 /* libogg.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B5EDD134B5AAA5278B9C7F /* libogg.xcframework */; platformFilters = (ios, ); };
++		8FC87F1F6BB6ECC98C415920 /* libvorbis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017DD1BEFC782CD81330C867 /* libvorbis.xcframework */; platformFilters = (ios, ); };
+ /* End PBXBuildFile section */
+ 
+ /* Begin PBXFileReference section */
+@@ -17,6 +21,10 @@
+ 		83B7F5C22F8696E000C57C20 /* libFLAC.14.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libFLAC.14.dylib; path = ../../../../ThirdParty/flac/lib/libFLAC.14.dylib; sourceTree = "<group>"; };
+ 		83C37A4C2F9A0A4F0032167A /* libvorbisfile.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libvorbisfile.3.dylib; path = ../../../../ThirdParty/vorbis/lib/libvorbisfile.3.dylib; sourceTree = "<group>"; };
+ 		83C6A4B52F9C928E0067BA93 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
++		42E9EA76ABEA827A2845F1F1 /* libFLAC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libFLAC.xcframework; path = "../../../../ThirdParty/flac/ios/libFLAC.xcframework"; sourceTree = SOURCE_ROOT; };
++		CE890E87FD9CF75CA2458523 /* libvorbisfile.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbisfile.xcframework; path = "../../../../ThirdParty/vorbis/ios/libvorbisfile.xcframework"; sourceTree = SOURCE_ROOT; };
++		E4B5EDD134B5AAA5278B9C7F /* libogg.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libogg.xcframework; path = "../../../../ThirdParty/ogg/ios/libogg.xcframework"; sourceTree = SOURCE_ROOT; };
++		017DD1BEFC782CD81330C867 /* libvorbis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbis.xcframework; path = "../../../../ThirdParty/vorbis/ios/libvorbis.xcframework"; sourceTree = SOURCE_ROOT; };
+ /* End PBXFileReference section */
+ 
+ /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+@@ -69,7 +77,11 @@
+ 			files = (
+ 				83C6A4B62F9C928E0067BA93 /* libz.tbd in Frameworks */,
+ 				83C37A4D2F9A0A4F0032167A /* libvorbisfile.3.dylib in Frameworks */,
++				50BC3D54FD69058C07948544 /* libvorbisfile.xcframework in Frameworks */,
+ 				83B7F5C32F8696E000C57C20 /* libFLAC.14.dylib in Frameworks */,
++				A3B3AED29992B7AAF952C7F9 /* libFLAC.xcframework in Frameworks */,
++				8FC87F1F6BB6ECC98C415920 /* libvorbis.xcframework in Frameworks */,
++				B612C97917ED459601D3E039 /* libogg.xcframework in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -98,7 +110,9 @@
+ 			children = (
+ 				83C6A4B52F9C928E0067BA93 /* libz.tbd */,
+ 				83C37A4C2F9A0A4F0032167A /* libvorbisfile.3.dylib */,
++				CE890E87FD9CF75CA2458523 /* libvorbisfile.xcframework */,
+ 				83B7F5C22F8696E000C57C20 /* libFLAC.14.dylib */,
++				42E9EA76ABEA827A2845F1F1 /* libFLAC.xcframework */,
+ 			);
+ 			name = Frameworks;
+ 			sourceTree = "<group>";
+@@ -345,7 +359,11 @@
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+-				SDKROOT = macosx;
++				SDKROOT = auto;
++				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
++				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
++				SUPPORTS_MACCATALYST = NO;
++				TARGETED_DEVICE_FAMILY = "1,2";
+ 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 				VERSION_INFO_PREFIX = "";
+@@ -405,7 +423,11 @@
+ 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+-				SDKROOT = macosx;
++				SDKROOT = auto;
++				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
++				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
++				SUPPORTS_MACCATALYST = NO;
++				TARGETED_DEVICE_FAMILY = "1,2";
+ 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+ 				VERSIONING_SYSTEM = "apple-generic";
+ 				VERSION_INFO_PREFIX = "";
