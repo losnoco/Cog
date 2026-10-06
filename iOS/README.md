@@ -30,6 +30,11 @@ artifact of the "Check if Cog builds for iOS" workflow unpacks into place.
   `Player` driving CogAudio's `AudioPlayer` as `PlaybackController` does on
   macOS. Music picked in Files is copied into the app's `Documents/Music`,
   which Files and Finder show.
+  - `Localizable.xcstrings` holds the app's strings in English and
+    Spanish, which follows the macOS app's wording. The keys the macOS
+    sources ask for with `NSLocalizedString` are kept by hand, because the
+    Swift compiler does not extract them. `EqualizerPresets.xcstrings`
+    translates the names of `Cog.q1.json`'s presets.
 - `CogPlugins/`: the plugins framework's prefix header and build settings.
 - `CogPluginsTests/`: tests that find, decode and play through the plugins
   on the iOS Simulator.

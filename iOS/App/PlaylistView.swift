@@ -159,7 +159,7 @@ struct PlaylistView: View {
 	private var summary: String {
 		let entries = shown
 		let total = entries.reduce(0) { $0 + $1.length.doubleValue }
-		return "\(entries.count) \(entries.count == 1 ? "track" : "tracks"), \(formatTime(total))"
+		return String(localized: "\(entries.count) tracks, \(formatTime(total))", comment: "The playlist's footer: how many tracks, and their total length")
 	}
 
 	/// Tag order: text by Finder's rules, then disc and track as numbers.
@@ -235,7 +235,7 @@ private struct EntryRow: View {
 			Image(systemName: "exclamationmark.triangle")
 				.foregroundStyle(.secondary)
 		} else if entry.queued {
-			Text("\(entry.queuePosition + 1)")
+			Text(entry.queuePosition + 1, format: .number)
 				.font(.caption.monospacedDigit().bold())
 				.foregroundStyle(.indigo)
 		} else if entry.stopAfter {

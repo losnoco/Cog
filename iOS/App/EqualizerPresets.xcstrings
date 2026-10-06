@@ -1,0 +1,270 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Acoustic" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acústico"
+          }
+        }
+      }
+    },
+    "Bass Booster" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potenciador de graves"
+          }
+        }
+      }
+    },
+    "Bass Reducer" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reductor de graves"
+          }
+        }
+      }
+    },
+    "Classical" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clásica"
+          }
+        }
+      }
+    },
+    "Dance" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dance"
+          }
+        }
+      }
+    },
+    "Deep" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profundo"
+          }
+        }
+      }
+    },
+    "Electronic" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electrónica"
+          }
+        }
+      }
+    },
+    "Flat" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plano"
+          }
+        }
+      }
+    },
+    "Hip-Hop" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hip-hop"
+          }
+        }
+      }
+    },
+    "Jazz" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jazz"
+          }
+        }
+      }
+    },
+    "Latin" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Latina"
+          }
+        }
+      }
+    },
+    "Loudness" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonoridad"
+          }
+        }
+      }
+    },
+    "Lounge" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lounge"
+          }
+        }
+      }
+    },
+    "Piano" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piano"
+          }
+        }
+      }
+    },
+    "Pop" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pop"
+          }
+        }
+      }
+    },
+    "R&B" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "R&B"
+          }
+        }
+      }
+    },
+    "Rock" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rock"
+          }
+        }
+      }
+    },
+    "Small Speakers" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parlantes pequeños"
+          }
+        }
+      }
+    },
+    "Spoken Word" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz hablada"
+          }
+        }
+      }
+    },
+    "Treble Booster" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potenciador de agudos"
+          }
+        }
+      }
+    },
+    "Treble Reducer" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reductor de agudos"
+          }
+        }
+      }
+    },
+    "Vocal Booster" : {
+      "comment" : "An equalizer preset's name, from Cog.q1.json",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potenciador vocal"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

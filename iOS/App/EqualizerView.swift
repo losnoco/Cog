@@ -47,7 +47,7 @@ struct EqualizerControls: View {
 				Spacer()
 				Menu(presetName) {
 					ForEach(Array(Equalizer.presets.enumerated()), id: \.offset) { index, preset in
-						Button(preset.name) { equalizer.apply(index) }
+						Button(preset.displayName) { equalizer.apply(index) }
 					}
 				}
 			}
@@ -78,7 +78,8 @@ struct EqualizerControls: View {
 	}
 
 	private var presetName: String {
-		Equalizer.presets.indices.contains(equalizer.presetIndex) ? Equalizer.presets[equalizer.presetIndex].name : "Custom"
+		Equalizer.presets.indices.contains(equalizer.presetIndex) ? Equalizer.presets[equalizer.presetIndex].displayName
+			: String(localized: "Custom", comment: "Equalizer preset: the bands as set by hand")
 	}
 }
 
@@ -90,7 +91,7 @@ private struct BandSlider: View {
 
 	var body: some View {
 		VStack(spacing: 6) {
-			Text(String(format: "%+.0f", equalizer.gains[band]))
+			Text(equalizer.gains[band], format: .number.precision(.fractionLength(0)).sign(strategy: .always()))
 				.font(.caption2.monospacedDigit())
 				.foregroundStyle(.secondary)
 			Slider(value: Binding(get: { equalizer.gains[band] }, set: { equalizer.setGain(($0 * 2).rounded() / 2, band: band) }),
@@ -122,5 +123,5 @@ private struct BandSlider: View {
 }
 
 private func decibels(_ value: Float) -> String {
-	String(format: "%+.1f dB", value)
+	value.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always())) + " dB"
 }

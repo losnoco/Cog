@@ -568,7 +568,7 @@ add('PBXProject', PROJECT_ID, 'Project object', {
 	'isa': 'PBXProject',
 	'attributes': {'BuildIndependentTargetsInParallel': 'YES', 'LastUpgradeCheck': '2700'},
 	'buildConfigurationList': project_config, 'compatibilityVersion': 'Xcode 15.0', 'developmentRegion': 'en',
-	'hasScannedForEncodings': '0', 'knownRegions': ['en', 'Base'], 'mainGroup': Ref(MAIN_GROUP, ''),
+	'hasScannedForEncodings': '0', 'knownRegions': ['en', 'es', 'Base'], 'mainGroup': Ref(MAIN_GROUP, ''),
 	'productRefGroup': PRODUCTS_GROUP, 'projectDirPath': '', 'projectReferences': project_references,
 	'projectRoot': '', 'targets': [Ref(APP_TARGET_ID, 'Cog'), Ref(TARGET_ID, 'CogPlugins'), Ref(TEST_TARGET_ID, 'CogPluginsTests')]})
 
@@ -616,6 +616,8 @@ app_config = configurations('PBXNativeTarget "Cog"', {
 	'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad': 'UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
 	'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone': 'UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
 	'LD_RUNPATH_SEARCH_PATHS': ['$(inherited)', '@executable_path/Frameworks'],
+	# App/Localizable.xcstrings: English, and Spanish as the macOS app has it.
+	'LOCALIZATION_PREFERS_STRING_CATALOGS': 'YES',
 	'MARKETING_VERSION': '0.1',
 	'PRODUCT_BUNDLE_IDENTIFIER': 'co.losno.MobileCog',
 	'PRODUCT_NAME': 'Cog',

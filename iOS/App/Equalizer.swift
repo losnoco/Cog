@@ -28,6 +28,8 @@ final class Equalizer: ObservableObject {
 		let gains: [Float]
 		let preamp: Float
 		var id: String { name }
+		/// Its name in the user's language; `name` stays Cog.q1.json's.
+		var displayName: String { Bundle.main.localizedString(forKey: name, value: nil, table: "EqualizerPresets") }
 	}
 
 	static let presets: [Preset] = loadPresets()

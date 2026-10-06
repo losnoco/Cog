@@ -176,12 +176,12 @@ struct SpeedControls: View {
 	}
 
 	private func ratio(_ value: Double) -> String {
-		String(format: "%.2f×", value)
+		value.formatted(.number.precision(.fractionLength(2))) + "×"
 	}
 
 	private func semitones(_ value: Double) -> String {
 		let steps = 12 * log2(value)
-		return abs(steps) < 0.05 ? String(localized: "0 semitones") : String(format: "%+.1f semitones", steps)
+		return abs(steps) < 0.05 ? String(localized: "0 semitones") : String(localized: "\(steps, format: .number.precision(.fractionLength(1)).sign(strategy: .always())) semitones")
 	}
 }
 
