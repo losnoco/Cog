@@ -13,8 +13,10 @@ struct ContentView: View {
 	@EnvironmentObject private var ui: AppUI
 
 	var body: some View {
-		if sizeClass == .regular {
-			// A large screen: the playlist beside Now Playing, always shown.
+		// An iPad's full width: the playlist beside Now Playing, always shown.
+		// A Pro Max iPhone held sideways is as regular in width, but too short
+		// for both.
+		if sizeClass == .regular && UIDevice.current.userInterfaceIdiom == .pad {
 			GeometryReader { geometry in
 				HStack(spacing: 0) {
 					NavigationStack {

@@ -161,7 +161,6 @@ struct NowPlayingView: View {
 			}
 			.padding(.horizontal, landscape ? 24 : 0)
 			.frame(width: geometry.size.width, height: geometry.size.height)
-			.animation(.default, value: landscape)
 		}
 	}
 
