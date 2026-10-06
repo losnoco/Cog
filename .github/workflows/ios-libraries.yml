@@ -23,10 +23,16 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-      - name: Check the build tools
-        run: >
-          command -v cmake && command -v ninja
-          || { echo "The runner needs cmake and ninja (brew install cmake ninja)"; exit 1; }
+      # The runner's PATH may leave out Homebrew.
+      - name: Set up cmake and ninja
+        run: |
+          if [ -x /opt/homebrew/bin/brew ]; then
+            echo /opt/homebrew/bin >> "$GITHUB_PATH"
+            export PATH="/opt/homebrew/bin:$PATH"
+          fi
+          for tool in cmake ninja; do
+            command -v "$tool" || brew install "$tool"
+          done
       # Xcode installs the iOS platform on demand; download it only when
       # its SDKs are missing, as it is several GB.
       - name: Install the iOS platform
