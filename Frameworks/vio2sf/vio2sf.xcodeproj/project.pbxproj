@@ -422,6 +422,8 @@
 					"JIT_ENABLED=1",
 					"$(inherited)",
 				);
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]" = "ARMJIT*.cpp ARMJIT_Linkage.S Arm64Emitter.cpp CommonFuncs.cpp MathUtil.cpp x64ABI.cpp x64CPUDetect.cpp x64Emitter.cpp";
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphone*]" = "DEBUG=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -434,7 +436,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Debug;
@@ -479,6 +485,8 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "JIT_ENABLED=1";
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]" = "ARMJIT*.cpp ARMJIT_Linkage.S Arm64Emitter.cpp CommonFuncs.cpp MathUtil.cpp x64ABI.cpp x64CPUDetect.cpp x64Emitter.cpp";
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphone*]" = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -489,7 +497,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Release;
@@ -508,7 +520,11 @@
 				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.vio2sf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -528,7 +544,11 @@
 				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.vio2sf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

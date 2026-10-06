@@ -80,7 +80,7 @@
 		8315868726F586E200803A3A /* psb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315868326F586E200803A3A /* psb.c */; };
 		8315868A26F586F900803A3A /* m2_psb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315868826F586F900803A3A /* m2_psb.c */; };
 		8315868B26F586F900803A3A /* m2_psb.h in Headers */ = {isa = PBXBuildFile; fileRef = 8315868926F586F900803A3A /* m2_psb.h */; };
-		8315868D26F58AF900803A3A /* libspeex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8315868C26F58AF900803A3A /* libspeex.a */; };
+		8315868D26F58AF900803A3A /* libspeex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8315868C26F58AF900803A3A /* libspeex.a */; platformFilters = (macos, ); };
 		8315958920FEC83F007002F0 /* asf.c in Sources */ = {isa = PBXBuildFile; fileRef = 8315958820FEC83F007002F0 /* asf.c */; };
 		8317C24C26982CC1007DD0B8 /* sspr.c in Sources */ = {isa = PBXBuildFile; fileRef = 8317C24826982CC1007DD0B8 /* sspr.c */; };
 		8319017B28F67EE100B70711 /* miniz.h in Headers */ = {isa = PBXBuildFile; fileRef = 8319017928F67EE000B70711 /* miniz.h */; };
@@ -95,7 +95,7 @@
 		831BA61F1EAC61A500CF89B0 /* cxs.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6151EAC61A500CF89B0 /* cxs.c */; };
 		831BA6211EAC61A500CF89B0 /* pasx.c in Sources */ = {isa = PBXBuildFile; fileRef = 831BA6171EAC61A500CF89B0 /* pasx.c */; };
 		832389501D2246C300482226 /* hca.c in Sources */ = {isa = PBXBuildFile; fileRef = 8323894F1D2246C300482226 /* hca.c */; };
-		83256BC8286662840036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256BC7286662610036D9C0 /* libmpg123.0.dylib */; };
+		83256BC8286662840036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256BC7286662610036D9C0 /* libmpg123.0.dylib */; platformFilters = (macos, ); };
 		83256CC528666C620036D9C0 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256C9D28666C620036D9C0 /* mpg123.h */; };
 		83256CD528666C620036D9C0 /* fmt123.h in Headers */ = {isa = PBXBuildFile; fileRef = 83256CAD28666C620036D9C0 /* fmt123.h */; };
 		83269DD22399F5DE00F49FE3 /* nus3bank_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83269DD02399F5DD00F49FE3 /* nus3bank_streamfile.h */; };
@@ -455,8 +455,8 @@
 		836DF624298F83F400CD0580 /* cri_keys.c in Sources */ = {isa = PBXBuildFile; fileRef = 836DF621298F83F400CD0580 /* cri_keys.c */; };
 		836DF627298F864100CD0580 /* cps.c in Sources */ = {isa = PBXBuildFile; fileRef = 836DF625298F864100CD0580 /* cps.c */; };
 		836DF628298F864100CD0580 /* ahx_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 836DF626298F864100CD0580 /* ahx_keys.h */; };
-		836EF0DB27BB975900BF35B2 /* libvorbis.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D027BB960A00BF35B2 /* libvorbis.0.dylib */; };
-		836EF0DD27BB97C500BF35B2 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0DC27BB97BA00BF35B2 /* libvorbisfile.3.dylib */; };
+		836EF0DB27BB975900BF35B2 /* libvorbis.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0D027BB960A00BF35B2 /* libvorbis.0.dylib */; platformFilters = (macos, ); };
+		836EF0DD27BB97C500BF35B2 /* libvorbisfile.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 836EF0DC27BB97BA00BF35B2 /* libvorbisfile.3.dylib */; platformFilters = (macos, ); };
 		836F46AE28208735005B9B87 /* blocked_tt_ad.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F46AD28208735005B9B87 /* blocked_tt_ad.c */; };
 		836F46B22820874D005B9B87 /* tt_ad.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F46AF2820874D005B9B87 /* tt_ad.c */; };
 		836F46B32820874D005B9B87 /* esf.c in Sources */ = {isa = PBXBuildFile; fileRef = 836F46B02820874D005B9B87 /* esf.c */; };
@@ -664,13 +664,13 @@
 		838BDB6A1D3AF7140022CA6F /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB691D3AF7140022CA6F /* libiconv.tbd */; };
 		838BDB6E1D3B043C0022CA6F /* ffmpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 838BDB6D1D3B043C0022CA6F /* ffmpeg.c */; };
 		838BDB711D3B1F990022CA6F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB701D3B1F990022CA6F /* CoreFoundation.framework */; };
-		838BDB731D3B1FA50022CA6F /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB721D3B1FA50022CA6F /* VideoDecodeAcceleration.framework */; };
+		838BDB731D3B1FA50022CA6F /* VideoDecodeAcceleration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB721D3B1FA50022CA6F /* VideoDecodeAcceleration.framework */; platformFilters = (macos, ); };
 		838BDB751D3B1FAD0022CA6F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB741D3B1FAD0022CA6F /* QuartzCore.framework */; };
 		838BDB771D3B1FB60022CA6F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB761D3B1FB60022CA6F /* Security.framework */; };
 		838BDB791D3B1FBE0022CA6F /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB781D3B1FBE0022CA6F /* VideoToolbox.framework */; };
 		838BDB7B1D3B1FC20022CA6F /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7A1D3B1FC20022CA6F /* CoreMedia.framework */; };
 		838BDB7D1D3B1FCC0022CA6F /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7C1D3B1FCC0022CA6F /* CoreVideo.framework */; };
-		838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */; };
+		838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838BDB7E1D3B1FD10022CA6F /* Cocoa.framework */; platformFilters = (macos, ); };
 		8396BE7A2935FC2F00CD0580 /* sscf_encrypted.c in Sources */ = {isa = PBXBuildFile; fileRef = 8396BE782935FC2F00CD0580 /* sscf_encrypted.c */; };
 		8396BE7B2935FC2F00CD0580 /* sscf_encrypted.h in Headers */ = {isa = PBXBuildFile; fileRef = 8396BE792935FC2F00CD0580 /* sscf_encrypted.h */; };
 		8399335F2591E8C1001855AF /* ifs.c in Sources */ = {isa = PBXBuildFile; fileRef = 8399335C2591E8C0001855AF /* ifs.c */; };
@@ -707,10 +707,10 @@
 		83AA5D241F6E2F9C0020821C /* awc.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D201F6E2F9B0020821C /* awc.c */; };
 		83AA5D251F6E2F9C0020821C /* hca_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 83AA5D211F6E2F9C0020821C /* hca_keys.h */; };
 		83AA5D271F6E2F9C0020821C /* stma.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA5D231F6E2F9C0020821C /* stma.c */; };
-		83AA7D17279EBD0400087AA4 /* libavcodec.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D13279EBCF900087AA4 /* libavcodec.62.dylib */; };
-		83AA7D18279EBD0900087AA4 /* libavformat.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D14279EBCF900087AA4 /* libavformat.62.dylib */; };
-		83AA7D19279EBD0B00087AA4 /* libavutil.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D16279EBCF900087AA4 /* libavutil.60.dylib */; };
-		83AA7D1A279EBD0D00087AA4 /* libswresample.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D15279EBCF900087AA4 /* libswresample.6.dylib */; };
+		83AA7D17279EBD0400087AA4 /* libavcodec.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D13279EBCF900087AA4 /* libavcodec.62.dylib */; platformFilters = (macos, ); };
+		83AA7D18279EBD0900087AA4 /* libavformat.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D14279EBCF900087AA4 /* libavformat.62.dylib */; platformFilters = (macos, ); };
+		83AA7D19279EBD0B00087AA4 /* libavutil.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D16279EBCF900087AA4 /* libavutil.60.dylib */; platformFilters = (macos, ); };
+		83AA7D1A279EBD0D00087AA4 /* libswresample.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D15279EBCF900087AA4 /* libswresample.6.dylib */; platformFilters = (macos, ); };
 		83AA7F7D2519C042004C5298 /* dsb.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7F742519C041004C5298 /* dsb.c */; };
 		83AA7F7E2519C042004C5298 /* svag_kcet.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7F752519C041004C5298 /* svag_kcet.c */; };
 		83AA7F7F2519C042004C5298 /* bsf.c in Sources */ = {isa = PBXBuildFile; fileRef = 83AA7F762519C042004C5298 /* bsf.c */; };
@@ -737,7 +737,7 @@
 		83B4DD31305265190055E7F2 /* hashes.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B4DD2F305265190055E7F2 /* hashes.h */; };
 		83B4DD32305265190055E7F2 /* hashes.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B4DD30305265190055E7F2 /* hashes.c */; };
 		83B69B222845A26600D2435A /* bw_mp3_riff.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B69B212845A26600D2435A /* bw_mp3_riff.c */; };
-		83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E342790452C006007A3 /* libfdk-aac.2.dylib */; };
+		83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E342790452C006007A3 /* libfdk-aac.2.dylib */; platformFilters = (macos, ); };
 		83B73C232D8FEC3A00A57F08 /* vorbis_codebooks_oor.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B73C222D8FEC3A00A57F08 /* vorbis_codebooks_oor.h */; };
 		83B73C242D8FEC3A00A57F08 /* oor_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B73C202D8FEC3A00A57F08 /* oor_helpers.h */; };
 		83B73C252D8FEC3A00A57F08 /* oor_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 83B73C212D8FEC3A00A57F08 /* oor_helpers.c */; };
@@ -884,6 +884,16 @@
 		83FD43EB2E6EA80700D8BF46 /* jaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FD43EA2E6EA80700D8BF46 /* jaudio.c */; };
 		83FD43ED2E6EA91A00D8BF46 /* reader_put.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FD43EC2E6EA91A00D8BF46 /* reader_put.c */; };
 		83FF0EBC1E93282100C58054 /* wwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 83FF0EBB1E93282100C58054 /* wwise.c */; };
+		04095EA0C230DD3078DF0002 /* libspeex.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0642AD5BB742D65D6B8D0120 /* libspeex.xcframework */; platformFilters = (ios, ); };
+		7BF04FC5A753A7E214B5BB63 /* libvorbis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8182268B1EF1B2451114BE7C /* libvorbis.xcframework */; platformFilters = (ios, ); };
+		8FF2987D25A1B8EEB8BBF58F /* libvorbisfile.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C1F17C55AA923961F248148 /* libvorbisfile.xcframework */; platformFilters = (ios, ); };
+		FC7E115557BD5B9AF35DECA1 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1C2C5EE4E73B1BE4A737EB /* libavcodec.xcframework */; platformFilters = (ios, ); };
+		5306ADFC08C00884D902AAAC /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA451F0C449421B41EE42A44 /* libavformat.xcframework */; platformFilters = (ios, ); };
+		7DF8E214C0A259521806C774 /* libswresample.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 782ACF531E9AC424623001D9 /* libswresample.xcframework */; platformFilters = (ios, ); };
+		EBE6B28B2A8CDA7957D3DE9E /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A7D2BB2089B07B2F2AC5A7F /* libavutil.xcframework */; platformFilters = (ios, ); };
+		8803B3A15183166E603834B0 /* libfdk-aac.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4A6DB2CD118FF7EDD48FF05 /* libfdk-aac.xcframework */; platformFilters = (ios, ); };
+		A2803F4BC1EA351EB8C49065 /* libmpg123.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59F7E882E8AD6A489EF375DF /* libmpg123.xcframework */; platformFilters = (ios, ); };
+		25198A33C83D02F9128BF809 /* libogg.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F503C101A0372783391977E /* libogg.xcframework */; platformFilters = (ios, ); };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1861,6 +1871,16 @@
 		83FD43EA2E6EA80700D8BF46 /* jaudio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jaudio.c; sourceTree = "<group>"; };
 		83FD43EC2E6EA91A00D8BF46 /* reader_put.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = reader_put.c; sourceTree = "<group>"; };
 		83FF0EBB1E93282100C58054 /* wwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wwise.c; sourceTree = "<group>"; };
+		0642AD5BB742D65D6B8D0120 /* libspeex.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libspeex.xcframework; path = "../../ThirdParty/speex/ios/libspeex.xcframework"; sourceTree = SOURCE_ROOT; };
+		8182268B1EF1B2451114BE7C /* libvorbis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbis.xcframework; path = "../../ThirdParty/vorbis/ios/libvorbis.xcframework"; sourceTree = SOURCE_ROOT; };
+		1C1F17C55AA923961F248148 /* libvorbisfile.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbisfile.xcframework; path = "../../ThirdParty/vorbis/ios/libvorbisfile.xcframework"; sourceTree = SOURCE_ROOT; };
+		EC1C2C5EE4E73B1BE4A737EB /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = "../../ThirdParty/ffmpeg/ios/libavcodec.xcframework"; sourceTree = SOURCE_ROOT; };
+		EA451F0C449421B41EE42A44 /* libavformat.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavformat.xcframework; path = "../../ThirdParty/ffmpeg/ios/libavformat.xcframework"; sourceTree = SOURCE_ROOT; };
+		782ACF531E9AC424623001D9 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = "../../ThirdParty/ffmpeg/ios/libswresample.xcframework"; sourceTree = SOURCE_ROOT; };
+		5A7D2BB2089B07B2F2AC5A7F /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = "../../ThirdParty/ffmpeg/ios/libavutil.xcframework"; sourceTree = SOURCE_ROOT; };
+		D4A6DB2CD118FF7EDD48FF05 /* libfdk-aac.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libfdk-aac.xcframework; path = "../../ThirdParty/fdk-aac/ios/libfdk-aac.xcframework"; sourceTree = SOURCE_ROOT; };
+		59F7E882E8AD6A489EF375DF /* libmpg123.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libmpg123.xcframework; path = "../../ThirdParty/mpg123/ios/libmpg123.xcframework"; sourceTree = SOURCE_ROOT; };
+		7F503C101A0372783391977E /* libogg.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libogg.xcframework; path = "../../ThirdParty/ogg/ios/libogg.xcframework"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1869,12 +1889,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				836EF0DD27BB97C500BF35B2 /* libvorbisfile.3.dylib in Frameworks */,
+				8FF2987D25A1B8EEB8BBF58F /* libvorbisfile.xcframework in Frameworks */,
 				836EF0DB27BB975900BF35B2 /* libvorbis.0.dylib in Frameworks */,
+				7BF04FC5A753A7E214B5BB63 /* libvorbis.xcframework in Frameworks */,
 				83AA7D1A279EBD0D00087AA4 /* libswresample.6.dylib in Frameworks */,
+				7DF8E214C0A259521806C774 /* libswresample.xcframework in Frameworks */,
 				83AA7D19279EBD0B00087AA4 /* libavutil.60.dylib in Frameworks */,
+				EBE6B28B2A8CDA7957D3DE9E /* libavutil.xcframework in Frameworks */,
 				83AA7D18279EBD0900087AA4 /* libavformat.62.dylib in Frameworks */,
+				5306ADFC08C00884D902AAAC /* libavformat.xcframework in Frameworks */,
 				83AA7D17279EBD0400087AA4 /* libavcodec.62.dylib in Frameworks */,
+				FC7E115557BD5B9AF35DECA1 /* libavcodec.xcframework in Frameworks */,
 				83B72E3A27904589006007A3 /* libfdk-aac.2.dylib in Frameworks */,
+				8803B3A15183166E603834B0 /* libfdk-aac.xcframework in Frameworks */,
 				83E22FC32772FD16000015EE /* AudioToolbox.framework in Frameworks */,
 				83E22FC12772FD06000015EE /* libbz2.tbd in Frameworks */,
 				838BDB7F1D3B1FD10022CA6F /* Cocoa.framework in Frameworks */,
@@ -1888,8 +1915,11 @@
 				838BDB6A1D3AF7140022CA6F /* libiconv.tbd in Frameworks */,
 				838BDB681D3AF70D0022CA6F /* libz.tbd in Frameworks */,
 				83256BC8286662840036D9C0 /* libmpg123.0.dylib in Frameworks */,
+				A2803F4BC1EA351EB8C49065 /* libmpg123.xcframework in Frameworks */,
 				83D731891A749D1500CA1366 /* g719.framework in Frameworks */,
 				8315868D26F58AF900803A3A /* libspeex.a in Frameworks */,
+				04095EA0C230DD3078DF0002 /* libspeex.xcframework in Frameworks */,
+				25198A33C83D02F9128BF809 /* libogg.xcframework in Frameworks */,
 				836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */,
 				83D6772D2653A30B00252130 /* libcelt_0061.framework in Frameworks */,
 				83D6772E2653A31400252130 /* libcelt_0110.framework in Frameworks */,
@@ -1921,6 +1951,7 @@
 			isa = PBXGroup;
 			children = (
 				83256BC7286662610036D9C0 /* libmpg123.0.dylib */,
+				59F7E882E8AD6A489EF375DF /* libmpg123.xcframework */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -2207,13 +2238,21 @@
 			children = (
 				83256B9A286662610036D9C0 /* mpg123 */,
 				836EF0DC27BB97BA00BF35B2 /* libvorbisfile.3.dylib */,
+				1C1F17C55AA923961F248148 /* libvorbisfile.xcframework */,
 				836EF0D027BB960A00BF35B2 /* libvorbis.0.dylib */,
+				8182268B1EF1B2451114BE7C /* libvorbis.xcframework */,
 				83B72E342790452C006007A3 /* libfdk-aac.2.dylib */,
+				D4A6DB2CD118FF7EDD48FF05 /* libfdk-aac.xcframework */,
 				83AA7D13279EBCF900087AA4 /* libavcodec.62.dylib */,
+				EC1C2C5EE4E73B1BE4A737EB /* libavcodec.xcframework */,
 				83AA7D14279EBCF900087AA4 /* libavformat.62.dylib */,
+				EA451F0C449421B41EE42A44 /* libavformat.xcframework */,
 				83AA7D16279EBCF900087AA4 /* libavutil.60.dylib */,
+				5A7D2BB2089B07B2F2AC5A7F /* libavutil.xcframework */,
 				83AA7D15279EBCF900087AA4 /* libswresample.6.dylib */,
+				782ACF531E9AC424623001D9 /* libswresample.xcframework */,
 				8315868C26F58AF900803A3A /* libspeex.a */,
+				0642AD5BB742D65D6B8D0120 /* libspeex.xcframework */,
 				83D731381A74968900CA1366 /* g719.xcodeproj */,
 				835FC6C123F62AEE006960FA /* libatrac9.xcodeproj */,
 				83D6762B26539A7100252130 /* libcelt_0061.xcodeproj */,
@@ -4055,7 +4094,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
@@ -4141,7 +4184,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
@@ -4160,7 +4207,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.libvgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -4178,7 +4229,11 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.libvgmstream;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

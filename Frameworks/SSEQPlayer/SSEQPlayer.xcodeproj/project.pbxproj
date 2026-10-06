@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		830109F91A09BC0A0004F8D8 /* codecvt.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F71A09BC0A0004F8D8 /* codecvt.h */; };
 		830109FA1A09BC0A0004F8D8 /* wstring_convert.h in Headers */ = {isa = PBXBuildFile; fileRef = 830109F81A09BC0A0004F8D8 /* wstring_convert.h */; };
-		83848FBC1807623F00E7332D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FBB1807623F00E7332D /* Cocoa.framework */; };
+		83848FBC1807623F00E7332D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83848FBB1807623F00E7332D /* Cocoa.framework */; platformFilters = (macos, ); };
 		83848FC61807623F00E7332D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 83848FC41807623F00E7332D /* InfoPlist.strings */; };
 		838490251807649A00E7332D /* Channel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838490011807649A00E7332D /* Channel.cpp */; };
 		838490261807649A00E7332D /* Channel.h in Headers */ = {isa = PBXBuildFile; fileRef = 838490021807649A00E7332D /* Channel.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -376,7 +376,11 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Debug;
@@ -429,7 +433,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-Wframe-larger-than=4000";
 				OTHER_CPLUSPLUSFLAGS = "-Wframe-larger-than=16000";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Release;
@@ -447,7 +455,11 @@
 				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.sseqplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -466,7 +478,11 @@
 				INSTALL_PATH = "@rpath";
 				PRODUCT_BUNDLE_IDENTIFIER = net.kode54.sseqplayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = auto;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
