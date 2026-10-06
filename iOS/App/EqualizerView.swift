@@ -15,43 +15,45 @@ struct EqualizerView: View {
 				Toggle("Equalizer", isOn: $equalizer.isEnabled)
 					.font(.headline)
 
-				HStack {
-					Text("Preset")
-					Spacer()
-					Menu(presetName) {
-						ForEach(Array(Equalizer.presets.enumerated()), id: \.offset) { index, preset in
-							Button(preset.name) { equalizer.apply(index) }
-						}
-					}
-				}
-
-				VStack(alignment: .leading, spacing: 4) {
+				// What the switch governs: dimmed and still while it is off.
+				VStack(spacing: 20) {
 					HStack {
-						Text("Preamp")
+						Text("Preset")
 						Spacer()
-						Text(decibels(equalizer.preamp))
-							.monospacedDigit()
-							.foregroundStyle(.secondary)
-					}
-					Slider(value: Binding(get: { equalizer.preamp }, set: { equalizer.setPreamp(($0 * 2).rounded() / 2) }),
-					       in: Equalizer.range)
-				}
-
-				ScrollView(.horizontal) {
-					HStack(alignment: .bottom, spacing: 2) {
-						ForEach(Equalizer.frequencies.indices, id: \.self) { band in
-							BandSlider(band: band)
+						Menu(presetName) {
+							ForEach(Array(Equalizer.presets.enumerated()), id: \.offset) { index, preset in
+								Button(preset.name) { equalizer.apply(index) }
+							}
 						}
 					}
-					.padding(.vertical, 8)
+
+					VStack(alignment: .leading, spacing: 4) {
+						HStack {
+							Text("Preamp")
+							Spacer()
+							Text(decibels(equalizer.preamp))
+								.monospacedDigit()
+								.foregroundStyle(.secondary)
+						}
+						Slider(value: Binding(get: { equalizer.preamp }, set: { equalizer.setPreamp(($0 * 2).rounded() / 2) }),
+						       in: Equalizer.range)
+					}
+
+					ScrollView(.horizontal) {
+						HStack(alignment: .bottom, spacing: 2) {
+							ForEach(Equalizer.frequencies.indices, id: \.self) { band in
+								BandSlider(band: band)
+							}
+						}
+						.padding(.vertical, 8)
+					}
+					.scrollIndicators(.visible)
 				}
-				.scrollIndicators(.visible)
+				.disabled(!equalizer.isEnabled)
 
 				Spacer()
 			}
 			.padding()
-			.disabled(!equalizer.isEnabled)
-			.animation(.default, value: equalizer.isEnabled)
 			.navigationTitle("Equalizer")
 			.navigationBarTitleDisplayMode(.inline)
 			.toolbar {
@@ -64,7 +66,6 @@ struct EqualizerView: View {
 				}
 			}
 		}
-		.presentationDetents([.medium, .large])
 	}
 
 	private var presetName: String {
