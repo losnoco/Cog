@@ -192,16 +192,16 @@ private struct SpeedSlider: View {
 					.monospacedDigit()
 					.foregroundStyle(.secondary)
 			}
-			Slider(value: Binding(get: { Speed.slider(fromSpeed: value) }, set: { position in
-				let speed = Speed.speed(fromSlider: position)
-				set(abs(speed - 1) < 0.02 ? 1 : (speed * 100).rounded() / 100)
-			}), in: 0...1) {
-				Text(title)
-			} minimumValueLabel: {
+			HStack {
 				Text("0.2×").font(.caption2)
-			} maximumValueLabel: {
+				ScrubbingSlider(value: Binding(get: { Speed.slider(fromSpeed: value) }, set: { position in
+					let speed = Speed.speed(fromSlider: position)
+					set(abs(speed - 1) < 0.02 ? 1 : (speed * 100).rounded() / 100)
+				}))
+				.accessibilityLabel(Text(title))
 				Text("5×").font(.caption2)
 			}
+			.padding(.top, 8)
 			.sensoryFeedback(.selection, trigger: value == 1)
 		}
 	}

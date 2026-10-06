@@ -164,7 +164,7 @@ struct NowPlayingView: View {
 			.multilineTextAlignment(.center)
 			.padding(.horizontal)
 
-			ProgressBar(clock: player.clock, length: entry.length)
+			ProgressBar(clock: player.clock, length: entry.length, tint: palette?.accent)
 		}
 	}
 
@@ -233,14 +233,17 @@ struct NowPlayingView: View {
 private struct ProgressBar: View {
 	@ObservedObject var clock: PlaybackClock
 	let length: Double
+	/// The album's accent, which a UIKit slider cannot take from the
+	/// environment's tint.
+	let tint: Color?
 	@EnvironmentObject private var player: Player
 	/// The slider's value while dragged; nil follows playback.
 	@State private var scrubbing: Double?
 
 	var body: some View {
 		VStack(spacing: 4) {
-			Slider(value: Binding(get: { scrubbing ?? clock.position }, set: { scrubbing = $0 }),
-			       in: 0...max(length, 1)) { editing in
+			ScrubbingSlider(value: Binding(get: { scrubbing ?? clock.position }, set: { scrubbing = $0 }),
+			                range: 0...max(length, 1), tint: tint) { editing in
 				if !editing, let target = scrubbing {
 					player.seek(to: target)
 					scrubbing = nil
