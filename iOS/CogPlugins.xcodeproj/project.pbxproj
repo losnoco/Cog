@@ -27,6 +27,7 @@
 		1EC1BF7D19AEB0E8FDE55F1D /* HVLMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CBB9134848BD549A403D565 /* HVLMetadataReader.m */; };
 		237FAE851E9FE3A0F011163D /* libvgmMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A3E14F83FC1E4439E5F2DE /* libvgmMetadataReader.mm */; };
 		23C65BF2FAF31D2E7D8AF770 /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D454E45687C44F4B6C045E5 /* ShortenDecoder.mm */; };
+		24AFD1A007CFD5F2AC940851 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8122059ACF2893E48561F658 /* CogPlaylist.framework */; };
 		26DF98040C8F313B5094D979 /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC3E5E4E639E44129F4C524 /* libAdPlug.framework */; };
 		275572E66D0BB37058D9C2FE /* adplug.db in Resources */ = {isa = PBXBuildFile; fileRef = 0D3D2BCFCFEB97ED1B75A623 /* adplug.db */; };
 		27E6ABBA7EE4507B599809ED /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */; };
@@ -144,6 +145,7 @@
 		EFFC1F5A7E66714F4AEC6E2F /* opl3midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22379D4AD1005DDB88C6C9B1 /* opl3midi.cpp */; };
 		F405DEACA3C577FE4B487350 /* fx98.pxt in Resources */ = {isa = PBXBuildFile; fileRef = B40964ADDC2FF86BDB936267 /* fx98.pxt */; };
 		F61150A6AD40CD07316B17E3 /* HTTPSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B48234EB136E9F658AB65827 /* HTTPSource.m */; };
+		F815EFED9F3EB48B9894412F /* PlaylistLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B49EB3B9474F202D166CC8D /* PlaylistLoaderTests.swift */; };
 		F85A78AF67240416AF39D328 /* picture.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B211DDD5245EC317DDD9DF8 /* picture.c */; };
 		F9F0EA40D481E8C59E582D0D /* GameDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = D3AE8170B0CA2FDD3259234E /* GameDecoder.m */; };
 		FAFCBBD2FC2AA56CE1EB41CC /* libvgmContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = FC735CCDBE1804B0B6FCDEDE /* libvgmContainer.mm */; };
@@ -158,6 +160,13 @@
 			proxyType = "2";
 			remoteGlobalIDString = "8DC2EF5B0486A6940098B216";
 			remoteInfo = mpcdec;
+		};
+		17242563664C73E3BEA0C06B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 356E8BAD9C754F17169B3C9D /* CogPlaylist.xcodeproj */;
+			proxyType = "2";
+			remoteGlobalIDString = CC5502BA1C98A58CEA5F6E05;
+			remoteInfo = CogPlaylist;
 		};
 		1A36542D22EF5B9EC9BC54BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -270,6 +279,13 @@
 			proxyType = "1";
 			remoteGlobalIDString = "83D3C67A201D37D8005564CB";
 			remoteInfo = libbinio;
+		};
+		72483B0279583E873A78D3DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 356E8BAD9C754F17169B3C9D /* CogPlaylist.xcodeproj */;
+			proxyType = "1";
+			remoteGlobalIDString = E80389F158B72B0D3636B1A4;
+			remoteInfo = CogPlaylist;
 		};
 		7D0B6619429CEAC1B667E496 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -522,6 +538,7 @@
 		3453D6CC072D843BA6780D71 /* APLFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = APLFile.m; path = ../Plugins/APL/APLFile.m; sourceTree = SOURCE_ROOT; };
 		34D0FABA4479FBBED1F7F133 /* HVLDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HVLDecoder.m; path = ../Plugins/Hively/Hively/HVLDecoder.m; sourceTree = SOURCE_ROOT; };
 		3550EC25063BC459CE3B0111 /* OMPTContainer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = OMPTContainer.mm; path = ../Plugins/OpenMPT/OpenMPT/OMPTContainer.mm; sourceTree = SOURCE_ROOT; };
+		356E8BAD9C754F17169B3C9D /* CogPlaylist.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogPlaylist.xcodeproj; path = ../CogPlaylist/CogPlaylist.xcodeproj; sourceTree = SOURCE_ROOT; };
 		36B62CBA5DF0861A0D61221E /* CueSheetTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetTrack.h; path = ../Plugins/CueSheet/CueSheetTrack.h; sourceTree = SOURCE_ROOT; };
 		384C3ABA497C71CD980DDA19 /* HLSSegment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSSegment.m; path = ../Plugins/HLS/HLSSegment.m; sourceTree = SOURCE_ROOT; };
 		3BC397956E922C55419563D0 /* VGMDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = VGMDecoder.m; path = ../Plugins/vgmstream/vgmstream/VGMDecoder.m; sourceTree = SOURCE_ROOT; };
@@ -585,6 +602,7 @@
 		869D93F89309673B0DBB2361 /* TagLibMetadataWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = TagLibMetadataWriter.h; path = ../Plugins/TagLib/TagLibMetadataWriter.h; sourceTree = SOURCE_ROOT; };
 		87601CF3C0471178CBA68F8F /* SidContainer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SidContainer.mm; path = ../Plugins/sidplay/SidContainer.mm; sourceTree = SOURCE_ROOT; };
 		89CA7DAB4E5E2BA565575C5D /* i_oplmusic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = i_oplmusic.cpp; path = ../Plugins/MIDI/MIDI/synthlib_doom/i_oplmusic.cpp; sourceTree = SOURCE_ROOT; };
+		8B49EB3B9474F202D166CC8D /* PlaylistLoaderTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/PlaylistLoaderTests.swift; sourceTree = "<group>"; };
 		8B52983244264E94BAAA6691 /* VGMContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = VGMContainer.m; path = ../Plugins/vgmstream/vgmstream/VGMContainer.m; sourceTree = SOURCE_ROOT; };
 		8C22A30F45041713A8792FFA /* VGMInterface.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = VGMInterface.m; path = ../Plugins/vgmstream/vgmstream/VGMInterface.m; sourceTree = SOURCE_ROOT; };
 		8C46C41A2F83E4E859E72DC2 /* libvgmMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = libvgmMetadataReader.h; path = ../Plugins/libvgmPlayer/libvgmMetadataReader.h; sourceTree = SOURCE_ROOT; };
@@ -764,6 +782,7 @@
 			buildActionMask = "2147483647";
 			files = (
 				DF53D2FA4E49D9D41FF4D40C /* CogAudio.framework in Frameworks */,
+				24AFD1A007CFD5F2AC940851 /* CogPlaylist.framework in Frameworks */,
 				50422BFAAA0E6F6A3162E91F /* CogPlugins.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
@@ -887,6 +906,14 @@
 			name = CueSheet;
 			sourceTree = "<group>";
 		};
+		37709B99111C7117B8EA52D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8122059ACF2893E48561F658 /* CogPlaylist.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		3EFD90D0AF2AEE927FCFBA33 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -910,6 +937,7 @@
 			isa = PBXGroup;
 			children = (
 				7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */,
+				8B49EB3B9474F202D166CC8D /* PlaylistLoaderTests.swift */,
 			);
 			name = CogPluginsTests;
 			sourceTree = "<group>";
@@ -1052,6 +1080,7 @@
 				A9AC7DC0913152952B471D54 /* libvgmstream.xcodeproj */,
 				59C8729440291E31799C5B21 /* nuked_sc55.xcodeproj */,
 				084D68C64F49A677B48D5ECD /* spessasynth_core.xcodeproj */,
+				356E8BAD9C754F17169B3C9D /* CogPlaylist.xcodeproj */,
 			);
 			name = Projects;
 			sourceTree = "<group>";
@@ -1482,6 +1511,7 @@
 			);
 			dependencies = (
 				E44029ADE565F8FA94BCA66C /* PBXTargetDependency */,
+				CE681A9B7EED090B11B577DE /* PBXTargetDependency */,
 			);
 			name = CogPluginsTests;
 			productName = CogPluginsTests;
@@ -1641,6 +1671,10 @@
 					ProductGroup = E8AA215B7EF6E5A62BDE0091 /* Products */;
 					ProjectRef = 084D68C64F49A677B48D5ECD /* spessasynth_core.xcodeproj */;
 				},
+				{
+					ProductGroup = 37709B99111C7117B8EA52D5 /* Products */;
+					ProjectRef = 356E8BAD9C754F17169B3C9D /* CogPlaylist.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1747,6 +1781,13 @@
 			fileType = wrapper.framework;
 			path = SSEQPlayer.framework;
 			remoteRef = A13AD7BC71474685DA9B986B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8122059ACF2893E48561F658 /* CogPlaylist.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CogPlaylist.framework;
+			remoteRef = 17242563664C73E3BEA0C06B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		82355ACDB3A25A8B86B9F558 /* spessasynth_core.framework */ = {
@@ -1930,6 +1971,7 @@
 			buildActionMask = "2147483647";
 			files = (
 				32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */,
+				F815EFED9F3EB48B9894412F /* PlaylistLoaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
 		};
@@ -2040,6 +2082,11 @@
 			isa = PBXTargetDependency;
 			name = GME;
 			targetProxy = 62538038ED318A2526A6A5E0 /* PBXContainerItemProxy */;
+		};
+		CE681A9B7EED090B11B577DE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CogPlaylist;
+			targetProxy = 72483B0279583E873A78D3DD /* PBXContainerItemProxy */;
 		};
 		E44029ADE565F8FA94BCA66C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

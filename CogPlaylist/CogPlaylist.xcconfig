@@ -1,0 +1,3 @@
+// Signing for device builds, as the macOS projects take it
+// (see Xcode-config/Shared.xcconfig).
+#include? "../Xcode-config/DEVELOPMENT_TEAM.xcconfig"

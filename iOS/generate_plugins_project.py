@@ -131,8 +131,12 @@ def framework_target(project):
 	raise SystemExit(f'No framework target in {project}')
 
 
+# Projects only the tests link: the shared playlist, whose loader they try
+# with the plugins.
+TEST_PROJECTS = ['CogPlaylist/CogPlaylist.xcodeproj']
+
 SUBPROJECTS = []
-for project in COMMON_PROJECTS + [p for plugin in PLUGINS for p in plugin.get('projects', [])]:
+for project in COMMON_PROJECTS + [p for plugin in PLUGINS for p in plugin.get('projects', [])] + TEST_PROJECTS:
 	if project not in [entry[1] for entry in SUBPROJECTS]:
 		name, target_id, product_id = framework_target(project)
 		SUBPROJECTS.append((name, project, target_id, product_id))
@@ -299,6 +303,7 @@ PROJECT_ID = uid('project', 'CogPlugins')
 
 project_references = []
 plugin_dependencies = []
+test_dependencies = []
 subproject_children = []
 for name, path, target_id, product_id in SUBPROJECTS:
 	project_file = uid('subproject', name)
@@ -326,12 +331,15 @@ for name, path, target_id, product_id in SUBPROJECTS:
 	dependency = uid('dependency', name)
 	add('PBXTargetDependency', dependency, 'PBXTargetDependency', {
 		'isa': 'PBXTargetDependency', 'name': name, 'targetProxy': Ref(target_proxy, 'PBXContainerItemProxy')})
-	plugin_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
-	build_id = uid('subprojectbuild', name)
-	add('PBXBuildFile', build_id, f'{name}.framework in Frameworks', {
-		'isa': 'PBXBuildFile', 'fileRef': Ref(reference_proxy, f'{name}.framework')})
-	plugin_links.append(Ref(build_id, f'{name}.framework in Frameworks'))
-	if name == 'CogAudio':
+	if path in TEST_PROJECTS:
+		test_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
+	else:
+		plugin_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
+		build_id = uid('subprojectbuild', name)
+		add('PBXBuildFile', build_id, f'{name}.framework in Frameworks', {
+			'isa': 'PBXBuildFile', 'fileRef': Ref(reference_proxy, f'{name}.framework')})
+		plugin_links.append(Ref(build_id, f'{name}.framework in Frameworks'))
+	if name == 'CogAudio' or path in TEST_PROJECTS:
 		test_build = uid('testlink', name)
 		add('PBXBuildFile', test_build, f'{name}.framework in Frameworks', {
 			'isa': 'PBXBuildFile', 'fileRef': Ref(reference_proxy, f'{name}.framework')})
@@ -469,7 +477,7 @@ add('PBXNativeTarget', TARGET_ID, 'CogPlugins', {
 	'productType': 'com.apple.product-type.framework'})
 add('PBXNativeTarget', TEST_TARGET_ID, 'CogPluginsTests', {
 	'isa': 'PBXNativeTarget', 'buildConfigurationList': test_config, 'buildPhases': test_phases,
-	'buildRules': [], 'dependencies': [Ref(test_dependency, 'PBXTargetDependency')], 'name': 'CogPluginsTests',
+	'buildRules': [], 'dependencies': [Ref(test_dependency, 'PBXTargetDependency')] + test_dependencies, 'name': 'CogPluginsTests',
 	'productName': 'CogPluginsTests', 'productReference': Ref(TEST_PRODUCT_ID, 'CogPluginsTests.xctest'),
 	'productType': 'com.apple.product-type.bundle.unit-test'})
 add('PBXProject', PROJECT_ID, 'Project object', {

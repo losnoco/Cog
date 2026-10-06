@@ -30,6 +30,30 @@ committed, by running `Scripts/build-ios-libraries.sh` (a few minutes, needs
   on the iOS Simulator.
 - `patches/`: changes to submodules that the iOS build needs.
 
+## The playlist
+
+`CogPlaylist/` is the playlist without AppKit, a framework that builds for
+macOS and iOS. It contains:
+
+- `PlaylistStore`: Cog's Core Data stack, on the shared `DataModel.xcdatamodeld`.
+- `PlaylistEntry` extensions: tags, URL and `setMetadata`, ported from
+  `Playlist/PlaylistEntry.m`.
+- `PlaylistModel`: order, current entry, queue, shuffle, repeat and stop-after,
+  ported from `Playlist/PlaylistController.m`.
+- `PlaylistLoader`: folders and containers through the plugins, and metadata
+  loaded in the background.
+
+Its rules are ported from the macOS app, so keep the two in step. The tests
+run on both platforms (`CogPlaylist` scheme). The loader is tested with the
+real plugins in `CogPluginsTests`.
+
+For now only iOS uses it. For the macOS app to adopt it:
+
+- Its `PlaylistController` delegates to `PlaylistModel`.
+- It stops generating the model's classes itself, since the entity classes
+  would otherwise exist twice.
+- It drops its own copy of `MaybeSecureValueDataTransformer`.
+
 ## Porting more of Cog
 
 - A project under `Frameworks/`:

@@ -1,0 +1,431 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		910DC24A4F1B6B6873F62553 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A15F74BB36306B159C4A0A0 /* DataModel.xcdatamodeld */; };
+		44D4EB2914657AC3DFB67298 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */; };
+		E576833919DDC4848BC75771 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0758E05655E8F04A8DEF1C50 /* CogAudio.framework */; };
+		D68FEF74E48128E325F7F809 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6879EEFDAF7ABC52EA51BC03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = CogAudio;
+		};
+		AF88B830B40181FDDDC338CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = CogAudio;
+		};
+		16950B44B09EECEC8B938B3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D200BE0831D65014A6621A4E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E80389F158B72B0D3636B1A4;
+			remoteInfo = CogPlaylist;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogPlaylist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogPlaylistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		84011B3A914F91C19F54159B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaybeSecureValueDataTransformer.swift; path = ../Transformers/MaybeSecureValueDataTransformer.swift; sourceTree = SOURCE_ROOT; };
+		7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = ../Audio/CogAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
+		BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CogPlaylist.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		9416EF2AB111650C214C7CF5 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Sources; sourceTree = "<group>"; };
+		D66DD72815057E8279171F14 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Tests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2003A6236DA13F3D7673919D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E576833919DDC4848BC75771 /* CogAudio.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3426D1E08704294951B4B0AA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D68FEF74E48128E325F7F809 /* CogPlaylist.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C71180087996ED469AE4473 = {
+			isa = PBXGroup;
+			children = (
+				9416EF2AB111650C214C7CF5 /* Sources */,
+				31608A03A0C3BC66BF523501 /* Shared with Cog */,
+				D66DD72815057E8279171F14 /* Tests */,
+				BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */,
+				D76F601938900D9F3514F5A3 /* Projects */,
+				32EA8C02888C0282FA91ABBD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		31608A03A0C3BC66BF523501 /* Shared with Cog */ = {
+			isa = PBXGroup;
+			children = (
+				9A15F74BB36306B159C4A0A0 /* DataModel.xcdatamodeld */,
+				07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */,
+			);
+			name = "Shared with Cog";
+			sourceTree = "<group>";
+		};
+		D76F601938900D9F3514F5A3 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */,
+			);
+			name = Projects;
+			sourceTree = "<group>";
+		};
+		32EA8C02888C0282FA91ABBD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */,
+				3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A26E1FF5A9D75E7F0910547B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0758E05655E8F04A8DEF1C50 /* CogAudio.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E80389F158B72B0D3636B1A4 /* CogPlaylist */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86012938A5A04092FF1E5512 /* Build configuration list for PBXNativeTarget "CogPlaylist" */;
+			buildPhases = (
+				88AB5D607474DEB4D1ECD0C6 /* Sources */,
+				2003A6236DA13F3D7673919D /* Frameworks */,
+				C8CE3D4F24CFD5A725169D79 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1EFA2675721E00FDF604D0F4 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				9416EF2AB111650C214C7CF5 /* Sources */,
+			);
+			name = CogPlaylist;
+			productName = CogPlaylist;
+			productReference = CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		BA3D22DACC1F819D52C3E8C6 /* CogPlaylistTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A275E591E8C9C0277276668D /* Build configuration list for PBXNativeTarget "CogPlaylistTests" */;
+			buildPhases = (
+				C7559011BB18F1C6C8BF0A8C /* Sources */,
+				3426D1E08704294951B4B0AA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7B5726B8F06A37E7EA60CEE2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D66DD72815057E8279171F14 /* Tests */,
+			);
+			name = CogPlaylistTests;
+			productName = CogPlaylistTests;
+			productReference = 3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D200BE0831D65014A6621A4E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+			};
+			buildConfigurationList = E319C0928571E9F7B9DED9E1 /* Build configuration list for PBXProject "CogPlaylist" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1C71180087996ED469AE4473;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 32EA8C02888C0282FA91ABBD /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A26E1FF5A9D75E7F0910547B /* Products */;
+					ProjectRef = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				E80389F158B72B0D3636B1A4 /* CogPlaylist */,
+				BA3D22DACC1F819D52C3E8C6 /* CogPlaylistTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		0758E05655E8F04A8DEF1C50 /* CogAudio.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CogAudio.framework;
+			remoteRef = 6879EEFDAF7ABC52EA51BC03 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C8CE3D4F24CFD5A725169D79 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		88AB5D607474DEB4D1ECD0C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				910DC24A4F1B6B6873F62553 /* DataModel.xcdatamodeld in Sources */,
+				44D4EB2914657AC3DFB67298 /* MaybeSecureValueDataTransformer.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C7559011BB18F1C6C8BF0A8C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1EFA2675721E00FDF604D0F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CogAudio;
+			targetProxy = AF88B830B40181FDDDC338CC /* PBXContainerItemProxy */;
+		};
+		7B5726B8F06A37E7EA60CEE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E80389F158B72B0D3636B1A4 /* CogPlaylist */;
+			targetProxy = 16950B44B09EECEC8B938B3C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		468ED8E8D2593272796CC7F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		195C1C46B2A1F4BEE49BABC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		0115182F1E24592DC5F38432 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlaylist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		0499974F77CCF26FD15A6795 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlaylist;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		2D6634D601CEFFE3952449D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"$(PROJECT_DIR)/../ThirdParty/soxr/lib",
+					"$(PROJECT_DIR)/../ThirdParty/rubberband/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlaylistTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3594FBCE277877B892D2D46B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+					"$(PROJECT_DIR)/../ThirdParty/soxr/lib",
+					"$(PROJECT_DIR)/../ThirdParty/rubberband/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlaylistTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E319C0928571E9F7B9DED9E1 /* Build configuration list for PBXProject "CogPlaylist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				468ED8E8D2593272796CC7F1 /* Debug */,
+				195C1C46B2A1F4BEE49BABC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86012938A5A04092FF1E5512 /* Build configuration list for PBXNativeTarget "CogPlaylist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0115182F1E24592DC5F38432 /* Debug */,
+				0499974F77CCF26FD15A6795 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A275E591E8C9C0277276668D /* Build configuration list for PBXNativeTarget "CogPlaylistTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D6634D601CEFFE3952449D5 /* Debug */,
+				3594FBCE277877B892D2D46B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		9A15F74BB36306B159C4A0A0 /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				84011B3A914F91C19F54159B /* DataModel.xcdatamodel */,
+			);
+			currentVersion = 84011B3A914F91C19F54159B /* DataModel.xcdatamodel */;
+			name = DataModel.xcdatamodeld;
+			path = ../DataModel.xcdatamodeld;
+			sourceTree = SOURCE_ROOT;
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = D200BE0831D65014A6621A4E /* Project object */;
+}
