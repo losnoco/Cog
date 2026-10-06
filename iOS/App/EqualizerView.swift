@@ -5,52 +5,16 @@
 
 import SwiftUI
 
+/// The sheet that holds the equalizer, where there is no room for it
+/// beside Now Playing.
 struct EqualizerView: View {
 	@EnvironmentObject private var equalizer: Equalizer
 	@Environment(\.dismiss) private var dismiss
 
 	var body: some View {
 		NavigationStack {
-			VStack(spacing: 20) {
-				Toggle("Equalizer", isOn: $equalizer.isEnabled)
-					.font(.headline)
-
-				// What the switch governs: dimmed and still while it is off.
-				VStack(spacing: 20) {
-					HStack {
-						Text("Preset")
-						Spacer()
-						Menu(presetName) {
-							ForEach(Array(Equalizer.presets.enumerated()), id: \.offset) { index, preset in
-								Button(preset.name) { equalizer.apply(index) }
-							}
-						}
-					}
-
-					VStack(alignment: .leading, spacing: 4) {
-						HStack {
-							Text("Preamp")
-							Spacer()
-							Text(decibels(equalizer.preamp))
-								.monospacedDigit()
-								.foregroundStyle(.secondary)
-						}
-						Slider(value: Binding(get: { equalizer.preamp }, set: { equalizer.setPreamp(($0 * 2).rounded() / 2) }),
-						       in: Equalizer.range)
-					}
-
-					ScrollView(.horizontal) {
-						HStack(alignment: .bottom, spacing: 2) {
-							ForEach(Equalizer.frequencies.indices, id: \.self) { band in
-								BandSlider(band: band)
-							}
-						}
-						.padding(.vertical, 8)
-					}
-					.scrollIndicators(.visible)
-				}
-				.disabled(!equalizer.isEnabled)
-
+			VStack {
+				EqualizerControls()
 				Spacer()
 			}
 			.padding()
@@ -65,6 +29,54 @@ struct EqualizerView: View {
 					Button("Done") { dismiss() }
 				}
 			}
+		}
+	}
+}
+
+/// The switch, the preset, the preamp and the bands.
+struct EqualizerControls: View {
+	@EnvironmentObject private var equalizer: Equalizer
+
+	var body: some View {
+		VStack(spacing: 20) {
+			Toggle("Equalizer", isOn: $equalizer.isEnabled)
+				.font(.headline)
+
+			// What the switch governs: dimmed and still while it is off.
+			VStack(spacing: 20) {
+				HStack {
+					Text("Preset")
+					Spacer()
+					Menu(presetName) {
+						ForEach(Array(Equalizer.presets.enumerated()), id: \.offset) { index, preset in
+							Button(preset.name) { equalizer.apply(index) }
+						}
+					}
+				}
+
+				VStack(alignment: .leading, spacing: 4) {
+					HStack {
+						Text("Preamp")
+						Spacer()
+						Text(decibels(equalizer.preamp))
+							.monospacedDigit()
+							.foregroundStyle(.secondary)
+					}
+					Slider(value: Binding(get: { equalizer.preamp }, set: { equalizer.setPreamp(($0 * 2).rounded() / 2) }),
+					       in: Equalizer.range)
+				}
+
+				ScrollView(.horizontal) {
+					HStack(alignment: .bottom, spacing: 2) {
+						ForEach(Equalizer.frequencies.indices, id: \.self) { band in
+							BandSlider(band: band)
+						}
+					}
+					.padding(.vertical, 8)
+				}
+				.scrollIndicators(.visible)
+			}
+			.disabled(!equalizer.isEnabled)
 		}
 	}
 

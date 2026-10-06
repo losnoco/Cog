@@ -94,6 +94,53 @@ struct NowPlayingView: View {
 	}
 
 	private var layout: some View {
+		VStack(spacing: 0) {
+			main
+			// Beside the playlist, the equalizer and speed open in the room
+			// below, rather than in sheets over everything.
+			if isEmbedded && (showsEqualizer || showsSpeed) {
+				panels
+					.transition(.move(edge: .bottom).combined(with: .opacity))
+			}
+		}
+		.animation(.spring(duration: 0.4), value: showsEqualizer)
+		.animation(.spring(duration: 0.4), value: showsSpeed)
+		.background {
+			if let palette {
+				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
+					.ignoresSafeArea()
+			}
+		}
+		.toolbar {
+			if !isEmbedded {
+				ToolbarItem(placement: .topBarTrailing) {
+					Button("Done") { dismiss() }
+				}
+			}
+		}
+		.toolbar(isEmbedded ? .hidden : .automatic, for: .navigationBar)
+		.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
+		.sheet(isPresented: sheet($showsEqualizer)) {
+			EqualizerView()
+				.environment(\.colorScheme, colorScheme)
+				.tint(.accentColor)
+		}
+		.sheet(isPresented: sheet($showsSpeed)) {
+			SpeedView()
+				.environment(\.colorScheme, colorScheme)
+				.tint(.accentColor)
+		}
+		.sheet(isPresented: $showsLyrics) {
+			if let entry = model.currentEntry {
+				LyricsView(entry: entry)
+					.environment(\.colorScheme, colorScheme)
+					.tint(.accentColor)
+			}
+		}
+	}
+
+	/// The art, what plays and the controls, in whatever room is left.
+	private var main: some View {
 		GeometryReader { geometry in
 			let landscape = geometry.size.width > geometry.size.height
 			// One tree in either orientation, only its layout switching, so
@@ -114,38 +161,60 @@ struct NowPlayingView: View {
 			.frame(width: geometry.size.width, height: geometry.size.height)
 			.animation(.default, value: landscape)
 		}
-		.background {
-			if let palette {
-				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
-					.ignoresSafeArea()
+	}
+
+	/// A sheet's binding: shown only where the panels are not.
+	private func sheet(_ shows: Binding<Bool>) -> Binding<Bool> {
+		Binding(get: { shows.wrappedValue && !isEmbedded }, set: { shows.wrappedValue = $0 })
+	}
+
+	/// The equalizer and speed as cards, side by side when both are open.
+	private var panels: some View {
+		HStack(alignment: .top, spacing: 16) {
+			if showsEqualizer {
+				panel("Equalizer", close: { showsEqualizer = false }) {
+					Button("Flat") { equalizer.flatten() }
+						.disabled(!equalizer.isEnabled)
+				} content: {
+					ScrollView {
+						EqualizerControls()
+							.padding([.horizontal, .bottom])
+					}
+				}
 			}
-		}
-		.toolbar {
-			if !isEmbedded {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button("Done") { dismiss() }
+			if showsSpeed {
+				panel("Speed", close: { showsSpeed = false }) {
+					EmptyView()
+				} content: {
+					SpeedControls()
+						.scrollContentBackground(.hidden)
 				}
 			}
 		}
-		.toolbar(isEmbedded ? .hidden : .automatic, for: .navigationBar)
-		.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
-		.sheet(isPresented: $showsEqualizer) {
-			EqualizerView()
-				.environment(\.colorScheme, colorScheme)
-				.tint(.accentColor)
-		}
-		.sheet(isPresented: $showsSpeed) {
-			SpeedView()
-				.environment(\.colorScheme, colorScheme)
-				.tint(.accentColor)
-		}
-		.sheet(isPresented: $showsLyrics) {
-			if let entry = model.currentEntry {
-				LyricsView(entry: entry)
-					.environment(\.colorScheme, colorScheme)
-					.tint(.accentColor)
+		.frame(height: 440)
+		.padding([.horizontal, .bottom], 16)
+	}
+
+	private func panel<Accessory: View, Content: View>(_ title: LocalizedStringKey, close: @escaping () -> Void,
+	                                                   @ViewBuilder accessory: () -> Accessory,
+	                                                   @ViewBuilder content: () -> Content) -> some View {
+		VStack(spacing: 0) {
+			HStack(spacing: 16) {
+				Text(title)
+					.font(.headline)
+				Spacer()
+				accessory()
+				Button("Close", systemImage: "xmark.circle.fill", action: close)
+					.labelStyle(.iconOnly)
+					.font(.title2)
+					.foregroundStyle(.secondary)
 			}
+			.padding(.horizontal)
+			.padding(.vertical, 12)
+			content()
 		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+		.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 	}
 
 	/// What an on-or-off button shows: the tint when on.
@@ -228,10 +297,10 @@ struct NowPlayingView: View {
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
 					.frame(maxWidth: .infinity)
-				Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
+				Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer.toggle() }
 					.foregroundStyle(state(equalizer.isEnabled))
 					.frame(maxWidth: .infinity)
-				Button("Speed", systemImage: "gauge.with.needle") { showsSpeed = true }
+				Button("Speed", systemImage: "gauge.with.needle") { showsSpeed.toggle() }
 					.foregroundStyle(state(Speed.isChanged(engine: speedEngine, tempo: tempo, pitch: pitch)))
 					.frame(maxWidth: .infinity)
 				Button(showsVisualizer ? "Hide Visualizer" : "Show Visualizer", systemImage: "waveform") { showsVisualizer.toggle() }
