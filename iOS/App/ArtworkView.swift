@@ -62,7 +62,8 @@ struct ArtworkView: View {
 		}
 		.frame(width: size, height: size)
 		.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-		.task(id: entry.artHash) {
+		// Again at a new size (a rotation), keeping the image shown meanwhile.
+		.task(id: "\(entry.artHash ?? "")@\(Int(size * scale))") {
 			image = await ArtworkCache.shared.image(for: entry, pixels: Int(size * scale))
 		}
 	}
