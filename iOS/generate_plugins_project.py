@@ -153,7 +153,8 @@ APP_ICON = 'Play.icon'
 # app builds, as on macOS.
 APP_SHARED_SOURCES = ['LyricsWindow/LrclibClient.swift', 'LyricsWindow/LyricsLookup.swift',
                       'Scrobbler/AudioScrobbler.swift', 'Scrobbler/LastFMAPI.swift', 'Scrobbler/ListenBrainzAPI.swift',
-                      'Scrobbler/ListenBrainzScrobbler.swift', 'Scrobbler/KeychainHelper.swift', 'Generated/Secrets.swift']
+                      'Scrobbler/ListenBrainzScrobbler.swift', 'Scrobbler/KeychainHelper.swift', 'Generated/Secrets.swift',
+                      'Visualization/ThirdParty/deadbeef/analyzer.c']
 
 SUBPROJECTS = []
 for project in COMMON_PROJECTS + [p for plugin in PLUGINS for p in plugin.get('projects', [])] + TEST_PROJECTS + EMBED_PROJECTS:
@@ -405,7 +406,8 @@ for source in APP_SHARED_SOURCES:
 	name = Path(source).name
 	file_id = uid('appsource', source)
 	add('PBXFileReference', file_id, name, {
-		'isa': 'PBXFileReference', 'lastKnownFileType': 'sourcecode.swift', 'name': name, 'path': rel(source), 'sourceTree': 'SOURCE_ROOT'})
+		'isa': 'PBXFileReference', 'lastKnownFileType': SOURCE_TYPES[Path(source).suffix], 'name': name, 'path': rel(source),
+		'sourceTree': 'SOURCE_ROOT'})
 	app_children.append(Ref(file_id, name))
 	build_id = uid('appsourcebuild', source)
 	add('PBXBuildFile', build_id, f'{name} in Sources', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, name)})

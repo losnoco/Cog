@@ -49,6 +49,7 @@ struct NowPlayingView: View {
 	@Environment(\.dismiss) private var dismiss
 	@State private var showsEqualizer = false
 	@State private var showsLyrics = false
+	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	@EnvironmentObject private var equalizer: Equalizer
 
 	var body: some View {
@@ -92,6 +93,19 @@ struct NowPlayingView: View {
 	@ViewBuilder private func artwork(size: CGFloat) -> some View {
 		if let entry = model.currentEntry {
 			ArtworkView(entry: entry, size: max(size, 0), cornerRadius: 16)
+				// The spectrum rises over the art's lower half, darkened to
+				// carry it.
+				.overlay(alignment: .bottom) {
+					if showsVisualizer {
+						SpectrumView(isPlaying: player.isPlaying)
+							.padding(.horizontal, 12)
+							.frame(height: max(size, 0) * 0.45)
+							.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
+							.clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 16, bottomTrailingRadius: 16))
+							.transition(.opacity)
+					}
+				}
+				.animation(.default, value: showsVisualizer)
 				.shadow(radius: 12, y: 4)
 		}
 	}
@@ -127,27 +141,39 @@ struct NowPlayingView: View {
 			}
 			.font(compact ? .title : .largeTitle)
 
-			HStack(spacing: compact ? 32 : 40) {
+			// Each button an equal share of the width, which seven need on a
+			// phone held upright.
+			HStack(spacing: 0) {
 				Button("Shuffle", systemImage: "shuffle") { model.toggleShuffle() }
 					.foregroundStyle(model.shuffleMode == .off ? Color.secondary : Color.accentColor)
 					.overlay(alignment: .bottomTrailing) {
 						if model.shuffleMode == .albums { badge("A") }
 					}
+					.frame(maxWidth: .infinity)
 				Button("Repeat", systemImage: model.repeatMode == .one ? "repeat.1" : "repeat") { model.toggleRepeat() }
 					.foregroundStyle(model.repeatMode == .none ? Color.secondary : Color.accentColor)
 					.overlay(alignment: .bottomTrailing) {
 						if model.repeatMode == .album { badge("A") }
 					}
+					.frame(maxWidth: .infinity)
 				Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
 					.foregroundStyle(model.currentEntry?.stopAfter == true ? Color.accentColor : Color.secondary)
+					.frame(maxWidth: .infinity)
 				Button("Lyrics", systemImage: "quote.bubble") { showsLyrics = true }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
+					.frame(maxWidth: .infinity)
 				Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
 					.foregroundStyle(equalizer.isEnabled ? Color.accentColor : Color.secondary)
+					.frame(maxWidth: .infinity)
+				Button(showsVisualizer ? "Hide Visualizer" : "Show Visualizer", systemImage: "waveform") { showsVisualizer.toggle() }
+					.foregroundStyle(showsVisualizer ? Color.accentColor : Color.secondary)
+					.frame(maxWidth: .infinity)
 				RoutePicker()
 					.frame(width: 32, height: 32)
+					.frame(maxWidth: .infinity)
 			}
+			.padding(.horizontal, 12)
 			.font(compact ? .title3 : .title2)
 		}
 		.labelStyle(.iconOnly)

@@ -150,6 +150,7 @@
 		BD7B1F59CBEF6849D6CCD5B5 /* psflib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F30C12771D00C495945E383B /* psflib.framework */; };
 		C0308D3FF5F3D64687A388B0 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC397956E922C55419563D0 /* VGMDecoder.m */; settings = {COMPILER_FLAGS = "-DVGM_USE_ATRAC9 -DVGM_USE_FFMPEG -DVGM_USE_G719 -DVGM_USE_G7221 -DVGM_USE_MPEG -DVGM_USE_VORBIS -D__MACOSX__"; }; };
 		C1D600A66C6D55C9BC838DC5 /* libtag.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6DC7906614491BDF2E01CF7 /* libtag.xcframework */; };
+		C238EB7933807B0AE97102A2 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 646099D3C9CB96D3B0FFD6B8 /* analyzer.c */; };
 		C74CAF65DED91B4D82C88D96 /* HVLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FABA4479FBBED1F7F133 /* HVLDecoder.m */; };
 		C9021DD72384E5B54AD70E45 /* spessasynth_core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 82355ACDB3A25A8B86B9F558 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */; };
@@ -728,6 +729,7 @@
 		5FE55E37B6CC2F2A30FF50E1 /* HLSPlaylistParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HLSPlaylistParser.h; path = ../Plugins/HLS/HLSPlaylistParser.h; sourceTree = SOURCE_ROOT; };
 		60156C1FBA80DDC0302EF210 /* yrw801.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = yrw801.h; path = ../Plugins/libvgmPlayer/yrw801.h; sourceTree = SOURCE_ROOT; };
 		644D14A6CEF05A0105659361 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		646099D3C9CB96D3B0FFD6B8 /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = analyzer.c; path = ../Visualization/ThirdParty/deadbeef/analyzer.c; sourceTree = SOURCE_ROOT; };
 		64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = SOURCE_ROOT; };
 		667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = ../ThirdParty/ffmpeg/ios/libavutil.xcframework; sourceTree = SOURCE_ROOT; };
 		6739A24254BD6309F1C3012B /* CueSheetDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetDecoder.h; path = ../Plugins/CueSheet/CueSheetDecoder.h; sourceTree = SOURCE_ROOT; };
@@ -1489,6 +1491,7 @@
 				E0468E03B37135675DFB60E6 /* ListenBrainzScrobbler.swift */,
 				5F2967EF39D3B5BF923884AA /* KeychainHelper.swift */,
 				08A15506AAB53F24B32C54A6 /* Secrets.swift */,
+				646099D3C9CB96D3B0FFD6B8 /* analyzer.c */,
 				D1CE5BD588F43A7ECF044221 /* GeneralUserGS.sf3 */,
 				5C17991CE27509B9B5142ED0 /* GeneralUserGS-Drums.sf3 */,
 				E4FA227D84BACA6027AE67EE /* GeneralUserXG-SFeTest.sf3 */,
@@ -2245,6 +2248,7 @@
 				238E15565E43452D2885473B /* ListenBrainzScrobbler.swift in Sources */,
 				17947ACE230E8190A13147B4 /* KeychainHelper.swift in Sources */,
 				CB2297A0B85E5B58A2DA1559 /* Secrets.swift in Sources */,
+				C238EB7933807B0AE97102A2 /* analyzer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
 		};
