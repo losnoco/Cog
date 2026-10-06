@@ -18,6 +18,11 @@ final class ArtworkCache {
 	private let cache = NSCache<NSString, UIImage>()
 	private var palettes: [String: ArtworkPalette] = [:]
 
+	/// The colors of `entry`'s art, if they have been worked out already.
+	func cachedPalette(for entry: PlaylistEntry) -> ArtworkPalette? {
+		entry.artHash.flatMap { palettes[$0] }
+	}
+
 	/// The colors of `entry`'s art; nil if it has none.
 	func palette(for entry: PlaylistEntry) async -> ArtworkPalette? {
 		guard let hash = entry.artHash else { return nil }
@@ -115,8 +120,16 @@ struct ArtworkPalette: Equatable, Sendable {
 extension View {
 	/// Keeps `palette` the colors of `entry`'s art: nil without art, and
 	/// worked out again only when the art changes.
+	///
+	/// Colors already worked out apply before the view is first drawn, so it
+	/// opens in them rather than changing to them just after.
 	func albumPalette(_ palette: Binding<ArtworkPalette?>, of entry: PlaylistEntry?) -> some View {
-		task(id: entry?.artHash) {
+		onAppear {
+			if let entry, let cached = ArtworkCache.shared.cachedPalette(for: entry) {
+				palette.wrappedValue = cached
+			}
+		}
+		.task(id: entry?.artHash) {
 			if let entry {
 				palette.wrappedValue = await ArtworkCache.shared.palette(for: entry)
 			} else {

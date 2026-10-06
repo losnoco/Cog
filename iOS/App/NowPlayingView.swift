@@ -44,18 +44,15 @@ struct MiniPlayerView: View {
 		.background {
 			// To the screen's edges: under the home indicator, and beside the
 			// Dynamic Island in landscape.
-			if let palette {
-				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .leading, endPoint: .trailing)
-					.ignoresSafeArea(edges: [.horizontal, .bottom])
-			} else {
+			ZStack {
 				Rectangle().fill(.bar)
-					.ignoresSafeArea(edges: [.horizontal, .bottom])
+				AlbumGradient(palette: palette, startPoint: .leading, endPoint: .trailing)
 			}
+			.ignoresSafeArea(edges: [.horizontal, .bottom])
 		}
 		.contentShape(Rectangle())
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
-		.animation(.easeInOut(duration: 0.6), value: palette)
 		.albumPalette($palette, of: model.currentEntry)
 	}
 }
@@ -91,7 +88,6 @@ struct NowPlayingView: View {
 		// opens keep the usual look.
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
-		.animation(.easeInOut(duration: 0.6), value: palette)
 		.albumPalette($palette, of: model.currentEntry)
 	}
 
@@ -110,10 +106,8 @@ struct NowPlayingView: View {
 		.animation(.spring(duration: 0.4), value: ui.showsLyrics)
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
-			if let palette {
-				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
-					.ignoresSafeArea()
-			}
+			AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
+				.ignoresSafeArea()
 		}
 		.toolbar {
 			if !isEmbedded {
@@ -398,4 +392,19 @@ private struct RoutePicker: UIViewRepresentable {
 	}
 
 	func updateUIView(_ uiView: AVRoutePickerView, context: Context) {}
+}
+
+/// An album's colors as a gradient, fading from one album's to the next's
+/// (or in and out); only it animates, so a layout settling as the palette
+/// arrives does not.
+private struct AlbumGradient: View {
+	let palette: ArtworkPalette?
+	let startPoint: UnitPoint
+	let endPoint: UnitPoint
+
+	var body: some View {
+		LinearGradient(colors: [palette?.top ?? .clear, palette?.bottom ?? .clear], startPoint: startPoint, endPoint: endPoint)
+			.opacity(palette == nil ? 0 : 1)
+			.animation(.easeInOut(duration: 0.6), value: palette)
+	}
 }
