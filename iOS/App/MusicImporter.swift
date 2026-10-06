@@ -8,6 +8,7 @@
 //  copies keep playing from one launch to the next.
 //
 
+import CogPlaylist
 import Foundation
 
 enum MusicImporter {
@@ -36,6 +37,38 @@ enum MusicImporter {
 				}
 			}
 		}.value
+	}
+
+	/// Entries stored with their absolute path into the app's data
+	/// container, which iOS moves when the app is reinstalled (as every build
+	/// from Xcode does): points those at the container as it is now, where
+	/// the file is. Returns how many moved.
+	@MainActor
+	@discardableResult
+	static func relocateMovedContainer(in model: PlaylistModel) -> Int {
+		let home = URL(fileURLWithPath: NSHomeDirectory()).standardizedFileURL.path
+		var moved = 0
+		for entry in model.entries {
+			guard let url = entry.url, url.isFileURL, !FileManager.default.fileExists(atPath: url.path),
+			      let relative = pathInsideAppContainer(url.path) else { continue }
+			let current = URL(fileURLWithPath: home + relative)
+			guard FileManager.default.fileExists(atPath: current.path) else { continue }
+			var components = URLComponents(url: current, resolvingAgainstBaseURL: false)
+			components?.fragment = url.fragment
+			entry.url = components?.url ?? current
+			entry.error = false
+			moved += 1
+		}
+		if moved > 0 { model.store.save() }
+		return moved
+	}
+
+	/// "/Documents/Music/a.flac" from ".../Containers/Data/Application/<UUID>/Documents/Music/a.flac".
+	private static func pathInsideAppContainer(_ path: String) -> String? {
+		guard let range = path.range(of: #"/Containers/Data/Application/[0-9A-Fa-f-]{36}"#, options: .regularExpression) else {
+			return nil
+		}
+		return String(path[range.upperBound...])
 	}
 
 	/// Music/name, or "name 2", "name 3"… if taken.

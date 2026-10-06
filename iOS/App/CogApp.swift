@@ -23,7 +23,9 @@ struct CogApp: App {
 			NSLog("Could not open the playlist store: \(error)")
 			store = try! PlaylistStore(inMemory: true)
 		}
-		_player = StateObject(wrappedValue: Player(model: PlaylistModel(store: store)))
+		let model = PlaylistModel(store: store)
+		MusicImporter.relocateMovedContainer(in: model)
+		_player = StateObject(wrappedValue: Player(model: model))
 	}
 
 	var body: some Scene {
