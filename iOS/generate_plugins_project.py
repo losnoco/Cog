@@ -608,6 +608,9 @@ app_config = configurations('PBXNativeTarget "Cog"', {
 	'INFOPLIST_FILE': 'CogApp-Info.plist',
 	'INFOPLIST_KEY_CFBundleDisplayName': 'Cog',
 	'INFOPLIST_KEY_LSApplicationCategoryType': 'public.app-category.music',
+	# Files opened from Files play where they are. A build setting, which
+	# Xcode's editors leave alone; they dropped the key from the plist file.
+	'INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace': 'YES',
 	'INFOPLIST_KEY_UIApplicationSceneManifest_Generation': 'YES',
 	'INFOPLIST_KEY_UILaunchScreen_Generation': 'YES',
 	'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad': 'UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight',
