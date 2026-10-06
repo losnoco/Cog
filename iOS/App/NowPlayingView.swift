@@ -47,9 +47,12 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
+	@Environment(\.colorScheme) private var colorScheme
 	@State private var showsEqualizer = false
 	@State private var showsLyrics = false
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
+	/// The playing album's colors; nil without art, for the usual look.
+	@State private var palette: ArtworkPalette?
 	@EnvironmentObject private var equalizer: Equalizer
 
 	var body: some View {
@@ -74,20 +77,48 @@ struct NowPlayingView: View {
 				.frame(width: geometry.size.width, height: geometry.size.height)
 				.animation(.default, value: landscape)
 			}
+			.background {
+				if let palette {
+					LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
+						.ignoresSafeArea()
+				}
+			}
 			.toolbar {
 				ToolbarItem(placement: .topBarTrailing) {
 					Button("Done") { dismiss() }
 				}
 			}
+			.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
 			.sheet(isPresented: $showsEqualizer) {
 				EqualizerView()
+					.environment(\.colorScheme, colorScheme)
+					.tint(.accentColor)
 			}
 			.sheet(isPresented: $showsLyrics) {
 				if let entry = model.currentEntry {
 					LyricsView(entry: entry)
+						.environment(\.colorScheme, colorScheme)
+						.tint(.accentColor)
 				}
 			}
 		}
+		// Light on the album's dark colors, in its accent; the sheets it
+		// opens keep the usual look.
+		.tint(palette?.accent)
+		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
+		.animation(.easeInOut(duration: 0.6), value: palette)
+		.task(id: model.currentEntry?.artHash) {
+			if let entry = model.currentEntry {
+				palette = await ArtworkCache.shared.palette(for: entry)
+			} else {
+				palette = nil
+			}
+		}
+	}
+
+	/// What an on-or-off button shows: the tint when on.
+	private func state(_ on: Bool) -> AnyShapeStyle {
+		on ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary)
 	}
 
 	@ViewBuilder private func artwork(size: CGFloat) -> some View {
@@ -97,7 +128,7 @@ struct NowPlayingView: View {
 				// carry it.
 				.overlay(alignment: .bottom) {
 					if showsVisualizer {
-						SpectrumView(isPlaying: player.isPlaying)
+						SpectrumView(isPlaying: player.isPlaying, color: palette?.accent ?? .white)
 							.padding(.horizontal, 12)
 							.frame(height: max(size, 0) * 0.45)
 							.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
@@ -145,29 +176,29 @@ struct NowPlayingView: View {
 			// phone held upright.
 			HStack(spacing: 0) {
 				Button("Shuffle", systemImage: "shuffle") { model.toggleShuffle() }
-					.foregroundStyle(model.shuffleMode == .off ? Color.secondary : Color.accentColor)
+					.foregroundStyle(state(model.shuffleMode != .off))
 					.overlay(alignment: .bottomTrailing) {
 						if model.shuffleMode == .albums { badge("A") }
 					}
 					.frame(maxWidth: .infinity)
 				Button("Repeat", systemImage: model.repeatMode == .one ? "repeat.1" : "repeat") { model.toggleRepeat() }
-					.foregroundStyle(model.repeatMode == .none ? Color.secondary : Color.accentColor)
+					.foregroundStyle(state(model.repeatMode != .none))
 					.overlay(alignment: .bottomTrailing) {
 						if model.repeatMode == .album { badge("A") }
 					}
 					.frame(maxWidth: .infinity)
 				Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
-					.foregroundStyle(model.currentEntry?.stopAfter == true ? Color.accentColor : Color.secondary)
+					.foregroundStyle(state(model.currentEntry?.stopAfter == true))
 					.frame(maxWidth: .infinity)
 				Button("Lyrics", systemImage: "quote.bubble") { showsLyrics = true }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
 					.frame(maxWidth: .infinity)
 				Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
-					.foregroundStyle(equalizer.isEnabled ? Color.accentColor : Color.secondary)
+					.foregroundStyle(state(equalizer.isEnabled))
 					.frame(maxWidth: .infinity)
 				Button(showsVisualizer ? "Hide Visualizer" : "Show Visualizer", systemImage: "waveform") { showsVisualizer.toggle() }
-					.foregroundStyle(showsVisualizer ? Color.accentColor : Color.secondary)
+					.foregroundStyle(state(showsVisualizer))
 					.frame(maxWidth: .infinity)
 				RoutePicker()
 					.frame(width: 32, height: 32)

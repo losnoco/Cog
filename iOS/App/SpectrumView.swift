@@ -45,7 +45,7 @@ private final class Analyzer {
 	}
 
 	/// Advances to `date` and draws into `context`, bars from the bottom.
-	func draw(in context: inout GraphicsContext, size: CGSize, at date: Date) {
+	func draw(in context: inout GraphicsContext, size: CGSize, at date: Date, color: Color) {
 		let posted = controller.samplesPosted()
 		if posted != lastPosted {
 			lastPosted = posted
@@ -69,7 +69,7 @@ private final class Analyzer {
 			body.addRect(CGRect(x: x, y: size.height - CGFloat(bar.bar_height), width: width, height: CGFloat(bar.bar_height)))
 			peaks.addRect(CGRect(x: x, y: size.height - CGFloat(bar.peak_ypos) - 1, width: width, height: 1.5))
 		}
-		context.fill(body, with: .color(.white.opacity(0.75)))
+		context.fill(body, with: .color(color.opacity(0.8)))
 		context.fill(peaks, with: .color(.white))
 	}
 }
@@ -77,12 +77,14 @@ private final class Analyzer {
 struct SpectrumView: View {
 	/// Still while paused: no frames are drawn then.
 	var isPlaying: Bool
+	/// The bars'; the peaks are white.
+	var color: Color
 	@State private var analyzer = Analyzer()
 
 	var body: some View {
 		TimelineView(.animation(minimumInterval: 1.0 / 60.0, paused: !isPlaying)) { timeline in
 			Canvas { context, size in
-				analyzer.draw(in: &context, size: size, at: timeline.date)
+				analyzer.draw(in: &context, size: size, at: timeline.date, color: color)
 			}
 		}
 		.accessibilityHidden(true)
