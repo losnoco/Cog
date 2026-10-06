@@ -290,7 +290,7 @@ struct NowPlayingView: View {
 			.multilineTextAlignment(.center)
 			.padding(.horizontal)
 
-			ProgressBar(clock: player.clock, length: entry.length, tint: palette?.accent)
+			ProgressBar(clock: player.clock, length: entry.length.doubleValue, tint: palette?.accent)
 		}
 	}
 

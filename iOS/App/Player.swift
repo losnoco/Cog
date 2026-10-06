@@ -149,7 +149,7 @@ final class Player: NSObject, ObservableObject {
 	/// Backward go.
 	func seek(by seconds: Double) {
 		guard let entry = model.currentEntry, status != .stopped else { return }
-		seek(to: min(max(position + seconds, 0), max(entry.length, 0)))
+		seek(to: min(max(position + seconds, 0), max(entry.length.doubleValue, 0)))
 	}
 
 	/// The first entry of the next album along the playlist.
@@ -229,7 +229,7 @@ final class Player: NSObject, ObservableObject {
 		}
 		var info: [String: Any] = [
 			MPMediaItemPropertyTitle: entry.title,
-			MPMediaItemPropertyPlaybackDuration: entry.length,
+			MPMediaItemPropertyPlaybackDuration: entry.length.doubleValue,
 			MPNowPlayingInfoPropertyElapsedPlaybackTime: position,
 			MPNowPlayingInfoPropertyPlaybackRate: status == .playing ? tempo : 0.0,
 			MPNowPlayingInfoPropertyDefaultPlaybackRate: tempo,
@@ -278,7 +278,7 @@ extension Player {
 			guard let entry else { return }
 			// Scrobbled once half heard, or four minutes, as Last.fm and
 			// ListenBrainz have it; never under 30 seconds long.
-			player.setScrobbleThreshold(entry.length >= 30 ? min(240, entry.length / 2) : 0)
+			player.setScrobbleThreshold(entry.length.doubleValue >= 30 ? min(240, entry.length.doubleValue / 2) : 0)
 			let track = entry.audioScrobblerTrack
 			AudioScrobbler.shared.updateNowPlaying(track)
 			ListenBrainzScrobbler.shared.updateNowPlaying(track)

@@ -169,7 +169,6 @@
 		8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */; };
 		8377C6B927B900F000E8BC0F /* SpectrumItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C6B827B900F000E8BC0F /* SpectrumItem.m */; };
 		837DC92B285B05710005C58A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837DC92A285B05710005C58A /* CoreData.framework */; };
-		837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 837DC92F285B3F790005C58A /* DataModel.xcdatamodeld */; };
 		8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952E2E4609CF00A7CFD8 /* libyuv.a */; };
 		838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952D2E4609CF00A7CFD8 /* libdav1d.a */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
@@ -220,7 +219,6 @@
 		83E998722F7131140017AE33 /* TotalTimeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998712F7131140017AE33 /* TotalTimeTransformer.swift */; };
 		83E998762F71325E0017AE33 /* ColorToValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998752F71325E0017AE33 /* ColorToValueTransformer.swift */; };
 		83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */; };
-		83E9987A2F7135310017AE33 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */; };
 		83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */; };
 		83F759E42FAB0706009DB584 /* HLS.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F759E32FAB0706009DB584 /* HLS.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -269,6 +267,8 @@
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */; };
 		F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */; };
+		1EBFAF4C15D626F515FDBA65 /* CogPlaylist.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = A439B853591A600EFD69D4A1 /* CogPlaylist.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		36521C1430E83285BE9E2609 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A439B853591A600EFD69D4A1 /* CogPlaylist.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -769,6 +769,20 @@
 			remoteGlobalIDString = 0D827CD21990D4420010B8EF;
 			remoteInfo = MASShortcut;
 		};
+		B3D6276AA67F7AD284300D6F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2BAD84CB7CAF14F5B4EF778 /* CogPlaylist.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC5502BA1C98A58CEA5F6E05;
+			remoteInfo = CogPlaylist;
+		};
+		44E8E70C2A47F4A15E61367C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2BAD84CB7CAF14F5B4EF778 /* CogPlaylist.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E80389F158B72B0D3636B1A4;
+			remoteInfo = CogPlaylist;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -847,6 +861,7 @@
 				ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */,
 				838F851F256B4E8B00C3E614 /* Sparkle.framework in Copy Files */,
 				17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */,
+				1EBFAF4C15D626F515FDBA65 /* CogPlaylist.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1228,6 +1243,7 @@
 		F56961334CC939A7158B7470 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
+		E2BAD84CB7CAF14F5B4EF778 /* CogPlaylist.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogPlaylist.xcodeproj; path = CogPlaylist/CogPlaylist.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1235,6 +1251,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36521C1430E83285BE9E2609 /* CogPlaylist.framework in Frameworks */,
 				0AC233A32F6C3B4900E6FE2E /* SwiftUIIntrospect in Frameworks */,
 				83DFCDA12E8532E5009E3DF1 /* nuked_sc55.framework in Frameworks */,
 				8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */,
@@ -1322,6 +1339,7 @@
 				ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */,
 				838F851D256B4E5E00C3E614 /* Sparkle.framework */,
 				17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */,
+				E2BAD84CB7CAF14F5B4EF778 /* CogPlaylist.xcodeproj */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -2254,6 +2272,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		ADFA9FA2E11CA3E755DEBBB7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A439B853591A600EFD69D4A1 /* CogPlaylist.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2317,6 +2343,7 @@
 				17C809880C3BD1F5005707C4 /* PBXTargetDependency */,
 				17C809E50C3BD47C005707C4 /* PBXTargetDependency */,
 				17F5613F0C3BD4E90019975C /* PBXTargetDependency */,
+				627037B29E858AA59E304C68 /* PBXTargetDependency */,
 				8E8D40930CBB03AF00135C1B /* PBXTargetDependency */,
 				8E8D41CC0CBB0DD200135C1B /* PBXTargetDependency */,
 				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
@@ -2415,6 +2442,10 @@
 				{
 					ProductGroup = 17F5612B0C3BD4DC0019975C /* Products */;
 					ProjectRef = 17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */;
+				},
+				{
+					ProductGroup = ADFA9FA2E11CA3E755DEBBB7 /* Products */;
+					ProjectRef = E2BAD84CB7CAF14F5B4EF778 /* CogPlaylist.xcodeproj */;
 				},
 				{
 					ProductGroup = 17C809DF0C3BD46D005707C4 /* Products */;
@@ -2806,6 +2837,13 @@
 			remoteRef = ED69CBC225BE328C0090B90D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		A439B853591A600EFD69D4A1 /* CogPlaylist.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CogPlaylist.framework;
+			remoteRef = B3D6276AA67F7AD284300D6F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -2977,7 +3015,6 @@
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				0A8783C730707A99000C7A1B /* AcknowledgementsView.swift in Sources */,
 				838770FA2D6F0996001455A0 /* FeedbackController.m in Sources */,
-				837DC931285B3F790005C58A /* DataModel.xcdatamodeld in Sources */,
 				0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */,
 				0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */,
 				835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */,
@@ -3078,7 +3115,6 @@
 				616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */,
 				616000000000000000000002 /* PathSuggester.m in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
-				83E9987A2F7135310017AE33 /* MaybeSecureValueDataTransformer.swift in Sources */,
 				4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */,
 				AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */,
 				8399D4E21805A55000B503B1 /* XmlContainer.m in Sources */,
@@ -3278,6 +3314,11 @@
 			isa = PBXTargetDependency;
 			name = MASShortcut;
 			targetProxy = ED69CBC525BE32B40090B90D /* PBXContainerItemProxy */;
+		};
+		627037B29E858AA59E304C68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CogPlaylist;
+			targetProxy = 44E8E70C2A47F4A15E61367C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

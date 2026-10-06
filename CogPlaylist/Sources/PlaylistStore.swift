@@ -2,21 +2,22 @@
 //  PlaylistStore.swift
 //  CogPlaylist
 //
-//  The playlist's Core Data stack: Cog's own DataModel (shared with the macOS
-//  app), loaded from this framework.
+//  The playlist's Core Data stack: Cog's DataModel, compiled into this
+//  framework, so that its entities' classes are this framework's. The macOS
+//  app builds its own container on the same model.
 //
 
 import CoreData
 import Foundation
 
-public final class PlaylistStore {
+@objc public final class PlaylistStore: NSObject {
 	public let container: NSPersistentContainer
 
 	public var viewContext: NSManagedObjectContext { container.viewContext }
 
 	/// The model, loaded once: Core Data wants one instance per model, or its
 	/// entities stop matching their classes.
-	private static let model: NSManagedObjectModel = {
+	@objc public static let model: NSManagedObjectModel = {
 		let bundle = Bundle(for: PlaylistStore.self)
 		guard let url = bundle.url(forResource: "DataModel", withExtension: "momd"),
 		      let model = NSManagedObjectModel(contentsOf: url) else {
@@ -38,6 +39,7 @@ public final class PlaylistStore {
 		container.loadPersistentStores { _, error in loadError = error }
 		if let loadError { throw loadError }
 		container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		super.init()
 	}
 
 	public static var defaultURL: URL {
@@ -46,8 +48,9 @@ public final class PlaylistStore {
 		return directory.appendingPathComponent("DataModel.sqlite")
 	}
 
-	/// The metadata blob's transformer, which the model names.
-	private static func registerTransformers() {
+	/// The metadata blob's transformer, which the model names: registered
+	/// before any store opens on the model.
+	@objc public static func registerTransformers() {
 		let name = NSValueTransformerName("MaybeSecureValueDataTransformer")
 		if ValueTransformer(forName: name) == nil {
 			ValueTransformer.setValueTransformer(MaybeSecureValueDataTransformer(), forName: name)

@@ -219,7 +219,7 @@ final class PlaylistModelTests: XCTestCase {
 		XCTAssertEqual(entry.title, "Song")
 		XCTAssertEqual(entry.display, "Someone - Song")
 		XCTAssertEqual(entry.bitrate, 900)
-		XCTAssertEqual(entry.length, 10, accuracy: 0.001)
+		XCTAssertEqual(entry.length.doubleValue, 10, accuracy: 0.001)
 		XCTAssertEqual(entry.replayGainTrackGain, -6.5)
 		XCTAssertEqual(entry.track, 3)
 		XCTAssertTrue(entry.metadataLoaded)

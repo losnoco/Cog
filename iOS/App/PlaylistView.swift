@@ -106,7 +106,7 @@ struct PlaylistView: View {
 						Button("Title") { model.sort { $0.title.localizedStandardCompare($1.title) == .orderedAscending } }
 						Button("Artist") { model.sort { Self.ordered(($0.artist ?? "", $0.album ?? "", $0.disc, $0.track), ($1.artist ?? "", $1.album ?? "", $1.disc, $1.track)) } }
 						Button("Album") { model.sort { Self.ordered(($0.album ?? "", "", $0.disc, $0.track), ($1.album ?? "", "", $1.disc, $1.track)) } }
-						Button("Length") { model.sort { $0.length < $1.length } }
+						Button("Length") { model.sort { $0.length.doubleValue < $1.length.doubleValue } }
 						Button("File Name") { model.sort { $0.filename.localizedStandardCompare($1.filename) == .orderedAscending } }
 					}
 					Button("Add from Cog's Folder", systemImage: "folder") { addMusicFolder() }
@@ -156,7 +156,7 @@ struct PlaylistView: View {
 	/// "12 tracks, 48:03", for what is shown.
 	private var summary: String {
 		let entries = shown
-		let total = entries.reduce(0) { $0 + $1.length }
+		let total = entries.reduce(0) { $0 + $1.length.doubleValue }
 		return "\(entries.count) \(entries.count == 1 ? "track" : "tracks"), \(formatTime(total))"
 	}
 
@@ -208,8 +208,8 @@ private struct EntryRow: View {
 				}
 			}
 			Spacer()
-			if entry.length > 0 {
-				Text(formatTime(entry.length))
+			if entry.length.doubleValue > 0 {
+				Text(formatTime(entry.length.doubleValue))
 					.font(.subheadline.monospacedDigit())
 					.foregroundStyle(.secondary)
 			}

@@ -65,8 +65,8 @@ final class PlaylistLoaderTests: XCTestCase {
 		XCTAssertEqual(added.map(\.title), ["One", "Two", "single.wav"])
 		XCTAssertEqual(added[0].artist, "Cog")
 		XCTAssertEqual(added[0].album, "Album")
-		XCTAssertEqual(added[0].length, 1, accuracy: 0.05)
-		XCTAssertEqual(added[2].length, 1, accuracy: 0.05)
+		XCTAssertEqual(added[0].length.doubleValue, 1, accuracy: 0.05)
+		XCTAssertEqual(added[2].length.doubleValue, 1, accuracy: 0.05)
 		XCTAssertEqual(added[2].sampleRate, 44100)
 		XCTAssertFalse(added.contains(where: \.error))
 	}

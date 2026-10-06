@@ -52,7 +52,7 @@ struct LyricsText: View {
 		}
 		let asked = entry.objectID
 		let shown = LyricsLookup.shared.displayText(title: entry.rawTitle, artist: entry.artist, album: entry.album,
-		                                            duration: entry.length) { answer in
+		                                            duration: entry.length.doubleValue) { answer in
 			// The answer, if this still shows the entry it was for.
 			if entry.objectID == asked { text = answer }
 		}

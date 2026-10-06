@@ -26,7 +26,7 @@ extension PlaylistEntry {
 	/// The entry as the scrobblers take it, as PlaylistEntry.m makes it.
 	var audioScrobblerTrack: AudioScrobblerTrack {
 		let track = AudioScrobblerTrack(title: title, artist: artist, albumArtist: albumartist, album: album,
-		                                trackNumber: Int(self.track), length: length)
+		                                trackNumber: Int(self.track), length: length.doubleValue)
 		// TagLib, FLAC, Vorbis and Opus lowercase the Picard names; FFmpeg
 		// keeps the MP4/ID3 spelling.
 		track.recordingMBID = readAllValuesAsString("musicbrainz_trackid") ?? readAllValuesAsString("musicbrainz track id")

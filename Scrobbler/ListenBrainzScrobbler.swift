@@ -3,13 +3,9 @@
 //  Cog
 //
 
+import CogPlaylist
 import CoreData
 import Foundation
-
-// On iOS the Core Data classes come from CogPlaylist; macOS generates its own.
-#if canImport(CogPlaylist)
-import CogPlaylist
-#endif
 
 /// Sends listens to ListenBrainz alongside the Last.FM scrobbler.
 ///
