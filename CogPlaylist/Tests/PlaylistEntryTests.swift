@@ -41,6 +41,15 @@ final class PlaylistEntryTests: XCTestCase {
 		XCTAssertEqual(makeEntry(url: "/Music/#1 hits.mp3").url?.path, "/Music/#1 hits.mp3")
 	}
 
+	/// The loader reads stored strings through it from Objective-C.
+	func testURLForPathIsAvailableToObjectiveC() {
+		let selector = NSSelectorFromString("urlForPath:")
+		XCTAssertTrue(PlaylistEntry.responds(to: selector))
+		let url = (PlaylistEntry.self as AnyObject).perform(selector, with: "/Music/a.cue#02")?.takeUnretainedValue() as? URL
+		XCTAssertEqual(url?.path, "/Music/a.cue")
+		XCTAssertEqual(url?.fragment, "02")
+	}
+
 	func testNoURLIsSilence() {
 		XCTAssertEqual(makeEntry(url: nil).url?.absoluteString, "silence://10")
 		XCTAssertEqual(makeEntry(url: "").url?.absoluteString, "silence://10")

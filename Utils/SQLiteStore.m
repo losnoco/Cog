@@ -507,8 +507,6 @@ enum {
 
 const char *query_count_queue = "SELECT COUNT(*) FROM queue";
 
-NSURL *_Nonnull urlForPath(NSString *_Nullable path);
-
 @interface SQLiteStore (Private)
 - (NSString *_Nullable)addString:(id _Nullable)string returnId:(int64_t *_Nonnull)stringId;
 - (NSString *_Nonnull)getString:(int64_t)stringId;
@@ -1510,7 +1508,7 @@ static SQLiteStore *g_sharedStore = nil;
 			uint64_t discNr = ((uint64_t)trackNr) >> 32;
 			trackNr &= (1UL << 32) - 1;
 
-			entry.url = urlForPath([self getString:urlId]);
+			entry.url = [PlaylistEntry urlForPath:[self getString:urlId]];
 
 			entry.album = [self getString:albumId];
 			entry.albumartist = [self getString:albumartistId];

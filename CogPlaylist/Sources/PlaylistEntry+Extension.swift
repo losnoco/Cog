@@ -78,8 +78,8 @@ extension PlaylistEntry {
 
 	/// A stored URL string, or a path as older playlists kept it, perhaps
 	/// with a cue track fragment ("/a/b.flac#01"); nothing is ten seconds of
-	/// silence.
-	static func url(forPath path: String?) -> URL? {
+	/// silence. The loader reads entries' stored strings with it.
+	@objc(urlForPath:) public static func url(forPath path: String?) -> URL? {
 		guard let path, !path.isEmpty else { return URL(string: "silence://10") }
 
 		if path.contains("://") {
