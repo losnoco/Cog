@@ -14,6 +14,13 @@ import CogPlaylist
 import Combine
 import MediaPlayer
 
+/// The playing entry's position, apart from Player: it changes four times a
+/// second, and only what shows it should redraw that often.
+@MainActor
+final class PlaybackClock: ObservableObject {
+	@Published var position: Double = 0
+}
+
 @MainActor
 final class Player: NSObject, ObservableObject {
 	let model: PlaylistModel
@@ -22,8 +29,13 @@ final class Player: NSObject, ObservableObject {
 	private let audioPlayer: AudioPlayer = AudioPlayer()!
 
 	@Published private(set) var status: CogStatus = .stopped
-	/// Seconds into the entry playing, refreshed while it plays.
-	@Published private(set) var position: Double = 0
+	/// Seconds into the entry playing, refreshed while it plays, in `clock`
+	/// (which views showing it observe, rather than the whole player).
+	let clock = PlaybackClock()
+	private(set) var position: Double {
+		get { clock.position }
+		set { clock.position = newValue }
+	}
 
 	private var positionTimer: Timer?
 	private var routeObserver: NSObjectProtocol?

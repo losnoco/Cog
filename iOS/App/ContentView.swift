@@ -7,18 +7,19 @@ import CogPlaylist
 import SwiftUI
 
 struct ContentView: View {
-	@EnvironmentObject private var player: Player
+	@EnvironmentObject private var model: PlaylistModel
 	@State private var showsNowPlaying = false
 
 	var body: some View {
 		NavigationStack {
 			PlaylistView()
-		}
-		.safeAreaInset(edge: .bottom) {
-			if player.currentEntry != nil {
-				MiniPlayerView()
-					.onTapGesture { showsNowPlaying = true }
-			}
+				// Inside the stack, so the list makes room for it at its end.
+				.safeAreaInset(edge: .bottom, spacing: 0) {
+					if model.currentEntry != nil {
+						MiniPlayerView()
+							.onTapGesture { showsNowPlaying = true }
+					}
+				}
 		}
 		.sheet(isPresented: $showsNowPlaying) {
 			NowPlayingView()

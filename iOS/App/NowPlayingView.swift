@@ -10,14 +10,15 @@ import SwiftUI
 /// The bar above the tab of whatever plays; tapped, it opens Now Playing.
 struct MiniPlayerView: View {
 	@EnvironmentObject private var player: Player
+	@EnvironmentObject private var model: PlaylistModel
 
 	var body: some View {
 		HStack(spacing: 16) {
 			VStack(alignment: .leading, spacing: 2) {
-				Text(player.currentEntry?.title ?? "")
+				Text(model.currentEntry?.title ?? "")
 					.font(.subheadline.weight(.semibold))
 					.lineLimit(1)
-				if let artist = player.currentEntry?.artist {
+				if let artist = model.currentEntry?.artist {
 					Text(artist)
 						.font(.caption)
 						.foregroundStyle(.secondary)
@@ -43,8 +44,6 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
-	/// The slider's value while dragged; nil follows playback.
-	@State private var scrubbing: Double?
 
 	var body: some View {
 		NavigationStack {
@@ -60,7 +59,7 @@ struct NowPlayingView: View {
 					}
 					.padding(.horizontal, 32)
 
-				if let entry = player.currentEntry {
+				if let entry = model.currentEntry {
 					VStack(spacing: 4) {
 						Text(entry.title)
 							.font(.title2.bold())
@@ -72,7 +71,7 @@ struct NowPlayingView: View {
 					.multilineTextAlignment(.center)
 					.padding(.horizontal)
 
-					progress(length: entry.length)
+					ProgressBar(clock: player.clock, length: entry.length)
 				}
 
 				HStack(spacing: 48) {
@@ -98,7 +97,7 @@ struct NowPlayingView: View {
 							if model.repeatMode == .album { badge("A") }
 						}
 					Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
-						.foregroundStyle(player.currentEntry?.stopAfter == true ? Color.accentColor : Color.secondary)
+						.foregroundStyle(model.currentEntry?.stopAfter == true ? Color.accentColor : Color.secondary)
 					RoutePicker()
 						.frame(width: 32, height: 32)
 				}
@@ -114,9 +113,24 @@ struct NowPlayingView: View {
 		}
 	}
 
-	private func progress(length: Double) -> some View {
+	private func badge(_ text: String) -> some View {
+		Text(text)
+			.font(.system(size: 9, weight: .bold))
+			.offset(x: 6, y: 4)
+	}
+}
+
+/// The position slider: the one part of Now Playing that follows the clock.
+private struct ProgressBar: View {
+	@ObservedObject var clock: PlaybackClock
+	let length: Double
+	@EnvironmentObject private var player: Player
+	/// The slider's value while dragged; nil follows playback.
+	@State private var scrubbing: Double?
+
+	var body: some View {
 		VStack(spacing: 4) {
-			Slider(value: Binding(get: { scrubbing ?? player.position }, set: { scrubbing = $0 }),
+			Slider(value: Binding(get: { scrubbing ?? clock.position }, set: { scrubbing = $0 }),
 			       in: 0...max(length, 1)) { editing in
 				if !editing, let target = scrubbing {
 					player.seek(to: target)
@@ -125,20 +139,14 @@ struct NowPlayingView: View {
 			}
 			.disabled(length <= 0)
 			HStack {
-				Text(formatTime(scrubbing ?? player.position))
+				Text(formatTime(scrubbing ?? clock.position))
 				Spacer()
-				Text("-" + formatTime(max(0, length - (scrubbing ?? player.position))))
+				Text("-" + formatTime(max(0, length - (scrubbing ?? clock.position))))
 			}
 			.font(.caption.monospacedDigit())
 			.foregroundStyle(.secondary)
 		}
 		.padding(.horizontal, 24)
-	}
-
-	private func badge(_ text: String) -> some View {
-		Text(text)
-			.font(.system(size: 9, weight: .bold))
-			.offset(x: 6, y: 4)
 	}
 }
 
