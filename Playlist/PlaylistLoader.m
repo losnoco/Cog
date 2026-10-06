@@ -951,8 +951,6 @@ static NSDictionary *entryInfoForURL(NSURL *url) {
 	}
 }
 
-NSURL *_Nullable urlForPath(NSString *_Nullable path);
-
 - (void)loadInfoForEntries:(NSArray *)entries {
 	NSMutableDictionary *queueThisJob = [NSMutableDictionary new];
 	for(PlaylistEntry *pe in entries) {
@@ -1046,7 +1044,7 @@ NSURL *_Nullable urlForPath(NSString *_Nullable path);
 					[blockInputs removeObjectAtIndex:0];
 					[blockLock unlock];
 
-					NSURL *url = urlForPath(key);
+					NSURL *url = [PlaylistEntry urlForPath:key];
 
 					NSString *message = [NSString stringWithFormat:@"Loading metadata for %@", url];
 					DLog(@"%@", message);
