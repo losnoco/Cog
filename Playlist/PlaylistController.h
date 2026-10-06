@@ -55,7 +55,6 @@ static inline BOOL IsRepeatOneSet(void) {
 @property(retain) NSString *_Nullable currentStatus;
 
 @property(strong, nonatomic, readonly) NSPersistentContainer *_Nonnull persistentContainer;
-@property(strong, nonatomic, readonly) NSMutableDictionary<NSString *, AlbumArtwork *> *_Nonnull persistentArtStorage;
 
 // Private Methods
 - (void)commitPersistentStore;

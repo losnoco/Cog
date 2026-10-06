@@ -13,11 +13,9 @@
 #import "PlaylistEntry.h"
 
 #import "AVIFDecoder.h"
-#import "SHA256Digest.h"
 #import "SecondsFormatter.h"
 
 extern NSPersistentContainer *kPersistentContainer;
-extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlaylistEntryMetadataLoadedNotification";
 
@@ -268,29 +266,6 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 	}
 }
 
-@dynamic albumArtInternal;
-- (NSData *)albumArtInternal {
-	NSString *imageCacheTag = self.artHash;
-	return [kArtworkDictionary objectForKey:imageCacheTag].artData;
-}
-
-- (void)setAlbumArtInternal:(NSData *)albumArtInternal {
-	if(!albumArtInternal || [albumArtInternal length] == 0) return;
-
-	Class shaClass = NSClassFromString(@"SHA256Digest"); // CogAudio
-	NSString *imageCacheTag = [shaClass digestDataAsString:albumArtInternal];
-
-	self.artHash = imageCacheTag;
-
-	if(![kArtworkDictionary objectForKey:imageCacheTag]) {
-		AlbumArtwork *art = [NSEntityDescription insertNewObjectForEntityForName:@"AlbumArtwork" inManagedObjectContext:kPersistentContainer.viewContext];
-		art.artHash = imageCacheTag;
-		art.artData = albumArtInternal;
-
-		[kArtworkDictionary setObject:art forKey:imageCacheTag];
-	}
-}
-
 @dynamic urlBookmark;
 
 @dynamic statusMessage;
@@ -306,101 +281,6 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 	}
 
 	return nil;
-}
-
-- (void)setMetadata:(NSDictionary *)metadata {
-	if(metadata == nil) {
-		self.error = YES;
-		self.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMetadata", nil, [NSBundle mainBundle], @"");
-	} else {
-		NSDictionary *originalDict = (NSDictionary * _Nullable) self.metadataBlob;
-		NSMutableDictionary *metaDict;
-		if(originalDict) {
-			metaDict = [originalDict mutableCopy];
-		} else {
-			metaDict = [NSMutableDictionary new];
-		}
-		self.volume = 1;
-		for(NSString *key in metadata) {
-			NSString *tagName = [PlaylistEntry metaTagForKey:key];
-			NSString *lowerKey = [tagName lowercaseString];
-			id valueObj = [metadata objectForKey:key];
-			id genericValue;
-			NSArray *values = nil;
-			NSString *firstValue = nil;
-			NSData *dataValue = nil;
-			if([valueObj isKindOfClass:[NSArray class]]) {
-				values = (NSArray *)valueObj;
-				if([values count]) {
-					firstValue = values[0];
-				}
-				genericValue = values;
-			} else if([valueObj isKindOfClass:[NSString class]]) {
-				firstValue = (NSString *)valueObj;
-				values = @[firstValue];
-				genericValue = values;
-			} else if([valueObj isKindOfClass:[NSNumber class]]) {
-				NSNumber *numberValue = (NSNumber *)valueObj;
-				firstValue = [numberValue stringValue];
-				values = @[firstValue];
-				genericValue = values;
-			} else if([valueObj isKindOfClass:[NSData class]]) {
-				dataValue = (NSData *)valueObj;
-				genericValue = dataValue;
-			} else {
-				// Unknown object in metadata block
-				genericValue = valueObj;
-			}
-			if([lowerKey isEqualToString:@"bitrate"]) {
-				self.bitrate = [firstValue intValue];
-			} else if([lowerKey isEqualToString:@"bitspersample"]) {
-				self.bitsPerSample = [firstValue intValue];
-			} else if([lowerKey isEqualToString:@"channelconfig"]) {
-				self.channelConfig = [firstValue intValue];
-			} else if([lowerKey isEqualToString:@"channels"]) {
-				self.channels = [firstValue intValue];
-			} else if([lowerKey isEqualToString:@"codec"]) {
-				self.codec = firstValue;
-			} else if([lowerKey isEqualToString:@"cuesheet"]) {
-				self.cuesheet = firstValue;
-			} else if([lowerKey isEqualToString:@"encoding"]) {
-				self.encoding = firstValue;
-			} else if([lowerKey isEqualToString:@"endian"]) {
-				self.endian = firstValue;
-			} else if([lowerKey isEqualToString:@"floatingpoint"]) {
-				self.floatingPoint = [firstValue boolValue];
-			} else if([lowerKey isEqualToString:@"samplerate"]) {
-				self.sampleRate = [firstValue floatValue];
-			} else if([lowerKey isEqualToString:@"seekable"]) {
-				self.seekable = [firstValue boolValue];
-			} else if([lowerKey isEqualToString:@"totalframes"]) {
-				self.totalFrames = [firstValue integerValue];
-			} else if([lowerKey isEqualToString:@"unsigned"]) {
-				self.unSigned = [firstValue boolValue];
-			} else if([lowerKey isEqualToString:@"replaygain_album_gain"]) {
-				self.replayGainAlbumGain = [firstValue floatValue];
-			} else if([lowerKey isEqualToString:@"replaygain_album_peak"]) {
-				self.replayGainAlbumPeak = [firstValue floatValue];
-			} else if([lowerKey isEqualToString:@"replaygain_track_gain"]) {
-				self.replayGainTrackGain = [firstValue floatValue];
-			} else if([lowerKey isEqualToString:@"replaygain_track_peak"]) {
-				self.replayGainTrackPeak = [firstValue floatValue];
-			} else if([lowerKey isEqualToString:@"soundcheck"]) {
-				self.soundcheck = firstValue;
-			} else if([lowerKey isEqualToString:@"volume"]) {
-				self.volume = [firstValue floatValue];
-			} else if([lowerKey isEqualToString:@"albumart"]) {
-				self.albumArt = dataValue;
-			} else {
-				[metaDict setObject:genericValue forKey:key];
-			}
-		}
-		self.metadataBlob = [NSDictionary dictionaryWithDictionary:metaDict];
-	}
-
-	[self setMetadataLoaded:YES];
-
-	[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaylistEntryMetadataLoadedNotification object:self];
 }
 
 @dynamic playCountItem;

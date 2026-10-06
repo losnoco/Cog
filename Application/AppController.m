@@ -598,7 +598,7 @@ static BOOL consentLastEnabled = NO;
 
 	[playlistController clearFilterPredicate:self];
 
-	NSMutableDictionary<NSString *, AlbumArtwork *> *artLeftovers = [playlistController.persistentArtStorage mutableCopy];
+	NSMutableDictionary<NSString *, AlbumArtwork *> *artLeftovers = [ArtworkStore.shared.artworks mutableCopy];
 
 	NSManagedObjectContext *moc = playlistController.persistentContainer.viewContext;
 

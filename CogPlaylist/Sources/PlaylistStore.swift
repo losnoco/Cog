@@ -40,6 +40,9 @@ import Foundation
 		if let loadError { throw loadError }
 		container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 		super.init()
+		let artwork = ArtworkStore(context: container.viewContext)
+		try artwork.loadAll()
+		ArtworkStore.shared = artwork
 	}
 
 	public static var defaultURL: URL {

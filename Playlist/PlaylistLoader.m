@@ -45,7 +45,6 @@
 
 @import Sentry;
 
-extern NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary;
 
 @implementation PlaylistLoader
 
@@ -295,72 +294,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
-static inline BOOL cueSheetValueHasContent(id value) {
-	if([value isKindOfClass:[NSString class]]) {
-		return [value length] > 0;
-	}
-	if([value isKindOfClass:[NSArray class]]) {
-		for(id item in value) {
-			if([item isKindOfClass:[NSString class]] && [item length] > 0) {
-				return YES;
-			}
-		}
-	}
-	return NO;
-}
-
-static inline BOOL isCueSheetTrackURL(NSURL *url) {
-	if(![url isFileURL] || ![[url fragment] length]) {
-		return NO;
-	}
-	if([[url pathExtension] caseInsensitiveCompare:@"cue"] == NSOrderedSame) {
-		return YES;
-	}
-
-	// Embedded CUE tracks retain the audio file's extension (for example,
-	// album.flac#01). Inspect the underlying file without its track fragment;
-	// checking the fragment alone would also match unrelated subsong URLs.
-	NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-	components.fragment = nil;
-	NSURL *baseURL = components.URL;
-	if(!baseURL) {
-		return NO;
-	}
-
-	NSDictionary *metadata = [AudioMetadataReader metadataForURL:baseURL skipCue:YES];
-	if(cueSheetValueHasContent(metadata[@"cuesheet"])) {
-		return YES;
-	}
-
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:baseURL skipCue:YES];
-	return cueSheetValueHasContent(properties[@"cuesheet"]);
-}
-
-static NSDictionary *entryInfoForURL(NSURL *url) {
-	BOOL cueSheetTrack = isCueSheetTrackURL(url);
-	// Resolve logical CUE metadata before opening a decoder for properties. A
-	// properties lookup may need to inspect the shared audio file, whose tags do
-	// not describe an individual CUE fragment.
-	NSDictionary *metadata = cueSheetTrack ? [AudioMetadataReader metadataForURL:url] : nil;
-	NSDictionary *properties = [AudioPropertiesReader propertiesForURL:url];
-	if(!properties) {
-		return nil;
-	}
-
-	if(!metadata) {
-		metadata = [AudioMetadataReader metadataForURL:url] ?: @{};
-	}
-	if(cueSheetTrack) {
-		// Decoder properties may include tags from the shared album file. Apply
-		// the logical CUE dictionary last so its title and track fields replace
-		// those values unconditionally.
-		NSMutableDictionary *entryInfo = [properties mutableCopy];
-		[entryInfo addEntriesFromDictionary:metadata];
-		return [entryInfo copy];
-	}
-	return [NSDictionary dictionaryByMerging:properties with:metadata];
-}
-
 - (void)beginProgress:(NSString *)localizedDescription {
 	while(playbackController.progressOverall) {
 		[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
@@ -421,10 +354,10 @@ static NSDictionary *entryInfoForURL(NSURL *url) {
 }
 
 - (NSDictionary *)initialCueInfoForURL:(NSURL *)url {
-	if(!isCueSheetTrackURL(url)) {
+	if(![PlaylistEntryInfo isCueSheetTrackURL:url]) {
 		return nil;
 	}
-	return entryInfoForURL(url);
+	return [PlaylistEntryInfo infoForURL:url];
 }
 
 + (NSString *)keyForPath:(NSString *)path {
@@ -1054,7 +987,7 @@ static NSDictionary *entryInfoForURL(NSURL *url) {
 					}
 
 					@try {
-						NSDictionary *entryInfo = entryInfoForURL(url);
+						NSDictionary *entryInfo = [PlaylistEntryInfo infoForURL:url];
 						if(entryInfo == nil)
 							return;
 						
@@ -1210,7 +1143,7 @@ static NSDictionary *entryInfoForURL(NSURL *url) {
 		}
 
 		@try {
-			NSDictionary *entryInfo = entryInfoForURL(pe.url);
+			NSDictionary *entryInfo = [PlaylistEntryInfo infoForURL:pe.url];
 			if(entryInfo == nil)
 				return;
 			
@@ -1264,25 +1197,19 @@ static NSDictionary *entryInfoForURL(NSURL *url) {
 	if(pc) {
 		NSManagedObjectContext *moc = pc.viewContext;
 
-		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"AlbumArtwork"];
 		NSError *error = nil;
-		NSArray *results = [moc executeFetchRequest:request error:&error];
-		if(!results) {
+		if(![ArtworkStore.shared loadAllAndReturnError:&error]) {
 			ALog(@"Error fetching AlbumArtwork objects: %@\n%@", [error localizedDescription], [error userInfo]);
 			abort();
 		}
 
-		for(AlbumArtwork *art in results) {
-			[kArtworkDictionary setObject:art forKey:art.artHash];
-		}
-
-		request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
+		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 
 		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];
 
 		request.sortDescriptors = @[sortDescriptor];
 
-		results = [moc executeFetchRequest:request error:&error];
+		NSArray *results = [moc executeFetchRequest:request error:&error];
 		if(!results) {
 			ALog(@"Error fetching PlaylistEntry objects: %@\n%@", [error localizedDescription], [error userInfo]);
 			abort();

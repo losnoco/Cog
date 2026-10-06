@@ -44,15 +44,11 @@ extern NSNotificationName _Nonnull const CogPlaylistEntryMetadataLoadedNotificat
 
 @property(nonatomic) NSData *_Nullable urlBookmark;
 
-@property(nonatomic) NSData *_Nullable albumArtInternal;
-
 @property(nonatomic) PlayCount *_Nullable playCountItem;
 @property(nonatomic, readonly) NSString *_Nonnull playCount;
 @property(nonatomic, readonly) NSString *_Nonnull playCountInfo;
 
 @property(nonatomic, readonly) float rating;
-
-- (void)setMetadata:(NSDictionary *_Nonnull)metadata;
 
 - (AudioScrobblerTrack *_Nonnull)audioScrobblerTrack;
 

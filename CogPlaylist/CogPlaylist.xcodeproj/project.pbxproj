@@ -10,6 +10,7 @@
 		44D4EB2914657AC3DFB67298 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */; };
 		910DC24A4F1B6B6873F62553 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A15F74BB36306B159C4A0A0 /* DataModel.xcdatamodeld */; };
 		D68FEF74E48128E325F7F809 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */; };
+		E576833919DDC4848BC75771 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0758E05655E8F04A8DEF1C50 /* CogAudio.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -20,11 +21,26 @@
 			remoteGlobalIDString = E80389F158B72B0D3636B1A4;
 			remoteInfo = CogPlaylist;
 		};
+		6879EEFDAF7ABC52EA51BC03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = CogAudio;
+		};
+		AF88B830B40181FDDDC338CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = CogAudio;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaybeSecureValueDataTransformer.swift; path = ../Transformers/MaybeSecureValueDataTransformer.swift; sourceTree = SOURCE_ROOT; };
 		3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogPlaylistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = ../Audio/CogAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
 		84011B3A914F91C19F54159B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CogPlaylist.xcconfig; sourceTree = "<group>"; };
 		CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogPlaylist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -48,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E576833919DDC4848BC75771 /* CogAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +86,7 @@
 				31608A03A0C3BC66BF523501 /* Shared with Cog */,
 				D66DD72815057E8279171F14 /* Tests */,
 				BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */,
+				D76F601938900D9F3514F5A3 /* Projects */,
 				32EA8C02888C0282FA91ABBD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,6 +107,22 @@
 				3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A26E1FF5A9D75E7F0910547B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0758E05655E8F04A8DEF1C50 /* CogAudio.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D76F601938900D9F3514F5A3 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */,
+			);
+			name = Projects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,6 +159,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				1EFA2675721E00FDF604D0F4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				9416EF2AB111650C214C7CF5 /* Sources */,
@@ -156,6 +191,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 32EA8C02888C0282FA91ABBD /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A26E1FF5A9D75E7F0910547B /* Products */;
+					ProjectRef = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				E80389F158B72B0D3636B1A4 /* CogPlaylist */,
@@ -165,6 +206,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		0758E05655E8F04A8DEF1C50 /* CogAudio.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CogAudio.framework;
+			remoteRef = 6879EEFDAF7ABC52EA51BC03 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -197,6 +245,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		1EFA2675721E00FDF604D0F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CogAudio;
+			targetProxy = AF88B830B40181FDDDC338CC /* PBXContainerItemProxy */;
+		};
 		7B5726B8F06A37E7EA60CEE2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E80389F158B72B0D3636B1A4 /* CogPlaylist */;
