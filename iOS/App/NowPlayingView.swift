@@ -394,17 +394,26 @@ private struct RoutePicker: UIViewRepresentable {
 	func updateUIView(_ uiView: AVRoutePickerView, context: Context) {}
 }
 
-/// An album's colors as a gradient, fading from one album's to the next's
-/// (or in and out); only it animates, so a layout settling as the palette
-/// arrives does not.
+/// An album's colors as a gradient. Changing from one album's to the next's
+/// fades; appearing, or a track without art, does not. Only the colors
+/// animate, never the frame: an implicit animation would also move it, as
+/// the layout settles while the sheet opens.
 private struct AlbumGradient: View {
 	let palette: ArtworkPalette?
 	let startPoint: UnitPoint
 	let endPoint: UnitPoint
+	@State private var shown: ArtworkPalette?
 
 	var body: some View {
-		LinearGradient(colors: [palette?.top ?? .clear, palette?.bottom ?? .clear], startPoint: startPoint, endPoint: endPoint)
-			.opacity(palette == nil ? 0 : 1)
-			.animation(.easeInOut(duration: 0.6), value: palette)
+		LinearGradient(colors: [shown?.top ?? .clear, shown?.bottom ?? .clear], startPoint: startPoint, endPoint: endPoint)
+			.opacity(shown == nil ? 0 : 1)
+			.onAppear { shown = palette }
+			.onChange(of: palette) { old, new in
+				if old != nil, new != nil {
+					withAnimation(.easeInOut(duration: 0.6)) { shown = new }
+				} else {
+					shown = new
+				}
+			}
 	}
 }
