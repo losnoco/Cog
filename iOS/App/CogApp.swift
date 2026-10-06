@@ -29,6 +29,7 @@ struct CogApp: App {
 		MusicImporter.relocateMovedContainer(in: model)
 		let locations = MusicLocations()
 		locations.restore(in: model)
+		SoundFontAccess.restore()
 		_locations = StateObject(wrappedValue: locations)
 		_player = StateObject(wrappedValue: Player(model: model))
 	}

@@ -33,6 +33,7 @@ struct SettingsView: View {
 				Section("Playback") {
 					Toggle("Fade on Pause and Seek", isOn: $fading)
 					Toggle("Stop After Each Track", isOn: $stopAfterEach)
+					NavigationLink("MIDI") { MIDISettingsView() }
 				}
 				Section {
 					Picker("ReplayGain", selection: $replayGain) {

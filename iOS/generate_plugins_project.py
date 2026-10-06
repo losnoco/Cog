@@ -422,7 +422,9 @@ for resource in APP_RESOURCES + [APP_ICON]:
 
 # Linked: what the app's code imports. Embedded: every framework they need.
 app_links = []
-for name, ref in [('CogAudio', framework_refs['CogAudio']), ('CogPlaylist', framework_refs['CogPlaylist'])]:
+# File_Extractor opens SC-55 ROM set archives, through App/Cog-Bridging-Header.h.
+for name in ['CogAudio', 'CogPlaylist', 'File_Extractor']:
+	ref = framework_refs[name]
 	build_id = uid('applink', name)
 	add('PBXBuildFile', build_id, f'{name}.framework in Frameworks', {'isa': 'PBXBuildFile', 'fileRef': Ref(ref, f'{name}.framework')})
 	app_links.append(Ref(build_id, f'{name}.framework in Frameworks'))
@@ -613,6 +615,7 @@ app_config = configurations('PBXNativeTarget "Cog"', {
 	'PRODUCT_BUNDLE_IDENTIFIER': 'co.losno.MobileCog',
 	'PRODUCT_NAME': 'Cog',
 	'SWIFT_EMIT_LOC_STRINGS': 'YES',
+	'SWIFT_OBJC_BRIDGING_HEADER': 'App/Cog-Bridging-Header.h',
 }, {}, {})
 add('PBXNativeTarget', APP_TARGET_ID, 'Cog', {
 	'isa': 'PBXNativeTarget', 'buildConfigurationList': app_config, 'buildPhases': app_phases,

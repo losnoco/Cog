@@ -36,6 +36,7 @@
 		26DF98040C8F313B5094D979 /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC3E5E4E639E44129F4C524 /* libAdPlug.framework */; };
 		275572E66D0BB37058D9C2FE /* adplug.db in Resources */ = {isa = PBXBuildFile; fileRef = 0D3D2BCFCFEB97ED1B75A623 /* adplug.db */; };
 		27E6ABBA7EE4507B599809ED /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */; };
+		29889B1C5E7C1E8FEDF6833F /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2F05F10D669068268BFDB49 /* File_Extractor.framework */; };
 		2A090A7FB29F457F50515C5A /* HivelyPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 532C99773A73F4B0A63DB0A3 /* HivelyPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2CD6DD50F641FDF9EC8A37FC /* HLSMemorySource.m in Sources */ = {isa = PBXBuildFile; fileRef = BF27B2F8D72FC2A16E0EB2A8 /* HLSMemorySource.m */; };
 		3068B3435515F79CF9B5C33D /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29F7CEB74A50703629F0CF4 /* MIDIContainer.mm */; };
@@ -909,6 +910,7 @@
 			files = (
 				9E8A4C26F25EA64CA7DCBE5D /* CogAudio.framework in Frameworks */,
 				9D66EDAC91EA6EFF5E9E86B5 /* CogPlaylist.framework in Frameworks */,
+				29889B1C5E7C1E8FEDF6833F /* File_Extractor.framework in Frameworks */,
 				5545ED0AC47A2972717A9605 /* CogPlugins.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
@@ -2525,6 +2527,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.losno.MobileCog;
 				PRODUCT_NAME = Cog;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "App/Cog-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -2650,6 +2653,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.losno.MobileCog;
 				PRODUCT_NAME = Cog;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "App/Cog-Bridging-Header.h";
 			};
 			name = Debug;
 		};
