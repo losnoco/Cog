@@ -293,12 +293,18 @@ struct NowPlayingView: View {
 	private func controls(compact: Bool) -> some View {
 		VStack(spacing: compact ? 12 : 24) {
 			HStack(spacing: compact ? 40 : 48) {
-				Button("Previous", systemImage: "backward.fill") { player.previous() }
+				HoldButton("Previous", systemImage: "backward.fill", action: { player.previous() }) { held in
+					held ? player.beginRewind() : player.endRewind()
+				}
+				.accessibilityAction(named: "Seek Backward") { player.seek(by: -5) }
 				Button(player.isPlaying ? "Pause" : "Play", systemImage: player.isPlaying ? "pause.circle.fill" : "play.circle.fill") {
 					player.togglePlayPause()
 				}
 				.font(.system(size: compact ? 48 : 64))
-				Button("Next", systemImage: "forward.fill") { player.next() }
+				HoldButton("Next", systemImage: "forward.fill", action: { player.next() }) { held in
+					held ? player.beginFastForward() : player.endFastForward()
+				}
+				.accessibilityAction(named: "Seek Forward") { player.seek(by: 5) }
 			}
 			.font(compact ? .title : .largeTitle)
 			// Lifted off the art's colors, or the plain background.
@@ -367,6 +373,70 @@ struct NowPlayingView: View {
 		Text(text)
 			.font(.system(size: 9, weight: .bold))
 			.offset(x: 6, y: 4)
+	}
+}
+
+/// A button that acts when tapped, and does something else for as long as
+/// it is held instead: Next fast-forwards, Previous rewinds.
+private struct HoldButton: View {
+	let title: LocalizedStringKey
+	let systemImage: String
+	let action: () -> Void
+	let hold: (Bool) -> Void
+	/// Held long enough, and not yet let go.
+	@State private var holding = false
+	/// The tap that ends a hold, which must not act as well.
+	@State private var swallowsTap = false
+	@State private var waiting: Task<Void, Never>?
+
+	init(_ title: LocalizedStringKey, systemImage: String, action: @escaping () -> Void, hold: @escaping (Bool) -> Void) {
+		self.title = title
+		self.systemImage = systemImage
+		self.action = action
+		self.hold = hold
+	}
+
+	var body: some View {
+		Button(title, systemImage: systemImage) {
+			if swallowsTap {
+				swallowsTap = false
+			} else {
+				action()
+			}
+		}
+		// Whether the release or the tap arrives first, each flag says what
+		// is left to do.
+		.buttonStyle(PressReporting { pressed in
+			if pressed {
+				swallowsTap = false
+				waiting = Task {
+					try? await Task.sleep(for: .seconds(0.4))
+					guard !Task.isCancelled else { return }
+					holding = true
+					swallowsTap = true
+					hold(true)
+				}
+			} else {
+				waiting?.cancel()
+				if holding {
+					holding = false
+					hold(false)
+				}
+			}
+		})
+		.sensoryFeedback(.impact, trigger: holding) { _, now in now }
+	}
+}
+
+/// The plain look of a tinted button, telling when it is pressed and let go.
+private struct PressReporting: ButtonStyle {
+	let report: (Bool) -> Void
+
+	func makeBody(configuration: Configuration) -> some View {
+		configuration.label
+			.foregroundStyle(.tint)
+			.opacity(configuration.isPressed ? 0.4 : 1)
+			.onChange(of: configuration.isPressed) { _, pressed in report(pressed) }
 	}
 }
 

@@ -39,6 +39,10 @@ final class Player: NSObject, ObservableObject {
 	}
 
 	private var positionTimer: Timer?
+	/// Raises the tempo while Next is held.
+	private var fastForwardTimer: Timer?
+	/// Steps back while Previous is held.
+	private var rewindTimer: Timer?
 	private var routeObserver: NSObjectProtocol?
 	private var defaultsObserver: NSObjectProtocol?
 	/// The rate the lock screen last heard, which the tempo sets.
@@ -60,6 +64,8 @@ final class Player: NSObject, ObservableObject {
 		audioPlayer.setDelegate(self)
 		audioPlayer.setVolume(100)
 		model.onPlaylistChange = { [weak self] in self?.audioPlayer.resetNextStreams() }
+		// A fast forward the app quit during gives the speed back.
+		endFastForward()
 		setUpRemoteCommands()
 		// Listens a past session could not send.
 		ListenBrainzScrobbler.shared.flush()
@@ -171,6 +177,75 @@ final class Player: NSObject, ObservableObject {
 		play(entries[previous])
 	}
 
+	// MARK: - Fast forward and rewind
+
+	/// The tempo setting and engine as they were before the fast forward,
+	/// kept in the defaults so that a quit in the middle cannot lose them.
+	private static let fastForwardKey = "fastForwardRestore"
+	private static let speedKeys = ["rubberbandEngine", "tempo"]
+
+	/// Plays faster and faster on the speed engine until `endFastForward`:
+	/// from 1.5 times the tempo, half the tempo more each second, up to the
+	/// engine's 5×. Varispeed when the engine is off, so the pitch rises as
+	/// a tape's would; Rubber Band and Signalsmith keep it.
+	func beginFastForward() {
+		let defaults = UserDefaults.standard
+		guard status == .playing, defaults.dictionary(forKey: Self.fastForwardKey) == nil else { return }
+		// Only what was set, so that a registered default stays one.
+		let set = defaults.persistentDomain(forName: Bundle.main.bundleIdentifier ?? "") ?? [:]
+		defaults.set(set.filter { Self.speedKeys.contains($0.key) }, forKey: Self.fastForwardKey)
+		if defaults.string(forKey: "rubberbandEngine") == "disabled" {
+			defaults.set("varispeed", forKey: "rubberbandEngine")
+			defaults.set(1.0, forKey: "tempo")
+		}
+		let base = tempo
+		let started = Date()
+		let speedUp = {
+			let held = Date().timeIntervalSince(started)
+			defaults.set(min(base * (1.5 + held / 2), Speed.range.upperBound), forKey: "tempo")
+		}
+		speedUp()
+		let timer = Timer(timeInterval: 0.25, repeats: true) { _ in speedUp() }
+		RunLoop.main.add(timer, forMode: .common)
+		fastForwardTimer = timer
+	}
+
+	func endFastForward() {
+		let defaults = UserDefaults.standard
+		fastForwardTimer?.invalidate()
+		fastForwardTimer = nil
+		guard let saved = defaults.dictionary(forKey: Self.fastForwardKey) else { return }
+		for key in Self.speedKeys {
+			if let value = saved[key] {
+				defaults.set(value, forKey: key)
+			} else {
+				defaults.removeObject(forKey: key)
+			}
+		}
+		defaults.removeObject(forKey: Self.fastForwardKey)
+	}
+
+	/// Skips back twice a second, playing a moment of each spot, until
+	/// `endRewind`: three seconds at first, two more for each second held,
+	/// up to thirty.
+	func beginRewind() {
+		guard rewindTimer == nil, status != .stopped else { return }
+		let started = Date()
+		seek(by: -3)
+		let timer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
+			MainActor.assumeIsolated {
+				self?.seek(by: -min(3 + 2 * Date().timeIntervalSince(started), 30))
+			}
+		}
+		RunLoop.main.add(timer, forMode: .common)
+		rewindTimer = timer
+	}
+
+	func endRewind() {
+		rewindTimer?.invalidate()
+		rewindTimer = nil
+	}
+
 	// MARK: - Position
 
 	private func startPositionTimer() {
@@ -212,6 +287,17 @@ final class Player: NSObject, ObservableObject {
 		}
 		center.previousTrackCommand.addTarget { [weak self] _ in
 			MainActor.assumeIsolated { self?.previous() }
+			return .success
+		}
+		// Next and Previous held, on the lock screen, headphones and in the car.
+		center.seekForwardCommand.addTarget { [weak self] event in
+			guard let event = event as? MPSeekCommandEvent else { return .commandFailed }
+			MainActor.assumeIsolated { event.type == .beginSeeking ? self?.beginFastForward() : self?.endFastForward() }
+			return .success
+		}
+		center.seekBackwardCommand.addTarget { [weak self] event in
+			guard let event = event as? MPSeekCommandEvent else { return .commandFailed }
+			MainActor.assumeIsolated { event.type == .beginSeeking ? self?.beginRewind() : self?.endRewind() }
 			return .success
 		}
 		center.changePlaybackPositionCommand.addTarget { [weak self] event in
