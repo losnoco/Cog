@@ -42,7 +42,6 @@ NSPersistentContainer *kPersistentContainer = nil;
 
 static NSArray *cellIdentifiers = nil;
 
-NSMutableDictionary<NSString *, AlbumArtwork *> *kArtworkDictionary = nil;
 
 static void *playlistControllerContext = &playlistControllerContext;
 
@@ -132,8 +131,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	self.persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy;
 
-	_persistentArtStorage = [NSMutableDictionary new];
-	kArtworkDictionary = self.persistentArtStorage;
+	// Where entries keep their album art; it takes in the stored pictures as
+	// the playlist loads.
+	ArtworkStore.shared = [[ArtworkStore alloc] initWithContext:self.persistentContainer.viewContext];
 
 	return self;
 }

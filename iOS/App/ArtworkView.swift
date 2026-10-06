@@ -27,7 +27,7 @@ final class ArtworkCache {
 	func palette(for entry: PlaylistEntry) async -> ArtworkPalette? {
 		guard let hash = entry.artHash else { return nil }
 		if let cached = palettes[hash] { return cached }
-		guard let data = entry.albumArtData else { return nil }
+		guard let data = entry.albumArtInternal else { return nil }
 		let palette = await Task.detached(priority: .userInitiated) {
 			Self.decode(data, pixels: 32).flatMap { $0.cgImage }.flatMap(ArtworkPalette.init)
 		}.value
@@ -40,7 +40,7 @@ final class ArtworkCache {
 		guard let hash = entry.artHash else { return nil }
 		let key = "\(hash)-\(pixels)" as NSString
 		if let cached = cache.object(forKey: key) { return cached }
-		guard let data = entry.albumArtData else { return nil }
+		guard let data = entry.albumArtInternal else { return nil }
 		let image = await Task.detached(priority: .userInitiated) { Self.decode(data, pixels: pixels) }.value
 		if let image { cache.setObject(image, forKey: key) }
 		return image

@@ -83,6 +83,9 @@ public final class PlaylistModel: ObservableObject {
 		for art in artwork where !named.contains(art.artHash ?? "") {
 			context.delete(art)
 		}
+		// The art store took in every picture as the store opened; it must not
+		// hand out the ones just dropped.
+		try? ArtworkStore.shared?.loadAll()
 		updateIndexes()
 		currentEntry = entries.first { $0.current }
 		queue = entries.filter(\.queued).sorted { $0.queuePosition < $1.queuePosition }

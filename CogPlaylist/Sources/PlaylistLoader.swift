@@ -59,7 +59,7 @@ public final class PlaylistLoader {
 			let width = max(2, ProcessInfo.processInfo.activeProcessorCount)
 			func addNext() {
 				guard let (id, url) = pending.popFirst() else { return }
-				group.addTask(priority: .utility) { (id, Self.entryInfo(for: url)) }
+				group.addTask(priority: .utility) { (id, PlaylistEntryInfo.info(for: url)) }
 			}
 			for _ in 0..<width { addNext() }
 			for await (id, info) in group {
@@ -132,69 +132,5 @@ public final class PlaylistLoader {
 		                                                      options: [.skipsHiddenFiles]) else { return [] }
 		let files = enumerator.compactMap { $0 as? URL }.filter { (try? $0.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true }
 		return files.sorted { $0.path.localizedStandardCompare($1.path) == .orderedAscending }
-	}
-
-	// MARK: - Entry info
-
-	/// Properties and tags for one entry, merged, as entryInfoForURL() makes
-	/// them; nil if the file cannot be read.
-	nonisolated static func entryInfo(for url: URL) -> [String: Any]? {
-		let cueSheetTrack = isCueSheetTrack(url)
-		// A cue track's own tags first: the decoder's properties can carry the
-		// shared album file's.
-		var metadata = cueSheetTrack ? AudioMetadataReader.metadata(for: url) as? [String: Any] : nil
-		guard let properties = AudioPropertiesReader.properties(for: url) as? [String: Any] else { return nil }
-		if metadata == nil {
-			metadata = AudioMetadataReader.metadata(for: url) as? [String: Any] ?? [:]
-		}
-		if cueSheetTrack {
-			return properties.merging(metadata ?? [:]) { _, cue in cue }
-		}
-		return merge(properties, with: metadata ?? [:])
-	}
-
-	/// Whether a URL is one track of a cue sheet: a fragment of a .cue file,
-	/// or of an audio file with one embedded.
-	nonisolated static func isCueSheetTrack(_ url: URL) -> Bool {
-		guard url.isFileURL, let fragment = url.fragment, !fragment.isEmpty else { return false }
-		if url.pathExtension.caseInsensitiveCompare("cue") == .orderedSame { return true }
-		var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-		components?.fragment = nil
-		guard let base = components?.url else { return false }
-		if hasContent(AudioMetadataReader.metadata(for: base, skipCue: true)?["cuesheet"]) { return true }
-		return hasContent(AudioPropertiesReader.properties(for: base, skipCue: true)?["cuesheet"])
-	}
-
-	nonisolated private static func hasContent(_ value: Any?) -> Bool {
-		if let string = value as? String { return !string.isEmpty }
-		if let array = value as? [Any] { return array.contains { ($0 as? String)?.isEmpty == false } }
-		return false
-	}
-
-	/// The first dictionary, with what the second has that it lacks or has
-	/// empty (as +[NSDictionary dictionaryByMerging:with:]).
-	nonisolated static func merge(_ first: [String: Any], with second: [String: Any]) -> [String: Any] {
-		var result = first
-		for (key, value) in second {
-			guard let existing = first[key] else {
-				result[key] = value
-				continue
-			}
-			if let existingDictionary = existing as? [String: Any], let valueDictionary = value as? [String: Any] {
-				result[key] = merge(existingDictionary, with: valueDictionary)
-			} else if isEmpty(existing) {
-				result[key] = value
-			}
-		}
-		return result
-	}
-
-	nonisolated private static func isEmpty(_ value: Any) -> Bool {
-		switch value {
-		case let string as String: return string.isEmpty
-		case let number as NSNumber: return number == 0
-		case let data as Data: return data.isEmpty
-		default: return false
-		}
 	}
 }
