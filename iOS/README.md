@@ -14,7 +14,8 @@ iOS/prepare.sh
 `prepare.sh` applies the patches in `iOS/patches/` to submodules. It also
 builds the iOS third-party libraries into `ThirdParty/*/ios/`, which are not
 committed, by running `Scripts/build-ios-libraries.sh` (a few minutes, needs
-`brew install cmake ninja`).
+`brew install cmake ninja`). CI builds them too: the `ios-libraries`
+artifact of the "Check if Cog builds for iOS" workflow unpacks into place.
 
 ## Layout
 

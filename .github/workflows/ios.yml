@@ -1,28 +1,24 @@
-name: Build the iOS libraries
+name: Check if Cog builds for iOS
 on:
   push:
     branches:
       - main
-    paths:
-      - Scripts/build-ios-libraries.sh
-      - ThirdParty/*/patches/**
-      - .github/workflows/ios-libraries.yml
   pull_request:
     branches:
       - main
-    paths:
-      - Scripts/build-ios-libraries.sh
-      - ThirdParty/*/patches/**
-      - .github/workflows/ios-libraries.yml
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build the iOS xcframeworks
+    name: Build the iOS Cog.app
     runs-on: [self-hosted, macOS]
+    env:
+      XCODE_DERIVEDDATA_PATH: build-ios
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
       # The runner's PATH may leave out Homebrew.
       - name: Set up cmake and ninja
         run: |
@@ -50,11 +46,24 @@ jobs:
       - name: Build the libraries
         if: steps.cache.outputs.cache-hit != 'true'
         run: Scripts/build-ios-libraries.sh
-      - name: Package archive
+      - name: Package the libraries
         run: >
           tar -cJf ios-libraries.tar.xz ThirdParty/*/ios
-      - name: Upload Artifact
+      - name: Upload the libraries
         uses: actions/upload-artifact@v6
         with:
           name: ios-libraries
           path: ios-libraries.tar.xz
+      - name: Prepare the checkout
+        run: iOS/prepare.sh
+      - name: Run xcodebuild
+        run: >
+          xcodebuild
+          -quiet
+          -project iOS/MobileCog.xcodeproj
+          -scheme Cog
+          -configuration Debug
+          -destination generic/platform=iOS
+          -derivedDataPath $XCODE_DERIVEDDATA_PATH
+          CODE_SIGNING_ALLOWED=NO
+          build
