@@ -71,6 +71,25 @@ final class PlaylistLoaderTests: XCTestCase {
 		XCTAssertFalse(added.contains(where: \.error))
 	}
 
+	func testAddingAFolderAgainAddsOnlyWhatIsNew() async throws {
+		let album = directory.appendingPathComponent("Album", isDirectory: true)
+		try FileManager.default.createDirectory(at: album, withIntermediateDirectories: true)
+		try writeWAV(named: "Album/one.wav", seconds: 0.5)
+		try writeWAV(named: "top.wav", seconds: 0.5)
+		let model = PlaylistModel(store: try PlaylistStore(inMemory: true),
+		                          defaults: try XCTUnwrap(UserDefaults(suiteName: "PlaylistLoaderTests-\(UUID().uuidString)")))
+		let loader = PlaylistLoader(model: model)
+		let first = await loader.add([directory], skippingExisting: true)
+		XCTAssertEqual(first.map(\.filename), ["one.wav", "top.wav"], "subfolders walked")
+
+		try writeWAV(named: "Album/two.wav", seconds: 0.5)
+		let second = await loader.add([directory], skippingExisting: true)
+		XCTAssertEqual(second.map(\.filename), ["two.wav"])
+		XCTAssertEqual(model.entries.count, 3)
+		let third = await loader.add([directory], skippingExisting: true)
+		XCTAssertTrue(third.isEmpty)
+	}
+
 	func testAnUnreadableFileIsMarked() async throws {
 		try "not audio either".write(to: directory.appendingPathComponent("broken.wav"), atomically: true, encoding: .utf8)
 		let model = PlaylistModel(store: try PlaylistStore(inMemory: true),

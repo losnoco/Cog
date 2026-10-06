@@ -26,10 +26,16 @@ public final class PlaylistLoader {
 
 	/// Adds `urls` (files, folders, containers, streams) at `position`, the
 	/// end by default, and returns the entries made, which play at once while
-	/// their tags load.
+	/// their tags load. With `skippingExisting`, tracks the playlist already
+	/// has are left out, after folders and containers are opened, so adding a
+	/// folder again adds only what is new in it.
 	@discardableResult
-	public func add(_ urls: [URL], at position: Int? = nil) async -> [PlaylistEntry] {
-		let expanded = await Task.detached(priority: .userInitiated) { Self.expand(urls) }.value
+	public func add(_ urls: [URL], at position: Int? = nil, skippingExisting: Bool = false) async -> [PlaylistEntry] {
+		var expanded = await Task.detached(priority: .userInitiated) { Self.expand(urls) }.value
+		if skippingExisting {
+			let existing = Set(model.entries.compactMap { $0.url.map(Self.identity) })
+			expanded.removeAll { existing.contains(Self.identity($0)) }
+		}
 		guard !expanded.isEmpty else { return [] }
 		let context = model.store.viewContext
 		let entries = expanded.map { url -> PlaylistEntry in
@@ -62,6 +68,14 @@ public final class PlaylistLoader {
 			}
 		}
 		model.store.save()
+	}
+
+	/// What makes two URLs the same track: a file's resolved path (the
+	/// same file reached by /var or /private/var is one) and its fragment
+	/// (a cue sheet or subsong track); anything else as written.
+	nonisolated static func identity(_ url: URL) -> String {
+		guard url.isFileURL else { return url.absoluteString }
+		return url.standardizedFileURL.resolvingSymlinksInPath().path + "#" + (url.fragment ?? "")
 	}
 
 	// MARK: - Expanding

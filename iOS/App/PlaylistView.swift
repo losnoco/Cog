@@ -168,15 +168,15 @@ struct PlaylistView: View {
 		await player.loader.add(files)
 	}
 
-	/// Everything in Cog's Music folder not already in the playlist (files
-	/// put there from Finder or the Files app).
+	/// Every track in Cog's Music folder, its subfolders included, that the
+	/// playlist does not have yet (files put there from Finder or the Files
+	/// app).
 	private func addMusicFolder() {
-		let known = Set(model.entries.compactMap { $0.url?.standardizedFileURL.path })
-		let files = (try? FileManager.default.contentsOfDirectory(at: MusicImporter.musicFolder, includingPropertiesForKeys: nil)) ?? []
-		let new = files.filter { !known.contains($0.standardizedFileURL.path) }
-			.sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
-		guard !new.isEmpty else { return }
-		Task { await add(new, copying: false) }
+		Task {
+			addingCount += 1
+			defer { addingCount -= 1 }
+			await player.loader.add([MusicImporter.musicFolder], skippingExisting: true)
+		}
 	}
 }
 
