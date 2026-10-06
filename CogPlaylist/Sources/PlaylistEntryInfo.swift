@@ -15,6 +15,10 @@ import Foundation
 	/// Properties and tags for the entry at `url`; nil if the file cannot be
 	/// read. A cue sheet track's own tags win over the shared audio file's.
 	@objc(infoForURL:) public static func info(for url: URL) -> [String: Any]? {
+		PluginCalls.run(for: url) { readInfo(for: url) }
+	}
+
+	private static func readInfo(for url: URL) -> [String: Any]? {
 		let cueSheetTrack = isCueSheetTrack(url)
 		// Resolve the cue track's own tags before opening a decoder for
 		// properties: that may read the shared audio file, whose tags do not
@@ -36,6 +40,10 @@ import Foundation
 	/// or of an audio file with one embedded (album.flac#01), not merely a
 	/// subsong.
 	@objc(isCueSheetTrackURL:) public static func isCueSheetTrack(_ url: URL) -> Bool {
+		PluginCalls.run(for: url) { checkCueSheetTrack(url) } ?? false
+	}
+
+	private static func checkCueSheetTrack(_ url: URL) -> Bool {
 		guard url.isFileURL, let fragment = url.fragment, !fragment.isEmpty else { return false }
 		if url.pathExtension.caseInsensitiveCompare("cue") == .orderedSame { return true }
 		var components = URLComponents(url: url, resolvingAgainstBaseURL: false)

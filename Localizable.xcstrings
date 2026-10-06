@@ -1556,6 +1556,7 @@
       }
     },
     "ErrorMetadata" : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {

@@ -25,6 +25,7 @@ FOUNDATION_EXPORT const unsigned char CogAudioVersionString[];
 #import <CogAudio/AudioPropertiesReader.h>
 
 // Utilities
+#import <CogAudio/CogExceptionCatching.h>
 #import <CogAudio/CogSemaphore.h>
 #import <CogAudio/CoreAudioUtils.h>
 #import <CogAudio/soxr.h>
