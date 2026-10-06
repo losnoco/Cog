@@ -96,15 +96,16 @@ struct NowPlayingView: View {
 	private var layout: some View {
 		VStack(spacing: 0) {
 			main
-			// Beside the playlist, the equalizer and speed open in the room
-			// below, rather than in sheets over everything.
-			if isEmbedded && (showsEqualizer || showsSpeed) {
+			// Beside the playlist, the equalizer, speed and lyrics open in the
+			// room below, rather than in sheets over everything.
+			if isEmbedded && (showsEqualizer || showsSpeed || showsLyrics) {
 				panels
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
 		}
 		.animation(.spring(duration: 0.4), value: showsEqualizer)
 		.animation(.spring(duration: 0.4), value: showsSpeed)
+		.animation(.spring(duration: 0.4), value: showsLyrics)
 		.background {
 			if let palette {
 				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
@@ -130,7 +131,7 @@ struct NowPlayingView: View {
 				.environment(\.colorScheme, colorScheme)
 				.tint(.accentColor)
 		}
-		.sheet(isPresented: $showsLyrics) {
+		.sheet(isPresented: sheet($showsLyrics)) {
 			if let entry = model.currentEntry {
 				LyricsView(entry: entry)
 					.environment(\.colorScheme, colorScheme)
@@ -168,11 +169,14 @@ struct NowPlayingView: View {
 		Binding(get: { shows.wrappedValue && !isEmbedded }, set: { shows.wrappedValue = $0 })
 	}
 
-	/// The equalizer and speed as cards, side by side when both are open.
+	/// The equalizer, speed and lyrics as cards, side by side.
 	private var panels: some View {
 		HStack(alignment: .top, spacing: 16) {
 			if showsEqualizer {
 				panel("Equalizer", close: { showsEqualizer = false }) {
+					Toggle("Equalizer", isOn: $equalizer.isEnabled)
+						.labelsHidden()
+				} trailing: {
 					Button("Flat") { equalizer.flatten() }
 						.disabled(!equalizer.isEnabled)
 				} content: {
@@ -185,9 +189,20 @@ struct NowPlayingView: View {
 			if showsSpeed {
 				panel("Speed", close: { showsSpeed = false }) {
 					EmptyView()
+				} trailing: {
+					EmptyView()
 				} content: {
 					SpeedControls()
 						.scrollContentBackground(.hidden)
+				}
+			}
+			if showsLyrics, let entry = model.currentEntry {
+				panel("Lyrics", close: { showsLyrics = false }) {
+					EmptyView()
+				} trailing: {
+					EmptyView()
+				} content: {
+					LyricsText(entry: entry)
 				}
 			}
 		}
@@ -195,19 +210,25 @@ struct NowPlayingView: View {
 		.padding([.horizontal, .bottom], 16)
 	}
 
-	private func panel<Accessory: View, Content: View>(_ title: LocalizedStringKey, close: @escaping () -> Void,
-	                                                   @ViewBuilder accessory: () -> Accessory,
-	                                                   @ViewBuilder content: () -> Content) -> some View {
+	/// A card: its title centered, what it offers on either side of it, and
+	/// a close button at the end.
+	private func panel<Leading: View, Trailing: View, Content: View>(
+		_ title: LocalizedStringKey, close: @escaping () -> Void, @ViewBuilder leading: () -> Leading,
+		@ViewBuilder trailing: () -> Trailing, @ViewBuilder content: () -> Content
+	) -> some View {
 		VStack(spacing: 0) {
-			HStack(spacing: 16) {
+			ZStack {
 				Text(title)
 					.font(.headline)
-				Spacer()
-				accessory()
-				Button("Close", systemImage: "xmark.circle.fill", action: close)
-					.labelStyle(.iconOnly)
-					.font(.title2)
-					.foregroundStyle(.secondary)
+				HStack(spacing: 16) {
+					leading()
+					Spacer()
+					trailing()
+					Button("Close", systemImage: "xmark.circle.fill", action: close)
+						.labelStyle(.iconOnly)
+						.font(.title2)
+						.foregroundStyle(.secondary)
+				}
 			}
 			.padding(.horizontal)
 			.padding(.vertical, 12)
@@ -293,7 +314,7 @@ struct NowPlayingView: View {
 				Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
 					.foregroundStyle(state(model.currentEntry?.stopAfter == true))
 					.frame(maxWidth: .infinity)
-				Button("Lyrics", systemImage: "quote.bubble") { showsLyrics = true }
+				Button("Lyrics", systemImage: "quote.bubble") { showsLyrics.toggle() }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
 					.frame(maxWidth: .infinity)
