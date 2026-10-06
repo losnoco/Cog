@@ -180,6 +180,8 @@ struct NowPlayingView: View {
 				Button("Next", systemImage: "forward.fill") { player.next() }
 			}
 			.font(compact ? .title : .largeTitle)
+			// Lifted off the art's colors, or the plain background.
+			.shadow(color: .black.opacity(palette == nil ? 0.18 : 0.35), radius: compact ? 4 : 6, y: compact ? 2 : 3)
 
 			// Each button an equal share of the width, which eight need on a
 			// phone held upright.

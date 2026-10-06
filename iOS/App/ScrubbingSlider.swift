@@ -162,6 +162,9 @@ final class ScrubbingSliderView: UIView {
 			// finger has moved a little.
 			lastX = location.x - pan.translation(in: slider).x
 			scrubbed = slider.value
+			// Pressed, as when the stock slider has the finger (its thumb's
+			// lens), though it takes no touches itself.
+			slider.isHighlighted = true
 			speed = .full
 			onScrubbing(true)
 			fallthrough
@@ -177,6 +180,7 @@ final class ScrubbingSliderView: UIView {
 		default:
 			guard isScrubbing else { return }
 			isScrubbing = false
+			slider.isHighlighted = false
 			speed = nil
 			onScrubbing(false)
 		}
