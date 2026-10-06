@@ -229,6 +229,32 @@ final class PlaylistModelTests: XCTestCase {
 		XCTAssertTrue(entry.error)
 	}
 
+	func testAlbumArtIsStoredOnceByHash() throws {
+		let entries = add(["A1", "A2", "B1"])
+		let art = Data("not really a picture".utf8)
+		entries[0].setMetadata(["albumArt": art])
+		entries[1].setMetadata(["albumArt": art])
+		XCTAssertEqual(entries[0].artHash, entries[1].artHash)
+		XCTAssertEqual(entries[0].artHash?.count, 64, "SHA-256, hex")
+		XCTAssertEqual(entries[1].albumArtData, art)
+		XCTAssertNil(entries[2].albumArtData)
+		XCTAssertNil((entries[0].metadataBlob as? NSDictionary)?["albumArt"], "not in the blob")
+		let request = NSFetchRequest<AlbumArtwork>(entityName: "AlbumArtwork")
+		XCTAssertEqual(try store.viewContext.count(for: request), 1)
+
+		// Art no entry names goes on the next load.
+		model.remove(at: IndexSet([0, 1]))
+		_ = PlaylistModel(store: store, defaults: defaults)
+		XCTAssertEqual(try store.viewContext.count(for: request), 0)
+	}
+
+	func testSortingByAClosureReordersAndReindexes() {
+		add(["B2", "A1", "B1"])
+		model.sort { ($0.album ?? "", $0.track) < ($1.album ?? "", $1.track) }
+		XCTAssertEqual(names(model.entries), ["A1", "B1", "B2"])
+		XCTAssertEqual(model.entries.map(\.index), [0, 1, 2])
+	}
+
 	func testUntitledEntriesShowTheirFileName() {
 		let entry = PlaylistEntry(context: store.viewContext)
 		entry.url = URL(fileURLWithPath: "/music/some file.flac")

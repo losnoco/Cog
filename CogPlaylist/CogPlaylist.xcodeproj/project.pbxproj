@@ -7,13 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		910DC24A4F1B6B6873F62553 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A15F74BB36306B159C4A0A0 /* DataModel.xcdatamodeld */; };
 		44D4EB2914657AC3DFB67298 /* MaybeSecureValueDataTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */; };
-		E576833919DDC4848BC75771 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0758E05655E8F04A8DEF1C50 /* CogAudio.framework */; };
+		910DC24A4F1B6B6873F62553 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9A15F74BB36306B159C4A0A0 /* DataModel.xcdatamodeld */; };
 		D68FEF74E48128E325F7F809 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */; };
+		E576833919DDC4848BC75771 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0758E05655E8F04A8DEF1C50 /* CogAudio.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		16950B44B09EECEC8B938B3C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D200BE0831D65014A6621A4E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E80389F158B72B0D3636B1A4;
+			remoteInfo = CogPlaylist;
+		};
 		6879EEFDAF7ABC52EA51BC03 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */;
@@ -28,27 +35,28 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = CogAudio;
 		};
-		16950B44B09EECEC8B938B3C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D200BE0831D65014A6621A4E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E80389F158B72B0D3636B1A4;
-			remoteInfo = CogPlaylist;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogPlaylist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogPlaylistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		84011B3A914F91C19F54159B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		07A6177E2B7ABDF01A4D3AD3 /* MaybeSecureValueDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaybeSecureValueDataTransformer.swift; path = ../Transformers/MaybeSecureValueDataTransformer.swift; sourceTree = SOURCE_ROOT; };
+		3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogPlaylistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = ../Audio/CogAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
+		84011B3A914F91C19F54159B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CogPlaylist.xcconfig; sourceTree = "<group>"; };
+		CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogPlaylist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9416EF2AB111650C214C7CF5 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Sources; sourceTree = "<group>"; };
-		D66DD72815057E8279171F14 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Tests; sourceTree = "<group>"; };
+		9416EF2AB111650C214C7CF5 /* Sources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D66DD72815057E8279171F14 /* Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Tests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,14 +100,6 @@
 			name = "Shared with Cog";
 			sourceTree = "<group>";
 		};
-		D76F601938900D9F3514F5A3 /* Projects */ = {
-			isa = PBXGroup;
-			children = (
-				7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */,
-			);
-			name = Projects;
-			sourceTree = "<group>";
-		};
 		32EA8C02888C0282FA91ABBD /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -117,9 +117,37 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D76F601938900D9F3514F5A3 /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */,
+			);
+			name = Projects;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		BA3D22DACC1F819D52C3E8C6 /* CogPlaylistTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A275E591E8C9C0277276668D /* Build configuration list for PBXNativeTarget "CogPlaylistTests" */;
+			buildPhases = (
+				C7559011BB18F1C6C8BF0A8C /* Sources */,
+				3426D1E08704294951B4B0AA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7B5726B8F06A37E7EA60CEE2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D66DD72815057E8279171F14 /* Tests */,
+			);
+			name = CogPlaylistTests;
+			productName = CogPlaylistTests;
+			productReference = 3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E80389F158B72B0D3636B1A4 /* CogPlaylist */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86012938A5A04092FF1E5512 /* Build configuration list for PBXNativeTarget "CogPlaylist" */;
@@ -140,26 +168,6 @@
 			productName = CogPlaylist;
 			productReference = CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */;
 			productType = "com.apple.product-type.framework";
-		};
-		BA3D22DACC1F819D52C3E8C6 /* CogPlaylistTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A275E591E8C9C0277276668D /* Build configuration list for PBXNativeTarget "CogPlaylistTests" */;
-			buildPhases = (
-				C7559011BB18F1C6C8BF0A8C /* Sources */,
-				3426D1E08704294951B4B0AA /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				7B5726B8F06A37E7EA60CEE2 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D66DD72815057E8279171F14 /* Tests */,
-			);
-			name = CogPlaylistTests;
-			productName = CogPlaylistTests;
-			productReference = 3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -250,47 +258,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		468ED8E8D2593272796CC7F1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_TESTABILITY = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
-		};
-		195C1C46B2A1F4BEE49BABC5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				SWIFT_COMPILATION_MODE = wholemodule;
-			};
-			name = Release;
-		};
 		0115182F1E24592DC5F38432 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -330,6 +297,25 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.CogPlaylist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		195C1C46B2A1F4BEE49BABC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -381,18 +367,31 @@
 			};
 			name = Release;
 		};
+		468ED8E8D2593272796CC7F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E319C0928571E9F7B9DED9E1 /* Build configuration list for PBXProject "CogPlaylist" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				468ED8E8D2593272796CC7F1 /* Debug */,
-				195C1C46B2A1F4BEE49BABC5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		86012938A5A04092FF1E5512 /* Build configuration list for PBXNativeTarget "CogPlaylist" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -407,6 +406,15 @@
 			buildConfigurations = (
 				2D6634D601CEFFE3952449D5 /* Debug */,
 				3594FBCE277877B892D2D46B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E319C0928571E9F7B9DED9E1 /* Build configuration list for PBXProject "CogPlaylist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				468ED8E8D2593272796CC7F1 /* Debug */,
+				195C1C46B2A1F4BEE49BABC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

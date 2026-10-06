@@ -223,9 +223,7 @@ extension PlaylistEntry {
 			case "soundcheck": soundcheck = firstValue
 			case "volume": volume = number?.floatValue ?? 1
 			case "albumart":
-				// Album art is the app's to store (macOS keeps it in
-				// AlbumArtwork, by hash); the entry keeps none.
-				break
+				if let data = valueObject as? Data { setAlbumArt(data) }
 			default:
 				dictionary[key] = genericValue
 			}

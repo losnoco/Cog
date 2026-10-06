@@ -77,6 +77,12 @@ public final class PlaylistModel: ObservableObject {
 			return true
 		}
 		entries = loaded
+		// Art no entry names any more, as macOS drops it on quitting.
+		let named = Set(loaded.compactMap(\.artHash))
+		let artwork = (try? context.fetch(NSFetchRequest<AlbumArtwork>(entityName: "AlbumArtwork"))) ?? []
+		for art in artwork where !named.contains(art.artHash ?? "") {
+			context.delete(art)
+		}
 		updateIndexes()
 		currentEntry = entries.first { $0.current }
 		queue = entries.filter(\.queued).sorted { $0.queuePosition < $1.queuePosition }
@@ -228,6 +234,15 @@ public final class PlaylistModel: ObservableObject {
 		entries = (entries as NSArray).sortedArray(using: descriptors) as? [PlaylistEntry] ?? entries
 		updateIndexes()
 		store.save()
+	}
+
+	/// Puts the playlist in the order `areInIncreasingOrder` gives, which
+	/// becomes its order (for keys KVC cannot reach, as the tags are).
+	public func sort(by areInIncreasingOrder: (PlaylistEntry, PlaylistEntry) -> Bool) {
+		entries.sort(by: areInIncreasingOrder)
+		updateIndexes()
+		store.save()
+		if shuffleMode != .off { resetShuffleList() }
 	}
 
 	/// Puts the playlist in a random order (not shuffle, which leaves it be).

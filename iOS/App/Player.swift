@@ -189,6 +189,13 @@ final class Player: NSObject, ObservableObject {
 		if let album = entry.album { info[MPMediaItemPropertyAlbumTitle] = album }
 		MPNowPlayingInfoCenter.default().nowPlayingInfo = info
 		MPNowPlayingInfoCenter.default().playbackState = status == .playing ? .playing : .paused
+		// The art, once decoded, if the entry is still the one playing.
+		Task {
+			guard let image = await ArtworkCache.shared.image(for: entry, pixels: 600), model.currentEntry == entry,
+			      var current = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+			current[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+			MPNowPlayingInfoCenter.default().nowPlayingInfo = current
+		}
 	}
 }
 

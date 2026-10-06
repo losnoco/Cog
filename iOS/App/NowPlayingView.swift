@@ -13,7 +13,10 @@ struct MiniPlayerView: View {
 	@EnvironmentObject private var model: PlaylistModel
 
 	var body: some View {
-		HStack(spacing: 16) {
+		HStack(spacing: 12) {
+			if let entry = model.currentEntry {
+				ArtworkView(entry: entry, size: 40, cornerRadius: 4)
+			}
 			VStack(alignment: .leading, spacing: 2) {
 				Text(model.currentEntry?.title ?? "")
 					.font(.subheadline.weight(.semibold))
@@ -49,17 +52,10 @@ struct NowPlayingView: View {
 		NavigationStack {
 			VStack(spacing: 24) {
 				Spacer()
-				RoundedRectangle(cornerRadius: 16)
-					.fill(.quaternary)
-					.aspectRatio(1, contentMode: .fit)
-					.overlay {
-						Image(systemName: "music.note")
-							.font(.system(size: 80))
-							.foregroundStyle(.secondary)
-					}
-					.padding(.horizontal, 32)
-
 				if let entry = model.currentEntry {
+					ArtworkView(entry: entry, size: 300, cornerRadius: 16)
+						.shadow(radius: 12, y: 4)
+
 					VStack(spacing: 4) {
 						Text(entry.title)
 							.font(.title2.bold())
