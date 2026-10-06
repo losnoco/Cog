@@ -171,20 +171,20 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 - (NSString *)gainCorrection {
 	if(self.replayGainAlbumGain) {
 		if(self.replayGainAlbumPeak)
-			return NSLocalizedStringFromTableInBundle(@"GainAlbumGainPeak", nil, [NSBundle bundleForClass:[self class]], @"");
+			return NSLocalizedStringFromTableInBundle(@"GainAlbumGainPeak", nil, [NSBundle mainBundle], @"");
 		else
-			return NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle bundleForClass:[self class]], @"");
+			return NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle mainBundle], @"");
 	} else if(self.replayGainTrackGain) {
 		if(self.replayGainTrackPeak)
-			return NSLocalizedStringFromTableInBundle(@"GainTrackGainPeak", nil, [NSBundle bundleForClass:[self class]], @"");
+			return NSLocalizedStringFromTableInBundle(@"GainTrackGainPeak", nil, [NSBundle mainBundle], @"");
 		else
-			return NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle bundleForClass:[self class]], @"");
+			return NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle mainBundle], @"");
 	} else if(self.soundcheck && self.soundcheck.length) {
-		return NSLocalizedStringFromTableInBundle(@"GainSoundcheck", nil, [NSBundle bundleForClass:[self class]], @"");
+		return NSLocalizedStringFromTableInBundle(@"GainSoundcheck", nil, [NSBundle mainBundle], @"");
 	} else if(self.volume && self.volume != 1.0) {
-		return NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle bundleForClass:[self class]], @"");
+		return NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle mainBundle], @"");
 	} else {
-		return NSLocalizedStringFromTableInBundle(@"GainNone", nil, [NSBundle bundleForClass:[self class]], @"");
+		return NSLocalizedStringFromTableInBundle(@"GainNone", nil, [NSBundle mainBundle], @"");
 	}
 }
 
@@ -192,24 +192,24 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 - (NSString *)gainInfo {
 	NSMutableArray *gainItems = [NSMutableArray new];
 	if(self.replayGainAlbumGain) {
-		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainAlbumGain]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainAlbumGain", nil, [NSBundle mainBundle], @""), self.replayGainAlbumGain]];
 	}
 	if(self.replayGainAlbumPeak) {
-		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainAlbumPeak", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainAlbumPeak]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainAlbumPeak", nil, [NSBundle mainBundle], @""), self.replayGainAlbumPeak]];
 	}
 	if(self.replayGainTrackGain) {
-		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainTrackGain]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %+.2f dB", NSLocalizedStringFromTableInBundle(@"GainTrackGain", nil, [NSBundle mainBundle], @""), self.replayGainTrackGain]];
 	}
 	if(self.replayGainTrackPeak) {
-		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainTrackPeak", nil, [NSBundle bundleForClass:[self class]], @""), self.replayGainTrackPeak]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %.6f", NSLocalizedStringFromTableInBundle(@"GainTrackPeak", nil, [NSBundle mainBundle], @""), self.replayGainTrackPeak]];
 	}
 	if(self.soundcheck && self.soundcheck.length) {
 		NSString *scdisplay = self.soundcheckDisplay;
 		if(scdisplay && scdisplay.length)
-			[gainItems addObject:[NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTableInBundle(@"GainSoundcheck", nil, [NSBundle bundleForClass:[self class]], @""), scdisplay]];
+			[gainItems addObject:[NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTableInBundle(@"GainSoundcheck", nil, [NSBundle mainBundle], @""), scdisplay]];
 	}
 	if(self.volume && self.volume != 1) {
-		[gainItems addObject:[NSString stringWithFormat:@"%@: %.2f%C", NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle bundleForClass:[self class]], @""), self.volume, (unichar)0x00D7]];
+		[gainItems addObject:[NSString stringWithFormat:@"%@: %.2f%C", NSLocalizedStringFromTableInBundle(@"GainVolumeScale", nil, [NSBundle mainBundle], @""), self.volume, (unichar)0x00D7]];
 	}
 	return [gainItems componentsJoinedByString:@"\n"];
 }
@@ -296,11 +296,11 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 @dynamic statusMessage;
 - (NSString *)statusMessage {
 	if(self.stopAfter) {
-		return NSLocalizedStringFromTableInBundle(@"StatusStopAfter", nil, [NSBundle bundleForClass:[self class]], @"");
+		return NSLocalizedStringFromTableInBundle(@"StatusStopAfter", nil, [NSBundle mainBundle], @"");
 	} else if(self.current) {
-		return NSLocalizedStringFromTableInBundle(@"StatusPlaying", nil, [NSBundle bundleForClass:[self class]], @"");
+		return NSLocalizedStringFromTableInBundle(@"StatusPlaying", nil, [NSBundle mainBundle], @"");
 	} else if(self.queued) {
-		return [NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"StatusQueued", nil, [NSBundle bundleForClass:[self class]], @""), self.queuePosition + 1];
+		return [NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"StatusQueued", nil, [NSBundle mainBundle], @""), self.queuePosition + 1];
 	} else if(self.error) {
 		return self.errorMessage;
 	}
@@ -311,7 +311,7 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 - (void)setMetadata:(NSDictionary *)metadata {
 	if(metadata == nil) {
 		self.error = YES;
-		self.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMetadata", nil, [NSBundle bundleForClass:[self class]], @"");
+		self.errorMessage = NSLocalizedStringFromTableInBundle(@"ErrorMetadata", nil, [NSBundle mainBundle], @"");
 	} else {
 		NSDictionary *originalDict = (NSDictionary * _Nullable) self.metadataBlob;
 		NSMutableDictionary *metaDict;
@@ -482,9 +482,9 @@ NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlayl
 		dateFormatter.timeStyle = NSDateFormatterShortStyle;
 
 		if(pc.count) {
-			return [NSString stringWithFormat:@"%@: %@\n%@: %@", NSLocalizedStringFromTableInBundle(@"TimeFirstSeen", nil, [NSBundle bundleForClass:[self class]], @""), [dateFormatter stringFromDate:pc.firstSeen], NSLocalizedStringFromTableInBundle(@"TimeLastPlayed", nil, [NSBundle bundleForClass:[self class]], @""), [dateFormatter stringFromDate:pc.lastPlayed]];
+			return [NSString stringWithFormat:@"%@: %@\n%@: %@", NSLocalizedStringFromTableInBundle(@"TimeFirstSeen", nil, [NSBundle mainBundle], @""), [dateFormatter stringFromDate:pc.firstSeen], NSLocalizedStringFromTableInBundle(@"TimeLastPlayed", nil, [NSBundle mainBundle], @""), [dateFormatter stringFromDate:pc.lastPlayed]];
 		} else {
-			return [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTableInBundle(@"TimeFirstSeen", nil, [NSBundle bundleForClass:[self class]], @""), [dateFormatter stringFromDate:pc.firstSeen]];
+			return [NSString stringWithFormat:@"%@: %@", NSLocalizedStringFromTableInBundle(@"TimeFirstSeen", nil, [NSBundle mainBundle], @""), [dateFormatter stringFromDate:pc.firstSeen]];
 		}
 	}
 	return @"";
