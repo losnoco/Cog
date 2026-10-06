@@ -13,7 +13,7 @@
 
 #import <Accelerate/Accelerate.h>
 
-#include <dlfcn.h>
+//#include <dlfcn.h>
 
 SCPlayer::SCPlayer()
 : MIDIPlayer() {
@@ -166,6 +166,7 @@ static NSString *getRomName(NSString *baseName) {
 	return basePath;
 }
 
+#if 0
 /* The emulator's own back.data, from the framework that holds sc55_init:
  * looked up once, as -[NSBundle bundleWithIdentifier:] scans every bundle
  * loaded, which takes seconds on iOS. */
@@ -188,15 +189,17 @@ static NSString *backDataPath(void) {
 	});
 	return path;
 }
+#endif
 
 static int loadRom(void *context, const char *name, uint8_t *buffer, uint32_t *size) {
 	@autoreleasepool {
 		NSString *_name = [NSString stringWithUTF8String:name];
 		NSString *romName;
-		if([_name isEqualToString:@"back.data"]) {
+		/* This isn't called in this Nuked-SC55 fork */
+		/*if([_name isEqualToString:@"back.data"]) {
 			romName = backDataPath();
 			if(!romName) return -1;
-		} else {
+		} else*/ {
 			romName = getRomName(_name);
 		}
 		BOOL dir = NO;
