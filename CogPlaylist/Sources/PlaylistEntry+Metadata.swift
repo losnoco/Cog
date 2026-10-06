@@ -73,3 +73,12 @@ extension PlaylistEntry {
 		NotificationCenter.default.post(name: CogPlaylistEntryMetadataLoadedNotification, object: self)
 	}
 }
+
+extension PlaylistEntry {
+	/// What ReplayGain needs, as the engine takes it (`EngineTrack.rgInfo`).
+	public var replayGainInfo: [String: Any] {
+		["replaygain_album_gain": replayGainAlbumGain, "replaygain_album_peak": replayGainAlbumPeak,
+		 "replaygain_track_gain": replayGainTrackGain, "replaygain_track_peak": replayGainTrackPeak,
+		 "volume": volume]
+	}
+}
