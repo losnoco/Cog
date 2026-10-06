@@ -586,12 +586,20 @@ add('PBXShellScriptBuildPhase', secrets_phase, 'Generate Swift secrets file', {
 	'runOnlyForDeploymentPostprocessing': '0', 'shellPath': '/bin/sh',
 	# The script writes into $SRCROOT/Generated, the repository's.
 	'shellScript': 'SRCROOT="${SRCROOT}/.." "${SCRIPT_INPUT_FILE_0}"\n', 'showEnvVarsInLog': '0'})
+version_phase = uid('phase', 'Cog', 'Version the app from git')
+add('PBXShellScriptBuildPhase', version_phase, 'Version the app from git', {
+	'isa': 'PBXShellScriptBuildPhase', 'alwaysOutOfDate': '1', 'buildActionMask': '2147483647', 'files': [],
+	'inputFileListPaths': [], 'inputPaths': ['$(SRCROOT)/genversion.sh'], 'name': 'Version the app from git',
+	'outputFileListPaths': [], 'outputPaths': [], 'runOnlyForDeploymentPostprocessing': '0', 'shellPath': '/bin/sh',
+	# After the Info.plist is written, every build, as HEAD moves.
+	'shellScript': '"${SCRIPT_INPUT_FILE_0}"\n', 'showEnvVarsInLog': '0'})
 app_phases = [
 	Ref(secrets_phase, 'Generate Swift secrets file'),
 	phase('PBXSourcesBuildPhase', 'Sources', 'Cog', app_sources),
 	phase('PBXFrameworksBuildPhase', 'Frameworks', 'Cog', app_links),
 	phase('PBXResourcesBuildPhase', 'Resources', 'Cog', app_resources),
 	Ref(embed_phase, 'Embed Frameworks'),
+	Ref(version_phase, 'Version the app from git'),
 ]
 app_plugins_proxy = uid('appproxy', 'CogPlugins')
 add('PBXContainerItemProxy', app_plugins_proxy, 'PBXContainerItemProxy', {
@@ -603,6 +611,7 @@ add('PBXTargetDependency', app_plugins_dependency, 'PBXTargetDependency', {
 app_config = configurations('PBXNativeTarget "Cog"', {
 	'ASSETCATALOG_COMPILER_APPICON_NAME': 'Play',
 	'CODE_SIGN_STYLE': 'Automatic',
+	# genversion.sh puts the version counted from git over these two.
 	'CURRENT_PROJECT_VERSION': '1',
 	'GENERATE_INFOPLIST_FILE': 'YES',
 	'INFOPLIST_FILE': 'CogApp-Info.plist',

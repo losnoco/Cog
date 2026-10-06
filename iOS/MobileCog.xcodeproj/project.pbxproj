@@ -1764,6 +1764,7 @@
 				2B77FF8328E11E3195686884 /* Frameworks */,
 				099E2B3BDACE154698DAA005 /* Resources */,
 				F3E636CC23B45ACCF73159E9 /* Embed Frameworks */,
+				C945AD6B630FABE40516ADA6 /* Version the app from git */,
 			);
 			buildRules = (
 			);
@@ -2231,6 +2232,28 @@
 			runOnlyForDeploymentPostprocessing = "0";
 			shellPath = /bin/sh;
 			shellScript = "SRCROOT=\"${SRCROOT}/..\" \"${SCRIPT_INPUT_FILE_0}\"
+";
+			showEnvVarsInLog = "0";
+		};
+		C945AD6B630FABE40516ADA6 /* Version the app from git */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = "1";
+			buildActionMask = "2147483647";
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/genversion.sh",
+			);
+			name = "Version the app from git";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+			shellPath = /bin/sh;
+			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"
 ";
 			showEnvVarsInLog = "0";
 		};

@@ -35,6 +35,10 @@ artifact of the "Check if Cog builds for iOS" workflow unpacks into place.
     sources ask for with `NSLocalizedString` are kept by hand, because the
     Swift compiler does not extract them. `EqualizerPresets.xcstrings`
     translates the names of `Cog.q1.json`'s presets.
+- `genversion.sh`: versions the app as `Scripts/genversion.sh` versions
+  the macOS one, counting commits, but from the iOS app's first commit
+  (700560d4f, version 1) rather than the `k54` tag. A shallow clone has
+  no history to count and builds version 0.
 - `CogPlugins/`: the plugins framework's prefix header and build settings.
 - `CogPluginsTests/`: tests that find, decode and play through the plugins
   on the iOS Simulator.
