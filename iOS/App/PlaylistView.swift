@@ -11,13 +11,10 @@ struct PlaylistView: View {
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@EnvironmentObject private var locations: MusicLocations
-	@State private var importing = false
+	@EnvironmentObject private var ui: AppUI
 	@State private var addingCount = 0
-	@State private var showsSettings = false
-	@State private var showsEqualizer = false
 	@State private var confirmsClear = false
 	@State private var query = ""
-	@State private var addsURL = false
 	@State private var urlText = ""
 
 	/// The entries the search leaves, all of them when there is none.
@@ -31,35 +28,43 @@ struct PlaylistView: View {
 	}
 
 	var body: some View {
-		List {
-			ForEach(shown, id: \.objectID) { entry in
-				Button {
-					player.play(entry)
-				} label: {
-					EntryRow(entry: entry)
-				}
-				.swipeActions(edge: .leading) {
-					Button(entry.queued ? "Unqueue" : "Queue", systemImage: entry.queued ? "text.badge.minus" : "text.badge.plus") {
-						model.toggleQueued([entry])
+		ScrollViewReader { proxy in
+			List {
+				ForEach(shown, id: \.objectID) { entry in
+					Button {
+						player.play(entry)
+					} label: {
+						EntryRow(entry: entry)
 					}
-					.tint(.indigo)
+					.swipeActions(edge: .leading) {
+						Button(entry.queued ? "Unqueue" : "Queue", systemImage: entry.queued ? "text.badge.minus" : "text.badge.plus") {
+							model.toggleQueued([entry])
+						}
+						.tint(.indigo)
+					}
+				}
+				.onDelete { offsets in
+					// Offsets into what is shown, which a search narrows.
+					let entries = shown
+					model.remove(at: IndexSet(offsets.map { Int(entries[$0].index) }))
+				}
+				.onMove(perform: query.isEmpty ? { model.move(fromOffsets: $0, toOffset: $1) } : nil)
+				if !shown.isEmpty {
+					Text(summary)
+						.font(.footnote)
+						.foregroundStyle(.secondary)
+						.frame(maxWidth: .infinity)
+						.listRowSeparator(.hidden)
 				}
 			}
-			.onDelete { offsets in
-				// Offsets into what is shown, which a search narrows.
-				let entries = shown
-				model.remove(at: IndexSet(offsets.map { Int(entries[$0].index) }))
-			}
-			.onMove(perform: query.isEmpty ? { model.move(fromOffsets: $0, toOffset: $1) } : nil)
-			if !shown.isEmpty {
-				Text(summary)
-					.font(.footnote)
-					.foregroundStyle(.secondary)
-					.frame(maxWidth: .infinity)
-					.listRowSeparator(.hidden)
+			// Go to Current Track, from the menu.
+			.onChange(of: ui.revealsCurrent) {
+				if let entry = model.currentEntry {
+					withAnimation { proxy.scrollTo(entry.objectID, anchor: .center) }
+				}
 			}
 		}
-		.searchable(text: $query, prompt: "Title, Artist, Album")
+		.searchable(text: $query, isPresented: $ui.searching, prompt: "Title, Artist, Album")
 		.listStyle(.plain)
 		.navigationTitle("Playlist")
 		.overlay {
@@ -69,7 +74,7 @@ struct PlaylistView: View {
 				} description: {
 					Text("Add files or folders from Files; they play where they are. Music copied into Cog's folder in the Files app or Finder can be added too.")
 				} actions: {
-					Button("Add Music") { importing = true }
+					Button("Add Music") { ui.addsMusic = true }
 						.buttonStyle(.borderedProminent)
 				}
 			}
@@ -82,7 +87,7 @@ struct PlaylistView: View {
 				if addingCount > 0 {
 					ProgressView()
 				}
-				Button("Add Music", systemImage: "plus") { importing = true }
+				Button("Add Music", systemImage: "plus") { ui.addsMusic = true }
 				Menu("More", systemImage: "ellipsis.circle") {
 					Picker("Shuffle", systemImage: "shuffle", selection: Binding(get: { model.shuffleMode }, set: { model.shuffleMode = $0 })) {
 						Text("Off").tag(PlaylistShuffleMode.off)
@@ -105,20 +110,20 @@ struct PlaylistView: View {
 						Button("File Name") { model.sort { $0.filename.localizedStandardCompare($1.filename) == .orderedAscending } }
 					}
 					Button("Add from Cog's Folder", systemImage: "folder") { addMusicFolder() }
-					Button("Add URL", systemImage: "link") { addsURL = true }
+					Button("Add URL", systemImage: "link") { ui.addsURL = true }
 					Button("Reload Tags", systemImage: "arrow.clockwise") {
 						Task { await player.loader.loadInfo(for: model.entries) }
 					}
 					.disabled(model.entries.isEmpty)
 					Divider()
-					Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
-					Button("Settings", systemImage: "gearshape") { showsSettings = true }
+					Button("Equalizer", systemImage: "slider.vertical.3") { ui.showsEqualizer = true }
+					Button("Settings", systemImage: "gearshape") { ui.showsSettings = true }
 					Button("Clear Playlist", systemImage: "trash", role: .destructive) { confirmsClear = true }
 						.disabled(model.entries.isEmpty)
 				}
 			}
 		}
-		.fileImporter(isPresented: $importing, allowedContentTypes: [.item, .folder], allowsMultipleSelection: true) { result in
+		.fileImporter(isPresented: $ui.addsMusic, allowedContentTypes: [.item, .folder], allowsMultipleSelection: true) { result in
 			guard case let .success(urls) = result else { return }
 			Task { await add(locations.add(urls)) }
 		}
@@ -128,13 +133,10 @@ struct PlaylistView: View {
 				model.removeAll()
 			}
 		}
-		.sheet(isPresented: $showsSettings) {
+		.sheet(isPresented: $ui.showsSettings) {
 			SettingsView()
 		}
-		.sheet(isPresented: $showsEqualizer) {
-			EqualizerView()
-		}
-		.alert("Add URL", isPresented: $addsURL) {
+		.alert("Add URL", isPresented: $ui.addsURL) {
 			TextField("https://", text: $urlText)
 				.keyboardType(.URL)
 				.textInputAutocapitalization(.never)

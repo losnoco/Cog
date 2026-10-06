@@ -11,6 +11,7 @@ import SwiftUI
 struct CogApp: App {
 	@StateObject private var player: Player
 	@StateObject private var locations: MusicLocations
+	@StateObject private var ui = AppUI()
 
 	init() {
 		// Before the engine reads them.
@@ -43,6 +44,10 @@ struct CogApp: App {
 				.environmentObject(player.model)
 				.environmentObject(player.equalizer)
 				.environmentObject(locations)
+				.environmentObject(ui)
+		}
+		.commands {
+			CogCommands(player: player, model: player.model, ui: ui)
 		}
 	}
 }

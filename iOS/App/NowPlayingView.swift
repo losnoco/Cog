@@ -65,9 +65,7 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
 	@Environment(\.colorScheme) private var colorScheme
-	@State private var showsEqualizer = false
-	@State private var showsLyrics = false
-	@State private var showsSpeed = false
+	@EnvironmentObject private var ui: AppUI
 	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
 	@AppStorage("tempo") private var tempo = 1.0
 	@AppStorage("pitch") private var pitch = 1.0
@@ -100,14 +98,14 @@ struct NowPlayingView: View {
 			main
 			// Beside the playlist, the equalizer, speed and lyrics open in the
 			// room below, rather than in sheets over everything.
-			if cardsFit && (showsEqualizer || showsSpeed || showsLyrics) {
+			if cardsFit && (ui.showsEqualizer || ui.showsSpeed || ui.showsLyrics) {
 				panels
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
 		}
-		.animation(.spring(duration: 0.4), value: showsEqualizer)
-		.animation(.spring(duration: 0.4), value: showsSpeed)
-		.animation(.spring(duration: 0.4), value: showsLyrics)
+		.animation(.spring(duration: 0.4), value: ui.showsEqualizer)
+		.animation(.spring(duration: 0.4), value: ui.showsSpeed)
+		.animation(.spring(duration: 0.4), value: ui.showsLyrics)
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
 			if let palette {
@@ -124,17 +122,17 @@ struct NowPlayingView: View {
 		}
 		.toolbar(isEmbedded ? .hidden : .automatic, for: .navigationBar)
 		.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
-		.sheet(isPresented: sheet($showsEqualizer)) {
+		.sheet(isPresented: sheet($ui.showsEqualizer)) {
 			EqualizerView()
 				.environment(\.colorScheme, colorScheme)
 				.tint(.accentColor)
 		}
-		.sheet(isPresented: sheet($showsSpeed)) {
+		.sheet(isPresented: sheet($ui.showsSpeed)) {
 			SpeedView()
 				.environment(\.colorScheme, colorScheme)
 				.tint(.accentColor)
 		}
-		.sheet(isPresented: sheet($showsLyrics)) {
+		.sheet(isPresented: sheet($ui.showsLyrics)) {
 			if let entry = model.currentEntry {
 				LyricsView(entry: entry)
 					.environment(\.colorScheme, colorScheme)
@@ -187,8 +185,8 @@ struct NowPlayingView: View {
 	/// The equalizer, speed and lyrics as cards, side by side.
 	private var panels: some View {
 		HStack(alignment: .top, spacing: 16) {
-			if showsEqualizer {
-				panel("Equalizer", close: { showsEqualizer = false }) {
+			if ui.showsEqualizer {
+				panel("Equalizer", close: { ui.showsEqualizer = false }) {
 					Toggle("Equalizer", isOn: $equalizer.isEnabled)
 						.labelsHidden()
 				} trailing: {
@@ -201,8 +199,8 @@ struct NowPlayingView: View {
 					}
 				}
 			}
-			if showsSpeed {
-				panel("Speed", close: { showsSpeed = false }) {
+			if ui.showsSpeed {
+				panel("Speed", close: { ui.showsSpeed = false }) {
 					EmptyView()
 				} trailing: {
 					EmptyView()
@@ -211,8 +209,8 @@ struct NowPlayingView: View {
 						.scrollContentBackground(.hidden)
 				}
 			}
-			if showsLyrics, let entry = model.currentEntry {
-				panel("Lyrics", close: { showsLyrics = false }) {
+			if ui.showsLyrics, let entry = model.currentEntry {
+				panel("Lyrics", close: { ui.showsLyrics = false }) {
 					EmptyView()
 				} trailing: {
 					EmptyView()
@@ -329,14 +327,14 @@ struct NowPlayingView: View {
 				Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
 					.foregroundStyle(state(model.currentEntry?.stopAfter == true))
 					.frame(maxWidth: .infinity)
-				Button("Lyrics", systemImage: "quote.bubble") { showsLyrics.toggle() }
+				Button("Lyrics", systemImage: "quote.bubble") { ui.showsLyrics.toggle() }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
 					.frame(maxWidth: .infinity)
-				Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer.toggle() }
+				Button("Equalizer", systemImage: "slider.vertical.3") { ui.showsEqualizer.toggle() }
 					.foregroundStyle(state(equalizer.isEnabled))
 					.frame(maxWidth: .infinity)
-				Button("Speed", systemImage: "gauge.with.needle") { showsSpeed.toggle() }
+				Button("Speed", systemImage: "gauge.with.needle") { ui.showsSpeed.toggle() }
 					.foregroundStyle(state(Speed.isChanged(engine: speedEngine, tempo: tempo, pitch: pitch)))
 					.frame(maxWidth: .infinity)
 				Button(showsVisualizer ? "Hide Visualizer" : "Show Visualizer", systemImage: "waveform") { showsVisualizer.toggle() }

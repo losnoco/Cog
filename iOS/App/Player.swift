@@ -145,6 +145,32 @@ final class Player: NSObject, ObservableObject {
 		updateNowPlaying()
 	}
 
+	/// Five seconds either way, as the macOS app's Seek Forward and Seek
+	/// Backward go.
+	func seek(by seconds: Double) {
+		guard let entry = model.currentEntry, status != .stopped else { return }
+		seek(to: min(max(position + seconds, 0), max(entry.length, 0)))
+	}
+
+	/// The first entry of the next album along the playlist.
+	func nextAlbum() {
+		let entries = model.entries
+		guard let current = model.currentEntry, let index = entries.firstIndex(of: current),
+		      let next = entries[(index + 1)...].first(where: { $0.album != current.album }) else { return }
+		play(next)
+	}
+
+	/// The first entry of the album before this one along the playlist.
+	func previousAlbum() {
+		let entries = model.entries
+		guard let current = model.currentEntry, var start = entries.firstIndex(of: current) else { return }
+		while start > 0 && entries[start - 1].album == current.album { start -= 1 }
+		guard start > 0 else { return }
+		var previous = start - 1
+		while previous > 0 && entries[previous - 1].album == entries[start - 1].album { previous -= 1 }
+		play(entries[previous])
+	}
+
 	// MARK: - Position
 
 	private func startPositionTimer() {

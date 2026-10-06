@@ -9,7 +9,8 @@ import SwiftUI
 struct ContentView: View {
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.horizontalSizeClass) private var sizeClass
-	@State private var showsNowPlaying = false
+	@Environment(\.colorScheme) private var colorScheme
+	@EnvironmentObject private var ui: AppUI
 
 	var body: some View {
 		if sizeClass == .regular {
@@ -39,13 +40,30 @@ struct ContentView: View {
 				.safeAreaInset(edge: .bottom, spacing: 0) {
 					if model.currentEntry != nil {
 						MiniPlayerView()
-							.onTapGesture { showsNowPlaying = true }
+							.onTapGesture { ui.showsNowPlaying = true }
+					}
+				}
+				// The menus' equalizer, speed and lyrics, while Now Playing
+				// (which opens its own) is closed.
+				.sheet(isPresented: overPlaylist($ui.showsEqualizer)) {
+					EqualizerView()
+				}
+				.sheet(isPresented: overPlaylist($ui.showsSpeed)) {
+					SpeedView()
+				}
+				.sheet(isPresented: overPlaylist($ui.showsLyrics)) {
+					if let entry = model.currentEntry {
+						LyricsView(entry: entry)
 					}
 				}
 		}
-		.sheet(isPresented: $showsNowPlaying) {
+		.sheet(isPresented: $ui.showsNowPlaying) {
 			NowPlayingView()
 		}
+	}
+
+	private func overPlaylist(_ shows: Binding<Bool>) -> Binding<Bool> {
+		Binding(get: { shows.wrappedValue && !ui.showsNowPlaying }, set: { shows.wrappedValue = $0 })
 	}
 }
 
