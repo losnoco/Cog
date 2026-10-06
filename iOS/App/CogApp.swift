@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct CogApp: App {
 	@StateObject private var player: Player
+	@StateObject private var locations: MusicLocations
 
 	init() {
 		// The plugins register now rather than on the first play.
@@ -26,6 +27,9 @@ struct CogApp: App {
 		PlaylistController.container = store.container
 		let model = PlaylistModel(store: store)
 		MusicImporter.relocateMovedContainer(in: model)
+		let locations = MusicLocations()
+		locations.restore(in: model)
+		_locations = StateObject(wrappedValue: locations)
 		_player = StateObject(wrappedValue: Player(model: model))
 	}
 
@@ -35,6 +39,7 @@ struct CogApp: App {
 				.environmentObject(player)
 				.environmentObject(player.model)
 				.environmentObject(player.equalizer)
+				.environmentObject(locations)
 		}
 	}
 }

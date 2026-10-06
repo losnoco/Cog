@@ -10,6 +10,7 @@ import UniformTypeIdentifiers
 struct PlaylistView: View {
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
+	@EnvironmentObject private var locations: MusicLocations
 	@State private var importing = false
 	@State private var addingCount = 0
 	@State private var showsSettings = false
@@ -66,7 +67,7 @@ struct PlaylistView: View {
 				ContentUnavailableView {
 					Label("No Music", systemImage: "music.note.list")
 				} description: {
-					Text("Add files or folders from Files. Music copied into Cog's folder in the Files app or Finder can be added too.")
+					Text("Add files or folders from Files; they play where they are. Music copied into Cog's folder in the Files app or Finder can be added too.")
 				} actions: {
 					Button("Add Music") { importing = true }
 						.buttonStyle(.borderedProminent)
@@ -119,7 +120,7 @@ struct PlaylistView: View {
 		}
 		.fileImporter(isPresented: $importing, allowedContentTypes: [.item, .folder], allowsMultipleSelection: true) { result in
 			guard case let .success(urls) = result else { return }
-			Task { await add(urls, copying: true) }
+			Task { await add(locations.add(urls)) }
 		}
 		.confirmationDialog("Clear the playlist?", isPresented: $confirmsClear, titleVisibility: .visible) {
 			Button("Clear Playlist", role: .destructive) {
@@ -140,7 +141,7 @@ struct PlaylistView: View {
 				.autocorrectionDisabled()
 			Button("Add") {
 				if let url = URL(string: urlText.trimmingCharacters(in: .whitespaces)), url.scheme != nil {
-					Task { await add([url], copying: false) }
+					Task { await add([url]) }
 				}
 				urlText = ""
 			}
@@ -166,11 +167,10 @@ struct PlaylistView: View {
 		return (a.2, a.3) < (b.2, b.3)
 	}
 
-	private func add(_ urls: [URL], copying: Bool) async {
+	private func add(_ urls: [URL]) async {
 		addingCount += 1
 		defer { addingCount -= 1 }
-		let files = copying ? await MusicImporter.importItems(urls) : urls
-		await player.loader.add(files)
+		await player.loader.add(urls)
 	}
 
 	/// Every track in Cog's Music folder, its subfolders included, that the

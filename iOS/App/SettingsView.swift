@@ -20,6 +20,7 @@ struct SettingsView: View {
 	var body: some View {
 		NavigationStack {
 			Form {
+				MusicLocationsSection()
 				Section("Playback") {
 					Toggle("Fade on Pause and Seek", isOn: $fading)
 					Toggle("Stop After Each Track", isOn: $stopAfterEach)
@@ -62,6 +63,35 @@ struct SettingsView: View {
 					Button("Done") { dismiss() }
 				}
 			}
+		}
+	}
+}
+
+/// What Cog may play outside its own folder, and taking that back.
+struct MusicLocationsSection: View {
+	@EnvironmentObject private var locations: MusicLocations
+
+	var body: some View {
+		Section {
+			ForEach(locations.locations) { location in
+				VStack(alignment: .leading, spacing: 2) {
+					Text(location.name)
+					Text(location.path)
+						.font(.caption)
+						.foregroundStyle(.secondary)
+						.lineLimit(1)
+						.truncationMode(.head)
+				}
+			}
+			.onDelete { offsets in
+				offsets.map { locations.locations[$0] }.forEach(locations.remove)
+			}
+		} header: {
+			Text("Music Locations")
+		} footer: {
+			Text(locations.locations.isEmpty
+				? "Files and folders you add from Files play where they are, and show up here."
+				: "Files and folders Cog plays where they are. Removing one leaves its tracks in the playlist, unplayable.")
 		}
 	}
 }
