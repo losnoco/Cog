@@ -11,7 +11,7 @@
 #
 # Usage: build-ios-libraries.sh [library ...]   (default: all of them)
 #
-# Needs cmake (brew install cmake).
+# Needs cmake and ninja (brew install cmake ninja).
 
 set -eu
 

@@ -1,0 +1,54 @@
+name: Build the iOS libraries
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Scripts/build-ios-libraries.sh
+      - ThirdParty/*/patches/**
+      - .github/workflows/ios-libraries.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - Scripts/build-ios-libraries.sh
+      - ThirdParty/*/patches/**
+      - .github/workflows/ios-libraries.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build the iOS xcframeworks
+    runs-on: [self-hosted, macOS]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Check the build tools
+        run: >
+          command -v cmake && command -v ninja
+          || { echo "The runner needs cmake and ninja (brew install cmake ninja)"; exit 1; }
+      # Xcode installs the iOS platform on demand; download it only when
+      # its SDKs are missing, as it is several GB.
+      - name: Install the iOS platform
+        run: >
+          { xcrun --sdk iphoneos --show-sdk-path && xcrun --sdk iphonesimulator --show-sdk-path; }
+          || xcodebuild -downloadPlatform iOS -architectureVariant arm64
+      # The sources are pinned by checksum in the script, so the script and
+      # Cog's patches are all that decide the result.
+      - name: Restore the libraries
+        id: cache
+        uses: actions/cache@v5
+        with:
+          path: ThirdParty/*/ios
+          key: ios-libraries-${{ hashFiles('Scripts/build-ios-libraries.sh', 'ThirdParty/*/patches/**') }}
+      - name: Build the libraries
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: Scripts/build-ios-libraries.sh
+      - name: Package archive
+        run: >
+          tar -cJf ios-libraries.tar.xz ThirdParty/*/ios
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ios-libraries
+          path: ios-libraries.tar.xz
