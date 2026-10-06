@@ -12,6 +12,7 @@ struct PlaylistView: View {
 	@EnvironmentObject private var model: PlaylistModel
 	@EnvironmentObject private var locations: MusicLocations
 	@EnvironmentObject private var ui: AppUI
+	@AppStorage("showsPlaylistArt") private var showsArt = true
 	@State private var addingCount = 0
 	@State private var confirmsClear = false
 	@State private var query = ""
@@ -109,6 +110,7 @@ struct PlaylistView: View {
 						Button("Length") { model.sort { $0.length.doubleValue < $1.length.doubleValue } }
 						Button("File Name") { model.sort { $0.filename.localizedStandardCompare($1.filename) == .orderedAscending } }
 					}
+					Toggle("Album Art", systemImage: "photo", isOn: $showsArt)
 					Button("Add from Cog's Folder", systemImage: "folder") { addMusicFolder() }
 					Button("Add URL", systemImage: "link") { ui.addsURL = true }
 					Button("Reload Tags", systemImage: "arrow.clockwise") {
@@ -190,12 +192,15 @@ struct PlaylistView: View {
 private struct EntryRow: View {
 	@ObservedObject var entry: PlaylistEntry
 	@EnvironmentObject private var player: Player
+	@AppStorage("showsPlaylistArt") private var showsArt = true
 
 	var body: some View {
 		HStack(spacing: 12) {
 			status
 				.frame(width: 18)
-			ArtworkView(entry: entry, size: 40, cornerRadius: 4)
+			if showsArt {
+				ArtworkView(entry: entry, size: 40, cornerRadius: 4)
+			}
 			VStack(alignment: .leading, spacing: 2) {
 				Text(entry.title)
 					.lineLimit(1)

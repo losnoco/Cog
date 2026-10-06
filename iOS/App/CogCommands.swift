@@ -30,6 +30,7 @@ struct CogCommands: Commands {
 	@ObservedObject var model: PlaylistModel
 	@ObservedObject var ui: AppUI
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
+	@AppStorage("showsPlaylistArt") private var showsPlaylistArt = true
 
 	private var nothingPlays: Bool { model.currentEntry == nil }
 
@@ -64,6 +65,7 @@ struct CogCommands: Commands {
 			Toggle("Speed", isOn: $ui.showsSpeed)
 			Toggle("Visualizer", isOn: $showsVisualizer)
 				.keyboardShortcut("v", modifiers: [.command, .shift])
+			Toggle("Album Art in Playlist", isOn: $showsPlaylistArt)
 			Divider()
 		}
 

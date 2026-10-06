@@ -42,12 +42,14 @@ struct MiniPlayerView: View {
 		.padding(.horizontal)
 		.padding(.vertical, 10)
 		.background {
+			// To the screen's edges: under the home indicator, and beside the
+			// Dynamic Island in landscape.
 			if let palette {
 				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .leading, endPoint: .trailing)
-					.ignoresSafeArea(edges: .bottom)
+					.ignoresSafeArea(edges: [.horizontal, .bottom])
 			} else {
 				Rectangle().fill(.bar)
-					.ignoresSafeArea(edges: .bottom)
+					.ignoresSafeArea(edges: [.horizontal, .bottom])
 			}
 		}
 		.contentShape(Rectangle())
