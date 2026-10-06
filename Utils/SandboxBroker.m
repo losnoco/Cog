@@ -13,6 +13,8 @@
 
 #import "Logging.h"
 
+#import <CogPlaylist/CogPlaylist-Swift.h>
+
 #import "Cog-Swift.h"
 
 #import "PlaylistController.h"

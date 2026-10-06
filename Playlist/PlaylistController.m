@@ -118,7 +118,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 	[self initDefaults];
 
-	_persistentContainer = [[NSPersistentContainer alloc] initWithName:@"DataModel"];
+	// The model CogPlaylist compiles, whose entities are its classes; the store
+	// stays where it always was.
+	_persistentContainer = [[NSPersistentContainer alloc] initWithName:@"DataModel" managedObjectModel:PlaylistStore.model];
 	[self.persistentContainer loadPersistentStoresWithCompletionHandler:^(NSPersistentStoreDescription *description, NSError *error) {
 		if(error != nil) {
 			ALog(@"Failed to load Core Data stack: %@", error);

@@ -3,6 +3,7 @@
 //  Cog
 //
 
+import CogPlaylist
 import CoreData
 import Foundation
 

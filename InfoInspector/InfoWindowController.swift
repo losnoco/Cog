@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import CogPlaylist
 import SwiftUI
 
 /// Owns the Info Inspector HUD panel. Instantiated by MainMenu.xib, which

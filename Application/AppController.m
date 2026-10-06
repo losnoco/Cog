@@ -13,6 +13,8 @@
 #import "PlaylistView.h"
 #import "SQLiteStore.h"
 #import "SandboxBroker.h"
+
+#import <CogPlaylist/CogPlaylist-Swift.h>
 #import "SpotlightWindowController.h"
 #import <CogAudio/Status.h>
 
@@ -104,9 +106,7 @@ static AppController *kAppController = nil;
 	[NSValueTransformer setValueTransformer:rubberbandEngineHiddenTransformer
 									forName:@"RubberbandEngineHiddenTransformer"];
 
-	NSValueTransformer *maybeSecureValueDataTransformer = [MaybeSecureValueDataTransformer new];
-	[NSValueTransformer setValueTransformer:maybeSecureValueDataTransformer
-									forName:@"MaybeSecureValueDataTransformer"];
+	[PlaylistStore registerTransformers];
 }
 - (id)init {
 	self = [super init];
