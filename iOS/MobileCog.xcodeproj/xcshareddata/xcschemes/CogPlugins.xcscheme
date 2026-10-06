@@ -3,7 +3,7 @@
    <BuildAction parallelizeBuildables = "YES" buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry buildForTesting = "YES" buildForRunning = "YES" buildForProfiling = "YES" buildForArchiving = "YES" buildForAnalyzing = "YES">
-            <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "B32B5CFB1D4DDD922EDF335C" BuildableName = "CogPlugins.framework" BlueprintName = "CogPlugins" ReferencedContainer = "container:CogPlugins.xcodeproj">
+            <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "B32B5CFB1D4DDD922EDF335C" BuildableName = "CogPlugins.framework" BlueprintName = "CogPlugins" ReferencedContainer = "container:MobileCog.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -11,7 +11,7 @@
    <TestAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference skipped = "NO">
-            <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "2D253B2854ABFC01F796BE91" BuildableName = "CogPluginsTests.xctest" BlueprintName = "CogPluginsTests" ReferencedContainer = "container:CogPlugins.xcodeproj">
+            <BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "2D253B2854ABFC01F796BE91" BuildableName = "CogPluginsTests.xctest" BlueprintName = "CogPluginsTests" ReferencedContainer = "container:MobileCog.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
