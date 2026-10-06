@@ -80,6 +80,8 @@
 		83F9FFF62D6EC43900026576 /* soxr.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F9FFF02D6EC43900026576 /* soxr.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83F9FFF82D6EC43900026576 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */; platformFilters = (macos, ); };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AD88ED57A490620B20C5681 /* CogExceptionCatching.h in Headers */ = {isa = PBXBuildFile; fileRef = D4FBBB369A684384871FD68E /* CogExceptionCatching.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D70822D9394E0B6D56EE6123 /* CogExceptionCatching.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D1661D35A9335C079703CA /* CogExceptionCatching.m */; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
 		B0575F2D0D687A0800411D77 /* Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = B0575F2C0D687A0800411D77 /* Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0575F300D687A4000411D77 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0575F2F0D687A4000411D77 /* Helper.m */; };
@@ -191,6 +193,8 @@
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
 		8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioContainer.m; sourceTree = "<group>"; };
+		D4FBBB369A684384871FD68E /* CogExceptionCatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogExceptionCatching.h; sourceTree = "<group>"; };
+		93D1661D35A9335C079703CA /* CogExceptionCatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogExceptionCatching.m; sourceTree = "<group>"; };
 		B0575F2C0D687A0800411D77 /* Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
 		B0575F2F0D687A4000411D77 /* Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helper.m; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -309,6 +313,8 @@
 				17D21EBC0B8BF44000D1EBDE /* AudioPlayer.m */,
 				8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */,
 				8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */,
+				D4FBBB369A684384871FD68E /* CogExceptionCatching.h */,
+				93D1661D35A9335C079703CA /* CogExceptionCatching.m */,
 				17A2D3C30B8D1D37000778C4 /* AudioDecoder.h */,
 				17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */,
 				17C940210B900909008627D6 /* AudioMetadataReader.h */,
@@ -541,6 +547,7 @@
 				8377C64E27B8C54400E8BC0F /* fft.h in Headers */,
 				835FAC5E27BCA14D00BA8562 /* BadSampleCleaner.h in Headers */,
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
+				1AD88ED57A490620B20C5681 /* CogExceptionCatching.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
 				07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */,
 			);
@@ -681,6 +688,7 @@
 				17ADB13D0B97926D00257CA2 /* AudioSource.m in Sources */,
 				83CB56662E06464D003DD379 /* NSDictionary+Optional.m in Sources */,
 				8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */,
+				D70822D9394E0B6D56EE6123 /* CogExceptionCatching.m in Sources */,
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
 				835DD2742ACAF5AD0057E319 /* lpc.c in Sources */,
 				834A41AA287A90AB00EB9D9B /* freesurround_decoder.cpp in Sources */,

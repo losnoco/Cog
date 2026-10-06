@@ -2,17 +2,14 @@
 //  PlaylistLoader.swift
 //  CogPlaylist
 //
-//  Adds files to a playlist: folders walked, containers (cue sheets,
-//  playlists, archives, multi-track formats) opened through the plugins, and
-//  each entry's properties and tags read in the background. The plugin
-//  dealing of Playlist/PlaylistLoader.m, without its macOS parts (sandbox
-//  bookmarks, XML playlists, Spotlight).
+//  Adds files to a playlist: what they stand for found by PlaylistExpander
+//  (folders walked, containers opened), and each entry's properties and tags
+//  read in the background with PlaylistEntryInfo.
 //
 //  Files outside the app's container must be readable when added, which on
 //  iOS means the app holds their security scope (a document picker's URLs).
 //
 
-import CogAudio
 import CoreData
 import Foundation
 
@@ -31,7 +28,16 @@ public final class PlaylistLoader {
 	/// folder again adds only what is new in it.
 	@discardableResult
 	public func add(_ urls: [URL], at position: Int? = nil, skippingExisting: Bool = false) async -> [PlaylistEntry] {
-		var expanded = await Task.detached(priority: .userInitiated) { Self.expand(urls) }.value
+		var expanded = await Task.detached(priority: .userInitiated) { () -> [URL] in
+			// As the macOS app expands them, with what suits a library of its
+			// own: cue sheets and playlists in folders read, and the files
+			// they play from left to them.
+			let expander = PlaylistExpander()
+			expander.readsCueSheetsInFolders = true
+			expander.readsPlaylistsInFolders = true
+			expander.skipsContainerDependencies = true
+			return expander.urls(for: urls, sort: true)
+		}.value
 		if skippingExisting {
 			let existing = Set(model.entries.compactMap { $0.url.map(Self.identity) })
 			expanded.removeAll { existing.contains(Self.identity($0)) }
@@ -76,61 +82,5 @@ public final class PlaylistLoader {
 	nonisolated static func identity(_ url: URL) -> String {
 		guard url.isFileURL else { return url.absoluteString }
 		return url.standardizedFileURL.resolvingSymlinksInPath().path + "#" + (url.fragment ?? "")
-	}
-
-	// MARK: - Expanding
-
-	/// The file extensions the plugins play, and those they open as
-	/// containers of other entries.
-	nonisolated static var playableTypes: Set<String> {
-		Set(((AudioPlayer.fileTypes() as? [String]) ?? []).map { $0.lowercased() })
-	}
-
-	nonisolated static var containerTypes: Set<String> {
-		Set(((AudioPlayer.containerTypes() as? [String]) ?? []).map { $0.lowercased() })
-	}
-
-	/// The entries `urls` stand for, in order, each once. Files a container
-	/// plays from (a cue sheet's audio file) are its tracks, not entries of
-	/// their own.
-	nonisolated static func expand(_ urls: [URL]) -> [URL] {
-		let playable = playableTypes
-		let containers = containerTypes
-		var result: [URL] = []
-		var seen = Set<String>()
-		var dependencies = Set<String>()
-		func add(_ url: URL) {
-			if seen.insert(url.absoluteString).inserted { result.append(url) }
-		}
-		func visit(_ url: URL) {
-			let url = PlaylistEntry.normalize(url)
-			var isDirectory: ObjCBool = false
-			if url.isFileURL, FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue {
-				for file in files(in: url) { visit(file) }
-				return
-			}
-			let type = url.pathExtension.lowercased()
-			if containers.contains(type), url.fragment == nil,
-			   let inner = AudioContainer.urls(forContainerURL: url) as? [URL], !inner.isEmpty {
-				inner.forEach(add)
-				for dependency in (AudioContainer.dependencyUrls(forContainerURL: url) as? [URL]) ?? [] {
-					dependencies.insert(dependency.absoluteString)
-				}
-				return
-			}
-			if !url.isFileURL || playable.contains(type) {
-				add(url)
-			}
-		}
-		urls.forEach(visit)
-		return result.filter { !dependencies.contains($0.absoluteString) }
-	}
-
-	/// A folder's files, depth first, in Finder's order.
-	nonisolated static func files(in folder: URL) -> [URL] {
-		guard let enumerator = FileManager.default.enumerator(at: folder, includingPropertiesForKeys: [.isRegularFileKey],
-		                                                      options: [.skipsHiddenFiles]) else { return [] }
-		let files = enumerator.compactMap { $0 as? URL }.filter { (try? $0.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true }
-		return files.sorted { $0.path.localizedStandardCompare($1.path) == .orderedAscending }
 	}
 }

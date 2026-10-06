@@ -27,7 +27,6 @@ typedef enum {
 	IBOutlet NSScrollView *playlistView;
 	IBOutlet PlaybackController *playbackController;
 
-	NSOperationQueue *containerQueue;
 	NSOperationQueue *queue;
 
 	BOOL metadataLoadInProgress;
