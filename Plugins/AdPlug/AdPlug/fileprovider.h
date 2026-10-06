@@ -9,7 +9,7 @@
 #ifndef fileprovider_h
 #define fileprovider_h
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import "Plugin.h"
 

@@ -305,7 +305,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 			if([[[tracks objectAtIndex:i] track] isEqualToString:[url fragment]]) {
 				CueSheetTrack *_track = [tracks objectAtIndex:i];
 
-				if(![[_track url] isEqualTo:[track url]])
+				if(![[_track url] isEqual:[track url]])
 					return NO;
 
 				track = _track;

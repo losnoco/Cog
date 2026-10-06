@@ -944,7 +944,7 @@ static void http_schedule_retry_locked(HTTPSource *fp) {
 - (void)URLSession:(NSURLSession *)session didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void
  (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler {
 	if([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-		BOOL sslVerify = ![[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"allowInsecureSSL"];
+		BOOL sslVerify = ![[NSUserDefaults standardUserDefaults] boolForKey:@"allowInsecureSSL"];
 
 		if(!sslVerify) {
 			// Allow insecure SSL

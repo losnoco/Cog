@@ -7,7 +7,7 @@
 //
 
 #import "Plugin.h"
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 // config.h things
 #define __MACOSX__

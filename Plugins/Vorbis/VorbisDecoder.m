@@ -33,22 +33,22 @@ static const int chmap[MAXCHANNELS][MAXCHANNELS] = {
 	{ 0, 2, 1, 7, 5, 6, 3, 4 } // l, c, r, sl, sr, bl, br, lfe -> l, r, c, lfe, bl, br, sl, sr
 };
 
-size_t sourceRead(void *buf, size_t size, size_t nmemb, void *datasource) {
+static size_t sourceRead(void *buf, size_t size, size_t nmemb, void *datasource) {
 	id source = (__bridge id)datasource;
 
 	return [source read:buf amount:(size * nmemb)];
 }
 
-int sourceSeek(void *datasource, ogg_int64_t offset, int whence) {
+static int sourceSeek(void *datasource, ogg_int64_t offset, int whence) {
 	id source = (__bridge id)datasource;
 	return ([source seek:offset whence:whence] ? 0 : -1);
 }
 
-int sourceClose(void *datasource) {
+static int sourceClose(void *datasource) {
 	return 0;
 }
 
-long sourceTell(void *datasource) {
+static long sourceTell(void *datasource) {
 	id source = (__bridge id)datasource;
 
 	return [source tell];

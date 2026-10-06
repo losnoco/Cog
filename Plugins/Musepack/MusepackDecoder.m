@@ -12,25 +12,25 @@
 
 @implementation MusepackDecoder
 
-mpc_int32_t ReadProc(mpc_reader *p_reader, void *ptr, mpc_int32_t size) {
+static mpc_int32_t ReadProc(mpc_reader *p_reader, void *ptr, mpc_int32_t size) {
 	MusepackDecoder *decoder = (__bridge MusepackDecoder *)p_reader->data;
 
 	return (mpc_int32_t)[[decoder source] read:ptr amount:size];
 }
 
-mpc_bool_t SeekProc(mpc_reader *p_reader, mpc_int32_t offset) {
+static mpc_bool_t SeekProc(mpc_reader *p_reader, mpc_int32_t offset) {
 	MusepackDecoder *decoder = (__bridge MusepackDecoder *)p_reader->data;
 
 	return [[decoder source] seek:offset whence:SEEK_SET];
 }
 
-mpc_int32_t TellProc(mpc_reader *p_reader) {
+static mpc_int32_t TellProc(mpc_reader *p_reader) {
 	MusepackDecoder *decoder = (__bridge MusepackDecoder *)p_reader->data;
 
 	return (mpc_int32_t)[[decoder source] tell];
 }
 
-mpc_int32_t GetSizeProc(mpc_reader *p_reader) {
+static mpc_int32_t GetSizeProc(mpc_reader *p_reader) {
 	MusepackDecoder *decoder = (__bridge MusepackDecoder *)p_reader->data;
 
 	if([[decoder source] seekable]) {
@@ -50,7 +50,7 @@ mpc_int32_t GetSizeProc(mpc_reader *p_reader) {
 	}
 }
 
-mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
+static mpc_bool_t CanSeekProc(mpc_reader *p_reader) {
 	MusepackDecoder *decoder = (__bridge MusepackDecoder *)p_reader->data;
 
 	return [[decoder source] seekable];

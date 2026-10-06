@@ -49,7 +49,7 @@
 		839BD00F196514E600947767 /* bass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bass.h; path = ../../../ThirdParty/BASS/bass.h; sourceTree = "<group>"; };
 		839BD0131965222D00947767 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		839BD0141965231800947767 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
-		839BD0151965233700947767 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		839BD0151965233700947767 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +102,7 @@
 		839BCFDB1965133E00947767 /* BASSMODS */ = {
 			isa = PBXGroup;
 			children = (
-				839BD0151965233700947767 /* PlaylistController.h */,
+				839BD0151965233700947767 /* PlaylistControllerEnums.h */,
 				839BD0141965231800947767 /* Logging.h */,
 				839BD0131965222D00947767 /* Plugin.h */,
 				839BD00F196514E600947767 /* bass.h */,

@@ -9,7 +9,7 @@
 
 #include <nuked_sc55/api.h>
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import <Accelerate/Accelerate.h>
 

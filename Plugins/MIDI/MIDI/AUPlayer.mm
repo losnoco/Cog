@@ -55,7 +55,12 @@ AUPlayer::AUPlayer()
 	bufferList = NULL;
 	audioBuffer = NULL;
 
+#if TARGET_OS_IPHONE
+	// iOS has no DLSSynth; MIDISynth is its General MIDI synthesizer.
+	componentSubType = kAudioUnitSubType_MIDISynth;
+#else
 	componentSubType = kAudioUnitSubType_DLSSynth;
+#endif
 	componentManufacturer = kAudioUnitManufacturer_Apple;
 }
 
@@ -438,8 +443,13 @@ bool AUPlayer::openInstance(const AudioComponentDescription &cd, Instance &into)
 		UInt32 flags = 0;
 		if(AudioComponentGetDescription(comp, &found) == noErr)
 			flags = found.componentFlags;
+#if !TARGET_OS_IPHONE
+		// iOS has only the out-of-process default for v3 units.
 		if(flags & kAudioComponentFlag_CanLoadInProcess)
 			options = kAudioComponentInstantiation_LoadInProcess;
+#else
+		(void)flags;
+#endif
 	}
 
 	/* The completion is delivered on a private queue, not the main one, so
@@ -555,8 +565,10 @@ bool AUPlayer::configureInstance(Instance &instance) {
 
 	AudioUnitReset(unit, kAudioUnitScope_Global, 0);
 
+#if !TARGET_OS_IPHONE
 	value = 1;
 	AudioUnitSetProperty(unit, kMusicDeviceProperty_StreamFromDisk, kAudioUnitScope_Global, 0, &value, sizeof(value));
+#endif
 
 	if(preset) {
 		CFDictionaryRef cdict = (__bridge CFDictionaryRef)preset;

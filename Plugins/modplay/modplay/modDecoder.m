@@ -8,7 +8,7 @@
 
 #import "modDecoder.h"
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 @implementation modDecoder
 

@@ -12,7 +12,7 @@
 //  concatenated bytes to the FFmpeg decoder for actual audio decode.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import "Plugin.h"
 

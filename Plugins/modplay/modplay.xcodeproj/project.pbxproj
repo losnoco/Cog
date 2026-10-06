@@ -81,7 +81,7 @@
 		83F4D57E18D8238A009B2DE6 /* modDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = modDecoder.h; sourceTree = "<group>"; };
 		83F4D57F18D8238A009B2DE6 /* modDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = modDecoder.m; sourceTree = "<group>"; };
 		83F4D58118D8239D009B2DE6 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
-		83F4D58218D823D1009B2DE6 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistController.h; path = ../../../Playlist/PlaylistController.h; sourceTree = "<group>"; };
+		83F4D58218D823D1009B2DE6 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,7 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				8360B3FF18DD01910059272F /* unpackers */,
-				83F4D58218D823D1009B2DE6 /* PlaylistController.h */,
+				83F4D58218D823D1009B2DE6 /* PlaylistControllerEnums.h */,
 				83F4D58118D8239D009B2DE6 /* Plugin.h */,
 				83F4D57E18D8238A009B2DE6 /* modDecoder.h */,
 				83F4D57F18D8238A009B2DE6 /* modDecoder.m */,

@@ -11,7 +11,7 @@
 
 #import <libvgmstream/libvgmstream.h>
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #include <stdlib.h>
 
@@ -231,14 +231,14 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 - (BOOL)open:(id<CogSource>)s {
 	int track_num = [[[s url] fragment] intValue];
 
-	loopCount = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultLoopCount"] intValue];
+	loopCount = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultLoopCount"] intValue];
 	if(loopCount < 1) {
 		loopCount = 1;
 	} else if(loopCount > 10) {
 		loopCount = 10;
 	}
 
-	fadeTime = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	fadeTime = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 	if(fadeTime < 0.0) {
 		fadeTime = 0.0;
 	}

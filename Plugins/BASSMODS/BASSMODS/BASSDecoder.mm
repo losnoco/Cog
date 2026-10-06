@@ -14,7 +14,7 @@
 
 #import "Logging.h"
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 static class Bass_Initializer {
 	std::mutex lock;

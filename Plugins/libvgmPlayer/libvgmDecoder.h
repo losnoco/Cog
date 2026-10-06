@@ -6,7 +6,7 @@
 //  Copyright 2022-2026 __LoSnoCo__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import <libvgm/player/playera.hpp>
 #import <libvgm/player/playerbase.hpp>

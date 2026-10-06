@@ -14,7 +14,7 @@
 
 #import "Logging.h"
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #include <vector>
 
@@ -196,7 +196,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	[self setSource:s];
 
-	sampleRate = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthSampleRate"] doubleValue];
+	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
@@ -233,7 +233,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 		n_channels = 1;
 
-		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
 
 		length = (int)ceil(sampleRate * defaultLength);
 
@@ -280,7 +280,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		return NO;
 	}
 
-	double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 	if(defaultFade < 0.0) {
 		defaultFade = 0.0;
 	}

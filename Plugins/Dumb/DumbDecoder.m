@@ -16,7 +16,7 @@
 
 #import "Logging.h"
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 @implementation DumbDecoder
 

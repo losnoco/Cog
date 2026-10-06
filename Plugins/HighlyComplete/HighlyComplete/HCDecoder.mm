@@ -36,7 +36,11 @@
 #include <list>
 
 #undef ROR
+// As vio2sf is built: with its JIT on macOS, and without on iOS, which
+// allows no executable memory.
+#if !TARGET_OS_IPHONE
 #define JIT_ENABLED 1
+#endif
 // melonDS's x86-64 JIT header, reached through NDS.h, narrows a pointer
 // difference to int; it is upstream code, so the warning is silenced.
 #pragma clang diagnostic push
@@ -54,7 +58,7 @@
 
 #include <dlfcn.h>
 
-#import "PlaylistController.h"
+#import "PlaylistControllerEnums.h"
 
 #include <signal.h>
 
@@ -1221,6 +1225,9 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			return NO;
 		}
 
+#if TARGET_OS_IPHONE
+		std::optional<melonDS::JITArgs> jitargs = std::nullopt;
+#else
 		melonDS::JITArgs _jitargs {
 			32,
 			true,
@@ -1228,6 +1235,7 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 			true
 		};
 		auto jitargs = std::make_optional(_jitargs);
+#endif
 
 		std::optional<melonDS::GDBArgs> gdbargs = std::nullopt;
 
@@ -1453,8 +1461,8 @@ static int MapSNSF(void *context, const uint8_t *exe, size_t exe_size,
 	tagFadeMs = info.tag_fade_ms;
 
 	if(!tagLengthMs) {
-		double defaultLength = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
-		double defaultFade = [[[[NSUserDefaultsController sharedUserDefaultsController] defaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 		if(defaultLength < 0) {
 			defaultLength = 150.0;
 		}

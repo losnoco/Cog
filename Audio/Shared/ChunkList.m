@@ -477,8 +477,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		halveDSDVolume = NO;
 		enableHDCD = NO;
 
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.enableHDCD" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
+		[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:@"halveDSDVolume" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
+		[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:@"enableHDCD" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:kChunkListContext];
 
 		observersRegistered = YES;
 	}
@@ -486,8 +486,8 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (void)removeObservers {
 	if(observersRegistered) {
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.halveDSDVolume" context:kChunkListContext];
-		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.enableHDCD" context:kChunkListContext];
+		[[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"halveDSDVolume" context:kChunkListContext];
+		[[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"enableHDCD" context:kChunkListContext];
 
 		observersRegistered = NO;
 	}
@@ -524,10 +524,10 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		return;
 	}
 	
-	if([keyPath isEqualToString:@"values.halveDSDVolume"]) {
-		halveDSDVolume = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"halveDSDVolume"];
-	} else if([keyPath isEqualToString:@"values.enableHDCD"]) {
-		enableHDCD = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"enableHDCD"];
+	if([keyPath isEqualToString:@"halveDSDVolume"]) {
+		halveDSDVolume = [[NSUserDefaults standardUserDefaults] boolForKey:@"halveDSDVolume"];
+	} else if([keyPath isEqualToString:@"enableHDCD"]) {
+		enableHDCD = [[NSUserDefaults standardUserDefaults] boolForKey:@"enableHDCD"];
 	}
 }
 
