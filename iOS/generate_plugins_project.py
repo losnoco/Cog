@@ -22,10 +22,16 @@ PROJECT = HERE / 'CogPlugins.xcodeproj'
 IOS_DEPLOYMENT_TARGET = '18.0'
 
 # Each plugin: its source directory (relative to the repository), and
-# optionally files there to leave out ('exclude'), header search paths
+# optionally files there to leave out ('exclude') or the only ones to build
+# ('sources', relative to the directory, when it holds unused ones), files
+# from elsewhere it compiles too ('extra_sources', relative to the
+# repository), header search paths
 # ('headers'), the iOS libraries it links ('libraries': xcframeworks that
-# Scripts/build-ios-libraries.sh builds, relative to the repository) and
-# other linker flags ('ldflags', for system libraries).
+# Scripts/build-ios-libraries.sh builds, relative to the repository), the
+# framework projects it links ('projects', from Frameworks/, built for iOS
+# as well), compiler flags for its sources ('cflags'), other linker flags
+# ('ldflags', for system libraries) and files it loads from its bundle
+# ('resources', relative to its directory), which iOS finds in CogPlugins.
 PLUGINS = [
 	{'name': 'CoreAudio', 'dir': 'Plugins/CoreAudio'},
 	{'name': 'CueSheet', 'dir': 'Plugins/CueSheet'},
@@ -43,6 +49,58 @@ PLUGINS = [
 	{'name': 'M3u', 'dir': 'Plugins/M3u'},
 	{'name': 'Pls', 'dir': 'Plugins/Pls'},
 	{'name': 'SilenceDecoder', 'dir': 'Plugins/SilenceDecoder/SilenceDecoder'},
+	{'name': 'AdPlug', 'dir': 'Plugins/AdPlug/AdPlug',
+	 'headers': ['Frameworks/libbinio/libbinio/libbinio/src', 'Frameworks/libbinio/libbinio'],
+	 'projects': ['Frameworks/AdPlug/libAdPlug.xcodeproj', 'Frameworks/libbinio/libbinio.xcodeproj']},
+	{'name': 'APL', 'dir': 'Plugins/APL'},
+	{'name': 'ArchiveSource', 'dir': 'Plugins/ArchiveSource/ArchiveSource'},
+	{'name': 'GME', 'dir': 'Plugins/GME', 'projects': ['Frameworks/GME/GME.xcodeproj']},
+	{'name': 'HighlyComplete', 'dir': 'Plugins/HighlyComplete/HighlyComplete',
+	 'headers': ['Frameworks/mGBA/mGBA/mgba/include'],
+	 'cflags': '-DEMU_LITTLE_ENDIAN -DHAVE_STDINT_H -DMINIMAL_CORE=2 -DMGBA_STANDALONE',
+	 'projects': ['Frameworks/HighlyExperimental/HighlyExperimental.xcodeproj', 'Frameworks/HighlyQuixotic/HighlyQuixotic.xcodeproj',
+	              'Frameworks/HighlyTheoretical/HighlyTheoretical.xcodeproj', 'Frameworks/lazyusf2/lazyusf2.xcodeproj',
+	              'Frameworks/mGBA/mGBA.xcodeproj', 'Frameworks/psflib/psflib.xcodeproj', 'Frameworks/snes9x/snes9x.xcodeproj',
+	              'Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj', 'Frameworks/vio2sf/vio2sf.xcodeproj']},
+	{'name': 'Hively', 'dir': 'Plugins/Hively/Hively', 'projects': ['Frameworks/HivelyPlayer/HivelyPlayer.xcodeproj']},
+	{'name': 'Musepack', 'dir': 'Plugins/Musepack', 'projects': ['Frameworks/MPCDec/MPCDec.xcodeproj']},
+	{'name': 'OpenMPT', 'dir': 'Plugins/OpenMPT/OpenMPT', 'projects': ['Frameworks/OpenMPT/libOpenMPT.xcodeproj']},
+	{'name': 'Shorten', 'dir': 'Plugins/Shorten', 'projects': ['Frameworks/Shorten/Shorten.xcodeproj']},
+	{'name': 'sidplay', 'dir': 'Plugins/sidplay', 'projects': ['Frameworks/libsidplayfp/sidplayfp.xcodeproj']},
+	{'name': 'Syntrax', 'dir': 'Plugins/Syntrax/Syntrax', 'projects': ['Frameworks/Syntrax-c/Syntrax_c.xcodeproj']},
+	{'name': 'vgmstream', 'dir': 'Plugins/vgmstream/vgmstream',
+	 'headers': ['ThirdParty/ffmpeg/include'],
+	 'cflags': '-DVGM_USE_ATRAC9 -DVGM_USE_FFMPEG -DVGM_USE_G719 -DVGM_USE_G7221 -DVGM_USE_MPEG -DVGM_USE_VORBIS -D__MACOSX__',
+	 'projects': ['Frameworks/vgmstream/libvgmstream.xcodeproj']},
+	{'name': 'HLS', 'dir': 'Plugins/HLS'},
+	{'name': 'libvgmPlayer', 'dir': 'Plugins/libvgmPlayer',
+	 'headers': ['ThirdParty/libvgm/include'],
+	 'libraries': ['ThirdParty/libvgm/ios/libvgm-player.xcframework', 'ThirdParty/libvgm/ios/libvgm-emu.xcframework',
+	               'ThirdParty/libvgm/ios/libvgm-utils.xcframework'],
+	 'ldflags': ['-lz', '-liconv']},
+	{'name': 'MIDI', 'dir': 'Plugins/MIDI/MIDI',
+	 'sources': ['AUPlayer.mm', 'MIDIContainer.mm', 'MIDIDecoder.mm', 'MIDIMetadataReader.mm', 'MIDIPlayer.cpp', 'MSPlayer.cpp',
+	             'resampler.c', 'SCPlayer.mm', 'SpessaPlayer.mm', 'synthlib_doom/i_oplmusic.cpp', 'synthlib_opl3w/opl3midi.cpp',
+	             'fmopl3lib/opl3.cpp', 'fmopl3lib/opl3class.cpp'],
+	 'extra_sources': ['Utils/MIDIPluginState.m'],
+	 'headers': ['ThirdParty/json'],
+	 'projects': ['Frameworks/nuked-sc55/nuked-sc55.xcodeproj', 'Plugins/MIDI/MIDI/spessasynth_core/spessasynth_core.xcodeproj']},
+	{'name': 'minimp3', 'dir': 'Plugins/minimp3',
+	 'headers': ['ThirdParty/libid3tag/include'],
+	 'libraries': ['ThirdParty/libid3tag/ios/libid3tag.xcframework'], 'ldflags': ['-lz']},
+	{'name': 'Opus', 'dir': 'Plugins/Opus/Opus',
+	 'headers': ['ThirdParty/opusfile/include', 'ThirdParty/opus/include', 'ThirdParty/ogg/include', 'ThirdParty/flac/include'],
+	 'libraries': ['ThirdParty/opusfile/ios/libopusfile.xcframework', 'ThirdParty/opus/ios/libopus.xcframework',
+	               'ThirdParty/ogg/ios/libogg.xcframework', 'ThirdParty/flac/ios/libFLAC.xcframework']},
+	{'name': 'Organya', 'dir': 'Plugins/Organya',
+	 'resources': ['wavetable.dat', 'fx96.pxt', 'fx97.pxt', 'fx98.pxt', 'fx99.pxt', 'fx9a.pxt', 'fx9b.pxt']},
+	{'name': 'Vorbis', 'dir': 'Plugins/Vorbis',
+	 'headers': ['Plugins/Vorbis/vorbis-tools/include', 'ThirdParty/vorbis/include', 'ThirdParty/ogg/include', 'ThirdParty/flac/include'],
+	 'libraries': ['ThirdParty/vorbis/ios/libvorbisfile.xcframework', 'ThirdParty/vorbis/ios/libvorbis.xcframework',
+	               'ThirdParty/ogg/ios/libogg.xcframework', 'ThirdParty/flac/ios/libFLAC.xcframework']},
+	{'name': 'WavPack', 'dir': 'Plugins/WavPack',
+	 'headers': ['ThirdParty/WavPack/include'],
+	 'libraries': ['ThirdParty/WavPack/ios/libwavpack.xcframework']},
 	{'name': 'TagLib', 'dir': 'Plugins/TagLib',
 	 'libraries': ['ThirdParty/taglib/ios/libtag.xcframework'], 'ldflags': ['-lz']},
 ]
@@ -56,14 +114,29 @@ HEADER_SEARCH_PATHS = [
 	'Playlist',
 ]
 
-# Other projects whose framework the plugins link: (name, project path,
-# target ID, product ID) — the IDs are those in the other project.
-SUBPROJECTS = [
-	('CogAudio', 'Audio/CogAudio.xcodeproj', '8DC2EF4F0486A6940098B216', '8DC2EF5B0486A6940098B216'),
-	('File_Extractor', 'Frameworks/File_Extractor/File_Extractor.xcodeproj', '8359FF3B17FEF39F0060F3ED', '8359FF3C17FEF39F0060F3ED'),
-]
+# Projects whose framework every plugin links.
+COMMON_PROJECTS = ['Audio/CogAudio.xcodeproj', 'Frameworks/File_Extractor/File_Extractor.xcodeproj']
 
-SYSTEM_FRAMEWORKS = ['AudioToolbox', 'AVFoundation', 'CoreMedia', 'Foundation', 'Security']
+
+def framework_target(project):
+	"""(product name, target ID, product ID) of a project's framework target."""
+	text = (ROOT / project / 'project.pbxproj').read_text(errors='replace')
+	for m in re.finditer(r'\t\t([0-9A-F]{24}) /\* [^*]+ \*/ = \{\n\t\t\tisa = PBXNativeTarget;(.*?)\n\t\t\};', text, re.S):
+		body = m.group(2)
+		if 'com.apple.product-type.framework' not in body:
+			continue
+		product = re.search(r'productReference = ([0-9A-F]{24}) /\* ([^*]+)\.framework \*/', body)
+		return product.group(2), m.group(1), product.group(1)
+	raise SystemExit(f'No framework target in {project}')
+
+
+SUBPROJECTS = []
+for project in COMMON_PROJECTS + [p for plugin in PLUGINS for p in plugin.get('projects', [])]:
+	if project not in [entry[1] for entry in SUBPROJECTS]:
+		name, target_id, product_id = framework_target(project)
+		SUBPROJECTS.append((name, project, target_id, product_id))
+
+SYSTEM_FRAMEWORKS = ['AudioToolbox', 'AVFoundation', 'CoreMedia', 'CoreMIDI', 'Foundation', 'Security']
 
 SOURCE_TYPES = {
 	'.m': 'sourcecode.c.objc',
@@ -120,16 +193,20 @@ class Ref(str):
 
 plugin_groups = []
 plugin_sources = []  # build file refs for the Sources phase
+plugin_resources = []  # and for the Resources phase
 for plugin in PLUGINS:
 	directory = ROOT / plugin['dir']
 	exclude = set(plugin.get('exclude', []))
 	explicit = explicit_file_types(directory)
 	children = []
-	for path in sorted(directory.rglob('*')):
+	extra = [ROOT / path for path in plugin.get('extra_sources', [])]
+	for path in sorted(directory.rglob('*')) + extra:
 		if not path.is_file() or any(part.endswith(('.xcodeproj', '.lproj')) for part in path.parts):
 			continue
 		relative = path.relative_to(ROOT).as_posix()
 		if path.name in exclude or relative in exclude:
+			continue
+		if 'sources' in plugin and path not in extra and path.relative_to(directory).as_posix() not in plugin['sources']:
 			continue
 		ext = path.suffix
 		if ext not in SOURCE_TYPES and ext not in HEADER_TYPES:
@@ -143,9 +220,21 @@ for plugin in PLUGINS:
 		children.append(Ref(file_id, path.name))
 		if ext in SOURCE_TYPES:
 			build_id = uid('build', relative)
-			add('PBXBuildFile', build_id, f'{path.name} in Sources', {
-				'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, path.name)})
+			build_file = {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, path.name)}
+			if plugin.get('cflags'):
+				build_file['settings'] = {'COMPILER_FLAGS': plugin['cflags']}
+			add('PBXBuildFile', build_id, f'{path.name} in Sources', build_file)
 			plugin_sources.append(Ref(build_id, f'{path.name} in Sources'))
+	for resource in plugin.get('resources', []):
+		relative = f"{plugin['dir']}/{resource}"
+		file_id = uid('file', relative)
+		add('PBXFileReference', file_id, resource, {
+			'isa': 'PBXFileReference', 'lastKnownFileType': 'file', 'name': resource,
+			'path': rel(relative), 'sourceTree': 'SOURCE_ROOT'})
+		children.append(Ref(file_id, resource))
+		build_id = uid('resource', relative)
+		add('PBXBuildFile', build_id, f'{resource} in Resources', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, resource)})
+		plugin_resources.append(Ref(build_id, f'{resource} in Resources'))
 	group_id = uid('group', plugin['name'])
 	add('PBXGroup', group_id, plugin['name'], {
 		'isa': 'PBXGroup', 'children': children, 'name': plugin['name'], 'sourceTree': '<group>'})
@@ -288,6 +377,7 @@ def phase(isa, name, target, files):
 plugin_phases = [
 	phase('PBXSourcesBuildPhase', 'Sources', 'CogPlugins', plugin_sources),
 	phase('PBXFrameworksBuildPhase', 'Frameworks', 'CogPlugins', plugin_links),
+	phase('PBXResourcesBuildPhase', 'Resources', 'CogPlugins', plugin_resources),
 ]
 test_phases = [
 	phase('PBXSourcesBuildPhase', 'Sources', 'CogPluginsTests', test_sources),
@@ -316,7 +406,7 @@ def configurations(owner, common, debug, release, base=None):
 
 project_settings = {
 	'ALWAYS_SEARCH_USER_PATHS': 'NO',
-	'CLANG_CXX_LANGUAGE_STANDARD': 'gnu++17',
+	'CLANG_CXX_LANGUAGE_STANDARD': 'gnu++20',
 	'CLANG_ENABLE_MODULES': 'YES',
 	'CLANG_ENABLE_OBJC_ARC': 'YES',
 	'GCC_C_LANGUAGE_STANDARD': 'gnu17',
@@ -402,7 +492,11 @@ def render(value, indent):
 
 
 def render_inline(body):
-	return '{' + ''.join(f'{quote(k)} = {v if isinstance(v, Ref) else quote(v)}; ' for k, v in body.items()) + '}'
+	def value(v):
+		if isinstance(v, dict):
+			return render_inline(v)
+		return v if isinstance(v, Ref) else quote(v)
+	return '{' + ''.join(f'{quote(k)} = {value(v)}; ' for k, v in body.items()) + '}'
 
 
 INLINE = {'PBXBuildFile', 'PBXFileReference'}

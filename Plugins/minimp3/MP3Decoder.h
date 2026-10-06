@@ -6,7 +6,7 @@
 //  Copyright 2006 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #define MINIMP3_FLOAT_OUTPUT 1
 #define MINIMP3_NO_STDIO 1

@@ -1,7 +1,7 @@
 //
 // APLDecoder.h
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import "Plugin.h"
 

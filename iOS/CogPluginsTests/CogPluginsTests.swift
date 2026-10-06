@@ -80,7 +80,58 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertTrue(names(plugins.containers()["pls"]).contains("PlsContainer"))
 	}
 
+	/// Every plugin linked into CogPlugins registers what it reads.
+	func testEveryPluginRegisters() {
+		let registered = [plugins.decodersByExtension(), plugins.decodersByMimeType(), plugins.containers(), plugins.sources(),
+		                  plugins.metadataReaders(), plugins.propertiesReadersByExtension()].map { names($0) }.joined()
+		let classes = ["AdPlugDecoder", "APLDecoder", "ArchiveContainer", "ArchiveSource", "CoreAudioDecoder", "CueSheetDecoder",
+		               "FFMPEGDecoder", "FileSource", "FlacDecoder", "GameDecoder", "HCDecoder", "HLSDecoder", "HTTPSource",
+		               "HVLDecoder", "jxsDecoder", "libvgmDecoder", "M3uContainer", "MIDIDecoder", "MP3Decoder", "MusepackDecoder",
+		               "OMPTDecoder", "OpusFile", "OrganyaDecoder", "PlsContainer", "ShortenDecoder", "SidDecoder", "SilenceDecoder",
+		               "TagLibMetadataReader", "VGMDecoder", "VorbisDecoder", "WavPackDecoder"]
+		for name in classes {
+			XCTAssertTrue(registered.contains(name), "\(name) is not registered")
+		}
+	}
+
 	// MARK: - Decoding
+
+	/// A MIDI file through the MIDI plugin's FM synthesizer (OPL3), which
+	/// needs no SoundFont: one note, then silence.
+	func testAMIDIFileDecodesThroughTheMIDIPlugin() throws {
+		let defaults = UserDefaults.standard
+		let settings: [String: Any] = ["midiPlugin": "OPL3W0", "synthSampleRate": 44100, "synthDefaultSeconds": 150,
+		                               "synthDefaultFadeSeconds": 0, "synthDefaultLoopCount": 1]
+		for (key, value) in settings { defaults.set(value, forKey: key) }
+		defer { for key in settings.keys { defaults.removeObject(forKey: key) } }
+
+		// Format 0, 96 ticks a quarter note at 120 bpm: middle C for a quarter.
+		let track: [UInt8] = [0x00, 0xC0, 0x00, 0x00, 0x90, 60, 100, 0x60, 0x80, 60, 0, 0x00, 0xFF, 0x2F, 0x00]
+		var smf = Data("MThd".utf8) + Data([0, 0, 0, 6, 0, 0, 0, 1, 0, 96])
+		smf += Data("MTrk".utf8) + Data([0, 0, 0, UInt8(track.count)]) + Data(track)
+		let url = directory.appendingPathComponent("note.mid")
+		try smf.write(to: url)
+
+		let source = try XCTUnwrap(plugins.audioSource(for: url))
+		XCTAssertTrue(source.open(url))
+		let decoder = try XCTUnwrap((NSClassFromString("MIDIDecoder") as? NSObject.Type)?.init() as? CogDecoder)
+		guard decoder.open(source) else {
+			return XCTFail("the MIDI plugin would not open the file")
+		}
+		var frames = 0
+		var peak: Float = 0
+		while frames < 44100 * 10, let chunk = decoder.readAudio(), chunk.frameCount() > 0 {
+			frames += Int(chunk.frameCount())
+			if chunk.format.mFormatFlags & kAudioFormatFlagIsFloat != 0 {
+				chunk.removeSamples(chunk.frameCount()).withUnsafeBytes { peak = max(peak, $0.bindMemory(to: Float.self).map(abs).max() ?? 0) }
+			}
+		}
+		decoder.close()
+		XCTAssertGreaterThan(frames, 44100 / 4, "at least the note")
+		XCTAssertLessThan(frames, 44100 * 10, "and it ends")
+		XCTAssertGreaterThan(peak, 0.01, "the note is heard")
+	}
+
 
 	func testAWAVFileDecodesThroughThePlugins() throws {
 		let url = try writeWAV(named: "sine.wav", seconds: 1)

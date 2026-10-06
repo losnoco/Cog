@@ -52,18 +52,18 @@ static const int chmap[MAXCHANNELS][MAXCHANNELS] = {
 	{ 0, 2, 1, 7, 5, 6, 3, 4 } // l, c, r, sl, sr, bl, br, lfe -> l, r, c, lfe, bl, br, sl, sr
 };
 
-int sourceRead(void *_stream, unsigned char *_ptr, int _nbytes) {
+static int sourceRead(void *_stream, unsigned char *_ptr, int _nbytes) {
 	id source = (__bridge id)_stream;
 
 	return (int)[source read:_ptr amount:_nbytes];
 }
 
-int sourceSeek(void *_stream, opus_int64 _offset, int _whence) {
+static int sourceSeek(void *_stream, opus_int64 _offset, int _whence) {
 	id source = (__bridge id)_stream;
 	return ([source seek:_offset whence:_whence] ? 0 : -1);
 }
 
-int sourceClose(void *_stream) {
+static int sourceClose(void *_stream) {
 	return 0;
 }
 

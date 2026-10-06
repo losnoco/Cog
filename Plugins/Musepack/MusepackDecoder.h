@@ -7,7 +7,7 @@
 //
 
 #import "Plugin.h"
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <mpcdec/decoder.h>
 #import <mpcdec/internal.h>
 #import <mpcdec/mpcdec.h>

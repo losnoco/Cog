@@ -18,7 +18,8 @@ typedef char TEXT;
 #ifdef _WIN32
 typedef int BOOL;
 #else
-#ifdef __aarch64__
+// As Objective-C has it: bool on arm64 and on every iOS target.
+#if defined(__aarch64__) || defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__)
 #include <stdbool.h>
 typedef bool BOOL;
 #else

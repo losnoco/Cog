@@ -245,6 +245,10 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 		plugin = @"Spessa";
 		[[NSUserDefaults standardUserDefaults] setValue:plugin forKey:@"midiPlugin"];
 
+#if TARGET_OS_IPHONE
+		// No alert from a decoder on iOS: the app says so if it wants to.
+		ALog(@"BASSMIDI has been replaced by SpessaSynth");
+#else
 		dispatch_sync(dispatch_get_main_queue(), ^{
 			NSAlert *alert = [NSAlert new];
 			[alert setMessageText:[[NSBundle mainBundle] localizedStringForKey:@"BassNoticeTitle" value:@"MIDI Synthesizer Notice" table:nil]];
@@ -253,6 +257,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 			[alert beginSheetModalForWindow:[NSApp mainWindow] completionHandler:^(NSModalResponse returnCode) {
 			}];
 		});
+#endif
 
 		[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"midiPluginBassNoMore"];
 	}

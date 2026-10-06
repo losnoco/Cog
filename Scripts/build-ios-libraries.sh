@@ -68,6 +68,40 @@ cmake_build() {
 	done
 }
 
+# autotools_build <source directory> <library file name> [configure options ...]:
+# builds each architecture apart (autotools cross-compiles one at a time),
+# then joins them into each platform's prefix.
+autotools_build() {
+	source=$1
+	library=$2
+	shift 2
+	for platform in ${PLATFORMS}; do
+		sdk=${platform%%:*}
+		sysroot=$(xcrun --sdk "${sdk}" --show-sdk-path)
+		suffix=""
+		[ "${sdk}" = iphonesimulator ] && suffix=-simulator
+		slices=""
+		for arch in $(echo "${platform#*:}" | tr , ' '); do
+			build="${WORK}/build-$(basename "${source}")-${sdk}-${arch}"
+			mkdir -p "${build}"
+			host=$([ "${arch}" = arm64 ] && echo aarch64-apple-ios || echo x86_64-apple-ios)
+			# An iOS host and an explicit build, so configure knows it cross-
+			# compiles: otherwise it runs a test program to find out, which for
+			# x86_64 starts Rosetta.
+			(cd "${build}" && "${source}/configure" --build=aarch64-apple-darwin --host="${host}" --prefix="${build}/install" \
+				--disable-shared --enable-static \
+				CC="$(xcrun --sdk "${sdk}" -f clang) -target ${arch}-apple-ios${IOS_MIN}${suffix} -isysroot ${sysroot}" \
+				CFLAGS="-O2" "$@" >"${build}/configure.log" 2>&1 && make -j "${JOBS}" install >"${build}/make.log" 2>&1) || {
+				tail -20 "${build}/configure.log" "${build}/make.log" >&2
+				exit 1
+			}
+			slices="${slices} ${build}/install/lib/${library}"
+		done
+		mkdir -p "$(prefix "${sdk}")/lib"
+		lipo -create ${slices} -output "$(prefix "${sdk}")/lib/${library}"
+	done
+}
+
 # xcframework <ThirdParty directory> <library file name> [headers]: packs
 # the library from each platform's prefix into ThirdParty/<directory>/ios/,
 # with a headers directory if given (otherwise the headers are those in
@@ -136,6 +170,71 @@ build_flac() {
 	cmake_build "${WORK}/flac-1.5.0" -DBUILD_PROGRAMS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_DOCS=OFF \
 		-DINSTALL_MANPAGES=OFF -DBUILD_CXXLIBS=OFF -DWITH_OGG=ON -DWITH_STACK_PROTECTOR=OFF
 	xcframework flac libFLAC.a
+}
+
+# Vorbis, Opus and opusfile at the commits the macOS builds name.
+build_vorbis() {
+	[ -f "$(prefix iphoneos)/lib/libogg.a" ] || build_ogg
+	fetch https://github.com/xiph/vorbis/archive/43bbff0141028e58d476c1d5fd45dd5573db576d.tar.gz vorbis.tar.gz \
+		9e2b69d155b80f3c62b5b39f8f0dc8a67f7c84b9dee2b435af12628c90806586
+	cmake_build "${WORK}/vorbis-43bbff0141028e58d476c1d5fd45dd5573db576d"
+	xcframework vorbis libvorbis.a
+	xcframework vorbis libvorbisfile.a
+}
+
+build_opus() {
+	[ -f "$(prefix iphoneos)/lib/libogg.a" ] || build_ogg
+	fetch https://github.com/xiph/opus/archive/7aa5be9878eb81fb1001ed1e3f2c35fbdc4f6edb.tar.gz opus.tar.gz \
+		c5dcf7b1d63140f5c031177aa442b0cd946cf15883d4115c45e35bfd0e08748d
+	# A snapshot has no version file for CMake to read.
+	echo "PACKAGE_VERSION=\"1.5.2\"" > "${WORK}/opus-7aa5be9878eb81fb1001ed1e3f2c35fbdc4f6edb/package_version"
+	cmake_build "${WORK}/opus-7aa5be9878eb81fb1001ed1e3f2c35fbdc4f6edb" -DOPUS_BUILD_TESTING=OFF -DOPUS_BUILD_PROGRAMS=OFF
+	xcframework opus libopus.a
+	fetch https://github.com/xiph/opusfile/archive/24d6e752b8c8c82e46231c74b0e4146b3d189216.tar.gz opusfile.tar.gz \
+		beb6ea885f62f84c2a3c3f873339884f8fb33912fc04ebef8db9458eaa498432
+	echo "PACKAGE_VERSION=\"0.12\"" > "${WORK}/opusfile-24d6e752b8c8c82e46231c74b0e4146b3d189216/package_version"
+	cmake_build "${WORK}/opusfile-24d6e752b8c8c82e46231c74b0e4146b3d189216" -DOP_DISABLE_HTTP=ON -DOP_DISABLE_DOCS=ON \
+		-DOP_DISABLE_EXAMPLES=ON
+	xcframework opusfile libopusfile.a
+}
+
+build_mpg123() {
+	fetch https://downloads.sourceforge.net/project/mpg123/mpg123/1.33.5/mpg123-1.33.5.tar.bz2 mpg123.tar.bz2 \
+		0d7ebc8da0aff3ca383c8c6b5a6adbe402ee5bb256685b8c5499f3a739f9d6dd
+	cmake_build "${WORK}/mpg123-1.33.5/ports/cmake" -DBUILD_PROGRAMS=OFF -DBUILD_LIBOUT123=OFF
+	xcframework mpg123 libmpg123.a
+}
+
+build_speex() {
+	fetch https://downloads.xiph.org/releases/speex/speex-1.2.1.tar.gz speex.tar.gz \
+		4b44d4f2b38a370a2d98a78329fefc56a0cf93d1c1be70029217baae6628feea
+	autotools_build "${WORK}/speex-1.2.1" libspeex.a --disable-binaries --disable-oggtest
+	xcframework speex libspeex.a
+}
+
+build_id3tag() {
+	fetch https://codeberg.org/tenacityteam/libid3tag/archive/0.16.2.tar.gz libid3tag.tar.gz \
+		02721346d554c4b4aa3966b134152be65eb4df1fb9322d2d019133238d2ba017
+	cmake_build "${WORK}/libid3tag" -DBUILD_TESTING=OFF
+	xcframework libid3tag libid3tag.a
+}
+
+build_wavpack() {
+	fetch https://github.com/dbry/WavPack/releases/download/5.8.1/wavpack-5.8.1.tar.xz wavpack.tar.xz \
+		7322775498602c8850afcfc1ae38f99df4cbcd51386e873d6b0f8047e55c0c26
+	cmake_build "${WORK}/wavpack-5.8.1" -DWAVPACK_BUILD_PROGRAMS=OFF -DWAVPACK_BUILD_DOCS=OFF -DBUILD_TESTING=OFF \
+		-DWAVPACK_BUILD_COOLEDIT_PLUGIN=OFF -DWAVPACK_BUILD_WINAMP_PLUGIN=OFF -DWAVPACK_INSTALL_DOCS=OFF
+	xcframework WavPack libwavpack.a
+}
+
+build_libvgm() {
+	fetch https://github.com/ValleyBell/libvgm/archive/867223e7c33d63de115d1ab955f784c44f19040a.tar.gz libvgm.tar.gz \
+		9cfaa21546d30b038dac1e20379467c258227143d45f8af9f25f4d3768d95dae
+	cmake_build "${WORK}/libvgm-867223e7c33d63de115d1ab955f784c44f19040a" -DBUILD_LIBAUDIO=NO -DBUILD_PLAYER=NO -DBUILD_VGM2WAV=NO \
+		-DBUILD_TESTS=NO
+	for library in libvgm-emu libvgm-player libvgm-utils; do
+		xcframework libvgm "${library}.a"
+	done
 }
 
 # TagLib's headers go in the xcframework as tag/, so the plugins' framework
@@ -229,7 +328,7 @@ build_ffmpeg() {
 	done
 }
 
-LIBRARIES=${*:-"soxr rubberband ogg flac taglib fdkaac ffmpeg"}
+LIBRARIES=${*:-"soxr rubberband ogg flac vorbis opus mpg123 speex id3tag wavpack libvgm taglib fdkaac ffmpeg"}
 for library in ${LIBRARIES}; do
 	"build_${library}"
 done

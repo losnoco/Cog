@@ -5,7 +5,7 @@
 //  Created by Christopher Snowhill on 12/4/22.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import "OrganyaDecoder.h"
 
@@ -139,7 +139,7 @@ namespace Organya {
 	static std::vector<short> DrumSamples[12];
 	
 	void LoadWaveTable(void) {
-		NSURL *url = [[NSBundle bundleWithIdentifier:@"co.losno.Organya"] URLForResource:@"wavetable" withExtension:@"dat"];
+		NSURL *url = [[NSBundle bundleForClass:[OrganyaDecoder class]] URLForResource:@"wavetable" withExtension:@"dat"];
 		if(!url) return;
 		NSString *path = [url path];
 		FILE* fp = std::fopen([path UTF8String], "rb");
@@ -159,7 +159,7 @@ namespace Organya {
 			// Load the drum parameters
 			char Buf[64] = {};
 			std::snprintf(Buf, sizeof(Buf)-1, "fx%02x", patch[drumno]);
-			NSURL *url = [[NSBundle bundleWithIdentifier:@"co.losno.Organya"] URLForResource:[NSString stringWithUTF8String:Buf] withExtension:@"pxt"];
+			NSURL *url = [[NSBundle bundleForClass:[OrganyaDecoder class]] URLForResource:[NSString stringWithUTF8String:Buf] withExtension:@"pxt"];
 			if(!url) continue;
 			NSString *path = [url path];
 			FILE* fp = std::fopen([path UTF8String], "rb");

@@ -6,7 +6,7 @@
 //  Copyright 2019-2026 __LoSnoCo__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import "Plugin.h"
 

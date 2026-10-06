@@ -54,31 +54,31 @@ int get_default_worker_threads (void)
 
 @implementation WavPackDecoder
 
-int32_t ReadBytesProc(void *ds, void *data, int32_t bcount) {
+static int32_t ReadBytesProc(void *ds, void *data, int32_t bcount) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	return (int32_t)[[wv source] read:data amount:bcount];
 }
 
-uint32_t GetPosProc(void *ds) {
+static uint32_t GetPosProc(void *ds) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	return (uint32_t)[[wv source] tell];
 }
 
-int SetPosAbsProc(void *ds, uint32_t pos) {
+static int SetPosAbsProc(void *ds, uint32_t pos) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	return ([[wv source] seek:pos whence:SEEK_SET] ? 0 : -1);
 }
 
-int SetPosRelProc(void *ds, int32_t delta, int mode) {
+static int SetPosRelProc(void *ds, int32_t delta, int mode) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	return ([[wv source] seek:delta whence:mode] ? 0 : -1);
 }
 
-int PushBackByteProc(void *ds, int c) {
+static int PushBackByteProc(void *ds, int c) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	if([[wv source] seekable]) {
@@ -90,7 +90,7 @@ int PushBackByteProc(void *ds, int c) {
 	}
 }
 
-uint32_t GetLengthProc(void *ds) {
+static uint32_t GetLengthProc(void *ds) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	if([[wv source] seekable]) {
@@ -107,13 +107,13 @@ uint32_t GetLengthProc(void *ds) {
 	}
 }
 
-int CanSeekProc(void *ds) {
+static int CanSeekProc(void *ds) {
 	WavPackReader *wv = (__bridge WavPackReader *)ds;
 
 	return [[wv source] seekable];
 }
 
-int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
+static int32_t WriteBytesProc(void *ds, void *data, int32_t bcount) {
 	return -1;
 }
 

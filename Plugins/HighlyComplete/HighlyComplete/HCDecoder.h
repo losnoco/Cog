@@ -8,7 +8,7 @@
 
 #import "Plugin.h"
 #include "circular_buffer.h"
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 @interface HCDecoder : NSObject <CogDecoder, CogMetadataReader> {
 	id<CogSource> currentSource;
