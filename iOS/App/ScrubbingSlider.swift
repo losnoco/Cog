@@ -5,9 +5,11 @@
 //  A slider whose thumb slows down as the finger moves away from the track,
 //  as the Music app's position slider once did: full speed on it, then
 //  half, quarter and fine further off. Neither Slider nor UISlider offers
-//  that; a UISlider that tracks its touches its own way does, and as a
-//  control it keeps the touch from scrolling a form or pulling down a sheet,
-//  as the stock one does.
+//  that, and UISlider moves its thumb with gestures of its own that a
+//  subclass cannot slow. So a stock UISlider only draws, and a pan on the
+//  view around it, begun only on the thumb, moves it: a pan there also
+//  keeps a form from scrolling and a sheet from being pulled down, as the
+//  stock slider does. VoiceOver gets a stock Slider in its place.
 //
 
 import SwiftUI
@@ -25,6 +27,9 @@ struct ScrubbingSlider: View {
 	var body: some View {
 		SliderRepresentable(value: $value, range: range, tint: tint, onEditingChanged: onEditingChanged) { speed = $0 }
 			.frame(height: 32)
+			.accessibilityRepresentation {
+				Slider(value: $value, in: range)
+			}
 			.overlay(alignment: .top) {
 				if let speed, speed != .full {
 					Text(speed.name)
@@ -80,84 +85,100 @@ private struct SliderRepresentable: UIViewRepresentable {
 	let onEditingChanged: (Bool) -> Void
 	let onSpeedChange: (ScrubSpeed?) -> Void
 
-	func makeUIView(context: Context) -> ScrubbingUISlider {
-		let slider = ScrubbingUISlider()
-		slider.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .valueChanged)
-		slider.setContentHuggingPriority(.defaultLow, for: .horizontal)
-		slider.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-		return slider
+	func makeUIView(context: Context) -> ScrubbingSliderView {
+		let view = ScrubbingSliderView()
+		view.setContentHuggingPriority(.defaultLow, for: .horizontal)
+		view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+		return view
 	}
 
-	func updateUIView(_ slider: ScrubbingUISlider, context: Context) {
-		context.coordinator.parent = self
-		slider.minimumValue = Float(range.lowerBound)
-		slider.maximumValue = Float(range.upperBound)
+	func updateUIView(_ view: ScrubbingSliderView, context: Context) {
+		view.slider.minimumValue = Float(range.lowerBound)
+		view.slider.maximumValue = Float(range.upperBound)
 		// Not while the finger has it: the binding may round or snap what it
 		// is given, and the thumb would stick there.
-		if !slider.isTracking {
-			slider.value = Float(value)
+		if !view.isScrubbing {
+			view.slider.value = Float(value)
 		}
-		slider.minimumTrackTintColor = tint.map(UIColor.init)
-		slider.isEnabled = context.environment.isEnabled
-		slider.onTracking = { context.coordinator.parent.onEditingChanged($0) }
-		slider.onSpeedChange = { context.coordinator.parent.onSpeedChange($0) }
-	}
-
-	func makeCoordinator() -> Coordinator {
-		Coordinator(parent: self)
-	}
-
-	final class Coordinator: NSObject {
-		var parent: SliderRepresentable
-
-		init(parent: SliderRepresentable) {
-			self.parent = parent
-		}
-
-		@objc func changed(_ slider: UISlider) {
-			parent.value = Double(slider.value)
-		}
+		view.slider.minimumTrackTintColor = tint.map(UIColor.init)
+		view.slider.isEnabled = context.environment.isEnabled
+		view.onChange = { value = Double($0) }
+		view.onScrubbing = onEditingChanged
+		view.onSpeedChange = onSpeedChange
 	}
 }
 
-final class ScrubbingUISlider: UISlider {
-	var onTracking: (Bool) -> Void = { _ in }
+final class ScrubbingSliderView: UIView {
+	let slider = UISlider()
+	var onChange: (Float) -> Void = { _ in }
+	var onScrubbing: (Bool) -> Void = { _ in }
 	var onSpeedChange: (ScrubSpeed?) -> Void = { _ in }
-	/// Where the finger was at the last move, and how fast it scrubs.
+	private(set) var isScrubbing = false
+	/// Where the finger was at the last move, and the value it has moved the
+	/// thumb to (kept here, as what the binding does with it may differ).
 	private var lastX: CGFloat = 0
+	private var scrubbed: Float = 0
 	private var speed: ScrubSpeed? {
 		didSet { if speed != oldValue { onSpeedChange(speed) } }
 	}
 
-	override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
-		// The stock slider decides whether the touch takes the thumb.
-		guard super.beginTracking(touch, with: event) else { return false }
-		lastX = touch.location(in: self).x
-		speed = .full
-		onTracking(true)
-		return true
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		slider.isUserInteractionEnabled = false
+		slider.translatesAutoresizingMaskIntoConstraints = false
+		addSubview(slider)
+		NSLayoutConstraint.activate([
+			slider.leadingAnchor.constraint(equalTo: leadingAnchor),
+			slider.trailingAnchor.constraint(equalTo: trailingAnchor),
+			slider.centerYAnchor.constraint(equalTo: centerYAnchor),
+		])
+		addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(panned(_:))))
 	}
 
-	override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
-		let location = touch.location(in: self)
-		let track = trackRect(forBounds: bounds)
-		speed = ScrubSpeed(distance: abs(location.y - bounds.midY))
-		let moved = Float((location.x - lastX) / max(track.width, 1)) * (maximumValue - minimumValue) * (speed?.factor ?? 1)
-		lastX = location.x
-		setValue(value + moved, animated: false)
-		sendActions(for: .valueChanged)
-		return true
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
 	}
 
-	override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
-		super.endTracking(touch, with: event)
-		speed = nil
-		onTracking(false)
+	/// Only a touch on the thumb, or near it, takes it; and one there is
+	/// not a scroll or a sheet's pull, as UISlider has it.
+	override func gestureRecognizerShouldBegin(_ recognizer: UIGestureRecognizer) -> Bool {
+		let onThumb = slider.isEnabled && isOnThumb(recognizer.location(in: slider))
+		if recognizer.view == self { return onThumb }
+		return !onThumb && super.gestureRecognizerShouldBegin(recognizer)
 	}
 
-	override func cancelTracking(with event: UIEvent?) {
-		super.cancelTracking(with: event)
-		speed = nil
-		onTracking(false)
+	private func isOnThumb(_ point: CGPoint) -> Bool {
+		let track = slider.trackRect(forBounds: slider.bounds)
+		let thumb = slider.thumbRect(forBounds: slider.bounds, trackRect: track, value: slider.value)
+		return thumb.insetBy(dx: -16, dy: -16).contains(point)
+	}
+
+	@objc private func panned(_ pan: UIPanGestureRecognizer) {
+		let location = pan.location(in: slider)
+		switch pan.state {
+		case .began:
+			isScrubbing = true
+			// Where the touch landed, which the pan only reports after the
+			// finger has moved a little.
+			lastX = location.x - pan.translation(in: slider).x
+			scrubbed = slider.value
+			speed = .full
+			onScrubbing(true)
+			fallthrough
+		case .changed:
+			speed = ScrubSpeed(distance: abs(location.y - slider.bounds.midY))
+			let track = slider.trackRect(forBounds: slider.bounds)
+			let span = slider.maximumValue - slider.minimumValue
+			scrubbed += Float((location.x - lastX) / max(track.width, 1)) * span * (speed?.factor ?? 1)
+			scrubbed = min(max(scrubbed, slider.minimumValue), slider.maximumValue)
+			lastX = location.x
+			slider.value = scrubbed
+			onChange(scrubbed)
+		default:
+			guard isScrubbing else { return }
+			isScrubbing = false
+			speed = nil
+			onScrubbing(false)
+		}
 	}
 }
