@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SettingsView: View {
 	@Environment(\.dismiss) private var dismiss
+	@EnvironmentObject private var locations: MusicLocations
 	@AppStorage("enableFading") private var fading = true
 	@AppStorage("volumeScaling") private var replayGain = "albumGainWithPeak"
 	@AppStorage("alwaysStopAfterCurrent") private var stopAfterEach = false
@@ -20,7 +21,15 @@ struct SettingsView: View {
 	var body: some View {
 		NavigationStack {
 			Form {
-				MusicLocationsSection()
+				Section {
+					NavigationLink {
+						MusicLocationsView()
+					} label: {
+						LabeledContent("Music Locations", value: "\(locations.locations.count)")
+					}
+				} footer: {
+					Text("Files and folders added from Files, which Cog plays where they are.")
+				}
 				Section("Playback") {
 					Toggle("Fade on Pause and Seek", isOn: $fading)
 					Toggle("Stop After Each Track", isOn: $stopAfterEach)
@@ -68,30 +77,42 @@ struct SettingsView: View {
 }
 
 /// What Cog may play outside its own folder, and taking that back.
-struct MusicLocationsSection: View {
+struct MusicLocationsView: View {
 	@EnvironmentObject private var locations: MusicLocations
 
 	var body: some View {
-		Section {
-			ForEach(locations.locations) { location in
-				VStack(alignment: .leading, spacing: 2) {
-					Text(location.name)
-					Text(location.path)
-						.font(.caption)
-						.foregroundStyle(.secondary)
-						.lineLimit(1)
-						.truncationMode(.head)
+		List {
+			Section {
+				ForEach(locations.locations) { location in
+					VStack(alignment: .leading, spacing: 2) {
+						Text(location.name)
+						Text(location.path)
+							.font(.caption)
+							.foregroundStyle(.secondary)
+							.lineLimit(1)
+							.truncationMode(.head)
+					}
+				}
+				.onDelete { offsets in
+					offsets.map { locations.locations[$0] }.forEach(locations.remove)
+				}
+			} footer: {
+				if !locations.locations.isEmpty {
+					Text("Removing a location leaves its tracks in the playlist, unplayable.")
 				}
 			}
-			.onDelete { offsets in
-				offsets.map { locations.locations[$0] }.forEach(locations.remove)
+		}
+		.overlay {
+			if locations.locations.isEmpty {
+				ContentUnavailableView("No Music Locations", systemImage: "folder",
+				                       description: Text("Files and folders you add from Files play where they are, and show up here."))
 			}
-		} header: {
-			Text("Music Locations")
-		} footer: {
-			Text(locations.locations.isEmpty
-				? "Files and folders you add from Files play where they are, and show up here."
-				: "Files and folders Cog plays where they are. Removing one leaves its tracks in the playlist, unplayable.")
+		}
+		.navigationTitle("Music Locations")
+		.toolbar {
+			if !locations.locations.isEmpty {
+				EditButton()
+			}
 		}
 	}
 }
