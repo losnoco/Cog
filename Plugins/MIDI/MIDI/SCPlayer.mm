@@ -13,6 +13,8 @@
 
 #import <Accelerate/Accelerate.h>
 
+#include <dlfcn.h>
+
 SCPlayer::SCPlayer()
 : MIDIPlayer() {
 	_player[0] = NULL;
@@ -164,13 +166,36 @@ static NSString *getRomName(NSString *baseName) {
 	return basePath;
 }
 
+/* The emulator's own back.data, from the framework that holds sc55_init:
+ * looked up once, as -[NSBundle bundleWithIdentifier:] scans every bundle
+ * loaded, which takes seconds on iOS. */
+static NSString *backDataPath(void) {
+	static NSString *path;
+	static dispatch_once_t once;
+	dispatch_once(&once, ^{
+		Dl_info info;
+		if(dladdr((const void *)&sc55_init, &info) && info.dli_fname) {
+			NSString *binary = [NSString stringWithUTF8String:info.dli_fname];
+			NSRange framework = [binary rangeOfString:@".framework/"];
+			if(framework.location != NSNotFound) {
+				NSString *bundlePath = [binary substringToIndex:framework.location + framework.length - 1];
+				path = [[NSBundle bundleWithPath:bundlePath] pathForResource:@"back" ofType:@"data"];
+			}
+		}
+		if(!path) {
+			path = [[NSBundle bundleWithIdentifier:@"org.losnoco.nuked-sc55"] pathForResource:@"back" ofType:@"data"];
+		}
+	});
+	return path;
+}
+
 static int loadRom(void *context, const char *name, uint8_t *buffer, uint32_t *size) {
 	@autoreleasepool {
 		NSString *_name = [NSString stringWithUTF8String:name];
 		NSString *romName;
 		if([_name isEqualToString:@"back.data"]) {
-			NSBundle *bundle = [NSBundle bundleWithIdentifier:@"org.losnoco.nuked-sc55"];
-			romName = [bundle pathForResource:@"back" ofType:@"data"];
+			romName = backDataPath();
+			if(!romName) return -1;
 		} else {
 			romName = getRomName(_name);
 		}
