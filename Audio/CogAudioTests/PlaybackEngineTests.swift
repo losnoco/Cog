@@ -298,6 +298,48 @@ final class PlaybackEngineTests: XCTestCase {
 		XCTAssertEqual(host.cleared, ["fine"])
 	}
 
+	/// Visualizations wait for the prebuffer notification: it comes once
+	/// audio reaches the device, and again after a seek, a resume and on
+	/// each new track.
+	func testPrebufferingIsAnnounced() throws {
+		let long = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
+		let short = SeamSignal.loopable(frames: 24000, sampleRate: 48000) // 0.5 s
+		let host = RecordingHost()
+		host.queue = [EngineTrack(url: URL(string: "memory://next")!, userInfo: "next", gain: 1)]
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { track in
+			MemoryDecoder(samples: track.url.host == "next" ? short : long, sampleRate: 48000, channels: 2)
+		}
+		engine.volume = 0
+
+		var posted = 0
+		let observer = NotificationCenter.default.addObserver(forName: Notification.Name("CogPlaybackDidPrebufferNotification"), object: nil, queue: nil) { _ in
+			posted += 1
+		}
+		defer { NotificationCenter.default.removeObserver(observer) }
+
+		XCTAssertTrue(engine.play(URL(string: "memory://long")!, userInfo: "long", rgInfo: nil, startPaused: false, seekTo: 0))
+		XCTAssertEqual(posted, 0, "not before audio is heard")
+		runMainLoop(until: { posted == 1 }, timeout: 5)
+		XCTAssertEqual(posted, 1, "on starting")
+
+		engine.seek(to: 5)
+		runMainLoop(until: { posted == 2 }, timeout: 5)
+		XCTAssertEqual(posted, 2, "after seeking")
+
+		engine.pause()
+		runMainLoop(until: { false }, timeout: 0.3)
+		XCTAssertEqual(posted, 2, "not while paused")
+		engine.resume()
+		XCTAssertEqual(posted, 3, "on resuming")
+
+		engine.seek(to: 9.5)
+		runMainLoop(until: { host.stopped }, timeout: 10)
+		XCTAssertTrue(host.log.contains("begin next"))
+		XCTAssertEqual(posted, 5, "after the seek, and for the next track")
+	}
+
 	/// At tempo 2 the playback position runs at twice the wall clock: the
 	/// stretch map, not the rendered frame count, gives track time.
 	func testThePositionFollowsTheTempo() throws {

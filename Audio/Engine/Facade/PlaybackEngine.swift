@@ -707,6 +707,7 @@ import Foundation
 			startDevice()
 			rampTransport(renderer, to: 1, frames: fadeFrames)
 			phase = .playing
+			postPrebuffered()
 		default:
 			return
 		}
@@ -1116,7 +1117,16 @@ import Foundation
 		currentOffset = offset
 		currentStart = position
 		currentHeard = true
+		postPrebuffered()
 	}
+
+	/// Audio has reached the device (a start, a seek, a new track or a
+	/// resume), as OutputCoreAudio announced it: visualizations wait for
+	/// this before trusting the reported latency.
+	private func postPrebuffered() {
+		NotificationCenter.default.post(name: Self.didPrebufferNotification, object: nil)
+	}
+	static let didPrebufferNotification = Notification.Name("CogPlaybackDidPrebufferNotification")
 
 	/// The heard track ended: count it if it has not been counted yet.
 	private func finishTrack() {
