@@ -74,6 +74,8 @@ struct NowPlayingView: View {
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
+	/// How tall Now Playing is, which says how much room the cards have.
+	@State private var height: CGFloat = 0
 	@EnvironmentObject private var equalizer: Equalizer
 
 	var body: some View {
@@ -98,7 +100,7 @@ struct NowPlayingView: View {
 			main
 			// Beside the playlist, the equalizer, speed and lyrics open in the
 			// room below, rather than in sheets over everything.
-			if isEmbedded && (showsEqualizer || showsSpeed || showsLyrics) {
+			if cardsFit && (showsEqualizer || showsSpeed || showsLyrics) {
 				panels
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
@@ -106,6 +108,7 @@ struct NowPlayingView: View {
 		.animation(.spring(duration: 0.4), value: showsEqualizer)
 		.animation(.spring(duration: 0.4), value: showsSpeed)
 		.animation(.spring(duration: 0.4), value: showsLyrics)
+		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
 			if let palette {
 				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
@@ -164,9 +167,21 @@ struct NowPlayingView: View {
 		}
 	}
 
-	/// A sheet's binding: shown only where the panels are not.
+	/// A sheet's binding: shown only where the cards are not.
 	private func sheet(_ shows: Binding<Bool>) -> Binding<Bool> {
-		Binding(get: { shows.wrappedValue && !isEmbedded }, set: { shows.wrappedValue = $0 })
+		Binding(get: { shows.wrappedValue && !cardsFit }, set: { shows.wrappedValue = $0 })
+	}
+
+	/// The cards' height: up to 440 points, leaving the art and controls
+	/// the 300 they need side by side.
+	private var cardHeight: CGFloat {
+		min(440, height - 300)
+	}
+
+	/// Beside the playlist, in a window tall enough for cards worth having;
+	/// otherwise the equalizer, speed and lyrics open in sheets.
+	private var cardsFit: Bool {
+		isEmbedded && cardHeight >= 220
 	}
 
 	/// The equalizer, speed and lyrics as cards, side by side.
@@ -206,7 +221,7 @@ struct NowPlayingView: View {
 				}
 			}
 		}
-		.frame(height: 440)
+		.frame(height: max(cardHeight - 16, 0))
 		.padding([.horizontal, .bottom], 16)
 	}
 
