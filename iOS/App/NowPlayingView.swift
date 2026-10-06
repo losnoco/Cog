@@ -304,8 +304,8 @@ struct NowPlayingView: View {
 			// Lifted off the art's colors, or the plain background.
 			.shadow(color: .black.opacity(palette == nil ? 0.18 : 0.35), radius: compact ? 4 : 6, y: compact ? 2 : 3)
 
-			// Each button an equal share of the width, which eight need on a
-			// phone held upright.
+			// Each button an equal share of the width. What is used less sits
+			// in the menu, where it is named rather than only drawn.
 			HStack(spacing: 0) {
 				Button("Shuffle", systemImage: "shuffle") { model.toggleShuffle() }
 					.foregroundStyle(state(model.shuffleMode != .off))
@@ -319,21 +319,11 @@ struct NowPlayingView: View {
 						if model.repeatMode == .album { badge("A") }
 					}
 					.frame(maxWidth: .infinity)
-				Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
-					.foregroundStyle(state(model.currentEntry?.stopAfter == true))
-					.frame(maxWidth: .infinity)
 				Button("Lyrics", systemImage: "quote.bubble") { ui.showsLyrics.toggle() }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
 					.frame(maxWidth: .infinity)
-				Button("Equalizer", systemImage: "slider.vertical.3") { ui.showsEqualizer.toggle() }
-					.foregroundStyle(state(equalizer.isEnabled))
-					.frame(maxWidth: .infinity)
-				Button("Speed", systemImage: "gauge.with.needle") { ui.showsSpeed.toggle() }
-					.foregroundStyle(state(Speed.isChanged(engine: speedEngine, tempo: tempo, pitch: pitch)))
-					.frame(maxWidth: .infinity)
-				Button(showsVisualizer ? "Hide Visualizer" : "Show Visualizer", systemImage: "waveform") { showsVisualizer.toggle() }
-					.foregroundStyle(state(showsVisualizer))
+				moreMenu
 					.frame(maxWidth: .infinity)
 				RoutePicker()
 					.frame(width: 32, height: 32)
@@ -343,6 +333,34 @@ struct NowPlayingView: View {
 			.font(compact ? .title3 : .title2)
 		}
 		.labelStyle(.iconOnly)
+	}
+
+	/// Stop after this, the equalizer, speed and the visualizer. Lit while
+	/// any of the first three changes what plays, as their buttons were.
+	private var moreMenu: some View {
+		let speedChanged = Speed.isChanged(engine: speedEngine, tempo: tempo, pitch: pitch)
+		let stopsAfter = model.currentEntry?.stopAfter == true
+		return Menu {
+			Toggle("Stop After This", systemImage: "stop.circle",
+			       isOn: Binding(get: { stopsAfter }, set: { _ in model.toggleStopAfterCurrent() }))
+				.disabled(model.currentEntry == nil)
+			Divider()
+			Button { ui.showsEqualizer.toggle() } label: {
+				Label("Equalizer", systemImage: "slider.vertical.3")
+				Text(equalizer.isEnabled ? "On" : "Off")
+			}
+			Button { ui.showsSpeed.toggle() } label: {
+				Label("Speed", systemImage: "gauge.with.needle")
+				Text(speedChanged ? "On" : "Off")
+			}
+			Toggle("Visualizer", systemImage: "waveform", isOn: $showsVisualizer)
+		} label: {
+			Label("More", systemImage: "ellipsis.circle")
+				.labelStyle(.iconOnly)
+		}
+		// The items named, though the row around shows only icons.
+		.labelStyle(.titleAndIcon)
+		.foregroundStyle(state(equalizer.isEnabled || speedChanged || stopsAfter))
 	}
 
 	private func badge(_ text: String) -> some View {

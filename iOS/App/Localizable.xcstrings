@@ -696,16 +696,6 @@
         }
       }
     },
-    "Hide Visualizer" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar visualizador"
-          }
-        }
-      }
-    },
     "High Consistency" : {
       "localizations" : {
         "es" : {
@@ -1485,16 +1475,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Corta"
-          }
-        }
-      }
-    },
-    "Show Visualizer" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar visualizador"
           }
         }
       }
