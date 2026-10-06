@@ -6,6 +6,7 @@
 //
 
 import Cocoa
+import CogPlaylist
 
 /// Implements the CogRemoteControlTarget boundary protocol against Cog's own
 /// controllers. Metadata that lives in PlaylistEntry's Objective-C category

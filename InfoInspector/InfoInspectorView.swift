@@ -5,6 +5,7 @@
 //  Created by Kevin López Brante on 2026-10-02.
 //
 
+import CogPlaylist
 import SwiftUI
 
 @MainActor

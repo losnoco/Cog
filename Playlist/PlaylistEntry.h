@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import <CogPlaylist/CogPlaylist-Swift.h>
+
 #import "Cog-Swift.h"
 
 // Posted (object: the entry) once an entry's metadata has been loaded, which
