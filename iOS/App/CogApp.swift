@@ -33,6 +33,7 @@ struct CogApp: App {
 			ContentView()
 				.environmentObject(player)
 				.environmentObject(player.model)
+				.environmentObject(player.equalizer)
 		}
 	}
 }

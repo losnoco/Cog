@@ -13,6 +13,7 @@ struct PlaylistView: View {
 	@State private var importing = false
 	@State private var addingCount = 0
 	@State private var showsSettings = false
+	@State private var showsEqualizer = false
 	@State private var confirmsClear = false
 	@State private var query = ""
 	@State private var addsURL = false
@@ -109,6 +110,7 @@ struct PlaylistView: View {
 					}
 					.disabled(model.entries.isEmpty)
 					Divider()
+					Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
 					Button("Settings", systemImage: "gearshape") { showsSettings = true }
 					Button("Clear Playlist", systemImage: "trash", role: .destructive) { confirmsClear = true }
 						.disabled(model.entries.isEmpty)
@@ -127,6 +129,9 @@ struct PlaylistView: View {
 		}
 		.sheet(isPresented: $showsSettings) {
 			SettingsView()
+		}
+		.sheet(isPresented: $showsEqualizer) {
+			EqualizerView()
 		}
 		.alert("Add URL", isPresented: $addsURL) {
 			TextField("https://", text: $urlText)

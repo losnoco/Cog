@@ -47,6 +47,8 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
+	@State private var showsEqualizer = false
+	@EnvironmentObject private var equalizer: Equalizer
 
 	var body: some View {
 		NavigationStack {
@@ -94,6 +96,8 @@ struct NowPlayingView: View {
 						}
 					Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
 						.foregroundStyle(model.currentEntry?.stopAfter == true ? Color.accentColor : Color.secondary)
+					Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
+						.foregroundStyle(equalizer.isEnabled ? Color.accentColor : Color.secondary)
 					RoutePicker()
 						.frame(width: 32, height: 32)
 				}
@@ -105,6 +109,9 @@ struct NowPlayingView: View {
 				ToolbarItem(placement: .topBarTrailing) {
 					Button("Done") { dismiss() }
 				}
+			}
+			.sheet(isPresented: $showsEqualizer) {
+				EqualizerView()
 			}
 		}
 	}

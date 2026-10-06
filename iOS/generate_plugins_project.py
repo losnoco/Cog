@@ -142,8 +142,9 @@ EMBED_PROJECTS = ['Frameworks/g719/g719.xcodeproj', 'Frameworks/libatrac9/libatr
                   'Frameworks/libcelt_0110/libcelt_0110/libcelt_0110.xcodeproj']
 
 # What the app bundles: the MIDI plugin's SoundFonts (it looks for them in
-# the main bundle, as on macOS) and Cog's icon.
-APP_RESOURCES = ['GeneralUserGS.sf3', 'GeneralUserGS-Drums.sf3', 'GeneralUserXG-SFeTest.sf3', 'tg300b.sflist.json']
+# the main bundle, as on macOS), the equalizer's presets and Cog's icon.
+APP_RESOURCES = ['GeneralUserGS.sf3', 'GeneralUserGS-Drums.sf3', 'GeneralUserXG-SFeTest.sf3', 'tg300b.sflist.json',
+                 'Cog.q1.json']
 APP_ICON = 'Play.icon'
 
 SUBPROJECTS = []

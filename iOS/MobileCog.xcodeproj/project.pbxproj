@@ -186,6 +186,7 @@
 		F85A78AF67240416AF39D328 /* picture.c in Sources */ = {isa = PBXBuildFile; fileRef = 5B211DDD5245EC317DDD9DF8 /* picture.c */; };
 		F9F0EA40D481E8C59E582D0D /* GameDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = D3AE8170B0CA2FDD3259234E /* GameDecoder.m */; };
 		FAFCBBD2FC2AA56CE1EB41CC /* libvgmContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = FC735CCDBE1804B0B6FCDEDE /* libvgmContainer.mm */; };
+		FE3C8A13BB4F05374F74A50C /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 9DC63BC3F7FE89260D4A668C /* Cog.q1.json */; };
 		FE90CD24E28D5817B755A6E8 /* MIDIPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CEA3AF57AE158F64851EA10 /* MIDIPlayer.cpp */; };
 		FEB15A1D1133453EDC90E978 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75A1B068B2B5BA2E5031E915 /* Security.framework */; };
 /* End PBXBuildFile section */
@@ -769,6 +770,7 @@
 		97E19BBF296B18CA33747D71 /* libvgm-emu.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libvgm-emu.xcframework"; path = "../ThirdParty/libvgm/ios/libvgm-emu.xcframework"; sourceTree = SOURCE_ROOT; };
 		9C40DFD0DCCCA4A2F6A64B7D /* wavetable.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = wavetable.dat; path = ../Plugins/Organya/wavetable.dat; sourceTree = SOURCE_ROOT; };
 		9CF9C2F2B9DDA99D4C63675A /* opl3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = opl3.cpp; path = ../Plugins/MIDI/MIDI/fmopl3lib/opl3.cpp; sourceTree = SOURCE_ROOT; };
+		9DC63BC3F7FE89260D4A668C /* Cog.q1.json */ = {isa = PBXFileReference; lastKnownFileType = file; name = Cog.q1.json; path = ../Cog.q1.json; sourceTree = SOURCE_ROOT; };
 		9E2DA116C90E4656D7369A06 /* APLDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = APLDecoder.h; path = ../Plugins/APL/APLDecoder.h; sourceTree = SOURCE_ROOT; };
 		A00B1A8A55A34DEC612D6071 /* VGMPropertiesReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VGMPropertiesReader.h; path = ../Plugins/vgmstream/vgmstream/VGMPropertiesReader.h; sourceTree = SOURCE_ROOT; };
 		A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = ../ThirdParty/ffmpeg/ios/libavcodec.xcframework; sourceTree = SOURCE_ROOT; };
@@ -1465,6 +1467,7 @@
 				5C17991CE27509B9B5142ED0 /* GeneralUserGS-Drums.sf3 */,
 				E4FA227D84BACA6027AE67EE /* GeneralUserXG-SFeTest.sf3 */,
 				E9261831209C36A4CB9BEA60 /* tg300b.sflist.json */,
+				9DC63BC3F7FE89260D4A668C /* Cog.q1.json */,
 				54AF60E80ABE06A3DD3DAAC4 /* Play.icon */,
 			);
 			name = Cog;
@@ -2155,6 +2158,7 @@
 				B1A97DA14FB2FABE35237189 /* GeneralUserGS-Drums.sf3 in Resources */,
 				3E6174B6F9A0DAD13324B741 /* GeneralUserXG-SFeTest.sf3 in Resources */,
 				D632E0EA9178D1424F2AF004 /* tg300b.sflist.json in Resources */,
+				FE3C8A13BB4F05374F74A50C /* Cog.q1.json in Resources */,
 				951DDF06237A045AD7DE3089 /* Play.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";

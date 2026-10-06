@@ -25,6 +25,7 @@ final class PlaybackClock: ObservableObject {
 final class Player: NSObject, ObservableObject {
 	let model: PlaylistModel
 	let loader: PlaylistLoader
+	let equalizer = Equalizer()
 	// -init returns id, so Swift sees it as failable; it never fails.
 	private let audioPlayer: AudioPlayer = AudioPlayer()!
 
@@ -278,7 +279,18 @@ extension Player {
 	@objc func audioPlayer(_ player: AudioPlayer, reportPlayCountForTrack userInfo: Any?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, reportScrobbleForTrack userInfo: Any?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, sustainHDCD userInfo: Any?) {}
-	@objc func audioPlayer(_ player: AudioPlayer, displayEqualizer equalizer: OpaquePointer?) {}
+	/// The engine's equalizer, handed over (as on macOS) as an unretained
+	/// pointer when it starts being used.
+	@objc func audioPlayer(_ player: AudioPlayer, displayEqualizer equalizer: OpaquePointer?) {
+		MainActor.assumeIsolated {
+			guard let equalizer else { return }
+			self.equalizer.attach(Unmanaged<AnyObject>.fromOpaque(UnsafeRawPointer(equalizer)).takeUnretainedValue() as? CogEqualizer)
+		}
+	}
+
 	@objc func audioPlayer(_ player: AudioPlayer, refreshEqualizer equalizer: OpaquePointer?) {}
-	@objc func audioPlayer(_ player: AudioPlayer, removeEqualizer equalizer: OpaquePointer?) {}
+
+	@objc func audioPlayer(_ player: AudioPlayer, removeEqualizer equalizer: OpaquePointer?) {
+		MainActor.assumeIsolated { self.equalizer.attach(nil) }
+	}
 }
