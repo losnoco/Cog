@@ -95,7 +95,7 @@ static NSURL *getPlaylistEntryURL(id object) {
 					else {
 						[files removeObjectAtIndex:0];
 						--fileCount;
-						if(currentTrack && [currentTrack isEqualTo:file.url]) {
+						if(currentTrack && [currentTrack isEqual:file.url]) {
 							if(fileCount)
 								currentTrack = files[0].url;
 							else
@@ -156,11 +156,11 @@ static NSURL *getPlaylistEntryURL(id object) {
 	@synchronized (self) {
 		while([files count]) {
 			MIDIFileEventContainer *file = files[0];
-			if(currentTrack && [file.url isEqualTo:currentTrack]) {
+			if(currentTrack && [file.url isEqual:currentTrack]) {
 				currentTrack = nil;
 				[self removeTrack:file.url];
 				continue;
-			} else if([file.url isEqualTo:url]) {
+			} else if([file.url isEqual:url]) {
 				currentTrack = file.url;
 				break;
 			} else {
@@ -197,7 +197,7 @@ static NSURL *getPlaylistEntryURL(id object) {
 
 - (void)removeTrack:(NSURL *)url {
 	@synchronized (self) {
-		assert([url isEqualTo:files[0].url]);
+		assert([url isEqual:files[0].url]);
 		[files removeObjectAtIndex:0];
 	}
 }
@@ -274,7 +274,7 @@ static NSURL *getPlaylistEntryURL(id object) {
 
 - (NSMutableArray<MIDIEvent *> *)findEventsForUrl:(NSURL *)url withTimestamp:(uint64_t)timestamp {
 	for(MIDIFileEventContainer *file in files) {
-		if([file.url isEqualTo:url]) {
+		if([file.url isEqual:url]) {
 			NSMutableArray *events = file.events;
 			if(![events count])
 				return events;

@@ -72,6 +72,7 @@ final class IntegerMemoryDecoder: NSObject, CogDecoder {
 	func close() {}
 }
 
+#if os(macOS)
 final class ExclusiveOutputTests: XCTestCase {
 	// MARK: - Integers in, the same integers out
 
@@ -402,3 +403,5 @@ final class ExclusiveOutputTests: XCTestCase {
 		XCTAssertEqual(status(bits: 24, render: int16).modifications, [CogAudioOutputModificationPrecision])
 	}
 }
+
+#endif

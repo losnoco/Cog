@@ -6,7 +6,7 @@
 //  Copyright 2022 __LoSnoCo__. All rights reserved.
 //
 
-#import <CoreAudio/CoreAudio.h>
+#import <CoreAudio/CoreAudioTypes.h>
 #import <Foundation/Foundation.h>
 
 @interface DownmixProcessor : NSObject {

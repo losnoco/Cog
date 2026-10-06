@@ -304,7 +304,7 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 }
 
 - (double)volumeUp:(double)amount {
-	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+	BOOL volumeLimit = [[NSUserDefaults standardUserDefaults] boolForKey:@"volumeLimit"];
 	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
 	double newVolume = linearToLogarithmic(logarithmicToLinear(volume + amount, MAX_VOLUME), MAX_VOLUME);
@@ -319,7 +319,7 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 }
 
 - (double)volumeDown:(double)amount {
-	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+	BOOL volumeLimit = [[NSUserDefaults standardUserDefaults] boolForKey:@"volumeLimit"];
 	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
 	double newVolume;

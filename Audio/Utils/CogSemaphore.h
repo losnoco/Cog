@@ -6,7 +6,7 @@
 //  Copyright 2005 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <mach/mach.h>
 
 @interface Semaphore : NSObject {

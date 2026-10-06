@@ -6,12 +6,12 @@
 //  Copyright 2005 Vincent Spader. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
-#import <CoreAudio/CoreAudio.h>
+#import <CoreAudio/CoreAudioTypes.h>
 #import <CoreAudio/CoreAudioTypes.h>
 
 #import <CogAudio/Status.h>
