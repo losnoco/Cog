@@ -8,9 +8,31 @@ import SwiftUI
 
 struct ContentView: View {
 	@EnvironmentObject private var model: PlaylistModel
+	@Environment(\.horizontalSizeClass) private var sizeClass
 	@State private var showsNowPlaying = false
 
 	var body: some View {
+		if sizeClass == .regular {
+			// A large screen: the playlist beside Now Playing, always shown.
+			GeometryReader { geometry in
+				HStack(spacing: 0) {
+					NavigationStack {
+						PlaylistView()
+					}
+					.frame(width: min(max(geometry.size.width * 0.4, 340), 460))
+					Divider()
+						.ignoresSafeArea()
+					NowPlayingView(isEmbedded: true)
+				}
+			}
+		} else {
+			compact
+		}
+	}
+
+	/// A phone, or a narrow window: the playlist, with what plays in a bar
+	/// at its foot that opens Now Playing.
+	private var compact: some View {
 		NavigationStack {
 			PlaylistView()
 				// Inside the stack, so the list makes room for it at its end.

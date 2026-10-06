@@ -11,6 +11,9 @@ import SwiftUI
 struct MiniPlayerView: View {
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
+	@Environment(\.colorScheme) private var colorScheme
+	/// The playing album's colors, as Now Playing has them.
+	@State private var palette: ArtworkPalette?
 
 	var body: some View {
 		HStack(spacing: 12) {
@@ -38,12 +41,26 @@ struct MiniPlayerView: View {
 		.font(.title3)
 		.padding(.horizontal)
 		.padding(.vertical, 10)
-		.background(.bar)
+		.background {
+			if let palette {
+				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .leading, endPoint: .trailing)
+					.ignoresSafeArea(edges: .bottom)
+			} else {
+				Rectangle().fill(.bar)
+					.ignoresSafeArea(edges: .bottom)
+			}
+		}
 		.contentShape(Rectangle())
+		.tint(palette?.accent)
+		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
+		.animation(.easeInOut(duration: 0.6), value: palette)
+		.albumPalette($palette, of: model.currentEntry)
 	}
 }
 
 struct NowPlayingView: View {
+	/// Beside the playlist on a large screen, rather than a sheet over it.
+	var isEmbedded = false
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
@@ -61,54 +78,11 @@ struct NowPlayingView: View {
 
 	var body: some View {
 		NavigationStack {
-			GeometryReader { geometry in
-				let landscape = geometry.size.width > geometry.size.height
-				// One tree in either orientation, only its layout switching, so
-				// the art, info and controls keep their identity and move
-				// rather than being rebuilt.
-				let layout = landscape ? AnyLayout(HStackLayout(spacing: 32)) : AnyLayout(VStackLayout(spacing: 24))
-				layout {
-					// Side by side the art is as tall as there is room for.
-					artwork(size: landscape ? min(geometry.size.height - 32, geometry.size.width * 0.42)
-						: min(geometry.size.width - 64, geometry.size.height * 0.45, 360))
-					VStack(spacing: landscape ? 16 : 24) {
-						info
-						controls(compact: landscape)
-					}
-					.frame(maxWidth: landscape ? .infinity : nil)
-				}
-				.padding(.horizontal, landscape ? 24 : 0)
-				.frame(width: geometry.size.width, height: geometry.size.height)
-				.animation(.default, value: landscape)
-			}
-			.background {
-				if let palette {
-					LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
-						.ignoresSafeArea()
-				}
-			}
-			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
-					Button("Done") { dismiss() }
-				}
-			}
-			.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
-			.sheet(isPresented: $showsEqualizer) {
-				EqualizerView()
-					.environment(\.colorScheme, colorScheme)
-					.tint(.accentColor)
-			}
-			.sheet(isPresented: $showsSpeed) {
-				SpeedView()
-					.environment(\.colorScheme, colorScheme)
-					.tint(.accentColor)
-			}
-			.sheet(isPresented: $showsLyrics) {
-				if let entry = model.currentEntry {
-					LyricsView(entry: entry)
-						.environment(\.colorScheme, colorScheme)
-						.tint(.accentColor)
-				}
+			if isEmbedded && model.currentEntry == nil {
+				ContentUnavailableView("Not Playing", systemImage: "music.note",
+				                       description: Text("Choose a track in the playlist."))
+			} else {
+				layout
 			}
 		}
 		// Light on the album's dark colors, in its accent; the sheets it
@@ -116,11 +90,60 @@ struct NowPlayingView: View {
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
 		.animation(.easeInOut(duration: 0.6), value: palette)
-		.task(id: model.currentEntry?.artHash) {
+		.albumPalette($palette, of: model.currentEntry)
+	}
+
+	private var layout: some View {
+		GeometryReader { geometry in
+			let landscape = geometry.size.width > geometry.size.height
+			// One tree in either orientation, only its layout switching, so
+			// the art, info and controls keep their identity and move
+			// rather than being rebuilt.
+			let layout = landscape ? AnyLayout(HStackLayout(spacing: 32)) : AnyLayout(VStackLayout(spacing: 24))
+			layout {
+				// Side by side the art is as tall as there is room for.
+				artwork(size: landscape ? min(geometry.size.height - 32, geometry.size.width * 0.42)
+					: min(geometry.size.width - 64, geometry.size.height * 0.45, isEmbedded ? 560 : 360))
+				VStack(spacing: landscape ? 16 : 24) {
+					info
+					controls(compact: landscape)
+				}
+				.frame(maxWidth: landscape ? .infinity : nil)
+			}
+			.padding(.horizontal, landscape ? 24 : 0)
+			.frame(width: geometry.size.width, height: geometry.size.height)
+			.animation(.default, value: landscape)
+		}
+		.background {
+			if let palette {
+				LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
+					.ignoresSafeArea()
+			}
+		}
+		.toolbar {
+			if !isEmbedded {
+				ToolbarItem(placement: .topBarTrailing) {
+					Button("Done") { dismiss() }
+				}
+			}
+		}
+		.toolbar(isEmbedded ? .hidden : .automatic, for: .navigationBar)
+		.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
+		.sheet(isPresented: $showsEqualizer) {
+			EqualizerView()
+				.environment(\.colorScheme, colorScheme)
+				.tint(.accentColor)
+		}
+		.sheet(isPresented: $showsSpeed) {
+			SpeedView()
+				.environment(\.colorScheme, colorScheme)
+				.tint(.accentColor)
+		}
+		.sheet(isPresented: $showsLyrics) {
 			if let entry = model.currentEntry {
-				palette = await ArtworkCache.shared.palette(for: entry)
-			} else {
-				palette = nil
+				LyricsView(entry: entry)
+					.environment(\.colorScheme, colorScheme)
+					.tint(.accentColor)
 			}
 		}
 	}

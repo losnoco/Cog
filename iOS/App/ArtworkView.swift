@@ -112,6 +112,20 @@ struct ArtworkPalette: Equatable, Sendable {
 	}
 }
 
+extension View {
+	/// Keeps `palette` the colors of `entry`'s art: nil without art, and
+	/// worked out again only when the art changes.
+	func albumPalette(_ palette: Binding<ArtworkPalette?>, of entry: PlaylistEntry?) -> some View {
+		task(id: entry?.artHash) {
+			if let entry {
+				palette.wrappedValue = await ArtworkCache.shared.palette(for: entry)
+			} else {
+				palette.wrappedValue = nil
+			}
+		}
+	}
+}
+
 /// An entry's art, or a placeholder note, `size` points square.
 struct ArtworkView: View {
 	@ObservedObject var entry: PlaylistEntry
