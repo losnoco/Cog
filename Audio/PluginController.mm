@@ -277,14 +277,19 @@ static void cache_run() {
 #if TARGET_OS_IPHONE
 /// iOS loads no code bundles: the plugins are linked into the app
 /// (CogPlugins.framework), so their classes are found among those of the
-/// images loaded with it, leaving out the system's.
+/// app's own images: its executable, and the frameworks beside CogAudio's.
 - (void)loadPlugins {
 	Protocol *pluginProtocols[] = { @protocol(CogContainer), @protocol(CogDecoder), @protocol(CogMetadataReader),
 		                            @protocol(CogPropertiesReader), @protocol(CogSource) };
+	NSString *frameworks = [[[NSString stringWithUTF8String:class_getImageName([PluginController class])]
+		stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
+	const char *frameworksPrefix = [[frameworks stringByAppendingString:@"/"] fileSystemRepresentation];
+	const char *executable = [[[NSBundle mainBundle] executablePath] fileSystemRepresentation];
 	unsigned int imageCount = 0;
 	const char **images = objc_copyImageNames(&imageCount);
 	for(unsigned int i = 0; i < imageCount; ++i) {
-		if(strstr(images[i], "/System/Library/") || strstr(images[i], "/usr/lib/")) continue;
+		if(strncmp(images[i], frameworksPrefix, strlen(frameworksPrefix)) != 0 &&
+		   !(executable && strcmp(images[i], executable) == 0)) continue;
 		unsigned int classCount = 0;
 		const char **classNames = objc_copyClassNamesForImage(images[i], &classCount);
 		for(unsigned int j = 0; j < classCount; ++j) {
@@ -432,15 +437,26 @@ static NSString *xmlEscapeString(NSString * string) {
 #endif
 
 - (void)printPluginInfo {
-	ALog(@"Sources: %@", self.sources);
-	ALog(@"Containers: %@", self.containers);
-	ALog(@"Metadata Readers: %@", self.metadataReaders);
+	// Thousands of entries take seconds to log: off the launch path, from
+	// copies, as the registry is complete by now.
+	NSDictionary *sources = [self.sources copy];
+	NSDictionary *containers = [self.containers copy];
+	NSDictionary *metadataReaders = [self.metadataReaders copy];
+	NSDictionary *propertiesReadersByExtension = [self.propertiesReadersByExtension copy];
+	NSDictionary *propertiesReadersByMimeType = [self.propertiesReadersByMimeType copy];
+	NSDictionary *decodersByExtension = [self.decodersByExtension copy];
+	NSDictionary *decodersByMimeType = [self.decodersByMimeType copy];
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
+		ALog(@"Sources: %@", sources);
+		ALog(@"Containers: %@", containers);
+		ALog(@"Metadata Readers: %@", metadataReaders);
 
-	ALog(@"Properties Readers By Extension: %@", self.propertiesReadersByExtension);
-	ALog(@"Properties Readers By Mime Type: %@", self.propertiesReadersByMimeType);
+		ALog(@"Properties Readers By Extension: %@", propertiesReadersByExtension);
+		ALog(@"Properties Readers By Mime Type: %@", propertiesReadersByMimeType);
 
-	ALog(@"Decoders by Extension: %@", self.decodersByExtension);
-	ALog(@"Decoders by Mime Type: %@", self.decodersByMimeType);
+		ALog(@"Decoders by Extension: %@", decodersByExtension);
+		ALog(@"Decoders by Mime Type: %@", decodersByMimeType);
+	});
 
 #if 0
     // XXX Keep in sync with Info.plist on disk!

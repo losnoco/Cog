@@ -51,6 +51,7 @@ PLUGINS = [
 	{'name': 'SilenceDecoder', 'dir': 'Plugins/SilenceDecoder/SilenceDecoder'},
 	{'name': 'AdPlug', 'dir': 'Plugins/AdPlug/AdPlug',
 	 'headers': ['Frameworks/libbinio/libbinio/libbinio/src', 'Frameworks/libbinio/libbinio'],
+	 'resources': ['../../../Frameworks/AdPlug/AdPlug/database/adplug.db'],
 	 'projects': ['Frameworks/AdPlug/libAdPlug.xcodeproj', 'Frameworks/libbinio/libbinio.xcodeproj']},
 	{'name': 'APL', 'dir': 'Plugins/APL'},
 	{'name': 'ArchiveSource', 'dir': 'Plugins/ArchiveSource/ArchiveSource'},
@@ -226,15 +227,16 @@ for plugin in PLUGINS:
 			add('PBXBuildFile', build_id, f'{path.name} in Sources', build_file)
 			plugin_sources.append(Ref(build_id, f'{path.name} in Sources'))
 	for resource in plugin.get('resources', []):
-		relative = f"{plugin['dir']}/{resource}"
+		relative = os.path.normpath(f"{plugin['dir']}/{resource}")
+		name = Path(resource).name
 		file_id = uid('file', relative)
-		add('PBXFileReference', file_id, resource, {
-			'isa': 'PBXFileReference', 'lastKnownFileType': 'file', 'name': resource,
+		add('PBXFileReference', file_id, name, {
+			'isa': 'PBXFileReference', 'lastKnownFileType': 'file', 'name': name,
 			'path': rel(relative), 'sourceTree': 'SOURCE_ROOT'})
-		children.append(Ref(file_id, resource))
+		children.append(Ref(file_id, name))
 		build_id = uid('resource', relative)
-		add('PBXBuildFile', build_id, f'{resource} in Resources', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, resource)})
-		plugin_resources.append(Ref(build_id, f'{resource} in Resources'))
+		add('PBXBuildFile', build_id, f'{name} in Resources', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, name)})
+		plugin_resources.append(Ref(build_id, f'{name} in Resources'))
 	group_id = uid('group', plugin['name'])
 	add('PBXGroup', group_id, plugin['name'], {
 		'isa': 'PBXGroup', 'children': children, 'name': plugin['name'], 'sourceTree': '<group>'})

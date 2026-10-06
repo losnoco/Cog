@@ -28,6 +28,7 @@
 		237FAE851E9FE3A0F011163D /* libvgmMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A3E14F83FC1E4439E5F2DE /* libvgmMetadataReader.mm */; };
 		23C65BF2FAF31D2E7D8AF770 /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D454E45687C44F4B6C045E5 /* ShortenDecoder.mm */; };
 		26DF98040C8F313B5094D979 /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC3E5E4E639E44129F4C524 /* libAdPlug.framework */; };
+		275572E66D0BB37058D9C2FE /* adplug.db in Resources */ = {isa = PBXBuildFile; fileRef = 0D3D2BCFCFEB97ED1B75A623 /* adplug.db */; };
 		27E6ABBA7EE4507B599809ED /* libavutil.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */; };
 		2CD6DD50F641FDF9EC8A37FC /* HLSMemorySource.m in Sources */ = {isa = PBXBuildFile; fileRef = BF27B2F8D72FC2A16E0EB2A8 /* HLSMemorySource.m */; };
 		3068B3435515F79CF9B5C33D /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29F7CEB74A50703629F0CF4 /* MIDIContainer.mm */; };
@@ -493,6 +494,7 @@
 		09FD061E41F1DE6461DC1C88 /* HLSMemorySource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HLSMemorySource.h; path = ../Plugins/HLS/HLSMemorySource.h; sourceTree = SOURCE_ROOT; };
 		0BB2C1FE7DE677915F8CAC6A /* HVLContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HVLContainer.m; path = ../Plugins/Hively/Hively/HVLContainer.m; sourceTree = SOURCE_ROOT; };
 		0C74EC760C0B2BA53F2E1952 /* FileSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FileSource.h; path = ../Plugins/FileSource/FileSource.h; sourceTree = SOURCE_ROOT; };
+		0D3D2BCFCFEB97ED1B75A623 /* adplug.db */ = {isa = PBXFileReference; lastKnownFileType = file; name = adplug.db; path = ../Frameworks/AdPlug/AdPlug/database/adplug.db; sourceTree = SOURCE_ROOT; };
 		0DB7E483BAAB2817377FA994 /* OMPTDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = OMPTDecoder.mm; path = ../Plugins/OpenMPT/OpenMPT/OMPTDecoder.mm; sourceTree = SOURCE_ROOT; };
 		1255CF4B6F176308FC96A72F /* SidContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SidContainer.h; path = ../Plugins/sidplay/SidContainer.h; sourceTree = SOURCE_ROOT; };
 		14077DDB322F67958D56B89F /* libbinio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libbinio.xcodeproj; path = ../Frameworks/libbinio/libbinio.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1368,6 +1370,7 @@
 				92CE4384AB8EEB743CF83623 /* AdPlugMetadataReader.mm */,
 				312DCD14A343F771C341CE2E /* fileprovider.h */,
 				D6308C6E5C5F4BA02A0C1866 /* fileprovider.mm */,
+				0D3D2BCFCFEB97ED1B75A623 /* adplug.db */,
 			);
 			name = AdPlug;
 			sourceTree = "<group>";
@@ -1816,6 +1819,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = "2147483647";
 			files = (
+				275572E66D0BB37058D9C2FE /* adplug.db in Resources */,
 				DA5267CE8917B3533C05D445 /* wavetable.dat in Resources */,
 				A1C1EE0A1C03F1CE89D67E3F /* fx96.pxt in Resources */,
 				0D83B1F7DE6AAEDDC13A65BE /* fx97.pxt in Resources */,

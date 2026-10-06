@@ -14,6 +14,16 @@ import XCTest
 final class CogPluginsTests: XCTestCase {
 	private var directory: URL!
 
+	/// The plugins' setup, timed before any test can have caused it.
+	private static var pluginSetupSeconds: TimeInterval = 0
+
+	override class func setUp() {
+		super.setUp()
+		let start = Date()
+		_ = PluginController.shared()
+		pluginSetupSeconds = Date().timeIntervalSince(start)
+	}
+
 	override func setUpWithError() throws {
 		directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
 		try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -80,6 +90,14 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertTrue(names(plugins.containers()["pls"]).contains("PlsContainer"))
 	}
 
+	/// Finding and registering the plugins, which the app pays at launch,
+	/// takes a fraction of a second: a plugin doing real work as it
+	/// registers (as AdPlug's and sidplay's once did, for seconds) fails this.
+	func testPluginSetupIsQuick() {
+		print("PluginController setup took \(String(format: "%.3f", Self.pluginSetupSeconds)) s")
+		XCTAssertLessThan(Self.pluginSetupSeconds, 2)
+	}
+
 	/// Every plugin linked into CogPlugins registers what it reads.
 	func testEveryPluginRegisters() {
 		let registered = [plugins.decodersByExtension(), plugins.decodersByMimeType(), plugins.containers(), plugins.sources(),
@@ -92,6 +110,10 @@ final class CogPluginsTests: XCTestCase {
 		for name in classes {
 			XCTAssertTrue(registered.contains(name), "\(name) is not registered")
 		}
+		// Resources plugins load from their bundle, CogPlugins on iOS.
+		let bundle = Bundle(for: try! XCTUnwrap(NSClassFromString("AdPlugDecoder")))
+		XCTAssertNotNil(bundle.url(forResource: "adplug", withExtension: "db"))
+		XCTAssertNotNil(bundle.url(forResource: "wavetable", withExtension: "dat"), "Organya's")
 	}
 
 	// MARK: - Decoding

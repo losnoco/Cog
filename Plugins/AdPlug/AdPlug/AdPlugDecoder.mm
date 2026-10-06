@@ -22,7 +22,7 @@ static CAdPlugDatabase *g_database = NULL;
 
 + (void)initialize {
 	if(!g_database) {
-		NSURL *dbUrl = [[NSBundle bundleWithIdentifier:@"net.kode54.AdPlug"] URLForResource:@"adplug" withExtension:@"db"];
+		NSURL *dbUrl = [[NSBundle bundleForClass:[AdPlugDecoder class]] URLForResource:@"adplug" withExtension:@"db"];
 
 		NSString *dbPath = [dbUrl path];
 
