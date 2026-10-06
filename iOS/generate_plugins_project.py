@@ -147,6 +147,14 @@ APP_RESOURCES = ['GeneralUserGS.sf3', 'GeneralUserGS-Drums.sf3', 'GeneralUserXG-
                  'Cog.q1.json']
 APP_ICON = 'Play.icon'
 
+# The macOS app's sources the iOS app compiles as they are: lyrics from
+# LRCLIB, and scrobbling to Last.fm and ListenBrainz. Generated/Secrets.swift
+# (the Last.fm key) is written by Scripts/generate-swift-secrets.sh as the
+# app builds, as on macOS.
+APP_SHARED_SOURCES = ['LyricsWindow/LrclibClient.swift', 'LyricsWindow/LyricsLookup.swift',
+                      'Scrobbler/AudioScrobbler.swift', 'Scrobbler/LastFMAPI.swift', 'Scrobbler/ListenBrainzAPI.swift',
+                      'Scrobbler/ListenBrainzScrobbler.swift', 'Scrobbler/KeychainHelper.swift', 'Generated/Secrets.swift']
+
 SUBPROJECTS = []
 for project in COMMON_PROJECTS + [p for plugin in PLUGINS for p in plugin.get('projects', [])] + TEST_PROJECTS + EMBED_PROJECTS:
 	if project not in [entry[1] for entry in SUBPROJECTS]:
@@ -392,6 +400,16 @@ add('PBXFileReference', APP_INFO, 'CogApp-Info.plist', {
 	'isa': 'PBXFileReference', 'lastKnownFileType': 'text.plist.xml', 'path': 'CogApp-Info.plist', 'sourceTree': '<group>'})
 app_children = [Ref(APP_FOLDER, 'App'), Ref(APP_INFO, 'CogApp-Info.plist')]
 app_resources = []
+app_sources = []
+for source in APP_SHARED_SOURCES:
+	name = Path(source).name
+	file_id = uid('appsource', source)
+	add('PBXFileReference', file_id, name, {
+		'isa': 'PBXFileReference', 'lastKnownFileType': 'sourcecode.swift', 'name': name, 'path': rel(source), 'sourceTree': 'SOURCE_ROOT'})
+	app_children.append(Ref(file_id, name))
+	build_id = uid('appsourcebuild', source)
+	add('PBXBuildFile', build_id, f'{name} in Sources', {'isa': 'PBXBuildFile', 'fileRef': Ref(file_id, name)})
+	app_sources.append(Ref(build_id, f'{name} in Sources'))
 for resource in APP_RESOURCES + [APP_ICON]:
 	file_id = uid('appresource', resource)
 	kind = 'folder.iconcomposer.icon' if resource.endswith('.icon') else 'file'
@@ -556,8 +574,17 @@ embed_phase = uid('phase', 'Cog', 'Embed Frameworks')
 add('PBXCopyFilesBuildPhase', embed_phase, 'Embed Frameworks', {
 	'isa': 'PBXCopyFilesBuildPhase', 'buildActionMask': '2147483647', 'dstPath': '', 'dstSubfolderSpec': '10',
 	'files': app_embeds, 'name': 'Embed Frameworks', 'runOnlyForDeploymentPostprocessing': '0'})
+secrets_phase = uid('phase', 'Cog', 'Generate Swift secrets file')
+add('PBXShellScriptBuildPhase', secrets_phase, 'Generate Swift secrets file', {
+	'isa': 'PBXShellScriptBuildPhase', 'buildActionMask': '2147483647', 'files': [], 'inputFileListPaths': [],
+	'inputPaths': ['$(SRCROOT)/../Scripts/generate-swift-secrets.sh'], 'name': 'Generate Swift secrets file',
+	'outputFileListPaths': [], 'outputPaths': ['$(SRCROOT)/../Generated/Secrets.swift'],
+	'runOnlyForDeploymentPostprocessing': '0', 'shellPath': '/bin/sh',
+	# The script writes into $SRCROOT/Generated, the repository's.
+	'shellScript': 'SRCROOT="${SRCROOT}/.." "${SCRIPT_INPUT_FILE_0}"\n', 'showEnvVarsInLog': '0'})
 app_phases = [
-	phase('PBXSourcesBuildPhase', 'Sources', 'Cog', []),
+	Ref(secrets_phase, 'Generate Swift secrets file'),
+	phase('PBXSourcesBuildPhase', 'Sources', 'Cog', app_sources),
 	phase('PBXFrameworksBuildPhase', 'Frameworks', 'Cog', app_links),
 	phase('PBXResourcesBuildPhase', 'Resources', 'Cog', app_resources),
 	Ref(embed_phase, 'Embed Frameworks'),

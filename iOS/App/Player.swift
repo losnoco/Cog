@@ -49,6 +49,8 @@ final class Player: NSObject, ObservableObject {
 		audioPlayer.setVolume(100)
 		model.onPlaylistChange = { [weak self] in self?.audioPlayer.resetNextStreams() }
 		setUpRemoteCommands()
+		// Listens a past session could not send.
+		ListenBrainzScrobbler.shared.flush()
 		routeObserver = NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { [weak self] note in
 			// Headphones out: pause, as every iOS player does.
 			let reason = (note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt).flatMap(AVAudioSession.RouteChangeReason.init(rawValue:))
@@ -222,9 +224,17 @@ extension Player {
 
 	@objc func audioPlayer(_ player: AudioPlayer, didBeginStream userInfo: Any?) {
 		MainActor.assumeIsolated {
-			model.setCurrent(userInfo as? PlaylistEntry)
+			let entry = userInfo as? PlaylistEntry
+			model.setCurrent(entry)
 			position = 0
 			updateNowPlaying()
+			guard let entry else { return }
+			// Scrobbled once half heard, or four minutes, as Last.fm and
+			// ListenBrainz have it; never under 30 seconds long.
+			player.setScrobbleThreshold(entry.length >= 30 ? min(240, entry.length / 2) : 0)
+			let track = entry.audioScrobblerTrack
+			AudioScrobbler.shared.updateNowPlaying(track)
+			ListenBrainzScrobbler.shared.updateNowPlaying(track)
 		}
 	}
 
@@ -277,7 +287,14 @@ extension Player {
 
 	@objc func audioPlayer(_ player: AudioPlayer, updatePosition userInfo: Any?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, reportPlayCountForTrack userInfo: Any?) {}
-	@objc func audioPlayer(_ player: AudioPlayer, reportScrobbleForTrack userInfo: Any?) {}
+	@objc func audioPlayer(_ player: AudioPlayer, reportScrobbleForTrack userInfo: Any?) {
+		MainActor.assumeIsolated {
+			guard let entry = userInfo as? PlaylistEntry else { return }
+			let track = entry.audioScrobblerTrack
+			AudioScrobbler.shared.scrobbleTrack(track)
+			ListenBrainzScrobbler.shared.scrobble(track)
+		}
+	}
 	@objc func audioPlayer(_ player: AudioPlayer, sustainHDCD userInfo: Any?) {}
 	/// The engine's equalizer, handed over (as on macOS) as an unretained
 	/// pointer when it starts being used.

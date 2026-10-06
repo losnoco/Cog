@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Cocoa
 
 @objc
 public class AudioScrobblerTrack: NSObject {

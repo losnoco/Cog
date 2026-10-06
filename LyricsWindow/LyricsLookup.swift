@@ -6,6 +6,11 @@
 import CoreData
 import Foundation
 
+// On iOS the Core Data classes come from CogPlaylist; macOS generates its own.
+#if canImport(CogPlaylist)
+import CogPlaylist
+#endif
+
 /// Fetches lyrics from LRCLIB for tracks that carry none of their own, and
 /// remembers the answers in memory and in the Core Data store.
 ///

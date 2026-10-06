@@ -168,6 +168,11 @@ extension PlaylistEntry {
 
 	public var comment: String? { readAllValuesAsString("comment") }
 
+	/// Lyrics the file carries, unsynced.
+	public var unsyncedlyrics: String? {
+		firstOf("unsyncedlyrics", "unsynced lyrics", "lyrics")
+	}
+
 	// MARK: - Loading
 
 	/// Stores what the plugins report for the entry, as macOS does: audio

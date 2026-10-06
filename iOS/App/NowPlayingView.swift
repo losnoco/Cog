@@ -48,6 +48,7 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
 	@State private var showsEqualizer = false
+	@State private var showsLyrics = false
 	@EnvironmentObject private var equalizer: Equalizer
 
 	var body: some View {
@@ -96,6 +97,9 @@ struct NowPlayingView: View {
 						}
 					Button("Stop After This", systemImage: "stop.circle") { model.toggleStopAfterCurrent() }
 						.foregroundStyle(model.currentEntry?.stopAfter == true ? Color.accentColor : Color.secondary)
+					Button("Lyrics", systemImage: "quote.bubble") { showsLyrics = true }
+						.foregroundStyle(Color.secondary)
+						.disabled(model.currentEntry == nil)
 					Button("Equalizer", systemImage: "slider.vertical.3") { showsEqualizer = true }
 						.foregroundStyle(equalizer.isEnabled ? Color.accentColor : Color.secondary)
 					RoutePicker()
@@ -112,6 +116,11 @@ struct NowPlayingView: View {
 			}
 			.sheet(isPresented: $showsEqualizer) {
 				EqualizerView()
+			}
+			.sheet(isPresented: $showsLyrics) {
+				if let entry = model.currentEntry {
+					LyricsView(entry: entry)
+				}
 			}
 		}
 	}
