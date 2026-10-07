@@ -14,7 +14,8 @@ struct CogApp: App {
 	@StateObject private var ui = AppUI()
 
 	init() {
-		// Before the engine reads them.
+		// Before the engine and the plugins read them.
+		Self.registerDefaults()
 		Speed.registerDefaults()
 		// The plugins register now rather than on the first play.
 		_ = PluginController.shared()
@@ -35,6 +36,28 @@ struct CogApp: App {
 		SoundFontAccess.restore()
 		_locations = StateObject(wrappedValue: locations)
 		_player = StateObject(wrappedValue: Player(model: model))
+	}
+
+	/// The macOS app's defaults (AppController's initDefaults) that the
+	/// engine and the plugins read. Without them the synth formats get a
+	/// length, fade and sample rate of zero, and end as soon as they start.
+	private static func registerDefaults() {
+		UserDefaults.standard.register(defaults: [
+			"volumeScaling": "albumGainWithPeak",
+			"resampling": "cubic",
+			"midiPlugin": "Spessa",
+			"midi.flavor": "default",
+			"httpStreamingBufferSize": 0x40000,
+			"enableLrclib": false,
+			"lrclibUrl": "https://lrclib.net",
+			"synthDefaultSeconds": 150.0,
+			"synthDefaultFadeSeconds": 8.0,
+			"synthDefaultLoopCount": 2,
+			"synthSampleRate": 44100,
+			"alwaysStopAfterCurrent": false,
+			"suspendOutputOnPause": true,
+			"enableFading": true,
+		])
 	}
 
 	var body: some Scene {
