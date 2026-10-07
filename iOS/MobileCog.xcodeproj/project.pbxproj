@@ -1771,6 +1771,10 @@
 			dependencies = (
 				1FBE61DCA5063626A6D95437 /* PBXTargetDependency */,
 				CE681A9B7EED090B11B577DE /* PBXTargetDependency */,
+				42AE74E6E503E8AC0A86171B /* PBXTargetDependency */,
+				CC68625F89BDF124D9EE6712 /* PBXTargetDependency */,
+				055B2C075B313F149CC747EA /* PBXTargetDependency */,
+				15D036EBDBE15890A369326E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				69473915121E2B8094A74A1D /* App */,

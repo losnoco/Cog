@@ -359,7 +359,9 @@ for name, path, target_id, product_id in SUBPROJECTS:
 		test_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
 		app_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
 	elif path in EMBED_PROJECTS:
-		pass
+		# libvgmstream depends on these in its own project, but the app
+		# embeds them, so it says so rather than leaning on that.
+		app_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
 	else:
 		plugin_dependencies.append(Ref(dependency, 'PBXTargetDependency'))
 		build_id = uid('subprojectbuild', name)
