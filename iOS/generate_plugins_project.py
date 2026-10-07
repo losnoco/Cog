@@ -533,6 +533,8 @@ plugin_config = configurations('PBXNativeTarget "CogPlugins"', {
 	'INSTALL_PATH': '$(LOCAL_LIBRARY_DIR)/Frameworks',
 	'OTHER_LDFLAGS': ['$(inherited)', '-lc++'] + sorted({f for plugin in PLUGINS for f in plugin.get('ldflags', [])}),
 	'LD_RUNPATH_SEARCH_PATHS': ['$(inherited)', '@executable_path/Frameworks', '@loader_path/Frameworks'],
+	'CURRENT_PROJECT_VERSION': '1',
+	'MARKETING_VERSION': '1.0',
 	'PRODUCT_BUNDLE_IDENTIFIER': 'org.cogx.CogPlugins',
 	'PRODUCT_NAME': '$(TARGET_NAME)',
 	'SKIP_INSTALL': 'YES',

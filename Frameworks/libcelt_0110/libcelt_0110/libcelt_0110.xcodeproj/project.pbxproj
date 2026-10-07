@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		83D676F42653A05E00252130 /* float_cast.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676BF2653A05D00252130 /* float_cast.h */; };
-		83D676F52653A05E00252130 /* match-test.sh in Resources */ = {isa = PBXBuildFile; fileRef = 83D676C02653A05D00252130 /* match-test.sh */; };
 		83D676F72653A05E00252130 /* kiss_fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676C22653A05D00252130 /* kiss_fft.h */; };
 		83D676F82653A05E00252130 /* fixed_c5x.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D676C32653A05D00252130 /* fixed_c5x.h */; };
 		83D676FA2653A05E00252130 /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = 83D676C52653A05D00252130 /* Makefile.am */; };
@@ -294,7 +293,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83D677172653A05E00252130 /* Makefile.in in Resources */,
-				83D676F52653A05E00252130 /* match-test.sh in Resources */,
 				83D676FA2653A05E00252130 /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -449,7 +449,7 @@
 		835DF7052C79AED70008814A /* play_state.c in Sources */ = {isa = PBXBuildFile; fileRef = 835DF7042C79AED70008814A /* play_state.c */; };
 		836581A62CF3E53600E26C58 /* sdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 836581A52CF3E53600E26C58 /* sdd.c */; };
 		836C052B23F62F1A00FA07C7 /* libatrac9.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; };
-		836C052C23F62F3100FA07C7 /* libatrac9.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		836C052C23F62F3100FA07C7 /* libatrac9.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 835FC6C623F62AEF006960FA /* libatrac9.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		836DF622298F83F400CD0580 /* cri_keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 836DF61F298F83F400CD0580 /* cri_keys.h */; };
 		836DF623298F83F400CD0580 /* bitstream_msb.h in Headers */ = {isa = PBXBuildFile; fileRef = 836DF620298F83F400CD0580 /* bitstream_msb.h */; };
 		836DF624298F83F400CD0580 /* cri_keys.c in Sources */ = {isa = PBXBuildFile; fileRef = 836DF621298F83F400CD0580 /* cri_keys.c */; };
@@ -829,10 +829,10 @@
 		83D26A8426E66DC2001A9475 /* chunks.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D26A8026E66DC2001A9475 /* chunks.c */; };
 		83D6772D2653A30B00252130 /* libcelt_0061.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; };
 		83D6772E2653A31400252130 /* libcelt_0110.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D676BE26539F4F00252130 /* libcelt_0110.framework */; };
-		83D6772F2653A32B00252130 /* libcelt_0061.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		83D677302653A32E00252130 /* libcelt_0110.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D676BE26539F4F00252130 /* libcelt_0110.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83D6772F2653A32B00252130 /* libcelt_0061.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D6763026539A7200252130 /* libcelt_0061.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83D677302653A32E00252130 /* libcelt_0110.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D676BE26539F4F00252130 /* libcelt_0110.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83D731891A749D1500CA1366 /* g719.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; };
-		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		83D7318A1A749D2200CA1366 /* g719.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83D7313E1A74968A00CA1366 /* g719.framework */; platformFilters = (macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83DC4CBA2FF7CCA0002B41D9 /* wmw.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DC4CB92FF7CCA0002B41D9 /* wmw.c */; };
 		83DC4CBC2FF7CD0D002B41D9 /* hvqm4_streamfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DC4CBB2FF7CD0D002B41D9 /* hvqm4_streamfile.h */; };
 		83DC4CBE2FF7CEFF002B41D9 /* aac_raw_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 83DC4CBD2FF7CEFF002B41D9 /* aac_raw_decoder.c */; };

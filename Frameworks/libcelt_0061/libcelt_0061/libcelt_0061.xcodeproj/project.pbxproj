@@ -12,7 +12,6 @@
 		83D6766E26539A9500252130 /* entenc.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6763626539A9400252130 /* entenc.h */; };
 		83D6766F26539A9500252130 /* bands.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6763726539A9400252130 /* bands.h */; };
 		83D6767026539A9500252130 /* psy.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D6763826539A9400252130 /* psy.c */; };
-		83D6767126539A9500252130 /* match-test.sh in Resources */ = {isa = PBXBuildFile; fileRef = 83D6763926539A9400252130 /* match-test.sh */; };
 		83D6767226539A9500252130 /* modes.c in Sources */ = {isa = PBXBuildFile; fileRef = 83D6763A26539A9500252130 /* modes.c */; };
 		83D6767326539A9500252130 /* mfrngcod.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6763B26539A9500252130 /* mfrngcod.h */; };
 		83D6767426539A9500252130 /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D6763C26539A9500252130 /* mdct.h */; };
@@ -304,7 +303,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83D6767126539A9500252130 /* match-test.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
