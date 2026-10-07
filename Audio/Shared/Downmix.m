@@ -289,9 +289,19 @@ static void *kDownmixProcessorContext = &kDownmixProcessorContext;
 		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
 	} else if(inputFormat.mChannelsPerFrame > 1 && outConfig == AudioConfigMono) {
 		downmix_to_mono((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, frames);
+	} else if(inputFormat.mChannelsPerFrame > outputFormat.mChannelsPerFrame) {
+		/* More channels in than the device takes, and the device is neither
+		 * stereo nor mono: downmix to stereo, then fit that to the device's
+		 * layout. Without this the chain below matches nothing and leaves the
+		 * caller's buffer unwritten, which reaches the device as silence. */
+		float tempBuffer[frames * 2];
+		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, tempBuffer, frames);
+		upmix((const float *)tempBuffer, 2, AudioConfigStereo, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
 	} else if(inputFormat.mChannelsPerFrame < outputFormat.mChannelsPerFrame) {
 		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
-	} else if(inConfig == outConfig) {
+	} else {
+		/* Same channel count: the samples are already in the order the device
+		 * wants them, whether or not the two layouts are named the same. */
 		memcpy(outBuffer, inBuffer, frames * outputFormat.mBytesPerPacket);
 	}
 }
