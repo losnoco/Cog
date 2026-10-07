@@ -630,7 +630,7 @@ app_config = configurations('PBXNativeTarget "Cog"', {
 	# App/Localizable.xcstrings: English, and Spanish as the macOS app has it.
 	'LOCALIZATION_PREFERS_STRING_CATALOGS': 'YES',
 	'MARKETING_VERSION': '0.1',
-	'PRODUCT_BUNDLE_IDENTIFIER': 'co.losno.MobileCog',
+	'PRODUCT_BUNDLE_IDENTIFIER': 'org.cogx.cog',
 	'PRODUCT_NAME': 'Cog',
 	'SWIFT_EMIT_LOC_STRINGS': 'YES',
 	'SWIFT_OBJC_BRIDGING_HEADER': 'App/Cog-Bridging-Header.h',
