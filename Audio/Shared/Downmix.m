@@ -299,10 +299,17 @@ static void *kDownmixProcessorContext = &kDownmixProcessorContext;
 		upmix((const float *)tempBuffer, 2, AudioConfigStereo, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
 	} else if(inputFormat.mChannelsPerFrame < outputFormat.mChannelsPerFrame) {
 		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
-	} else {
-		/* Same channel count: the samples are already in the order the device
-		 * wants them, whether or not the two layouts are named the same. */
+	} else if(inConfig == outConfig) {
+		/* Identical layouts: the sample order already matches the device, so a
+		 * raw copy is all that is needed. */
 		memcpy(outBuffer, inBuffer, frames * outputFormat.mBytesPerPacket);
+	} else {
+		/* The same number of channels but a different layout (say a 2.1 input
+		 * and a 3.0 device): copying the bytes positionally would send the LFE
+		 * sample to the centre speaker. Map each channel to the position its
+		 * flag names and clear any position that has no input to fill it, so
+		 * nothing lands on the wrong output. */
+		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
 	}
 }
 
