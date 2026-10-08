@@ -89,7 +89,8 @@ static const uint32_t AudioChannelConfigTable[] = {
 	uint32_t index = 0;
 	for(uint32_t walk = 0; walk < 32; ++walk) {
 		uint32_t query = 1 << walk;
-		if(flag & query) return index;
+		if(flag & query)
+			return (channelConfig & query) ? index : ~0;
 		if(channelConfig & query) ++index;
 	}
 	return ~0;
