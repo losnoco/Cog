@@ -60,28 +60,38 @@ struct MiniPlayerView: View {
 struct NowPlayingView: View {
 	/// Beside the playlist on a large screen, rather than a sheet over it.
 	var isEmbedded = false
+	/// The controls under what plays; without them while a bar of the
+	/// playlist's has them, as when the Duo stands like a laptop.
+	var showsControls = true
+	/// The equalizer, speed and lyrics open in the pane across an iPhone
+	/// Duo's fold, rather than here as cards or sheets.
+	var panelsElsewhere = false
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
 	@Environment(\.colorScheme) private var colorScheme
 	@EnvironmentObject private var ui: AppUI
-	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
-	@AppStorage("tempo") private var tempo = 1.0
-	@AppStorage("pitch") private var pitch = 1.0
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
 	/// How tall Now Playing is, which says how much room the cards have.
 	@State private var height: CGFloat = 0
-	@EnvironmentObject private var equalizer: Equalizer
+	/// Whether the controls show, following `showsControls` in a
+	/// transaction of its own: changed with the pane's size, in the same
+	/// update, they would appear at once, unanimated. Nil until it changes.
+	@State private var controlsShown: Bool?
 
 	var body: some View {
-		NavigationStack {
-			if isEmbedded && model.currentEntry == nil {
-				ContentUnavailableView("Not Playing", systemImage: "music.note",
-				                       description: Text("Choose a track in the playlist."))
+		Group {
+			// Embedded, it shows no bars, so it has no stack of its own: on an
+			// iPhone Duo a stack would keep room for a vertical bar that is
+			// never there, an empty strip beside the fold.
+			if isEmbedded {
+				content
 			} else {
-				layout
+				NavigationStack {
+					content
+				}
 			}
 		}
 		// Light on the album's dark colors, in its accent; the sheets it
@@ -89,6 +99,15 @@ struct NowPlayingView: View {
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
 		.albumPalette($palette, of: model.currentEntry)
+	}
+
+	@ViewBuilder private var content: some View {
+		if isEmbedded && model.currentEntry == nil {
+			ContentUnavailableView("Not Playing", systemImage: "music.note",
+			                       description: Text("Choose a track in the playlist."))
+		} else {
+			layout
+		}
 	}
 
 	private var layout: some View {
@@ -104,6 +123,9 @@ struct NowPlayingView: View {
 		.animation(.spring(duration: 0.4), value: ui.showsEqualizer)
 		.animation(.spring(duration: 0.4), value: ui.showsSpeed)
 		.animation(.spring(duration: 0.4), value: ui.showsLyrics)
+		.onChange(of: showsControls) { _, shows in
+			withAnimation(.spring(duration: 0.4)) { controlsShown = shows }
+		}
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
 			AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
@@ -151,18 +173,26 @@ struct NowPlayingView: View {
 					: min(geometry.size.width - 64, geometry.size.height * 0.45, isEmbedded ? 560 : 360))
 				VStack(spacing: landscape ? 16 : 24) {
 					info
-					controls(compact: landscape)
+					if controlsShown ?? showsControls {
+						NowPlayingControls(compact: landscape, palette: palette)
+					}
 				}
 				.frame(maxWidth: landscape ? .infinity : nil)
 			}
 			.padding(.horizontal, landscape ? 24 : 0)
 			.frame(width: geometry.size.width, height: geometry.size.height)
+			// Beside the playlist the pane changes width as an iPhone Duo's
+			// hinge moves, in updates that come unanimated; the art, text and
+			// controls follow it smoothly. Not in a sheet, whose size settles
+			// as it opens.
+			.animation(isEmbedded ? .spring(duration: 0.4) : nil, value: geometry.size.width)
 		}
 	}
 
-	/// A sheet's binding: shown only where the cards are not.
+	/// A sheet's binding: shown only where the cards are not, here or
+	/// across the fold.
 	private func sheet(_ shows: Binding<Bool>) -> Binding<Bool> {
-		Binding(get: { shows.wrappedValue && !cardsFit }, set: { shows.wrappedValue = $0 })
+		Binding(get: { shows.wrappedValue && !cardsFit && !panelsElsewhere }, set: { shows.wrappedValue = $0 })
 	}
 
 	/// The cards' height: up to 440 points, leaving the art and controls
@@ -174,12 +204,72 @@ struct NowPlayingView: View {
 	/// Beside the playlist, in a window tall enough for cards worth having;
 	/// otherwise the equalizer, speed and lyrics open in sheets.
 	private var cardsFit: Bool {
-		isEmbedded && cardHeight >= 220
+		isEmbedded && !panelsElsewhere && cardHeight >= 220
 	}
 
-	/// The equalizer, speed and lyrics as cards, side by side.
+	/// The equalizer, speed and lyrics as cards, side by side, below.
 	private var panels: some View {
-		HStack(alignment: .top, spacing: 16) {
+		PlaybackPanels(axis: .horizontal)
+			.frame(height: max(cardHeight - 16, 0))
+			.padding([.horizontal, .bottom], 16)
+	}
+
+	@ViewBuilder private func artwork(size: CGFloat) -> some View {
+		if let entry = model.currentEntry {
+			ArtworkView(entry: entry, size: max(size, 0), cornerRadius: 16)
+				// The spectrum rises over the art's lower half, darkened to
+				// carry it.
+				.overlay(alignment: .bottom) {
+					if showsVisualizer {
+						SpectrumView(isPlaying: player.isPlaying, color: palette?.accent ?? .white)
+							.padding(.horizontal, 12)
+							.frame(height: max(size, 0) * 0.45)
+							.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
+							.clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 16, bottomTrailingRadius: 16))
+							.transition(.opacity)
+					}
+				}
+				.animation(.default, value: showsVisualizer)
+				.shadow(radius: 12, y: 4)
+		}
+	}
+
+	/// Title, artist and album, and the position.
+	@ViewBuilder private var info: some View {
+		if let entry = model.currentEntry {
+			VStack(spacing: 4) {
+				Text(entry.title)
+					.font(.title2.bold())
+					.lineLimit(2)
+				Text([entry.artist, entry.album].compactMap { $0 }.joined(separator: " — "))
+					.foregroundStyle(.secondary)
+					.lineLimit(1)
+			}
+			// Rewrapped as the pane changes width, the words move to their
+			// new lines rather than jumping there.
+			.contentTransition(.interpolate)
+			.multilineTextAlignment(.center)
+			.padding(.horizontal)
+
+			ProgressBar(clock: player.clock, length: entry.length.doubleValue, tint: palette?.accent)
+		}
+	}
+}
+
+/// The equalizer, speed and lyrics, as cards: in a row below Now Playing,
+/// or in the pane across an iPhone Duo's fold from it, in a row or a column
+/// as that pane runs.
+struct PlaybackPanels: View {
+	let axis: Axis
+	@EnvironmentObject private var model: PlaylistModel
+	@EnvironmentObject private var ui: AppUI
+	@EnvironmentObject private var equalizer: Equalizer
+
+	var body: some View {
+		let layout = axis == .horizontal
+			? AnyLayout(HStackLayout(alignment: .top, spacing: 16))
+			: AnyLayout(VStackLayout(spacing: 16))
+		layout {
 			if ui.showsEqualizer {
 				panel("Equalizer", close: { ui.showsEqualizer = false }) {
 					Toggle("Equalizer", isOn: $equalizer.isEnabled)
@@ -214,8 +304,6 @@ struct NowPlayingView: View {
 				}
 			}
 		}
-		.frame(height: max(cardHeight - 16, 0))
-		.padding([.horizontal, .bottom], 16)
 	}
 
 	/// A card: its title centered, what it offers on either side of it, and
@@ -245,52 +333,25 @@ struct NowPlayingView: View {
 		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 		.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
 	}
+}
 
-	/// What an on-or-off button shows: the tint when on.
-	private func state(_ on: Bool) -> AnyShapeStyle {
-		on ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary)
-	}
+/// Transport, then the modes and the rest; smaller where room is short.
+/// Under what plays in Now Playing, or in a bar along the playlist's foot
+/// while the Duo stands like a laptop.
+struct NowPlayingControls: View {
+	let compact: Bool
+	/// The playing album's colors, which the transport's shadow allows for.
+	let palette: ArtworkPalette?
+	@EnvironmentObject private var player: Player
+	@EnvironmentObject private var model: PlaylistModel
+	@EnvironmentObject private var ui: AppUI
+	@EnvironmentObject private var equalizer: Equalizer
+	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
+	@AppStorage("tempo") private var tempo = 1.0
+	@AppStorage("pitch") private var pitch = 1.0
+	@AppStorage("showsVisualizer") private var showsVisualizer = false
 
-	@ViewBuilder private func artwork(size: CGFloat) -> some View {
-		if let entry = model.currentEntry {
-			ArtworkView(entry: entry, size: max(size, 0), cornerRadius: 16)
-				// The spectrum rises over the art's lower half, darkened to
-				// carry it.
-				.overlay(alignment: .bottom) {
-					if showsVisualizer {
-						SpectrumView(isPlaying: player.isPlaying, color: palette?.accent ?? .white)
-							.padding(.horizontal, 12)
-							.frame(height: max(size, 0) * 0.45)
-							.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
-							.clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 16, bottomTrailingRadius: 16))
-							.transition(.opacity)
-					}
-				}
-				.animation(.default, value: showsVisualizer)
-				.shadow(radius: 12, y: 4)
-		}
-	}
-
-	/// Title, artist and album, and the position.
-	@ViewBuilder private var info: some View {
-		if let entry = model.currentEntry {
-			VStack(spacing: 4) {
-				Text(entry.title)
-					.font(.title2.bold())
-					.lineLimit(2)
-				Text([entry.artist, entry.album].compactMap { $0 }.joined(separator: " — "))
-					.foregroundStyle(.secondary)
-					.lineLimit(1)
-			}
-			.multilineTextAlignment(.center)
-			.padding(.horizontal)
-
-			ProgressBar(clock: player.clock, length: entry.length.doubleValue, tint: palette?.accent)
-		}
-	}
-
-	/// Transport, then the modes and the rest; smaller in landscape.
-	private func controls(compact: Bool) -> some View {
+	var body: some View {
 		VStack(spacing: compact ? 12 : 24) {
 			HStack(spacing: compact ? 40 : 48) {
 				HoldButton("Previous", systemImage: "backward.fill", action: { player.previous() }) { held in
@@ -339,6 +400,11 @@ struct NowPlayingView: View {
 			.font(compact ? .title3 : .title2)
 		}
 		.labelStyle(.iconOnly)
+	}
+
+	/// What an on-or-off button shows: the tint when on.
+	private func state(_ on: Bool) -> AnyShapeStyle {
+		on ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary)
 	}
 
 	/// Stop after this, the equalizer, speed and the visualizer. Lit while
