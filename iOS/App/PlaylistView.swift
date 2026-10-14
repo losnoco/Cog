@@ -37,6 +37,7 @@ struct PlaylistView: View {
 					} label: {
 						EntryRow(entry: entry)
 					}
+					.listRowBackground(ui.added.contains(entry.objectID) ? Color.accentColor.opacity(0.2) : nil)
 					.swipeActions(edge: .leading) {
 						Button(entry.queued ? "Unqueue" : "Queue", systemImage: entry.queued ? "text.badge.minus" : "text.badge.plus") {
 							model.toggleQueued([entry])
@@ -63,6 +64,23 @@ struct PlaylistView: View {
 				if let entry = model.currentEntry {
 					withAnimation { proxy.scrollTo(entry.objectID, anchor: .center) }
 				}
+			}
+			// What was just added: shown (a search could hide it), scrolled
+			// to, and highlighted for a moment. A new addition restarts it.
+			.task(id: ui.revealsAdded) {
+				guard ui.revealsAdded > 0 else { return }
+				if !query.isEmpty {
+					query = ""
+					ui.searching = false
+				}
+				// The rows appear in the next update.
+				await Task.yield()
+				if let first = model.entries.first(where: { ui.added.contains($0.objectID) }) {
+					withAnimation { proxy.scrollTo(first.objectID, anchor: ui.added.count == 1 ? .center : .top) }
+				}
+				try? await Task.sleep(for: .seconds(2.5))
+				guard !Task.isCancelled else { return }
+				withAnimation(.easeOut(duration: 0.6)) { ui.clearAdded() }
 			}
 		}
 		.searchable(text: $query, isPresented: $ui.searching, prompt: "Title, Artist, Album")
@@ -174,7 +192,7 @@ struct PlaylistView: View {
 	private func add(_ urls: [URL]) async {
 		addingCount += 1
 		defer { addingCount -= 1 }
-		await player.loader.add(urls)
+		ui.reveal(await player.loader.add(urls))
 	}
 
 	/// Every track in Cog's Music folder, its subfolders included, that the
@@ -184,7 +202,7 @@ struct PlaylistView: View {
 		Task {
 			addingCount += 1
 			defer { addingCount -= 1 }
-			await player.loader.add([MusicImporter.musicFolder], skippingExisting: true)
+			ui.reveal(await player.loader.add([MusicImporter.musicFolder], skippingExisting: true))
 		}
 	}
 }

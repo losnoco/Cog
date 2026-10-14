@@ -7,6 +7,7 @@
 //
 
 import CogPlaylist
+import CoreData
 import SwiftUI
 
 /// What the menus open and show, shared with the views that open and
@@ -23,6 +24,21 @@ final class AppUI: ObservableObject {
 	@Published var searching = false
 	/// Counted up to scroll the playlist to what plays.
 	@Published var revealsCurrent = 0
+	/// What was just added, however it was: the playlist scrolls to it and
+	/// highlights it for a moment.
+	@Published private(set) var added: Set<NSManagedObjectID> = []
+	/// Counted up with each addition, for the playlist to scroll again.
+	@Published private(set) var revealsAdded = 0
+
+	func reveal(_ entries: [PlaylistEntry]) {
+		guard !entries.isEmpty else { return }
+		added = Set(entries.map(\.objectID))
+		revealsAdded += 1
+	}
+
+	func clearAdded() {
+		added = []
+	}
 }
 
 struct CogCommands: Commands {
