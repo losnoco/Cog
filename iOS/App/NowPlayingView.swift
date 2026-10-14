@@ -35,6 +35,8 @@ struct MiniPlayerView: View {
 			Button(player.isPlaying ? "Pause" : "Play", systemImage: player.isPlaying ? "pause.fill" : "play.fill") {
 				player.togglePlayPause()
 			}
+			.contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
+			.animation(.default, value: player.isPlaying)
 			Button("Next", systemImage: "forward.fill") { player.next() }
 		}
 		.labelStyle(.iconOnly)
@@ -64,6 +66,7 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
 	@Environment(\.colorScheme) private var colorScheme
+	@Environment(\.verticalSizeClass) private var verticalSizeClass
 	@EnvironmentObject private var ui: AppUI
 	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
 	@AppStorage("tempo") private var tempo = 1.0
@@ -94,6 +97,11 @@ struct NowPlayingView: View {
 	private var layout: some View {
 		VStack(spacing: 0) {
 			main
+				// On a phone on its side the art and controls take the whole
+				// height, centered in it: the Done button floats over the
+				// corner above the controls rather than taking a bar's worth
+				// of room, and the home indicator's strip is used too.
+				.ignoresSafeArea(.container, edges: !isEmbedded && verticalSizeClass == .compact ? .vertical : [])
 			// Beside the playlist, the equalizer, speed and lyrics open in the
 			// room below, rather than in sheets over everything.
 			if cardsFit && (ui.showsEqualizer || ui.showsSpeed || ui.showsLyrics) {
@@ -301,6 +309,9 @@ struct NowPlayingView: View {
 					player.togglePlayPause()
 				}
 				.font(.system(size: compact ? 48 : 64))
+				// The circle stays; only the glyph inside turns into the other.
+				.contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
+				.animation(.default, value: player.isPlaying)
 				HoldButton("Next", systemImage: "forward.fill", action: { player.next() }) { held in
 					held ? player.beginFastForward() : player.endFastForward()
 				}
