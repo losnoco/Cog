@@ -38,6 +38,15 @@ final class PlaylistExpanderTests: XCTestCase {
 		XCTAssertEqual(names(expander.fileURLs(inFolder: folder.path)), ["a.flac", "b.flac", "Disc 2/c.flac", "album.cue", "list.m3u"])
 	}
 
+	func testFoldersLeaveOutHiddenFiles() throws {
+		for path in ["._a.flac", ".DS_Store", ".Trash/d.flac", "Disc 2/._c.flac"] {
+			let file = folder.appendingPathComponent(path)
+			try FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
+			try Data([0]).write(to: file)
+		}
+		XCTAssertEqual(names(PlaylistExpander().fileURLs(inFolder: folder.path)), ["a.flac", "b.flac", "Disc 2/c.flac"])
+	}
+
 	func testExpandingKeysEachURLOnce() {
 		let expander = PlaylistExpander()
 		let stream = URL(string: "http://example.com/stream.mp3")!

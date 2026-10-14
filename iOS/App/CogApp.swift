@@ -31,6 +31,7 @@ struct CogApp: App {
 		PlaylistController.container = store.container
 		let model = PlaylistModel(store: store)
 		MusicImporter.relocateMovedContainer(in: model)
+		MusicImporter.removeAppleDoubleFiles(in: model)
 		let locations = MusicLocations()
 		locations.restore(in: model)
 		SoundFontAccess.restore()

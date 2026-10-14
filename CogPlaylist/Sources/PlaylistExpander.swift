@@ -94,7 +94,10 @@ import Foundation
 	}
 
 	/// The files in a folder and its subfolders, cue sheets and playlists as
-	/// the preferences have them.
+	/// the preferences have them. Hidden files and folders are left out, as
+	/// Finder hides them: among them the "._" files macOS writes beside
+	/// each file it copies to a disk that cannot keep its metadata, which
+	/// share the file's extension but hold no audio.
 	func fileURLs(inFolder path: String) -> [URL] {
 		let handle = sandbox?.beginAccess(toFolder: URL(fileURLWithPath: path))
 		let subpaths = FileManager.default.subpaths(atPath: path) ?? []
@@ -102,6 +105,7 @@ import Foundation
 
 		var urls: [URL] = []
 		for subpath in subpaths {
+			if subpath.split(separator: "/").contains(where: { $0.hasPrefix(".") }) { continue }
 			let absolute = (path as NSString).appendingPathComponent(subpath)
 			var isDirectory: ObjCBool = false
 			guard FileManager.default.fileExists(atPath: absolute, isDirectory: &isDirectory), !isDirectory.boolValue else { continue }

@@ -61,6 +61,21 @@ enum MusicImporter {
 		return moved
 	}
 
+	/// Takes out the "._" files macOS leaves beside what it copies to disks
+	/// that cannot keep its metadata, which adding a folder used to add as
+	/// tracks (they share the file's extension but hold no audio). Returns
+	/// how many went.
+	@MainActor
+	@discardableResult
+	static func removeAppleDoubleFiles(in model: PlaylistModel) -> Int {
+		let offsets = IndexSet(model.entries.indices.filter { index in
+			guard let url = model.entries[index].url, url.isFileURL else { return false }
+			return url.lastPathComponent.hasPrefix("._")
+		})
+		if !offsets.isEmpty { model.remove(at: offsets) }
+		return offsets.count
+	}
+
 	/// Points the entries under `old` at the same place under `new`, keeping
 	/// what follows the path (a cue sheet's track). Returns how many moved.
 	@MainActor
