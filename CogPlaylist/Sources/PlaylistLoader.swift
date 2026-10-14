@@ -79,7 +79,7 @@ public final class PlaylistLoader {
 	/// What makes two URLs the same track: a file's resolved path (the
 	/// same file reached by /var or /private/var is one) and its fragment
 	/// (a cue sheet or subsong track); anything else as written.
-	nonisolated static func identity(_ url: URL) -> String {
+	public nonisolated static func identity(_ url: URL) -> String {
 		guard url.isFileURL else { return url.absoluteString }
 		return url.standardizedFileURL.resolvingSymlinksInPath().path + "#" + (url.fragment ?? "")
 	}

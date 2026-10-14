@@ -35,6 +35,13 @@ artifact of the "Check if Cog builds for iOS" workflow unpacks into place.
     sources ask for with `NSLocalizedString` are kept by hand, because the
     Swift compiler does not extract them. `EqualizerPresets.xcstrings`
     translates the names of `Cog.q1.json`'s presets.
+- `generate_document_types.py`: declares the files the app opens in
+  `CogApp-Info.plist`, from the macOS app's document types in
+  `Info.plist.template`. iOS goes by type rather than by extension, so each
+  extension gets the system's type for it or one imported for Cog. Run it
+  again after changing the macOS app's document types. A file opened in Cog
+  is added to the playlist and played; one shared from another app is moved
+  into `Documents/Music`.
 - `genversion.sh`: versions the app as `Scripts/genversion.sh` versions
   the macOS one, counting commits, but from the iOS app's first commit
   (700560d4f, version 1) rather than the `k54` tag. A shallow clone has

@@ -19,6 +19,29 @@ enum MusicImporter {
 		return folder
 	}
 
+	/// Moves a file another app shared, which iOS copied into
+	/// Documents/Inbox, into the Music folder, where it stays with the rest.
+	/// Anything else, opened where it is, is returned as it is.
+	static func keepInbox(_ url: URL) -> URL {
+		let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+		let inbox = documents.appendingPathComponent("Inbox", isDirectory: true).resolvingSymlinksInPath().path + "/"
+		guard url.isFileURL, url.resolvingSymlinksInPath().path.hasPrefix(inbox) else { return url }
+		let name = url.deletingPathExtension().lastPathComponent
+		var destination = musicFolder.appendingPathComponent(url.lastPathComponent)
+		var copy = 2
+		while FileManager.default.fileExists(atPath: destination.path) {
+			destination = musicFolder.appendingPathComponent("\(name) \(copy)").appendingPathExtension(url.pathExtension)
+			copy += 1
+		}
+		do {
+			try FileManager.default.moveItem(at: url, to: destination)
+			return destination
+		} catch {
+			NSLog("Could not move \(url.path) into the Music folder: \(error)")
+			return url
+		}
+	}
+
 	/// Entries stored with their absolute path into the app's data
 	/// container, which iOS moves when the app is reinstalled (as every build
 	/// from Xcode does): points those at the container as it is now, where

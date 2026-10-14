@@ -60,6 +60,23 @@ struct CogApp: App {
 		])
 	}
 
+	/// A file opened in Cog from Files or another app: added to the playlist
+	/// and played, as the macOS app does by default (enqueueAndPlay). One
+	/// the playlist has already plays from where it is.
+	@MainActor
+	private func open(_ url: URL) async {
+		let url = MusicImporter.keepInbox(url)
+		let model = player.model
+		var entries = await player.loader.add(locations.add([url]), skippingExisting: true)
+		if entries.isEmpty {
+			let identity = PlaylistLoader.identity(url)
+			entries = model.entries.filter { $0.url.map(PlaylistLoader.identity) == identity }
+		}
+		guard let first = entries.first else { return }
+		player.play(first)
+		ui.reveal(entries)
+	}
+
 	var body: some Scene {
 		WindowGroup {
 			ContentView()
@@ -68,6 +85,9 @@ struct CogApp: App {
 				.environmentObject(player.equalizer)
 				.environmentObject(locations)
 				.environmentObject(ui)
+				.onOpenURL { url in
+					Task { await open(url) }
+				}
 		}
 		.commands {
 			CogCommands(player: player, model: player.model, ui: ui)
