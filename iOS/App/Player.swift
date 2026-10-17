@@ -186,8 +186,9 @@ final class Player: NSObject, ObservableObject {
 	private static let speedKeys = ["rubberbandEngine", "tempo"]
 
 	/// Plays faster and faster on the speed engine until `endFastForward`:
-	/// from 1.5 times the tempo, half the tempo more each second, up to the
-	/// engine's 5×. Varispeed when the engine is off, so the pitch rises as
+	/// from the tempo as it was (1× unless set), half the tempo more each
+	/// second, up to the engine's 5×, so the engine eases in rather than
+	/// jumping. Varispeed when the engine is off, so the pitch rises as
 	/// a tape's would; Rubber Band and Signalsmith keep it.
 	func beginFastForward() {
 		let defaults = UserDefaults.standard
@@ -203,10 +204,11 @@ final class Player: NSObject, ObservableObject {
 		let started = Date()
 		let speedUp = {
 			let held = Date().timeIntervalSince(started)
-			defaults.set(min(base * (1.5 + held / 2), Speed.range.upperBound), forKey: "tempo")
+			defaults.set(min(base * (1 + held / 2), Speed.range.upperBound), forKey: "tempo")
 		}
 		speedUp()
-		let timer = Timer(timeInterval: 0.25, repeats: true) { _ in speedUp() }
+		// Often enough that the climb is heard as a ramp, not steps.
+		let timer = Timer(timeInterval: 0.1, repeats: true) { _ in speedUp() }
 		RunLoop.main.add(timer, forMode: .common)
 		fastForwardTimer = timer
 	}
