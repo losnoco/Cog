@@ -26,6 +26,7 @@ final class Player: NSObject, ObservableObject {
 	let model: PlaylistModel
 	let loader: PlaylistLoader
 	let equalizer = Equalizer()
+	let waveform = WaveformModel()
 	// -init returns id, so Swift sees it as failable; it never fails.
 	private let audioPlayer: AudioPlayer = AudioPlayer()!
 
@@ -360,6 +361,7 @@ extension Player {
 			let entry = userInfo as? PlaylistEntry
 			model.setCurrent(entry)
 			position = 0
+			waveform.track(entry?.url)
 			updateNowPlaying()
 			guard let entry else { return }
 			// Scrobbled once half heard, or four minutes, as Last.fm and
@@ -382,6 +384,7 @@ extension Player {
 				position = audioPlayer.amountPlayed()
 			}
 			if self.status == .stopped {
+				waveform.track(nil)
 				Task { await DeviceOutput.deactivateSession() }
 			}
 			updateNowPlaying()

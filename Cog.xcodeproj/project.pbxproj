@@ -266,6 +266,8 @@
 		ED69CBC725BE32C00090B90D /* MASShortcut.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; };
 		ED69CBCA25BE32E80090B90D /* MASShortcut.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = ED69CBBF25BE328C0090B90D /* MASShortcut.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */; };
+		0ABB324730843A3C000AAB12 /* WaveformController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABB324630843A3C000AAB12 /* WaveformController.swift */; };
+		0ABB371330843A63000AAB12 /* WaveformSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABB371230843A63000AAB12 /* WaveformSliderCell.swift */; };
 		F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */ = {isa = PBXBuildFile; fileRef = F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */; };
 		1EBFAF4C15D626F515FDBA65 /* CogPlaylist.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = A439B853591A600EFD69D4A1 /* CogPlaylist.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		36521C1430E83285BE9E2609 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A439B853591A600EFD69D4A1 /* CogPlaylist.framework */; };
@@ -1240,6 +1242,8 @@
 		E983E24C795286EB454FFAC4 /* LyricsLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsLookup.swift; sourceTree = "<group>"; };
 		ED69CBB825BE328C0090B90D /* MASShortcut.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MASShortcut.xcodeproj; path = Frameworks/shpakovski/MASShortcut/MASShortcut.xcodeproj; sourceTree = "<group>"; };
 		EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSliderToolbarItem.swift; path = Window/PositionSliderToolbarItem.swift; sourceTree = "<group>"; };
+		0ABB324630843A3C000AAB12 /* WaveformController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformController.swift; path = Window/WaveformController.swift; sourceTree = "<group>"; };
+		0ABB371230843A63000AAB12 /* WaveformSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformSliderCell.swift; path = Window/WaveformSliderCell.swift; sourceTree = "<group>"; };
 		F56961334CC939A7158B7470 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FinderCompare.m"; sourceTree = "<group>"; };
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
@@ -1608,6 +1612,8 @@
 				17E0D5E50F520F02005B6FED /* PositionSlider.h */,
 				17E0D5E60F520F02005B6FED /* PositionSlider.m */,
 				EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */,
+				0ABB324630843A3C000AAB12 /* WaveformController.swift */,
+				0ABB371230843A63000AAB12 /* WaveformSliderCell.swift */,
 				8325F59B2F71412700400A88 /* RepeatTransformers.swift */,
 				8325F59D2F71418600400A88 /* ShuffleTransformers.swift */,
 				838A33852D06CFCA00D0D770 /* SpeedButton.h */,
@@ -3019,6 +3025,8 @@
 				0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */,
 				835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */,
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
+				0ABB324730843A3C000AAB12 /* WaveformController.swift in Sources */,
+				0ABB371330843A63000AAB12 /* WaveformSliderCell.swift in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
 				5604D45B0D60349B004F5C5D /* SpotlightWindowController.m in Sources */,
 				0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */,

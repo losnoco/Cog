@@ -293,7 +293,7 @@ struct NowPlayingView: View {
 			.multilineTextAlignment(.center)
 			.padding(.horizontal)
 
-			ProgressBar(clock: player.clock, length: entry.length.doubleValue, tint: palette?.accent)
+			ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
 		}
 	}
 
@@ -454,6 +454,7 @@ private struct PressReporting: ButtonStyle {
 /// The position slider: the one part of Now Playing that follows the clock.
 private struct ProgressBar: View {
 	@ObservedObject var clock: PlaybackClock
+	@ObservedObject var waveform: WaveformModel
 	let length: Double
 	/// The album's accent, which a UIKit slider cannot take from the
 	/// environment's tint.
@@ -461,11 +462,15 @@ private struct ProgressBar: View {
 	@EnvironmentObject private var player: Player
 	/// The slider's value while dragged; nil follows playback.
 	@State private var scrubbing: Double?
+	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
+	@AppStorage(WaveformModel.logScaleKey) private var logScale = true
+	@AppStorage(WaveformModel.rectifiedKey) private var rectified = false
 
 	var body: some View {
 		VStack(spacing: 4) {
 			ScrubbingSlider(value: Binding(get: { scrubbing ?? clock.position }, set: { scrubbing = $0 }),
-			                range: 0...max(length, 1), tint: tint) { editing in
+			                range: 0...max(length, 1), tint: tint, waveform: showWaveform ? waveform.waveform : nil,
+			                logScale: logScale, rectified: rectified) { editing in
 				if !editing, let target = scrubbing {
 					player.seek(to: target)
 					scrubbing = nil
@@ -479,6 +484,16 @@ private struct ProgressBar: View {
 			}
 			.font(.caption.monospacedDigit())
 			.foregroundStyle(.secondary)
+			// The waveform settings, on the times rather than the slider,
+			// where holding the thumb before a drag would open them.
+			.contentShape(Rectangle())
+			.contextMenu {
+				Toggle("Show Waveform", isOn: $showWaveform)
+				Toggle("Logarithmic Scale", isOn: $logScale)
+					.disabled(!showWaveform)
+				Toggle("Rectified", isOn: $rectified)
+					.disabled(!showWaveform)
+			}
 		}
 		.padding(.horizontal, 24)
 	}

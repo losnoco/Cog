@@ -1032,7 +1032,7 @@
                         <slider key="view" verticalHuggingPriority="750" id="1549" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <sliderCell key="cell" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="1550" customClass="TrackingCell"/>
+                            <sliderCell key="cell" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="1550" customClass="WaveformSliderCell"/>
                             <connections>
                                 <action selector="seek:" target="705" id="1597"/>
                                 <binding destination="1897" name="maxValue" keyPath="content.length" id="YY5-Mn-b4V"/>
@@ -1317,7 +1317,7 @@
                         <slider key="view" verticalHuggingPriority="750" id="2293" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="2294" customClass="TrackingCell">
+                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="2294" customClass="WaveformSliderCell">
                                 <font key="font" metaFont="message" size="11"/>
                             </sliderCell>
                             <connections>
@@ -1577,7 +1577,7 @@
                         <slider key="view" verticalHuggingPriority="750" id="3108" customClass="PositionSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="3109" customClass="TrackingCell">
+                            <sliderCell key="cell" controlSize="small" enabled="NO" alignment="left" tickMarkPosition="above" sliderType="linear" id="3109" customClass="WaveformSliderCell">
                                 <font key="font" metaFont="message" size="11"/>
                             </sliderCell>
                             <connections>
@@ -1918,6 +1918,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleToolbarStyle:" target="226" id="EYr-kR-yZK"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Waveform in Seek Bar" id="Wfm-Sb-k1t">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="1689" name="value" keyPath="values.waveformSeekBar" id="Wfm-Sb-b1n"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="2155"/>

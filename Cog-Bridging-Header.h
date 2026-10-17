@@ -15,5 +15,6 @@
 #import "Playlist/PlaylistControllerEnums.h"
 #import "Preferences/PathSuggester.h"
 #import "Preferences/MIDIConfig.h"
+#import "Utils/TrackingCell.h"
 #import "Spotlight/SpotlightWindowController.h"
 #import "NSData+MD5.h"

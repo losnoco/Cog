@@ -17,6 +17,9 @@ struct SettingsView: View {
 	@AppStorage("enableSpatialAudio") private var spatialAudio = false
 	@AppStorage("enableHeadTracking") private var headTracking = false
 	@AppStorage("enableLrclib") private var lrclib = false
+	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
+	@AppStorage(WaveformModel.logScaleKey) private var waveformLogScale = true
+	@AppStorage(WaveformModel.rectifiedKey) private var waveformRectified = false
 
 	var body: some View {
 		NavigationStack {
@@ -34,6 +37,17 @@ struct SettingsView: View {
 					Toggle("Fade on Pause and Seek", isOn: $fading)
 					Toggle("Stop After Each Track", isOn: $stopAfterEach)
 					NavigationLink("MIDI") { MIDISettingsView() }
+				}
+				Section {
+					Toggle("Show Waveform", isOn: $showWaveform)
+					Toggle("Logarithmic Scale", isOn: $waveformLogScale)
+						.disabled(!showWaveform)
+					Toggle("Rectified", isOn: $waveformRectified)
+						.disabled(!showWaveform)
+				} header: {
+					Text("Seek Bar")
+				} footer: {
+					Text("The track's loudness, drawn as the seek bar. Hold the times under it in Now Playing for these too.")
 				}
 				Section {
 					Picker("ReplayGain", selection: $replayGain) {

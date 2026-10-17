@@ -5315,6 +5315,24 @@
         }
       }
     },
+    "Wfm-Sb-k1t.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform in Seek Bar\"; ObjectID = \"Wfm-Sb-k1t\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Waveform in Seek Bar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar forma de onda en la barra de reproducción"
+          }
+        }
+      }
+    },
     "VVx-99-roJ.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"VVx-99-roJ\";",
       "extractionState" : "manual",

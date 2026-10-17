@@ -1319,6 +1319,69 @@
         }
       }
     },
+    "Logarithmic Scale" : {
+      "comment" : "Position slider menu item: waveform in decibels",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escala logarítmica"
+          }
+        }
+      }
+    },
+    "Logarithmic scale" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escala logarítmica"
+          }
+        }
+      }
+    },
+    "Rectified" : {
+      "comment" : "Position slider menu item: waveform folded above its baseline",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectificada"
+          }
+        }
+      }
+    },
+    "Seek Bar" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barra de reproducción"
+          }
+        }
+      }
+    },
+    "Show Waveform" : {
+      "comment" : "Position slider menu item",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar forma de onda"
+          }
+        }
+      }
+    },
+    "Show waveform" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar forma de onda"
+          }
+        }
+      }
+    },
     "dhms" : {
       "comment" : "days, hours, minutes and seconds",
       "localizations" : {

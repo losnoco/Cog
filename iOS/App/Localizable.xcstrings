@@ -826,6 +826,16 @@
         }
       }
     },
+    "Logarithmic Scale" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escala logarítmica"
+          }
+        }
+      }
+    },
     "Long" : {
       "localizations" : {
         "es" : {
@@ -1249,6 +1259,16 @@
         }
       }
     },
+    "Rectified" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rectificada"
+          }
+        }
+      }
+    },
     "Reload Tags" : {
       "localizations" : {
         "es" : {
@@ -1419,6 +1439,16 @@
         }
       }
     },
+    "Seek Bar" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barra de reproducción"
+          }
+        }
+      }
+    },
     "Seek Forward" : {
       "localizations" : {
         "es" : {
@@ -1475,6 +1505,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Corta"
+          }
+        }
+      }
+    },
+    "Show Waveform" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar forma de onda"
           }
         }
       }
@@ -1735,6 +1775,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No es un conjunto completo de ROMs de SC-55mk2 o SC-55mk1."
+          }
+        }
+      }
+    },
+    "The track's loudness, drawn as the seek bar. Hold the times under it in Now Playing for these too." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La intensidad de la pista, dibujada como barra de reproducción. Mantén presionados los tiempos bajo ella en Reproduciendo para ver estas opciones."
           }
         }
       }

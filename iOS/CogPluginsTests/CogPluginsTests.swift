@@ -314,6 +314,60 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertFalse(host.errors.contains("short"))
 		XCTAssertGreaterThan(engine.amountPlayed, 0.4)
 	}
+
+	// MARK: - Waveform
+
+	/// A whole file scanned to the seek bar's waveform: every bucket filled,
+	/// the stereo sine folded to mono at its own level. Two seconds are read
+	/// from start to end, a minute in segments at once.
+	func testAWaveformScanCoversTheWholeTrack() throws {
+		for seconds in [2.0, 60.0] {
+			try checkWaveformScan(of: writeWAV(named: "waveform-\(Int(seconds)).wav", seconds: seconds))
+		}
+	}
+
+	private func checkWaveformScan(of url: URL) throws {
+		let scanned = expectation(description: "scanned")
+		var result: Waveform?
+		WaveformScanner(url: url).start(progress: { _ in }) { waveform in
+			result = waveform
+			scanned.fulfill()
+		}
+		wait(for: [scanned], timeout: 60)
+		let waveform = try XCTUnwrap(result)
+		XCTAssertTrue(waveform.isComplete)
+		// A bucket is under half the sine's period, so its peak can fall a
+		// little short of the sine's, and its RMS varies; on average it is
+		// the sine's.
+		for bucket in 0..<Waveform.bucketCount {
+			let peak = max(-waveform.minimum[bucket], waveform.maximum[bucket])
+			XCTAssertEqual(peak, 0.5, accuracy: 0.02, "bucket \(bucket)")
+			XCTAssertLessThanOrEqual(waveform.rms[bucket], peak + 1e-4, "bucket \(bucket)")
+		}
+		let meanSquare = waveform.rms.map { $0 * $0 }.reduce(0, +) / Float(Waveform.bucketCount)
+		XCTAssertEqual(meanSquare.squareRoot(), 0.5 / Float(2).squareRoot(), accuracy: 0.01)
+	}
+
+	func testAWaveformSurvivesTheCache() throws {
+		var waveform = Waveform()
+		for bucket in 0..<Waveform.bucketCount {
+			waveform.minimum[bucket] = -Float(bucket) / Float(Waveform.bucketCount)
+			waveform.maximum[bucket] = Float(bucket) / Float(Waveform.bucketCount)
+			waveform.rms[bucket] = Float(bucket) / Float(2 * Waveform.bucketCount)
+		}
+		waveform.scanned = [Bool](repeating: true, count: Waveform.bucketCount)
+		XCTAssertEqual(Waveform(encoded: waveform.encoded()), waveform)
+		XCTAssertNil(Waveform(encoded: Data(waveform.encoded().dropLast())))
+	}
+
+	func testWaveformLevelsAreLinearOrDecibels() {
+		XCTAssertEqual(Waveform.level(0.5, logScale: false), 0.5, accuracy: 1e-6)
+		XCTAssertEqual(Waveform.level(-2, logScale: false), 1, accuracy: 1e-6)
+		XCTAssertEqual(Waveform.level(1, logScale: true), 1, accuracy: 1e-6)
+		XCTAssertEqual(Waveform.level(0.001, logScale: true), 0, accuracy: 1e-6, "-60 dB is the floor")
+		XCTAssertEqual(Waveform.level(0.0316, logScale: true), 0.5, accuracy: 0.01, "-30 dB is halfway")
+		XCTAssertEqual(Waveform.level(0, logScale: true), 0)
+	}
 }
 
 private final class Host: NSObject, PlaybackEngineHost {

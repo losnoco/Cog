@@ -862,6 +862,10 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 
+	[userDefaultsValuesDict setObject:@YES forKey:@"waveformSeekBar"];
+	[userDefaultsValuesDict setObject:@YES forKey:@"waveformLogScale"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"waveformRectified"];
+
 	[userDefaultsValuesDict setObject:@(150.0) forKey:@"synthDefaultSeconds"];
 	[userDefaultsValuesDict setObject:@(8.0) forKey:@"synthDefaultFadeSeconds"];
 	[userDefaultsValuesDict setObject:@(2) forKey:@"synthDefaultLoopCount"];

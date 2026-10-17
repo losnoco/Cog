@@ -51,6 +51,10 @@ private final class AppearancePrefs: ObservableObject {
 
 struct AppearancePaneView: View {
     @StateObject private var prefs = AppearancePrefs()
+    // As @AppStorage, these follow the seek bar's menu and the View menu too.
+    @AppStorage("waveformSeekBar") private var waveformSeekBar = true
+    @AppStorage("waveformLogScale") private var waveformLogScale = true
+    @AppStorage("waveformRectified") private var waveformRectified = false
 
     var body: some View {
         if #available(macOS 13.0, *) {
@@ -82,6 +86,13 @@ struct AppearancePaneView: View {
                     Text("Pause icon:")
                     Spacer()
                     Button("Choose…") { pickDockIcon("Pause") }
+                }
+            }
+            Section(header: Text("Seek Bar").bold()) {
+                Toggle("Show waveform", isOn: $waveformSeekBar)
+                if waveformSeekBar {
+                    Toggle("Logarithmic scale", isOn: $waveformLogScale)
+                    Toggle("Rectified", isOn: $waveformRectified)
                 }
             }
             Section(header: Text("Spectrum").bold()) {
