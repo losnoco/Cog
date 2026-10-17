@@ -1582,6 +1582,16 @@
         }
       }
     },
+    "Remove" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar"
+          }
+        }
+      }
+    },
     "Remove ROM Set" : {
       "localizations" : {
         "es" : {
@@ -1738,6 +1748,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hacer scrobbling"
+          }
+        }
+      }
+    },
+    "Search for Album" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar álbum"
+          }
+        }
+      }
+    },
+    "Search for Artist" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar artista"
           }
         }
       }

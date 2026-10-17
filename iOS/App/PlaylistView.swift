@@ -16,19 +16,31 @@ struct PlaylistView: View {
 	@State private var addingCount = 0
 	@State private var confirmsClear = false
 	@State private var query = ""
+	/// An artist or album the search keeps to, from a row's menu.
+	@State private var tokens: [SearchToken] = []
 	@State private var urlText = ""
 	/// The entry whose details are shown, as the macOS Info Inspector has
 	/// them.
 	@State private var infoEntry: PlaylistEntry?
 
+	private var isSearching: Bool { !query.isEmpty || !tokens.isEmpty }
+
 	/// The entries the search leaves, all of them when there is none.
 	private var shown: [PlaylistEntry] {
 		let terms = query.split(separator: " ").map(String.init)
-		guard !terms.isEmpty else { return model.entries }
+		guard isSearching else { return model.entries }
 		return model.entries.filter { entry in
 			let text = [entry.title, entry.artist ?? "", entry.album ?? "", entry.albumartist ?? ""].joined(separator: " ")
-			return terms.allSatisfy { text.localizedStandardContains($0) }
+			return terms.allSatisfy { text.localizedStandardContains($0) } && tokens.allSatisfy { $0.matches(entry) }
 		}
+	}
+
+	/// Shows only what the artist or album of `entry` has, in the search.
+	private func search(_ field: SearchToken.Field, of entry: PlaylistEntry) {
+		guard let value = field == .artist ? entry.artist : entry.album, !value.isEmpty else { return }
+		query = ""
+		tokens = [SearchToken(field: field, value: value)]
+		ui.searching = true
 	}
 
 	var body: some View {
@@ -43,6 +55,15 @@ struct PlaylistView: View {
 					.listRowBackground(ui.added.contains(entry.objectID) ? Color.accentColor.opacity(0.2) : nil)
 					.contextMenu {
 						Button("Get Info", systemImage: "info.circle") { infoEntry = entry }
+						Divider()
+						Button("Search for Artist", systemImage: "music.mic") { search(.artist, of: entry) }
+							.disabled(entry.artist?.isEmpty ?? true)
+						Button("Search for Album", systemImage: "square.stack") { search(.album, of: entry) }
+							.disabled(entry.album?.isEmpty ?? true)
+						Divider()
+						Button("Remove", systemImage: "trash", role: .destructive) {
+							model.remove(at: IndexSet(integer: Int(entry.index)))
+						}
 					}
 					.swipeActions(edge: .leading) {
 						Button(entry.queued ? "Unqueue" : "Queue", systemImage: entry.queued ? "text.badge.minus" : "text.badge.plus") {
@@ -56,7 +77,7 @@ struct PlaylistView: View {
 					let entries = shown
 					model.remove(at: IndexSet(offsets.map { Int(entries[$0].index) }))
 				}
-				.onMove(perform: query.isEmpty ? { model.move(fromOffsets: $0, toOffset: $1) } : nil)
+				.onMove(perform: !isSearching ? { model.move(fromOffsets: $0, toOffset: $1) } : nil)
 				if !shown.isEmpty {
 					Text(summary)
 						.font(.footnote)
@@ -75,8 +96,9 @@ struct PlaylistView: View {
 			// to, and highlighted for a moment. A new addition restarts it.
 			.task(id: ui.revealsAdded) {
 				guard ui.revealsAdded > 0 else { return }
-				if !query.isEmpty {
+				if isSearching {
 					query = ""
+					tokens = []
 					ui.searching = false
 				}
 				// The rows appear in the next update.
@@ -89,7 +111,9 @@ struct PlaylistView: View {
 				withAnimation(.easeOut(duration: 0.6)) { ui.clearAdded() }
 			}
 		}
-		.searchable(text: $query, isPresented: $ui.searching, prompt: "Title, Artist, Album")
+		.searchable(text: $query, tokens: $tokens, isPresented: $ui.searching, prompt: "Title, Artist, Album") { token in
+			Label(token.value, systemImage: token.field == .artist ? "music.mic" : "square.stack")
+		}
 		.listStyle(.plain)
 		.navigationTitle("Playlist")
 		.overlay {
@@ -270,6 +294,29 @@ private struct EntryRow: View {
 		} else if entry.stopAfter {
 			Image(systemName: "stop.circle")
 				.foregroundStyle(.secondary)
+		}
+	}
+}
+
+/// An artist or album the playlist's search keeps to: the entries whose
+/// artist (or album artist), or album, is just that.
+struct SearchToken: Identifiable, Hashable {
+	enum Field: Hashable {
+		case artist, album
+	}
+
+	let field: Field
+	let value: String
+
+	var id: Self { self }
+
+	func matches(_ entry: PlaylistEntry) -> Bool {
+		switch field {
+		case .artist:
+			entry.artist?.localizedCaseInsensitiveCompare(value) == .orderedSame
+				|| entry.albumartist?.localizedCaseInsensitiveCompare(value) == .orderedSame
+		case .album:
+			entry.album?.localizedCaseInsensitiveCompare(value) == .orderedSame
 		}
 	}
 }
