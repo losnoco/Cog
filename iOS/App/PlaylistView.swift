@@ -17,6 +17,9 @@ struct PlaylistView: View {
 	@State private var confirmsClear = false
 	@State private var query = ""
 	@State private var urlText = ""
+	/// The entry whose details are shown, as the macOS Info Inspector has
+	/// them.
+	@State private var infoEntry: PlaylistEntry?
 
 	/// The entries the search leaves, all of them when there is none.
 	private var shown: [PlaylistEntry] {
@@ -38,6 +41,9 @@ struct PlaylistView: View {
 						EntryRow(entry: entry)
 					}
 					.listRowBackground(ui.added.contains(entry.objectID) ? Color.accentColor.opacity(0.2) : nil)
+					.contextMenu {
+						Button("Get Info", systemImage: "info.circle") { infoEntry = entry }
+					}
 					.swipeActions(edge: .leading) {
 						Button(entry.queued ? "Unqueue" : "Queue", systemImage: entry.queued ? "text.badge.minus" : "text.badge.plus") {
 							model.toggleQueued([entry])
@@ -151,6 +157,11 @@ struct PlaylistView: View {
 			Button("Clear Playlist", role: .destructive) {
 				player.stop()
 				model.removeAll()
+			}
+		}
+		.sheet(isPresented: Binding(get: { infoEntry != nil }, set: { if !$0 { infoEntry = nil } })) {
+			if let infoEntry {
+				InfoView(entry: infoEntry)
 			}
 		}
 		.sheet(isPresented: $ui.showsSettings) {

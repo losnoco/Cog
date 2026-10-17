@@ -202,6 +202,16 @@
         }
       }
     },
+    "Album Artist" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artista del álbum"
+          }
+        }
+      }
+    },
     "Album gain falls back to track gain when a file has no album gain." : {
       "localizations" : {
         "es" : {
@@ -279,6 +289,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Consultando LRCLIB…"
+          }
+        }
+      }
+    },
+    "Bitrate" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasa de bits"
+          }
+        }
+      }
+    },
+    "Bits Per Sample" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bits por muestra"
           }
         }
       }
@@ -369,6 +399,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cerrar"
+          }
+        }
+      }
+    },
+    "Codec" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códec"
+          }
+        }
+      }
+    },
+    "Comment" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comentarios"
+          }
+        }
+      }
+    },
+    "Composer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compositor"
           }
         }
       }
@@ -465,6 +525,16 @@
         }
       }
     },
+    "Cuesheet" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuesheet"
+          }
+        }
+      }
+    },
     "Custom" : {
       "comment" : "Equalizer preset: the bands as set by hand",
       "localizations" : {
@@ -472,6 +542,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Personalizado"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha"
           }
         }
       }
@@ -516,6 +596,16 @@
         }
       }
     },
+    "Encoding" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codificación"
+          }
+        }
+      }
+    },
     "Engine" : {
       "localizations" : {
         "es" : {
@@ -547,6 +637,16 @@
       }
     },
     "File Name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del archivo"
+          }
+        }
+      }
+    },
+    "Filename" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -636,6 +736,159 @@
         }
       }
     },
+    "GainAlbumGain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Album Gain"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganancia del álbum"
+          }
+        }
+      }
+    },
+    "GainAlbumGainPeak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Album Gain plus Peak"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganancia del álbum más pico"
+          }
+        }
+      }
+    },
+    "GainAlbumPeak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Album Peak"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pico del álbum"
+          }
+        }
+      }
+    },
+    "GainNone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna"
+          }
+        }
+      }
+    },
+    "GainSoundcheck" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SoundCheck"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste de volumen"
+          }
+        }
+      }
+    },
+    "GainTrackGain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track Gain"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganancia de pista"
+          }
+        }
+      }
+    },
+    "GainTrackGainPeak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track Gain plus Peak"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ganancia de pista más pico"
+          }
+        }
+      }
+    },
+    "GainTrackPeak" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track Peak"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pico de pista"
+          }
+        }
+      }
+    },
+    "GainVolumeScale" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume Scale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escala de volumen"
+          }
+        }
+      }
+    },
     "General MIDI" : {
       "localizations" : {
         "es" : {
@@ -652,6 +905,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "General MIDI 2"
+          }
+        }
+      }
+    },
+    "Genre" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Género"
+          }
+        }
+      }
+    },
+    "Get Info" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtener información"
           }
         }
       }
@@ -742,6 +1015,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Independiente"
+          }
+        }
+      }
+    },
+    "Info" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Información"
           }
         }
       }
@@ -999,6 +1282,16 @@
         }
       }
     },
+    "No" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        }
+      }
+    },
     "No lyrics. Cog can look them up on LRCLIB: turn that on in Settings." : {
       "localizations" : {
         "es" : {
@@ -1155,6 +1448,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reproducir"
+          }
+        }
+      }
+    },
+    "Play Count" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducciones"
           }
         }
       }
@@ -1415,6 +1718,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rubber Band (mejor calidad)"
+          }
+        }
+      }
+    },
+    "Sample Rate" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frecuencia de muestreo"
           }
         }
       }
@@ -1799,6 +2112,40 @@
         }
       }
     },
+    "TimeFirstSeen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First seen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visto por primera vez"
+          }
+        }
+      }
+    },
+    "TimeLastPlayed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last played"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducido por última vez"
+          }
+        }
+      }
+    },
     "Title" : {
       "localizations" : {
         "es" : {
@@ -1945,6 +2292,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yamaha XG"
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sí"
           }
         }
       }

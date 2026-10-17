@@ -424,7 +424,12 @@ extension Player {
 	}
 
 	@objc func audioPlayer(_ player: AudioPlayer, updatePosition userInfo: Any?) {}
-	@objc func audioPlayer(_ player: AudioPlayer, reportPlayCountForTrack userInfo: Any?) {}
+	@objc func audioPlayer(_ player: AudioPlayer, reportPlayCountForTrack userInfo: Any?) {
+		MainActor.assumeIsolated {
+			guard let entry = userInfo as? PlaylistEntry else { return }
+			PlayCounts.record(entry)
+		}
+	}
 	@objc func audioPlayer(_ player: AudioPlayer, reportScrobbleForTrack userInfo: Any?) {
 		MainActor.assumeIsolated {
 			guard let entry = userInfo as? PlaylistEntry else { return }

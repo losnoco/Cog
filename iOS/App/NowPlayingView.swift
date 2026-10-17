@@ -76,6 +76,8 @@ struct NowPlayingView: View {
 	@State private var palette: ArtworkPalette?
 	/// How tall Now Playing is, which says how much room the cards have.
 	@State private var height: CGFloat = 0
+	/// The details of what plays, as the macOS Info Inspector has them.
+	@State private var showsInfo = false
 	@EnvironmentObject private var equalizer: Equalizer
 
 	var body: some View {
@@ -139,6 +141,13 @@ struct NowPlayingView: View {
 		.sheet(isPresented: sheet($ui.showsLyrics)) {
 			if let entry = model.currentEntry {
 				LyricsView(entry: entry)
+					.environment(\.colorScheme, colorScheme)
+					.tint(.accentColor)
+			}
+		}
+		.sheet(isPresented: $showsInfo) {
+			if let entry = model.currentEntry {
+				InfoView(entry: entry)
 					.environment(\.colorScheme, colorScheme)
 					.tint(.accentColor)
 			}
@@ -371,6 +380,9 @@ struct NowPlayingView: View {
 				Text(speedChanged ? "On" : "Off")
 			}
 			Toggle("Visualizer", systemImage: "waveform", isOn: $showsVisualizer)
+			Divider()
+			Button("Info", systemImage: "info.circle") { showsInfo = true }
+				.disabled(model.currentEntry == nil)
 		} label: {
 			Label("More", systemImage: "ellipsis.circle")
 				.labelStyle(.iconOnly)
