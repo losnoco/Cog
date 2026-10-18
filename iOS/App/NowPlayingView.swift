@@ -513,8 +513,8 @@ private struct ProgressBar: View {
 	/// The slider's value while dragged; nil follows playback.
 	@State private var scrubbing: Double?
 	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
-	@AppStorage(WaveformModel.logScaleKey) private var logScale = true
-	@AppStorage(WaveformModel.rectifiedKey) private var rectified = false
+	@AppStorage(WaveformModel.logScaleKey) private var logScale = false
+	@AppStorage(WaveformModel.rectifiedKey) private var rectified = true
 
 	var body: some View {
 		VStack(spacing: 4) {

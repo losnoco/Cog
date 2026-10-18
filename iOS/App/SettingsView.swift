@@ -18,8 +18,8 @@ struct SettingsView: View {
 	@AppStorage("enableHeadTracking") private var headTracking = false
 	@AppStorage("enableLrclib") private var lrclib = false
 	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
-	@AppStorage(WaveformModel.logScaleKey) private var waveformLogScale = true
-	@AppStorage(WaveformModel.rectifiedKey) private var waveformRectified = false
+	@AppStorage(WaveformModel.logScaleKey) private var waveformLogScale = false
+	@AppStorage(WaveformModel.rectifiedKey) private var waveformRectified = true
 
 	var body: some View {
 		NavigationStack {

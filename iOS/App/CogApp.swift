@@ -59,8 +59,8 @@ struct CogApp: App {
 			"suspendOutputOnPause": true,
 			"enableFading": true,
 			"waveformSeekBar": true,
-			"waveformLogScale": true,
-			"waveformRectified": false,
+			"waveformLogScale": false,
+			"waveformRectified": true,
 		])
 	}
 

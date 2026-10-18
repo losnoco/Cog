@@ -53,8 +53,8 @@ struct AppearancePaneView: View {
     @StateObject private var prefs = AppearancePrefs()
     // As @AppStorage, these follow the seek bar's menu and the View menu too.
     @AppStorage("waveformSeekBar") private var waveformSeekBar = true
-    @AppStorage("waveformLogScale") private var waveformLogScale = true
-    @AppStorage("waveformRectified") private var waveformRectified = false
+    @AppStorage("waveformLogScale") private var waveformLogScale = false
+    @AppStorage("waveformRectified") private var waveformRectified = true
 
     var body: some View {
         if #available(macOS 13.0, *) {
