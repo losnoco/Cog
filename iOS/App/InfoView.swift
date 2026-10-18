@@ -13,64 +13,90 @@ import SwiftUI
 
 struct InfoView: View {
 	@ObservedObject var entry: PlaylistEntry
+	var presentation = Presentation.sheet
+	/// The rows' background over the album's colors; nil for the usual
+	/// grouped list.
+	var rowBackground: Color?
 	@Environment(\.dismiss) private var dismiss
 	@State private var artwork: UIImage?
 
+	enum Presentation {
+		/// In a sheet of its own, with a Done button.
+		case sheet
+		/// Pushed onto Now Playing's stack, on a phone.
+		case page
+		/// A card under Now Playing beside the playlist, whose art is in
+		/// view already.
+		case card
+	}
+
 	var body: some View {
-		NavigationStack {
-			List {
-				if let artwork {
-					Image(uiImage: artwork)
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-						.clipShape(RoundedRectangle(cornerRadius: 8))
-						.frame(maxWidth: 320)
-						.frame(maxWidth: .infinity)
-						.listRowBackground(Color.clear)
-				}
-				Section {
-					row("Album Artist", entry.albumartist)
-					row("Artist", entry.artist)
-					row("Composer", entry.composer)
-					row("Album", entry.album)
-					row("Title", entry.title)
-					row("Track", entry.trackText)
-					row("Length", entry.metadataLoaded ? formatTime(entry.length.doubleValue) : nil,
-					    detail: entry.metadataLoaded ? Self.preciseTime(entry.length.doubleValue) : nil)
-					row("Date", entry.date)
-					row("Genre", entry.genre)
-				}
-				Section {
-					row("Filename", entry.filenameFragment)
-					row("Sample Rate", entry.sampleRate > 0 ? Self.hertz(entry.sampleRate) : nil)
-					row("Channels", entry.channels > 0 ? "\(entry.channels)" : nil)
-					row("Bitrate", entry.bitrate > 0 ? "\(entry.bitrate) kbps" : nil)
-					row("Bits Per Sample", entry.bitsPerSample > 0 ? "\(entry.bitsPerSample)" : nil)
-					row("Codec", entry.codec)
-					row("Encoding", entry.encoding)
-					row("Cuesheet", entry.cuesheet?.isEmpty ?? true ? String(localized: "No") : String(localized: "Yes"))
-				}
-				Section {
-					row("ReplayGain", gainCorrection, detail: gainInfo)
-					row("Play Count", playCount.count, detail: playCount.info)
-				}
-				if let comment = entry.comment, !comment.isEmpty {
-					Section("Comment") {
-						Text(comment)
-							.textSelection(.enabled)
+		if presentation != .sheet {
+			content
+		} else {
+			NavigationStack {
+				content
+					.toolbar {
+						ToolbarItem(placement: .confirmationAction) {
+							Button("Done") { dismiss() }
+						}
 					}
+			}
+		}
+	}
+
+	private var content: some View {
+		List {
+			if presentation != .card, let artwork {
+				Image(uiImage: artwork)
+					.resizable()
+					.aspectRatio(contentMode: .fit)
+					.clipShape(RoundedRectangle(cornerRadius: 8))
+					.frame(maxWidth: 320)
+					.frame(maxWidth: .infinity)
+					.listRowBackground(Color.clear)
+			}
+			Section {
+				row("Album Artist", entry.albumartist)
+				row("Artist", entry.artist)
+				row("Composer", entry.composer)
+				row("Album", entry.album)
+				row("Title", entry.title)
+				row("Track", entry.trackText)
+				row("Length", entry.metadataLoaded ? formatTime(entry.length.doubleValue) : nil,
+				    detail: entry.metadataLoaded ? Self.preciseTime(entry.length.doubleValue) : nil)
+				row("Date", entry.date)
+				row("Genre", entry.genre)
+			}
+			Section {
+				row("Filename", entry.filenameFragment)
+				row("Sample Rate", entry.sampleRate > 0 ? Self.hertz(entry.sampleRate) : nil)
+				row("Channels", entry.channels > 0 ? "\(entry.channels)" : nil)
+				row("Bitrate", entry.bitrate > 0 ? "\(entry.bitrate) kbps" : nil)
+				row("Bits Per Sample", entry.bitsPerSample > 0 ? "\(entry.bitsPerSample)" : nil)
+				row("Codec", entry.codec)
+				row("Encoding", entry.encoding)
+				row("Cuesheet", entry.cuesheet?.isEmpty ?? true ? String(localized: "No") : String(localized: "Yes"))
+			}
+			Section {
+				row("ReplayGain", gainCorrection, detail: gainInfo)
+				row("Play Count", playCount.count, detail: playCount.info)
+			}
+			if let comment = entry.comment, !comment.isEmpty {
+				Section("Comment") {
+					Text(comment)
+						.textSelection(.enabled)
+						.listRowBackground(rowBackground)
 				}
 			}
-			.navigationTitle("Info")
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Done") { dismiss() }
-				}
-			}
-			.task(id: entry.artHash) {
-				artwork = await ArtworkCache.shared.image(for: entry, pixels: 640)
-			}
+		}
+		.navigationTitle(presentation == .card ? Text(verbatim: "") : Text("Info"))
+		.navigationBarTitleDisplayMode(.inline)
+		// The album's colors, or the card's, show through.
+		.scrollContentBackground(rowBackground == nil && presentation != .card ? .automatic : .hidden)
+		.task(id: entry.artHash) {
+			guard presentation != .card else { return }
+			artwork = await ArtworkCache.shared.image(for: entry, pixels: 640)
 		}
 	}
 
@@ -92,6 +118,7 @@ struct InfoView: View {
 			} label: {
 				Text(label)
 			}
+			.listRowBackground(rowBackground)
 		}
 	}
 

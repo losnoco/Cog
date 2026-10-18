@@ -106,7 +106,7 @@ struct NowPlayingView: View {
 				.ignoresSafeArea(.container, edges: !isEmbedded && verticalSizeClass == .compact ? .vertical : [])
 			// Beside the playlist, the equalizer, speed and lyrics open in the
 			// room below, rather than in sheets over everything.
-			if cardsFit && (ui.showsEqualizer || ui.showsSpeed || ui.showsLyrics) {
+			if cardsFit && (ui.showsEqualizer || ui.showsSpeed || ui.showsLyrics || showsInfo) {
 				panels
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
@@ -114,6 +114,7 @@ struct NowPlayingView: View {
 		.animation(.spring(duration: 0.4), value: ui.showsEqualizer)
 		.animation(.spring(duration: 0.4), value: ui.showsSpeed)
 		.animation(.spring(duration: 0.4), value: ui.showsLyrics)
+		.animation(.spring(duration: 0.4), value: showsInfo)
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
 			AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
@@ -121,6 +122,10 @@ struct NowPlayingView: View {
 		}
 		.toolbar {
 			if !isEmbedded {
+				ToolbarItem(placement: .topBarLeading) {
+					Button("Info", systemImage: "info.circle") { showsInfo = true }
+						.disabled(model.currentEntry == nil)
+				}
 				ToolbarItem(placement: .topBarTrailing) {
 					Button("Done") { dismiss() }
 				}
@@ -145,12 +150,32 @@ struct NowPlayingView: View {
 					.tint(.accentColor)
 			}
 		}
-		.sheet(isPresented: $showsInfo) {
+		// Beside the playlist, a card, or a sheet where cards do not fit;
+		// over it, pushed in Now Playing's own stack. (A zoom out of the art
+		// hid the whole sheet while it ran.)
+		.sheet(isPresented: Binding(get: { showsInfo && isEmbedded && !cardsFit }, set: { showsInfo = $0 })) {
 			if let entry = model.currentEntry {
 				InfoView(entry: entry)
 					.environment(\.colorScheme, colorScheme)
 					.tint(.accentColor)
 			}
+		}
+		.navigationDestination(isPresented: Binding(get: { showsInfo && !isEmbedded }, set: { showsInfo = $0 })) {
+			if let entry = model.currentEntry {
+				InfoView(entry: entry, presentation: .page, rowBackground: palette == nil ? nil : .white.opacity(0.1))
+					// Opaque from the first frame, not faded in as AlbumGradient
+					// is: the push slides in a whole page.
+					.background {
+						if let palette {
+							LinearGradient(colors: [palette.top, palette.bottom], startPoint: .top, endPoint: .bottom)
+								.background(.black)
+								.ignoresSafeArea()
+						}
+					}
+			}
+		}
+		.onChange(of: model.currentEntry == nil) { _, ended in
+			if ended { showsInfo = false }
 		}
 	}
 
@@ -228,6 +253,15 @@ struct NowPlayingView: View {
 					EmptyView()
 				} content: {
 					LyricsText(entry: entry)
+				}
+			}
+			if showsInfo, let entry = model.currentEntry {
+				panel("Info", close: { showsInfo = false }) {
+					EmptyView()
+				} trailing: {
+					EmptyView()
+				} content: {
+					InfoView(entry: entry, presentation: .card, rowBackground: palette == nil ? nil : .white.opacity(0.1))
 				}
 			}
 		}
@@ -349,6 +383,13 @@ struct NowPlayingView: View {
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
 					.frame(maxWidth: .infinity)
+				// Over the playlist, Info is in the toolbar.
+				if isEmbedded {
+					Button("Info", systemImage: "info.circle") { showsInfo.toggle() }
+						.foregroundStyle(Color.secondary)
+						.disabled(model.currentEntry == nil)
+						.frame(maxWidth: .infinity)
+				}
 				moreMenu
 					.frame(maxWidth: .infinity)
 				RoutePicker()
@@ -380,9 +421,6 @@ struct NowPlayingView: View {
 				Text(speedChanged ? "On" : "Off")
 			}
 			Toggle("Visualizer", systemImage: "waveform", isOn: $showsVisualizer)
-			Divider()
-			Button("Info", systemImage: "info.circle") { showsInfo = true }
-				.disabled(model.currentEntry == nil)
 		} label: {
 			Label("More", systemImage: "ellipsis.circle")
 				.labelStyle(.iconOnly)
