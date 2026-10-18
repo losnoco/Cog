@@ -319,6 +319,12 @@ struct NowPlayingView: View {
 				}
 				.animation(.default, value: showsVisualizer)
 				.shadow(radius: 12, y: 4)
+				// Beside the playlist, held: what plays, found in it.
+				.contextMenu {
+					if isEmbedded {
+						Button("Go to Current Track", systemImage: "scope") { ui.revealCurrent(of: model) }
+					}
+				}
 		}
 	}
 

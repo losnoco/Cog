@@ -86,13 +86,7 @@ struct PlaylistView: View {
 						.listRowSeparator(.hidden)
 				}
 			}
-			// Go to Current Track, from the menu.
-			.onChange(of: ui.revealsCurrent) {
-				if let entry = model.currentEntry {
-					withAnimation { proxy.scrollTo(entry.objectID, anchor: .center) }
-				}
-			}
-			// What was just added: shown (a search could hide it), scrolled
+			// What was just added, or what plays: shown (a search could hide it), scrolled
 			// to, and highlighted for a moment. A new addition restarts it.
 			.task(id: ui.revealsAdded) {
 				guard ui.revealsAdded > 0 else { return }

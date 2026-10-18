@@ -22,10 +22,8 @@ final class AppUI: ObservableObject {
 	@Published var addsMusic = false
 	@Published var addsURL = false
 	@Published var searching = false
-	/// Counted up to scroll the playlist to what plays.
-	@Published var revealsCurrent = 0
-	/// What was just added, however it was: the playlist scrolls to it and
-	/// highlights it for a moment.
+	/// What was just added, however it was, or what plays when asked for:
+	/// the playlist scrolls to it and highlights it for a moment.
 	@Published private(set) var added: Set<NSManagedObjectID> = []
 	/// Counted up with each addition, for the playlist to scroll again.
 	@Published private(set) var revealsAdded = 0
@@ -34,6 +32,11 @@ final class AppUI: ObservableObject {
 		guard !entries.isEmpty else { return }
 		added = Set(entries.map(\.objectID))
 		revealsAdded += 1
+	}
+
+	/// Go to Current Track: what plays, scrolled to and highlighted.
+	func revealCurrent(of model: PlaylistModel) {
+		if let entry = model.currentEntry { reveal([entry]) }
 	}
 
 	func clearAdded() {
@@ -69,7 +72,7 @@ struct CogCommands: Commands {
 		}
 
 		CommandGroup(before: .toolbar) {
-			Button("Go to Current Track") { ui.revealsCurrent += 1 }
+			Button("Go to Current Track") { ui.revealCurrent(of: model) }
 				.keyboardShortcut("l")
 				.disabled(nothingPlays)
 			Divider()

@@ -43,6 +43,9 @@ struct ContentView: View {
 					if model.currentEntry != nil {
 						MiniPlayerView()
 							.onTapGesture { ui.showsNowPlaying = true }
+							.contextMenu {
+								Button("Go to Current Track", systemImage: "scope") { ui.revealCurrent(of: model) }
+							}
 					}
 				}
 				// The menus' equalizer, speed and lyrics, while Now Playing
