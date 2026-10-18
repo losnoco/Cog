@@ -144,6 +144,8 @@ struct ArtworkView: View {
 	@ObservedObject var entry: PlaylistEntry
 	let size: CGFloat
 	var cornerRadius: CGFloat = 6
+	/// Fades from one track's art to the next's, rather than swapping it.
+	var crossfades = false
 	@Environment(\.displayScale) private var scale
 	@State private var image: UIImage?
 
@@ -153,6 +155,8 @@ struct ArtworkView: View {
 				Image(uiImage: image)
 					.resizable()
 					.scaledToFill()
+					.id(ObjectIdentifier(image))
+					.transition(.opacity)
 			} else {
 				Rectangle()
 					.fill(.quaternary)
@@ -165,7 +169,8 @@ struct ArtworkView: View {
 		.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
 		// Again at a new size (a rotation), keeping the image shown meanwhile.
 		.task(id: "\(entry.artHash ?? "")@\(Int(size * scale))") {
-			image = await ArtworkCache.shared.image(for: entry, pixels: Int(size * scale))
+			let loaded = await ArtworkCache.shared.image(for: entry, pixels: Int(size * scale))
+			withAnimation(crossfades ? .easeInOut(duration: 0.4) : nil) { image = loaded }
 		}
 	}
 }

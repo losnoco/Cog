@@ -18,19 +18,25 @@ struct MiniPlayerView: View {
 	var body: some View {
 		HStack(spacing: 12) {
 			if let entry = model.currentEntry {
-				ArtworkView(entry: entry, size: 40, cornerRadius: 4)
+				ArtworkView(entry: entry, size: 40, cornerRadius: 4, crossfades: true)
 			}
-			VStack(alignment: .leading, spacing: 2) {
-				Text(model.currentEntry?.title ?? "")
-					.font(.subheadline.weight(.semibold))
-					.lineLimit(1)
-				if let artist = model.currentEntry?.artist {
-					Text(artist)
-						.font(.caption)
-						.foregroundStyle(.secondary)
+			// The next track's title and artist blur in over the last's.
+			ZStack(alignment: .leading) {
+				VStack(alignment: .leading, spacing: 2) {
+					Text(model.currentEntry?.title ?? "")
+						.font(.subheadline.weight(.semibold))
 						.lineLimit(1)
+					if let artist = model.currentEntry?.artist {
+						Text(artist)
+							.font(.caption)
+							.foregroundStyle(.secondary)
+							.lineLimit(1)
+					}
 				}
+				.id(model.currentEntry?.objectID)
+				.transition(.blurReplace)
 			}
+			.animation(.easeInOut(duration: 0.35), value: model.currentEntry?.objectID)
 			Spacer()
 			Button(player.isPlaying ? "Pause" : "Play", systemImage: player.isPlaying ? "pause.fill" : "play.fill") {
 				player.togglePlayPause()
@@ -43,19 +49,43 @@ struct MiniPlayerView: View {
 		.font(.title3)
 		.padding(.horizontal)
 		.padding(.vertical, 10)
-		.background {
-			// To the screen's edges: under the home indicator, and beside the
-			// Dynamic Island in landscape.
-			ZStack {
-				Rectangle().fill(.bar)
-				AlbumGradient(palette: palette, startPoint: .leading, endPoint: .trailing)
-			}
-			.ignoresSafeArea(edges: [.horizontal, .bottom])
-		}
-		.contentShape(Rectangle())
+		.modifier(MiniPlayerBackground(palette: palette))
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
 		.albumPalette($palette, of: model.currentEntry)
+	}
+}
+
+/// The mini player's background. With Liquid Glass, a capsule of it that
+/// floats over the playlist, in the album's colors; before it, a bar to the
+/// screen's edges.
+private struct MiniPlayerBackground: ViewModifier {
+	let palette: ArtworkPalette?
+
+	func body(content: Content) -> some View {
+		if #available(iOS 26, *) {
+			content
+				// From one album's color to the next's, as AlbumGradient fades.
+				.animation(.easeInOut(duration: 0.6)) {
+					$0.glassEffect(.regular.tint(palette?.bottom.opacity(0.6)).interactive(), in: .capsule)
+				}
+				.contentShape(.capsule)
+				.contentShape(.contextMenuPreview, .capsule)
+				.padding(.horizontal, 16)
+				.padding(.bottom, 8)
+		} else {
+			content
+				.background {
+					// To the screen's edges: under the home indicator, and
+					// beside the Dynamic Island in landscape.
+					ZStack {
+						Rectangle().fill(.bar)
+						AlbumGradient(palette: palette, startPoint: .leading, endPoint: .trailing)
+					}
+					.ignoresSafeArea(edges: [.horizontal, .bottom])
+				}
+				.contentShape(Rectangle())
+		}
 	}
 }
 
