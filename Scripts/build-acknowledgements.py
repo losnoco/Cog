@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Regenerate Acknowledgements/Acknowledgements.json from components.json.
+"""Regenerate the bundled acknowledgements from components.json.
 
-The generated file is the bundled resource read by the Acknowledgements
-window. License texts are embedded once each and referenced by key, so a
-license shared by many components (GPL, Apache, ...) ships only once.
+Acknowledgements/Acknowledgements.json is read by the macOS Acknowledgements
+window, and iOS/App/Acknowledgements.json by the iOS Acknowledgements
+screen. A component lists the platforms it ships on in 'platforms' (both
+when absent), and each file holds only its platform's components. License
+texts are embedded once each and referenced by key, so a license shared by
+many components (GPL, Apache, ...) ships only once.
 
 Usage: Scripts/build-acknowledgements.py   (run from anywhere)
 """
@@ -16,7 +19,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "Acknowledgements" / "components.json"
-OUTPUT = ROOT / "Acknowledgements" / "Acknowledgements.json"
+OUTPUTS = {
+    "macOS": ROOT / "Acknowledgements" / "Acknowledgements.json",
+    "iOS": ROOT / "iOS" / "App" / "Acknowledgements.json",
+}
 
 
 def read_text(path: Path) -> str:
@@ -73,6 +79,10 @@ def main() -> int:
         name = component["name"]
         if component["group"] not in group_ids:
             errors.append(f"{name}: unknown group '{component['group']}'")
+        platforms = component.get("platforms", list(OUTPUTS))
+        for platform in platforms:
+            if platform not in OUTPUTS:
+                errors.append(f"{name}: unknown platform '{platform}'")
         keys = []
         for source in component.get("texts", []):
             if source not in licenses:
@@ -84,15 +94,20 @@ def main() -> int:
             keys.append(source)
         entry = {key: component[key] for key in ("group", "name", "version", "url", "license", "holders", "note") if component.get(key)}
         entry["texts"] = keys
-        components.append(entry)
+        components.append((platforms, entry))
 
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1
 
-    output = {"groups": manifest["groups"], "licenses": licenses, "components": components}
-    OUTPUT.write_text(json.dumps(output, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"Wrote {OUTPUT.relative_to(ROOT)}: {len(components)} components, {len(licenses)} license texts")
+    for platform, path in OUTPUTS.items():
+        shipped = [entry for platforms, entry in components if platform in platforms]
+        used = {key for entry in shipped for key in entry["texts"]}
+        output = {"groups": manifest["groups"],
+                  "licenses": {key: text for key, text in licenses.items() if key in used},
+                  "components": shipped}
+        path.write_text(json.dumps(output, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        print(f"Wrote {path.relative_to(ROOT)}: {len(shipped)} components, {len(used)} license texts")
     return 0
 
 

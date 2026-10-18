@@ -47,7 +47,7 @@ struct SettingsView: View {
 				} header: {
 					Text("Seek Bar")
 				} footer: {
-					Text("The track's loudness, drawn as the seek bar. Hold the times under it in Now Playing for these too.")
+					Text("The track's loudness, drawn as the seek bar.")
 				}
 				Section {
 					Picker("ReplayGain", selection: $replayGain) {
@@ -79,6 +79,9 @@ struct SettingsView: View {
 				}
 				LastFMSection()
 				ListenBrainzSection()
+				Section {
+					NavigationLink("Acknowledgements") { AcknowledgementsView() }
+				}
 			}
 			.navigationTitle("Settings")
 			.navigationBarTitleDisplayMode(.inline)
