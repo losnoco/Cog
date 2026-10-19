@@ -220,7 +220,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	[self tableShouldSync];
 }
 
-- (IBAction)toggleColumn:(id)sender {
+- (IBAction)toggleColumn:(NSMenuItem *)sender {
 	id tc = [sender representedObject];
 
 	if([sender state] == NSControlStateValueOff) {

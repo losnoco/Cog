@@ -181,19 +181,6 @@
         }
       }
     },
-    "4R4-ba-Ndx.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"⏰\"; ObjectID = \"4R4-ba-Ndx\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "⏰"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "5.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Bring All to Front\"; ObjectID = \"5\";",
       "extractionState" : "extracted_with_value",
@@ -4454,19 +4441,6 @@
         }
       }
     },
-    "bQV-ZD-SDv.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"🎵\"; ObjectID = \"bQV-ZD-SDv\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "🎵"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "C2Q-qG-dwX.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"C2Q-qG-dwX\";",
       "extractionState" : "manual",
@@ -4640,19 +4614,6 @@
           }
         }
       }
-    },
-    "ijs-k0-EIP.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"1.0×\"; ObjectID = \"ijs-k0-EIP\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "1.0×"
-          }
-        }
-      },
-      "shouldTranslate" : false
     },
     "js2-sT-U4M.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"js2-sT-U4M\";",
@@ -4833,19 +4794,6 @@
           }
         }
       }
-    },
-    "M0v-A9-meu.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"🔒\"; ObjectID = \"M0v-A9-meu\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "🔒"
-          }
-        }
-      },
-      "shouldTranslate" : false
     },
     "M6d-rj-lEz.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"M6d-rj-lEz\";",
@@ -5494,19 +5442,6 @@
           }
         }
       }
-    },
-    "XV7-Re-I9u.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"⚠️\"; ObjectID = \"XV7-Re-I9u\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "⚠️"
-          }
-        }
-      },
-      "shouldTranslate" : false
     },
     "y8c-n8-5Uh.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Always Stop After Current\"; ObjectID = \"y8c-n8-5Uh\";",

@@ -49,9 +49,6 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	IBOutlet NSSlider *volumeSlider;
 	IBOutlet NSSlider *miniVolumeSlider;
 	IBOutlet NSSlider *miniPlusVolumeSlider;
-	IBOutlet NSSlider *pitchSlider;
-	IBOutlet NSSlider *tempoSlider;
-	IBOutlet NSButton *lockButton;
 
 	IBOutlet NSArrayController *outputDevices;
 
@@ -89,11 +86,8 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (double)volume;
 - (void)setVolume:(double)volume;
 
-- (IBAction)changePitch:(id)sender;
 - (IBAction)pitchDown:(id)sender;
 - (IBAction)pitchUp:(id)sender;
-
-- (IBAction)changeTempo:(id)sender;
 
 // The speed engine resamples, so pitch follows tempo and the lock means nothing.
 + (BOOL)isVarispeed;

@@ -59,6 +59,7 @@
 		3F48E4C939BAAE31122BABAA /* SidDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = D5EC8EF46E0D8E8D4E34543B /* SidDecoder.mm */; };
 		3F860854465B9CD43B175049 /* libfdk-aac.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E645023FA3DDE611F15C07E7 /* libfdk-aac.xcframework */; };
 		402C04ECAB265B8C9D828C8A /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB821A988F522F49086C420E /* sidplayfp.framework */; };
+		44F439990135AAE534EBCEC5 /* SpectrumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0370650B61067CFC89A424D /* SpectrumView.swift */; };
 		4679C83C35D5CF82C7EBB503 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB96A5BAE8525021B1DEB4DD /* SidMetadataReader.mm */; };
 		473B65903619C7E9B4DF1E8C /* libopus.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9589F8429AC738EFB618FA3E /* libopus.xcframework */; };
 		48425FFBE7EB53E2878E8481 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D59C40E79B719FEE54AFFC5 /* FileSource.m */; };
@@ -70,6 +71,7 @@
 		50422BFAAA0E6F6A3162E91F /* CogPlugins.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 681B3E839D0E192A690222C4 /* CogPlugins.framework */; };
 		506553DEED31340DD80A55A0 /* OMPTContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3550EC25063BC459CE3B0111 /* OMPTContainer.mm */; };
 		53611AF983DD4519694107C3 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46D6405F3B78DFF490955EAD /* CoreMIDI.framework */; };
+		5425F638539669076211EE53 /* LyricsText.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB555EB4EAC3737FD50CC73A /* LyricsText.swift */; };
 		5545ED0AC47A2972717A9605 /* CogPlugins.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 681B3E839D0E192A690222C4 /* CogPlugins.framework */; };
 		585BE524744AFAB5FD34DCF9 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 644D14A6CEF05A0105659361 /* AVFoundation.framework */; };
 		5A9C27394F0683FEAD24F5C5 /* HighlyTheoretical.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1C32C67824BCD18B24D97BCD /* HighlyTheoretical.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -833,6 +835,7 @@
 		CC962CE19DF1CC389D66757D /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = ../Frameworks/Shorten/Shorten.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CD92CBA4FB13B40660D230F8 /* SidDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SidDecoder.h; path = ../Plugins/sidplay/SidDecoder.h; sourceTree = SOURCE_ROOT; };
 		CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FlacDecoder.m; path = ../Plugins/Flac/FlacDecoder.m; sourceTree = SOURCE_ROOT; };
+		D0370650B61067CFC89A424D /* SpectrumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpectrumView.swift; path = ../Visualization/SpectrumView.swift; sourceTree = SOURCE_ROOT; };
 		D05BA07425A81304D0F2D4D1 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetMetadataReader.h; path = ../Plugins/CueSheet/CueSheetMetadataReader.h; sourceTree = SOURCE_ROOT; };
 		D105E7348FFC04E58612438E /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = SOURCE_ROOT; };
 		D1CE5BD588F43A7ECF044221 /* GeneralUserGS.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; name = GeneralUserGS.sf3; path = ../GeneralUserGS.sf3; sourceTree = SOURCE_ROOT; };
@@ -870,6 +873,7 @@
 		E80F8E92F446847E4371DE0D /* jxsDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = jxsDecoder.h; path = ../Plugins/Syntrax/Syntrax/jxsDecoder.h; sourceTree = SOURCE_ROOT; };
 		E9261831209C36A4CB9BEA60 /* tg300b.sflist.json */ = {isa = PBXFileReference; lastKnownFileType = file; name = tg300b.sflist.json; path = ../tg300b.sflist.json; sourceTree = SOURCE_ROOT; };
 		E9DCAB0D9B45843111913A4D /* opl3class.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = opl3class.cpp; path = ../Plugins/MIDI/MIDI/fmopl3lib/opl3class.cpp; sourceTree = SOURCE_ROOT; };
+		EB555EB4EAC3737FD50CC73A /* LyricsText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LyricsText.swift; path = ../LyricsWindow/LyricsText.swift; sourceTree = SOURCE_ROOT; };
 		ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceDecoder.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.h; sourceTree = SOURCE_ROOT; };
 		ECE3C4E2FC2391C4F0A0D622 /* roms.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; fileEncoding = "4"; name = roms.hpp; path = ../Plugins/sidplay/roms.hpp; sourceTree = SOURCE_ROOT; };
 		ECF500DF07552252396E735D /* VGMContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VGMContainer.h; path = ../Plugins/vgmstream/vgmstream/VGMContainer.h; sourceTree = SOURCE_ROOT; };
@@ -1485,6 +1489,8 @@
 				3E614CEC2431896349FF20CD /* CogApp-Info.plist */,
 				491EB8564E09A359D73CF93F /* LrclibClient.swift */,
 				5CE483BAA46D154DB7C97656 /* LyricsLookup.swift */,
+				EB555EB4EAC3737FD50CC73A /* LyricsText.swift */,
+				D0370650B61067CFC89A424D /* SpectrumView.swift */,
 				944CD3EC27C2CEAECF2A77A5 /* AudioScrobbler.swift */,
 				D879007E42C4088AC20AC818 /* LastFMAPI.swift */,
 				FB1F5372A8473E7951EE7ABC /* ListenBrainzAPI.swift */,
@@ -2270,6 +2276,8 @@
 			files = (
 				E5CD8A1231982E6483C22451 /* LrclibClient.swift in Sources */,
 				F36D9A91F7D4A4D7E11451F3 /* LyricsLookup.swift in Sources */,
+				5425F638539669076211EE53 /* LyricsText.swift in Sources */,
+				44F439990135AAE534EBCEC5 /* SpectrumView.swift in Sources */,
 				B5E7CD172C728F63F23D45E5 /* AudioScrobbler.swift in Sources */,
 				70B81652DBEE4CD771ECDEC7 /* LastFMAPI.swift in Sources */,
 				F26E15EAFFF137930CA989F1 /* ListenBrainzAPI.swift in Sources */,

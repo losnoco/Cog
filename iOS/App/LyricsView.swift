@@ -2,8 +2,8 @@
 //  LyricsView.swift
 //  Cog (iOS)
 //
-//  The playing entry's lyrics: its own, or LRCLIB's when the lookup is on,
-//  as the macOS lyrics window shows them.
+//  The sheet that holds the playing entry's lyrics. LyricsText, which shows
+//  them, is shared with the macOS lyrics window.
 //
 
 import CogPlaylist
@@ -26,36 +26,5 @@ struct LyricsView: View {
 					}
 				}
 		}
-	}
-}
-
-/// The lyrics, scrolling.
-struct LyricsText: View {
-	@ObservedObject var entry: PlaylistEntry
-	@State private var text = ""
-
-	var body: some View {
-		ScrollView {
-			Text(text)
-				.font(.title3)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.textSelection(.enabled)
-				.padding()
-		}
-		.task(id: entry.objectID) { load() }
-	}
-
-	private func load() {
-		if let own = entry.unsyncedlyrics, !own.isEmpty {
-			text = own
-			return
-		}
-		let asked = entry.objectID
-		let shown = LyricsLookup.shared.displayText(title: entry.rawTitle, artist: entry.artist, album: entry.album,
-		                                            duration: entry.length.doubleValue) { answer in
-			// The answer, if this still shows the entry it was for.
-			if entry.objectID == asked { text = answer }
-		}
-		text = shown ?? String(localized: "No lyrics. Cog can look them up on LRCLIB: turn that on in Settings.")
 	}
 }

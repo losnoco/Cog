@@ -17,4 +17,6 @@
 #import "Preferences/MIDIConfig.h"
 #import "Utils/TrackingCell.h"
 #import "Spotlight/SpotlightWindowController.h"
+#import "Visualization/SpectrumViewSK.h"
+#import "Visualization/ThirdParty/deadbeef/analyzer.h"
 #import "NSData+MD5.h"

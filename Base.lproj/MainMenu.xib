@@ -1074,16 +1074,6 @@
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
-                            <connections>
-                                <outlet property="_LockButton" destination="OQS-2p-1yP" id="F1I-fb-SDQ"/>
-                                <outlet property="_NoticeButton" destination="yQh-Rt-nJL" id="qtG-mJ-LL6"/>
-                                <outlet property="_PitchLabel" destination="uVG-0w-rW4" id="R3l-6Y-zlc"/>
-                                <outlet property="_PitchSlider" destination="6P4-yi-9TK" id="Ni0-G0-USM"/>
-                                <outlet property="_ResetButton" destination="3Zc-Xv-g24" id="C7x-EU-QpA"/>
-                                <outlet property="_TempoSlider" destination="stI-oD-51s" id="Mt0-7i-R4f"/>
-                                <outlet property="_TempoLabel" destination="VUX-JL-rjr" id="khL-p0-vLD"/>
-                                <outlet property="_popView" destination="90w-7t-RYP" id="qfi-e0-UZc"/>
-                            </connections>
                         </button>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" bordered="YES" navigational="YES" id="1629">
@@ -2626,12 +2616,9 @@ Gw
             <connections>
                 <outlet property="appController" destination="226" id="TnP-DA-nJl"/>
                 <outlet property="equalizerWindowController" destination="dJ9-b3-BFu" id="gB5-Bu-vqC"/>
-                <outlet property="lockButton" destination="OQS-2p-1yP" id="RfR-WH-ZPY"/>
-                <outlet property="pitchSlider" destination="6P4-yi-9TK" id="Lnu-kw-iYW"/>
                 <outlet property="playlistController" destination="218" id="706"/>
                 <outlet property="playlistLoader" destination="1319" id="ghZ-65-60L"/>
                 <outlet property="playlistView" destination="207" id="717"/>
-                <outlet property="tempoSlider" destination="stI-oD-51s" id="dDc-lb-crL"/>
                 <outlet property="miniPlusVolumeSlider" destination="3114" id="Vs2-6r-mPl"/>
                 <outlet property="miniVolumeSlider" destination="2289" id="Vs1-6r-mNi"/>
                 <outlet property="volumeSlider" destination="1608" id="1615"/>
@@ -2805,107 +2792,6 @@ Gw
             </items>
             <point key="canvasLocation" x="-166" y="-282"/>
         </menu>
-        <customView id="90w-7t-RYP" userLabel="Speed View">
-            <rect key="frame" x="0.0" y="0.0" width="69" height="216"/>
-            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-            <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uVG-0w-rW4">
-                    <rect key="frame" x="4" y="199" width="24" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="🎵" id="bQV-ZD-SDv">
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VUX-JL-rjr">
-                    <rect key="frame" x="41" y="199" width="24" height="14"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" title="⏰" id="4R4-ba-Ndx">
-                        <font key="font" metaFont="smallSystem"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <slider horizontalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6P4-yi-9TK" userLabel="Pitch Slider" customClass="PitchSlider">
-                    <rect key="frame" x="6" y="34" width="20" height="164"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="40.824829049999998" tickMarkPosition="left" sliderType="linear" id="vTw-tV-W5R"/>
-                    <connections>
-                        <action selector="changePitch:" target="705" id="bZt-zY-tjg"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="N2w-jM-0Sd">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
-                            </dictionary>
-                        </binding>
-                        <outlet property="_TempoSlider" destination="stI-oD-51s" id="HMq-pE-Ssc"/>
-                    </connections>
-                </slider>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OQS-2p-1yP" userLabel="Lock Button">
-                    <rect key="frame" x="17" y="101" width="36" height="27"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="push" title="🔒" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="M0v-A9-meu">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="smallSystem"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="pressLock:" target="Ta5-Ik-jh9" id="HnF-AC-arz"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="8bJ-3a-LzT">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </button>
-                <slider horizontalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="stI-oD-51s" userLabel="Tempo Slider" customClass="TempoSlider">
-                    <rect key="frame" x="42" y="34" width="20" height="164"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" doubleValue="40.824829049999998" tickMarkPosition="left" sliderType="linear" id="94j-7B-a8j"/>
-                    <connections>
-                        <action selector="changeTempo:" target="705" id="8xu-Dm-ceG"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="xz9-lY-zDB">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
-                            </dictionary>
-                        </binding>
-                        <outlet property="_PitchSlider" destination="6P4-yi-9TK" id="QaV-cx-2wf"/>
-                    </connections>
-                </slider>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Zc-Xv-g24" userLabel="Reset Button">
-                    <rect key="frame" x="2" y="2" width="64" height="27"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="push" title="1.0×" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ijs-k0-EIP">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="smallSystem"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="pressReset:" target="Ta5-Ik-jh9" id="zoi-N3-teA"/>
-                        <binding destination="1689" name="enabled" keyPath="values.rubberbandEngine" id="nEe-pX-tFm">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </button>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yQh-Rt-nJL" userLabel="Notice">
-                    <rect key="frame" x="0.0" y="57" width="66" height="27"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <buttonCell key="cell" type="push" title="⚠️" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XV7-Re-I9u">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="smallSystem"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="showRubberbandSettings:" target="226" id="zqd-7k-1f0"/>
-                        <binding destination="1689" name="hidden" keyPath="values.rubberbandEngine" id="BoK-zT-W4T">
-                            <dictionary key="options">
-                                <string key="NSValueTransformerName">RubberbandEngineHiddenTransformer</string>
-                            </dictionary>
-                        </binding>
-                    </connections>
-                </button>
-            </subviews>
-            <point key="canvasLocation" x="964.5" y="12"/>
-        </customView>
         <customObject id="1675" customClass="SpotlightWindowController">
             <connections>
                 <outlet property="playlistLoader" destination="1319" id="1694"/>

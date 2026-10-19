@@ -148,10 +148,11 @@ APP_RESOURCES = ['GeneralUserGS.sf3', 'GeneralUserGS-Drums.sf3', 'GeneralUserXG-
 APP_ICON = 'Play.icon'
 
 # The macOS app's sources the iOS app compiles as they are: lyrics from
-# LRCLIB, and scrobbling to Last.fm and ListenBrainz. Generated/Secrets.swift
-# (the Last.fm key) is written by Scripts/generate-swift-secrets.sh as the
-# app builds, as on macOS.
-APP_SHARED_SOURCES = ['LyricsWindow/LrclibClient.swift', 'LyricsWindow/LyricsLookup.swift',
+# LRCLIB and the view that shows them, the spectrum, and scrobbling to
+# Last.fm and ListenBrainz. Generated/Secrets.swift (the Last.fm key) is
+# written by Scripts/generate-swift-secrets.sh as the app builds, as on macOS.
+APP_SHARED_SOURCES = ['LyricsWindow/LrclibClient.swift', 'LyricsWindow/LyricsLookup.swift', 'LyricsWindow/LyricsText.swift',
+                      'Visualization/SpectrumView.swift',
                       'Scrobbler/AudioScrobbler.swift', 'Scrobbler/LastFMAPI.swift', 'Scrobbler/ListenBrainzAPI.swift',
                       'Scrobbler/ListenBrainzScrobbler.swift', 'Scrobbler/KeychainHelper.swift', 'Generated/Secrets.swift',
                       'Visualization/ThirdParty/deadbeef/analyzer.c']

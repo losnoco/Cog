@@ -22,7 +22,7 @@
 	NSTimer *syncTimer;
 }
 
-- (IBAction)toggleColumn:(id)sender;
+- (IBAction)toggleColumn:(NSMenuItem *)sender;
 
 - (IBAction)scrollToCurrentEntry:(id)sender;
 

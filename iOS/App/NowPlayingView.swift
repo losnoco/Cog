@@ -339,7 +339,7 @@ struct NowPlayingView: View {
 				// carry it.
 				.overlay(alignment: .bottom) {
 					if showsVisualizer {
-						SpectrumView(isPlaying: player.isPlaying, color: palette?.accent ?? .white)
+						SpectrumView(isPlaying: player.isPlaying, barColor: (palette?.accent ?? .white).opacity(0.8))
 							.padding(.horizontal, 12)
 							.frame(height: max(size, 0) * 0.45)
 							.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
