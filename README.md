@@ -126,9 +126,8 @@ folders are granted already.
 
 ### iPhone and iPad
 
-1. Run `iOS/prepare.sh`. It applies the patches the iOS build needs to some
-   submodules, and builds the third-party libraries for iOS, which takes a
-   few minutes and needs `brew install cmake ninja`. The "Check if Cog builds
+1. Run `iOS/prepare.sh`. It builds the third-party libraries for iOS, which
+   takes a few minutes and needs `brew install cmake ninja`. The "Check if Cog builds
    for iOS" workflow also publishes them as its `ios-libraries` artifact.
 
 2. Open `iOS/MobileCog.xcodeproj` and build the `Cog` scheme.

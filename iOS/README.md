@@ -11,11 +11,11 @@ git submodule update --init --recursive
 iOS/prepare.sh
 ```
 
-`prepare.sh` applies the patches in `iOS/patches/` to submodules. It also
-builds the iOS third-party libraries into `ThirdParty/*/ios/`, which are not
-committed, by running `Scripts/build-ios-libraries.sh` (a few minutes, needs
-`brew install cmake ninja`). CI builds them too: the `ios-libraries`
-artifact of the "Check if Cog builds for iOS" workflow unpacks into place.
+`prepare.sh` builds the iOS third-party libraries into `ThirdParty/*/ios/`,
+which are not committed, by running `Scripts/build-ios-libraries.sh` (a few
+minutes, needs `brew install cmake ninja`). CI builds them too: the
+`ios-libraries` artifact of the "Check if Cog builds for iOS" workflow
+unpacks into place.
 
 ## Layout
 
@@ -49,7 +49,6 @@ artifact of the "Check if Cog builds for iOS" workflow unpacks into place.
 - `CogPlugins/`: the plugins framework's prefix header and build settings.
 - `CogPluginsTests/`: tests that find, decode and play through the plugins
   on the iOS Simulator.
-- `patches/`: changes to submodules that the iOS build needs.
 
 ## The playlist
 
