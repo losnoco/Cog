@@ -100,6 +100,14 @@ public final class DeviceOutput {
 	/// Frames between the renderer handing audio over and it being heard.
 	public private(set) var latencyFrames = 0
 
+	/// The session's I/O buffer, in frames, as the last format took it.
+	public private(set) var bufferFrames = 0
+
+	/// While spatial, what the mixer renders for, and whether it follows
+	/// the listener's head.
+	public private(set) var spatialRendering: AUSpatialMixerOutputType?
+	public private(set) var headTracking = false
+
 	public private(set) var isRunning = false
 
 	private var unit: AudioComponentInstance
@@ -302,6 +310,7 @@ public final class DeviceOutput {
 		isSpatial = spatial
 		deviceChannels = channels
 		format = spatial ? Self.spatialFormat(sampleRate: rate) : device
+		bufferFrames = Int((session.ioBufferDuration * rate).rounded())
 		latencyFrames = Int(((session.outputLatency + session.ioBufferDuration) * rate).rounded()) + mixerLatency
 		EngineLog.logger.info("Rendering \(Self.describe(self.renderFormat), privacy: .public) for \(self.deviceName ?? "no route", privacy: .public), latency \(self.latencyFrames) frames")
 		if wasRunning { try start() }
@@ -318,6 +327,7 @@ public final class DeviceOutput {
 			mixerInitialized = false
 		}
 		isSpatial = false
+		spatialRendering = nil
 		mediaServicesReset = false
 		// The engine attaches its new renderer after this; the old one may
 		// already be gone.
@@ -390,6 +400,8 @@ public final class DeviceOutput {
 		let status = AudioUnitSetProperty(mixer, kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, 0, &value, UInt32(MemoryLayout<UInt32>.size))
 		if status != noErr {
 			EngineLog.logger.error("Could not change the spatial mixer's output type: \(status)")
+		} else {
+			spatialRendering = type
 		}
 	}
 
@@ -397,6 +409,7 @@ public final class DeviceOutput {
 	public func setHeadTracking(_ enabled: Bool) {
 		guard let mixer else { return }
 		Self.setHeadTracking(enabled, on: mixer)
+		headTracking = enabled
 	}
 
 	private static func setHeadTracking(_ enabled: Bool, on mixer: AudioComponentInstance) {
@@ -427,9 +440,12 @@ public final class DeviceOutput {
 		_ = try? set(kAudioUnitProperty_AudioChannelLayout, kAudioUnitScope_Output, stereo)
 		try set(kAudioUnitProperty_SpatializationAlgorithm, kAudioUnitScope_Input, AUSpatializationAlgorithm.spatializationAlgorithm_UseOutputType.rawValue)
 		try set(kAudioUnitProperty_SpatialMixerSourceMode, kAudioUnitScope_Input, AUSpatialMixerSourceMode.spatialMixerSourceMode_AmbienceBed.rawValue)
-		try set(kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, (spatialOutputType ?? .spatialMixerOutputType_Headphones).rawValue)
+		let outputType = spatialOutputType ?? .spatialMixerOutputType_Headphones
+		try set(kAudioUnitProperty_SpatialMixerOutputType, kAudioUnitScope_Global, outputType.rawValue)
+		spatialRendering = outputType
 		_ = try? set(kAudioUnitProperty_SpatialMixerPersonalizedHRTFMode, kAudioUnitScope_Global, AUSpatialMixerPersonalizedHRTFMode.auto.rawValue)
-		Self.setHeadTracking(UserDefaults.standard.bool(forKey: Self.headTrackingKey), on: mixer)
+		headTracking = UserDefaults.standard.bool(forKey: Self.headTrackingKey)
+		Self.setHeadTracking(headTracking, on: mixer)
 		try set(kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, UInt32(Self.maximumSlice))
 		try Self.check(AudioUnitInitialize(mixer))
 		mixerInitialized = true
@@ -448,6 +464,7 @@ public final class DeviceOutput {
 		var connection = AudioUnitConnection(sourceAudioUnit: nil, sourceOutputNumber: 0, destInputNumber: 0)
 		_ = try? setProperty(kAudioUnitProperty_MakeConnection, scope: kAudioUnitScope_Input, &connection)
 		isSpatial = false
+		spatialRendering = nil
 	}
 
 	private static func makeMixer() throws -> AudioComponentInstance {
