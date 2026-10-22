@@ -7,6 +7,12 @@ import AVKit
 import CogPlaylist
 import SwiftUI
 
+extension Animation {
+	/// How every control in Now Playing and the mini player changes, and how
+	/// the cards come and go, so what moves together eases together.
+	static let controls = Animation.spring(duration: 0.4)
+}
+
 /// The bar above the tab of whatever plays; tapped, it opens Now Playing.
 struct MiniPlayerView: View {
 	@EnvironmentObject private var player: Player
@@ -42,7 +48,7 @@ struct MiniPlayerView: View {
 				player.togglePlayPause()
 			}
 			.contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
-			.animation(.default, value: player.isPlaying)
+			.animation(.controls, value: player.isPlaying)
 			Button("Next", systemImage: "forward.fill") { player.next() }
 		}
 		.labelStyle(.iconOnly)
@@ -141,10 +147,10 @@ struct NowPlayingView: View {
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
 		}
-		.animation(.spring(duration: 0.4), value: ui.showsEqualizer)
-		.animation(.spring(duration: 0.4), value: ui.showsSpeed)
-		.animation(.spring(duration: 0.4), value: ui.showsLyrics)
-		.animation(.spring(duration: 0.4), value: showsInfo)
+		.animation(.controls, value: ui.showsEqualizer)
+		.animation(.controls, value: ui.showsSpeed)
+		.animation(.controls, value: ui.showsLyrics)
+		.animation(.controls, value: showsInfo)
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
 			AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
@@ -212,20 +218,31 @@ struct NowPlayingView: View {
 	/// The art, what plays and the controls, in whatever room is left.
 	private var main: some View {
 		GeometryReader { geometry in
-			let landscape = geometry.size.width > geometry.size.height
+			// Side by side the art is as tall as there is room for; stacked,
+			// it leaves room below for what plays and the controls.
+			let besideSize = min(geometry.size.height - 32, geometry.size.width * 0.42)
+			let stackedSize = min(geometry.size.width - 64, geometry.size.height * 0.45, isEmbedded ? 560 : 360)
+			// Whichever shows the larger art: a phone on its side goes side by
+			// side, but Now Playing beside the playlist only a little wider
+			// than tall, as with More Space in landscape, stays stacked.
+			let landscape = besideSize > stackedSize
 			// One tree in either orientation, only its layout switching, so
 			// the art, info and controls keep their identity and move
 			// rather than being rebuilt.
 			let layout = landscape ? AnyLayout(HStackLayout(spacing: 32)) : AnyLayout(VStackLayout(spacing: 24))
 			layout {
-				// Side by side the art is as tall as there is room for.
-				artwork(size: landscape ? min(geometry.size.height - 32, geometry.size.width * 0.42)
-					: min(geometry.size.width - 64, geometry.size.height * 0.45, isEmbedded ? 560 : 360))
+				artwork(size: landscape ? besideSize : stackedSize)
 				VStack(spacing: landscape ? 16 : 24) {
 					info
-					controls(compact: landscape)
+					// Smaller only on a phone on its side. Beside the playlist
+					// they keep their size when a card turns the layout: a new
+					// font would replace Play's and Repeat's glyphs on the
+					// symbol effect's own clock, out of step with the move.
+					controls(compact: landscape && !isEmbedded)
 				}
-				.frame(maxWidth: landscape ? .infinity : nil)
+				// Stacked in a wide pane, the slider and the buttons kept to a
+				// width they can be taken in at a glance.
+				.frame(maxWidth: landscape ? .infinity : 720)
 			}
 			.padding(.horizontal, landscape ? 24 : 0)
 			.frame(width: geometry.size.width, height: geometry.size.height)
@@ -347,7 +364,7 @@ struct NowPlayingView: View {
 							.transition(.opacity)
 					}
 				}
-				.animation(.default, value: showsVisualizer)
+				.animation(.controls, value: showsVisualizer)
 				.shadow(radius: 12, y: 4)
 				// Beside the playlist, held: what plays, found in it.
 				.contextMenu {
@@ -390,7 +407,7 @@ struct NowPlayingView: View {
 				.font(.system(size: compact ? 48 : 64))
 				// The circle stays; only the glyph inside turns into the other.
 				.contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
-				.animation(.default, value: player.isPlaying)
+				.animation(.controls, value: player.isPlaying)
 				HoldButton("Next", systemImage: "forward.fill", action: { player.next() }) { held in
 					held ? player.beginFastForward() : player.endFastForward()
 				}
@@ -403,18 +420,40 @@ struct NowPlayingView: View {
 			// Each button an equal share of the width. What is used less sits
 			// in the menu, where it is named rather than only drawn.
 			HStack(spacing: 0) {
-				Button("Shuffle", systemImage: "shuffle") { model.toggleShuffle() }
-					.foregroundStyle(state(model.shuffleMode != .off))
-					.overlay(alignment: .bottomTrailing) {
-						if model.shuffleMode == .albums { badge("A") }
+				Button { model.toggleShuffle() } label: {
+					Label("Shuffle", systemImage: "shuffle")
+						.overlay(alignment: .topTrailing) {
+							if model.shuffleMode == .albums { ModeBadge(text: "A") }
+						}
+				}
+				.foregroundStyle(state(model.shuffleMode != .off))
+				.accessibilityValue(shuffleName(model.shuffleMode))
+				// Each change shown: the color, and the badge growing in or out.
+				.animation(.controls, value: model.shuffleMode)
+				// Held, any mode at once, rather than tapping round to it.
+				.contextMenu {
+					Picker("Shuffle", selection: Binding(get: { model.shuffleMode }, set: { model.shuffleMode = $0 })) {
+						ForEach([PlaylistShuffleMode.off, .albums, .all], id: \.self) { Text(shuffleName($0)).tag($0) }
 					}
-					.frame(maxWidth: .infinity)
-				Button("Repeat", systemImage: model.repeatMode == .one ? "repeat.1" : "repeat") { model.toggleRepeat() }
-					.foregroundStyle(state(model.repeatMode != .none))
-					.overlay(alignment: .bottomTrailing) {
-						if model.repeatMode == .album { badge("A") }
+				}
+				.frame(maxWidth: .infinity)
+				Button { model.toggleRepeat() } label: {
+					Label("Repeat", systemImage: model.repeatMode == .one ? "repeat.1" : "repeat")
+						.overlay(alignment: .topTrailing) {
+							if model.repeatMode == .album { ModeBadge(text: "A") }
+						}
+				}
+				.foregroundStyle(state(model.repeatMode != .none))
+				.accessibilityValue(repeatName(model.repeatMode))
+				// The 1 drawn in or out of the arrows as well.
+				.contentTransition(.symbolEffect(.replace))
+				.animation(.controls, value: model.repeatMode)
+				.contextMenu {
+					Picker("Repeat", selection: Binding(get: { model.repeatMode }, set: { model.repeatMode = $0 })) {
+						ForEach([PlaylistRepeatMode.none, .one, .album, .all], id: \.self) { Text(repeatName($0)).tag($0) }
 					}
-					.frame(maxWidth: .infinity)
+				}
+				.frame(maxWidth: .infinity)
 				Button("Lyrics", systemImage: "quote.bubble") { ui.showsLyrics.toggle() }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
@@ -466,10 +505,39 @@ struct NowPlayingView: View {
 		.foregroundStyle(state(equalizer.isEnabled || speedChanged || stopsAfter))
 	}
 
-	private func badge(_ text: String) -> some View {
+	private func shuffleName(_ mode: PlaylistShuffleMode) -> LocalizedStringKey {
+		switch mode {
+		case .off: "Off"
+		case .albums: "Albums"
+		case .all: "All"
+		}
+	}
+
+	private func repeatName(_ mode: PlaylistRepeatMode) -> LocalizedStringKey {
+		switch mode {
+		case .none: "Off"
+		case .one: "One"
+		case .album: "Album"
+		case .all: "All"
+		}
+	}
+}
+
+/// A mode's letter in a filled circle on the corner of its button's icon,
+/// inside the button so it is drawn, pressed and dimmed with it.
+private struct ModeBadge: View {
+	let text: String
+
+	var body: some View {
 		Text(text)
-			.font(.system(size: 9, weight: .bold))
-			.offset(x: 6, y: 4)
+			.font(.system(size: 9, weight: .heavy))
+			.foregroundStyle(.background)
+			.frame(minWidth: 14, minHeight: 14)
+			.background(.tint, in: .circle)
+			.offset(x: 8, y: -6)
+			.transition(.scale.combined(with: .opacity))
+			// The button's value names the mode.
+			.accessibilityHidden(true)
 	}
 }
 
