@@ -59,13 +59,13 @@ class RepeatModeImageTransformer: ValueTransformer {
         
         switch mode {
         case .noRepeat:
-            return NSImage(named: "repeatModeOffTemplate")
+            return NSImage(systemSymbolName: "arrow.right.to.line", accessibilityDescription: nil)
         case .repeatOne:
-            return NSImage(named: "repeatModeOneTemplate")
+            return NSImage(systemSymbolName: "repeat.1", accessibilityDescription: nil)
         case .repeatAlbum:
-            return NSImage(named: "repeatModeAlbumTemplate")
+            return NSImage(named: "repeat.album")
         case .repeatAll:
-            return NSImage(named: "repeatModeAllTemplate")
+            return NSImage(systemSymbolName: "repeat", accessibilityDescription: nil)
         default:
             return nil
         }

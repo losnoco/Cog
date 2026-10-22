@@ -20,13 +20,13 @@ class ShuffleImageTransformer: ValueTransformer {
 
         switch shuffleMode {
         case .off:
-            return NSImage(named: "shuffleOffTemplate")
+            return NSImage(systemSymbolName: "arrow.right", accessibilityDescription: nil)
         case .albums:
-            return NSImage(named: "shuffleAlbumTemplate")
+            return NSImage(named: "shuffle.album")
         case .all:
-            return NSImage(named: "shuffleOnTemplate")
+            return NSImage(systemSymbolName: "shuffle", accessibilityDescription: nil)
         default:
-            return NSImage(named: "shuffleOffTemplate")
+            return NSImage(systemSymbolName: "arrow.right", accessibilityDescription: nil)
         }
     }
 }

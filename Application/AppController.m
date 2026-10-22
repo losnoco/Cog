@@ -477,9 +477,9 @@ static BOOL consentLastEnabled = NO;
 			mainWindow.subtitle = @"";
 
 			self.infoButton.imageScaling = NSImageScaleNone;
-			self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+			self.infoButton.image = [NSImage imageWithSystemSymbolName:@"info.circle" accessibilityDescription:nil];
 			self.infoButtonMini.imageScaling = NSImageScaleNone;
-			self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+			self.infoButtonMini.image = [NSImage imageWithSystemSymbolName:@"info.circle" accessibilityDescription:nil];
 		}
 
 		if(entry.albumArt) {
@@ -513,9 +513,9 @@ static BOOL consentLastEnabled = NO;
 			self.infoButtonMini.image = newButtonImage;
 		} else {
 			self.infoButton.imageScaling = NSImageScaleNone;
-			self.infoButton.image = [NSImage imageNamed:@"infoTemplate"];
+			self.infoButton.image = [NSImage imageWithSystemSymbolName:@"info.circle" accessibilityDescription:nil];
 			self.infoButtonMini.imageScaling = NSImageScaleNone;
-			self.infoButtonMini.image = [NSImage imageNamed:@"infoTemplate"];
+			self.infoButtonMini.image = [NSImage imageWithSystemSymbolName:@"info.circle" accessibilityDescription:nil];
 		}
 
 		{

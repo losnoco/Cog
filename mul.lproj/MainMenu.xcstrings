@@ -4795,6 +4795,78 @@
         }
       }
     },
+    "Lyr-Mn-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Show Lyrics\"; ObjectID = \"Lyr-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Lyrics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar letras"
+          }
+        }
+      }
+    },
+    "Lyr-Mn-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Show Lyrics\"; ObjectID = \"Lyr-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Lyrics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar letras"
+          }
+        }
+      }
+    },
+    "Lyr-Tb-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Show Lyrics\"; ObjectID = \"Lyr-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Lyrics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar letras"
+          }
+        }
+      }
+    },
+    "Lyr-Tb-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Show Lyrics\"; ObjectID = \"Lyr-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Lyrics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar letras"
+          }
+        }
+      }
+    },
     "M6d-rj-lEz.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"M6d-rj-lEz\";",
       "extractionState" : "manual",

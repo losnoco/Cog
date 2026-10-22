@@ -963,10 +963,10 @@
                             <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="momentary" id="1538">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28"/>
+                                    <segment toolTip="Previous" image="backward.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="play.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Stop" image="stop.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="forward.fill" catalog="system" imageScaling="none" width="28"/>
                                 </segments>
                             </segmentedCell>
                             <connections>
@@ -1054,7 +1054,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="10" sizingBehavior="auto" id="1610">
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="10" sizingBehavior="auto" id="1610">
                         <nil key="toolTip"/>
                         <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="1608" customClass="VolumeSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
@@ -1076,14 +1076,14 @@
                             </buttonCell>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" bordered="YES" navigational="YES" id="1629">
+                    <toolbarItem implicitItemIdentifier="2F487D99-16E9-4BF8-9A98-637FABEB2716" label="Info Inspector" paletteLabel="Info Inspector" image="info.circle" catalog="system" bordered="YES" navigational="YES" id="1629">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="1627">
                             <rect key="frame" x="26" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1628">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="info.circle" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="1628">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1092,12 +1092,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="navigatorTemplate" bordered="YES" sizingBehavior="auto" navigational="YES" id="1630">
+                    <toolbarItem implicitItemIdentifier="6EE50288-54ED-448F-BB25-347479AE119F" label="File Tree" paletteLabel="File Tree" image="folder" catalog="system" bordered="YES" sizingBehavior="auto" navigational="YES" id="1630">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1631">
                             <rect key="frame" x="12" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="navigatorTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1632">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="folder" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="1632">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1106,12 +1106,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="2466">
+                    <toolbarItem implicitItemIdentifier="972E4070-D310-48FE-BA9B-C06B248FF020" label="Randomize" paletteLabel="Randomize" image="dice" catalog="system" bordered="YES" sizingBehavior="auto" id="2466">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2467">
                             <rect key="frame" x="17" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2468">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="dice" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="2468">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1120,12 +1120,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" bordered="YES" sizingBehavior="auto" id="1636">
+                    <toolbarItem implicitItemIdentifier="384C0EB5-D1D6-4D39-8113-03FB4958D7ED" label="Shuffle" paletteLabel="Shuffle" image="arrow.right" catalog="system" bordered="YES" sizingBehavior="auto" id="1636">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1637">
                             <rect key="frame" x="7" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1638">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.right" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="1638">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1139,12 +1139,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F3591DBA-E0EC-4564-896A-C6EFFABC7873" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" bordered="YES" sizingBehavior="auto" id="1639">
+                    <toolbarItem implicitItemIdentifier="F3591DBA-E0EC-4564-896A-C6EFFABC7873" label="Repeat" paletteLabel="Repeat" image="arrow.right.to.line" catalog="system" bordered="YES" sizingBehavior="auto" id="1639">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="1640">
                             <rect key="frame" x="6" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="1641">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.right.to.line" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="1641">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1158,12 +1158,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F636F7BD-E049-4DF5-B758-35DF87C40AA0" label="Mini Mode" paletteLabel="Mini Mode" image="miniModeOnTemplate" bordered="YES" sizingBehavior="auto" id="2532">
+                    <toolbarItem implicitItemIdentifier="F636F7BD-E049-4DF5-B758-35DF87C40AA0" label="Mini Mode" paletteLabel="Mini Mode" image="arrow.down.right.and.arrow.up.left" catalog="system" bordered="YES" sizingBehavior="auto" id="2532">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2533">
                             <rect key="frame" x="17" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOnTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2534">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.down.right.and.arrow.up.left" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="2534">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1172,12 +1172,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="59219EB6-8475-4EE4-97FE-6CA445CFF11E" label="Show Equalizer" paletteLabel="Show Equalizer" image="equalizerTemplate" bordered="YES" sizingBehavior="auto" id="vzT-Gb-aGW">
+                    <toolbarItem implicitItemIdentifier="59219EB6-8475-4EE4-97FE-6CA445CFF11E" label="Show Equalizer" paletteLabel="Show Equalizer" image="slider.vertical.3" catalog="system" bordered="YES" sizingBehavior="auto" id="vzT-Gb-aGW">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="pqI-qS-H6p">
                             <rect key="frame" x="32" y="14" width="24" height="19"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="equalizerTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="pyB-k5-6Ls">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="slider.vertical.3" catalog="system" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="pyB-k5-6Ls">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="smallSystem"/>
                             </buttonCell>
@@ -1186,14 +1186,30 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9824C59B-F192-42FE-963F-6B8526B82EDB" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="duplicateItemsTemplate" bordered="YES" navigational="YES" id="rEg-qk-MbN">
+                    <toolbarItem implicitItemIdentifier="858E73D9-9BE8-4497-AC26-732125C6E00D" label="Show Lyrics" paletteLabel="Show Lyrics" image="quote.bubble" catalog="system" bordered="YES" sizingBehavior="auto" id="Lyr-Tb-Itm">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="Lyr-Tb-Btn">
+                            <rect key="frame" x="26" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="quote.bubble" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="Lyr-Tb-Cel">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleWindow:" target="3y4-Q0-Kkl" id="Lyr-Tb-Act"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="9824C59B-F192-42FE-963F-6B8526B82EDB" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="square.on.square" catalog="system" bordered="YES" navigational="YES" id="rEg-qk-MbN">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="tZ2-xZ-vNQ">
                             <rect key="frame" x="53" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="duplicateItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="q9i-5M-4gr">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="square.on.square" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="q9i-5M-4gr">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1202,14 +1218,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="7AA82F92-BD5B-4F3B-AD99-806D95A471C3" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="deadItemsTemplate" bordered="YES" navigational="YES" id="knJ-aI-sFa">
+                    <toolbarItem implicitItemIdentifier="7AA82F92-BD5B-4F3B-AD99-806D95A471C3" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="questionmark.folder" catalog="system" bordered="YES" navigational="YES" id="knJ-aI-sFa">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="sRS-xA-LC2">
                             <rect key="frame" x="42" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="deadItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="UR2-Bz-PyJ">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="questionmark.folder" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="UR2-Bz-PyJ">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1290,10 +1306,10 @@
                             <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="momentary" id="2296">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
-                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28">
+                                    <segment toolTip="Previous" image="backward.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="play.fill" catalog="system" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Stop" image="stop.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="forward.fill" catalog="system" imageScaling="none" width="28">
                                         <nil key="label"/>
                                     </segment>
                                 </segments>
@@ -1332,7 +1348,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="15" sizingBehavior="auto" id="2275">
+                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="15" sizingBehavior="auto" id="2275">
                         <nil key="toolTip"/>
                         <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="2289" customClass="VolumeSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
@@ -1343,12 +1359,12 @@
                             </connections>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="2278">
+                    <toolbarItem implicitItemIdentifier="EE7CA50B-9B79-414A-A257-7AC385032675" label="Shuffle" paletteLabel="Shuffle" image="arrow.right" catalog="system" sizingBehavior="auto" id="2278">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2283">
                             <rect key="frame" x="7" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2284">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.right" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="2284">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1362,12 +1378,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" sizingBehavior="auto" id="2279">
+                    <toolbarItem implicitItemIdentifier="9A52F396-9BBC-4791-AC12-664859F26F89" label="Repeat" paletteLabel="Repeat" image="arrow.right.to.line" catalog="system" sizingBehavior="auto" id="2279">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2281">
                             <rect key="frame" x="6" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2282">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.right.to.line" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="2282">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1381,12 +1397,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="1CD73ECB-7401-4384-AB5F-4189E4E3ABE9" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="kVl-aW-mtT">
+                    <toolbarItem implicitItemIdentifier="1CD73ECB-7401-4384-AB5F-4189E4E3ABE9" label="Randomize" paletteLabel="Randomize" image="dice" catalog="system" bordered="YES" sizingBehavior="auto" id="kVl-aW-mtT">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="4nl-vF-VBi">
                             <rect key="frame" x="17" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="mPh-Va-23E">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="dice" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="mPh-Va-23E">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1395,12 +1411,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2064CD41-7C2B-4EE0-BCE9-8E18E09F02EF" label="Normal Mode" paletteLabel="Normal Mode" image="miniModeOffTemplate" sizingBehavior="auto" id="2526">
+                    <toolbarItem implicitItemIdentifier="2064CD41-7C2B-4EE0-BCE9-8E18E09F02EF" label="Normal Mode" paletteLabel="Normal Mode" image="arrow.up.left.and.arrow.down.right" catalog="system" sizingBehavior="auto" id="2526">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2527">
                             <rect key="frame" x="25" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2528">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.up.left.and.arrow.down.right" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="2528">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1412,12 +1428,12 @@
                             <action selector="toggleMiniMode:" target="226" id="2531"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="infoTemplate" visibilityPriority="2" sizingBehavior="auto" navigational="YES" id="2429">
+                    <toolbarItem implicitItemIdentifier="0649F8CF-02D0-4D43-9FB4-CCAFAFA03B49" label="Info Inspector" paletteLabel="Info Inspector" image="info.circle" catalog="system" visibilityPriority="2" sizingBehavior="auto" navigational="YES" id="2429">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="2430">
                             <rect key="frame" x="26" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="infoTemplate" imagePosition="only" alignment="center" borderStyle="border" id="2431">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="info.circle" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="2431">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1426,12 +1442,12 @@
                             <action selector="toggleWindow:" target="2422" id="2433"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="1A6385ED-7F2D-4752-8113-C8693E5DDC1C" label="Show Equalizer" paletteLabel="Show Equalizer" image="equalizerTemplate" bordered="YES" sizingBehavior="auto" id="ZOn-sB-FR3">
+                    <toolbarItem implicitItemIdentifier="1A6385ED-7F2D-4752-8113-C8693E5DDC1C" label="Show Equalizer" paletteLabel="Show Equalizer" image="slider.vertical.3" catalog="system" bordered="YES" sizingBehavior="auto" id="ZOn-sB-FR3">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="pbi-yj-rqU">
                             <rect key="frame" x="32" y="14" width="24" height="19"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="equalizerTemplate" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="SX9-eB-f6f">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="slider.vertical.3" catalog="system" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="SX9-eB-f6f">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="smallSystem"/>
                             </buttonCell>
@@ -1440,14 +1456,30 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="E56B804D-0A4D-415C-B34A-56D9102046D1" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="duplicateItemsTemplate" bordered="YES" id="4pg-Lq-O8K">
+                    <toolbarItem implicitItemIdentifier="D5CD1906-1D02-4821-AE20-253281AD114E" label="Show Lyrics" paletteLabel="Show Lyrics" image="quote.bubble" catalog="system" bordered="YES" sizingBehavior="auto" id="Lyr-Mn-Itm">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="Lyr-Mn-Btn">
+                            <rect key="frame" x="26" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="quote.bubble" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="Lyr-Mn-Cel">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleWindow:" target="3y4-Q0-Kkl" id="Lyr-Mn-Act"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="E56B804D-0A4D-415C-B34A-56D9102046D1" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="square.on.square" catalog="system" bordered="YES" id="4pg-Lq-O8K">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="0XX-i8-gc0">
                             <rect key="frame" x="53" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="duplicateItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="6yJ-BU-Bgg">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="square.on.square" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="6yJ-BU-Bgg">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1456,14 +1488,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="56A027C2-B330-46E5-8C3C-AADF8DF7F2EE" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="deadItemsTemplate" bordered="YES" id="WKt-lM-Bv1">
+                    <toolbarItem implicitItemIdentifier="56A027C2-B330-46E5-8C3C-AADF8DF7F2EE" label="Remove Dead Items" paletteLabel="Remove Dead Items" image="questionmark.folder" catalog="system" bordered="YES" id="WKt-lM-Bv1">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
                         <size key="maxSize" width="32" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="SBg-uC-koX">
                             <rect key="frame" x="42" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="deadItemsTemplate" imagePosition="only" alignment="center" borderStyle="border" id="CEJ-na-l45">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="questionmark.folder" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="CEJ-na-l45">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1550,10 +1582,10 @@
                             <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="momentary" id="3106">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment toolTip="Previous" image="previousTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Play" image="playTemplate" imageScaling="none" width="28" tag="1"/>
-                                    <segment toolTip="Stop" image="stopTemplate" imageScaling="none" width="28"/>
-                                    <segment toolTip="Next" image="nextTemplate" imageScaling="none" width="28">
+                                    <segment toolTip="Previous" image="backward.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Play" image="play.fill" catalog="system" imageScaling="none" width="28" tag="1"/>
+                                    <segment toolTip="Stop" image="stop.fill" catalog="system" imageScaling="none" width="28"/>
+                                    <segment toolTip="Next" image="forward.fill" catalog="system" imageScaling="none" width="28">
                                         <nil key="label"/>
                                     </segment>
                                 </segments>
@@ -1592,7 +1624,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0004-7890-ABCD-EF1234567894" label="Volume" paletteLabel="Volume" image="volume3Template" visibilityPriority="15" sizingBehavior="auto" id="3113">
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0004-7890-ABCD-EF1234567894" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="15" sizingBehavior="auto" id="3113">
                         <nil key="toolTip"/>
                         <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="3114" customClass="VolumeSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
@@ -1603,12 +1635,12 @@
                             </connections>
                         </slider>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0005-7890-ABCD-EF1234567895" label="Shuffle" paletteLabel="Shuffle" image="shuffleOffTemplate" sizingBehavior="auto" id="3116">
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0005-7890-ABCD-EF1234567895" label="Shuffle" paletteLabel="Shuffle" image="arrow.right" catalog="system" sizingBehavior="auto" id="3116">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="3117">
                             <rect key="frame" x="7" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="shuffleOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3118">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.right" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="3118">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1622,12 +1654,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0006-7890-ABCD-EF1234567896" label="Repeat" paletteLabel="Repeat" image="repeatModeOffTemplate" sizingBehavior="auto" id="3119">
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0006-7890-ABCD-EF1234567896" label="Repeat" paletteLabel="Repeat" image="arrow.right.to.line" catalog="system" sizingBehavior="auto" id="3119">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="3120">
                             <rect key="frame" x="6" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="repeatModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3121">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.right.to.line" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="3121">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1641,12 +1673,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0007-7890-ABCD-EF1234567897" label="Randomize" paletteLabel="Randomize" image="randomizeTemplate" bordered="YES" sizingBehavior="auto" id="3122">
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0007-7890-ABCD-EF1234567897" label="Randomize" paletteLabel="Randomize" image="dice" catalog="system" bordered="YES" sizingBehavior="auto" id="3122">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="3123">
                             <rect key="frame" x="17" y="14" width="32" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="randomizeTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3124">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="dice" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="3124">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -1655,12 +1687,12 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0008-7890-ABCD-EF1234567898" label="Normal Mode" paletteLabel="Normal Mode" image="miniModeOffTemplate" sizingBehavior="auto" id="3125">
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0008-7890-ABCD-EF1234567898" label="Normal Mode" paletteLabel="Normal Mode" image="arrow.up.left.and.arrow.down.right" catalog="system" sizingBehavior="auto" id="3125">
                         <nil key="toolTip"/>
                         <button key="view" verticalHuggingPriority="750" id="3126">
                             <rect key="frame" x="25" y="14" width="28" height="23"/>
                             <autoresizingMask key="autoresizingMask"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="miniModeOffTemplate" imagePosition="only" alignment="center" borderStyle="border" id="3127">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="arrow.up.left.and.arrow.down.right" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="3127">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -2173,13 +2205,13 @@ CA
                             <menuItem isSeparatorItem="YES" id="1863">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Remove Duplicate Items" secondaryImage="duplicateItemsTemplate" id="2qB-Bq-t2u" userLabel="Menu Item - Remove Duplicate Items">
+                            <menuItem title="Remove Duplicate Items" secondaryImage="square.on.square" catalog="system" id="2qB-Bq-t2u" userLabel="Menu Item - Remove Duplicate Items">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="removeDuplicates:" target="218" id="bS3-zS-wcJ"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Remove Dead Items" secondaryImage="deadItemsTemplate" id="Ajn-k4-afd" userLabel="Menu Item - Remove Dead Items">
+                            <menuItem title="Remove Dead Items" secondaryImage="questionmark.folder" catalog="system" id="Ajn-k4-afd" userLabel="Menu Item - Remove Dead Items">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="removeDeadItems:" target="218" id="vGZ-l5-tlE"/>
@@ -2231,7 +2263,7 @@ CA
                             <menuItem title="Repeat" id="1740">
                                 <menu key="submenu" title="Repeat" id="1741">
                                     <items>
-                                        <menuItem title="All" state="on" secondaryImage="repeatModeAllTemplate" keyEquivalent="r" id="1742">
+                                        <menuItem title="All" state="on" secondaryImage="repeat" catalog="system" keyEquivalent="r" id="1742">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1760">
@@ -2241,7 +2273,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Album" secondaryImage="repeatModeAlbumTemplate" id="1892">
+                                        <menuItem title="Album" secondaryImage="repeat.album" id="1892">
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="2412">
                                                     <dictionary key="options">
@@ -2250,7 +2282,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="One" secondaryImage="repeatModeOneTemplate" id="1746">
+                                        <menuItem title="One" secondaryImage="repeat.1" catalog="system" id="1746">
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1763">
                                                     <dictionary key="options">
@@ -2259,7 +2291,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="None" secondaryImage="repeatModeOffTemplate" id="1749">
+                                        <menuItem title="None" secondaryImage="arrow.right.to.line" catalog="system" id="1749">
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="repeat" id="1767">
                                                     <dictionary key="options">
@@ -2283,7 +2315,7 @@ CA
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Shuffle" id="2439">
                                     <items>
-                                        <menuItem title="All" secondaryImage="shuffleOnTemplate" keyEquivalent="s" id="2443">
+                                        <menuItem title="All" secondaryImage="shuffle" catalog="system" keyEquivalent="s" id="2443">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="shuffle" id="2445">
@@ -2293,7 +2325,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Albums" secondaryImage="shuffleAlbumTemplate" id="2442">
+                                        <menuItem title="Albums" secondaryImage="shuffle.album" id="2442">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="shuffle" id="2448">
@@ -2303,7 +2335,7 @@ CA
                                                 </binding>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Off" secondaryImage="shuffleOffTemplate" id="2440">
+                                        <menuItem title="Off" secondaryImage="arrow.right" catalog="system" id="2440">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <binding destination="218" name="value" keyPath="shuffle" id="2451">
@@ -2872,16 +2904,18 @@ Gw
         </customObject>
     </objects>
     <resources>
+        <image name="arrow.down.right.and.arrow.up.left" catalog="system" width="16" height="16"/>
+        <image name="arrow.right" catalog="system" width="20" height="19"/>
+        <image name="arrow.right.to.line" catalog="system" width="20" height="19"/>
         <image name="arrow.trianglehead.2.counterclockwise.rotate.90" catalog="system" width="16" height="15"/>
         <image name="arrow.trianglehead.clockwise.rotate.90" catalog="system" width="16" height="15"/>
+        <image name="arrow.up.left.and.arrow.down.right" catalog="system" width="16" height="16"/>
         <image name="backward.end.fill" catalog="system" width="15" height="12"/>
         <image name="backward.fill" catalog="system" width="20" height="12"/>
         <image name="chart.bar" catalog="system" width="20" height="14"/>
         <image name="clear" catalog="system" width="15" height="14"/>
-        <image name="deadItemsTemplate" width="20" height="20"/>
         <image name="deskclock" catalog="system" width="15" height="16"/>
-        <image name="duplicateItemsTemplate" width="20" height="20"/>
-        <image name="equalizerTemplate" width="20" height="20"/>
+        <image name="dice" catalog="system" width="20" height="20"/>
         <image name="exclamationmark.bubble" catalog="system" width="17" height="16"/>
         <image name="filemenu.and.selection" catalog="system" width="18" height="14"/>
         <image name="finder" catalog="system" width="16" height="15"/>
@@ -3046,46 +3080,35 @@ yw
         <image name="info" catalog="system" width="10" height="15"/>
         <image name="info.circle" catalog="system" width="15" height="15"/>
         <image name="info.square" catalog="system" width="15" height="14"/>
-        <image name="infoTemplate" width="16" height="16"/>
         <image name="line.3.horizontal.decrease" catalog="system" width="16" height="10"/>
         <image name="macwindow.stack" catalog="system" width="17" height="18"/>
         <image name="magnifyingglass" catalog="system" width="16" height="15"/>
-        <image name="miniModeOffTemplate" width="16" height="16"/>
-        <image name="miniModeOnTemplate" width="16" height="16"/>
         <image name="minus" catalog="system" width="14" height="4"/>
         <image name="music.microphone" catalog="system" width="16" height="16"/>
-        <image name="navigatorTemplate" width="16" height="16"/>
-        <image name="nextTemplate" width="20" height="19"/>
         <image name="pianokeys" catalog="system" width="18" height="14"/>
         <image name="pip.swap" catalog="system" width="20" height="16"/>
         <image name="play.fill" catalog="system" width="12" height="13"/>
         <image name="play.square.fill" catalog="system" width="15" height="14"/>
-        <image name="playTemplate" width="16" height="16"/>
         <image name="plus.square" catalog="system" width="15" height="14"/>
-        <image name="previousTemplate" width="20" height="19"/>
+        <image name="questionmark.folder" catalog="system" width="20" height="20"/>
         <image name="quote.bubble" catalog="system" width="17" height="16"/>
-        <image name="randomizeTemplate" width="20" height="20"/>
         <image name="repeat" catalog="system" width="17" height="14"/>
-        <image name="repeatModeAlbumTemplate" width="20" height="19"/>
-        <image name="repeatModeAllTemplate" width="20" height="19"/>
-        <image name="repeatModeOffTemplate" width="20" height="19"/>
-        <image name="repeatModeOneTemplate" width="20" height="19"/>
+        <image name="repeat.1" catalog="system" width="20" height="19"/>
+        <image name="repeat.album" width="18" height="14"/>
         <image name="shuffle" catalog="system" width="18" height="14"/>
-        <image name="shuffleAlbumTemplate" width="20" height="19"/>
-        <image name="shuffleOffTemplate" width="20" height="19"/>
-        <image name="shuffleOnTemplate" width="20" height="19"/>
-        <image name="slider.vertical.3" catalog="system" width="15" height="14"/>
+        <image name="shuffle.album" width="23" height="14"/>
+        <image name="slider.vertical.3" catalog="system" width="20" height="20"/>
         <image name="speaker.minus" catalog="system" width="19" height="14"/>
         <image name="speaker.plus" catalog="system" width="19" height="14"/>
+        <image name="speaker.wave.3.fill" catalog="system" width="17" height="16"/>
         <image name="square.and.arrow.down" catalog="system" width="15" height="17"/>
+        <image name="square.on.square" catalog="system" width="20" height="20"/>
         <image name="square.stack" catalog="system" width="15" height="18"/>
         <image name="square.stack.fill" catalog="system" width="15" height="18"/>
         <image name="stop.fill" catalog="system" width="14" height="13"/>
-        <image name="stopTemplate" width="16" height="16"/>
         <image name="text.line.first.and.arrowtriangle.forward" catalog="system" width="19" height="15"/>
         <image name="textformat.size.larger" catalog="system" width="11" height="12"/>
         <image name="textformat.size.smaller" catalog="system" width="9" height="9"/>
         <image name="trash" catalog="system" width="15" height="17"/>
-        <image name="volume3Template" width="17" height="16"/>
     </resources>
 </document>
