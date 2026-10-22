@@ -18,10 +18,6 @@ final class SignalInspectorWindowController: NSWindowController, NSWindowDelegat
 	@IBOutlet var playbackController: PlaybackController?
 
 	private let meters = SignalMetricsModel()
-	private var timer: Timer?
-
-	/// Meters refresh at about the engine's own tick.
-	private static let refreshInterval = 1.0 / 20
 
 	@objc init() {
 		super.init(window: nil)
@@ -99,24 +95,12 @@ final class SignalInspectorWindowController: NSWindowController, NSWindowDelegat
 	}
 
 	private func startMetering() {
-		guard timer == nil, let player = playbackController?.audioPlayer() else { return }
-		player.meteringEnabled = true
-		let timer = Timer(timeInterval: Self.refreshInterval, repeats: true) { [weak self] _ in
-			MainActor.assumeIsolated { self?.refresh() }
+		OutputMeter.shared.subscribe(self, player: playbackController?.audioPlayer()) { [weak self] metrics in
+			self?.meters.update(metrics)
 		}
-		RunLoop.main.add(timer, forMode: .common)
-		self.timer = timer
-		refresh()
 	}
 
 	private func stopMetering() {
-		timer?.invalidate()
-		timer = nil
-		playbackController?.audioPlayer()?.meteringEnabled = false
-		meters.update(nil)
-	}
-
-	private func refresh() {
-		meters.update(playbackController?.audioPlayer()?.signalMetrics())
+		OutputMeter.shared.unsubscribe(self)
 	}
 }

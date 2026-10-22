@@ -275,7 +275,7 @@ private struct LiveView: View {
 	}
 }
 
-private struct MeterRow: View {
+struct MeterRow: View {
 	let channel: SignalMetricsModel.Channel
 
 	var body: some View {
@@ -321,7 +321,7 @@ private struct MeterRow: View {
 }
 
 /// dBFS marks under the meters.
-private struct MeterScale: View {
+struct MeterScale: View {
 	private let marks: [Double] = [-60, -40, -20, -10, -6, -3, 0]
 
 	var body: some View {

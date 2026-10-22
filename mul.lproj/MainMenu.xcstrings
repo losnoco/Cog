@@ -5353,6 +5353,96 @@
         }
       }
     },
+    "VUm-Me-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show VU Meter\"; ObjectID = \"VUm-Me-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Mn-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"VU Meter\"; ObjectID = \"VUm-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Mn-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"VU Meter\"; ObjectID = \"VUm-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Tb-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"VU Meter\"; ObjectID = \"VUm-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Tb-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"VU Meter\"; ObjectID = \"VUm-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
     "Wfm-Sb-k1t.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform in Seek Bar\"; ObjectID = \"Wfm-Sb-k1t\";",
       "extractionState" : "extracted_with_value",
