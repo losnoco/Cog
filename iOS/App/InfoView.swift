@@ -17,6 +17,8 @@ struct InfoView: View {
 	/// The rows' background over the album's colors; nil for the usual
 	/// grouped list.
 	var rowBackground: Color?
+	/// The art at the top; not where Now Playing shows it beside.
+	var showsArtwork = true
 	@Environment(\.dismiss) private var dismiss
 	@State private var artwork: UIImage?
 
@@ -47,7 +49,7 @@ struct InfoView: View {
 
 	private var content: some View {
 		List {
-			if presentation != .card, let artwork {
+			if showsArtwork, presentation != .card, let artwork {
 				Image(uiImage: artwork)
 					.resizable()
 					.aspectRatio(contentMode: .fit)
@@ -95,7 +97,7 @@ struct InfoView: View {
 		// The album's colors, or the card's, show through.
 		.scrollContentBackground(rowBackground == nil && presentation != .card ? .automatic : .hidden)
 		.task(id: entry.artHash) {
-			guard presentation != .card else { return }
+			guard showsArtwork, presentation != .card else { return }
 			artwork = await ArtworkCache.shared.image(for: entry, pixels: 640)
 		}
 	}

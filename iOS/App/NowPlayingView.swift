@@ -98,31 +98,39 @@ private struct MiniPlayerBackground: ViewModifier {
 struct NowPlayingView: View {
 	/// Beside the playlist on a large screen, rather than a sheet over it.
 	var isEmbedded = false
+	/// The controls under what plays; without them while a bar of the
+	/// playlist's has them, as when the Duo stands like a laptop.
+	var showsControls = true
+	/// The equalizer, speed, lyrics and Info open in the pane across an
+	/// iPhone Duo's fold, rather than here as cards or sheets.
+	var panelsElsewhere = false
 	@EnvironmentObject private var player: Player
 	@EnvironmentObject private var model: PlaylistModel
 	@Environment(\.dismiss) private var dismiss
 	@Environment(\.colorScheme) private var colorScheme
 	@Environment(\.verticalSizeClass) private var verticalSizeClass
 	@EnvironmentObject private var ui: AppUI
-	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
-	@AppStorage("tempo") private var tempo = 1.0
-	@AppStorage("pitch") private var pitch = 1.0
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
 	/// How tall Now Playing is, which says how much room the cards have.
 	@State private var height: CGFloat = 0
-	/// The details of what plays, as the macOS Info Inspector has them.
-	@State private var showsInfo = false
-	@EnvironmentObject private var equalizer: Equalizer
+	/// Whether the controls show, following `showsControls` in a
+	/// transaction of its own: changed with the pane's size, in the same
+	/// update, they would appear at once, unanimated. Nil until it changes.
+	@State private var controlsShown: Bool?
 
 	var body: some View {
-		NavigationStack {
-			if isEmbedded && model.currentEntry == nil {
-				ContentUnavailableView("Not Playing", systemImage: "music.note",
-				                       description: Text("Choose a track in the playlist."))
+		Group {
+			// Embedded, it shows no bars, so it has no stack of its own: on an
+			// iPhone Duo a stack would keep room for a vertical bar that is
+			// never there, an empty strip beside the fold.
+			if isEmbedded {
+				content
 			} else {
-				layout
+				NavigationStack {
+					content
+				}
 			}
 		}
 		// Light on the album's dark colors, in its accent; the sheets it
@@ -130,6 +138,15 @@ struct NowPlayingView: View {
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
 		.albumPalette($palette, of: model.currentEntry)
+	}
+
+	@ViewBuilder private var content: some View {
+		if isEmbedded && model.currentEntry == nil {
+			ContentUnavailableView("Not Playing", systemImage: "music.note",
+			                       description: Text("Choose a track in the playlist."))
+		} else {
+			layout
+		}
 	}
 
 	private var layout: some View {
@@ -142,7 +159,7 @@ struct NowPlayingView: View {
 				.ignoresSafeArea(.container, edges: !isEmbedded && verticalSizeClass == .compact ? .vertical : [])
 			// Beside the playlist, the equalizer, speed and lyrics open in the
 			// room below, rather than in sheets over everything.
-			if cardsFit && (ui.showsEqualizer || ui.showsSpeed || ui.showsLyrics || showsInfo) {
+			if cardsFit && (ui.showsEqualizer || ui.showsSpeed || ui.showsLyrics || ui.showsInfo) {
 				panels
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 			}
@@ -150,7 +167,10 @@ struct NowPlayingView: View {
 		.animation(.controls, value: ui.showsEqualizer)
 		.animation(.controls, value: ui.showsSpeed)
 		.animation(.controls, value: ui.showsLyrics)
-		.animation(.controls, value: showsInfo)
+		.animation(.controls, value: ui.showsInfo)
+		.onChange(of: showsControls) { _, shows in
+			withAnimation(.controls) { controlsShown = shows }
+		}
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
 			AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
@@ -159,7 +179,7 @@ struct NowPlayingView: View {
 		.toolbar {
 			if !isEmbedded {
 				ToolbarItem(placement: .topBarLeading) {
-					Button("Info", systemImage: "info.circle") { showsInfo = true }
+					Button("Info", systemImage: "info.circle") { ui.showsInfo = true }
 						.disabled(model.currentEntry == nil)
 				}
 				ToolbarItem(placement: .topBarTrailing) {
@@ -189,14 +209,14 @@ struct NowPlayingView: View {
 		// Beside the playlist, a card, or a sheet where cards do not fit;
 		// over it, pushed in Now Playing's own stack. (A zoom out of the art
 		// hid the whole sheet while it ran.)
-		.sheet(isPresented: Binding(get: { showsInfo && isEmbedded && !cardsFit }, set: { showsInfo = $0 })) {
+		.sheet(isPresented: Binding(get: { ui.showsInfo && isEmbedded && !cardsFit && !panelsElsewhere }, set: { ui.showsInfo = $0 })) {
 			if let entry = model.currentEntry {
 				InfoView(entry: entry)
 					.environment(\.colorScheme, colorScheme)
 					.tint(.accentColor)
 			}
 		}
-		.navigationDestination(isPresented: Binding(get: { showsInfo && !isEmbedded }, set: { showsInfo = $0 })) {
+		.navigationDestination(isPresented: Binding(get: { ui.showsInfo && !isEmbedded }, set: { ui.showsInfo = $0 })) {
 			if let entry = model.currentEntry {
 				InfoView(entry: entry, presentation: .page, rowBackground: palette == nil ? nil : .white.opacity(0.1))
 					// Opaque from the first frame, not faded in as AlbumGradient
@@ -211,7 +231,7 @@ struct NowPlayingView: View {
 			}
 		}
 		.onChange(of: model.currentEntry == nil) { _, ended in
-			if ended { showsInfo = false }
+			if ended { ui.showsInfo = false }
 		}
 	}
 
@@ -238,7 +258,9 @@ struct NowPlayingView: View {
 					// they keep their size when a card turns the layout: a new
 					// font would replace Play's and Repeat's glyphs on the
 					// symbol effect's own clock, out of step with the move.
-					controls(compact: landscape && !isEmbedded)
+					if controlsShown ?? showsControls {
+						NowPlayingControls(compact: landscape && !isEmbedded, isEmbedded: isEmbedded, palette: palette)
+					}
 				}
 				// Stacked in a wide pane, the slider and the buttons kept to a
 				// width they can be taken in at a glance.
@@ -246,12 +268,18 @@ struct NowPlayingView: View {
 			}
 			.padding(.horizontal, landscape ? 24 : 0)
 			.frame(width: geometry.size.width, height: geometry.size.height)
+			// Beside the playlist the pane changes width as an iPhone Duo's
+			// hinge moves, in updates that come unanimated; the art, text and
+			// controls follow it smoothly. Not in a sheet, whose size settles
+			// as it opens.
+			.animation(isEmbedded ? .controls : nil, value: geometry.size.width)
 		}
 	}
 
-	/// A sheet's binding: shown only where the cards are not.
+	/// A sheet's binding: shown only where the cards are not, here or
+	/// across the fold.
 	private func sheet(_ shows: Binding<Bool>) -> Binding<Bool> {
-		Binding(get: { shows.wrappedValue && !cardsFit }, set: { shows.wrappedValue = $0 })
+		Binding(get: { shows.wrappedValue && !cardsFit && !panelsElsewhere }, set: { shows.wrappedValue = $0 })
 	}
 
 	/// The cards' height: up to 440 points, leaving the art and controls
@@ -263,90 +291,14 @@ struct NowPlayingView: View {
 	/// Beside the playlist, in a window tall enough for cards worth having;
 	/// otherwise the equalizer, speed and lyrics open in sheets.
 	private var cardsFit: Bool {
-		isEmbedded && cardHeight >= 220
+		isEmbedded && !panelsElsewhere && cardHeight >= 220
 	}
 
-	/// The equalizer, speed and lyrics as cards, side by side.
+	/// The equalizer, speed and lyrics as cards, side by side, below.
 	private var panels: some View {
-		HStack(alignment: .top, spacing: 16) {
-			if ui.showsEqualizer {
-				panel("Equalizer", close: { ui.showsEqualizer = false }) {
-					Toggle("Equalizer", isOn: $equalizer.isEnabled)
-						.labelsHidden()
-				} trailing: {
-					Button("Flat") { equalizer.flatten() }
-						.disabled(!equalizer.isEnabled)
-				} content: {
-					ScrollView {
-						EqualizerControls()
-							.padding([.horizontal, .bottom])
-					}
-				}
-			}
-			if ui.showsSpeed {
-				panel("Speed", close: { ui.showsSpeed = false }) {
-					EmptyView()
-				} trailing: {
-					EmptyView()
-				} content: {
-					SpeedControls()
-						.scrollContentBackground(.hidden)
-				}
-			}
-			if ui.showsLyrics, let entry = model.currentEntry {
-				panel("Lyrics", close: { ui.showsLyrics = false }) {
-					EmptyView()
-				} trailing: {
-					EmptyView()
-				} content: {
-					LyricsText(entry: entry)
-				}
-			}
-			if showsInfo, let entry = model.currentEntry {
-				panel("Info", close: { showsInfo = false }) {
-					EmptyView()
-				} trailing: {
-					EmptyView()
-				} content: {
-					InfoView(entry: entry, presentation: .card, rowBackground: palette == nil ? nil : .white.opacity(0.1))
-				}
-			}
-		}
-		.frame(height: max(cardHeight - 16, 0))
-		.padding([.horizontal, .bottom], 16)
-	}
-
-	/// A card: its title centered, what it offers on either side of it, and
-	/// a close button at the end.
-	private func panel<Leading: View, Trailing: View, Content: View>(
-		_ title: LocalizedStringKey, close: @escaping () -> Void, @ViewBuilder leading: () -> Leading,
-		@ViewBuilder trailing: () -> Trailing, @ViewBuilder content: () -> Content
-	) -> some View {
-		VStack(spacing: 0) {
-			ZStack {
-				Text(title)
-					.font(.headline)
-				HStack(spacing: 16) {
-					leading()
-					Spacer()
-					trailing()
-					Button("Close", systemImage: "xmark.circle.fill", action: close)
-						.labelStyle(.iconOnly)
-						.font(.title2)
-						.foregroundStyle(.secondary)
-				}
-			}
-			.padding(.horizontal)
-			.padding(.vertical, 12)
-			content()
-		}
-		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-		.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-	}
-
-	/// What an on-or-off button shows: the tint when on.
-	private func state(_ on: Bool) -> AnyShapeStyle {
-		on ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary)
+		PlaybackPanels(palette: palette)
+			.frame(height: max(cardHeight - 16, 0))
+			.padding([.horizontal, .bottom], 16)
 	}
 
 	@ViewBuilder private func artwork(size: CGFloat) -> some View {
@@ -386,15 +338,122 @@ struct NowPlayingView: View {
 					.foregroundStyle(.secondary)
 					.lineLimit(1)
 			}
+			// Rewrapped as the pane changes width, the words move to their
+			// new lines rather than jumping there.
+			.contentTransition(.interpolate)
 			.multilineTextAlignment(.center)
 			.padding(.horizontal)
 
 			ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
 		}
 	}
+}
 
-	/// Transport, then the modes and the rest; smaller in landscape.
-	private func controls(compact: Bool) -> some View {
+/// The equalizer, speed, lyrics and Info, as cards in a row below Now
+/// Playing.
+struct PlaybackPanels: View {
+	/// The playing album's colors, which Info's rows are drawn over.
+	var palette: ArtworkPalette?
+	@EnvironmentObject private var model: PlaylistModel
+	@EnvironmentObject private var ui: AppUI
+	@EnvironmentObject private var equalizer: Equalizer
+
+	var body: some View {
+		HStack(alignment: .top, spacing: 16) {
+			if ui.showsEqualizer {
+				panel("Equalizer", close: { ui.showsEqualizer = false }) {
+					Toggle("Equalizer", isOn: $equalizer.isEnabled)
+						.labelsHidden()
+				} trailing: {
+					Button("Flat") { equalizer.flatten() }
+						.disabled(!equalizer.isEnabled)
+				} content: {
+					ScrollView {
+						EqualizerControls()
+							.padding([.horizontal, .bottom])
+					}
+				}
+			}
+			if ui.showsSpeed {
+				panel("Speed", close: { ui.showsSpeed = false }) {
+					EmptyView()
+				} trailing: {
+					EmptyView()
+				} content: {
+					SpeedControls()
+						.scrollContentBackground(.hidden)
+				}
+			}
+			if ui.showsLyrics, let entry = model.currentEntry {
+				panel("Lyrics", close: { ui.showsLyrics = false }) {
+					EmptyView()
+				} trailing: {
+					EmptyView()
+				} content: {
+					LyricsText(entry: entry)
+				}
+			}
+			if ui.showsInfo, let entry = model.currentEntry {
+				panel("Info", close: { ui.showsInfo = false }) {
+					EmptyView()
+				} trailing: {
+					EmptyView()
+				} content: {
+					InfoView(entry: entry, presentation: .card, rowBackground: palette == nil ? nil : .white.opacity(0.1))
+				}
+			}
+		}
+	}
+
+	/// A card: its title centered, what it offers on either side of it, and
+	/// a close button at the end.
+	private func panel<Leading: View, Trailing: View, Content: View>(
+		_ title: LocalizedStringKey, close: @escaping () -> Void, @ViewBuilder leading: () -> Leading,
+		@ViewBuilder trailing: () -> Trailing, @ViewBuilder content: () -> Content
+	) -> some View {
+		VStack(spacing: 0) {
+			ZStack {
+				Text(title)
+					.font(.headline)
+				HStack(spacing: 16) {
+					leading()
+					Spacer()
+					trailing()
+					Button("Close", systemImage: "xmark.circle.fill", action: close)
+						.labelStyle(.iconOnly)
+						.font(.title2)
+						.foregroundStyle(.secondary)
+				}
+			}
+			.padding(.horizontal)
+			.padding(.vertical, 12)
+			content()
+		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+		.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+	}
+}
+
+/// Transport, then the modes and the rest; smaller where room is short.
+/// Under what plays in Now Playing, or in a bar along the playlist's foot
+/// while the Duo stands like a laptop.
+struct NowPlayingControls: View {
+	let compact: Bool
+	/// Beside the playlist, where Info opens from the menu rather than from
+	/// a toolbar.
+	let isEmbedded: Bool
+	/// The playing album's colors, which the transport's shadow allows for.
+	let palette: ArtworkPalette?
+	@EnvironmentObject private var player: Player
+	@EnvironmentObject private var model: PlaylistModel
+	@EnvironmentObject private var ui: AppUI
+	@EnvironmentObject private var equalizer: Equalizer
+	@AppStorage("rubberbandEngine") private var speedEngine = "varispeed"
+	@AppStorage("tempo") private var tempo = 1.0
+	@AppStorage("pitch") private var pitch = 1.0
+	@AppStorage("showsVisualizer") private var showsVisualizer = false
+
+	var body: some View {
 		VStack(spacing: compact ? 12 : 24) {
 			HStack(spacing: compact ? 40 : 48) {
 				HoldButton("Previous", systemImage: "backward.fill", action: { player.previous() }) { held in
@@ -460,7 +519,7 @@ struct NowPlayingView: View {
 					.frame(maxWidth: .infinity)
 				// Over the playlist, Info is in the toolbar.
 				if isEmbedded {
-					Button("Info", systemImage: "info.circle") { showsInfo.toggle() }
+					Button("Info", systemImage: "info.circle") { ui.showsInfo.toggle() }
 						.foregroundStyle(Color.secondary)
 						.disabled(model.currentEntry == nil)
 						.frame(maxWidth: .infinity)
@@ -475,6 +534,11 @@ struct NowPlayingView: View {
 			.font(compact ? .title3 : .title2)
 		}
 		.labelStyle(.iconOnly)
+	}
+
+	/// What an on-or-off button shows: the tint when on.
+	private func state(_ on: Bool) -> AnyShapeStyle {
+		on ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary)
 	}
 
 	/// Stop after this, the equalizer, speed and the visualizer. Lit while

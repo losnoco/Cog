@@ -18,6 +18,8 @@ final class AppUI: ObservableObject {
 	@Published var showsEqualizer = false
 	@Published var showsSpeed = false
 	@Published var showsLyrics = false
+	/// The details of what plays, as the macOS Info Inspector has them.
+	@Published var showsInfo = false
 	@Published var showsSettings = false
 	@Published var addsMusic = false
 	@Published var addsURL = false
