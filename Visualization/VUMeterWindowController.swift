@@ -8,74 +8,55 @@
 import Cocoa
 import SwiftUI
 
-/// Owns the VU meter window. Instantiated by MainMenu.xib, which connects
-/// `playbackController` and targets toggleWindow:/showWindow:; the toolbar's
-/// VU meter opens it too.
+/// Owns the VU meter, in its window or docked. Instantiated by MainMenu.xib,
+/// which connects `playbackController` and targets toggleWindow:/showWindow:;
+/// the toolbar's VU meter opens it too.
 ///
-/// The output is metered only while the window is on screen.
+/// The output is metered only while the meter can be seen.
 @objc(VUMeterWindowController)
-final class VUMeterWindowController: NSWindowController, NSWindowDelegate {
+final class VUMeterWindowController: PaneWindowController {
 	@IBOutlet var playbackController: PlaybackController?
 
 	private let model = VUMeterModel()
 
-	@objc init() {
-		super.init(window: nil)
+	override var paneIdentifier: String {
+		"vuMeter"
 	}
 
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
+	override var paneTitle: String {
+		NSLocalizedString("VU Meter", comment: "VU meter window title")
 	}
 
-	override func loadWindow() {
+	override var defaultPlacement: PanePlacement {
+		PanePlacement(edge: .bottom, position: 1, size: 150)
+	}
+
+	override var paneAppearance: NSAppearance? {
+		NSAppearance(named: .darkAqua)
+	}
+
+	override func makePaneView() -> NSView {
+		hostingView(VUMeterView(model: model))
+	}
+
+	override func makeWindow() -> NSWindow {
 		let window = NSWindow(
 			contentRect: NSRect(x: 196, y: 240, width: 380, height: 150),
 			styleMask: [.titled, .closable, .miniaturizable, .resizable],
 			backing: .buffered,
 			defer: true
 		)
-		window.title = NSLocalizedString("VU Meter", comment: "VU meter window title")
+		window.title = paneTitle
 		window.appearance = NSAppearance(named: .darkAqua)
 		window.titlebarAppearsTransparent = true
 		window.isReleasedWhenClosed = false
 		window.contentMinSize = NSSize(width: 240, height: 90)
-		window.contentView = NSHostingView(rootView: VUMeterView(model: model))
 		window.setFrameAutosaveName("VUMeter")
-		window.delegate = self
-		self.window = window
-
-		NotificationCenter.default.addObserver(self, selector: #selector(occlusionStateDidChange(_:)), name: NSWindow.didChangeOcclusionStateNotification, object: window)
+		return window
 	}
 
-	@objc private func occlusionStateDidChange(_ notification: Notification) {
-		updateMetering()
-	}
-
-	override func showWindow(_ sender: Any?) {
-		// Without a nib, NSWindowController never calls loadWindow() itself.
-		if window == nil {
-			loadWindow()
-		}
-		super.showWindow(sender)
-		updateMetering()
-	}
-
-	@IBAction func toggleWindow(_ sender: Any?) {
-		if window?.isVisible == true {
-			window?.orderOut(self)
-			updateMetering()
-		} else {
-			showWindow(self)
-		}
-	}
-
-	func windowWillClose(_ notification: Notification) {
-		OutputMeter.shared.unsubscribe(self)
-	}
-
-	/// Meters while the window can be seen.
-	private func updateMetering() {
-		if window?.isVisible == true && window?.occlusionState.contains(.visible) != false {
+	override func paneVisibilityDidChange() {
+		if isPaneVisible {
 			OutputMeter.shared.subscribe(self, player: playbackController?.audioPlayer()) { [weak self] metrics in
 				self?.model.update(metrics)
 			}

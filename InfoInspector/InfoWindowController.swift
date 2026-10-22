@@ -10,10 +10,11 @@ import Cocoa
 import CogPlaylist
 import SwiftUI
 
-/// Owns the Info Inspector HUD panel. Instantiated by MainMenu.xib, which
-/// connects the outlets below and targets toggleWindow:/showWindow:.
+/// Owns the Info Inspector, in its HUD panel or docked. Instantiated by
+/// MainMenu.xib, which connects the outlets below and targets
+/// toggleWindow:/showWindow:.
 @objc(InfoWindowController)
-final class InfoWindowController: NSWindowController {
+final class InfoWindowController: PaneWindowController {
 	@IBOutlet var playlistSelectionController: NSArrayController?
 	@IBOutlet var currentEntryController: NSObjectController?
 	@IBOutlet var appController: AppController?
@@ -21,12 +22,20 @@ final class InfoWindowController: NSWindowController {
 	private let model = InfoInspectorModel()
 	private var observations: [NSKeyValueObservation] = []
 
-	@objc init() {
-		super.init(window: nil)
+	override var paneIdentifier: String {
+		"infoInspector"
 	}
 
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
+	override var paneTitle: String {
+		NSLocalizedString("Info Inspector", comment: "Info Inspector window title")
+	}
+
+	override var defaultPlacement: PanePlacement {
+		PanePlacement(edge: .right, size: 300)
+	}
+
+	override var opensBesideMainWindow: Bool {
+		true
 	}
 
 	override func awakeFromNib() {
@@ -61,45 +70,26 @@ final class InfoWindowController: NSWindowController {
 		}
 	}
 
-	override func loadWindow() {
+	override func makePaneView() -> NSView {
+		// Docked, the pane can be shorter than the inspector's layout.
+		hostingView(ScrollView { InfoInspectorView(model: model) })
+	}
+
+	override func makeWindow() -> NSWindow {
 		let panel = NSPanel(
 			contentRect: NSRect(x: 0, y: 0, width: 300, height: 604),
 			styleMask: [.titled, .closable, .resizable, .utilityWindow, .nonactivatingPanel, .hudWindow],
 			backing: .buffered,
 			defer: true
 		)
-		panel.title = NSLocalizedString("Info Inspector", comment: "Info Inspector window title")
+		panel.title = paneTitle
 		panel.titlebarAppearsTransparent = true
 		panel.hidesOnDeactivate = true
 		panel.isReleasedWhenClosed = false
 		panel.animationBehavior = .utilityWindow
 		panel.contentMinSize = NSSize(width: 240, height: 594)
 		panel.contentMaxSize = NSSize(width: 400, height: 622)
-		panel.contentView = NSHostingView(rootView: InfoInspectorView(model: model))
 		panel.setFrameAutosaveName("InfoInspector")
-		window = panel
-	}
-
-	override func showWindow(_ sender: Any?) {
-		// Without a nib, NSWindowController never calls loadWindow() itself.
-		if window == nil {
-			loadWindow()
-		}
-		super.showWindow(sender)
-	}
-
-	@IBAction func toggleWindow(_ sender: Any?) {
-		if window == nil {
-			loadWindow()
-		}
-		if window?.isVisible == true {
-			window?.orderOut(self)
-		} else {
-			if let mainFrame = NSApp.mainWindow?.frame {
-				// Align the Info Inspector to the right of the main window.
-				window?.setFrameTopLeftPoint(NSPoint(x: mainFrame.maxX, y: mainFrame.maxY))
-			}
-			showWindow(self)
-		}
+		return panel
 	}
 }

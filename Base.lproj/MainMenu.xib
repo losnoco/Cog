@@ -1971,6 +1971,13 @@
                                     <action selector="showWindow:" target="Bno-cV-wwU" id="d3F-Ro-6Qp"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="RPL-Sp-Itm"/>
+                            <menuItem title="Reset Pane Layout" id="RPL-Mn-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="resetPaneLayout:" target="226" id="RPL-Mn-Act"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1854">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

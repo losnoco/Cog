@@ -19,491 +19,6 @@
         }
       }
     },
-    "1g1-Th-emL.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Play Count\"; ObjectID = \"1g1-Th-emL\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Play Count"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recuento de repr."
-          }
-        }
-      }
-    },
-    "2qB-Bq-t2u.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Remove Duplicate Items\"; ObjectID = \"2qB-Bq-t2u\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Duplicate Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos duplicados"
-          }
-        }
-      }
-    },
-    "3A3-9o-Gh9.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Codec\"; ObjectID = \"3A3-9o-Gh9\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Codec"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Códec"
-          }
-        }
-      }
-    },
-    "3A3-9o-Gh9.title" : {
-      "comment" : "Class = \"NSTableColumn\"; title = \"Codec\"; ObjectID = \"3A3-9o-Gh9\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Codec"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Códec"
-          }
-        }
-      }
-    },
-    "3no-xo-TpJ.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Bits Per Sample\"; ObjectID = \"3no-xo-TpJ\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Bits Per Sample"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bits por muestra"
-          }
-        }
-      }
-    },
-    "3no-xo-TpJ.title" : {
-      "comment" : "Class = \"NSTableColumn\"; title = \"Bits Per Sample\"; ObjectID = \"3no-xo-TpJ\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bits Per Sample"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bits por muestra"
-          }
-        }
-      }
-    },
-    "3QN-Ok-QPu.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"3QN-Ok-QPu\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
-    "4pg-Lq-O8K.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Duplicate Items\"; ObjectID = \"4pg-Lq-O8K\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Duplicate Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos duplicados"
-          }
-        }
-      }
-    },
-    "4pg-Lq-O8K.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Remove Duplicate Items\"; ObjectID = \"4pg-Lq-O8K\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Duplicate Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos duplicados"
-          }
-        }
-      }
-    },
-    "5.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Bring All to Front\"; ObjectID = \"5\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Bring All to Front"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Traer todo al frente"
-          }
-        }
-      }
-    },
-    "5bQ-Qy-2KR.ibShadowedDisplayPattern" : {
-      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedDisplayPattern = \"%{value1}@%{value2}@\"; ObjectID = \"5bQ-Qy-2KR\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%{value1}@%{value2}@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%{value1}@%{value2}@"
-          }
-        }
-      }
-    },
-    "5iV-dM-oX2.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Reset Play Count\"; ObjectID = \"5iV-dM-oX2\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Reset Play Count"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restablecer el recuento de reproducciones"
-          }
-        }
-      }
-    },
-    "19.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Window\"; ObjectID = \"19\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Window"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ventana"
-          }
-        }
-      }
-    },
-    "20m-a6-e24.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"20m-a6-e24\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de texto"
-          }
-        }
-      }
-    },
-    "21.title" : {
-      "comment" : "Class = \"NSWindow\"; title = \"Cog\"; ObjectID = \"21\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cog"
-          }
-        }
-      }
-    },
-    "23.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Minimize\"; ObjectID = \"23\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Minimize"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimizar"
-          }
-        }
-      }
-    },
-    "24.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Window\"; ObjectID = \"24\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Window"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ventana"
-          }
-        }
-      }
-    },
-    "29.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"MainMenu\"; ObjectID = \"29\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "MainMenu"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Menú principal"
-          }
-        }
-      }
-    },
-    "56.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Cog\"; ObjectID = \"56\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cog"
-          }
-        }
-      }
-    },
-    "57.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Cog\"; ObjectID = \"57\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cog"
-          }
-        }
-      }
-    },
-    "58.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"About Cog\"; ObjectID = \"58\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "About Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acerca de Cog"
-          }
-        }
-      }
-    },
-    "71l-3L-S3g.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"71l-3L-S3g\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
-    "72.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Add File...\"; ObjectID = \"72\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add File..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir archivo..."
-          }
-        }
-      }
-    },
-    "73.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Close Window\"; ObjectID = \"73\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close Window"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerrar ventana"
-          }
-        }
-      }
-    },
-    "75.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Save As...\"; ObjectID = \"75\";",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save Playlist As..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar playlist como..."
-          }
-        }
-      }
-    },
-    "81.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"File\"; ObjectID = \"81\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "File"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archivo"
-          }
-        }
-      }
-    },
-    "83.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"File\"; ObjectID = \"83\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "File"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archivo"
-          }
-        }
-      }
-    },
     "103.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Help\"; ObjectID = \"103\";",
       "extractionState" : "extracted_with_value",
@@ -540,744 +55,6 @@
         }
       }
     },
-    "111.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Cog Help\"; ObjectID = \"111\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cog Help"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ayuda de Cog"
-          }
-        }
-      }
-    },
-    "129.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Settings…\"; ObjectID = \"129\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Settings…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configuración..."
-          }
-        }
-      }
-    },
-    "130.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Services\"; ObjectID = \"130\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Services"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Servicios"
-          }
-        }
-      }
-    },
-    "131.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Services\"; ObjectID = \"131\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Services"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Servicios"
-          }
-        }
-      }
-    },
-    "134.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Cog\"; ObjectID = \"134\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Hide Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar Cog"
-          }
-        }
-      }
-    },
-    "136.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Quit Cog\"; ObjectID = \"136\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Quit Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Salir de Cog"
-          }
-        }
-      }
-    },
-    "145.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Others\"; ObjectID = \"145\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Hide Others"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocultar otros"
-          }
-        }
-      }
-    },
-    "150.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show All\"; ObjectID = \"150\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show All"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar todo"
-          }
-        }
-      }
-    },
-    "157.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Copy\"; ObjectID = \"157\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Copy"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Copiar"
-          }
-        }
-      }
-    },
-    "158.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Undo\"; ObjectID = \"158\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Undo"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deshacer"
-          }
-        }
-      }
-    },
-    "160.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Cut\"; ObjectID = \"160\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cut"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cortar"
-          }
-        }
-      }
-    },
-    "163.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Edit\"; ObjectID = \"163\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Edit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edición"
-          }
-        }
-      }
-    },
-    "164.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Delete\"; ObjectID = \"164\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Delete"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Borrar"
-          }
-        }
-      }
-    },
-    "169.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Edit\"; ObjectID = \"169\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Edit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edición"
-          }
-        }
-      }
-    },
-    "171.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Paste\"; ObjectID = \"171\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Paste"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pegar"
-          }
-        }
-      }
-    },
-    "172.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Select All\"; ObjectID = \"172\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Select All"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar todo"
-          }
-        }
-      }
-    },
-    "173.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Redo\"; ObjectID = \"173\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Redo"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rehacer"
-          }
-        }
-      }
-    },
-    "197.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Zoom\"; ObjectID = \"197\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Zoom"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoom"
-          }
-        }
-      }
-    },
-    "208.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Rating\"; ObjectID = \"208\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Rating"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clasificación"
-          }
-        }
-      }
-    },
-    "209.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"#\"; ObjectID = \"209\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "#"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "#"
-          }
-        }
-      }
-    },
-    "303.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Send Feedback...\"; ObjectID = \"303\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Send Feedback..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar comentarios..."
-          }
-        }
-      }
-    },
-    "391.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Artist\"; ObjectID = \"391\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Artist"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Artista"
-          }
-        }
-      }
-    },
-    "418.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Control\"; ObjectID = \"418\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Control"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Control"
-          }
-        }
-      }
-    },
-    "419.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Control\"; ObjectID = \"419\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Control"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Control"
-          }
-        }
-      }
-    },
-    "420.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Play/Pause\"; ObjectID = \"420\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Play/Pause"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reproducir/Pausar"
-          }
-        }
-      }
-    },
-    "422.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Next Song\"; ObjectID = \"422\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Next Song"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima canción"
-          }
-        }
-      }
-    },
-    "423.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Previous Song\"; ObjectID = \"423\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Previous Song"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Canción anterior"
-          }
-        }
-      }
-    },
-    "513.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Menu\"; ObjectID = \"513\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Menu"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Menú"
-          }
-        }
-      }
-    },
-    "517.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Stop\"; ObjectID = \"517\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Stop"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detener"
-          }
-        }
-      }
-    },
-    "518.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Next Track\"; ObjectID = \"518\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Next Track"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Próxima pista"
-          }
-        }
-      }
-    },
-    "519.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Previous Track\"; ObjectID = \"519\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Previous Track"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pista anterior"
-          }
-        }
-      }
-    },
-    "520.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Play/Pause\"; ObjectID = \"520\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Play/Pause"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reproducir/Pausar"
-          }
-        }
-      }
-    },
-    "702.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Cog\"; ObjectID = \"702\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Cog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cog"
-          }
-        }
-      }
-    },
-    "791.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Current Song\"; ObjectID = \"791\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Current Song"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Canción actual"
-          }
-        }
-      }
-    },
-    "806.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Album\"; ObjectID = \"806\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Album"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Álbum"
-          }
-        }
-      }
-    },
-    "807.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Length\"; ObjectID = \"807\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Length"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duración"
-          }
-        }
-      }
-    },
-    "848.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Date\"; ObjectID = \"848\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Date"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fecha"
-          }
-        }
-      }
-    },
-    "849.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Genre\"; ObjectID = \"849\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Genre"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Género"
-          }
-        }
-      }
-    },
-    "850.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"№\"; ObjectID = \"850\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "№"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "№"
-          }
-        }
-      }
-    },
-    "881.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Playlist\"; ObjectID = \"881\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Playlist"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Playlist"
-          }
-        }
-      }
-    },
-    "882.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Playlist\"; ObjectID = \"882\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Playlist"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Playlist"
-          }
-        }
-      }
-    },
     "1063.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Menu\"; ObjectID = \"1063\";",
       "extractionState" : "extracted_with_value",
@@ -1310,6 +87,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar en el Finder"
+          }
+        }
+      }
+    },
+    "111.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Cog Help\"; ObjectID = \"111\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog Help"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda de Cog"
           }
         }
       }
@@ -1386,6 +181,60 @@
         }
       }
     },
+    "129.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Settings…\"; ObjectID = \"129\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Settings…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configuración..."
+          }
+        }
+      }
+    },
+    "130.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Services\"; ObjectID = \"130\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Services"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicios"
+          }
+        }
+      }
+    },
+    "131.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Services\"; ObjectID = \"131\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Services"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicios"
+          }
+        }
+      }
+    },
     "1324.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Menu\"; ObjectID = \"1324\";",
       "extractionState" : "extracted_with_value",
@@ -1454,6 +303,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Artista"
+          }
+        }
+      }
+    },
+    "134.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Cog\"; ObjectID = \"134\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar Cog"
           }
         }
       }
@@ -1548,6 +415,24 @@
         }
       }
     },
+    "136.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Quit Cog\"; ObjectID = \"136\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Quit Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salir de Cog"
+          }
+        }
+      }
+    },
     "1360.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Remove\"; ObjectID = \"1360\";",
       "extractionState" : "extracted_with_value",
@@ -1638,6 +523,24 @@
         }
       }
     },
+    "145.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Others\"; ObjectID = \"145\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide Others"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar otros"
+          }
+        }
+      }
+    },
     "1454.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Current Artist\"; ObjectID = \"1454\";",
       "extractionState" : "extracted_with_value",
@@ -1670,6 +573,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duración total: 00 horas 00 minutos 00 segundos"
+          }
+        }
+      }
+    },
+    "150.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show All\"; ObjectID = \"150\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar todo"
           }
         }
       }
@@ -2070,6 +991,24 @@
         }
       }
     },
+    "157.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Copy\"; ObjectID = \"157\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        }
+      }
+    },
     "1576.ibShadowedDisplayName" : {
       "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedDisplayName = \"All\"; ObjectID = \"1576\";",
       "extractionState" : "extracted_with_value",
@@ -2102,6 +1041,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Título"
+          }
+        }
+      }
+    },
+    "158.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Undo\"; ObjectID = \"158\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Undo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshacer"
           }
         }
       }
@@ -2156,6 +1113,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Género"
+          }
+        }
+      }
+    },
+    "160.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Cut\"; ObjectID = \"160\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cortar"
           }
         }
       }
@@ -2240,6 +1215,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Inspector de información"
+          }
+        }
+      }
+    },
+    "163.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Edit\"; ObjectID = \"163\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Edit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición"
           }
         }
       }
@@ -2352,6 +1345,24 @@
         }
       }
     },
+    "164.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Delete\"; ObjectID = \"164\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Delete"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar"
+          }
+        }
+      }
+    },
     "1683.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Seek Backward\"; ObjectID = \"1683\";",
       "extractionState" : "extracted_with_value",
@@ -2384,6 +1395,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avanzar"
+          }
+        }
+      }
+    },
+    "169.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Edit\"; ObjectID = \"169\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Edit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición"
           }
         }
       }
@@ -2424,6 +1453,24 @@
         }
       }
     },
+    "171.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Paste\"; ObjectID = \"171\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Paste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegar"
+          }
+        }
+      }
+    },
     "1712.headerCell.title" : {
       "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Path\"; ObjectID = \"1712\";",
       "extractionState" : "extracted_with_value",
@@ -2456,6 +1503,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Celda de texto"
+          }
+        }
+      }
+    },
+    "172.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Select All\"; ObjectID = \"172\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccionar todo"
+          }
+        }
+      }
+    },
+    "173.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Redo\"; ObjectID = \"173\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Redo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rehacer"
           }
         }
       }
@@ -2910,6 +1993,24 @@
         }
       }
     },
+    "19.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Window\"; ObjectID = \"19\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana"
+          }
+        }
+      }
+    },
     "1903.ibShadowedIsNilPlaceholder" : {
       "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"Cog\"; ObjectID = \"1903\";",
       "extractionState" : "extracted_with_value",
@@ -2960,6 +2061,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cog"
+          }
+        }
+      }
+    },
+    "197.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Zoom\"; ObjectID = \"197\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Zoom"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom"
+          }
+        }
+      }
+    },
+    "1g1-Th-emL.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Play Count\"; ObjectID = \"1g1-Th-emL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Play Count"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recuento de repr."
           }
         }
       }
@@ -3072,6 +2209,24 @@
         }
       }
     },
+    "208.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Rating\"; ObjectID = \"208\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Rating"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clasificación"
+          }
+        }
+      }
+    },
     "2083.ibShadowedIsNilPlaceholder" : {
       "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"Not Playing\"; ObjectID = \"2083\";",
       "extractionState" : "extracted_with_value",
@@ -3104,6 +2259,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No hay reproducción"
+          }
+        }
+      }
+    },
+    "209.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"#\"; ObjectID = \"209\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "#"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#"
+          }
+        }
+      }
+    },
+    "20m-a6-e24.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"20m-a6-e24\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de texto"
+          }
+        }
+      }
+    },
+    "21.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Cog\"; ObjectID = \"21\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog"
           }
         }
       }
@@ -3480,6 +2689,24 @@
         }
       }
     },
+    "23.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Minimize\"; ObjectID = \"23\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Minimize"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimizar"
+          }
+        }
+      }
+    },
     "2374.ibShadowedIsNilPlaceholder" : {
       "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedIsNilPlaceholder = \"Cog\"; ObjectID = \"2374\";",
       "extractionState" : "extracted_with_value",
@@ -3530,6 +2757,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cog"
+          }
+        }
+      }
+    },
+    "24.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Window\"; ObjectID = \"24\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana"
           }
         }
       }
@@ -3692,24 +2937,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar inspector de información"
-          }
-        }
-      }
-    },
-    "Sig-In-Mnu.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Signal Inspector\"; ObjectID = \"Sig-In-Mnu\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Signal Inspector"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar inspector de señal"
           }
         }
       }
@@ -3962,6 +3189,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aleatorizar"
+          }
+        }
+      }
+    },
+    "29.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"MainMenu\"; ObjectID = \"29\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MainMenu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menú principal"
+          }
+        }
+      }
+    },
+    "2qB-Bq-t2u.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Remove Duplicate Items\"; ObjectID = \"2qB-Bq-t2u\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Duplicate Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos duplicados"
+          }
+        }
+      }
+    },
+    "303.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Send Feedback...\"; ObjectID = \"303\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Send Feedback..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar comentarios..."
           }
         }
       }
@@ -4387,6 +3668,707 @@
         }
       }
     },
+    "391.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Artist\"; ObjectID = \"391\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Artist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artista"
+          }
+        }
+      }
+    },
+    "3A3-9o-Gh9.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Codec\"; ObjectID = \"3A3-9o-Gh9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Codec"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códec"
+          }
+        }
+      }
+    },
+    "3A3-9o-Gh9.title" : {
+      "comment" : "Class = \"NSTableColumn\"; title = \"Codec\"; ObjectID = \"3A3-9o-Gh9\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codec"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códec"
+          }
+        }
+      }
+    },
+    "3QN-Ok-QPu.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"3QN-Ok-QPu\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "3no-xo-TpJ.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Bits Per Sample\"; ObjectID = \"3no-xo-TpJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bits Per Sample"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bits por muestra"
+          }
+        }
+      }
+    },
+    "3no-xo-TpJ.title" : {
+      "comment" : "Class = \"NSTableColumn\"; title = \"Bits Per Sample\"; ObjectID = \"3no-xo-TpJ\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bits Per Sample"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bits por muestra"
+          }
+        }
+      }
+    },
+    "418.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Control\"; ObjectID = \"418\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Control"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control"
+          }
+        }
+      }
+    },
+    "419.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Control\"; ObjectID = \"419\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Control"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control"
+          }
+        }
+      }
+    },
+    "420.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Play/Pause\"; ObjectID = \"420\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Play/Pause"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir/Pausar"
+          }
+        }
+      }
+    },
+    "422.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Next Song\"; ObjectID = \"422\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Next Song"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima canción"
+          }
+        }
+      }
+    },
+    "423.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Previous Song\"; ObjectID = \"423\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Previous Song"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canción anterior"
+          }
+        }
+      }
+    },
+    "4pg-Lq-O8K.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Duplicate Items\"; ObjectID = \"4pg-Lq-O8K\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Duplicate Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos duplicados"
+          }
+        }
+      }
+    },
+    "4pg-Lq-O8K.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Remove Duplicate Items\"; ObjectID = \"4pg-Lq-O8K\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Duplicate Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos duplicados"
+          }
+        }
+      }
+    },
+    "5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Bring All to Front\"; ObjectID = \"5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bring All to Front"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traer todo al frente"
+          }
+        }
+      }
+    },
+    "513.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Menu\"; ObjectID = \"513\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Menu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menú"
+          }
+        }
+      }
+    },
+    "517.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Stop\"; ObjectID = \"517\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Stop"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener"
+          }
+        }
+      }
+    },
+    "518.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Next Track\"; ObjectID = \"518\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Next Track"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima pista"
+          }
+        }
+      }
+    },
+    "519.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Previous Track\"; ObjectID = \"519\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Previous Track"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pista anterior"
+          }
+        }
+      }
+    },
+    "520.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Play/Pause\"; ObjectID = \"520\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Play/Pause"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir/Pausar"
+          }
+        }
+      }
+    },
+    "56.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Cog\"; ObjectID = \"56\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog"
+          }
+        }
+      }
+    },
+    "57.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Cog\"; ObjectID = \"57\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog"
+          }
+        }
+      }
+    },
+    "58.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"About Cog\"; ObjectID = \"58\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acerca de Cog"
+          }
+        }
+      }
+    },
+    "5bQ-Qy-2KR.ibShadowedDisplayPattern" : {
+      "comment" : "Class = \"CocoaBindingsConnection\"; ibShadowedDisplayPattern = \"%{value1}@%{value2}@\"; ObjectID = \"5bQ-Qy-2KR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%{value1}@%{value2}@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%{value1}@%{value2}@"
+          }
+        }
+      }
+    },
+    "5iV-dM-oX2.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Reset Play Count\"; ObjectID = \"5iV-dM-oX2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reset Play Count"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer el recuento de reproducciones"
+          }
+        }
+      }
+    },
+    "702.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Cog\"; ObjectID = \"702\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cog"
+          }
+        }
+      }
+    },
+    "71l-3L-S3g.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"71l-3L-S3g\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "72.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Add File...\"; ObjectID = \"72\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add File..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir archivo..."
+          }
+        }
+      }
+    },
+    "73.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Close Window\"; ObjectID = \"73\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar ventana"
+          }
+        }
+      }
+    },
+    "75.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Save As...\"; ObjectID = \"75\";",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Playlist As..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar playlist como..."
+          }
+        }
+      }
+    },
+    "791.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Current Song\"; ObjectID = \"791\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Current Song"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canción actual"
+          }
+        }
+      }
+    },
+    "806.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Album\"; ObjectID = \"806\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Album"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Álbum"
+          }
+        }
+      }
+    },
+    "807.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Length\"; ObjectID = \"807\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Length"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración"
+          }
+        }
+      }
+    },
+    "81.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"File\"; ObjectID = \"81\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo"
+          }
+        }
+      }
+    },
+    "83.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"File\"; ObjectID = \"83\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo"
+          }
+        }
+      }
+    },
+    "848.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Date\"; ObjectID = \"848\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha"
+          }
+        }
+      }
+    },
+    "849.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Genre\"; ObjectID = \"849\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Genre"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Género"
+          }
+        }
+      }
+    },
+    "850.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"№\"; ObjectID = \"850\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "№"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "№"
+          }
+        }
+      }
+    },
+    "881.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Playlist\"; ObjectID = \"881\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Playlist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playlist"
+          }
+        }
+      }
+    },
+    "882.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Playlist\"; ObjectID = \"882\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Playlist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playlist"
+          }
+        }
+      }
+    },
     "Ajn-k4-afd.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Remove Dead Items\"; ObjectID = \"Ajn-k4-afd\";",
       "extractionState" : "extracted_with_value",
@@ -4489,80 +4471,8 @@
         }
       }
     },
-    "et9-zH-awt.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Sample Rate\"; ObjectID = \"et9-zH-awt\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Sample Rate"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tasa de muestreo"
-          }
-        }
-      }
-    },
-    "et9-zH-awt.title" : {
-      "comment" : "Class = \"NSTableColumn\"; title = \"Sample Rate\"; ObjectID = \"et9-zH-awt\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sample Rate"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tasa de muestreo"
-          }
-        }
-      }
-    },
-    "f31-bq-Mgd.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Nuked SC-55\"; ObjectID = \"f31-bq-Mgd\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Nuked SC-55"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar Nuked SC-55"
-          }
-        }
-      }
-    },
     "FMU-QZ-NdQ.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"FMU-QZ-NdQ\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
-    "gKK-cS-RP5.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"gKK-cS-RP5\";",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -4615,24 +4525,6 @@
         }
       }
     },
-    "js2-sT-U4M.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"js2-sT-U4M\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
     "Kc3-Tr-9fA.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Collapse All Folders\"; ObjectID = \"Kc3-Tr-9fA\";",
       "extractionState" : "extracted_with_value",
@@ -4665,132 +4557,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%{value1}@%{value2}@"
-          }
-        }
-      }
-    },
-    "knJ-aI-sFa.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Dead Items\"; ObjectID = \"knJ-aI-sFa\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Dead Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos inexistentes"
-          }
-        }
-      }
-    },
-    "knJ-aI-sFa.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Remove Dead Items\"; ObjectID = \"knJ-aI-sFa\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Dead Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos inexistentes"
-          }
-        }
-      }
-    },
-    "kq8-9v-zC0.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Reload Info\"; ObjectID = \"kq8-9v-zC0\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Reload Info"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recargar información"
-          }
-        }
-      }
-    },
-    "kVl-aW-mtT.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"Randomize\"; ObjectID = \"kVl-aW-mtT\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Randomize"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aleatorizar"
-          }
-        }
-      }
-    },
-    "kVl-aW-mtT.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Randomize\"; ObjectID = \"kVl-aW-mtT\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Randomize"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aleatorizar"
-          }
-        }
-      }
-    },
-    "lBy-Uc-vCA.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"lBy-Uc-vCA\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de texto"
-          }
-        }
-      }
-    },
-    "lXN-EZ-xg0.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Mini Player On Top\"; ObjectID = \"lXN-EZ-xg0\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Mini Player On Top"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar minirreproductor encima de todo"
           }
         }
       }
@@ -4885,78 +4651,6 @@
         }
       }
     },
-    "mhx-dQ-Kwx.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Move to Trash\"; ObjectID = \"mhx-dQ-Kwx\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Move to Trash"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover al Basurero"
-          }
-        }
-      }
-    },
-    "moV-3G-GpB.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"moV-3G-GpB\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
-    "nb7-FW-egH.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Privacy Policy...\"; ObjectID = \"nb7-FW-egH\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Privacy Policy..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Política de privacidad..."
-          }
-        }
-      }
-    },
-    "nBU-pH-J3I.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Equalizer\"; ObjectID = \"nBU-pH-J3I\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Equalizer"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar ecualizador"
-          }
-        }
-      }
-    },
     "NtB-XF-g07.label" : {
       "comment" : "Class = \"NSToolbarItem\"; label = \"Spectrum\"; ObjectID = \"NtB-XF-g07\";",
       "extractionState" : "extracted_with_value",
@@ -4989,24 +4683,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Analizador"
-          }
-        }
-      }
-    },
-    "omb-wi-loX.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Stop after Selection\"; ObjectID = \"omb-wi-loX\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Stop after Selection"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detener después de la selección"
           }
         }
       }
@@ -5047,24 +4723,6 @@
         }
       }
     },
-    "pU1-ci-9uB.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show All Songs\"; ObjectID = \"pU1-ci-9uB\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show All Songs"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar todas las canciones"
-          }
-        }
-      }
-    },
     "PyI-lF-iuz.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Remove Rating\"; ObjectID = \"PyI-lF-iuz\";",
       "extractionState" : "extracted_with_value",
@@ -5097,6 +4755,654 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selección sigue la reproducción"
+          }
+        }
+      }
+    },
+    "RPL-Mn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Reset Pane Layout\"; ObjectID = \"RPL-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reset Pane Layout"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer disposición de paneles"
+          }
+        }
+      }
+    },
+    "Sig-In-Mnu.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Signal Inspector\"; ObjectID = \"Sig-In-Mnu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Signal Inspector"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar inspector de señal"
+          }
+        }
+      }
+    },
+    "Tkb-7M-OiA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Lyrics\"; ObjectID = \"Tkb-7M-OiA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Lyrics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar letras"
+          }
+        }
+      }
+    },
+    "UAk-Gc-lT4.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Filter Playlist\"; ObjectID = \"UAk-Gc-lT4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Filter Playlist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtrar playlist"
+          }
+        }
+      }
+    },
+    "UKB-ta-5qX.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Save Selection As...\"; ObjectID = \"UKB-ta-5qX\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Selection As…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar selección como..."
+          }
+        }
+      }
+    },
+    "VUm-Me-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show VU Meter\"; ObjectID = \"VUm-Me-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Mn-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"VU Meter\"; ObjectID = \"VUm-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Mn-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"VU Meter\"; ObjectID = \"VUm-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Tb-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"VU Meter\"; ObjectID = \"VUm-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VUm-Tb-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"VU Meter\"; ObjectID = \"VUm-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "VU Meter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "VVx-99-roJ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"VVx-99-roJ\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "WKt-lM-Bv1.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Dead Items\"; ObjectID = \"WKt-lM-Bv1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Dead Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos inexistentes"
+          }
+        }
+      }
+    },
+    "WKt-lM-Bv1.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Remove Dead Items\"; ObjectID = \"WKt-lM-Bv1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Dead Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos inexistentes"
+          }
+        }
+      }
+    },
+    "Wfm-Sb-k1t.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform in Seek Bar\"; ObjectID = \"Wfm-Sb-k1t\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Waveform in Seek Bar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar forma de onda en la barra de reproducción"
+          }
+        }
+      }
+    },
+    "XBr-ec-D81.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Title\"; ObjectID = \"XBr-ec-D81\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Título"
+          }
+        }
+      }
+    },
+    "YwT-z9-2d2.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"YwT-z9-2d2\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "ZOn-sB-FR3.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Show Equalizer\"; ObjectID = \"ZOn-sB-FR3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Equalizer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar ecualizador"
+          }
+        }
+      }
+    },
+    "ZOn-sB-FR3.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Show Equalizer\"; ObjectID = \"ZOn-sB-FR3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Equalizer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar ecualizador"
+          }
+        }
+      }
+    },
+    "et9-zH-awt.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Sample Rate\"; ObjectID = \"et9-zH-awt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sample Rate"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasa de muestreo"
+          }
+        }
+      }
+    },
+    "et9-zH-awt.title" : {
+      "comment" : "Class = \"NSTableColumn\"; title = \"Sample Rate\"; ObjectID = \"et9-zH-awt\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sample Rate"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasa de muestreo"
+          }
+        }
+      }
+    },
+    "f31-bq-Mgd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Nuked SC-55\"; ObjectID = \"f31-bq-Mgd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Nuked SC-55"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar Nuked SC-55"
+          }
+        }
+      }
+    },
+    "gKK-cS-RP5.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"gKK-cS-RP5\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "js2-sT-U4M.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"js2-sT-U4M\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "kVl-aW-mtT.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Randomize\"; ObjectID = \"kVl-aW-mtT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Randomize"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aleatorizar"
+          }
+        }
+      }
+    },
+    "kVl-aW-mtT.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Randomize\"; ObjectID = \"kVl-aW-mtT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Randomize"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aleatorizar"
+          }
+        }
+      }
+    },
+    "knJ-aI-sFa.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Dead Items\"; ObjectID = \"knJ-aI-sFa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Dead Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos inexistentes"
+          }
+        }
+      }
+    },
+    "knJ-aI-sFa.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Remove Dead Items\"; ObjectID = \"knJ-aI-sFa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Remove Dead Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar elementos inexistentes"
+          }
+        }
+      }
+    },
+    "kq8-9v-zC0.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Reload Info\"; ObjectID = \"kq8-9v-zC0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Reload Info"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recargar información"
+          }
+        }
+      }
+    },
+    "lBy-Uc-vCA.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Text Cell\"; ObjectID = \"lBy-Uc-vCA\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de texto"
+          }
+        }
+      }
+    },
+    "lXN-EZ-xg0.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Mini Player On Top\"; ObjectID = \"lXN-EZ-xg0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Mini Player On Top"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar minirreproductor encima de todo"
+          }
+        }
+      }
+    },
+    "mhx-dQ-Kwx.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Move to Trash\"; ObjectID = \"mhx-dQ-Kwx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move to Trash"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover al Basurero"
+          }
+        }
+      }
+    },
+    "moV-3G-GpB.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"moV-3G-GpB\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Table View Cell"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celda de vista de tabla"
+          }
+        }
+      }
+    },
+    "nBU-pH-J3I.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Equalizer\"; ObjectID = \"nBU-pH-J3I\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Equalizer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar ecualizador"
+          }
+        }
+      }
+    },
+    "nb7-FW-egH.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Privacy Policy...\"; ObjectID = \"nb7-FW-egH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Privacy Policy..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidad..."
+          }
+        }
+      }
+    },
+    "omb-wi-loX.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Stop after Selection\"; ObjectID = \"omb-wi-loX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Stop after Selection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener después de la selección"
+          }
+        }
+      }
+    },
+    "pU1-ci-9uB.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show All Songs\"; ObjectID = \"pU1-ci-9uB\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show All Songs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar todas las canciones"
           }
         }
       }
@@ -5209,24 +5515,6 @@
         }
       }
     },
-    "Tkb-7M-OiA.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Lyrics\"; ObjectID = \"Tkb-7M-OiA\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Lyrics"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar letras"
-          }
-        }
-      }
-    },
     "tus-lr-RhS.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"tus-lr-RhS\";",
       "extractionState" : "manual",
@@ -5241,24 +5529,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
-    "UAk-Gc-lT4.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Filter Playlist\"; ObjectID = \"UAk-Gc-lT4\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Filter Playlist"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Filtrar playlist"
           }
         }
       }
@@ -5299,42 +5569,6 @@
         }
       }
     },
-    "UKB-ta-5qX.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Save Selection As...\"; ObjectID = \"UKB-ta-5qX\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save Selection As…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar selección como..."
-          }
-        }
-      }
-    },
-    "vaJ-Bc-ebE.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"vaJ-Bc-ebE\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
     "vBH-Mr-XWi.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Toggle Toolbar Style\"; ObjectID = \"vBH-Mr-XWi\";",
       "extractionState" : "extracted_with_value",
@@ -5353,116 +5587,8 @@
         }
       }
     },
-    "VUm-Me-Itm.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show VU Meter\"; ObjectID = \"VUm-Me-Itm\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show VU Meter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar vúmetro"
-          }
-        }
-      }
-    },
-    "VUm-Mn-Itm.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"VU Meter\"; ObjectID = \"VUm-Mn-Itm\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "VU Meter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vúmetro"
-          }
-        }
-      }
-    },
-    "VUm-Mn-Itm.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"VU Meter\"; ObjectID = \"VUm-Mn-Itm\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "VU Meter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vúmetro"
-          }
-        }
-      }
-    },
-    "VUm-Tb-Itm.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"VU Meter\"; ObjectID = \"VUm-Tb-Itm\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "VU Meter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vúmetro"
-          }
-        }
-      }
-    },
-    "VUm-Tb-Itm.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"VU Meter\"; ObjectID = \"VUm-Tb-Itm\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "VU Meter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vúmetro"
-          }
-        }
-      }
-    },
-    "Wfm-Sb-k1t.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform in Seek Bar\"; ObjectID = \"Wfm-Sb-k1t\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Waveform in Seek Bar"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar forma de onda en la barra de reproducción"
-          }
-        }
-      }
-    },
-    "VVx-99-roJ.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"VVx-99-roJ\";",
+    "vaJ-Bc-ebE.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"vaJ-Bc-ebE\";",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -5515,42 +5641,6 @@
         }
       }
     },
-    "WKt-lM-Bv1.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Dead Items\"; ObjectID = \"WKt-lM-Bv1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Dead Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos inexistentes"
-          }
-        }
-      }
-    },
-    "WKt-lM-Bv1.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Remove Dead Items\"; ObjectID = \"WKt-lM-Bv1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Remove Dead Items"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar elementos inexistentes"
-          }
-        }
-      }
-    },
     "wky-z8-Cj5.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"wky-z8-Cj5\";",
       "extractionState" : "manual",
@@ -5583,24 +5673,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar ventana del analizador"
-          }
-        }
-      }
-    },
-    "XBr-ec-D81.headerCell.title" : {
-      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Title\"; ObjectID = \"XBr-ec-D81\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Title"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Título"
           }
         }
       }
@@ -5655,60 +5727,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Artista del álbum"
-          }
-        }
-      }
-    },
-    "YwT-z9-2d2.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Table View Cell\"; ObjectID = \"YwT-z9-2d2\";",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Table View Cell"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Celda de vista de tabla"
-          }
-        }
-      }
-    },
-    "ZOn-sB-FR3.label" : {
-      "comment" : "Class = \"NSToolbarItem\"; label = \"Show Equalizer\"; ObjectID = \"ZOn-sB-FR3\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Equalizer"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar ecualizador"
-          }
-        }
-      }
-    },
-    "ZOn-sB-FR3.paletteLabel" : {
-      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Show Equalizer\"; ObjectID = \"ZOn-sB-FR3\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Equalizer"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar ecualizador"
           }
         }
       }

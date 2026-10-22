@@ -17,10 +17,10 @@ final class LyricsWindowModel: ObservableObject {
 	@Published var entry: PlaylistEntry?
 }
 
-/// Owns the lyrics window. Instantiated by MainMenu.xib, which connects the
-/// outlets below and targets toggleWindow:.
+/// Owns the lyrics, in their window or docked. Instantiated by MainMenu.xib,
+/// which connects the outlets below and targets toggleWindow:.
 @objc(LyricsWindowController)
-final class LyricsWindowController: NSWindowController, NSWindowDelegate {
+final class LyricsWindowController: PaneWindowController {
 	@IBOutlet var playlistSelectionController: NSArrayController?
 	@IBOutlet var currentEntryController: NSObjectController?
 	@IBOutlet var appController: AppController?
@@ -28,12 +28,20 @@ final class LyricsWindowController: NSWindowController, NSWindowDelegate {
 	private let model = LyricsWindowModel()
 	private var observations: [NSKeyValueObservation] = []
 
-	@objc init() {
-		super.init(window: nil)
+	override var paneIdentifier: String {
+		"lyrics"
 	}
 
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
+	override var paneTitle: String {
+		NSLocalizedString("Lyrics", comment: "Lyrics window title")
+	}
+
+	override var defaultPlacement: PanePlacement {
+		PanePlacement(edge: .right, position: 2, size: 300)
+	}
+
+	override var opensBesideMainWindow: Bool {
+		true
 	}
 
 	override func awakeFromNib() {
@@ -57,7 +65,7 @@ final class LyricsWindowController: NSWindowController, NSWindowDelegate {
 	}
 
 	private func updateEntry() {
-		guard window?.isVisible == true else {
+		guard isPaneOpen else {
 			model.entry = nil
 			return
 		}
@@ -71,49 +79,26 @@ final class LyricsWindowController: NSWindowController, NSWindowDelegate {
 		}
 	}
 
-	override func loadWindow() {
+	override func makePaneView() -> NSView {
+		hostingView(LyricsWindowView(model: model))
+	}
+
+	override func makeWindow() -> NSWindow {
 		let window = NSWindow(
 			contentRect: NSRect(x: 196, y: 240, width: 480, height: 270),
 			styleMask: [.titled, .closable, .miniaturizable, .resizable],
 			backing: .buffered,
 			defer: true
 		)
-		window.title = NSLocalizedString("Lyrics", comment: "Lyrics window title")
+		window.title = paneTitle
 		window.isReleasedWhenClosed = false
 		window.contentMinSize = NSSize(width: 240, height: 135)
-		window.contentView = NSHostingView(rootView: LyricsWindowView(model: model))
 		window.setFrameAutosaveName("LyricsWindow")
-		window.delegate = self
-		self.window = window
+		return window
 	}
 
-	func windowWillClose(_ notification: Notification) {
-		model.entry = nil
-	}
-
-	override func showWindow(_ sender: Any?) {
-		// Without a nib, NSWindowController never calls loadWindow() itself.
-		if window == nil {
-			loadWindow()
-		}
-		super.showWindow(sender)
+	override func paneVisibilityDidChange() {
 		updateEntry()
-	}
-
-	@IBAction func toggleWindow(_ sender: Any?) {
-		if window == nil {
-			loadWindow()
-		}
-		if window?.isVisible == true {
-			window?.orderOut(self)
-			updateEntry()
-		} else {
-			if let mainFrame = NSApp.mainWindow?.frame {
-				// Align the lyrics window to the right of the main window.
-				window?.setFrameTopLeftPoint(NSPoint(x: mainFrame.maxX, y: mainFrame.maxY))
-			}
-			showWindow(self)
-		}
 	}
 }
 

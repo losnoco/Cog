@@ -104,7 +104,8 @@ struct SignalInspectorView: View {
 			.padding(12)
 		}
 		.font(.system(size: NSFont.smallSystemFontSize))
-		.frame(minWidth: 300, maxWidth: .infinity, minHeight: 360, maxHeight: .infinity, alignment: .top)
+		// The panel sets its own smallest size; docked, the pane may be smaller.
+		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 	}
 }
 

@@ -237,8 +237,9 @@ static BOOL consentLastEnabled = NO;
 		contentViewController.view = playlistRoot;
 
 		mainSplitViewController = [MainSplitViewController new];
+		// Panes dock around the playlist, inside the content beside the sidebar.
 		[mainSplitViewController setupWithSidebarViewController:fileTreeViewController
-		                                  contentViewController:contentViewController];
+		                                  contentViewController:[[PaneManager shared] dockViewControllerWithCenter:contentViewController]];
 		// Required alongside allowsFullHeightLayout for the full-height sidebar look
 		mainWindow.styleMask |= NSWindowStyleMaskFullSizeContentView;
 		mainWindow.contentViewController = mainSplitViewController;
@@ -1081,6 +1082,10 @@ static NSDictionary *shortcutDefaults = nil;
 
 - (IBAction)decreaseFontSize:(id)sender {
 	[self changeFontSize:-1];
+}
+
+- (IBAction)resetPaneLayout:(id)sender {
+	[[PaneManager shared] resetLayout];
 }
 
 - (IBAction)toggleMiniMode:(id)sender {

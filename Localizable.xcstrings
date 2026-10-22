@@ -1070,6 +1070,17 @@
         }
       }
     },
+    "Close" : {
+      "comment" : "Docked pane: the button that hides it",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar"
+          }
+        }
+      }
+    },
     "Codec" : {
       "comment" : "Codec title",
       "localizations" : {
@@ -1698,12 +1709,67 @@
         }
       }
     },
+    "Dock Above" : {
+      "comment" : "Docked pane: move it above the playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acoplar arriba"
+          }
+        }
+      }
+    },
+    "Dock Below" : {
+      "comment" : "Docked pane: move it below the playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acoplar abajo"
+          }
+        }
+      }
+    },
     "Dock Icon" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Icono del dock"
+          }
+        }
+      }
+    },
+    "Dock in Main Window" : {
+      "comment" : "Pane window: the titlebar button that docks it",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acoplar en la ventana principal"
+          }
+        }
+      }
+    },
+    "Dock on the Left" : {
+      "comment" : "Docked pane: move it to the left of the playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acoplar a la izquierda"
+          }
+        }
+      }
+    },
+    "Dock on the Right" : {
+      "comment" : "Docked pane: move it to the right of the playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acoplar a la derecha"
           }
         }
       }
@@ -2115,6 +2181,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mejor calidad"
+          }
+        }
+      }
+    },
+    "Float in a Window" : {
+      "comment" : "Docked pane: the button that moves it to its own window",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flotar en una ventana"
           }
         }
       }

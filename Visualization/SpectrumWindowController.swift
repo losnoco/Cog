@@ -22,44 +22,38 @@ final class SpectrumWindowModel: ObservableObject {
 	@Published var sceneKitView: SpectrumViewSK?
 }
 
-/// Owns the spectrum window. Instantiated by MainMenu.xib, which connects
-/// `playbackController` and targets showWindow:.
+/// Owns the spectrum, in its window or docked. Instantiated by MainMenu.xib,
+/// which connects `playbackController` and targets showWindow:.
 @objc(SpectrumWindowController)
-final class SpectrumWindowController: NSWindowController, NSWindowDelegate {
+final class SpectrumWindowController: PaneWindowController {
 	@IBOutlet var playbackController: PlaybackController?
 
 	private let model = SpectrumWindowModel()
 	private var sceneKitObservation: NSKeyValueObservation?
 
-	@objc init() {
-		super.init(window: nil)
+	override var paneIdentifier: String {
+		"spectrum"
 	}
 
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
+	override var paneTitle: String {
+		NSLocalizedString("Spectrum", comment: "Spectrum window title")
 	}
 
-	override func loadWindow() {
-		let window = NSWindow(
-			contentRect: NSRect(x: 196, y: 240, width: 480, height: 270),
-			styleMask: [.titled, .closable, .miniaturizable, .resizable],
-			backing: .buffered,
-			defer: true
-		)
-		window.title = NSLocalizedString("Spectrum", comment: "Spectrum window title")
-		window.appearance = NSAppearance(named: .darkAqua)
-		window.titlebarAppearsTransparent = true
-		window.isReleasedWhenClosed = false
-		window.contentView = NSHostingView(rootView: SpectrumWindowView(model: model))
-		window.delegate = self
-		self.window = window
+	override var defaultPlacement: PanePlacement {
+		PanePlacement(edge: .bottom, size: 180)
+	}
 
+	override var paneAppearance: NSAppearance? {
+		NSAppearance(named: .darkAqua)
+	}
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
 		let center = NotificationCenter.default
 		for name in ["CogPlaybackDidBeginNotificiation", "CogPlaybackDidPauseNotificiation",
 		             "CogPlaybackDidResumeNotificiation", "CogPlaybackDidStopNotificiation"] {
 			center.addObserver(self, selector: #selector(playbackStatusDidChange(_:)), name: Notification.Name(name), object: nil)
 		}
-		center.addObserver(self, selector: #selector(occlusionStateDidChange(_:)), name: NSWindow.didChangeOcclusionStateNotification, object: window)
 
 		// Switching between 3D and flat in Settings swaps the view at once.
 		sceneKitObservation = UserDefaults.standard.observe(\.spectrumSceneKit) { [weak self] _, _ in
@@ -71,10 +65,43 @@ final class SpectrumWindowController: NSWindowController, NSWindowDelegate {
 		}
 	}
 
+	override func makePaneView() -> NSView {
+		hostingView(SpectrumWindowView(model: model))
+	}
+
+	override func makeWindow() -> NSWindow {
+		let window = NSWindow(
+			contentRect: NSRect(x: 196, y: 240, width: 480, height: 270),
+			styleMask: [.titled, .closable, .miniaturizable, .resizable],
+			backing: .buffered,
+			defer: true
+		)
+		window.title = paneTitle
+		window.appearance = NSAppearance(named: .darkAqua)
+		window.titlebarAppearsTransparent = true
+		window.isReleasedWhenClosed = false
+		return window
+	}
+
+	/// Runs while the spectrum shows; covered, it stops drawing.
+	override func paneVisibilityDidChange() {
+		if isPaneOpen {
+			if !model.isRunning {
+				startRunning()
+			}
+		} else if model.isRunning {
+			stopRunning()
+		}
+		let isOccluded = !isPaneVisible
+		if model.isOccluded != isOccluded {
+			model.isOccluded = isOccluded
+		}
+	}
+
 	private func startRunning() {
 		model.status = playbackController?.playbackStatus ?? .stopped
 		model.isRunning = true
-		if model.sceneKitView == nil, let view = SpectrumViewSK.createGuard(withFrame: window?.contentLayoutRect ?? .zero) {
+		if model.sceneKitView == nil, let view = SpectrumViewSK.createGuard(withFrame: paneView.bounds) {
 			view.enableCameraControl()
 			if model.status == .playing {
 				view.startPlayback()
@@ -89,31 +116,15 @@ final class SpectrumWindowController: NSWindowController, NSWindowDelegate {
 	}
 
 	@objc private func playbackStatusDidChange(_ notification: Notification) {
-		model.status = playbackController?.playbackStatus ?? .stopped
-	}
-
-	@objc private func occlusionStateDidChange(_ notification: Notification) {
-		model.isOccluded = window.map { !$0.occlusionState.contains(.visible) } ?? true
-	}
-
-	func windowWillClose(_ notification: Notification) {
-		stopRunning()
-	}
-
-	override func showWindow(_ sender: Any?) {
-		// Without a nib, NSWindowController never calls loadWindow() itself.
-		if window == nil {
-			loadWindow()
-		}
-		startRunning()
-		super.showWindow(sender)
-	}
-
-	@IBAction func toggleWindow(_ sender: Any?) {
-		if window?.isVisible == true {
-			window?.orderOut(self)
-		} else {
-			showWindow(self)
+		// The notifications come before PlaybackController's status changes,
+		// so the status is the notification's.
+		switch notification.name.rawValue {
+		case "CogPlaybackDidBeginNotificiation", "CogPlaybackDidResumeNotificiation":
+			model.status = .playing
+		case "CogPlaybackDidPauseNotificiation":
+			model.status = .paused
+		default:
+			model.status = .stopped
 		}
 	}
 }

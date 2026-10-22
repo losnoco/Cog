@@ -124,6 +124,7 @@
 - (void)nodeCollapsed:(NSNotification *)notification;
 
 - (IBAction)toggleMiniMode:(id)sender;
+- (IBAction)resetPaneLayout:(id)sender;
 - (IBAction)toggleMiniPlusMode:(id)sender;
 - (IBAction)toggleToolbarStyle:(id)sender;
 

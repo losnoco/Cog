@@ -24,6 +24,9 @@
 		0A6E6C6F308A81BA00E2ADA7 /* OutputMeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E6C6E308A81BA00E2ADA7 /* OutputMeter.swift */; };
 		0A6E713A308A829A00E2ADA7 /* VUMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E7139308A829A00E2ADA7 /* VUMeterView.swift */; };
 		0A6E7142308A82B300E2ADA7 /* VUMeterWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E7141308A82B300E2ADA7 /* VUMeterWindowController.swift */; };
+		0A6E7AC6308A86F000E2ADA7 /* PaneWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E7AC5308A86F000E2ADA7 /* PaneWindowController.swift */; };
+		0A6E7ACE308A875D00E2ADA7 /* PaneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E7ACD308A875D00E2ADA7 /* PaneManager.swift */; };
+		0A6E7F91308A8AE500E2ADA7 /* PaneDockGuides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6E7F90308A8AE500E2ADA7 /* PaneDockGuides.swift */; };
 		0A877A79307074CA000C7A1B /* InfoWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A877A78307074CA000C7A1B /* InfoWindowController.swift */; };
 		0A877A80307074E2000C7A1B /* InfoInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */; };
 		0A877F2630707A6A000C7A1B /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A877F2530707A6A000C7A1B /* Acknowledgements.json */; };
@@ -913,6 +916,9 @@
 		0A6E6C6E308A81BA00E2ADA7 /* OutputMeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputMeter.swift; sourceTree = "<group>"; };
 		0A6E7139308A829A00E2ADA7 /* VUMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VUMeterView.swift; path = Visualization/VUMeterView.swift; sourceTree = "<group>"; };
 		0A6E7141308A82B300E2ADA7 /* VUMeterWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VUMeterWindowController.swift; path = Visualization/VUMeterWindowController.swift; sourceTree = "<group>"; };
+		0A6E7AC5308A86F000E2ADA7 /* PaneWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaneWindowController.swift; path = Window/PaneWindowController.swift; sourceTree = "<group>"; };
+		0A6E7ACD308A875D00E2ADA7 /* PaneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaneManager.swift; path = Window/PaneManager.swift; sourceTree = "<group>"; };
+		0A6E7F90308A8AE500E2ADA7 /* PaneDockGuides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaneDockGuides.swift; path = Window/PaneDockGuides.swift; sourceTree = "<group>"; };
 		0A877A78307074CA000C7A1B /* InfoWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InfoWindowController.swift; path = InfoInspector/InfoWindowController.swift; sourceTree = "<group>"; };
 		0A877A7F307074E2000C7A1B /* InfoInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InfoInspectorView.swift; path = InfoInspector/InfoInspectorView.swift; sourceTree = "<group>"; };
 		0A877F2530707A6A000C7A1B /* Acknowledgements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = Acknowledgements.json; path = Acknowledgements/Acknowledgements.json; sourceTree = "<group>"; };
@@ -1647,6 +1653,9 @@
 				0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */,
 				0A00385F3086B9BD00C5352B /* SpeedButton.swift */,
 				0A0038613086B9BD00C5352B /* SpeedPopoverView.swift */,
+				0A6E7AC5308A86F000E2ADA7 /* PaneWindowController.swift */,
+				0A6E7ACD308A875D00E2ADA7 /* PaneManager.swift */,
+				0A6E7F90308A8AE500E2ADA7 /* PaneDockGuides.swift */,
 			);
 			name = Window;
 			sourceTree = "<group>";
@@ -3140,7 +3149,9 @@
 				515000000000000000000005 /* OutputPaneView.swift in Sources */,
 				515000000000000000000006 /* AppearancePaneView.swift in Sources */,
 				0A0E707E307416E400EF30D0 /* SignalStatusModel.swift in Sources */,
+				0A6E7ACE308A875D00E2ADA7 /* PaneManager.swift in Sources */,
 				83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */,
+				0A6E7F91308A8AE500E2ADA7 /* PaneDockGuides.swift in Sources */,
 				515000000000000000000007 /* GeneralPaneView.swift in Sources */,
 				8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */,
 				515000000000000000000008 /* MIDIPaneView.swift in Sources */,
@@ -3151,6 +3162,7 @@
 				51500000000000000000000D /* AudioDeviceModel.swift in Sources */,
 				51500000000000000000000E /* LastFMPaneView.swift in Sources */,
 				616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */,
+				0A6E7AC6308A86F000E2ADA7 /* PaneWindowController.swift in Sources */,
 				616000000000000000000002 /* PathSuggester.m in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
 				4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */,
