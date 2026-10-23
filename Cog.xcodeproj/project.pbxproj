@@ -32,6 +32,7 @@
 		0A877F2630707A6A000C7A1B /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A877F2530707A6A000C7A1B /* Acknowledgements.json */; };
 		0A8783C730707A99000C7A1B /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */; };
 		0A9CEA032861501700E47168 /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9CEA012861501700E47168 /* AboutWindowController.swift */; };
+		0A9DE83E308BFC93002D77DC /* SignalMeters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9DE83D308BFC93002D77DC /* SignalMeters.swift */; };
 		0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78692F6B1ECF00537320 /* CreditsView.swift */; };
 		0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA78682F6B1ECF00537320 /* AboutView.swift */; };
 		0ABB324730843A3C000AAB12 /* WaveformController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABB324630843A3C000AAB12 /* WaveformController.swift */; };
@@ -924,6 +925,7 @@
 		0A877F2530707A6A000C7A1B /* Acknowledgements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = Acknowledgements.json; path = Acknowledgements/Acknowledgements.json; sourceTree = "<group>"; };
 		0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AcknowledgementsView.swift; path = Window/AcknowledgementsView.swift; sourceTree = "<group>"; };
 		0A9CEA012861501700E47168 /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutWindowController.swift; path = Window/AboutWindowController.swift; sourceTree = "<group>"; };
+		0A9DE83D308BFC93002D77DC /* SignalMeters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalMeters.swift; sourceTree = "<group>"; };
 		0ABA78682F6B1ECF00537320 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AboutView.swift; path = Window/AboutView.swift; sourceTree = "<group>"; };
 		0ABA78692F6B1ECF00537320 /* CreditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CreditsView.swift; path = Window/CreditsView.swift; sourceTree = "<group>"; };
 		0ABB324630843A3C000AAB12 /* WaveformController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformController.swift; path = Window/WaveformController.swift; sourceTree = "<group>"; };
@@ -1360,6 +1362,7 @@
 				0A0E70843074175600EF30D0 /* SignalInspectorView.swift */,
 				0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */,
 				0A6E6C6E308A81BA00E2ADA7 /* OutputMeter.swift */,
+				0A9DE83D308BFC93002D77DC /* SignalMeters.swift */,
 			);
 			path = SignalInspector;
 			sourceTree = "<group>";
@@ -3171,6 +3174,7 @@
 				17FAEBAC0F662985007C8707 /* ToolTipTextField.m in Sources */,
 				0A6E6C6F308A81BA00E2ADA7 /* OutputMeter.swift in Sources */,
 				F6F96719102C709000D2C9B4 /* NSString+FinderCompare.m in Sources */,
+				0A9DE83E308BFC93002D77DC /* SignalMeters.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00B92830111F354B2239AE48 /* VGMContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B52983244264E94BAAA6691 /* VGMContainer.m */; settings = {COMPILER_FLAGS = "-DVGM_USE_ATRAC9 -DVGM_USE_FFMPEG -DVGM_USE_G719 -DVGM_USE_G7221 -DVGM_USE_MPEG -DVGM_USE_VORBIS -D__MACOSX__"; }; };
+		015FFDDEC0B1AA6F22CD8E97 /* VUMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E6832858CBCBE4960E6F31 /* VUMeterView.swift */; };
 		047936E2A7D9B145CBD7CD44 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */; };
 		056433AE28170C5044BE271A /* Syntrax_c.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 13F1B0575A12665BAE01AAAC /* Syntrax_c.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		062940EF34A69E986610B412 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C40369FED30EEB66982F3D /* HighlyQuixotic.framework */; };
@@ -130,6 +131,7 @@
 		A5D06CBB9D73BCB2CA2A06CB /* VorbisDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 02325170602DA2B4E80294AA /* VorbisDecoder.m */; };
 		A65AF7020F224C68B3795576 /* ArchiveSource.m in Sources */ = {isa = PBXBuildFile; fileRef = DBB80CD88493F37761E3AAD6 /* ArchiveSource.m */; };
 		A6F219BED004D88C8653726F /* spessasynth_core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82355ACDB3A25A8B86B9F558 /* spessasynth_core.framework */; };
+		A774B6601FAAC51CC84E75FF /* SignalMeters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E9C4583F2DA66D6A2D382D /* SignalMeters.swift */; };
 		A8FF5F24BDA2A4CCD7962A23 /* jxsDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = ED54D5D3E71CB4B68FF9A896 /* jxsDecoder.m */; };
 		A9633D81A70FF75554884F72 /* AdPlugMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 92CE4384AB8EEB743CF83623 /* AdPlugMetadataReader.mm */; };
 		A968FE7037A459B2F8D6FBD4 /* sidplayfp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BB821A988F522F49086C420E /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -145,6 +147,7 @@
 		B614C2D48EE43B5E8A7C8864 /* ArchiveContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = D5B08E086BBE28004780E318 /* ArchiveContainer.m */; };
 		B69282C19DAF86DF2C96D4DC /* libvorbis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94773D810AFC2CF97E33C2A3 /* libvorbis.xcframework */; };
 		B74595DF082BC1778FCD08EA /* GeneralUserGS.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = D1CE5BD588F43A7ECF044221 /* GeneralUserGS.sf3 */; };
+		B755C34E207534B200C0FED7 /* OutputMeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADF619D205FB77124E6CD4 /* OutputMeter.swift */; };
 		B77AC090D246735F6F40317B /* HLSSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 384C3ABA497C71CD980DDA19 /* HLSSegment.m */; };
 		BC81318A7CD897E52081C83E /* libvgm-player.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 473A22E40B152B3A740A8EB0 /* libvgm-player.xcframework */; };
 		BCEDC3D519FAE1F7864C087B /* libvgmPropertiesReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95701CD1532DCD29093ED21B /* libvgmPropertiesReader.mm */; };
@@ -657,6 +660,7 @@
 /* Begin PBXFileReference section */
 		019ADF4B49F7C630B2C00750 /* libid3tag.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libid3tag.xcframework; path = ../ThirdParty/libid3tag/ios/libid3tag.xcframework; sourceTree = SOURCE_ROOT; };
 		01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = M3uContainer.m; path = ../Plugins/M3u/M3uContainer.m; sourceTree = SOURCE_ROOT; };
+		01E9C4583F2DA66D6A2D382D /* SignalMeters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalMeters.swift; path = ../SignalInspector/SignalMeters.swift; sourceTree = SOURCE_ROOT; };
 		02325170602DA2B4E80294AA /* VorbisDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = VorbisDecoder.m; path = ../Plugins/Vorbis/VorbisDecoder.m; sourceTree = SOURCE_ROOT; };
 		036CA9849CAB37A23AC4989A /* AdPlugContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = AdPlugContainer.h; path = ../Plugins/AdPlug/AdPlug/AdPlugContainer.h; sourceTree = SOURCE_ROOT; };
 		070B415F99EE4EA9EA376102 /* MIDIPluginState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = MIDIPluginState.m; path = ../Utils/MIDIPluginState.m; sourceTree = SOURCE_ROOT; };
@@ -704,6 +708,7 @@
 		3E752BEA4457DB2E2EE899D5 /* libOpenMPT.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libOpenMPT.xcodeproj; path = ../Frameworks/OpenMPT/libOpenMPT.xcodeproj; sourceTree = SOURCE_ROOT; };
 		3F70359EFBB8FDFBAB019008 /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = ../Frameworks/libsidplayfp/sidplayfp.xcodeproj; sourceTree = SOURCE_ROOT; };
 		40B10BC8E4E51573F98F96ED /* GameDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = GameDecoder.h; path = ../Plugins/GME/GameDecoder.h; sourceTree = SOURCE_ROOT; };
+		41E6832858CBCBE4960E6F31 /* VUMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VUMeterView.swift; path = ../Visualization/VUMeterView.swift; sourceTree = SOURCE_ROOT; };
 		46D6405F3B78DFF490955EAD /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		473A22E40B152B3A740A8EB0 /* libvgm-player.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libvgm-player.xcframework"; path = "../ThirdParty/libvgm/ios/libvgm-player.xcframework"; sourceTree = SOURCE_ROOT; };
 		484B12BD156A475E5A43AF8D /* libvorbisfile.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbisfile.xcframework; path = ../ThirdParty/vorbis/ios/libvorbisfile.xcframework; sourceTree = SOURCE_ROOT; };
@@ -855,6 +860,7 @@
 		DC5F720C7292C42B874C271A /* SilenceSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceSource.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.h; sourceTree = SOURCE_ROOT; };
 		DCC8E68EA4EE2D5F6B25FB46 /* libvgmDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = libvgmDecoder.mm; path = ../Plugins/libvgmPlayer/libvgmDecoder.mm; sourceTree = SOURCE_ROOT; };
 		DE5702BF0CCFC1557C2F85B5 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = CueSheetMetadataReader.m; path = ../Plugins/CueSheet/CueSheetMetadataReader.m; sourceTree = SOURCE_ROOT; };
+		DFADF619D205FB77124E6CD4 /* OutputMeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OutputMeter.swift; path = ../SignalInspector/OutputMeter.swift; sourceTree = SOURCE_ROOT; };
 		DFFEA0FD74A3E8AE17852FE5 /* minimp3_ex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = minimp3_ex.h; path = ../Plugins/minimp3/ThirdParty/minimp3_ex.h; sourceTree = SOURCE_ROOT; };
 		E0468E03B37135675DFB60E6 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ListenBrainzScrobbler.swift; path = ../Scrobbler/ListenBrainzScrobbler.swift; sourceTree = SOURCE_ROOT; };
 		E04DE2F7FC66D08A4484D35D /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = base64.h; path = "../Plugins/Vorbis/vorbis-tools/include/base64.h"; sourceTree = SOURCE_ROOT; };
@@ -1491,6 +1497,9 @@
 				5CE483BAA46D154DB7C97656 /* LyricsLookup.swift */,
 				EB555EB4EAC3737FD50CC73A /* LyricsText.swift */,
 				D0370650B61067CFC89A424D /* SpectrumView.swift */,
+				41E6832858CBCBE4960E6F31 /* VUMeterView.swift */,
+				DFADF619D205FB77124E6CD4 /* OutputMeter.swift */,
+				01E9C4583F2DA66D6A2D382D /* SignalMeters.swift */,
 				944CD3EC27C2CEAECF2A77A5 /* AudioScrobbler.swift */,
 				D879007E42C4088AC20AC818 /* LastFMAPI.swift */,
 				FB1F5372A8473E7951EE7ABC /* ListenBrainzAPI.swift */,
@@ -2278,6 +2287,9 @@
 				F36D9A91F7D4A4D7E11451F3 /* LyricsLookup.swift in Sources */,
 				5425F638539669076211EE53 /* LyricsText.swift in Sources */,
 				44F439990135AAE534EBCEC5 /* SpectrumView.swift in Sources */,
+				015FFDDEC0B1AA6F22CD8E97 /* VUMeterView.swift in Sources */,
+				B755C34E207534B200C0FED7 /* OutputMeter.swift in Sources */,
+				A774B6601FAAC51CC84E75FF /* SignalMeters.swift in Sources */,
 				B5E7CD172C728F63F23D45E5 /* AudioScrobbler.swift in Sources */,
 				70B81652DBEE4CD771ECDEC7 /* LastFMAPI.swift in Sources */,
 				F26E15EAFFF137930CA989F1 /* ListenBrainzAPI.swift in Sources */,

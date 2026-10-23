@@ -5,7 +5,7 @@
 //  Created by Kevin López Brante on 2026-10-22.
 //
 
-import Cocoa
+import Foundation
 import CogAudio
 
 /// The one reader of the output's levels. Each `SignalMetrics` takes the

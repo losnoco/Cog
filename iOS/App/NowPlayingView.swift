@@ -111,6 +111,7 @@ struct NowPlayingView: View {
 	@Environment(\.verticalSizeClass) private var verticalSizeClass
 	@EnvironmentObject private var ui: AppUI
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
+	@AppStorage("visualizerStyle") private var visualizerStyle = VisualizerStyle.spectrum
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
 	/// How tall Now Playing is, which says how much room the cards have.
@@ -304,19 +305,28 @@ struct NowPlayingView: View {
 	@ViewBuilder private func artwork(size: CGFloat) -> some View {
 		if let entry = model.currentEntry {
 			ArtworkView(entry: entry, size: max(size, 0), cornerRadius: 16)
-				// The spectrum rises over the art's lower half, darkened to
-				// carry it.
+				// The spectrum or the VU meter rises over the art's lower
+				// half, darkened to carry it.
 				.overlay(alignment: .bottom) {
 					if showsVisualizer {
-						SpectrumView(isPlaying: player.isPlaying, barColor: (palette?.accent ?? .white).opacity(0.8))
-							.padding(.horizontal, 12)
-							.frame(height: max(size, 0) * 0.45)
-							.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
-							.clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 16, bottomTrailingRadius: 16))
-							.transition(.opacity)
+						ZStack {
+							switch visualizerStyle {
+							case .spectrum:
+								SpectrumView(isPlaying: player.isPlaying, barColor: (palette?.accent ?? .white).opacity(0.8))
+									.padding(.horizontal, 12)
+							case .vuMeter:
+								NowPlayingVUMeter()
+									.padding(.horizontal, 4)
+							}
+						}
+						.frame(height: max(size, 0) * 0.45)
+						.background(LinearGradient(colors: [.clear, .black.opacity(0.6)], startPoint: .top, endPoint: .bottom))
+						.clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 16, bottomTrailingRadius: 16))
+						.transition(.opacity)
 					}
 				}
 				.animation(.controls, value: showsVisualizer)
+				.animation(.controls, value: visualizerStyle)
 				.shadow(radius: 12, y: 4)
 				// Beside the playlist, held: what plays, found in it.
 				.contextMenu {
@@ -452,6 +462,7 @@ struct NowPlayingControls: View {
 	@AppStorage("tempo") private var tempo = 1.0
 	@AppStorage("pitch") private var pitch = 1.0
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
+	@AppStorage("visualizerStyle") private var visualizerStyle = VisualizerStyle.spectrum
 
 	var body: some View {
 		VStack(spacing: compact ? 12 : 24) {
@@ -559,7 +570,14 @@ struct NowPlayingControls: View {
 				Label("Speed", systemImage: "gauge.with.needle")
 				Text(speedChanged ? "On" : "Off")
 			}
-			Toggle("Visualizer", systemImage: "waveform", isOn: $showsVisualizer)
+			Picker(selection: visualizer) {
+				Text("Off").tag(VisualizerStyle?.none)
+				Text("Spectrum").tag(VisualizerStyle?.some(.spectrum))
+				Text("VU Meter").tag(VisualizerStyle?.some(.vuMeter))
+			} label: {
+				Label("Visualizer", systemImage: "waveform")
+			}
+			.pickerStyle(.menu)
 		} label: {
 			Label("More", systemImage: "ellipsis.circle")
 				.labelStyle(.iconOnly)
@@ -567,6 +585,16 @@ struct NowPlayingControls: View {
 		// The items named, though the row around shows only icons.
 		.labelStyle(.titleAndIcon)
 		.foregroundStyle(state(equalizer.isEnabled || speedChanged || stopsAfter))
+	}
+
+	/// The visualizer's style, or nil while it is off.
+	private var visualizer: Binding<VisualizerStyle?> {
+		Binding(get: { showsVisualizer ? visualizerStyle : nil }, set: { style in
+			if let style {
+				visualizerStyle = style
+			}
+			showsVisualizer = style != nil
+		})
 	}
 
 	private func shuffleName(_ mode: PlaylistShuffleMode) -> LocalizedStringKey {

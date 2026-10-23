@@ -51,6 +51,7 @@ struct CogCommands: Commands {
 	@ObservedObject var model: PlaylistModel
 	@ObservedObject var ui: AppUI
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
+	@AppStorage("visualizerStyle") private var visualizerStyle = VisualizerStyle.spectrum
 	@AppStorage("showsPlaylistArt") private var showsPlaylistArt = true
 
 	private var nothingPlays: Bool { model.currentEntry == nil }
@@ -86,6 +87,10 @@ struct CogCommands: Commands {
 			Toggle("Speed", isOn: $ui.showsSpeed)
 			Toggle("Visualizer", isOn: $showsVisualizer)
 				.keyboardShortcut("v", modifiers: [.command, .shift])
+			Picker("Visualizer Style", selection: $visualizerStyle) {
+				Text("Spectrum").tag(VisualizerStyle.spectrum)
+				Text("VU Meter").tag(VisualizerStyle.vuMeter)
+			}
 			Toggle("Album Art in Playlist", isOn: $showsPlaylistArt)
 			Divider()
 		}

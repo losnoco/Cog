@@ -551,21 +551,4 @@ enum SignalFormatting {
 	static func milliseconds(_ seconds: Double) -> String {
 		String.localizedStringWithFormat("%.0f", seconds * 1000)
 	}
-
-	/// "L", "R", "C", "LFE"…, from the channel config's bits in interleaving
-	/// order; numbers where the layout is unknown.
-	static func channelLabels(count: Int, config: UInt32) -> [String] {
-		let names = ["L", "R", "C", "LFE", "Ls", "Rs", "Lc", "Rc", "Cs", "Lsd", "Rsd", "Tc", "Tfl", "Tfc", "Tfr", "Tbl", "Tbc", "Tbr"]
-		var labels: [String] = []
-		for bit in 0..<names.count where config & (1 << UInt32(bit)) != 0 {
-			labels.append(names[bit])
-		}
-		if count == 1 && config == 0 {
-			return ["M"]
-		}
-		guard labels.count == count else {
-			return (1...max(count, 1)).map(String.init)
-		}
-		return labels
-	}
 }

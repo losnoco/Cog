@@ -1,6 +1,26 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%.1f VU" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.1f VU"
+          }
+        }
+      }
+    },
+    "%.1f dBFS" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.1f dBFS"
+          }
+        }
+      }
+    },
     "%@ semitones" : {
       "localizations" : {
         "es" : {
@@ -58,6 +78,16 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "0 VU At" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 VU en"
           }
         }
       }
@@ -329,6 +359,16 @@
         }
       }
     },
+    "Bars" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barras"
+          }
+        }
+      }
+    },
     "Bitrate" : {
       "localizations" : {
         "es" : {
@@ -425,6 +465,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "¿Limpiar la playlist?"
+          }
+        }
+      }
+    },
+    "Click to switch between needles and bars." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca para cambiar entre agujas y barras."
+          }
+        }
+      }
+    },
+    "Clipped" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saturado"
           }
         }
       }
@@ -1306,6 +1366,16 @@
         }
       }
     },
+    "Needles" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agujas"
+          }
+        }
+      }
+    },
     "Next" : {
       "localizations" : {
         "es" : {
@@ -1386,6 +1456,16 @@
         }
       }
     },
+    "No levels while paused" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin niveles en pausa"
+          }
+        }
+      }
+    },
     "No lyrics. Cog can look them up on LRCLIB: turn that on in Settings." : {
       "localizations" : {
         "es" : {
@@ -1412,6 +1492,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No se está reproduciendo"
+          }
+        }
+      }
+    },
+    "Not clipped" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin saturación"
           }
         }
       }
@@ -1474,6 +1564,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Otras contribuciones"
+          }
+        }
+      }
+    },
+    "PEAK" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PICO"
           }
         }
       }
@@ -1948,6 +2048,16 @@
         }
       }
     },
+    "Show" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
+        }
+      }
+    },
     "Show Waveform" : {
       "localizations" : {
         "es" : {
@@ -2094,6 +2204,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Espacializar el sonido envolvente"
+          }
+        }
+      }
+    },
+    "Spectrum" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analizador"
           }
         }
       }
@@ -2384,6 +2504,16 @@
         }
       }
     },
+    "VU Meter" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
     "Varies the playback speed, like a record player: the pitch follows it." : {
       "localizations" : {
         "es" : {
@@ -2422,6 +2552,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Visualizador"
+          }
+        }
+      }
+    },
+    "Visualizer Style" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo del visualizador"
           }
         }
       }

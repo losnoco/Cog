@@ -72,7 +72,7 @@ final class VUMeterModel: ObservableObject {
 			peakTimes[needle] = now
 		}
 		if let metrics, !rms.isEmpty {
-			let names = SignalFormatting.channelLabels(count: min(metrics.channels, Int(COG_METER_CHANNELS)), config: metrics.channelConfig)
+			let names = SignalMetricsModel.channelLabels(count: min(metrics.channels, Int(COG_METER_CHANNELS)), config: metrics.channelConfig)
 			let newLabels = sources.map { $0 < names.count ? names[$0] : "" }
 			if labels != newLabels {
 				labels = newLabels

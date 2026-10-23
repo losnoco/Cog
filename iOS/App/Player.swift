@@ -27,8 +27,9 @@ final class Player: NSObject, ObservableObject {
 	let loader: PlaylistLoader
 	let equalizer = Equalizer()
 	let waveform = WaveformModel()
-	// -init returns id, so Swift sees it as failable; it never fails.
-	private let audioPlayer: AudioPlayer = AudioPlayer()!
+	// -init returns id, so Swift sees it as failable; it never fails. The
+	// VU meter reads its levels.
+	let audioPlayer: AudioPlayer = AudioPlayer()!
 
 	@Published private(set) var status: CogStatus = .stopped
 	/// Seconds into the entry playing, refreshed while it plays, in `clock`
