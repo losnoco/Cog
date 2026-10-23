@@ -20,6 +20,7 @@ struct SettingsView: View {
 	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
 	@AppStorage(WaveformModel.logScaleKey) private var waveformLogScale = false
 	@AppStorage(WaveformModel.rectifiedKey) private var waveformRectified = true
+	@AppStorage("nowPlayingAlwaysDark") private var nowPlayingAlwaysDark = false
 
 	var body: some View {
 		NavigationStack {
@@ -48,6 +49,13 @@ struct SettingsView: View {
 					Text("Seek Bar")
 				} footer: {
 					Text("The track's loudness, drawn as the seek bar.")
+				}
+				Section {
+					Toggle("Always Dark", isOn: $nowPlayingAlwaysDark)
+				} header: {
+					Text("Now Playing")
+				} footer: {
+					Text("Tracks without album art play in dark colors too, as tracks with art do in the album's.")
 				}
 				Section {
 					Picker("ReplayGain", selection: $replayGain) {

@@ -20,6 +20,7 @@ struct MiniPlayerView: View {
 	@Environment(\.colorScheme) private var colorScheme
 	/// The playing album's colors, as Now Playing has them.
 	@State private var palette: ArtworkPalette?
+	@AppStorage("nowPlayingAlwaysDark") private var alwaysDark = false
 
 	var body: some View {
 		HStack(spacing: 12) {
@@ -57,7 +58,7 @@ struct MiniPlayerView: View {
 		.padding(.vertical, 10)
 		.modifier(MiniPlayerBackground(palette: palette))
 		.tint(palette?.accent)
-		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
+		.environment(\.colorScheme, palette == nil && !alwaysDark ? colorScheme : .dark)
 		.albumPalette($palette, of: model.currentEntry)
 	}
 }
@@ -112,6 +113,7 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var ui: AppUI
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	@AppStorage("visualizerStyle") private var visualizerStyle = VisualizerStyle.spectrum
+	@AppStorage("nowPlayingAlwaysDark") private var alwaysDark = false
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
 	/// How tall Now Playing is, which says how much room the cards have.
@@ -134,10 +136,10 @@ struct NowPlayingView: View {
 				}
 			}
 		}
-		// Light on the album's dark colors, in its accent; the sheets it
-		// opens keep the usual look.
+		// Light on the album's dark colors, in its accent, and dark without
+		// art if the setting says so; the sheets it opens keep the usual look.
 		.tint(palette?.accent)
-		.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
+		.environment(\.colorScheme, palette == nil && !alwaysDark ? colorScheme : .dark)
 		.albumPalette($palette, of: model.currentEntry)
 	}
 
@@ -174,8 +176,15 @@ struct NowPlayingView: View {
 		}
 		.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
 		.background {
-			AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
-				.ignoresSafeArea()
+			// Dark without art too: over a light pane or sheet, the dark
+			// background is drawn here.
+			ZStack {
+				if palette == nil && alwaysDark {
+					Color(uiColor: .systemBackground)
+				}
+				AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
+			}
+			.ignoresSafeArea()
 		}
 		.toolbar {
 			if !isEmbedded {

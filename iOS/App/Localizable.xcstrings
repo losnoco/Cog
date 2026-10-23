@@ -294,6 +294,16 @@
         }
       }
     },
+    "Always Dark" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siempre oscuro"
+          }
+        }
+      }
+    },
     "An SC-55mk2 or SC-55mk1 set: its files, their folder, or a zip, rar or 7z archive of them. Cog copies it in." : {
       "localizations" : {
         "es" : {
@@ -1518,6 +1528,16 @@
         }
       }
     },
+    "Now Playing" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En reproducción"
+          }
+        }
+      }
+    },
     "Nuked SC-55" : {
       "localizations" : {
         "es" : {
@@ -2450,6 +2470,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pista, evitando la saturación"
+          }
+        }
+      }
+    },
+    "Tracks without album art play in dark colors too, as tracks with art do in the album's." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las pistas sin carátula también se ven en colores oscuros, como las que tienen carátula se ven en los colores del álbum."
           }
         }
       }
