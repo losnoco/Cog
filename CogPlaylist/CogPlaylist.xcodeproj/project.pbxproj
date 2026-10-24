@@ -42,6 +42,7 @@
 		3D044BD3C83B13469017859E /* CogPlaylistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CogPlaylistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F93A18A8B61D287CB7F5221 /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = ../Audio/CogAudio.xcodeproj; sourceTree = SOURCE_ROOT; };
 		84011B3A914F91C19F54159B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		5E2D7C1B9A0F4E3D2C1B0A99 /* DataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		BC0FD11C23D6B286C704155A /* CogPlaylist.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CogPlaylist.xcconfig; sourceTree = "<group>"; };
 		CC5502BA1C98A58CEA5F6E05 /* CogPlaylist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogPlaylist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -430,8 +431,9 @@
 			isa = XCVersionGroup;
 			children = (
 				84011B3A914F91C19F54159B /* DataModel.xcdatamodel */,
+				5E2D7C1B9A0F4E3D2C1B0A99 /* DataModel 2.xcdatamodel */,
 			);
-			currentVersion = 84011B3A914F91C19F54159B /* DataModel.xcdatamodel */;
+			currentVersion = 5E2D7C1B9A0F4E3D2C1B0A99 /* DataModel 2.xcdatamodel */;
 			name = DataModel.xcdatamodeld;
 			path = ../DataModel.xcdatamodeld;
 			sourceTree = SOURCE_ROOT;

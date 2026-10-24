@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25A362" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AlbumArtwork" representedClassName="AlbumArtwork" syncable="YES" codeGenerationType="class">
+        <attribute name="artData" optional="YES" attributeType="Binary"/>
+        <attribute name="artHash" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="LyricsCache" representedClassName="LyricsCache" syncable="YES" codeGenerationType="class">
+        <attribute name="fetchedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="instrumental" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="key" optional="YES" attributeType="String"/>
+        <attribute name="known" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="plain" optional="YES" attributeType="String"/>
+        <attribute name="synced" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="key"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="PendingListen" representedClassName="PendingListen" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="listenedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="payload" optional="YES" attributeType="Binary"/>
+    </entity>
+    <entity name="PlayCount" representedClassName="PlayCount" syncable="YES" codeGenerationType="class">
+        <attribute name="album" optional="YES" attributeType="String"/>
+        <attribute name="artist" optional="YES" attributeType="String"/>
+        <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String"/>
+        <attribute name="firstSeen" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastPlayed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="rating" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Playlist" representedClassName="Playlist" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlaylistEntry" inverseName="playlist" inverseEntity="PlaylistEntry"/>
+    </entity>
+    <entity name="PlaylistEntry" representedClassName="PlaylistEntry" syncable="YES" codeGenerationType="class">
+        <attribute name="artHash" optional="YES" attributeType="String"/>
+        <attribute name="bitrate" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bitsPerSample" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="channelConfig" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="channels" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="codec" optional="YES" attributeType="String"/>
+        <attribute name="countAdded" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="cuesheet" optional="YES" attributeType="String"/>
+        <attribute name="current" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="currentPosition" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="dbIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="deLeted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="encoding" optional="YES" attributeType="String"/>
+        <attribute name="endian" optional="YES" attributeType="String"/>
+        <attribute name="entryId" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="error" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="errorMessage" optional="YES" attributeType="String"/>
+        <attribute name="floatingPoint" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="index" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="metadataBlob" optional="YES" attributeType="Transformable" valueTransformerName="MaybeSecureValueDataTransformer"/>
+        <attribute name="metadataLoaded" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="queued" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="queuePosition" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="removed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="replayGainAlbumGain" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="replayGainAlbumPeak" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="replayGainTrackGain" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="replayGainTrackPeak" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="sampleRate" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="seekable" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="shuffleIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="soundcheck" optional="YES" attributeType="String"/>
+        <attribute name="spotlightLength" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="spotlightTrack" optional="YES" attributeType="String"/>
+        <attribute name="stopAfter" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="totalFrames" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="trashUrlString" optional="YES" attributeType="String"/>
+        <attribute name="urlBookmark" optional="YES" attributeType="Binary"/>
+        <attribute name="unSigned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="urlString" optional="YES" attributeType="String"/>
+        <attribute name="volume" optional="YES" attributeType="Float" defaultValueString="1" usesScalarValueType="YES"/>
+        <relationship name="playlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Playlist" inverseName="entries" inverseEntity="Playlist"/>
+        <fetchIndex name="byPlaylistIndex">
+            <fetchIndexElement property="playlist" type="Binary" order="ascending"/>
+            <fetchIndexElement property="index" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="SandboxToken" representedClassName="SandboxToken" syncable="YES" codeGenerationType="class">
+        <attribute name="bookmark" optional="YES" attributeType="Binary"/>
+        <attribute name="folder" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="path" optional="YES" attributeType="String"/>
+    </entity>
+</model>

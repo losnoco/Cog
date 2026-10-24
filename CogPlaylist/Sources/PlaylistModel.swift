@@ -68,6 +68,7 @@ public final class PlaylistModel: ObservableObject {
 	/// Reads the playlist, dropping what was removed or has no URL, as the
 	/// macOS app does on launch.
 	public func load() {
+		Playlist.adoptOrphans(in: context)
 		let request = NSFetchRequest<PlaylistEntry>(entityName: "PlaylistEntry")
 		request.sortDescriptors = [NSSortDescriptor(key: "index", ascending: true)]
 		var loaded = (try? context.fetch(request)) ?? []

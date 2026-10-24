@@ -12,7 +12,7 @@ final class PlaylistStoreTests: XCTestCase {
 		let store = try PlaylistStore(inMemory: true)
 		XCTAssertTrue(store.container.managedObjectModel === PlaylistStore.model)
 		XCTAssertEqual(Set(PlaylistStore.model.entitiesByName.keys),
-		               ["AlbumArtwork", "LyricsCache", "PendingListen", "PlayCount", "PlaylistEntry", "SandboxToken"])
+		               ["AlbumArtwork", "LyricsCache", "PendingListen", "PlayCount", "Playlist", "PlaylistEntry", "SandboxToken"])
 	}
 
 	/// The model's entities are this framework's classes, which the macOS app

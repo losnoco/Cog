@@ -606,7 +606,7 @@ static BOOL consentLastEnabled = NO;
 	BOOL resetPlaylistOnQuit = [[NSUserDefaults standardUserDefaults] boolForKey:@"resetPlaylistOnQuit"];
 
 	if (resetPlaylistOnQuit) {
-		NSArray *entities = @[@"PlaylistEntry", @"AlbumArtwork"];
+		NSArray *entities = @[@"PlaylistEntry", @"Playlist", @"AlbumArtwork"];
 		for (NSString *entityName in entities) {
 			NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
 			NSError *error = nil;
@@ -619,7 +619,9 @@ static BOOL consentLastEnabled = NO;
 		}
 	} else {
 		// How the heck are people getting this in their playlists
-		for(PlaylistEntry *pe in playlistController.arrangedObjects) {
+		// Every playlist's entries, not only the one shown, keep their art.
+		NSArray *allEntries = [moc executeFetchRequest:[NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"] error:nil];
+		for(PlaylistEntry *pe in allEntries) {
 			if(pe.deLeted || !pe.urlString || [pe.urlString isEqualToString:@""] || !pe.url) {
 				[moc deleteObject:pe];
 				continue;

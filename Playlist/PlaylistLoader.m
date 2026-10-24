@@ -904,6 +904,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			abort();
 		}
 
+		// Entries from before there were playlists go into the first.
+		[Playlist adoptOrphansInContext:moc];
+
 		NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlaylistEntry"];
 
 		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"index" ascending:YES];

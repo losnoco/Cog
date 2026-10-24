@@ -1151,6 +1151,7 @@
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
 		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		837DC930285B3F790005C58A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		83A1B2C3D4E5F60718293A4B /* DataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		8381A09027C5F72F00A1C530 /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA256Digest.h; sourceTree = "<group>"; };
 		8383952D2E4609CF00A7CFD8 /* libdav1d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdav1d.a; path = ThirdParty/avif/lib/libdav1d.a; sourceTree = "<group>"; };
 		8383952E2E4609CF00A7CFD8 /* libyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyuv.a; path = ThirdParty/avif/lib/libyuv.a; sourceTree = "<group>"; };
@@ -4170,8 +4171,9 @@
 			isa = XCVersionGroup;
 			children = (
 				837DC930285B3F790005C58A /* DataModel.xcdatamodel */,
+				83A1B2C3D4E5F60718293A4B /* DataModel 2.xcdatamodel */,
 			);
-			currentVersion = 837DC930285B3F790005C58A /* DataModel.xcdatamodel */;
+			currentVersion = 83A1B2C3D4E5F60718293A4B /* DataModel 2.xcdatamodel */;
 			path = DataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
