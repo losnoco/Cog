@@ -14,9 +14,9 @@
 
 #import "DNDArrayController.h"
 
+#import <CogPlaylist/CogPlaylist-Swift.h>
+
 @class AlbumArtwork;
-@class PlaybackOrder;
-@class Playlist;
 
 @class PlaylistLoader;
 @class PlaylistEntry;
@@ -136,6 +136,10 @@
 - (void)showPlaylist:(Playlist *_Nonnull)playlist;
 /// The playlist playback goes on in: the current entry's.
 @property(nonatomic, readonly) Playlist *_Nullable playingPlaylist;
+/// For the playlist commands in Swift: stops playback, or has the engine
+/// ask again what plays next.
+- (void)stopPlayback;
+- (void)playingPlaylistDidChange;
 - (void)addEntriesToQueue:(NSArray<PlaylistEntry *> *_Nonnull)entries;
 
 // internal methods for data store init

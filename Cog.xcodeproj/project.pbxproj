@@ -18,6 +18,8 @@
 		0A0E707E307416E400EF30D0 /* SignalStatusModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E707D307416E400EF30D0 /* SignalStatusModel.swift */; };
 		0A0E70853074175600EF30D0 /* SignalInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E70843074175600EF30D0 /* SignalInspectorView.swift */; };
 		0A0E70873074176A00EF30D0 /* SignalInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */; };
+		0A301372308D7F11006DB4B2 /* PlaylistController+Playlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A301371308D7F11006DB4B2 /* PlaylistController+Playlists.swift */; };
+		0A301843308D7F84006DB4B2 /* PlaylistTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A301842308D7F84006DB4B2 /* PlaylistTabs.swift */; };
 		0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */; };
 		0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */; };
 		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
@@ -911,6 +913,8 @@
 		0A0E707D307416E400EF30D0 /* SignalStatusModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalStatusModel.swift; sourceTree = "<group>"; };
 		0A0E70843074175600EF30D0 /* SignalInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalInspectorView.swift; sourceTree = "<group>"; };
 		0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalInspectorWindowController.swift; sourceTree = "<group>"; };
+		0A301371308D7F11006DB4B2 /* PlaylistController+Playlists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlaylistController+Playlists.swift"; path = "Window/PlaylistController+Playlists.swift"; sourceTree = "<group>"; };
+		0A301842308D7F84006DB4B2 /* PlaylistTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaylistTabs.swift; path = Window/PlaylistTabs.swift; sourceTree = "<group>"; };
 		0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzAPI.swift; sourceTree = "<group>"; };
 		0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzScrobbler.swift; sourceTree = "<group>"; };
 		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
@@ -1151,7 +1155,6 @@
 		8377C6B827B900F000E8BC0F /* SpectrumItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumItem.m; path = Visualization/SpectrumItem.m; sourceTree = "<group>"; };
 		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		837DC930285B3F790005C58A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
-		83A1B2C3D4E5F60718293A4B /* DataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		8381A09027C5F72F00A1C530 /* SHA256Digest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SHA256Digest.h; sourceTree = "<group>"; };
 		8383952D2E4609CF00A7CFD8 /* libdav1d.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdav1d.a; path = ThirdParty/avif/lib/libdav1d.a; sourceTree = "<group>"; };
 		8383952E2E4609CF00A7CFD8 /* libyuv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libyuv.a; path = ThirdParty/avif/lib/libyuv.a; sourceTree = "<group>"; };
@@ -1182,6 +1185,7 @@
 		839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Merge.h"; sourceTree = "<group>"; };
 		839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Merge.m"; sourceTree = "<group>"; };
 		83A097362F7FF486007BAF78 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Credits.html; sourceTree = "<group>"; };
+		83A1B2C3D4E5F60718293A4B /* DataModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "DataModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		83AA7D00279EBC8200087AA4 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = ThirdParty/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
 		83AA7D01279EBC8200087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
 		83AA7D02279EBC8200087AA4 /* libavutil.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.dylib; path = ThirdParty/ffmpeg/lib/libavutil.60.dylib; sourceTree = "<group>"; };
@@ -1660,6 +1664,8 @@
 				0A6E7AC5308A86F000E2ADA7 /* PaneWindowController.swift */,
 				0A6E7ACD308A875D00E2ADA7 /* PaneManager.swift */,
 				0A6E7F90308A8AE500E2ADA7 /* PaneDockGuides.swift */,
+				0A301371308D7F11006DB4B2 /* PlaylistController+Playlists.swift */,
+				0A301842308D7F84006DB4B2 /* PlaylistTabs.swift */,
 			);
 			name = Window;
 			sourceTree = "<group>";
@@ -3063,6 +3069,7 @@
 				835FAC7927BCDF2A00BA8562 /* AVIFDecoder.m in Sources */,
 				EDAAA41F25A665C000731773 /* PositionSliderToolbarItem.swift in Sources */,
 				0ABB324730843A3C000AAB12 /* WaveformController.swift in Sources */,
+				0A301843308D7F84006DB4B2 /* PlaylistTabs.swift in Sources */,
 				0A0038623086B9BD00C5352B /* SpeedPopoverView.swift in Sources */,
 				0ABB371330843A63000AAB12 /* WaveformSliderCell.swift in Sources */,
 				1791FF900CB43A2C0070BC5C /* MediaKeysApplication.m in Sources */,
@@ -3078,6 +3085,7 @@
 				0A0E70873074176A00EF30D0 /* SignalInspectorWindowController.swift in Sources */,
 				0A6E7142308A82B300E2ADA7 /* VUMeterWindowController.swift in Sources */,
 				07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */,
+				0A301372308D7F11006DB4B2 /* PlaylistController+Playlists.swift in Sources */,
 				56C63D910D647DF300EAE25A /* NSComparisonPredicate+CogPredicate.m in Sources */,
 				0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */,
 				8325F5A32F71497F00400A88 /* ToggleQueueTitleTransformer.swift in Sources */,

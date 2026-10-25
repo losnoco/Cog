@@ -19,11 +19,6 @@
 
 @end
 
-// Sync, only declare items we need
-@interface PlaylistEntry
-@property(nonatomic) NSURL *_Nullable url;
-@end
-
 @interface PathItem : NSObject
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic) BOOL enabled;

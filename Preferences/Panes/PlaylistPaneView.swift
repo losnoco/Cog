@@ -27,6 +27,9 @@ private final class PlaylistPrefs: ObservableObject {
     @Published var quitOnNaturalStop: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(quitOnNaturalStop, forKey: "quitOnNaturalStop") }
     }
+    @Published var stopWhenQueueEmpties: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(stopWhenQueueEmpties, forKey: "stopWhenQueueEmpties") }
+    }
 
     deinit { isActive = false }
 
@@ -40,6 +43,7 @@ private final class PlaylistPrefs: ObservableObject {
         resumePlaybackOnStartup = d.bool(forKey: "resumePlaybackOnStartup")
         resetPlaylistOnQuit = d.bool(forKey: "resetPlaylistOnQuit")
         quitOnNaturalStop = d.bool(forKey: "quitOnNaturalStop")
+        stopWhenQueueEmpties = d.bool(forKey: "stopWhenQueueEmpties")
     }
 }
 
@@ -91,6 +95,7 @@ struct PlaylistPaneView: View {
             Toggle("Resume playback on startup", isOn: $prefs.resumePlaybackOnStartup)
             Toggle("Reset playlist on quit", isOn: $prefs.resetPlaylistOnQuit)
             Toggle("Quit when playback completes", isOn: $prefs.quitOnNaturalStop)
+            Toggle("Stop when the queue empties", isOn: $prefs.stopWhenQueueEmpties)
         }
     }
 }

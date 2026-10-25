@@ -1440,6 +1440,14 @@ BOOL showTrashConsent(NSWindow *window) {
 	return currentEntry.playlist;
 }
 
+- (void)stopPlayback {
+	[playbackController stop:self];
+}
+
+- (void)playingPlaylistDidChange {
+	[playbackController playlistDidChange:self];
+}
+
 - (void)showPlaylist:(Playlist *)playlist {
 	if(!playlist || playlist == _shownPlaylist) return;
 
@@ -1694,6 +1702,10 @@ BOOL showTrashConsent(NSWindow *window) {
 
 	if(action == @selector(stopAfterCurrent:) && currentEntry.stopAfter) return NO;
 
+	// The last playlist stays.
+	if(action == NSSelectorFromString(@"deletePlaylist:") &&
+	   [[Playlist playlistsInContext:self.persistentContainer.viewContext] count] < 2) return NO;
+
 	// if nothing is selected, gray out these
 	if([[self selectedObjects] count] < 1) {
 		if(action == @selector(remove:)) return NO;
@@ -1707,6 +1719,10 @@ BOOL showTrashConsent(NSWindow *window) {
 		if(action == @selector(searchByAlbum:)) return NO;
 
 		if(action == @selector(stopAfterSelection:)) return NO;
+
+		if(action == NSSelectorFromString(@"newPlaylistFromSelection:")) return NO;
+
+		if(action == NSSelectorFromString(@"addSelectionToPlaylist:")) return NO;
 	}
 
 	return YES;

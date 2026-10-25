@@ -233,6 +233,9 @@ static BOOL consentLastEnabled = NO;
 		NSView *playlistRoot = mainWindow.contentView;
 		mainWindow.contentView = [NSView new];
 
+		// Tabs for the playlists, above the one shown.
+		[PlaylistTabBar installInStackView:(NSStackView *)playlistRoot controller:playlistController];
+
 		NSViewController *contentViewController = [NSViewController new];
 		contentViewController.view = playlistRoot;
 
@@ -877,6 +880,10 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@(44100) forKey:@"synthSampleRate"];
 
 	[userDefaultsValuesDict setObject:@NO forKey:@"alwaysStopAfterCurrent"];
+	// Off: once the queue empties, play on after its last track, in that
+	// track's playlist.
+	[userDefaultsValuesDict setObject:@NO forKey:@"stopWhenQueueEmpties"];
+	[userDefaultsValuesDict setObject:@YES forKey:@"showPlaylistTabs"];
 	[userDefaultsValuesDict setObject:@NO forKey:@"selectionFollowsPlayback"];
 
 	[userDefaultsValuesDict setObject:@YES forKey:@"suspendOutputOnPause"];
