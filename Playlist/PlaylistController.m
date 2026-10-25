@@ -1469,8 +1469,9 @@ BOOL showTrashConsent(NSWindow *window) {
 			[self.tableView setIndicatorImage:nil inTableColumn:column];
 		}
 	}
-	// Undo works on rows of the playlist it was done in.
-	[[self undoManager] removeAllActions];
+	// Undo works on rows of the playlist it was done in. Clearing it also
+	// resets registration, so not while launch has it off.
+	if([[self undoManager] isUndoRegistrationEnabled]) [[self undoManager] removeAllActions];
 
 	[self willChangeValueForKey:@"shownPlaylist"];
 	_shownPlaylist = playlist;
