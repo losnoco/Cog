@@ -229,7 +229,7 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 	}
 	[fileHandle truncateFileAtOffset:0];
 
-	NSArray *filterList = @[@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"lengthText", @"positionText", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt"];
+	NSArray *filterList = @[@"display", @"length", @"path", @"filename", @"status", @"statusMessage", @"spam", @"lengthText", @"positionText", @"stopAfter", @"shuffleIndex", @"index", @"current", @"queued", @"currentPosition", @"queuePosition", @"error", @"removed", @"URL", @"albumArt", @"playlist"];
 
 	NSMutableDictionary *albumArtSet = [NSMutableDictionary new];
 
@@ -260,10 +260,13 @@ NSMutableDictionary *dictionaryWithPropertiesOfObject(id obj, NSArray *filterLis
 		[topLevel addObject:dict];
 	}
 
+	// The queue as positions in what is written; entries queued from
+	// elsewhere stay out.
 	NSMutableArray *queueList = [NSMutableArray new];
 
 	for(PlaylistEntry *pe in [playlistController queueList]) {
-		[queueList addObject:@(pe.index)];
+		NSUInteger position = [playlist indexOfObjectIdenticalTo:pe];
+		if(position != NSNotFound) [queueList addObject:@(position)];
 	}
 
 	NSDictionary *dictionary = @{@"albumArt": albumArtSet, @"queue": queueList, @"items": topLevel};
@@ -524,17 +527,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 			[self->playlistController emptyQueueList:self];
 
-			long i = 0;
+			NSMutableArray *queued = [NSMutableArray new];
 			for(NSNumber *index in [xmlData objectForKey:@"queue"]) {
 				NSInteger indexVal = [index intValue] + j;
-				PlaylistEntry *pe = [entries objectAtIndex:indexVal];
-				pe.queuePosition = i;
-				pe.queued = YES;
-
-				[[self->playlistController queueList] addObject:pe];
-
-				++i;
+				[queued addObject:[entries objectAtIndex:indexVal]];
 			}
+			[self->playlistController addEntriesToQueue:queued];
 		});
 	}
 	
@@ -773,8 +771,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				}
 				for(PlaylistEntry *pe in entrySet) {
 					[pe setMetadata:entryInfo];
-					if(pe.index >= 0 && pe.index < NSNotFound) {
-						[weakUpdateIndexes addIndex:pe.index];
+					NSInteger row = [playlistController rowForEntry:pe];
+					if(row != NSNotFound) {
+						[weakUpdateIndexes addIndex:row];
 					}
 				}
 			}
@@ -821,7 +820,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		if([pe metadataLoaded]) continue;
 
-		[update_indexes addIndex:pe.index];
+		NSInteger row = [self->playlistController rowForEntry:pe];
+		if(row != NSNotFound) [update_indexes addIndex:row];
 		[load_info_indexes addIndex:idx];
 
 		++i;
@@ -919,7 +919,23 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			abort();
 		}
 
+		// The playlist shown last, or else the one playing, or the first.
+		Playlist *shown = nil;
+		NSString *shownUUID = [[NSUserDefaults standardUserDefaults] stringForKey:@"shownPlaylist"];
+		NSUUID *uuid = shownUUID ? [[NSUUID alloc] initWithUUIDString:shownUUID] : nil;
+		if(uuid) shown = [Playlist playlistWithUUID:uuid inContext:moc];
+		if(!shown) {
+			for(PlaylistEntry *pe in results) {
+				if(pe.current && !pe.deLeted) {
+					shown = pe.playlist;
+					break;
+				}
+			}
+		}
+		if(!shown) shown = [[Playlist playlistsInContext:moc] firstObject];
+
 		if([results count] == 0) {
+			[playlistController showPlaylist:shown];
 			return NO;
 		}
 
@@ -966,14 +982,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 		results = [NSArray arrayWithArray:resultsCopy];
 
-		{
-			NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [results count])];
-
-			[playlistController insertObjectsUnsynced:results atArrangedObjectIndexes:is];
-		}
+		[playlistController showPlaylist:shown];
 
 		[playlistController readQueueFromDataStore];
-		[playlistController readShuffleListFromDataStore];
 
 		if(!dataMigrated && [results count]) {
 			[self performSelectorInBackground:@selector(loadInfoForEntries:) withObject:results];
@@ -1009,24 +1020,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	count = [store queueGetCount];
 
 	if(count) {
-		NSMutableIndexSet *refreshSet = [NSMutableIndexSet new];
-
 		[playlistController emptyQueueListUnsynced];
 
+		NSMutableArray *queued = [NSMutableArray new];
 		for(i = 0; i < count; ++i) {
 			NSInteger indexVal = [store queueGetEntry:i];
-			PlaylistEntry *pe = [entries objectAtIndex:indexVal];
-			pe.queuePosition = i;
-			pe.queued = YES;
-
-			[[playlistController queueList] addObject:pe];
-
-			[refreshSet addIndex:[pe index]];
+			[queued addObject:[entries objectAtIndex:indexVal]];
 		}
-
-		// Refresh entire row to refresh tooltips
-		unsigned long columns = [[playlistView.documentView tableColumns] count];
-		[playlistView.documentView reloadDataForRowIndexes:refreshSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
+		[playlistController addEntriesToQueue:queued];
 	}
 
 	// Clear the selection

@@ -294,13 +294,10 @@ static void setSpeed(NSString *key, NSString *lockedKey, double speed) {
 
 - (IBAction)play:(id)sender {
 	if([playlistController shuffle] != ShuffleOff) {
-		PlaylistEntry *pe = nil;
-
+		// The selection, or where shuffle starts.
 		NSInteger index = [playlistView selectedRow];
-		if(index != -1) pe = [playlistController entryAtIndex:index];
-
-		pe = [playlistController shuffledEntryAtIndex:(pe ? pe.shuffleIndex : 0)];
-		[self playEntryAtIndex:pe.index];
+		PlaylistEntry *pe = index != -1 ? [playlistController entryAtIndex:index] : [playlistController firstEntryToPlay];
+		if(pe) [self playEntry:pe];
 	} else {
 		if([playlistView selectedRow] == -1)
 			[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
@@ -689,19 +686,23 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	return [[[NSUserDefaults standardUserDefaults] stringForKey:@"rubberbandEngine"] isEqualToString:@"varispeed"];
 }
 
+// Album skips go along the playing entry's playlist, whichever is shown.
 - (IBAction)skipToNextAlbum:(id)sender {
 	BOOL found = NO;
 
-	NSInteger index = [[playlistController currentEntry] index];
-	NSString *origAlbum = [[playlistController currentEntry] album];
+	PlaylistEntry *current = [playlistController currentEntry];
+	Playlist *playlist = current.playlist;
+	NSInteger index = [current index];
+	NSString *origAlbum = [current album];
+	NSInteger count = [[playlist orderedEntries] count];
 
 	NSInteger i;
 	NSString *curAlbum;
 
-	PlaylistEntry *pe;
+	PlaylistEntry *pe = nil;
 
-	for(i = 1; i < [[playlistController arrangedObjects] count]; i++) {
-		pe = [playlistController entryAtIndex:index + i];
+	for(i = 1; i < count; i++) {
+		pe = [playlistController.playbackOrder entryAtPosition:index + i inPlaylist:playlist];
 		if(pe == nil)
 			break;
 
@@ -721,7 +722,7 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 
 	if(found) {
-		[self playEntryAtIndex:i + index];
+		[self playEntry:pe];
 	}
 }
 
@@ -729,16 +730,19 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	BOOL found = NO;
 	BOOL foundAlbum = NO;
 
-	NSInteger index = [[playlistController currentEntry] index];
-	NSString *origAlbum = [[playlistController currentEntry] album];
+	PlaylistEntry *current = [playlistController currentEntry];
+	Playlist *playlist = current.playlist;
+	NSInteger index = [current index];
+	NSString *origAlbum = [current album];
+	NSInteger count = [[playlist orderedEntries] count];
 	NSString *curAlbum;
 
 	NSInteger i;
 
 	PlaylistEntry *pe;
 
-	for(i = 1; i < [[playlistController arrangedObjects] count]; i++) {
-		pe = [playlistController entryAtIndex:index - i];
+	for(i = 1; i < count; i++) {
+		pe = [playlistController.playbackOrder entryAtPosition:index - i inPlaylist:playlist];
 		if(pe == nil)
 			break;
 
@@ -765,7 +769,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	if(found || foundAlbum) {
 		if(foundAlbum == YES)
 			i--;
-		[self playEntryAtIndex:index - i];
+		pe = [playlistController.playbackOrder entryAtPosition:index - i inPlaylist:playlist];
+		if(pe) [self playEntry:pe];
 	}
 }
 
@@ -1081,7 +1086,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		}
 		[songInfo setObject:@(entry.currentPosition) forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
 		[songInfo setObject:entry.length forKey:MPMediaItemPropertyPlaybackDuration];
-		[songInfo setObject:@(entry.index) forKey:MPMediaItemPropertyPersistentID];
+		// Unique across playlists, unlike the entry's position.
+		[songInfo setObject:@((unsigned long long)[[[entry.objectID URIRepresentation] absoluteString] hash]) forKey:MPMediaItemPropertyPersistentID];
 	}
 
     if (entry) {

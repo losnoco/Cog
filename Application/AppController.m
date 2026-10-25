@@ -323,11 +323,13 @@ static BOOL consentLastEnabled = NO;
 
 		if(results && [results count] > 0) {
 			PlaylistEntry *pe = results[0];
-			// Select this track
-			[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] byExtendingSelection:NO];
+			// Show its playlist and select this track
+			if(pe.playlist) [playlistController showPlaylist:pe.playlist];
+			NSInteger row = [playlistController rowForEntry:pe];
+			if(row != NSNotFound) [playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 			if(resumePlaybackOnStartup) {
 				// And play it
-				[playbackController playEntryAtIndex:pe.index startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
+				[playbackController playEntry:pe startPaused:(lastStatus == CogStatusPaused) andSeekTo:@(pe.currentPosition)];
 			} else {
 				// Startup resume is disabled, so clear stale "currently playing" markers from the last run.
 				for(PlaylistEntry *entry in results) {
@@ -1206,8 +1208,11 @@ static NSDictionary *shortcutDefaults = nil;
 
 - (void)selectTrack:(id)sender {
 	PlaylistEntry *pe = (PlaylistEntry *)sender;
+	// Only in the playlist shown; another's entries have no row.
+	NSInteger row = [playlistController rowForEntry:pe];
+	if(row == NSNotFound) return;
 	@try {
-		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] byExtendingSelection:NO];
+		[playlistView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 	}
 	@catch(NSException *e) {
 	}

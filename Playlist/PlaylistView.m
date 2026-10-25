@@ -345,9 +345,15 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 }
 
 - (IBAction)scrollToCurrentEntry:(id)sender {
-	[self scrollRowToVisible:[[playlistController currentEntry] index]];
-	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:(NSUInteger)[[playlistController currentEntry] index]]
-	  byExtendingSelection:NO];
+	PlaylistEntry *pe = [playlistController currentEntry];
+	if(!pe) return;
+	// To its playlist first, and out of a search that hides it.
+	if(pe.playlist) [playlistController showPlaylist:pe.playlist];
+	if([playlistController rowForEntry:pe] == NSNotFound) [playlistController clearFilterPredicate:self];
+	NSInteger row = [playlistController rowForEntry:pe];
+	if(row == NSNotFound) return;
+	[self scrollRowToVisible:row];
+	[self selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 }
 
 - (IBAction)saveSelectionAsPlaylist:(id)sender {
@@ -540,10 +546,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 - (IBAction)refreshTrack:(id)sender {
 	PlaylistEntry *pe = (PlaylistEntry *)sender;
-	if(pe && !pe.deLeted) {
-		unsigned long columns = [[self tableColumns] count];
-		[self reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:pe.index] columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
-	}
+	if(pe) [playlistController reloadRowsForEntries:@[pe]];
 }
 
 #if 0

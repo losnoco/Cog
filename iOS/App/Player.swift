@@ -162,7 +162,7 @@ final class Player: NSObject, ObservableObject {
 
 	/// The first entry of the next album along the playlist.
 	func nextAlbum() {
-		let entries = model.entries
+		let entries = model.playingEntries
 		guard let current = model.currentEntry, let index = entries.firstIndex(of: current),
 		      let next = entries[(index + 1)...].first(where: { $0.album != current.album }) else { return }
 		play(next)
@@ -170,7 +170,7 @@ final class Player: NSObject, ObservableObject {
 
 	/// The first entry of the album before this one along the playlist.
 	func previousAlbum() {
-		let entries = model.entries
+		let entries = model.playingEntries
 		guard let current = model.currentEntry, var start = entries.firstIndex(of: current) else { return }
 		while start > 0 && entries[start - 1].album == current.album { start -= 1 }
 		guard start > 0 else { return }
