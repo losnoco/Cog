@@ -455,14 +455,23 @@ static BOOL consentLastEnabled = NO;
 					// And now to set up user feedback prompting
 					options.onLastRunStatusDetermined = ^void(enum SentryLastRunStatus status, SentryEvent * _Nullable event) {
 						if(status == SentryLastRunStatusDidCrash && event) {
-							// capture user feedback
-							FeedbackController *fbcon = [FeedbackController new];
-							[fbcon performSelectorOnMainThread:@selector(showWindow:) withObject:nil waitUntilDone:YES];
-							if([fbcon waitForCompletion]) {
-								SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:event.eventId attachments:nil];
+							// capture user feedback, once launch is done: this can run on
+							// the main thread during launch, where waiting for an answer
+							// froze the app before its window could take one.
+							SentryId *eventId = event.eventId;
+							dispatch_async(dispatch_get_main_queue(), ^{
+								// Kept until it answers, by its own handler.
+								__block FeedbackController *fbcon = [FeedbackController new];
+								fbcon.completionHandler = ^(BOOL sent) {
+									if(sent) {
+										SentryFeedback *feedback = [[SentryFeedback alloc] initWithMessage:[fbcon comments] name:[fbcon name] email:[fbcon email] source:SentryFeedbackSourceCustom associatedEventId:eventId attachments:nil];
 
-								[SentrySDK captureFeedback:feedback];
-							}
+										[SentrySDK captureFeedback:feedback];
+									}
+									fbcon = nil;
+								};
+								[fbcon showWindow:nil];
+							});
 						}
 					};
 				}];

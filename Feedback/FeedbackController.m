@@ -11,8 +11,7 @@
 #import "Logging.h"
 
 @implementation FeedbackController {
-	BOOL showing;
-	BOOL sent;
+	BOOL finished;
 	
 	NSString *name;
 	NSString *email;
@@ -22,8 +21,7 @@
 - (id)init {
 	self = [super initWithWindowNibName:@"Feedback"];
 	if(self) {
-		showing = NO;
-		sent = NO;
+		finished = NO;
 	}
 	return self;
 }
@@ -33,9 +31,22 @@
 	[emailView setStringValue:@""];
 	[messageView setString:@""];
 
+	[[self window] setDelegate:self];
 	[super showWindow:sender];
-	
-	showing = YES;
+}
+
+/// Reports how the window was done with, once.
+- (void)finish:(BOOL)sent {
+	if(finished) return;
+	finished = YES;
+	void (^handler)(BOOL) = self.completionHandler;
+	self.completionHandler = nil;
+	if(handler) handler(sent);
+}
+
+// Closed with its close button: as cancelled.
+- (void)windowWillClose:(NSNotification *)notification {
+	[self finish:NO];
 }
 
 - (IBAction)sendFeedback:(id)sender {
@@ -43,22 +54,13 @@
 	email = [emailView stringValue];
 	comments = [messageView string];
 
+	[self finish:YES];
 	[[self window] close];
-	sent = YES;
-	showing = NO;
 }
 
 - (IBAction)cancel:(id)sender {
+	[self finish:NO];
 	[[self window] close];
-	sent = NO;
-	showing = NO;
-}
-
-- (BOOL)waitForCompletion {
-	while(showing) {
-		usleep(2000);
-	}
-	return sent;
 }
 
 - (NSString *)name {
