@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%.1f VU" : {
+      "comment" : "VU meter: a needle's reading",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -12,6 +13,7 @@
       }
     },
     "%.1f dBFS" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -210,6 +212,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Añadir desde la carpeta de Cog"
+          }
+        }
+      }
+    },
+    "Add to Playlist" : {
+      "comment" : "Row menu: copies the track to another playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir a playlist"
           }
         }
       }
@@ -633,6 +646,17 @@
         }
       }
     },
+    "Create" : {
+      "comment" : "New playlist alert: the button that makes it",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear"
+          }
+        }
+      }
+    },
     "Crisp" : {
       "localizations" : {
         "es" : {
@@ -680,6 +704,61 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Por defecto (automático)"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "comment" : "Playlists list: swipe action that deletes a playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar"
+          }
+        }
+      }
+    },
+    "Delete Playlist" : {
+      "comment" : "Confirmation button: deletes the playlist and its tracks",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar playlist"
+          }
+        }
+      }
+    },
+    "Delete Playlist…" : {
+      "comment" : "Playlist title menu: delete the shown playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar playlist…"
+          }
+        }
+      }
+    },
+    "Delete “%@”?" : {
+      "comment" : "Deleting a playlist: the alert's title, with its name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar «%@»?"
+          }
+        }
+      }
+    },
+    "Delete…" : {
+      "comment" : "Playlists list: row menu item that deletes a playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar…"
           }
         }
       }
@@ -1169,6 +1248,47 @@
         }
       }
     },
+    "Its %lld tracks are removed with it." : {
+      "comment" : "Deleting a playlist: what goes with it",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Its %lld track is removed with it."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Its %lld tracks are removed with it."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Su %lld pista se elimina con ella."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Sus %lld pistas se eliminan con ella."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "LRCLIB could not answer for this track." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1346,6 +1466,17 @@
         }
       }
     },
+    "Manage Playlists…" : {
+      "comment" : "Playlist title menu: the list of playlists, to reorder, rename and delete them",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestionar playlists…"
+          }
+        }
+      }
+    },
     "Mixed" : {
       "localizations" : {
         "es" : {
@@ -1382,6 +1513,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agujas"
+          }
+        }
+      }
+    },
+    "New Playlist" : {
+      "comment" : "Playlist title menu, commands and alert: a new, empty playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva playlist"
+          }
+        }
+      }
+    },
+    "New Playlist…" : {
+      "comment" : "Row menu, Add to Playlist: copies the track into a new playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva playlist…"
           }
         }
       }
@@ -1589,6 +1742,7 @@
       }
     },
     "PEAK" : {
+      "comment" : "VU meter: the lamp that lights near full scale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1694,6 +1848,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Playlist"
+          }
+        }
+      }
+    },
+    "Playlists" : {
+      "comment" : "Title of the list of playlists",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playlists"
           }
         }
       }
@@ -1834,6 +1999,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Al quitar una ubicación, sus pistas quedan en la playlist, pero ya no se pueden reproducir."
+          }
+        }
+      }
+    },
+    "Rename" : {
+      "comment" : "Playlists list: swipe action, and the alert's button, that renames a playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrar"
+          }
+        }
+      }
+    },
+    "Rename Playlist" : {
+      "comment" : "Alert title: editing a playlist's name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrar playlist"
+          }
+        }
+      }
+    },
+    "Rename Playlist…" : {
+      "comment" : "Playlist title menu: edit the shown playlist's name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrar playlist…"
+          }
+        }
+      }
+    },
+    "Rename…" : {
+      "comment" : "Playlists list: row menu item that renames a playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrar…"
           }
         }
       }
@@ -2078,12 +2287,45 @@
         }
       }
     },
+    "Show Next Playlist" : {
+      "comment" : "Command: the next playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar playlist siguiente"
+          }
+        }
+      }
+    },
+    "Show Previous Playlist" : {
+      "comment" : "Command: the previous playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar playlist anterior"
+          }
+        }
+      }
+    },
     "Show Waveform" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar forma de onda"
+          }
+        }
+      }
+    },
+    "Shown" : {
+      "comment" : "Playlists list: marks the playlist on screen",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pantalla"
           }
         }
       }
@@ -2304,6 +2546,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Detener después de esta"
+          }
+        }
+      }
+    },
+    "Stop When the Queue Empties" : {
+      "comment" : "Settings: once the queue has played, stop instead of going on in the playlist",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener al vaciarse la cola"
           }
         }
       }

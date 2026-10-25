@@ -24,6 +24,12 @@ final class AppUI: ObservableObject {
 	@Published var addsMusic = false
 	@Published var addsURL = false
 	@Published var searching = false
+	/// The list of playlists, to reorder, rename and delete them.
+	@Published var managesPlaylists = false
+	/// A playlist being named: a new one, or one renamed.
+	@Published var namingPlaylist: PlaylistNaming?
+	/// A playlist with tracks, waiting for its deletion to be confirmed.
+	@Published var deletingPlaylist: Playlist?
 	/// What was just added, however it was, or what plays when asked for:
 	/// the playlist scrolls to it and highlights it for a moment.
 	@Published private(set) var added: Set<NSManagedObjectID> = []
@@ -36,9 +42,40 @@ final class AppUI: ObservableObject {
 		revealsAdded += 1
 	}
 
-	/// Go to Current Track: what plays, scrolled to and highlighted.
+	/// Go to Current Track: what plays, in its playlist, scrolled to and
+	/// highlighted.
 	func revealCurrent(of model: PlaylistModel) {
-		if let entry = model.currentEntry { reveal([entry]) }
+		guard let entry = model.currentEntry else { return }
+		if let playing = entry.playlist, playing != model.shownPlaylist { model.show(playing) }
+		reveal([entry])
+	}
+
+	/// Deletes `playlist`, asking first when it has tracks; playback stops
+	/// if it is the one playing.
+	func delete(_ playlist: Playlist, model: PlaylistModel, player: Player, confirmed: Bool = false) {
+		guard model.playlists.count > 1 else { return }
+		guard confirmed || playlist.orderedEntries.isEmpty else {
+			deletingPlaylist = playlist
+			return
+		}
+		if playlist == model.playingPlaylist { player.stop() }
+		model.delete(playlist)
+	}
+}
+
+/// A playlist being named, in an alert: a new one, with copies of some
+/// entries, or one being renamed.
+enum PlaylistNaming {
+	case new([PlaylistEntry])
+	case rename(Playlist)
+}
+
+extension AppUI {
+	/// The shown playlist's neighbor, after or before it, around the ends.
+	func showPlaylist(offsetBy offset: Int, in model: PlaylistModel) {
+		let playlists = model.playlists
+		guard playlists.count > 1, let shown = model.shownPlaylist, let position = playlists.firstIndex(of: shown) else { return }
+		model.show(playlists[(position + offset + playlists.count) % playlists.count])
 	}
 
 	func clearAdded() {
@@ -67,6 +104,15 @@ struct CogCommands: Commands {
 				.keyboardShortcut("o")
 			Button("Add URL…") { ui.addsURL = true }
 				.keyboardShortcut("o", modifiers: [.command, .shift])
+			Divider()
+			Button("New Playlist") { ui.namingPlaylist = .new([]) }
+				.keyboardShortcut("n")
+			Button("Show Next Playlist") { ui.showPlaylist(offsetBy: 1, in: model) }
+				.keyboardShortcut(.tab, modifiers: .control)
+				.disabled(model.playlists.count < 2)
+			Button("Show Previous Playlist") { ui.showPlaylist(offsetBy: -1, in: model) }
+				.keyboardShortcut(.tab, modifiers: [.control, .shift])
+				.disabled(model.playlists.count < 2)
 		}
 
 		CommandGroup(after: .textEditing) {

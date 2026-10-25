@@ -14,6 +14,7 @@ struct SettingsView: View {
 	@AppStorage("enableFading") private var fading = true
 	@AppStorage("volumeScaling") private var replayGain = "albumGainWithPeak"
 	@AppStorage("alwaysStopAfterCurrent") private var stopAfterEach = false
+	@AppStorage("stopWhenQueueEmpties") private var stopWhenQueueEmpties = false
 	@AppStorage("enableSpatialAudio") private var spatialAudio = false
 	@AppStorage("enableHeadTracking") private var headTracking = false
 	@AppStorage("enableLrclib") private var lrclib = false
@@ -37,6 +38,7 @@ struct SettingsView: View {
 				Section("Playback") {
 					Toggle("Fade on Pause and Seek", isOn: $fading)
 					Toggle("Stop After Each Track", isOn: $stopAfterEach)
+					Toggle("Stop When the Queue Empties", isOn: $stopWhenQueueEmpties)
 					NavigationLink("MIDI") { MIDISettingsView() }
 				}
 				Section {

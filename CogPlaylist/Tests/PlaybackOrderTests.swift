@@ -152,6 +152,19 @@ final class PlaybackOrderTests: XCTestCase {
 		XCTAssertEqual(first.orderedEntries, a, "the original stays")
 	}
 
+	func testEntriesAreRemovedFromPlaylistsNotShown() {
+		let (a, b) = twoPlaylists()
+		model.setCurrent(a[1])
+		model.addToQueue([a[2]])
+		model.remove([a[1], a[2], b[0]])
+		XCTAssertEqual(names(model.playlists[0].orderedEntries), ["A1"])
+		XCTAssertEqual(model.playlists[0].orderedEntries.map(\.index), [0])
+		XCTAssertEqual(names(model.entries), ["B2", "B3"])
+		XCTAssertTrue(model.queue.isEmpty)
+		XCTAssertEqual(model.nextEntry(after: a[1]), a[0], "nothing after it is left: from the start, as in one playlist")
+		XCTAssertEqual(model.allEntries.count, 3)
+	}
+
 	func testPlaylistsAreReorderedAndTheShownOneRemembered() {
 		_ = twoPlaylists()
 		model.newPlaylist(named: "Third")

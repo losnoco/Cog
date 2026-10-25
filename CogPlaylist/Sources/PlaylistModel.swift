@@ -258,6 +258,37 @@ public final class PlaylistModel: ObservableObject {
 		remove(at: IndexSet(integersIn: 0..<entries.count))
 	}
 
+	/// Removes `removed` from whichever playlists have them, as `remove(at:)`
+	/// does for the shown one.
+	public func remove(_ removed: [PlaylistEntry]) {
+		let byPlaylist = Dictionary(grouping: removed.filter { !$0.deLeted }, by: \.playlist)
+		for (playlist, group) in byPlaylist {
+			if playlist == shownPlaylist {
+				let wanted = Set(group)
+				remove(at: IndexSet(entries.indices.filter { wanted.contains(entries[$0]) }))
+				continue
+			}
+			order.willRemove(group, current: currentEntry)
+			for entry in group {
+				entry.deLeted = true
+			}
+			for (position, entry) in (playlist?.orderedEntries ?? []).enumerated() where entry.index != Int64(position) {
+				entry.index = Int64(position)
+			}
+			if playlist == playingPlaylist { onPlaylistChange?() }
+		}
+		objectWillChange.send()
+		store.save()
+	}
+
+	/// Every playlist's entries, for what concerns their files rather than
+	/// their order.
+	public var allEntries: [PlaylistEntry] {
+		let request = NSFetchRequest<PlaylistEntry>(entityName: "PlaylistEntry")
+		request.predicate = NSPredicate(format: "deLeted == NO OR deLeted == nil")
+		return (try? context.fetch(request)) ?? []
+	}
+
 	public func move(fromOffsets source: IndexSet, toOffset destination: Int) {
 		entries.move(fromOffsets: source, toOffset: destination)
 		updateIndexes()

@@ -53,7 +53,7 @@ final class MusicLocations: ObservableObject {
 			_ = url.startAccessingSecurityScopedResource()
 			accessed[url.path] = url
 			if url.path != location.path {
-				moved += MusicImporter.repoint(model.entries, from: location.path, to: url.path)
+				moved += MusicImporter.repoint(model.allEntries, from: location.path, to: url.path)
 				locations[index].path = url.path
 			}
 			if stale, let fresh = try? url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil) {

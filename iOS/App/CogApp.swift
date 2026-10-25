@@ -56,6 +56,7 @@ struct CogApp: App {
 			"synthDefaultLoopCount": 2,
 			"synthSampleRate": 44100,
 			"alwaysStopAfterCurrent": false,
+			"stopWhenQueueEmpties": false,
 			"suspendOutputOnPause": true,
 			"enableFading": true,
 			"waveformSeekBar": true,

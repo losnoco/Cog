@@ -61,6 +61,14 @@ struct PlaylistView: View {
 						Button("Search for Album", systemImage: "square.stack") { search(.album, of: entry) }
 							.disabled(entry.album?.isEmpty ?? true)
 						Divider()
+						Menu("Add to Playlist", systemImage: "text.badge.plus") {
+							ForEach(model.playlists.filter { $0 != model.shownPlaylist }, id: \.objectID) { playlist in
+								Button(playlist.name ?? "") { model.copy([entry], to: playlist) }
+							}
+							Divider()
+							Button("New Playlist…", systemImage: "plus") { ui.namingPlaylist = .new([entry]) }
+						}
+						Divider()
 						Button("Remove", systemImage: "trash", role: .destructive) {
 							model.remove(at: IndexSet(integer: Int(entry.index)))
 						}
@@ -109,7 +117,9 @@ struct PlaylistView: View {
 			Label(token.value, systemImage: token.field == .artist ? "music.mic" : "square.stack")
 		}
 		.listStyle(.plain)
-		.navigationTitle("Playlist")
+		.navigationTitle(model.shownPlaylist?.name ?? Playlist.defaultName)
+		.toolbarTitleMenu { PlaylistsMenu() }
+		.toolbarTitleDisplayMode(.inline)
 		.overlay {
 			if model.entries.isEmpty && addingCount == 0 {
 				ContentUnavailableView {
@@ -173,7 +183,7 @@ struct PlaylistView: View {
 		}
 		.confirmationDialog("Clear the playlist?", isPresented: $confirmsClear, titleVisibility: .visible) {
 			Button("Clear Playlist", role: .destructive) {
-				player.stop()
+				if model.playingPlaylist == model.shownPlaylist { player.stop() }
 				model.removeAll()
 			}
 		}
@@ -185,6 +195,10 @@ struct PlaylistView: View {
 		.sheet(isPresented: $ui.showsSettings) {
 			SettingsView()
 		}
+		.sheet(isPresented: $ui.managesPlaylists) {
+			PlaylistsView()
+		}
+		.playlistPrompts(isActive: !ui.managesPlaylists)
 		.alert("Add URL", isPresented: $ui.addsURL) {
 			TextField("https://", text: $urlText)
 				.keyboardType(.URL)

@@ -51,7 +51,7 @@ enum MusicImporter {
 	static func relocateMovedContainer(in model: PlaylistModel) -> Int {
 		let home = URL(fileURLWithPath: NSHomeDirectory()).standardizedFileURL.path
 		var moved = 0
-		for entry in model.entries {
+		for entry in model.allEntries {
 			guard let url = entry.url, url.isFileURL, !FileManager.default.fileExists(atPath: url.path),
 			      let range = url.path.range(of: #"/Containers/Data/Application/[0-9A-Fa-f-]{36}"#, options: .regularExpression),
 			      FileManager.default.fileExists(atPath: home + url.path[range.upperBound...]) else { continue }
@@ -68,12 +68,12 @@ enum MusicImporter {
 	@MainActor
 	@discardableResult
 	static func removeAppleDoubleFiles(in model: PlaylistModel) -> Int {
-		let offsets = IndexSet(model.entries.indices.filter { index in
-			guard let url = model.entries[index].url, url.isFileURL else { return false }
+		let appleDouble = model.allEntries.filter { entry in
+			guard let url = entry.url, url.isFileURL else { return false }
 			return url.lastPathComponent.hasPrefix("._")
-		})
-		if !offsets.isEmpty { model.remove(at: offsets) }
-		return offsets.count
+		}
+		if !appleDouble.isEmpty { model.remove(appleDouble) }
+		return appleDouble.count
 	}
 
 	/// Points the entries under `old` at the same place under `new`, keeping
