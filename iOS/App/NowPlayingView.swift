@@ -102,6 +102,9 @@ struct NowPlayingView: View {
 	/// The controls under what plays; without them while a bar of the
 	/// playlist's has them, as when the Duo stands like a laptop.
 	var showsControls = true
+	/// The seek bar under what plays; without it while the controls take
+	/// the Duo's lower half, standing like a laptop, and have it there.
+	var showsProgress = true
 	/// The equalizer, speed, lyrics and Info open in the pane across an
 	/// iPhone Duo's fold, rather than here as cards or sheets.
 	var panelsElsewhere = false
@@ -363,7 +366,116 @@ struct NowPlayingView: View {
 			.multilineTextAlignment(.center)
 			.padding(.horizontal)
 
-			ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
+			if showsProgress {
+				ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
+					.transition(.opacity)
+			}
+		}
+	}
+}
+
+private extension View {
+	/// Drawn at its size and scaled by `scale`, taking only the scaled room:
+	/// a scale grows and shrinks smoothly, where a font changed instead
+	/// swaps the glyphs.
+	func shrunk(_ scale: CGFloat) -> some View {
+		modifier(Shrunk(scale: scale))
+	}
+}
+
+private struct Shrunk: ViewModifier {
+	let scale: CGFloat
+	/// The unscaled size; zero until measured.
+	@State private var size = CGSize.zero
+
+	func body(content: Content) -> some View {
+		content
+			.fixedSize()
+			.onGeometryChange(for: CGSize.self) { $0.size } action: { size = $0 }
+			.scaleEffect(scale)
+			.frame(width: size == .zero ? nil : size.width * scale,
+			       height: size == .zero ? nil : size.height * scale)
+	}
+}
+
+/// The controls while an iPhone Duo stands like a laptop, on the half that
+/// lies flat: a glass bar at the playlist's foot, or, expanded, the same
+/// bar grown over the whole half, at full size over the album's colors as
+/// Now Playing above it.
+struct StandingControls: View {
+	let expanded: Bool
+	/// The fold's height above the half, which the album's color fills too
+	/// when expanded: one surface from the art down.
+	let foldHeight: CGFloat
+	/// Expands the bar over the playlist, or brings the playlist back.
+	let toggle: () -> Void
+	@EnvironmentObject private var player: Player
+	@EnvironmentObject private var model: PlaylistModel
+	@Environment(\.colorScheme) private var colorScheme
+	@AppStorage("nowPlayingAlwaysDark") private var alwaysDark = false
+	@State private var palette: ArtworkPalette?
+
+	var body: some View {
+		// One view throughout, so its frame, corners and controls grow and
+		// shrink in a single move rather than one view replacing another.
+		let shape = RoundedRectangle(cornerRadius: expanded ? 0 : 28, style: .continuous)
+		VStack(spacing: 24) {
+			// Expanded, the seek bar comes down from Now Playing, as on its own
+			// it has the controls under it.
+			if expanded, let entry = model.currentEntry {
+				ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
+					.transition(.opacity)
+			}
+			NowPlayingControls(compact: !expanded, isEmbedded: true, palette: expanded ? palette : nil)
+		}
+			.frame(maxWidth: expanded ? 720 : nil)
+			.padding(.vertical, 12)
+			.frame(maxWidth: .infinity, maxHeight: expanded ? .infinity : nil)
+			.overlay(alignment: .topTrailing) {
+				Button(expanded ? "Show Playlist" : "Hide Playlist",
+				       systemImage: expanded ? "music.note.list" : "rectangle.expand.vertical",
+				       action: toggle)
+					.labelStyle(.iconOnly)
+					.font(expanded ? .title2 : .body)
+					.foregroundStyle(.secondary)
+					.contentTransition(.symbolEffect(.replace))
+					.padding(.top, expanded ? 16 : 10)
+					.padding(.trailing, 16)
+			}
+			.background {
+				ZStack {
+					glass(in: shape)
+					// The album's color fades in over the glass as it grows: the
+					// one Now Playing's ends in at the fold, over the fold as
+					// well, so the art's colors run on down. Opaque without art
+					// too, the playlist being underneath.
+					ZStack {
+						Color(uiColor: .systemBackground)
+						palette?.bottom
+					}
+					.animation(.easeInOut(duration: 0.6), value: palette)
+					.clipShape(shape)
+					.padding(.top, expanded ? -foldHeight : 0)
+					.opacity(expanded ? 1 : 0)
+				}
+				.ignoresSafeArea(.container, edges: expanded ? .all : [])
+			}
+			.padding(.horizontal, expanded ? 0 : 16)
+			.padding(.bottom, expanded ? 0 : 8)
+			.tint(expanded ? palette?.accent : nil)
+			.environment(\.colorScheme, expanded && (palette != nil || alwaysDark) ? .dark : colorScheme)
+			// Here, whatever brings the change: one stored in the defaults
+			// arrives outside the transaction that made it.
+			.animation(.controls, value: expanded)
+			.albumPalette($palette, of: model.currentEntry)
+	}
+
+	/// Liquid Glass, where the system has it; a material otherwise.
+	@ViewBuilder private func glass(in shape: some Shape) -> some View {
+		if #available(iOS 26.0, *) {
+			Color.clear.glassEffect(.regular, in: shape)
+		} else {
+			shape.fill(.regularMaterial)
 		}
 	}
 }
@@ -480,19 +592,25 @@ struct NowPlayingControls: View {
 					held ? player.beginRewind() : player.endRewind()
 				}
 				.accessibilityAction(named: "Seek Backward") { player.seek(by: -5) }
+				.shrunk(compact ? 28.0 / 34 : 1)
 				Button(player.isPlaying ? "Pause" : "Play", systemImage: player.isPlaying ? "pause.circle.fill" : "play.circle.fill") {
 					player.togglePlayPause()
 				}
-				.font(.system(size: compact ? 48 : 64))
+				.font(.system(size: 64))
 				// The circle stays; only the glyph inside turns into the other.
 				.contentTransition(.symbolEffect(.replace.magic(fallback: .downUp.byLayer), options: .nonRepeating))
 				.animation(.controls, value: player.isPlaying)
+				.shrunk(compact ? 0.75 : 1)
 				HoldButton("Next", systemImage: "forward.fill", action: { player.next() }) { held in
 					held ? player.beginFastForward() : player.endFastForward()
 				}
 				.accessibilityAction(named: "Seek Forward") { player.seek(by: 5) }
+				.shrunk(compact ? 28.0 / 34 : 1)
 			}
-			.font(compact ? .title : .largeTitle)
+			// One size, scaled down when compact: a smaller font would fade
+			// Play's and Repeat's glyphs out and in, on the symbol effect's
+			// own clock, rather than letting them shrink and grow.
+			.font(.largeTitle)
 			// Lifted off the art's colors, or the plain background.
 			.shadow(color: .black.opacity(palette == nil ? 0.18 : 0.35), radius: compact ? 4 : 6, y: compact ? 2 : 3)
 
@@ -515,6 +633,7 @@ struct NowPlayingControls: View {
 						ForEach([PlaylistShuffleMode.off, .albums, .all], id: \.self) { Text(shuffleName($0)).tag($0) }
 					}
 				}
+				.shrunk(compact ? 20.0 / 22 : 1)
 				.frame(maxWidth: .infinity)
 				Button { model.toggleRepeat() } label: {
 					Label("Repeat", systemImage: model.repeatMode == .one ? "repeat.1" : "repeat")
@@ -532,26 +651,30 @@ struct NowPlayingControls: View {
 						ForEach([PlaylistRepeatMode.none, .one, .album, .all], id: \.self) { Text(repeatName($0)).tag($0) }
 					}
 				}
+				.shrunk(compact ? 20.0 / 22 : 1)
 				.frame(maxWidth: .infinity)
 				Button("Lyrics", systemImage: "quote.bubble") { ui.showsLyrics.toggle() }
 					.foregroundStyle(Color.secondary)
 					.disabled(model.currentEntry == nil)
-					.frame(maxWidth: .infinity)
+					.shrunk(compact ? 20.0 / 22 : 1)
+				.frame(maxWidth: .infinity)
 				// Over the playlist, Info is in the toolbar.
 				if isEmbedded {
 					Button("Info", systemImage: "info.circle") { ui.showsInfo.toggle() }
 						.foregroundStyle(Color.secondary)
 						.disabled(model.currentEntry == nil)
-						.frame(maxWidth: .infinity)
+						.shrunk(compact ? 20.0 / 22 : 1)
+				.frame(maxWidth: .infinity)
 				}
 				moreMenu
-					.frame(maxWidth: .infinity)
+					.shrunk(compact ? 20.0 / 22 : 1)
+				.frame(maxWidth: .infinity)
 				RoutePicker()
 					.frame(width: 32, height: 32)
 					.frame(maxWidth: .infinity)
 			}
 			.padding(.horizontal, 12)
-			.font(compact ? .title3 : .title2)
+			.font(.title2)
 		}
 		.labelStyle(.iconOnly)
 	}

@@ -15,6 +15,20 @@ struct ContentView: View {
 	@EnvironmentObject private var ui: AppUI
 	/// The playlist's pane's width beside Now Playing, safe areas included.
 	@State private var playlistPaneWidth: CGFloat = 0
+	/// Standing like a laptop, the Duo's lower half shows only the controls,
+	/// larger, rather than the playlist with a bar of them.
+	@AppStorage("hidesPlaylistStanding") private var hidesPlaylistStanding = false
+	/// `hidesPlaylistStanding`, changed here in a transaction of its own:
+	/// one stored in the defaults arrives outside the one that changed it,
+	/// and the seek bar's move across the fold would come unanimated.
+	@State private var standingExpanded = UserDefaults.standard.bool(forKey: "hidesPlaylistStanding")
+	/// The standing controls' bar's height, margins included, which the
+	/// playlist keeps clear at its end.
+	@State private var standingBarHeight: CGFloat = 0
+	/// The room at the playlist's foot that its stack's bars take, and the
+	/// pane's own there, without them: the difference is the bars'.
+	@State private var playlistFootInset: CGFloat = 0
+	@State private var paneFootInset: CGFloat = 0
 
 	var body: some View {
 		// Room for both, as on an iPad or an unfolded iPhone Duo: the playlist
@@ -34,7 +48,11 @@ struct ContentView: View {
 				if #available(iOS 27.1, *) {
 					// The system splits them, along the fold where there is one.
 					ArrangementView {
-						NowPlayingView(isEmbedded: true, showsControls: !laptop, panelsElsewhere: fold != nil)
+						// The seek bar goes down with the controls when they
+						// take the lower half.
+						NowPlayingView(isEmbedded: true, showsControls: !laptop,
+						               showsProgress: !(laptop && standingExpanded && model.currentEntry != nil),
+						               panelsElsewhere: fold != nil)
 					} secondary: {
 						playlist(fold: fold, laptop: laptop)
 							.splitArrangementLayoutSize(minWidth: fold == nil ? 340 : nil,
@@ -70,25 +88,53 @@ struct ContentView: View {
 	/// The playlist beside Now Playing. On an iPhone Duo, the equalizer,
 	/// speed, lyrics and Info open in sheets over it, across the fold from
 	/// Now Playing, which stays in view and in reach; and while the Duo
-	/// stands like a laptop, the controls are in a bar at its foot.
+	/// stands like a laptop, the controls are in a bar at its foot, or, if
+	/// asked, in its place.
 	private func playlist(fold: Fold?, laptop: Bool) -> some View {
-		NavigationStack {
-			PlaylistView()
-				// Inside the stack, so the list makes room for it at its end.
-				.bottomBar {
-					if laptop && model.currentEntry != nil {
-						NowPlayingControls(compact: true, isEmbedded: true, palette: nil)
-							.padding(.vertical, 12)
-							.glassBacking()
-							.padding(.horizontal, 16)
-							.padding(.bottom, 8)
-							.transition(.move(edge: .bottom).combined(with: .opacity))
+		let standing = laptop && model.currentEntry != nil
+		// Standing like a laptop, the half lying flat may give the playlist
+		// up to larger controls: the bar of them grows over it. The playlist
+		// stays underneath, scrolled where it was, for when it comes back.
+		let controlsOnly = standing && standingExpanded
+		return ZStack(alignment: .bottom) {
+			NavigationStack {
+				PlaylistView()
+					// Inside the stack, so the list makes room at its end for
+					// the bar drawn over it, and fades under it.
+					.bottomBar {
+						if standing {
+							Color.clear
+								.frame(height: standingBarHeight)
+						}
 					}
+					// Inside the stack, which an animation from outside it does
+					// not reach.
+					.animation(.controls, value: laptop)
+					// Outside its own bar: the room the stack's bars take at
+					// the foot, the search field's among them.
+					.onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: {
+						playlistFootInset = $0
+					}
+			}
+			.accessibilityHidden(controlsOnly)
+			// Outside the stack, so the bar can grow to the whole pane.
+			if standing {
+				StandingControls(expanded: controlsOnly, foldHeight: fold?.frame.height ?? 0) {
+					withAnimation(.controls) { standingExpanded.toggle() }
+					hidesPlaylistStanding = standingExpanded
 				}
-				// Inside the stack, which an animation from outside it does
-				// not reach.
-				.animation(.controls, value: laptop)
+				.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+					if !controlsOnly { standingBarHeight = height }
+				}
+				// Over the stack, but above its bars at the foot, as a bar of
+				// its own would be; grown, over the whole pane.
+				.padding(.bottom, controlsOnly ? 0 : max(playlistFootInset - paneFootInset, 0))
+				.animation(.controls, value: controlsOnly)
+				.transition(.move(edge: .bottom).combined(with: .opacity))
+			}
 		}
+		.animation(.controls, value: standing)
+		.onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { paneFootInset = $0 }
 		// The pane's whole width, to the screen's edge: a sheet placed on
 		// the trailing side runs to that edge, over the Duo's vertical status
 		// bar, keeping its own content clear of it.
@@ -201,16 +247,6 @@ private extension View {
 			safeAreaBar(edge: .bottom, content: content)
 		} else {
 			safeAreaInset(edge: .bottom, content: content)
-		}
-	}
-
-	/// Liquid Glass behind, where the system has it; a material otherwise.
-	@ViewBuilder func glassBacking() -> some View {
-		let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
-		if #available(iOS 26.0, *) {
-			glassEffect(.regular, in: shape)
-		} else {
-			background(.regularMaterial, in: shape)
 		}
 	}
 }
