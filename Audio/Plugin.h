@@ -44,7 +44,8 @@
 // stores them, keyed by track URL: read in the one pass that finds the
 // tracks, where the readers would open the file again for every one. A
 // track left out of *info is read as usual. A container that finds no
-// tracks may still describe the file itself, under its own URL.
+// tracks may still describe the file itself, under its own URL, but only as
+// the readers give it, having read it with them.
 + (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)info;
 @end
 

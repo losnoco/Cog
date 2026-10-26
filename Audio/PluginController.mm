@@ -786,6 +786,12 @@ static NSString *xmlEscapeString(NSString * string) {
 		} else {
 			urls = [container urlsForContainerURL:url];
 		}
+		// A file in which the container found no tracks of its own, it can
+		// only have described as the readers do: TagLib's tags for an MP3
+		// with no cue sheet, say, though the container's plugin reads none.
+		if(!fileInfo && ![urls count] && [read objectForKey:url]) {
+			fileInfo = @{ url: [read objectForKey:url] };
+		}
 		if([read count]) read = readable(container, read);
 		if(!fileInfo && [read objectForKey:url]) {
 			fileInfo = @{ url: [read objectForKey:url] };
