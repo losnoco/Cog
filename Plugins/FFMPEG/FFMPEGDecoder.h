@@ -54,6 +54,7 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 	AVIOContext *ioCtx;
 	int streamIndex;
 	AVFormatContext *formatCtx;
+	BOOL formatCtxLent;
 	AVCodecContext *codecCtx;
 	AVFrame *lastDecodedFrame;
 	AVPacket *lastReadPacket;
@@ -89,5 +90,10 @@ int64_t ffmpeg_seek(void *opaque, int64_t offset, int whence);
 
 	NSDictionary *id3Metadata;
 }
+
+// Opens subsong `track` of a seekable file whose format context the caller
+// has opened and probed, as -open: would for the file's URL with that
+// fragment. The context stays the caller's, and outlives the decoder's use.
+- (BOOL)openTrack:(int)track ofFormatContext:(AVFormatContext *)ctx;
 
 @end

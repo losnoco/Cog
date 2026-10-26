@@ -129,8 +129,7 @@ static uint8_t reverse_bits[0x100];
 - (BOOL)open:(id<CogSource>)s {
 	char errDescr[AV_ERROR_MAX_STRING_SIZE];
 
-	int errcode, i;
-	AVStream *stream;
+	int errcode;
 
 	source = s;
 
@@ -181,6 +180,28 @@ static uint8_t reverse_bits[0x100];
 		ALog(@"Can't find stream info, errcode = %d, error = %s", errcode, errDescr);
 		return NO;
 	}
+
+	return [self openStreams];
+}
+
+- (BOOL)openTrack:(int)track ofFormatContext:(AVFormatContext *)ctx {
+	formatCtx = ctx;
+	formatCtxLent = YES;
+	seekable = YES;
+	subsong = track;
+	totalFrames = 0;
+	framesRead = 0;
+	rawDSD = NO;
+
+	return [self openStreams];
+}
+
+// Everything after the format context is opened and probed.
+- (BOOL)openStreams {
+	char errDescr[AV_ERROR_MAX_STRING_SIZE];
+
+	int errcode, i;
+	AVStream *stream;
 
 	streamIndex = -1;
 	metadataIndex = -1;
@@ -538,7 +559,11 @@ static uint8_t reverse_bits[0x100];
 	}
 
 	if(formatCtx) {
-		avformat_close_input(&formatCtx);
+		if(formatCtxLent) {
+			formatCtx = NULL;
+		} else {
+			avformat_close_input(&formatCtx);
+		}
 	}
 
 	if(ioCtx) {

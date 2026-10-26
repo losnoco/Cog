@@ -18,6 +18,18 @@
 	}
 }
 
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)info {
+	// Held outside the pool: what comes back through `info` is autoreleased,
+	// and would go with it.
+	NSArray *urls;
+	NSDictionary *trackInfo = nil;
+	@autoreleasepool {
+		urls = [[PluginController sharedPluginController] urlsForContainerURL:url trackInfo:info ? &trackInfo : NULL];
+	}
+	if(info) *info = trackInfo;
+	return urls;
+}
+
 + (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url {
 	@autoreleasepool {
 		return [[PluginController sharedPluginController] dependencyUrlsForContainerURL:url];

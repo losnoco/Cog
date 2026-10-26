@@ -335,6 +335,77 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
+// firstSawTrackWithoutReload: for many entries at once: the play counts
+// they may have are fetched together, where each entry would fetch up to
+// three times on its own.
+- (void)firstSawTracksWithoutReload:(NSArray<PlaylistEntry *> *)entries {
+	if(![entries count]) return;
+
+	NSManagedObjectContext *moc = self.persistentContainer.viewContext;
+
+	NSMutableSet *titles = [NSMutableSet new];
+	NSMutableSet *filenames = [NSMutableSet new];
+	for(PlaylistEntry *pe in entries) {
+		if(pe.title) [titles addObject:pe.title];
+		if(pe.filenameFragment) [filenames addObject:pe.filenameFragment];
+		if(pe.filename) [filenames addObject:pe.filename];
+	}
+
+	// Tags as playCountItem matches them: album, artist and title.
+	NSArray * (^tagKey)(NSString *, NSString *, NSString *) = ^NSArray *(NSString *album, NSString *artist, NSString *title) {
+		return @[album ?: [NSNull null], artist ?: [NSNull null], title ?: [NSNull null]];
+	};
+
+	NSMutableSet *knownTags = [NSMutableSet new];
+	NSMutableSet *knownFilenames = [NSMutableSet new];
+
+	[moc performBlockAndWait:^{
+		NSError *error = nil;
+		if([titles count]) {
+			NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+			request.predicate = [NSPredicate predicateWithFormat:@"title IN %@", titles];
+			for(PlayCount *pc in [moc executeFetchRequest:request error:&error]) {
+				[knownTags addObject:tagKey(pc.album, pc.artist, pc.title)];
+			}
+		}
+		if([filenames count]) {
+			NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"PlayCount"];
+			request.predicate = [NSPredicate predicateWithFormat:@"filename IN %@", filenames];
+			for(PlayCount *pc in [moc executeFetchRequest:request error:&error]) {
+				if(pc.filename) [knownFilenames addObject:pc.filename];
+			}
+		}
+	}];
+
+	for(PlaylistEntry *pe in entries) {
+		if(!pe.title) {
+			// No title to look for together.
+			[self firstSawTrackWithoutReload:pe];
+			continue;
+		}
+		NSArray *key = tagKey(pe.album, pe.artist, pe.title);
+		if([knownTags containsObject:key]) continue;
+		if((pe.filenameFragment && [knownFilenames containsObject:pe.filenameFragment]) ||
+		   (pe.filename && [knownFilenames containsObject:pe.filename])) {
+			// Counted under its file name only, which playCountItem tags.
+			[self firstSawTrackWithoutReload:pe];
+			[knownTags addObject:key];
+			continue;
+		}
+		[moc performBlockAndWait:^{
+			PlayCount *pc = [NSEntityDescription insertNewObjectForEntityForName:@"PlayCount" inManagedObjectContext:moc];
+			pc.count = 0;
+			pc.firstSeen = [NSDate date];
+			pc.album = pe.album;
+			pc.artist = pe.artist;
+			pc.title = pe.title;
+			pc.filename = pe.filenameFragment;
+		}];
+		[knownTags addObject:key];
+		if(pe.filenameFragment) [knownFilenames addObject:pe.filenameFragment];
+	}
+}
+
 - (void)ratingUpdatedWithEntry:(PlaylistEntry *)pe rating:(CGFloat)rating {
 	if(pe && !pe.deLeted) {
 		__block PlayCount *pc = pe.playCountItem;

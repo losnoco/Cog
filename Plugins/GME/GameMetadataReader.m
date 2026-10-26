@@ -95,6 +95,14 @@
 
 	gme_delete(emu);
 
+	NSDictionary *dict = [GameMetadataReader metadataForTrackInfo:info url:url track:track_num];
+
+	gme_free_info(info);
+
+	return dict;
+}
+
++ (NSDictionary *)metadataForTrackInfo:(gme_info_t *)info url:(NSURL *)url track:(int)track_num {
 	NSString *title = guess_encoding_of_string(info->song);
 	if(!title || ![title length]) {
 		// this is needed to distinguish between different tracks in NSF, for example
@@ -102,15 +110,11 @@
 		title = [[url lastPathComponent] stringByAppendingFormat:@" [%d]", track_num];
 	}
 
-	NSDictionary *dict = @{ @"genre": guess_encoding_of_string(info->system),
-		                    @"album": guess_encoding_of_string(info->game),
-		                    @"title": title,
-		                    @"artist": guess_encoding_of_string(info->author),
-		                    @"track": @(track_num + 1) };
-
-	gme_free_info(info);
-
-	return dict;
+	return @{ @"genre": guess_encoding_of_string(info->system),
+		      @"album": guess_encoding_of_string(info->game),
+		      @"title": title,
+		      @"artist": guess_encoding_of_string(info->author),
+		      @"track": @(track_num + 1) };
 }
 
 @end

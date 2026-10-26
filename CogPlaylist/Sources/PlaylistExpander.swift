@@ -44,6 +44,12 @@ import Foundation
 	/// itself.
 	@objc public private(set) var xmlPlaylistURLs: [URL] = []
 
+	/// What containers read of their tracks while opening them, as
+	/// PlaylistEntryInfo would read it, so the loader need not read it
+	/// again: a multi-track file's subsongs, from the one pass that found
+	/// them.
+	@objc public private(set) var trackInfo: [URL: [String: Any]] = [:]
+
 	/// Every URL seen so far, so each is added once.
 	private var unique = Set<URL>()
 	private var dependencies = Set<String>()
@@ -153,17 +159,25 @@ import Foundation
 
 				let type = url.pathExtension.lowercased()
 				if containerTypes.contains(type) {
-					let inner = PluginCalls.run(for: url) { AudioContainer.urls(forContainerURL: url) as? [URL] } ?? []
+					var info: NSDictionary?
+					let inner = PluginCalls.run(for: url) { AudioContainer.urls(forContainerURL: url, trackInfo: &info) as? [URL] } ?? []
 					if inner.isEmpty {
-						// Every container parser failed: the raw file, then.
+						// Every container parser failed: the raw file, then,
+						// with what one read of it.
 						lock.lock()
 						loaded[key] = url
+						if let fileInfo = (info as? [URL: [String: Any]])?[url] {
+							trackInfo[url] = fileInfo
+						}
 						lock.unlock()
 						return
 					}
 					let dependencies = PluginCalls.run(for: url) { AudioContainer.dependencyUrls(forContainerURL: url) as? [URL] } ?? []
 					lock.lock()
 					loaded[key] = inner
+					if let info = info as? [URL: [String: Any]] {
+						trackInfo.merge(info) { _, new in new }
+					}
 					// So the container is not added as well.
 					unique.insert(url)
 					self.dependencies.formUnion(dependencies.map(\.absoluteString))
@@ -235,6 +249,13 @@ import Foundation
 	/// All three steps, for an app with no progress to show between them.
 	public func urls(for urls: [URL], sort: Bool) -> [URL] {
 		validURLs(from: openContainers(expand(urls)), sort: sort)
+	}
+
+	/// All three steps, with what the containers read of the tracks they
+	/// hold (see trackInfo).
+	public func urlsAndInfo(for urls: [URL], sort: Bool) -> (urls: [URL], info: [URL: [String: Any]]) {
+		let found = self.urls(for: urls, sort: sort)
+		return (found, trackInfo)
 	}
 
 	/// Finder's order: case, width and composition aside, digits as numbers.

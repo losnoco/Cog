@@ -26,4 +26,14 @@
 - (void)setSource:(id<CogSource>)s;
 - (id<CogSource>)source;
 - (void)cleanUp;
+
+// The rate modules play at, from the user's settings.
++ (double)sampleRate;
+// A module loaded from `data` as the decoder loads it. Throws as
+// openmpt::module does.
++ (openmpt::module *)newModuleWithData:(const std::vector<char> &)data;
+// Selects `subsong` of `mod` and gives its length in frames at `sampleRate`.
++ (long)selectSubsong:(int)subsong ofModule:(openmpt::module *)mod sampleRate:(double)sampleRate;
+// The properties of a subsong `length` frames long.
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate length:(long)length;
 @end

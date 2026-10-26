@@ -16,6 +16,9 @@
 #import <objc/runtime.h>
 #endif
 
+// CogPluginMulti.m's order of plugins, highest priority first.
+extern "C" NSArray *sortClassesByPriority(NSArray *theClasses);
+
 #import <chrono>
 #import <map>
 #import <mutex>
@@ -126,6 +129,47 @@ static NSDictionary *cache_access_metadata(NSURL *url, BOOL skipCue) {
 	return nil;
 }
 
+// The cover image file in each folder lately looked in, or NSNull for none,
+// so adding a folder's tracks lists it and reads its cover once, not once a
+// track. Kept as long as the tags around it are.
+struct Cached_Folder_Art {
+	std::chrono::steady_clock::time_point time_accessed;
+	id image;
+};
+
+static std::map<std::string, Cached_Folder_Art> Folder_Art_List;
+
+static NSData *folder_cover_art(NSString *path) {
+	std::string key = [path UTF8String];
+	{
+		std::lock_guard<std::mutex> lock(*Cache_Lock);
+		auto it = Folder_Art_List.find(key);
+		if(it != Folder_Art_List.end()) {
+			it->second.time_accessed = std::chrono::steady_clock::now();
+			return it->second.image == [NSNull null] ? nil : it->second.image;
+		}
+	}
+
+	// Gather list of candidate image files
+	NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+	NSArray *types = @[@"jpg", @"jpeg", @"png", @"gif", @"webp", @"avif", @"heic"];
+	NSArray *imageFileNames = [fileNames pathsMatchingExtensions:types];
+
+	NSData *image = nil;
+	for(NSString *fileName in imageFileNames) {
+		if([PluginController isCoverFile:fileName]) {
+			image = [NSData dataWithContentsOfFile:[path stringByAppendingPathComponent:fileName]];
+			break;
+		}
+	}
+
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
+	Cached_Folder_Art &entry = Folder_Art_List[key];
+	entry.image = image ? image : [NSNull null];
+	entry.time_accessed = std::chrono::steady_clock::now();
+	return image;
+}
+
 static void cache_run() {
 	std::chrono::milliseconds dura(250);
 
@@ -143,6 +187,15 @@ static void cache_run() {
 				auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_accessed);
 				if(elapsed.count() >= 10) {
 					it = Cache_List.erase(it);
+					continue;
+				}
+				++it;
+			}
+
+			for(auto it = Folder_Art_List.begin(); it != Folder_Art_List.end();) {
+				auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - it->second.time_accessed);
+				if(elapsed.count() >= 10) {
+					it = Folder_Art_List.erase(it);
 					continue;
 				}
 				++it;
@@ -672,6 +725,107 @@ static NSString *xmlEscapeString(NSString * string) {
 	return [container urlsForContainerURL:url];
 }
 
+// Whether what `container` reads of its tracks is what reading each would
+// give: for `ext`, the decoder and readers picked first all come from the
+// container's own plugin. Picks among equals fall in no set order, so a tie
+// with another plugin's counts as another's.
+- (BOOL)containerReadsAsReaders:(Class)container forExtension:(NSString *)ext {
+	NSBundle *bundle = [NSBundle bundleForClass:container];
+	BOOL (^ownsFirst)(NSArray *) = ^BOOL(NSArray *classStrings) {
+		float top = -INFINITY;
+		for(NSString *classString in classStrings) {
+			top = MAX(top, [NSClassFromString(classString) priority]);
+		}
+		for(NSString *classString in classStrings) {
+			Class cls = NSClassFromString(classString);
+			if([cls priority] == top && [NSBundle bundleForClass:cls] != bundle) return NO;
+		}
+		return YES;
+	};
+	ext = [ext lowercaseString];
+	return ownsFirst([decodersByExtension objectForKey:ext]) &&
+	       ownsFirst([metadataReaders objectForKey:ext]) &&
+	       ownsFirst([propertiesReadersByExtension objectForKey:ext]);
+}
+
+- (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)info {
+	url = CogNormalizeURL(url);
+	if(info) *info = nil;
+
+	NSString *ext = [url pathExtension];
+	NSArray *containerSet = [containers objectForKey:[ext lowercaseString]];
+	if(!containerSet) return nil;
+
+	// What `container` read that reading each track would read alike.
+	NSDictionary * (^readable)(Class, NSDictionary *) = ^NSDictionary *(Class container, NSDictionary *trackInfo) {
+		NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:[trackInfo count]];
+		NSMutableDictionary *owned = [NSMutableDictionary new];
+		for(NSURL *trackURL in trackInfo) {
+			NSString *trackExt = [trackURL pathExtension];
+			NSNumber *owns = owned[trackExt];
+			if(!owns) {
+				owns = @([self containerReadsAsReaders:container forExtension:trackExt]);
+				owned[trackExt] = owns;
+			}
+			if([owns boolValue]) result[trackURL] = trackInfo[trackURL];
+		}
+		return result;
+	};
+
+	// The first container to find tracks, as CogContainerMulti picks it, and
+	// the first to describe the file itself, for when what it finds is only
+	// the file.
+	NSDictionary *trackInfo = nil;
+	NSArray *urls = nil;
+	NSDictionary *fileInfo = nil;
+	for(NSString *classString in sortClassesByPriority(containerSet)) {
+		Class container = NSClassFromString(classString);
+		NSDictionary *read = nil;
+		if(info && [container respondsToSelector:@selector(urlsForContainerURL:trackInfo:)]) {
+			urls = [container urlsForContainerURL:url trackInfo:&read];
+		} else {
+			urls = [container urlsForContainerURL:url];
+		}
+		if([read count]) read = readable(container, read);
+		if(!fileInfo && [read objectForKey:url]) {
+			fileInfo = @{ url: [read objectForKey:url] };
+		}
+		if([urls count]) {
+			trackInfo = read;
+			break;
+		}
+	}
+	if(fileInfo && ![trackInfo objectForKey:url] && (![urls count] || [urls isEqualToArray:@[url]])) {
+		trackInfo = fileInfo;
+	}
+
+	if(info && [trackInfo count]) {
+		// The cover beside the file, as metadataForURL: finds it for tracks
+		// that have none of their own.
+		NSData *folderArt = nil;
+		BOOL lookedForArt = NO;
+		NSMutableDictionary *completed = [NSMutableDictionary dictionaryWithCapacity:[trackInfo count]];
+		for(NSURL *trackURL in trackInfo) {
+			NSDictionary *entryInfo = trackInfo[trackURL];
+			if(![[entryInfo objectForKey:@"albumArt"] length] && [url isFileURL]) {
+				if(!lookedForArt) {
+					folderArt = folder_cover_art([[url path] stringByDeletingLastPathComponent]);
+					lookedForArt = YES;
+				}
+				if(folderArt) {
+					NSMutableDictionary *withArt = [entryInfo mutableCopy];
+					withArt[@"albumArt"] = folderArt;
+					entryInfo = withArt;
+				}
+			}
+			completed[trackURL] = entryInfo;
+		}
+		*info = completed;
+	}
+
+	return urls;
+}
+
 - (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url {
 	url = CogNormalizeURL(url);
 
@@ -810,21 +964,7 @@ static NSString *xmlEscapeString(NSString * string) {
 
 		if(nil == image) {
 			// Try to load image from external file
-
-			NSString *path = [[url path] stringByDeletingLastPathComponent];
-
-			// Gather list of candidate image files
-
-			NSArray *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
-			NSArray *types = @[@"jpg", @"jpeg", @"png", @"gif", @"webp", @"avif", @"heic"];
-			NSArray *imageFileNames = [fileNames pathsMatchingExtensions:types];
-
-			for(NSString *fileName in imageFileNames) {
-				if([PluginController isCoverFile:fileName]) {
-					image = [NSData dataWithContentsOfFile:[path stringByAppendingPathComponent:fileName]];
-					break;
-				}
-			}
+			image = folder_cover_art([[url path] stringByDeletingLastPathComponent]);
 
 			if(image) {
 				NSMutableDictionary *data = [cacheData mutableCopy];

@@ -86,11 +86,17 @@
 
 	jaytrax_changeSubsong(synPlayer, track_num);
 
-	//Some titles are all spaces?!
-	NSString *title = [guess_encoding_of_string(synPlayer->subsong->name) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	NSDictionary *dict = [jxsMetadataReader metadataForSubsong:synPlayer->subsong];
 
 	jaytrax_free(synPlayer);
 	jxsfile_freeSong(synSong);
+
+	return dict;
+}
+
++ (NSDictionary *)metadataForSubsong:(JT1Subsong *)subsong {
+	//Some titles are all spaces?!
+	NSString *title = [guess_encoding_of_string(subsong->name) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
 	if (title == nil) {
 		title = @"";

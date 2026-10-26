@@ -23,8 +23,10 @@
 	return [OMPTDecoder mimeTypes];
 }
 
+// Above TagLib's, which reads module titles too, so modules' tags come
+// from here every time, and from the one load the container reads them in.
 + (float)priority {
-	return 1.0f;
+	return 1.5f;
 }
 
 static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *value) {
@@ -65,23 +67,7 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		std::map<std::string, std::string> ctls;
 		openmpt::module *mod = new openmpt::module(data, std::clog, ctls);
 
-		NSMutableDictionary *dict = [NSMutableDictionary new];
-
-		std::vector<std::string> keys = mod->get_metadata_keys();
-
-		for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
-			@autoreleasepool {
-				NSString *tag = guess_encoding_of_string((*key).c_str());
-				NSString *value = guess_encoding_of_string(mod->get_metadata(*key).c_str());
-				if(*key == "type")
-					continue;
-				else if(*key == "type_long") {
-					setDictionary(dict, @"codec", value);
-				} else {
-					setDictionary(dict, tag, value);
-				}
-			}
-		}
+		NSDictionary *dict = [OMPTMetadataReader metadataForModule:mod];
 
 		delete mod;
 
@@ -90,6 +76,28 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		ALog(@"Exception caught while reading metadata with OpenMPT: %s", e.what());
 		return @{};
 	}
+}
+
++ (NSDictionary *)metadataForModule:(openmpt::module *)mod {
+	NSMutableDictionary *dict = [NSMutableDictionary new];
+
+	std::vector<std::string> keys = mod->get_metadata_keys();
+
+	for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
+		@autoreleasepool {
+			NSString *tag = guess_encoding_of_string((*key).c_str());
+			NSString *value = guess_encoding_of_string(mod->get_metadata(*key).c_str());
+			if(*key == "type")
+				continue;
+			else if(*key == "type_long") {
+				setDictionary(dict, @"codec", value);
+			} else {
+				setDictionary(dict, tag, value);
+			}
+		}
+	}
+
+	return dict;
 }
 
 @end

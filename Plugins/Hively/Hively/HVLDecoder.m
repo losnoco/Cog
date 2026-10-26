@@ -27,38 +27,20 @@ static void oneTimeInit(void) {
 		oneTimeInit();
 }
 
-- (BOOL)open:(id<CogSource>)s {
-	[s seek:0 whence:SEEK_END];
-	long size = [s tell];
-	[s seek:0 whence:SEEK_SET];
-
-	if(size > UINT_MAX)
-		return NO;
-
-	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
++ (double)sampleRate {
+	double sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
 		sampleRate = 192000.0;
 	}
+	return sampleRate;
+}
 
-	void *data = malloc(size);
-	[s read:data amount:size];
-
-	tune = hvl_LoadTune(data, (uint32_t)size, (int)sampleRate, 2);
-	free(data);
-	if(!tune)
-		return NO;
-
++ (long)framesLengthOfTune:(struct hvl_tune *)tune subsong:(int)subsong sampleRate:(double)sampleRate {
 	unsigned long safety = 2 * 60 * 60 * 50 * tune->ht_SpeedMultiplier;
 
-	NSURL *url = [s url];
-	if([[url fragment] length] == 0)
-		trackNumber = 0;
-	else
-		trackNumber = [[url fragment] intValue];
-
-	hvl_InitSubsong(tune, trackNumber);
+	hvl_InitSubsong(tune, subsong);
 
 	unsigned long loops = 0;
 
@@ -71,13 +53,55 @@ static void oneTimeInit(void) {
 		++loops;
 	}
 
+	return tune->ht_PlayingTime * sampleRate / (tune->ht_SpeedMultiplier * 50);
+}
+
++ (long)framesFadeForSampleRate:(double)sampleRate {
 	double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
 	if(defaultFade < 0.0) {
 		defaultFade = 0.0;
 	}
+	return (int)ceil(sampleRate * defaultFade);
+}
 
-	framesLength = tune->ht_PlayingTime * sampleRate / (tune->ht_SpeedMultiplier * 50);
-	framesFade = (int)ceil(sampleRate * defaultFade);
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate totalFrames:(long)totalFrames {
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(totalFrames),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @YES,
+		      @"channels": @(2),
+		      @"seekable": @YES,
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
+}
+
+- (BOOL)open:(id<CogSource>)s {
+	[s seek:0 whence:SEEK_END];
+	long size = [s tell];
+	[s seek:0 whence:SEEK_SET];
+
+	if(size > UINT_MAX)
+		return NO;
+
+	sampleRate = [HVLDecoder sampleRate];
+
+	void *data = malloc(size);
+	[s read:data amount:size];
+
+	tune = hvl_LoadTune(data, (uint32_t)size, (int)sampleRate, 2);
+	free(data);
+	if(!tune)
+		return NO;
+
+	NSURL *url = [s url];
+	if([[url fragment] length] == 0)
+		trackNumber = 0;
+	else
+		trackNumber = [[url fragment] intValue];
+
+	framesLength = [HVLDecoder framesLengthOfTune:tune subsong:trackNumber sampleRate:sampleRate];
+	framesFade = [HVLDecoder framesFadeForSampleRate:sampleRate];
 	totalFrames = framesLength + framesFade;
 
 	framesRead = 0;
@@ -94,15 +118,7 @@ static void oneTimeInit(void) {
 }
 
 - (NSDictionary *)properties {
-	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(sampleRate),
-		      @"totalFrames": @(totalFrames),
-		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @YES,
-		      @"channels": @(2),
-		      @"seekable": @YES,
-		      @"endian": @"host",
-		      @"encoding": @"synthesized" };
+	return [HVLDecoder propertiesWithSampleRate:sampleRate totalFrames:totalFrames];
 }
 
 - (NSDictionary *)metadata {

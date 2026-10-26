@@ -27,4 +27,16 @@
 	
 	float sampleBuffer[1024 * 2];
 }
+
+// The rate tunes play at, from the user's settings.
++ (double)sampleRate;
+// How many frames `subsong` of `tune` plays at `sampleRate` before its fade:
+// twice through, as the decoder plays it. Leaves the tune at the start of
+// `subsong`.
++ (long)framesLengthOfTune:(struct hvl_tune *)tune subsong:(int)subsong sampleRate:(double)sampleRate;
+// The frames of fade that follow, from the user's settings.
++ (long)framesFadeForSampleRate:(double)sampleRate;
+// The properties of a subsong `totalFrames` long, fade included.
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate totalFrames:(long)totalFrames;
+
 @end

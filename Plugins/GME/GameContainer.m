@@ -10,6 +10,7 @@
 
 #import "GameContainer.h"
 #import "GameDecoder.h"
+#import "GameMetadataReader.h"
 
 #import "Logging.h"
 
@@ -30,6 +31,10 @@
 
 // This really should be source...
 + (NSArray *)urlsForContainerURL:(NSURL *)url {
+	return [self urlsForContainerURL:url trackInfo:NULL];
+}
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)trackInfo {
 	if([url fragment]) {
 		// input url already has fragment defined - no need to expand further
 		return [NSMutableArray arrayWithObject:url];
@@ -52,7 +57,7 @@
 	[source read:data amount:size];
 
 	Music_Emu *emu;
-	gme_err_t error = gme_open_data(data, size, &emu, 44100);
+	gme_err_t error = gme_open_data(data, size, &emu, gme_info_only);
 	free(data);
 
 	if(NULL != error) {
@@ -80,18 +85,41 @@
 	}
 
 	int track_count = gme_track_count(emu);
-	gme_delete(emu);
-
-	if(track_count <= 1) {
-		return @[url];
-	}
 
 	NSMutableArray *tracks = [NSMutableArray array];
 
-	int i;
-	for(i = 0; i < track_count; i++) {
-		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+	if(track_count <= 1) {
+		[tracks addObject:url];
+	} else {
+		for(int i = 0; i < track_count; i++) {
+			[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+		}
 	}
+
+	if(trackInfo) {
+		// Every track's tags and length from the file just read, as the
+		// metadata reader and the decoder would find them.
+		double sampleRate = [GameDecoder sampleRateForType:gme_type(emu)];
+		NSMutableDictionary *info = [NSMutableDictionary dictionaryWithCapacity:[tracks count]];
+		int i = 0;
+		for(NSURL *track in tracks) {
+			gme_info_t *ti;
+			if(!gme_track_info(emu, &ti, i)) {
+				long length, fade;
+				[GameDecoder getLength:&length fade:&fade forTrackInfo:ti];
+				NSDictionary *properties = [GameDecoder propertiesWithSampleRate:sampleRate length:length];
+				NSDictionary *metadata = [GameMetadataReader metadataForTrackInfo:ti url:track track:i];
+				NSMutableDictionary *entryInfo = [properties mutableCopy];
+				[entryInfo addEntriesFromDictionary:metadata];
+				info[track] = entryInfo;
+				gme_free_info(ti);
+			}
+			++i;
+		}
+		*trackInfo = info;
+	}
+
+	gme_delete(emu);
 
 	return tracks;
 }

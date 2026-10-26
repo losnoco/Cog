@@ -10,7 +10,12 @@
 
 #import "Plugin.h"
 
+#import <GME/gme.h>
+
 @interface GameMetadataReader : NSObject <CogMetadataReader> {
 }
+
+// The tags of track `track` of the file at `url`, from its info.
++ (NSDictionary *)metadataForTrackInfo:(gme_info_t *)info url:(NSURL *)url track:(int)track;
 
 @end

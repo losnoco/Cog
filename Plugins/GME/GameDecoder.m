@@ -27,6 +27,70 @@ gme_err_t readCallback(void *data, void *out, int count) {
 	return 0; // Return 0 for no error
 }
 
++ (double)sampleRateForType:(gme_type_t)type {
+	double sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+
+	if(type == gme_spc_type || type == gme_sfm_type)
+		sampleRate = 32000.0;
+
+	return sampleRate;
+}
+
++ (void)getLength:(long *)outLength fade:(long *)outFade forTrackInfo:(gme_info_t *)info {
+	long length, fade;
+
+	// As recommended
+	if(info->length > 0) {
+		DLog(@"Using length: %i", info->length);
+		length = info->length;
+	} else if(info->loop_length > 0) {
+		DLog(@"Using loop length: %i", info->loop_length);
+		int loopCount = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultLoopCount"] intValue];
+		if(loopCount < 0) {
+			loopCount = 1;
+		} else if(loopCount > 10) {
+			loopCount = 10;
+		}
+		length = info->intro_length + loopCount * info->loop_length;
+	} else {
+		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+		if(defaultLength < 0) {
+			defaultLength = 150.0;
+		}
+		length = (int)ceil(defaultLength * 1000.0);
+		DLog(@"Setting default: %li", length);
+	}
+
+	if(info->fade_length >= 0) {
+		fade = info->fade_length;
+	} else {
+		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		if(defaultFade < 0) {
+			defaultFade = 0;
+		}
+		fade = (int)ceil(defaultFade * 1000.0);
+	}
+
+	*outLength = length + fade;
+	*outFade = fade;
+}
+
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate length:(long)length {
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @((long)(length * (sampleRate * 0.001))),
+		      @"bitsPerSample": @(sizeof(short) * 8), // Samples are short
+		      @"channels": @(2), // output from gme_play is in stereo
+		      @"seekable": @YES,
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
+}
+
 - (id)init {
 	self = [super init];
 	if(self) {
@@ -53,15 +117,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		return NO;
 	}
 
-	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
-	if(sampleRate < 8000.0) {
-		sampleRate = 44100.0;
-	} else if(sampleRate > 192000.0) {
-		sampleRate = 192000.0;
-	}
-
-	if(type == gme_spc_type || type == gme_sfm_type)
-		sampleRate = 32000.0;
+	sampleRate = [GameDecoder sampleRateForType:type];
 
 	emu = gme_new_emu(type, (int)sampleRate);
 	if(!emu) {
@@ -108,37 +164,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		return NO;
 	}
 
-	// As recommended
-	if(info->length > 0) {
-		DLog(@"Using length: %i", info->length);
-		length = info->length;
-	} else if(info->loop_length > 0) {
-		DLog(@"Using loop length: %i", info->loop_length);
-		int loopCount = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultLoopCount"] intValue];
-		if(loopCount < 0) {
-			loopCount = 1;
-		} else if(loopCount > 10) {
-			loopCount = 10;
-		}
-		length = info->intro_length + loopCount * info->loop_length;
-	} else {
-		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
-		if(defaultLength < 0) {
-			defaultLength = 150.0;
-		}
-		length = (int)ceil(defaultLength * 1000.0);
-		DLog(@"Setting default: %li", length);
-	}
-
-	if(info->fade_length >= 0) {
-		fade = info->fade_length;
-	} else {
-		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
-		if(defaultFade < 0) {
-			defaultFade = 0;
-		}
-		fade = (int)ceil(defaultFade * 1000.0);
-	}
+	[GameDecoder getLength:&length fade:&fade forTrackInfo:info];
 
 	gme_free_info(info);
 
@@ -151,8 +177,6 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		return NO;
 	}
 
-	length += fade;
-
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
 
@@ -160,14 +184,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 }
 
 - (NSDictionary *)properties {
-	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(sampleRate),
-		      @"totalFrames": @((long)(length * (sampleRate * 0.001))),
-		      @"bitsPerSample": @(sizeof(short) * 8), // Samples are short
-		      @"channels": @(2), // output from gme_play is in stereo
-		      @"seekable": @YES,
-		      @"endian": @"host",
-		      @"encoding": @"synthesized" };
+	return [GameDecoder propertiesWithSampleRate:sampleRate length:length];
 }
 
 - (NSDictionary *)metadata {

@@ -13,6 +13,9 @@
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url;
+// With each track's properties and metadata, merged, where the container
+// reads them in the same pass.
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)info;
 + (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url;
 
 @end

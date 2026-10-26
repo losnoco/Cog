@@ -25,4 +25,14 @@
 
 	int16_t sampleBuffer[2048 * 2];
 }
+
+// The rate the decoder plays at.
++ (double)sampleRate;
+// The length of track `track` of the song `player` has loaded, in frames at
+// `sampleRate`, without and with the fade a looping track gets. Measuring
+// plays the track through on `player`.
++ (void)getFramesLength:(long *)framesLength totalFrames:(long *)totalFrames forPlayer:(JT1Player *)player track:(int)track sampleRate:(double)sampleRate;
+// The properties of a track `totalFrames` long at `sampleRate`.
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate totalFrames:(long)totalFrames;
+
 @end

@@ -8,6 +8,7 @@
 
 #import "SidContainer.h"
 #import "SidDecoder.h"
+#import "SidMetadataReader.h"
 
 #import "Logging.h"
 
@@ -26,6 +27,10 @@
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url {
+	return [self urlsForContainerURL:url trackInfo:NULL];
+}
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)trackInfo {
 	if([url fragment]) {
 		// input url already has fragment defined - no need to expand further
 		return [NSMutableArray arrayWithObject:url];
@@ -54,6 +59,8 @@
 	[source read:data amount:size];
 
 	unsigned int subsongs = 0;
+	NSDictionary *properties = nil;
+	NSDictionary *metadata = nil;
 	SidTune *tune = NULL;
 
 	try {
@@ -72,6 +79,36 @@
 
 		subsongs = info->songs();
 
+		// Every song has the tags the metadata reader finds, and plays as
+		// the decoder would play it, or not at all: whether the tune loads,
+		// and its channels, are the same for all songs. A tune the decoder
+		// loads with a companion file is left to it.
+		if(trackInfo) {
+			metadata = [SidMetadataReader metadataForTuneInfo:info];
+
+			if(![SidDecoder loadsCompanionForURL:url]) {
+				double sampleRate = [SidDecoder sampleRate];
+				sidplayfp *engine = NULL;
+				sidbuilder *builder = NULL;
+				int channels = 1;
+				BOOL loaded = NO;
+
+				tune->selectSong(1);
+
+				try {
+					loaded = [SidDecoder loadTune:tune sampleRate:sampleRate engine:&engine builder:&builder channels:&channels];
+				} catch (std::exception &e) {
+					ALog(@"Exception caught loading SID file for track info: %s", e.what());
+				}
+
+				delete builder;
+				delete engine;
+
+				if(loaded)
+					properties = [SidDecoder propertiesWithSampleRate:sampleRate length:[SidDecoder lengthForSampleRate:sampleRate] channels:channels];
+			}
+		}
+
 		delete tune;
 		tune = NULL;
 	} catch (std::exception &e) {
@@ -85,6 +122,20 @@
 
 	for(unsigned int i = 1; i <= subsongs; ++i) {
 		[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
+	}
+
+	if(trackInfo && properties) {
+		// The decoder has no tags of its own, and the properties have none
+		// of the reader's keys.
+		NSMutableDictionary *merged = [properties mutableCopy];
+		[merged addEntriesFromDictionary:metadata];
+		NSDictionary *entryInfo = [NSDictionary dictionaryWithDictionary:merged];
+
+		NSMutableDictionary *info = [NSMutableDictionary dictionaryWithCapacity:[tracks count]];
+		for(NSURL *track in tracks) {
+			info[track] = entryInfo;
+		}
+		*trackInfo = info;
 	}
 
 	return tracks;

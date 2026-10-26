@@ -69,22 +69,90 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	return ss_midi_ticks_to_seconds(midi, tr->events[tr->event_count - 1].ticks);
 }
 
-- (BOOL)open:(id<CogSource>)s {
-	if(![s seekable]) {
-		return NO;
-	}
++ (double)sampleRate {
+	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
+	if([plugin isEqualToString:@"NukeSc55"])
+		return SCPlayer::sampleRate();
 
-	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
+	double sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
 		sampleRate = 192000.0;
 	}
+	return sampleRate;
+}
+
++ (BOOL)prepareFile:(SS_MIDIFile *)midi {
+	if(ss_midi_has_emidi(midi)) {
+		ss_midi_remove_emidi_non_gm(midi);
+	}
+
+	return midi->duration > 0.0;
+}
+
++ (void)getFramesLength:(double *)outFramesLength framesFade:(double *)outFramesFade secondsFade:(double *)outSecondsFade looped:(BOOL *)outLooped forFile:(const SS_MIDIFile *)midi track:(int)track sampleRate:(double)sampleRate {
+	double loopStart = -1;
+	double loopEnd = -1;
+
+	double subsong_begin = subsong_start_seconds(midi, (size_t)track);
+	double subsong_end = subsong_end_seconds(midi, (size_t)track);
+	double length = subsong_end - subsong_begin;
+	double secondsFade;
+	BOOL looped;
+
+	if(midi->loop.end > 0) {
+		loopStart = ss_midi_ticks_to_seconds(midi, midi->loop.start);
+		loopEnd = ss_midi_ticks_to_seconds(midi, midi->loop.end);
+		/* Express loop boundaries relative to subsong start. */
+		loopStart -= subsong_begin;
+		loopEnd -= subsong_begin;
+		if(loopStart < 0.0) loopStart = 0.0;
+		if(loopEnd < 0.0) loopEnd = 0.0;
+	}
+
+	if(loopStart == -1) loopStart = 0;
+	if(loopEnd == -1) loopEnd = length;
+
+	if(loopStart != 0 || loopEnd != length) {
+		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+		if(defaultFade < 0.0) {
+			defaultFade = 0.0;
+		}
+		length = loopStart + (loopEnd - loopStart) * 2;
+		secondsFade = defaultFade;
+		looped = YES;
+	} else {
+		secondsFade = 0.0;
+		looped = NO;
+	}
+
+	*outFramesLength = round(length * sampleRate);
+	*outFramesFade = round(secondsFade * sampleRate);
+	*outSecondsFade = secondsFade;
+	*outLooped = looped;
+}
+
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate totalFrames:(double)totalFrames {
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(totalFrames),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @YES,
+		      @"channels": @(2),
+		      @"seekable": @YES,
+		      @"codec": @"MIDI",
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
+}
+
+- (BOOL)open:(id<CogSource>)s {
+	if(![s seekable]) {
+		return NO;
+	}
 
 	source = s;
 
-	double loopStart = -1;
-	double loopEnd = -1;
 	SS_File *file = cog_file_open_handle(s);
 	if(!file)
 		return NO;
@@ -94,11 +162,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 	if(!midi_file)
 		return NO;
 
-	if(ss_midi_has_emidi(midi_file)) {
-		ss_midi_remove_emidi_non_gm(midi_file);
-	}
-
-	if(midi_file->duration <= 0.0) {
+	if(![MIDIDecoder prepareFile:midi_file]) {
 		ss_midi_free(midi_file);
 		midi_file = NULL;
 		return NO;
@@ -106,45 +170,11 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 
 	track_num = [[[s url] fragment] intValue]; /* 0 when absent */
 
-	double subsong_begin = subsong_start_seconds(midi_file, (size_t)track_num);
-	double subsong_end = subsong_end_seconds(midi_file, (size_t)track_num);
-	framesLength = subsong_end - subsong_begin;
+	sampleRate = [MIDIDecoder sampleRate];
+	if(!sampleRate)
+		return NO;
 
-	if(midi_file->loop.end > 0) {
-		loopStart = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.start);
-		loopEnd = ss_midi_ticks_to_seconds(midi_file, midi_file->loop.end);
-		/* Express loop boundaries relative to subsong start. */
-		loopStart -= subsong_begin;
-		loopEnd -= subsong_begin;
-		if(loopStart < 0.0) loopStart = 0.0;
-		if(loopEnd < 0.0) loopEnd = 0.0;
-	}
-
-	if(loopStart == -1) loopStart = 0;
-	if(loopEnd == -1) loopEnd = framesLength;
-
-	if(loopStart != 0 || loopEnd != framesLength) {
-		double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
-		if(defaultFade < 0.0) {
-			defaultFade = 0.0;
-		}
-		framesLength = loopStart + (loopEnd - loopStart) * 2;
-		secondsFade = defaultFade;
-		isLooped = YES;
-	} else {
-		secondsFade = 0.0;
-		isLooped = NO;
-	}
-
-	NSString *plugin = [[NSUserDefaults standardUserDefaults] stringForKey:@"midiPlugin"];
-	if([plugin isEqualToString:@"NukeSc55"]) {
-		sampleRate = SCPlayer::sampleRate();
-		if(!sampleRate)
-			return NO;
-	}
-
-	framesLength = round(framesLength * sampleRate);
-	framesFade = round(secondsFade * sampleRate);
+	[MIDIDecoder getFramesLength:&framesLength framesFade:&framesFade secondsFade:&secondsFade looped:&isLooped forFile:midi_file track:track_num sampleRate:sampleRate];
 
 	totalFrames = framesLength + framesFade;
 
@@ -157,16 +187,7 @@ static double subsong_end_seconds(const SS_MIDIFile *midi, size_t subsong) {
 }
 
 - (NSDictionary *)properties {
-	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(sampleRate),
-		      @"totalFrames": @(totalFrames),
-		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @YES,
-		      @"channels": @(2),
-		      @"seekable": @YES,
-		      @"codec": @"MIDI",
-		      @"endian": @"host",
-		      @"encoding": @"synthesized" };
+	return [MIDIDecoder propertiesWithSampleRate:sampleRate totalFrames:totalFrames];
 }
 
 - (NSDictionary *)metadata {

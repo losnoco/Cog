@@ -36,14 +36,43 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 	];
 }
 
-- (NSDictionary *)properties {
-	NSMutableDictionary *properties = [[decoder properties] mutableCopy];
++ (void)getStart:(long *)start end:(long *)end forTrackAtIndex:(NSUInteger)index ofTracks:(NSArray *)tracks embedded:(BOOL)embedded fileProperties:(NSDictionary *)properties {
+	CueSheetTrack *track = [tracks objectAtIndex:index];
+
+	CueSheetTrack *nextTrack = nil;
+	if(index + 1 < [tracks count]) {
+		nextTrack = [tracks objectAtIndex:index + 1];
+	}
+
+	float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
+
+	double _trackStart = [track time];
+	if(![track timeInSamples]) _trackStart *= sampleRate;
+	*start = _trackStart;
+
+	if(nextTrack && (embedded || ([[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]))) {
+		double _trackEnd = [nextTrack time];
+		if(![nextTrack timeInSamples]) _trackEnd *= sampleRate;
+		*end = _trackEnd;
+	} else {
+		*end = [[properties objectForKey:@"totalFrames"] doubleValue];
+	}
+}
+
++ (NSDictionary *)propertiesWithFileProperties:(NSDictionary *)fileProperties start:(long)start end:(long)end {
+	NSMutableDictionary *properties = [fileProperties mutableCopy];
 
 	// Need to alter length
-	if(!noFragment)
-		[properties setObject:@(trackEnd - trackStart) forKey:@"totalFrames"];
+	[properties setObject:@(end - start) forKey:@"totalFrames"];
 
 	return [NSDictionary dictionaryWithDictionary:properties];
+}
+
+- (NSDictionary *)properties {
+	if(noFragment)
+		return [NSDictionary dictionaryWithDictionary:[decoder properties]];
+
+	return [CueSheetDecoder propertiesWithFileProperties:[decoder properties] start:trackStart end:trackEnd];
 }
 
 - (NSDictionary *)metadata {
@@ -161,31 +190,15 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 					}
 				}
 
-				CueSheetTrack *nextTrack = nil;
-				if(i + 1 < [tracks count]) {
-					nextTrack = [tracks objectAtIndex:i + 1];
-				}
-
 				NSDictionary *properties = [decoder properties];
 				int bitsPerSample = [[properties objectForKey:@"bitsPerSample"] intValue];
 				int channels = [[properties objectForKey:@"channels"] intValue];
-				float sampleRate = [[properties objectForKey:@"sampleRate"] floatValue];
 
 				isDSD = bitsPerSample == 1;
 
 				bytesPerFrame = ((bitsPerSample + 7) / 8) * channels;
 
-				double _trackStart = [track time];
-				if(![track timeInSamples]) _trackStart *= sampleRate;
-				trackStart = _trackStart;
-
-				if(nextTrack && (embedded || ([[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]]))) {
-					double _trackEnd = [nextTrack time];
-					if(![nextTrack timeInSamples]) _trackEnd *= sampleRate;
-					trackEnd = _trackEnd;
-				} else {
-					trackEnd = [[properties objectForKey:@"totalFrames"] doubleValue];
-				}
+				[CueSheetDecoder getStart:&trackStart end:&trackEnd forTrackAtIndex:i ofTracks:tracks embedded:embedded fileProperties:properties];
 
 				seekedToStart = NO;
 
@@ -310,24 +323,7 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 				track = _track;
 
-				float sampleRate = [[[decoder properties] objectForKey:@"sampleRate"] floatValue];
-
-				double _trackStart = [track time];
-				if(![track timeInSamples]) _trackStart *= sampleRate;
-				trackStart = _trackStart;
-
-				CueSheetTrack *nextTrack = nil;
-				if(i + 1 < [tracks count]) {
-					nextTrack = [tracks objectAtIndex:i + 1];
-				}
-
-				if(nextTrack && (embedded || [[[nextTrack url] absoluteString] isEqualToString:[[track url] absoluteString]])) {
-					double _trackEnd = [nextTrack time];
-					if(![nextTrack timeInSamples]) _trackEnd *= sampleRate;
-					trackEnd = _trackEnd;
-				} else {
-					trackEnd = [[[decoder properties] objectForKey:@"totalFrames"] longValue];
-				}
+				[CueSheetDecoder getStart:&trackStart end:&trackEnd forTrackAtIndex:i ofTracks:tracks embedded:embedded fileProperties:[decoder properties]];
 
 				seekedToStart = NO;
 

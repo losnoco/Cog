@@ -28,7 +28,7 @@ public final class PlaylistLoader {
 	/// folder again adds only what is new in it.
 	@discardableResult
 	public func add(_ urls: [URL], at position: Int? = nil, skippingExisting: Bool = false) async -> [PlaylistEntry] {
-		var expanded = await Task.detached(priority: .userInitiated) { () -> [URL] in
+		var (expanded, trackInfo) = await Task.detached(priority: .userInitiated) { () -> ([URL], [URL: [String: Any]]) in
 			// As the macOS app expands them, with what suits a library of its
 			// own: cue sheets and playlists in folders read, and the files
 			// they play from left to them.
@@ -36,7 +36,7 @@ public final class PlaylistLoader {
 			expander.readsCueSheetsInFolders = true
 			expander.readsPlaylistsInFolders = true
 			expander.skipsContainerDependencies = true
-			return expander.urls(for: urls, sort: true)
+			return expander.urlsAndInfo(for: urls, sort: true)
 		}.value
 		if skippingExisting {
 			let existing = Set(model.entries.compactMap { $0.url.map(Self.identity) })
@@ -51,7 +51,17 @@ public final class PlaylistLoader {
 			return entry
 		}
 		model.insert(entries, at: position)
-		await loadInfo(for: entries)
+		// Tracks their container already read come with their tags; the
+		// rest are read now.
+		var unread: [PlaylistEntry] = []
+		for (entry, url) in zip(entries, expanded) {
+			if let info = trackInfo.removeValue(forKey: url) {
+				entry.setMetadata(info)
+			} else {
+				unread.append(entry)
+			}
+		}
+		await loadInfo(for: unread)
 		return entries
 	}
 

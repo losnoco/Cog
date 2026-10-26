@@ -21,6 +21,9 @@
 - (void)stuffURL:(NSURL *)url stream:(libvgmstream_t *)stream;
 - (NSDictionary *)getPropertiesForURL:(NSURL *)url;
 - (NSDictionary *)getMetadataForURL:(NSURL *)url;
+// The properties and tags stuffed for `url`, merged as the playlist loader
+// merges what the readers return; nil if none were.
+- (NSDictionary *)getInfoForURL:(NSURL *)url;
 
 @end
 

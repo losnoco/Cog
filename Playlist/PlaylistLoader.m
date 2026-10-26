@@ -447,35 +447,54 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	__block id<SentrySpan> addTask = [mainTask startChildWithOperation:@"Add entries to playlist" description:[NSString stringWithFormat:@"Adding %lu entries to the playlist", [validURLs count]]];
 
+	// What containers read of their tracks while opening them, which the
+	// entries take as they are added rather than being read again.
+	NSDictionary<NSURL *, NSDictionary *> *trackInfo = expander.trackInfo;
+
 	NSInteger i = 0;
 	__block NSMutableArray *entries = [NSMutableArray arrayWithCapacity:count];
 	NSMutableArray *preloadedEntryInfo = [NSMutableArray new];
-	for(NSURL *url in validURLs) {
-		__block PlaylistEntry *pe;
+	// Made on the main queue many at a time, not with a trip there each.
+	const NSUInteger batchSize = 256;
+	for(NSUInteger batchStart = 0, urlCount = [validURLs count]; batchStart < urlCount; batchStart += batchSize) {
+		NSArray *batch = [validURLs subarrayWithRange:NSMakeRange(batchStart, MIN(batchSize, urlCount - batchStart))];
+		NSInteger batchIndex = index + i;
+
+		// Cue sheet tracks' own tags, read off the main queue.
+		NSMutableArray *batchInfo = [NSMutableArray arrayWithCapacity:[batch count]];
+		for(NSURL *url in batch) {
+			NSDictionary *entryInfo = trackInfo[url];
+			if(!entryInfo) entryInfo = [self initialCueInfoForURL:url];
+			[batchInfo addObject:entryInfo ?: [NSNull null]];
+		}
 
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 			id<SentrySpan> addItemTask = nil;
 			if(addTask) {
-				addItemTask = [addTask startChildWithOperation:@"Add individual item on main queue" description:[NSString stringWithFormat:@"Track URL: %@", url]];
+				addItemTask = [addTask startChildWithOperation:@"Add items on main queue" description:[NSString stringWithFormat:@"%lu tracks", (unsigned long)[batch count]]];
 			}
-			pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:self->playlistController.persistentContainer.viewContext];
-			pe.url = url;
-			pe.index = index + i;
-			pe.rawTitle = [[url path] lastPathComponent];
-			pe.queuePosition = -1;
+			NSManagedObjectContext *moc = self->playlistController.persistentContainer.viewContext;
+			NSInteger position = batchIndex;
+			NSUInteger infoIndex = 0;
+			for(NSURL *url in batch) {
+				PlaylistEntry *pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:moc];
+				pe.url = url;
+				pe.index = position++;
+				pe.rawTitle = [[url path] lastPathComponent];
+				pe.queuePosition = -1;
+				[entries addObject:pe];
+
+				id entryInfo = batchInfo[infoIndex++];
+				if(entryInfo != [NSNull null]) {
+					[preloadedEntryInfo addObject:@[pe, entryInfo]];
+				}
+			}
 			[addItemTask finish];
 		});
 
-		NSDictionary *entryInfo = [self initialCueInfoForURL:url];
-		if(entryInfo) {
-			[preloadedEntryInfo addObject:@[pe, entryInfo]];
-		}
+		i += [batch count];
 
-		[entries addObject:pe];
-
-		++i;
-
-		progress += progressstep;
+		progress += progressstep * [batch count];
 		[self setProgressJobStatus:progress];
 	}
 
@@ -512,11 +531,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			// Apply cue metadata only after the array controller owns each managed
 			// object. Otherwise it can miss the per-entry KVO changes and reused row
 			// bindings may display the final cue title for every inserted track.
+			NSMutableArray *preloadedEntries = [NSMutableArray arrayWithCapacity:[preloadedEntryInfo count]];
 			for(NSArray *preloadedInfo in preloadedEntryInfo) {
 				PlaylistEntry *pe = preloadedInfo[0];
 				[pe setMetadata:preloadedInfo[1]];
-				[self->playlistController firstSawTrackWithoutReload:pe];
+				[preloadedEntries addObject:pe];
 			}
+			[self->playlistController firstSawTracksWithoutReload:preloadedEntries];
 		}
 		@finally {
 			[self->playlistController setSelectsInsertedObjects:selectsInsertedObjects];
@@ -633,8 +654,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	@synchronized(queuedURLs) {
 		[queuedURLs addEntriesFromDictionary:queueThisJob];
 	}
-
-	NSMutableIndexSet *update_indexes = [NSMutableIndexSet new];
 
 	__block double progress = 0.0;
 
@@ -758,27 +777,39 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 	}];
 
-	for(size_t i = 0, j = [outArray count]; i < j; i += 2) {
-		__block NSString *entryKey = [outArray objectAtIndex:i];
-		__block NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
-		__block NSMutableIndexSet *weakUpdateIndexes = update_indexes;
+	// Applied on the main queue many at a time, with their play counts
+	// looked up together and their rows redrawn together.
+	const size_t applyBatch = 128 * 2;
+	for(size_t start = 0, j = [outArray count]; start < j; start += applyBatch) {
+		size_t end = MIN(start + applyBatch, j);
 		PlaylistController *playlistController = self->playlistController;
 		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			NSArray *entrySet = [uniquePathsEntries objectForKey:entryKey];
-			if(entrySet) {
-				if([entrySet count] > 0) {
-					[playlistController firstSawTrack:entrySet[0]];
-				}
-				for(PlaylistEntry *pe in entrySet) {
-					[pe setMetadata:entryInfo];
-					NSInteger row = [playlistController rowForEntry:pe];
-					if(row != NSNotFound) {
-						[weakUpdateIndexes addIndex:row];
+			NSMutableArray *firstSeen = [NSMutableArray new];
+			NSMutableIndexSet *batchRows = [NSMutableIndexSet new];
+			for(size_t i = start; i < end; i += 2) {
+				NSString *entryKey = [outArray objectAtIndex:i];
+				NSDictionary *entryInfo = [outArray objectAtIndex:i + 1];
+				NSArray *entrySet = [uniquePathsEntries objectForKey:entryKey];
+				if(entrySet) {
+					for(PlaylistEntry *pe in entrySet) {
+						[pe setMetadata:entryInfo];
+						NSInteger row = [playlistController rowForEntry:pe];
+						if(row != NSNotFound) {
+							[batchRows addIndex:row];
+						}
+					}
+					if([entrySet count] > 0) {
+						[firstSeen addObject:entrySet[0]];
 					}
 				}
-			}
 
-			progress += progressstep;
+				progress += progressstep;
+			}
+			[playlistController firstSawTracksWithoutReload:firstSeen];
+			if([batchRows count]) {
+				NSTableView *tableView = [self->playlistView documentView];
+				[tableView reloadDataForRowIndexes:batchRows columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[tableView tableColumns] count])]];
+			}
 			[self setProgressJobStatus:progress];
 		});
 	}
@@ -786,15 +817,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[self->playlistController commitPersistentStoreAsync];
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-
-	{
-		__block NSScrollView *weakPlaylistView = playlistView;
-		__block NSIndexSet *weakIndexSet = update_indexes;
-		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-			unsigned long columns = [[[weakPlaylistView documentView] tableColumns] count];
-			[weakPlaylistView.documentView reloadDataForRowIndexes:weakIndexSet columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, columns)]];
-		});
-	}
 
 	@synchronized(queuedURLs) {
 		[queuedURLs removeObjectsForKeys:[queueThisJob allKeys]];

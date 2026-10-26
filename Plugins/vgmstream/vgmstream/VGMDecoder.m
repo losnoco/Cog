@@ -220,6 +220,22 @@ static NSString *get_description_tag(const char *description, const char *tag, c
 	return metadata;
 }
 
+- (NSDictionary *)getInfoForURL:(NSURL *)url {
+	NSDictionary *package;
+
+	@synchronized(self) {
+		package = [storage objectForKey:[url absoluteString]];
+	}
+
+	if(!package)
+		return nil;
+
+	// The tags share no keys with the properties, so nothing is overridden.
+	NSMutableDictionary *info = [[package objectForKey:@"properties"] mutableCopy];
+	[info addEntriesFromDictionary:[package objectForKey:@"metadata"]];
+	return info;
+}
+
 @end
 
 @implementation VGMDecoder

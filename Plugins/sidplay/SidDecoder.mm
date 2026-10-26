@@ -188,20 +188,87 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	}
 }
 
-- (BOOL)open:(id<CogSource>)s {
-	[SidDecoder createSharedTables];
++ (BOOL)loadsCompanionForURL:(NSURL *)url {
+	return [[url pathExtension] isEqualToString:@"mus"];
+}
 
-	if(![s seekable])
-		return NO;
-
-	[self setSource:s];
-
-	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
++ (double)sampleRate {
+	double sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
 	if(sampleRate < 8000.0) {
 		sampleRate = 44100.0;
 	} else if(sampleRate > 192000.0) {
 		sampleRate = 192000.0;
 	}
+	return sampleRate;
+}
+
++ (long)lengthForSampleRate:(double)sampleRate {
+	double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
+
+	return (int)ceil(sampleRate * defaultLength);
+}
+
++ (BOOL)loadTune:(SidTune *)tune sampleRate:(double)sampleRate engine:(sidplayfp **)outEngine builder:(sidbuilder **)outBuilder channels:(int *)channels {
+	[SidDecoder createSharedTables];
+
+	sidplayfp *engine = new sidplayfp;
+	*outEngine = engine;
+
+	engine->setRoms(kernel, basic, chargen);
+
+	if(!engine->load(tune))
+		return NO;
+
+	ReSIDfpBuilder *builder = new ReSIDfpBuilder("ReSIDfp");
+	*outBuilder = builder;
+
+	if(builder) {
+		builder->create((engine->info()).maxsids());
+		if(builder->getStatus()) {
+			builder->filter(true);
+			builder->filter6581Curve(0.5);
+			builder->filter8580Curve(0.5);
+		}
+		if(!builder->getStatus())
+			return NO;
+	} else
+		return NO;
+
+	const SidTuneInfo *tuneInfo = tune->getInfo();
+
+	SidConfig conf = engine->config();
+	conf.frequency = (int)ceil(sampleRate);
+	conf.sidEmulation = builder;
+	conf.playback = SidConfig::MONO;
+	if(tuneInfo && (tuneInfo->sidChips() > 1))
+		conf.playback = SidConfig::STEREO;
+	if(!engine->config(conf))
+		return NO;
+
+	*channels = (conf.playback == SidConfig::STEREO) ? 2 : 1;
+
+	return YES;
+}
+
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate length:(long)length channels:(int)channels {
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(16),
+		      @"floatingPoint": @NO,
+		      @"channels": @(channels),
+		      @"seekable": @YES,
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
+}
+
+- (BOOL)open:(id<CogSource>)s {
+	if(![s seekable])
+		return NO;
+
+	[self setSource:s];
+
+	sampleRate = [SidDecoder sampleRate];
 
 	NSString *path = [[s url] absoluteString];
 	NSRange fragmentRange = [path rangeOfString:@"#" options:NSBackwardsSearch];
@@ -214,9 +281,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	[[sid_file_container instance] add_hint:currentUrl source:s];
 	hintAdded = YES;
 
-	NSString *extension = [[s url] pathExtension];
-
-	const char **extList = [extension isEqualToString:@"mus"] ? extListStr : extListEmpty;
+	const char **extList = [SidDecoder loadsCompanionForURL:[s url]] ? extListStr : extListEmpty;
 
 	try {
 		tune = new SidTune(sidTuneLoader, [currentUrl UTF8String], extList, true);
@@ -233,48 +298,12 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 		n_channels = 1;
 
-		double defaultLength = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultSeconds"] doubleValue];
-
-		length = (int)ceil(sampleRate * defaultLength);
+		length = [SidDecoder lengthForSampleRate:sampleRate];
 
 		tune->selectSong(track_num);
 
-		engine = new sidplayfp;
-
-		engine->setRoms(kernel, basic, chargen);
-
-		if(!engine->load(tune))
+		if(![SidDecoder loadTune:tune sampleRate:sampleRate engine:&engine builder:&builder channels:&n_channels])
 			return NO;
-
-		ReSIDfpBuilder *_builder = new ReSIDfpBuilder("ReSIDfp");
-		builder = _builder;
-
-		if(_builder) {
-			_builder->create((engine->info()).maxsids());
-			if(_builder->getStatus()) {
-				_builder->filter(true);
-				_builder->filter6581Curve(0.5);
-				_builder->filter8580Curve(0.5);
-			}
-			if(!_builder->getStatus())
-				return NO;
-		} else
-			return NO;
-
-		const SidTuneInfo *tuneInfo = tune->getInfo();
-
-		SidConfig conf = engine->config();
-		conf.frequency = (int)ceil(sampleRate);
-		conf.sidEmulation = builder;
-		conf.playback = SidConfig::MONO;
-		if(tuneInfo && (tuneInfo->sidChips() > 1))
-			conf.playback = SidConfig::STEREO;
-		if(!engine->config(conf))
-			return NO;
-
-		if(conf.playback == SidConfig::STEREO) {
-			n_channels = 2;
-		}
 	} catch (std::exception &e) {
 		ALog(@"Exception caught loading SID file: %s", e.what());
 		return NO;
@@ -295,15 +324,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 }
 
 - (NSDictionary *)properties {
-	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(sampleRate),
-		      @"totalFrames": @(length),
-		      @"bitsPerSample": @(16),
-		      @"floatingPoint": @NO,
-		      @"channels": @(n_channels),
-		      @"seekable": @YES,
-		      @"endian": @"host",
-		      @"encoding": @"synthesized" };
+	return [SidDecoder propertiesWithSampleRate:sampleRate length:length channels:n_channels];
 }
 
 - (NSDictionary *)metadata {

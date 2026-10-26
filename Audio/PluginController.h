@@ -43,4 +43,6 @@
 - (void)setupMetadataReader:(NSString *)className;
 - (void)setupPropertiesReader:(NSString *)className;
 
++ (BOOL)isCoverFile:(NSString *)fileName;
+
 @end

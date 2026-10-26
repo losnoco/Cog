@@ -10,7 +10,12 @@
 
 #import "Plugin.h"
 
+#import <HivelyPlayer/hvl_replay.h>
+
 @interface HVLMetadataReader : NSObject <CogMetadataReader> {
 }
+
+// The tags of every subsong of `tune`.
++ (NSDictionary *)metadataForTune:(struct hvl_tune *)tune;
 
 @end

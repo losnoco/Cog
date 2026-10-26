@@ -38,6 +38,14 @@
 
 @optional
 + (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url;
+
+// The tracks urlsForContainerURL: gives, and with them, in *info, what the
+// properties and metadata readers would give each, merged as the playlist
+// stores them, keyed by track URL: read in the one pass that finds the
+// tracks, where the readers would open the file again for every one. A
+// track left out of *info is read as usual. A container that finds no
+// tracks may still describe the file itself, under its own URL.
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)info;
 @end
 
 @protocol CogDecoder <NSObject>
@@ -108,6 +116,7 @@
 
 - (id<CogSource>)audioSourceForURL:(NSURL *)url;
 - (NSArray *)urlsForContainerURL:(NSURL *)url;
+- (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)info;
 - (NSArray *)dependencyUrlsForContainerURL:(NSURL *)url;
 - (NSDictionary *)metadataForURL:(NSURL *)url skipCue:(BOOL)skip;
 - (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip;

@@ -31,6 +31,10 @@
 }
 
 + (NSArray *)urlsForContainerURL:(NSURL *)url {
+	return [self urlsForContainerURL:url trackInfo:NULL];
+}
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)trackInfo {
 	NSString *path = [[url absoluteString] stringByRemovingPercentEncoding];
 
 	if([url fragment]) {
@@ -94,6 +98,17 @@
 
 	libvgmstream_free(infostream);
 	libstreamfile_close(sf);
+
+	if(trackInfo) {
+		// The readers find every subsong in the cache just stuffed, so this
+		// is what they would return.
+		NSMutableDictionary *info = [NSMutableDictionary dictionaryWithCapacity:[tracks count]];
+		for(NSURL *track in tracks) {
+			NSDictionary *entryInfo = [sharedMyCache getInfoForURL:track];
+			if(entryInfo) info[track] = entryInfo;
+		}
+		*trackInfo = info;
+	}
 
 	return tracks;
 }

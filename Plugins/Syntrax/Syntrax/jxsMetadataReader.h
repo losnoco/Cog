@@ -8,9 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+#import <Syntrax_c/jaytrax.h>
+
 #import "Plugin.h"
 
 @interface jxsMetadataReader : NSObject <CogMetadataReader> {
 }
+
+// The tags of the track `subsong` is.
++ (NSDictionary *)metadataForSubsong:(JT1Subsong *)subsong;
 
 @end

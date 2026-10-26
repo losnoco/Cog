@@ -90,20 +90,24 @@
 			if(!embedded)
 				fileMetadata = [audioMetadataReader metadataForURL:[track url] skipCue:YES];
 
-			NSDictionary *cuesheetMetadata = [CueSheetMetadataReader processDataForTrack:track];
-
-			// Cue-sheet fields describe this logical track and take priority over
-			// the metadata shared by the underlying audio file. Do not use the
-			// NSDictionary merge category here: plug-ins load their own category
-			// implementations into one Objective-C runtime, so selector collisions
-			// can silently change which dictionary wins based on bundle load order.
-			NSMutableDictionary *metadata = fileMetadata ? [fileMetadata mutableCopy] : [NSMutableDictionary new];
-			[metadata addEntriesFromDictionary:cuesheetMetadata];
-			return [metadata copy];
+			return [CueSheetMetadataReader metadataForTrack:track fileMetadata:fileMetadata];
 		}
 	}
 
 	return nil;
+}
+
++ (NSDictionary *)metadataForTrack:(CueSheetTrack *)track fileMetadata:(NSDictionary *)fileMetadata {
+	NSDictionary *cuesheetMetadata = [CueSheetMetadataReader processDataForTrack:track];
+
+	// Cue-sheet fields describe this logical track and take priority over
+	// the metadata shared by the underlying audio file. Do not use the
+	// NSDictionary merge category here: plug-ins load their own category
+	// implementations into one Objective-C runtime, so selector collisions
+	// can silently change which dictionary wins based on bundle load order.
+	NSMutableDictionary *metadata = fileMetadata ? [fileMetadata mutableCopy] : [NSMutableDictionary new];
+	[metadata addEntriesFromDictionary:cuesheetMetadata];
+	return [metadata copy];
 }
 
 + (NSDictionary *)processDataForTrack:(CueSheetTrack *)track {

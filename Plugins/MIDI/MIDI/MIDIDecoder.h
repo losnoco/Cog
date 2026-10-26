@@ -43,4 +43,16 @@ class SpessaPlayer;
 	float outputBuffer[1024 * 2];
 }
 
+// The rate the decoder plays at, from the user's settings: 0 if the chosen
+// synthesizer cannot run.
++ (double)sampleRate;
+// Readies a freshly loaded file for playback, dropping its EMIDI tracks for
+// other sound cards; NO if nothing is left to play.
++ (BOOL)prepareFile:(SS_MIDIFile *)midi;
+// The length of subsong `track` of a prepared file, without and with its
+// fade, as the decoder plays it at `sampleRate`.
++ (void)getFramesLength:(double *)framesLength framesFade:(double *)framesFade secondsFade:(double *)secondsFade looped:(BOOL *)looped forFile:(const SS_MIDIFile *)midi track:(int)track sampleRate:(double)sampleRate;
+// The properties of a track that plays `totalFrames` frames at `sampleRate`.
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate totalFrames:(double)totalFrames;
+
 @end

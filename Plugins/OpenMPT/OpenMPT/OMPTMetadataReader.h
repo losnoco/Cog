@@ -10,7 +10,12 @@
 
 #import "Plugin.h"
 
+#import <libOpenMPT/libopenmpt.hpp>
+
 @interface OMPTMetadataReader : NSObject <CogMetadataReader> {
 }
+
+// The tags of every subsong of `mod`. Throws as openmpt::module does.
++ (NSDictionary *)metadataForModule:(openmpt::module *)mod;
 
 @end

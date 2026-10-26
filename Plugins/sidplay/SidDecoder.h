@@ -41,4 +41,16 @@
 - (void)setSource:(id<CogSource>)s;
 - (id<CogSource>)source;
 - (void)cleanUp;
+
+// Whether a tune at `url` is loaded with its stereo companion file (.mus
+// with .str), so its own data alone doesn't describe how it plays.
++ (BOOL)loadsCompanionForURL:(NSURL *)url;
+// The rate tunes play at, and how many frames before the fade, as set.
++ (double)sampleRate;
++ (long)lengthForSampleRate:(double)sampleRate;
+// Sets up a new engine and builder to play `tune` at `sampleRate`, and the
+// channels it renders. NO if the tune can't play; whatever was made is left
+// in *engine and *builder for the caller to delete. May throw.
++ (BOOL)loadTune:(SidTune *)tune sampleRate:(double)sampleRate engine:(sidplayfp **)engine builder:(sidbuilder **)builder channels:(int *)channels;
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate length:(long)length channels:(int)channels;
 @end

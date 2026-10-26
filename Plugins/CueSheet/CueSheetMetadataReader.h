@@ -16,5 +16,8 @@
 }
 
 + (NSDictionary *)processDataForTrack:(CueSheetTrack *)track;
+// The tags of `track`, the cue sheet's over `fileMetadata`, those of the
+// audio file it plays.
++ (NSDictionary *)metadataForTrack:(CueSheetTrack *)track fileMetadata:(NSDictionary *)fileMetadata;
 
 @end

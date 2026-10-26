@@ -48,9 +48,15 @@
 	if(!tune)
 		return nil;
 
-	NSString *title = [guess_encoding_of_string(tune->ht_Name) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	NSDictionary *dict = [HVLMetadataReader metadataForTune:tune];
 
 	hvl_FreeTune(tune);
+
+	return dict;
+}
+
++ (NSDictionary *)metadataForTune:(struct hvl_tune *)tune {
+	NSString *title = [guess_encoding_of_string(tune->ht_Name) stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
 	if(title == nil) {
 		title = @"";

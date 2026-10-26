@@ -9,6 +9,8 @@
 
 #import "FFMPEGDecoder.h"
 
+#import "NSDictionary+Merge.h"
+
 #import "Logging.h"
 
 @implementation FFMPEGContainer
@@ -25,7 +27,85 @@
 	return [FFMPEGDecoder priority];
 }
 
+// Whether the loader reads each track of `url` from this plugin's decoder
+// alone: no properties or metadata reader for the file, and no decoder that
+// would be tried ahead of ours. Any of those would add to or replace what
+// the decoder gives, from a parse of its own.
+static BOOL decoderAloneReadsURL(NSURL *url, id<CogSource> source) {
+	id<CogPluginController> pluginController = [NSClassFromString(@"PluginController") sharedPluginController];
+	NSString *ext = [[url pathExtension] lowercaseString];
+
+	if([[pluginController metadataReaders] objectForKey:ext])
+		return NO;
+	if([[pluginController propertiesReadersByExtension] objectForKey:ext])
+		return NO;
+	if([[pluginController propertiesReadersByMimeType] objectForKey:[[source mimeType] lowercaseString]])
+		return NO;
+
+	NSArray *decoders = [[pluginController decodersByExtension] objectForKey:ext];
+	if(![decoders containsObject:NSStringFromClass([FFMPEGDecoder class])])
+		return NO;
+	for(NSString *classString in decoders) {
+		Class decoder = NSClassFromString(classString);
+		if(decoder != [FFMPEGDecoder class] && [decoder priority] >= [FFMPEGDecoder priority])
+			return NO;
+	}
+
+	return YES;
+}
+
+static BOOL hasContent(id value) {
+	if([value isKindOfClass:[NSString class]])
+		return [value length] > 0;
+	if([value isKindOfClass:[NSArray class]]) {
+		for(id item in value) {
+			if([item isKindOfClass:[NSString class]] && [item length])
+				return YES;
+		}
+	}
+	return NO;
+}
+
+// Every track's properties and tags, as the decoder gives them opened on
+// each track's URL, from the format context the tracks were found in.
++ (NSDictionary *)trackInfoForTracks:(NSArray *)tracks formatContext:(AVFormatContext *)formatCtx {
+	NSMutableDictionary *info = [NSMutableDictionary dictionaryWithCapacity:[tracks count]];
+	int i = 0;
+	for(NSURL *track in tracks) {
+		FFMPEGDecoder *decoder = [FFMPEGDecoder new];
+		if([decoder openTrack:i ofFormatContext:formatCtx]) {
+			NSDictionary *properties = [decoder properties];
+			NSMutableDictionary *entryInfo = [[NSDictionary dictionaryByMerging:properties with:[decoder metadata]] mutableCopy];
+
+			// A cue sheet in the file's tags makes the loader read its
+			// subsongs as cue sheet tracks, which merge differently.
+			if(i == 0 && [tracks count] > 1 && hasContent([entryInfo objectForKey:@"cuesheet"])) {
+				[decoder close];
+				return nil;
+			}
+
+			// A later track of no length cannot seek to its start, so its
+			// decoder reads on from where the last one stopped, not from
+			// where it would in a file just opened.
+			if(i == 0 || [[properties objectForKey:@"totalFrames"] longValue])
+				info[track] = entryInfo;
+		} else if(i == 0 && [tracks count] > 1) {
+			// A first track that will not open cannot show whether the
+			// file has a cue sheet either.
+			[decoder close];
+			return nil;
+		}
+		[decoder close];
+		++i;
+	}
+	return info;
+}
+
 + (NSArray *)urlsForContainerURL:(NSURL *)url {
+	return [self urlsForContainerURL:url trackInfo:NULL];
+}
+
++ (NSArray *)urlsForContainerURL:(NSURL *)url trackInfo:(NSDictionary **)trackInfo {
 	char errDescr[AV_ERROR_MAX_STRING_SIZE];
 
 	if([url fragment]) {
@@ -140,6 +220,12 @@
 		for(i = 0; i < subsongs; ++i) {
 			[tracks addObject:[NSURL URLWithString:[[url absoluteString] stringByAppendingFormat:@"#%i", i]]];
 		}
+	}
+
+	// Only from a local file opened as the decoder opens one: the loader
+	// reads no properties from network streams.
+	if(trackInfo && source && [url isFileURL] && [source seekable] && decoderAloneReadsURL(url, source)) {
+		*trackInfo = [FFMPEGContainer trackInfoForTracks:tracks formatContext:formatCtx];
 	}
 
 exit:

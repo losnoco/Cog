@@ -14,6 +14,39 @@
 
 @implementation jxsDecoder
 
++ (double)sampleRate {
+	double sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+	return sampleRate;
+}
+
++ (void)getFramesLength:(long *)outFramesLength totalFrames:(long *)outTotalFrames forPlayer:(JT1Player *)player track:(int)track sampleRate:(double)sampleRate {
+	double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
+	if(defaultFade < 0.0) {
+		defaultFade = 0.0;
+	}
+
+	long framesLength = jaytrax_getLength(player, track, 2, sampleRate);
+	*outFramesLength = framesLength;
+	*outTotalFrames = framesLength + ((player->playFlg) ? sampleRate * defaultFade : 0);
+}
+
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate totalFrames:(long)totalFrames {
+	return @{@"bitrate": @(0),
+			 @"sampleRate": @(sampleRate),
+			 @"totalFrames": @(totalFrames),
+			 @"bitsPerSample": @(16),
+			 @"floatingPoint": @NO,
+			 @"channels": @(2),
+			 @"seekable": @YES,
+			 @"codec": @"Syntrax",
+			 @"endian": @"host"};
+}
+
 - (id)init {
 	self = [super init];
 	if (self) {
@@ -59,20 +92,9 @@
 	if (!jaytrax_loadSong(synPlayer, synSong))
 		return NO;
 
-	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
-	if(sampleRate < 8000.0) {
-		sampleRate = 44100.0;
-	} else if(sampleRate > 192000.0) {
-		sampleRate = 192000.0;
-	}
+	sampleRate = [jxsDecoder sampleRate];
 
-	double defaultFade = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthDefaultFadeSeconds"] doubleValue];
-	if(defaultFade < 0.0) {
-		defaultFade = 0.0;
-	}
-
-	framesLength = jaytrax_getLength(synPlayer, track_num, 2, sampleRate);
-	totalFrames = framesLength + ((synPlayer->playFlg) ? sampleRate * defaultFade : 0);
+	[jxsDecoder getFramesLength:&framesLength totalFrames:&totalFrames forPlayer:synPlayer track:track_num sampleRate:sampleRate];
 
 	framesRead = 0;
 
@@ -116,15 +138,7 @@
 }
 
 - (NSDictionary *)properties {
-	return @{@"bitrate": @(0),
-			 @"sampleRate": @(sampleRate),
-			 @"totalFrames": @(totalFrames),
-			 @"bitsPerSample": @(16),
-			 @"floatingPoint": @NO,
-			 @"channels": @(2),
-			 @"seekable": @YES,
-			 @"codec": @"Syntrax",
-			 @"endian": @"host"};
+	return [jxsDecoder propertiesWithSampleRate:sampleRate totalFrames:totalFrames];
 }
 
 - (AudioChunk *)readAudio {

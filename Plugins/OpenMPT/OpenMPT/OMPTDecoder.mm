@@ -28,6 +28,40 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 
 @implementation OMPTDecoder
 
++ (double)sampleRate {
+	double sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
+	if(sampleRate < 8000.0) {
+		sampleRate = 44100.0;
+	} else if(sampleRate > 192000.0) {
+		sampleRate = 192000.0;
+	}
+	return sampleRate;
+}
+
++ (openmpt::module *)newModuleWithData:(const std::vector<char> &)data {
+	std::map<std::string, std::string> ctls;
+	ctls["seek.sync_samples"] = "1";
+	return new openmpt::module(data, std::clog, ctls);
+}
+
++ (long)selectSubsong:(int)subsong ofModule:(openmpt::module *)mod sampleRate:(double)sampleRate {
+	mod->select_subsong(subsong);
+
+	return mod->get_duration_seconds() * sampleRate;
+}
+
++ (NSDictionary *)propertiesWithSampleRate:(double)sampleRate length:(long)length {
+	return @{ @"bitrate": @(0),
+		      @"sampleRate": @(sampleRate),
+		      @"totalFrames": @(length),
+		      @"bitsPerSample": @(32),
+		      @"floatingPoint": @YES,
+		      @"channels": @(2),
+		      @"seekable": @YES,
+		      @"endian": @"host",
+		      @"encoding": @"synthesized" };
+}
+
 - (id)init {
 	self = [super init];
 	if(self) {
@@ -43,12 +77,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 	long size = [source tell];
 	[source seek:0 whence:SEEK_SET];
 
-	sampleRate = [[[NSUserDefaults standardUserDefaults] valueForKey:@"synthSampleRate"] doubleValue];
-	if(sampleRate < 8000.0) {
-		sampleRate = 44100.0;
-	} else if(sampleRate > 192000.0) {
-		sampleRate = 192000.0;
-	}
+	sampleRate = [OMPTDecoder sampleRate];
 
 	try {
 		std::vector<char> data(static_cast<std::size_t>(size));
@@ -75,13 +104,9 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 			interp = 4;
 		else if([resampling isEqualToString:@"sinc"])
 			interp = 8;
-		std::map<std::string, std::string> ctls;
-		ctls["seek.sync_samples"] = "1";
-		mod = new openmpt::module(data, std::clog, ctls);
+		mod = [OMPTDecoder newModuleWithData:data];
 
-		mod->select_subsong(track_num);
-
-		length = mod->get_duration_seconds() * sampleRate;
+		length = [OMPTDecoder selectSubsong:track_num ofModule:mod sampleRate:sampleRate];
 
 		mod->set_repeat_count(IsRepeatOneSet() ? -1 : 0);
 		mod->set_render_param(openmpt::module::RENDER_MASTERGAIN_MILLIBEL, 0);
@@ -101,15 +126,7 @@ static void g_push_archive_extensions(std::vector<std::string> &list) {
 }
 
 - (NSDictionary *)properties {
-	return @{ @"bitrate": @(0),
-		      @"sampleRate": @(sampleRate),
-		      @"totalFrames": @(length),
-		      @"bitsPerSample": @(32),
-		      @"floatingPoint": @YES,
-		      @"channels": @(2),
-		      @"seekable": @YES,
-		      @"endian": @"host",
-		      @"encoding": @"synthesized" };
+	return [OMPTDecoder propertiesWithSampleRate:sampleRate length:length];
 }
 
 - (NSDictionary *)metadata {
