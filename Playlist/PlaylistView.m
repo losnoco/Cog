@@ -418,6 +418,24 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	if([filePaths count]) {
 		[pboard writeObjects:filePaths];
 	}
+
+	copiedEntries = entries;
+	copiedChangeCount = [pboard changeCount];
+}
+
+// Copies of the entries the last copy put on the pasteboard, or nil when
+// something else has written to it since, or any of them has gone or is
+// still loading.
+- (NSArray<PlaylistEntry *> *)copiesOfCopiedEntries:(NSPasteboard *)pboard {
+	if(![copiedEntries count] || [pboard changeCount] != copiedChangeCount) return nil;
+	for(PlaylistEntry *pe in copiedEntries) {
+		if(!pe.managedObjectContext || pe.isDeleted || !pe.metadataLoaded) return nil;
+	}
+	NSMutableArray *copies = [NSMutableArray arrayWithCapacity:[copiedEntries count]];
+	for(PlaylistEntry *pe in copiedEntries) {
+		[copies addObject:[pe copyForPlaylist]];
+	}
+	return copies;
 }
 
 - (IBAction)cut:(id)sender {
@@ -432,6 +450,18 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	// Determine the type of object that was dropped
 	NSArray *supportedTypes = @[CogUrlsPboardType, NSPasteboardTypeFileURL, iTunesDropType];
 	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+
+	// Our own copy or cut: the entries themselves, tags and all.
+	NSArray<PlaylistEntry *> *copies = [self copiesOfCopiedEntries:pboard];
+	if(copies) {
+		[playlistController clearFilterPredicate:self];
+		NSUInteger row = [[playlistController arrangedObjects] count];
+		[playlistController insertObjects:copies
+		          atArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(row, [copies count])]];
+		[playbackController playlistDidChange:playlistController];
+		return;
+	}
+
 	NSPasteboardType bestType = [pboard availableTypeFromArray:supportedTypes];
 #ifdef _DEBUG
 	DLog(@"All types:");

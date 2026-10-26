@@ -20,6 +20,11 @@
 	NSMenu *headerContextMenu;
 
 	NSTimer *syncTimer;
+
+	// What the last copy put on the pasteboard, to paste as copies while
+	// the pasteboard still holds it, without loading the files again.
+	NSArray<PlaylistEntry *> *copiedEntries;
+	NSInteger copiedChangeCount;
 }
 
 - (IBAction)toggleColumn:(NSMenuItem *)sender;
