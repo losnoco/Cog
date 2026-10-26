@@ -174,6 +174,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 	                     forKeyPath:@"progressOverall"
 	                        options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld)
 	                        context:playlistControllerContext];
+	[playbackController addObserver:self
+	                     forKeyPath:@"progressMetadata"
+	                        options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld)
+	                        context:playlistControllerContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:playlistControllerContext];
 
 	observersRegistered = YES;
@@ -191,6 +195,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	if(observersRegistered) {
 		[self removeObserver:self forKeyPath:@"arrangedObjects" context:playlistControllerContext];
 		[playbackController removeObserver:self forKeyPath:@"progressOverall" context:playlistControllerContext];
+		[playbackController removeObserver:self forKeyPath:@"progressMetadata" context:playlistControllerContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.fontSize" context:playlistControllerContext];
 	}
 }
@@ -216,7 +221,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 			[self.tableView reloadData];
 		} else if([keyPath isEqualToString:@"values.fontSize"]) {
 			[self updateRowSize];
-		} else if([keyPath isEqualToString:@"progressOverall"]) {
+		} else if([keyPath isEqualToString:@"progressOverall"] ||
+		          [keyPath isEqualToString:@"progressMetadata"]) {
 			id objNew = [change objectForKey:NSKeyValueChangeNewKey];
 			id objOld = [change objectForKey:NSKeyValueChangeOldKey];
 
@@ -247,17 +253,22 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (void)updateProgressText {
 	NSString *description = nil;
-	if(playbackController.progressOverall) {
+	NSProgress *progress = playbackController.progressOverall;
+	if(progress) {
 		if(playbackController.progressJob) {
-			description = [NSString stringWithFormat:@"%@ - %@", playbackController.progressOverall.localizedDescription, playbackController.progressJob.localizedDescription];
+			description = [NSString stringWithFormat:@"%@ - %@", progress.localizedDescription, playbackController.progressJob.localizedDescription];
 		} else {
-			description = playbackController.progressOverall.localizedDescription;
+			description = progress.localizedDescription;
 		}
+	} else {
+		// Tags loading in the background show while nothing else does
+		progress = playbackController.progressMetadata;
+		description = progress.localizedDescription;
 	}
 
 	if(description) {
 		[self setTotalTime:nil];
-		description = [description stringByAppendingFormat:@" - %.2f%% complete", playbackController.progressOverall.fractionCompleted * 100.0];
+		description = [description stringByAppendingFormat:@" - %.2f%% complete", progress.fractionCompleted * 100.0];
 		[self setCurrentStatus:description];
 	} else {
 		[self setCurrentStatus:nil];

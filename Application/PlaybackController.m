@@ -129,6 +129,7 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 
 @synthesize progressOverall;
 @synthesize progressJob;
+@synthesize progressMetadata;
 
 + (NSSet *)keyPathsForValuesAffectingSeekable {
 	return [NSSet setWithObjects:@"playlistController.currentEntry", @"playlistController.currentEntry.seekable", nil];
@@ -144,6 +145,7 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 
 		progressOverall = nil;
 		progressJob = nil;
+		progressMetadata = nil;
 
 		audioPlayer = [AudioPlayer new];
 		[audioPlayer setDelegate:self];

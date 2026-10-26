@@ -65,6 +65,8 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 	// progress bar display
 	NSProgress *progressOverall;
 	NSProgress *progressJob;
+	// tags loading in the background, apart from the above
+	NSProgress *progressMetadata;
 
 	void *_eq;
 }
@@ -73,6 +75,7 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 
 @property NSProgress *progressOverall;
 @property NSProgress *progressJob;
+@property NSProgress *progressMetadata;
 
 // The player, for what it reports beyond playback (the Signal Inspector's
 // meters).

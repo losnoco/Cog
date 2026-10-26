@@ -349,6 +349,44 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+// Tags loading in the background have a progress of their own, apart from
+// the adding of files, so neither waits for the other. Each job adds its
+// entries to it, to be read and then applied, and it goes once all are done.
+- (NSProgress *)beginMetadataJob:(NSUInteger)count {
+	__block NSProgress *job;
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		NSProgress *overall = self->playbackController.progressMetadata;
+		BOOL started = !overall;
+		if(started) {
+			overall = [NSProgress progressWithTotalUnitCount:0];
+			overall.localizedDescription = NSLocalizedString(@"ProgressActionLoadingMetadata", @"");
+		}
+		overall.totalUnitCount += count;
+		job = [NSProgress progressWithTotalUnitCount:count * 2];
+		[overall addChild:job withPendingUnitCount:count];
+		if(started) {
+			self->playbackController.progressMetadata = overall;
+		}
+	});
+	return job;
+}
+
+- (void)advanceMetadataJob:(NSProgress *)job by:(int64_t)units {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		job.completedUnitCount += units;
+	});
+}
+
+- (void)completeMetadataJob:(NSProgress *)job {
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		job.completedUnitCount = job.totalUnitCount;
+		NSProgress *overall = self->playbackController.progressMetadata;
+		if(overall && overall.completedUnitCount >= overall.totalUnitCount) {
+			self->playbackController.progressMetadata = nil;
+		}
+	});
+}
+
 - (NSDictionary *)initialCueInfoForURL:(NSURL *)url {
 	if(![PlaylistEntryInfo isCueSheetTrackURL:url]) {
 		return nil;
@@ -582,8 +620,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		NSMutableArray *arrayRest = [entriesNeedingInfo mutableCopy];
 		[arrayRest removeObjectAtIndex:0];
 
-		metadataLoadInProgress = YES;
-
 		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"")];
 		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"") percentOfTotal:50.0];
 
@@ -637,11 +673,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		}
 		if(!count) {
 			[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
-			[self completeProgress];
-			metadataLoadInProgress = NO;
 		}
 		return;
 	}
+
+	// Counted from now, while it waits for any job before it
+	NSProgress *job = [self beginMetadataJob:[queueThisJob count]];
 
 	size_t count = 0;
 	do {
@@ -653,21 +690,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	@synchronized(queuedURLs) {
 		[queuedURLs addEntriesFromDictionary:queueThisJob];
-	}
-
-	__block double progress = 0.0;
-
-	double progressstep;
-
-	if(metadataLoadInProgress) {
-		progressstep = 100.0 / (double)([queueThisJob count] + 1);
-		progress = progressstep;
-	} else {
-		[self beginProgress:NSLocalizedString(@"ProgressActionLoadingMetadata", @"")];
-		[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoadingMetadata", @"") percentOfTotal:50.0];
-
-		progressstep = 100.0 / (double)([entries count]);
-		progress = 0.0;
 	}
 
 	NSLock *outLock = [NSLock new];
@@ -716,8 +738,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						[weakArray addObject:key];
 						[weakArray addObject:entryInfo];
 						[uniquePathsEntries setObject:[NSMutableArray new] forKey:key];
-						progress += progressstep;
-						[self setProgressJobStatus:progress];
 						[weakLock unlock];
 
 						if(childTask) {
@@ -735,6 +755,9 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 							[childTask finishWithStatus:kSentrySpanStatusInternalError];
 						}
 					}
+					@finally {
+						[self advanceMetadataJob:job by:1];
+					}
 				}
 			}];
 
@@ -744,14 +767,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[queue waitUntilAllOperationsAreFinished];
 
-	progress = 0.0;
-	[self completeProgressJob];
-
-	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionMetadataApply", @"") percentOfTotal:50.0];
-
 	id<SentrySpan> finalTask = [mainTask startChildWithOperation:@"Apply tags to storage"];
-
-	progressstep = 200.0 / (double)([outArray count]);
 
 	NSManagedObjectContext *moc = playlistController.persistentContainer.viewContext;
 
@@ -802,15 +818,13 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 						[firstSeen addObject:entrySet[0]];
 					}
 				}
-
-				progress += progressstep;
 			}
 			[playlistController firstSawTracksWithoutReload:firstSeen];
 			if([batchRows count]) {
 				NSTableView *tableView = [self->playlistView documentView];
 				[tableView reloadDataForRowIndexes:batchRows columnIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [[tableView tableColumns] count])]];
 			}
-			[self setProgressJobStatus:progress];
+			job.completedUnitCount += (end - start) / 2;
 		});
 	}
 
@@ -822,8 +836,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 		[queuedURLs removeObjectsForKeys:[queueThisJob allKeys]];
 	}
 
-	[self completeProgress];
-	metadataLoadInProgress = NO;
+	// Tags that would not read were never applied
+	[self completeMetadataJob:job];
 	
 	[finalTask finish];
 	[mainTask finish];
