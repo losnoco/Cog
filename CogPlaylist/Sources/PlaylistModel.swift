@@ -235,6 +235,18 @@ public final class PlaylistModel: ObservableObject {
 		shownPlaylistChanged()
 	}
 
+	/// Adds entries at `position` (the end by default) of `playlist`, shown
+	/// or not; of the shown one if it has since been deleted.
+	public func insert(_ newEntries: [PlaylistEntry], at position: Int? = nil, into playlist: Playlist?) {
+		guard let playlist, playlist.managedObjectContext != nil, !playlist.isDeleted, playlist != shownPlaylist else {
+			insert(newEntries, at: position)
+			return
+		}
+		playlist.insert(newEntries, at: position ?? -1)
+		store.save()
+		if playlist == playingPlaylist { onPlaylistChange?() }
+	}
+
 	/// Removes the entries at `offsets`. Removed entries are only marked so
 	/// (and dropped on the next load), as on macOS. The current entry may be
 	/// removed while playing: playback goes on from the entry after it.

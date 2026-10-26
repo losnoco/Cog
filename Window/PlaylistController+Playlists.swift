@@ -119,14 +119,12 @@ extension PlaylistController {
 		commitPersistentStoreAsync()
 	}
 
-	/// Adds files to `playlist`, which is shown for them.
+	/// Adds files to `playlist`, which is shown for them; they go there
+	/// even if another is shown by the time they are ready.
 	func add(_ urls: [URL], to playlist: Playlist) {
 		guard !urls.isEmpty else { return }
 		show(playlist)
-		// Off the main thread, as other drops are: expanding folders takes a
-		// while.
-		let input: NSDictionary = ["entries": urls, "sort": true, "origin": URLOrigin.internal.rawValue]
-		performSelector(inBackground: #selector(addURLs(inBackground:)), with: input)
+		addURLs(inBackground: ["entries": urls, "sort": true, "origin": URLOrigin.internal.rawValue, "playlist": playlist])
 	}
 
 	// MARK: - Menu commands

@@ -102,6 +102,20 @@ extension Playlist {
 			position += 1
 		}
 	}
+
+	/// Puts `added` at `position` among the playlist's entries, or after them
+	/// when it is past the end or negative, taking them from any other.
+	@objc(insertEntries:atIndex:) public func insert(_ added: [PlaylistEntry], at position: Int) {
+		let addedSet = Set(added)
+		var ordered = orderedEntries.filter { !addedSet.contains($0) }
+		let at = position < 0 ? ordered.count : min(position, ordered.count)
+		ordered.insert(contentsOf: added, at: at)
+		for (index, entry) in ordered.enumerated() {
+			entry.deLeted = false
+			entry.playlist = self
+			if entry.index != Int64(index) { entry.index = Int64(index) }
+		}
+	}
 }
 
 extension PlaylistEntry {

@@ -395,6 +395,10 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort {
+	return [self insertURLs:urls atIndex:index sort:sort intoPlaylist:nil];
+}
+
+- (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort intoPlaylist:(Playlist *)playlist {
 	NSDictionary *xmlData = nil;
 
 	double progress;
@@ -408,9 +412,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	[self beginProgress:NSLocalizedString(@"ProgressActionLoader", @"")];
 
 	[self beginProgressJob:NSLocalizedString(@"ProgressSubActionLoaderListingFiles", @"") percentOfTotal:20.0];
-
-	if(index < 0)
-		index = 0;
 
 	id<SentrySpan> mainTask = [SentrySDK startTransactionWithName:@"Loading playlist entries" operation:@"Main task"];
 
@@ -496,7 +497,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	const NSUInteger batchSize = 256;
 	for(NSUInteger batchStart = 0, urlCount = [validURLs count]; batchStart < urlCount; batchStart += batchSize) {
 		NSArray *batch = [validURLs subarrayWithRange:NSMakeRange(batchStart, MIN(batchSize, urlCount - batchStart))];
-		NSInteger batchIndex = index + i;
+		NSInteger batchIndex = MAX(index, 0) + i;
 
 		// Cue sheet tracks' own tags, read off the main queue.
 		NSMutableArray *batchInfo = [NSMutableArray arrayWithCapacity:[batch count]];
@@ -538,7 +539,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[addTask finish];
 
-	NSInteger j = index + i;
+	// Where the playlist file's entries start among those made
+	NSInteger j = i;
 
 	if(xmlData) {
 		for(NSDictionary *entry in [xmlData objectForKey:@"entries"]) {
@@ -547,7 +549,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 			dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 				pe = [NSEntityDescription insertNewObjectForEntityForName:@"PlaylistEntry" inManagedObjectContext:self->playlistController.persistentContainer.viewContext];
 				[pe setValuesForKeysWithDictionary:entry];
-				pe.index = index + i;
+				pe.index = MAX(index, 0) + i;
 				pe.queuePosition = -1;
 			});
 
@@ -559,13 +561,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 	[self completeProgress];
 
-	NSIndexSet *is = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])];
-
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		BOOL selectsInsertedObjects = [self->playlistController selectsInsertedObjects];
 		[self->playlistController setSelectsInsertedObjects:NO];
 		@try {
-			[self->playlistController insertObjects:entries atArrangedObjectIndexes:is];
+			[self->playlistController insertEntries:entries atIndex:index intoPlaylist:playlist];
 			// Apply cue metadata only after the array controller owns each managed
 			// object. Otherwise it can miss the per-entry KVO changes and reused row
 			// bindings may display the final cue title for every inserted track.
@@ -597,9 +597,11 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	
 	[mainTask finish];
 
-	// Clear the selection
+	// Clear the selection, where they went into the table
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self->playlistController setSelectionIndexes:[NSIndexSet indexSet]];
+		if([entries count] && [entries[0] playlist] == self->playlistController.shownPlaylist) {
+			[self->playlistController setSelectionIndexes:[NSIndexSet indexSet]];
+		}
 	});
 
 	{
@@ -1089,7 +1091,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin {
-	[playlistController willInsertURLs:urls origin:origin];
+	[playlistController willInsertURLs:urls origin:origin playlist:playlistController.shownPlaylist];
 }
 - (void)didInsertURLs:(NSArray *)urls origin:(URLOrigin)origin {
 	[playlistController didInsertURLs:urls origin:origin];

@@ -41,6 +41,9 @@ typedef enum {
 - (NSArray *)addURLs:(NSArray *)urls sort:(BOOL)sort;
 - (NSArray *)addURL:(NSURL *)url;
 - (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort;
+// Into `playlist`, at `index` (its end when negative), whether or not it is
+// shown by the time they are ready; the one shown when nil.
+- (NSArray *)insertURLs:(NSArray *)urls atIndex:(NSInteger)index sort:(BOOL)sort intoPlaylist:(Playlist *)playlist;
 
 - (NSArray *)addDatabase;
 

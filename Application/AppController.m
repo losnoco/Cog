@@ -137,7 +137,7 @@ static AppController *kAppController = nil;
 			          NSDictionary *loadEntryData = @{@"entries": [p URLs],
 				                                      @"sort": @YES,
 				                                      @"origin": @(URLOriginExternal)};
-			          [self->playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
+			          [self->playlistController addURLsInBackground:loadEntryData];
 		          } else {
 			          [p close];
 		          }
@@ -186,7 +186,7 @@ static AppController *kAppController = nil;
 		NSDictionary *loadEntriesData = @{ @"entries": @[[panel url]],
 			                               @"sort": @NO,
 			                               @"origin": @(URLOriginExternal) };
-		[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
+		[playlistController addURLsInBackground:loadEntriesData];
 	}
 }
 
@@ -696,7 +696,7 @@ static BOOL consentLastEnabled = NO;
 	NSDictionary *loadEntriesData = @{ @"entries": urls,
 		                               @"sort": @NO,
 		                               @"origin": @(URLOriginExternal) };
-	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
+	[playlistController addURLsInBackground:loadEntriesData];
 	return YES;
 }
 
@@ -742,7 +742,7 @@ static BOOL consentLastEnabled = NO;
 		                               @"sort": @YES,
 		                               @"origin": @(URLOriginExternal) };
 
-	[playlistController performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntriesData];
+	[playlistController addURLsInBackground:loadEntriesData];
 
 	[theApplication replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }

@@ -247,7 +247,7 @@ static NSPredicate *musicOnlyPredicate = nil;
 		                             @"sort": @NO,
 		                             @"origin": @(URLOriginExternal) };
 
-	[playlistLoader performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
+	[playlistLoader addURLsInBackground:loadEntryData];
 	[self.query enableUpdates];
 }
 

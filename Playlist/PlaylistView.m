@@ -528,7 +528,7 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 			                               @"sort": @NO,
 			                               @"origin": @(URLOriginInternal) };
 
-		[playlistController performSelectorInBackground:@selector(insertURLsInBackground:) withObject:loadEntriesData];
+		[playlistController insertURLsInBackground:loadEntriesData];
 	}
 }
 

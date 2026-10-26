@@ -99,7 +99,7 @@
 	NSDictionary *loadEntryData = @{ @"entries": urls,
 		                             @"sort": @YES,
 		                             @"origin": @(origin) };
-	[playlistLoader performSelectorInBackground:@selector(addURLsInBackground:) withObject:loadEntryData];
+	[playlistLoader addURLsInBackground:loadEntryData];
 }
 
 - (void)clear:(id)sender {

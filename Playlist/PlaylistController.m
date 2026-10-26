@@ -969,7 +969,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 			                               @"sort": @YES,
 			                               @"origin": @(URLOriginInternal) };
 
-		[self performSelectorInBackground:@selector(insertURLsInBackground:) withObject:loadEntriesData];
+		[self insertURLsInBackground:loadEntriesData];
 	}
 
 	return YES;
@@ -1811,16 +1811,6 @@ BOOL showTrashConsent(NSWindow *window) {
 	return YES;
 }
 
-// Asynchronous event inlets:
-- (void)addURLsInBackground:(NSDictionary *)input {
-	NSUInteger row = [[self content] count];
-
-	NSMutableDictionary *_input = [input mutableCopy];
-	[_input setObject:@(row) forKey:@"index"];
-
-	[self insertURLsInBackground:_input];
-}
-
 static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_block_t block) {
 	if(dispatch_queue_get_label(queue) == dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL)) {
 		block();
@@ -1829,36 +1819,97 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 }
 
+// Asynchronous event inlets:
+- (void)addURLsInBackground:(NSDictionary *)input {
+	NSMutableDictionary *_input = [input mutableCopy];
+	[_input setObject:@(-1) forKey:@"index"];
+
+	[self insertURLsInBackground:_input];
+}
+
 - (void)insertURLsInBackground:(NSDictionary *)input {
-	[self performSelectorOnMainThread:@selector(clearFilterPredicate:) withObject:self waitUntilDone:YES];
-	
-	NSArray *entries = [input objectForKey:@"entries"];
-	NSUInteger row = [[input objectForKey:@"index"] integerValue];
-	BOOL sort = [[input objectForKey:@"sort"] boolValue];
-	URLOrigin origin = (URLOrigin)[[input objectForKey:@"origin"] integerValue];
-
-	NSUInteger countNow = [[self content] count];
-
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		[self willInsertURLs:entries origin:origin];
-	});
-
-	if(countNow && row && ![[self content] count]) {
-		row = 0;
+	// The playlist shown as the user acted, which loading in turn after
+	// others may not reach until another is
+	if(![input objectForKey:@"playlist"]) {
+		__block Playlist *playlist = nil;
+		dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+			playlist = self.shownPlaylist;
+		});
+		if(playlist) {
+			NSMutableDictionary *_input = [input mutableCopy];
+			[_input setObject:playlist forKey:@"playlist"];
+			input = _input;
+		}
 	}
 
-	NSArray *urlsAccepted = [playlistLoader insertURLs:entries atIndex:row sort:sort];
+	[self performSelectorInBackground:@selector(loadURLsForInput:) withObject:input];
+}
+
+- (void)loadURLsForInput:(NSDictionary *)input {
+	NSArray *entries = [input objectForKey:@"entries"];
+	NSNumber *index = [input objectForKey:@"index"];
+	NSInteger row = index ? [index integerValue] : -1;
+	BOOL sort = [[input objectForKey:@"sort"] boolValue];
+	URLOrigin origin = (URLOrigin)[[input objectForKey:@"origin"] integerValue];
+	Playlist *playlist = [input objectForKey:@"playlist"];
+
+	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
+		if(!playlist || playlist == self.shownPlaylist) [self clearFilterPredicate:self];
+		[self willInsertURLs:entries origin:origin playlist:playlist];
+	});
+
+	NSArray *urlsAccepted = [playlistLoader insertURLs:entries atIndex:row sort:sort intoPlaylist:playlist];
 	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
 		[self didInsertURLs:urlsAccepted origin:origin];
 	});
+}
 
-	dispatch_sync_reentrant(dispatch_get_main_queue(), ^{
-		if([self shuffle] != ShuffleOff) [self resetShuffleList];
-	});
+// Whether `playlist` is still there to add to.
+static BOOL playlistIsLive(Playlist *playlist) {
+	return playlist && [playlist managedObjectContext] && ![playlist isDeleted];
+}
+
+- (void)insertEntries:(NSArray<PlaylistEntry *> *)entries atIndex:(NSInteger)index intoPlaylist:(Playlist *)playlist {
+	if(![entries count]) return;
+	if(!playlistIsLive(playlist)) playlist = self.shownPlaylist;
+
+	if(playlist == self.shownPlaylist) {
+		[self clearFilterPredicate:self];
+		NSInteger count = [[self arrangedObjects] count];
+		if(index < 0 || index > count) index = count;
+		[self insertObjects:entries atArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, [entries count])]];
+		return;
+	}
+
+	// Not in the table: into the playlist's stored order alone, with no
+	// undo, as undo is of the playlist shown.
+	[playlist insertEntries:entries atIndex:index];
+	[self commitPersistentStoreAsync];
+	if(playlist == self.playingPlaylist) {
+		if([self shuffle] != ShuffleOff) [self.playbackOrder resetShuffleInPlaylist:playlist current:currentEntry];
+		[self playingPlaylistDidChange];
+	}
+}
+
+// Removes every entry of `playlist`, shown or not.
+- (void)clearPlaylist:(Playlist *)playlist {
+	if(!playlistIsLive(playlist) || playlist == self.shownPlaylist) {
+		[self clear:self];
+		return;
+	}
+
+	NSArray<PlaylistEntry *> *entries = playlist.orderedEntries;
+	if(![entries count]) return;
+	[self.playbackOrder willRemoveEntries:entries current:currentEntry];
+	for(PlaylistEntry *pe in entries) {
+		pe.deLeted = YES;
+	}
+	[self commitPersistentStoreAsync];
+	if(playlist == self.playingPlaylist) [self playingPlaylistDidChange];
 }
 
 // Event inlets:
-- (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin {
+- (void)willInsertURLs:(NSArray *)urls origin:(URLOrigin)origin playlist:(Playlist *)playlist {
 	if(![urls count]) return;
 
 	CGEventRef event = CGEventCreate(NULL /*default event source*/);
@@ -1884,7 +1935,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 
 	if(shouldClear) {
-		[self clear:self];
+		[self clearPlaylist:playlist];
 	}
 }
 

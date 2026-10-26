@@ -111,12 +111,19 @@
 - (PlaylistEntry *_Nullable)entryAtIndex:(NSInteger)i;
 
 // Event inlets:
-- (void)willInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin;
+- (void)willInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin playlist:(Playlist *_Nullable)playlist;
 - (void)didInsertURLs:(NSArray *_Nullable)urls origin:(URLOrigin)origin;
 
-// Asynchronous event handler
+// Asynchronous event handler, called as the user acts: the URLs load in the
+// background, into the playlist given as "playlist" or the one shown now,
+// though another may be shown by the time they are ready. "index" is where
+// in it, the end when negative or missing.
 - (void)addURLsInBackground:(NSDictionary *_Nonnull)input;
 - (void)insertURLsInBackground:(NSDictionary *_Nonnull)input;
+
+/// Puts `entries` at `index` (the end when negative) of `playlist`, shown or
+/// not; of the shown one if `playlist` is nil or has since been deleted.
+- (void)insertEntries:(NSArray<PlaylistEntry *> *_Nonnull)entries atIndex:(NSInteger)index intoPlaylist:(Playlist *_Nullable)playlist;
 
 // queue methods
 - (IBAction)toggleQueued:(id _Nullable)sender;

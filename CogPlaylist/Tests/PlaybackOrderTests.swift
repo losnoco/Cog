@@ -152,6 +152,23 @@ final class PlaybackOrderTests: XCTestCase {
 		XCTAssertEqual(first.orderedEntries, a, "the original stays")
 	}
 
+	func testAddedEntriesGoToTheirPlaylistThoughAnotherIsShown() {
+		let (a, _) = twoPlaylists()
+		let first = model.playlists[0]
+		let made = ["A4", "A0"].map { name -> PlaylistEntry in
+			let entry = PlaylistEntry(context: store.viewContext)
+			entry.url = URL(fileURLWithPath: "/music/\(name).flac")
+			entry.metadataBlob = ["title": [name]] as NSDictionary
+			return entry
+		}
+		model.insert([made[0]], into: first)
+		model.insert([made[1]], at: 0, into: first)
+		XCTAssertEqual(names(first.orderedEntries), ["A0", "A1", "A2", "A3", "A4"])
+		XCTAssertEqual(first.orderedEntries.map(\.index), [0, 1, 2, 3, 4])
+		XCTAssertEqual(names(model.entries), ["B1", "B2", "B3"], "the shown one is left alone")
+		XCTAssertEqual(a[0].index, 1)
+	}
+
 	func testEntriesAreRemovedFromPlaylistsNotShown() {
 		let (a, b) = twoPlaylists()
 		model.setCurrent(a[1])
