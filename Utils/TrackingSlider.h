@@ -18,3 +18,12 @@
 - (BOOL)isTracking;
 
 @end
+
+@interface NSSlider (PointerTracking)
+
+/// Puts the knob under the pointer and keeps it there until the mouse goes
+/// up, anywhere across the slider's height. Returns NO, doing nothing, for a
+/// disabled or vertical slider.
+- (BOOL)trackPointerFromEvent:(NSEvent *)event;
+
+@end

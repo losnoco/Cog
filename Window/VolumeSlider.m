@@ -9,6 +9,7 @@
 #import "VolumeSlider.h"
 #import "CogAudio/Helper.h"
 #import "PlaybackController.h"
+#import "TrackingSlider.h"
 
 static void *kVolumeSliderContext = &kVolumeSliderContext;
 
@@ -176,6 +177,10 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	[self showToolTip];
 
 	return [super sendAction:theAction to:theTarget];
+}
+
+- (void)mouseDown:(NSEvent *)event {
+	if(![self trackPointerFromEvent:event]) [super mouseDown:event];
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent {

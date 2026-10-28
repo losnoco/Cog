@@ -25,4 +25,8 @@
 	return tracking;
 }
 
+- (void)setTracking:(BOOL)flag {
+	tracking = flag;
+}
+
 @end
