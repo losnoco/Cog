@@ -148,9 +148,19 @@ private struct SpectrumWindowView: View {
 			SpectrumView(isPlaying: model.status == .playing && !model.isOccluded,
 			             barColor: color(barColorData), peakColor: color(dotColorData),
 			             isFullView: true, frequencyMode: frequencyMode)
-				// A click switches between octave bands and frequencies.
+				// A click switches between octave bands and frequencies, as
+				// does the menu.
 				.contentShape(Rectangle())
 				.onTapGesture { frequencyMode.toggle() }
+				.contextMenu {
+					Picker(selection: $frequencyMode) {
+						Text("Octave Bands", comment: "Spectrum menu item: bars for octave note bands").tag(false)
+						Text("Frequencies", comment: "Spectrum menu item: a line for each frequency").tag(true)
+					} label: {
+						EmptyView()
+					}
+					.pickerStyle(.inline)
+				}
 		} else {
 			Color.clear
 		}

@@ -2319,6 +2319,17 @@
         }
       }
     },
+    "Frequencies" : {
+      "comment" : "Spectrum menu item: a line for each frequency",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frecuencias"
+          }
+        }
+      }
+    },
     "GainAlbumGain" : {
       "localizations" : {
         "en" : {
@@ -3552,6 +3563,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "Octave Bands" : {
+      "comment" : "Spectrum menu item: bars for octave note bands",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bandas de octava"
           }
         }
       }
@@ -5219,6 +5241,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Analizador"
+          }
+        }
+      }
+    },
+    "Spectrum. Click to open the spectrum." : {
+      "comment" : "Spectrum toolbar item tooltip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analizador de espectro. Haz clic para abrir el analizador."
           }
         }
       }

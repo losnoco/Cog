@@ -216,7 +216,48 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 	self.delegate = self;
 
+	[self addPlaybackObservers];
+
 	isSetup = YES;
+}
+
+// Playback is followed from the start, unlike the window: resuming on
+// launch begins playing before the view first draws, and missing that
+// left it blank until the next track.
+- (void)addPlaybackObservers {
+	NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidBegin:)
+	                      name:CogPlaybackDidBeginNotificiation
+	                    object:nil];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidPause:)
+	                      name:CogPlaybackDidPauseNotificiation
+	                    object:nil];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidResume:)
+	                      name:CogPlaybackDidResumeNotificiation
+	                    object:nil];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidStop:)
+	                      name:CogPlaybackDidStopNotificiation
+	                    object:nil];
+}
+
+- (void)removePlaybackObservers {
+	NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidBeginNotificiation
+	                       object:nil];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidPauseNotificiation
+	                       object:nil];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidResumeNotificiation
+	                       object:nil];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidStopNotificiation
+	                       object:nil];
 }
 
 - (void)addObservers {
@@ -229,22 +270,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewSKContext];
 
 		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidBegin:)
-		                      name:CogPlaybackDidBeginNotificiation
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidPause:)
-		                      name:CogPlaybackDidPauseNotificiation
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidResume:)
-		                      name:CogPlaybackDidResumeNotificiation
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidStop:)
-		                      name:CogPlaybackDidStopNotificiation
-		                    object:nil];
 
 		[defaultCenter addObserver:self
 		                  selector:@selector(windowChangedOcclusionState:)
@@ -261,6 +286,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 	[self stopTimer];
 
+	[self removePlaybackObservers];
 	[self removeObservers];
 
 	[visController freeFFTState:&visFFTState];
@@ -276,18 +302,6 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewSKContext];
 
 		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidBeginNotificiation
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidPauseNotificiation
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidResumeNotificiation
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidStopNotificiation
-		                       object:nil];
 
 		[defaultCenter removeObserver:self
 		                         name:NSWindowDidChangeOcclusionStateNotification

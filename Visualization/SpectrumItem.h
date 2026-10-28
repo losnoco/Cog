@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SpectrumItem : NSToolbarItem {
 	IBOutlet PlaybackController *playbackController;
+	IBOutlet NSWindowController *windowController;
 }
 @end
 

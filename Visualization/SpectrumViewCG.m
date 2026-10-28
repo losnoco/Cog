@@ -113,7 +113,48 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 	_analyzer.freq_is_log = 0;
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 
+	[self addPlaybackObservers];
+
 	isSetup = YES;
+}
+
+// Playback is followed from the start, unlike the window: resuming on
+// launch begins playing before the view first draws, and missing that
+// left it blank until the next track.
+- (void)addPlaybackObservers {
+	NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidBegin:)
+	                      name:CogPlaybackDidBeginNotificiation
+	                    object:nil];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidPause:)
+	                      name:CogPlaybackDidPauseNotificiation
+	                    object:nil];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidResume:)
+	                      name:CogPlaybackDidResumeNotificiation
+	                    object:nil];
+	[defaultCenter addObserver:self
+	                  selector:@selector(playbackDidStop:)
+	                      name:CogPlaybackDidStopNotificiation
+	                    object:nil];
+}
+
+- (void)removePlaybackObservers {
+	NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidBeginNotificiation
+	                       object:nil];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidPauseNotificiation
+	                       object:nil];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidResumeNotificiation
+	                       object:nil];
+	[defaultCenter removeObserver:self
+	                         name:CogPlaybackDidStopNotificiation
+	                       object:nil];
 }
 
 - (void)enableFullView {
@@ -129,6 +170,8 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 	if(context == kSpectrumViewCGContext) {
 		if([keyPath isEqualToString:@"self.window.visible"]) {
 			[self updateVisListening];
+		} else if([keyPath isEqualToString:@"values.spectrumFreqMode"]) {
+			[self freqModeDidChange];
 		} else {
 			[self colorsDidChange:nil];
 		}
@@ -141,6 +184,7 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 	if(!observersAdded) {
 		NSUserDefaultsController *sharedUserDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewCGContext];
+		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumFreqMode" options:0 context:kSpectrumViewCGContext];
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewCGContext];
 
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewCGContext];
@@ -149,22 +193,6 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 		[defaultCenter addObserver:self
 		                  selector:@selector(colorsDidChange:)
 		                      name:NSSystemColorsDidChangeNotification
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidBegin:)
-		                      name:CogPlaybackDidBeginNotificiation
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidPause:)
-		                      name:CogPlaybackDidPauseNotificiation
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidResume:)
-		                      name:CogPlaybackDidResumeNotificiation
-		                    object:nil];
-		[defaultCenter addObserver:self
-		                  selector:@selector(playbackDidStop:)
-		                      name:CogPlaybackDidStopNotificiation
 		                    object:nil];
 
 		[defaultCenter addObserver:self
@@ -182,6 +210,7 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 
 	[self stopTimer];
 
+	[self removePlaybackObservers];
 	[self removeObservers];
 
 	[visController freeFFTState:&visFFTState];
@@ -191,6 +220,7 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 	if(observersAdded) {
 		NSUserDefaultsController *sharedUserDefaultsController = [NSUserDefaultsController sharedUserDefaultsController];
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewCGContext];
+		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumFreqMode" context:kSpectrumViewCGContext];
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewCGContext];
 
 		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewCGContext];
@@ -198,18 +228,6 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter removeObserver:self
 		                         name:NSSystemColorsDidChangeNotification
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidBeginNotificiation
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidPauseNotificiation
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidResumeNotificiation
-		                       object:nil];
-		[defaultCenter removeObserver:self
-		                         name:CogPlaybackDidStopNotificiation
 		                       object:nil];
 
 		[defaultCenter removeObserver:self
@@ -402,17 +420,6 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 	[backgroundColor setFill];
 	NSRectFill(dirtyRect);
 
-	if(!isFullView) {
-		CGContextRef context = NSGraphicsContext.currentContext.CGContext;
-		CGContextMoveToPoint(context, 0.0, 0.0);
-		CGContextAddLineToPoint(context, initFrame.size.width, 0.0);
-		CGContextAddLineToPoint(context, initFrame.size.width, initFrame.size.height);
-		CGContextAddLineToPoint(context, 0.0, initFrame.size.height);
-		CGContextAddLineToPoint(context, 0.0, 0.0);
-		CGContextSetStrokeColorWithColor(context, borderColor.CGColor);
-		CGContextStrokePath(context);
-	}
-
 	if(stopped) return;
 
 	if(isFullView) {
@@ -439,9 +446,9 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 	[self drawAnalyzer];
 }
 
-- (void)mouseDown:(NSEvent *)event {
-	BOOL freqMode = ![[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
-	[[NSUserDefaults standardUserDefaults] setBool:freqMode forKey:@"spectrumFreqMode"];
+// The spectrum window's menu switches the mode; the toolbar's follows it.
+- (void)freqModeDidChange {
+	BOOL freqMode = [[NSUserDefaults standardUserDefaults] boolForKey:@"spectrumFreqMode"];
 
 	_analyzer.mode = freqMode ? DDB_ANALYZER_MODE_FREQUENCIES : DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
 	_analyzer.mode_did_change = 1;
