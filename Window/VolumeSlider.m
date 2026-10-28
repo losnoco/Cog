@@ -56,6 +56,14 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	popover.animates = NO;
 	[popover setContentSize:textView.bounds.size];
 
+	// The toolbar sizes the item by the slider's constraints, and a slider has
+	// no width of its own: on macOS 15 it was squeezed to just its knob.
+	// With a minimum, the toolbar moves it to its overflow menu instead.
+	[[self.widthAnchor constraintGreaterThanOrEqualToConstant:64] setActive:YES];
+	NSLayoutConstraint *preferredWidth = [self.widthAnchor constraintEqualToConstant:96];
+	preferredWidth.priority = NSLayoutPriorityDefaultLow;
+	preferredWidth.active = YES;
+
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.volumeLimit" options:0 context:kVolumeSliderContext];
 	observersadded = YES;
 }
