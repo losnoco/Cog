@@ -113,6 +113,10 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 	// Bumped by every play or stop, so a start deferred until an entry's
 	// tags load is dropped if something else happened meanwhile.
 	NSUInteger startToken;
+	// The entry last handed to the player, and where it starts, so that the
+	// position shows that offset, rather than 0, once the stream begins.
+	PlaylistEntry *startingEntry;
+	double startingPosition;
 }
 
 #define DEFAULT_SEEK 5
@@ -426,6 +430,8 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[self sendMetaData];
 
 	double seekTime = pe.seekable ? [offset doubleValue] : 0.0;
+	startingEntry = pe;
+	startingPosition = seekTime;
 
 	[audioPlayer performSelectorOnMainThread:@selector(playBG:withUserInfo:withRGInfo:startPaused:andSeekTo:) withObjects:pe.url, pe, makeRGInfo(pe), @(paused), @(seekTime), nil];
 }
@@ -883,10 +889,15 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 		self->lastPosition = -10;
 
+		// A track started part-way, as when resuming on launch, begins at its
+		// offset. Paused, no timer would move the position off 0 until played.
+		double start = (pe && pe == self->startingEntry) ? self->startingPosition : 0.0;
+		self->startingEntry = nil;
+
 		if(!isSameEntry) {
 			[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaybackWillResetPositionNotification object:self];
 		}
-		[self setPosition:0];
+		[self setPosition:start];
 	});
 
 	if(pe) {
