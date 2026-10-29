@@ -315,6 +315,9 @@ import Foundation
 
 	/// How the current pipeline drives the device.
 	private var outputPlan = OutputPlan.shared
+	/// The decoder properties `outputPlan` was made from, standing in for
+	/// the first track's own until the feeder has decoded some of it.
+	private var plannedProperties: [AnyHashable: Any] = [:]
 	/// A device that could not be held exclusively (another process holds
 	/// it, or it would not start): planned as shared until playback stops or
 	/// the setting changes, so that not every track tries again.
@@ -381,6 +384,7 @@ import Foundation
 			plan = Self.plan(for: properties, device: device)
 		}
 		outputPlan = plan
+		plannedProperties = properties
 
 		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: plan.dop),
 		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization], carrier: plan.dop,
@@ -825,9 +829,14 @@ import Foundation
 	}
 
 	/// Whether the track being heard would now be planned differently.
+	/// Until the feeder has started it, the track is planned from the
+	/// properties the pipeline was built for: a slow decoder (a MIDI synth
+	/// loading) has not started when the notification of the build's own
+	/// rate switch arrives, and planned from nothing it would get shared
+	/// output, and a restart.
 	private func wantsAnotherPlan() -> Bool {
 		guard let output, let track = currentTrack else { return false }
-		return Self.plan(for: track.sourceProperties ?? [:], device: planning(for: output)) != outputPlan
+		return Self.plan(for: track.sourceProperties ?? plannedProperties, device: planning(for: output)) != outputPlan
 	}
 
 	/// The setting changed while paused: start or stop the clock, and run
@@ -869,6 +878,7 @@ import Foundation
 		seekPending = false
 		rebuildRequested = false
 		outputPlan = .shared
+		plannedProperties = [:]
 		if releasingDevice {
 			// Other apps may play again.
 			output?.releaseExclusive()
