@@ -45,7 +45,13 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	[textView setFrame:NSMakeRect(0, 0, 50, 20)];
 	textView.drawsBackground = NO;
 	textView.editable = NO;
+	// Selectable, it made the popover the key window, so the next click on
+	// the slider only brought the main window back.
+	textView.selectable = NO;
 	textView.alignment = NSTextAlignmentCenter;
+	// NSText's own default is Helvetica. Even digits keep the text still as
+	// the value changes.
+	textView.font = [NSFont monospacedDigitSystemFontOfSize:12 weight:NSFontWeightRegular];
 
 	NSViewController *viewController = [NSViewController new];
 	viewController.view = textView;
@@ -100,9 +106,12 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	double range = self.maxValue - self.minValue;
 	double progress = range == 0 ? 0 : ([self doubleValue] - self.minValue) / range;
 	CGFloat knobCenter = self.knobThickness / 2.f + (self.bounds.size.width - self.knobThickness) * progress;
-	NSRect anchor = NSMakeRect(knobCenter - 1, NSMidY(self.bounds) - 1, 2, 2);
+	// From the slider's edge, not the knob's middle, so it covers less of
+	// the knob, and it lets clicks through to what it does cover.
+	NSRect anchor = NSMakeRect(knobCenter - 1, NSMinY(self.bounds), 2, NSHeight(self.bounds));
 
 	[popover showRelativeToRect:anchor ofView:self preferredEdge:NSRectEdgeMaxY];
+	popover.contentViewController.view.window.ignoresMouseEvents = YES;
 	[self.window.parentWindow makeKeyWindow];
 }
 
@@ -116,6 +125,7 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	[self updateToolTip];
 
 	[popover showRelativeToRect:view.bounds ofView:view preferredEdge:NSRectEdgeMaxY];
+	popover.contentViewController.view.window.ignoresMouseEvents = YES;
 
 	[self hideToolTipAfterDelay:duration];
 }
