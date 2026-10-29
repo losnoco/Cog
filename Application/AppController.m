@@ -505,7 +505,6 @@ static BOOL consentLastEnabled = NO;
 			const CGFloat sizeX = 16.0;
 			const CGFloat sizeY = 16.0;
 
-			NSImage *newButtonImage = [[NSImage alloc] initWithSize:NSMakeSize(sizeX, sizeY)];
 			NSSize artSize = entry.albumArt.size;
 			CGFloat maxDim = MAX(artSize.width, artSize.height);
 			CGFloat ratioX = artSize.width / maxDim;
@@ -515,12 +514,32 @@ static BOOL consentLastEnabled = NO;
 			posX = posX * sizeX / maxDim;
 			posY = posY * sizeY / maxDim;
 
-			[newButtonImage lockFocus];
+			// Into an 8-bit sRGB bitmap at twice the size, not lockFocus's
+			// buffer in the display's colour space: sharp on Retina, and no
+			// colour out of range for the grey the toolbar turns it in an
+			// inactive window, where bright parts of some covers came out
+			// speckled on macOS 15.
+			NSBitmapImageRep *rep = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+			                                                                 pixelsWide:(NSInteger)(sizeX * 2)
+			                                                                 pixelsHigh:(NSInteger)(sizeY * 2)
+			                                                              bitsPerSample:8
+			                                                            samplesPerPixel:4
+			                                                                   hasAlpha:YES
+			                                                                   isPlanar:NO
+			                                                             colorSpaceName:NSDeviceRGBColorSpace
+			                                                                bytesPerRow:0
+			                                                               bitsPerPixel:0] bitmapImageRepByRetaggingWithColorSpace:[NSColorSpace sRGBColorSpace]];
+			rep.size = NSMakeSize(sizeX, sizeY);
+			[NSGraphicsContext saveGraphicsState];
+			NSGraphicsContext.currentContext = [NSGraphicsContext graphicsContextWithBitmapImageRep:rep];
+			NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
 			[entry.albumArt drawInRect:NSMakeRect(posX, posY, sizeX * ratioX, sizeY * ratioY)
 							  fromRect:NSMakeRect(0, 0, artSize.width, artSize.height)
 							 operation:NSCompositingOperationSourceOver
 							  fraction:1.0];
-			[newButtonImage unlockFocus];
+			[NSGraphicsContext restoreGraphicsState];
+			NSImage *newButtonImage = [[NSImage alloc] initWithSize:NSMakeSize(sizeX, sizeY)];
+			[newButtonImage addRepresentation:rep];
 
 			self.infoButton.imageScaling = NSImageScaleProportionallyUpOrDown;
 			self.infoButton.image = newButtonImage;
