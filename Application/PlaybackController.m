@@ -81,10 +81,13 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 	}
 	va_end(objects);
 
-	// Invoke on the main operation queue
-	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invocation];
-	NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
-	[mainQueue addOperation:operation];
+	// Invoke from the main run loop, not the main queue: stopping playback
+	// waits for the feeder while turning the run loop, and a feeder that
+	// dispatches to the main queue meanwhile (SandboxBroker does, opening a
+	// file) is only served if this is not itself running as a main queue
+	// block.
+	[invocation retainArguments];
+	[invocation performSelectorOnMainThread:@selector(invoke) withObject:nil waitUntilDone:NO];
 }
 
 @end
