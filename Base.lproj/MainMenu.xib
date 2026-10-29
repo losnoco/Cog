@@ -1054,7 +1054,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="10" sizingBehavior="auto" id="1610">
+                    <toolbarItem implicitItemIdentifier="3B680DEB-106E-4549-A478-FFB8A6738053" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="10" sizingBehavior="auto" id="1610" customClass="VolumeSliderToolbarItem" customModule="Cog" customModuleProvider="target">
                         <nil key="toolTip"/>
                         <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="1608" customClass="VolumeSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
@@ -1362,7 +1362,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="15" sizingBehavior="auto" id="2275">
+                    <toolbarItem implicitItemIdentifier="BBA4D635-FC27-42FC-B346-CE553195CA7C" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="15" sizingBehavior="auto" id="2275" customClass="VolumeSliderToolbarItem" customModule="Cog" customModuleProvider="target">
                         <nil key="toolTip"/>
                         <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="2289" customClass="VolumeSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
@@ -1652,7 +1652,7 @@
                             </textFieldCell>
                         </textField>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0004-7890-ABCD-EF1234567894" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="15" sizingBehavior="auto" id="3113">
+                    <toolbarItem implicitItemIdentifier="A1B2C3D4-0004-7890-ABCD-EF1234567894" label="Volume" paletteLabel="Volume" image="speaker.wave.3.fill" catalog="system" visibilityPriority="15" sizingBehavior="auto" id="3113" customClass="VolumeSliderToolbarItem" customModule="Cog" customModuleProvider="target">
                         <nil key="toolTip"/>
                         <slider key="view" toolTip="Volume" verticalHuggingPriority="750" id="3114" customClass="VolumeSlider">
                             <rect key="frame" x="0.0" y="14" width="96" height="14"/>
