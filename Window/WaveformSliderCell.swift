@@ -2,11 +2,12 @@
 //  WaveformSliderCell.swift
 //  Cog
 //
-//  The position slider's cell: while the waveform seek bar is on and the
-//  playing track has one, it draws the waveform as the bar, the played part
-//  in the accent colour, with a slim playhead for the knob. Otherwise it
-//  draws the stock slider. It keeps no state (cells get copied); the slider
-//  redraws it when the waveform or a setting changes.
+//  The position slider's cell: while the waveform seek bar is on, it draws
+//  the playing track's waveform as the bar, the played part in the accent
+//  colour, with a slim playhead for the knob; a flat line while there is
+//  none (stopped, or not scanned yet). Otherwise it draws the stock slider.
+//  It keeps no state (cells get copied); the slider redraws it when the
+//  waveform or a setting changes.
 //
 
 import AppKit
@@ -14,9 +15,16 @@ import CogAudio
 
 @objc(WaveformSliderCell)
 final class WaveformSliderCell: TrackingCell {
+	/// Silence throughout, drawn as a hairline.
+	private static let flat: Waveform = {
+		var waveform = Waveform()
+		waveform.scanned = [Bool](repeating: true, count: Waveform.bucketCount)
+		return waveform
+	}()
+
 	private var shownWaveform: Waveform? {
 		guard UserDefaults.standard.bool(forKey: WaveformController.enabledKey) else { return nil }
-		return WaveformController.shared.waveform
+		return WaveformController.shared.waveform ?? Self.flat
 	}
 
 	/// Where the waveform goes: the bar's span between the knob's centres at
