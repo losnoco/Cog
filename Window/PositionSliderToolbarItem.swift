@@ -53,7 +53,14 @@ final class PositionSliderContainer: NSView {
 		false
 	}
 
+	private var forwarding = false
+
+	/// A disabled slider passes the click up the responder chain, which
+	/// leads back here; drop it then rather than forward it again.
 	override func mouseDown(with event: NSEvent) {
-		subviews.first?.mouseDown(with: event)
+		guard !forwarding, let slider = subviews.first else { return }
+		forwarding = true
+		defer { forwarding = false }
+		slider.mouseDown(with: event)
 	}
 }
