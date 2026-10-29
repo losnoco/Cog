@@ -112,7 +112,7 @@ public final class WaveformScanner {
 		guard segments > 1 else {
 			read(first, track: track, from: 0, to: nil, into: accumulator, reporter: reporter)
 			close(first)
-			return cancelled.isSet ? nil : accumulator.waveform(final: true)
+			return cancelled.isSet ? nil : accumulator.finalWaveform()
 		}
 
 		let failed = CancellationFlag()
@@ -139,7 +139,7 @@ public final class WaveformScanner {
 			close(opened)
 			guard !cancelled.isSet else { return nil }
 		}
-		return accumulator.waveform(final: true)
+		return accumulator.finalWaveform()
 	}
 
 	/// What the decoder said of the track.
@@ -313,6 +313,16 @@ private final class Accumulator: @unchecked Sendable {
 			counts[bucket] += length
 			offset += length
 		}
+	}
+
+	/// The complete waveform, or nil if nothing was read: a decoder that
+	/// failed at once has nothing to show, and should not be cached as a
+	/// flat line.
+	func finalWaveform() -> Waveform? {
+		lock.lock()
+		let read = counts.contains { $0 > 0 }
+		lock.unlock()
+		return read ? waveform(final: true) : nil
 	}
 
 	/// What has been gathered. Final, buckets nothing reached (where a
