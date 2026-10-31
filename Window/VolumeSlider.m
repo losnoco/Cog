@@ -58,8 +58,10 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 
 	popover = [NSPopover new];
 	popover.contentViewController = viewController;
-	// Don't hide the popover automatically.
-	popover.behavior = NSPopoverBehaviorTransient;
+	// Hidden on a timer. Transient, before macOS 26, the click that closed it
+	// was sometimes dropped, so a click on the slider while it showed did
+	// nothing.
+	popover.behavior = NSPopoverBehaviorApplicationDefined;
 	popover.animates = NO;
 	[popover setContentSize:textView.bounds.size];
 
@@ -190,7 +192,13 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 }
 
 - (void)mouseDown:(NSEvent *)event {
-	if(![self trackPointerFromEvent:event]) [super mouseDown:event];
+	// Keep the tooltip up while the knob moves, and for a moment after.
+	[self hideToolTipAfterDelay:0];
+	if([self trackPointerFromEvent:event]) {
+		[self hideToolTipAfterDelay:1.0];
+	} else {
+		[super mouseDown:event];
+	}
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent {
