@@ -31,6 +31,11 @@ class PositionSliderToolbarItem: NSToolbarItem {
 		container.addSubview(slider)
 		view = container
 	}
+
+	override func validate() {
+		super.validate()
+		(view as? ToolbarSliderContainer)?.validateSlider()
+	}
 }
 
 /// The volume slider, in a container as tall as the toolbar's controls.
@@ -61,6 +66,11 @@ class VolumeSliderToolbarItem: NSToolbarItem {
 		])
 		view = container
 	}
+
+	override func validate() {
+		super.validate()
+		(view as? ToolbarSliderContainer)?.validateSlider()
+	}
 }
 
 /// Holds a toolbar slider so that none of it drags the window. In the
@@ -82,6 +92,23 @@ final class ToolbarSliderContainer: NSView {
 
 	override var mouseDownCanMoveWindow: Bool {
 		false
+	}
+
+	/// AppKit disables the slider while a sheet is up, and nothing enabled
+	/// it again afterwards, as the item's view is this container rather
+	/// than the slider. The toolbar validates its items as the window
+	/// updates; this enables the slider then as its binding has it.
+	func validateSlider() {
+		guard let slider = subviews.first as? NSControl else { return }
+		var enabled = window?.attachedSheet == nil
+		if enabled, let info = slider.infoForBinding(.enabled),
+		   let object = info[.observedObject] as? NSObject,
+		   let keyPath = info[.observedKeyPath] as? String {
+			enabled = (object.value(forKeyPath: keyPath) as? Bool) ?? true
+		}
+		if slider.isEnabled != enabled {
+			slider.isEnabled = enabled
+		}
 	}
 
 	private var forwarding = false
