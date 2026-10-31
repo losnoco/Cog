@@ -44,11 +44,20 @@ class VolumeSliderToolbarItem: NSToolbarItem {
 		let container = ToolbarSliderContainer(frame: NSRect(x: 0, y: 0, width: slider.frame.width, height: 28))
 		slider.translatesAutoresizingMaskIntoConstraints = false
 		container.addSubview(slider)
+		// Constraints place the slider's alignment rect, and its frame
+		// reaches 2 points past that at either end and 2 points down from
+		// centre. The toolbar passes a click to the item only within its
+		// alignment rect, and the window drags from the rest, so a click on
+		// the knob's lower edge or the bar's ends went to the toolbar or
+		// moved the window. The container takes in the slider's whole frame,
+		// keeping it centred where it was.
+		let insets = slider.alignmentRectInsets
+		let overhang = max(0, (insets.bottom - insets.top) / 2)
 		NSLayoutConstraint.activate([
-			slider.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-			slider.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+			slider.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: insets.left),
+			slider.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -insets.right),
 			slider.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-			container.heightAnchor.constraint(equalToConstant: 28),
+			container.heightAnchor.constraint(equalToConstant: 28 + 2 * overhang),
 		])
 		view = container
 	}
