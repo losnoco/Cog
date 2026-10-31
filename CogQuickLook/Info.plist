@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSExtension</key>
+	<dict>
+		<key>NSExtensionAttributes</key>
+		<dict>
+			<key>QLIsDataBasedPreview</key>
+			<false/>
+			<key>QLSupportedContentTypes</key>
+			<array>
+				<string>org.cogx.cog.rar-archive-of-spc</string>
+				<string>org.cogx.cog.7z-archive-of-vgm</string>
+				<string>org.cogx.cog.mpeg-audio</string>
+				<string>org.cogx.cog.usac-audio</string>
+				<string>org.cogx.cog.vgmstream</string>
+				<string>org.cogx.cog.tak-audio</string>
+				<string>org.cogx.cog.monkeys-audio</string>
+				<string>org.cogx.cog.dts-audio</string>
+				<string>org.cogx.cog.dts-hd-ma-audio</string>
+				<string>org.cogx.cog.true-audio</string>
+				<string>org.cogx.cog.truevq-audio</string>
+				<string>org.cogx.cog.real-audio</string>
+				<string>org.cogx.cog.matroska-audio</string>
+				<string>org.cogx.cog.webm-audio</string>
+				<string>org.cogx.cog.dsd-stream</string>
+				<string>org.cogx.cog.interchange-format</string>
+				<string>org.cogx.cog.wideband-single-bit-data</string>
+				<string>org.cogx.cog.psf-format</string>
+				<string>org.cogx.cog.libvgm</string>
+				<string>org.cogx.cog.adplug</string>
+				<string>org.cogx.cog.libopenmpt-module</string>
+				<string>org.cogx.cog.hively-tracker</string>
+				<string>org.cogx.cog.abyss-highest-experience</string>
+				<string>org.cogx.cog.game-music-emu</string>
+				<string>org.cogx.cog.wavpack</string>
+				<string>org.cogx.cog.shorten</string>
+				<string>org.cogx.cog.riff-midi</string>
+				<string>org.cogx.cog.mids-midi</string>
+				<string>org.cogx.cog.hmi-midi</string>
+				<string>org.cogx.cog.id-software-mus-midi</string>
+				<string>org.cogx.cog.xmi-midi</string>
+				<string>org.cogx.cog.loudness-midi</string>
+				<string>org.cogx.cog.extensible-music</string>
+				<string>org.cogx.cog.mobile-extensible-music</string>
+				<string>org.cogx.cog.sid</string>
+				<string>org.cogx.cog.organya</string>
+				<string>org.cogx.cog.syntrax</string>
+				<string>org.cogx.cog.musepack-audio</string>
+				<string>public.midi-audio</string>
+				<string>org.xiph.ogg-audio</string>
+				<string>com.microsoft.windows-media-wma</string>
+				<string>com.microsoft.advanced-systems-format</string>
+				<string>com.real.realaudio</string>
+				<string>com.real.realmedia</string>
+			</array>
+			<key>QLSupportsSearchableItems</key>
+			<false/>
+		</dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.quicklook.preview</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>$(PRODUCT_MODULE_NAME).PreviewViewController</string>
+	</dict>
+</dict>
+</plist>

@@ -47,6 +47,10 @@ for plist in "$MACOS_PLIST_PATH"; do
 
 		"$PlistBuddy" -c "Add :BuildTime date $BUILD_TIME" "$plist"
 
+		# The types the Quick Look extension previews, from
+		# Scripts/generate_quicklook_types.py
+		"$PlistBuddy" -c "Merge $REPO_ROOT_PATH/ImportedTypes.plist" "$plist"
+
 		# Sparkle's keys only belong in the directly distributed build
 		if [ "$COG_SPARKLE" != "YES" ]; then
 

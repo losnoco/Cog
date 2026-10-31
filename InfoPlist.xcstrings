@@ -1,6 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "7Z Archive of VGM Files" : {
+
+    },
+    "APL Link File" : {
+
+    },
+    "Abyss' Highest eXperience File" : {
+
+    },
+    "AdPlug Files" : {
+
+    },
     "CFBundleDisplayName" : {
       "comment" : "Bundle display name",
       "extractionState" : "extracted_with_value",
@@ -31,6 +43,57 @@
           }
         }
       }
+    },
+    "CUE Sheet File" : {
+
+    },
+    "DSD Stream File" : {
+
+    },
+    "DTS Audio File" : {
+
+    },
+    "DTS-HD MA Audio File" : {
+
+    },
+    "Extensible Music File" : {
+
+    },
+    "Game Music Emu Files" : {
+
+    },
+    "HMI MIDI File" : {
+
+    },
+    "Hively Tracker File" : {
+
+    },
+    "Interchange File Format" : {
+
+    },
+    "Loudness MIDI File" : {
+
+    },
+    "MIDS MIDI File" : {
+
+    },
+    "MPEG Audio File" : {
+
+    },
+    "Matroska Audio File" : {
+
+    },
+    "Matroska Video File" : {
+
+    },
+    "Mobile Extensible Music File" : {
+
+    },
+    "Monkey's Audio File" : {
+
+    },
+    "Musepack Audio File" : {
+
     },
     "NSCalendarsUsageDescription" : {
       "comment" : "Privacy - Calendars Usage Description",
@@ -247,6 +310,66 @@
           }
         }
       }
+    },
+    "Organya File" : {
+
+    },
+    "PSF Format Files" : {
+
+    },
+    "RAR Archive of SPC Files" : {
+
+    },
+    "RIFF MIDI File" : {
+
+    },
+    "Real Audio File" : {
+
+    },
+    "SID File" : {
+
+    },
+    "Shorten File" : {
+
+    },
+    "Syntrax File" : {
+
+    },
+    "TAK Audio File" : {
+
+    },
+    "True Audio File" : {
+
+    },
+    "TrueVQ Audio File" : {
+
+    },
+    "USAC Audio File" : {
+
+    },
+    "VGMStream Files" : {
+
+    },
+    "Wavpack File" : {
+
+    },
+    "WebM Audio File" : {
+
+    },
+    "Wideband Single-bit Data" : {
+
+    },
+    "XMI MIDI File" : {
+
+    },
+    "id Software MUS MIDI File" : {
+
+    },
+    "libOpenMPT Module Files" : {
+
+    },
+    "libvgm Files" : {
+
     }
   },
   "version" : "1.1"

@@ -139,7 +139,21 @@ struct Cached_Folder_Art {
 
 static std::map<std::string, Cached_Folder_Art> Folder_Art_List;
 
+/// Running in an app extension (the Quick Look preview) rather than the app.
+static BOOL in_app_extension(void) {
+	static BOOL inExtension;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		inExtension = [[[[NSBundle mainBundle] bundlePath] pathExtension] isEqualToString:@"appex"];
+	});
+	return inExtension;
+}
+
 static NSData *folder_cover_art(NSString *path) {
+	// A preview reads only the file it shows: listing its folder would have
+	// macOS ask for access to the Desktop, Downloads or a network volume.
+	if(in_app_extension()) return nil;
+
 	std::string key = [path UTF8String];
 	{
 		std::lock_guard<std::mutex> lock(*Cache_Lock);
@@ -314,7 +328,14 @@ static void cache_run() {
 }
 
 - (void)loadPluginsAtPath:(NSString *)path {
-	NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:nil];
+	NSError *error = nil;
+	NSArray *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
+	// The Quick Look extension's sandbox can read the app's plugins only
+	// where it can read the app: in /Applications, or anywhere in the
+	// directly distributed build.
+	if(!dirContents && path) {
+		ALog(@"Could not read plugins at %@: %@", path, error);
+	}
 
 	for(NSString *pname in dirContents) {
 		NSString *ppath;
@@ -371,6 +392,13 @@ static void cache_run() {
 - (void)loadPlugins {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 	NSString *basePath = [[paths firstObject] stringByAppendingPathComponent:@"Cog"];
+
+	// An app extension (the Quick Look preview) is itself in the app's
+	// PlugIns folder, beside the plugins, rather than holding them.
+	if(in_app_extension()) {
+		[self loadPluginsAtPath:[[[NSBundle mainBundle] bundlePath] stringByDeletingLastPathComponent]];
+		return;
+	}
 
 	[self loadPluginsAtPath:[[NSBundle mainBundle] builtInPlugInsPath]];
 	[self loadPluginsAtPath:[basePath stringByAppendingPathComponent:@"Plugins"]];

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -20,6 +20,9 @@
 		0A0E70873074176A00EF30D0 /* SignalInspectorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */; };
 		0A301372308D7F11006DB4B2 /* PlaylistController+Playlists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A301371308D7F11006DB4B2 /* PlaylistController+Playlists.swift */; };
 		0A301843308D7F84006DB4B2 /* PlaylistTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A301842308D7F84006DB4B2 /* PlaylistTabs.swift */; };
+		0A5F597C30969DDB009EB363 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A5F597B30969DDA009EB363 /* Quartz.framework */; };
+		0A5F598830969DDB009EB363 /* CogQuickLook.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0A5F597A30969DDA009EB363 /* CogQuickLook.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0A5F59A430969DDB009EB363 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
 		0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */; };
 		0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */; };
 		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
@@ -298,6 +301,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 835C7016306CD07D003A9DEB;
 			remoteInfo = CogAudioTests;
+		};
+		0A5F598630969DDB009EB363 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0A5F597930969DDA009EB363;
+			remoteInfo = CogQuickLook;
+		};
+		0A5F59A230969DDB009EB363 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = CogAudio;
 		};
 		17643CBB0D5BD44900F0A9FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -822,6 +839,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				0A5F598830969DDB009EB363 /* CogQuickLook.appex in CopyFiles */,
 				83F759E42FAB0706009DB584 /* HLS.bundle in CopyFiles */,
 				8389FCC42E76D51D004FAB82 /* Syntrax.bundle in CopyFiles */,
 				83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */,
@@ -915,6 +933,10 @@
 		0A0E70863074176A00EF30D0 /* SignalInspectorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalInspectorWindowController.swift; sourceTree = "<group>"; };
 		0A301371308D7F11006DB4B2 /* PlaylistController+Playlists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlaylistController+Playlists.swift"; path = "Window/PlaylistController+Playlists.swift"; sourceTree = "<group>"; };
 		0A301842308D7F84006DB4B2 /* PlaylistTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaylistTabs.swift; path = Window/PlaylistTabs.swift; sourceTree = "<group>"; };
+		0A5F597A30969DDA009EB363 /* CogQuickLook.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CogQuickLook.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A5F597B30969DDA009EB363 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		0A5F59A030969DDB009EB363 /* CogQuickLook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CogQuickLook.entitlements; sourceTree = "<group>"; };
+		0A5F59A130969DDB009EB363 /* CogQuickLook-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CogQuickLook-Direct.entitlements"; sourceTree = "<group>"; };
 		0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzAPI.swift; sourceTree = "<group>"; };
 		0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzScrobbler.swift; sourceTree = "<group>"; };
 		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
@@ -1273,7 +1295,30 @@
 		F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FinderCompare.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0A5F598C30969DDB009EB363 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0A5F597930969DDA009EB363 /* CogQuickLook */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0A5F597D30969DDB009EB363 /* CogQuickLook */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0A5F598C30969DDB009EB363 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CogQuickLook; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		0A5F597730969DDA009EB363 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A5F597C30969DDB009EB363 /* Quartz.framework in Frameworks */,
+				0A5F59A430969DDB009EB363 /* CogAudio.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D11072E0486CEB800E47090 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1708,6 +1753,7 @@
 				1770424E0B8BC41800B86321 /* Cog.app */,
 				CEC0CAFE000000000000F001 /* CogRemoteControl.framework */,
 				CEC0CAFE000000000000F301 /* cog-mcp */,
+				0A5F597A30969DDA009EB363 /* CogQuickLook.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1719,6 +1765,8 @@
 				83D0380E24A40DF2004CF90F /* CogAssets.xcassets */,
 				83859520234FEB35004E9946 /* Cog.entitlements */,
 				C06D1E0100000000000D0002 /* Cog-Direct.entitlements */,
+				0A5F59A030969DDB009EB363 /* CogQuickLook.entitlements */,
+				0A5F59A130969DDB009EB363 /* CogQuickLook-Direct.entitlements */,
 				83B30F652FF7A5D9003D672B /* CogMCP.entitlements */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				CEC0CAFE000000000000E001 /* CogRemoteControl */,
@@ -1726,6 +1774,7 @@
 				CEC0CAFE000000000000E002 /* RemoteControl */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				0A5F597D30969DDB009EB363 /* CogQuickLook */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				17B619FF0B909ED400BC003F /* PlugIns */,
 				3DDFC2452344EC6A000F1453 /* Xcode-config */,
@@ -1785,6 +1834,7 @@
 				83AB9031237CEFD300A433D5 /* MediaPlayer.framework */,
 				8355D6B7180613FB00D05687 /* Security.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				0A5F597B30969DDA009EB363 /* Quartz.framework */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -2339,6 +2389,30 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0A5F597930969DDA009EB363 /* CogQuickLook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A5F598D30969DDB009EB363 /* Build configuration list for PBXNativeTarget "CogQuickLook" */;
+			buildPhases = (
+				0A5F597630969DDA009EB363 /* Sources */,
+				0A5F597730969DDA009EB363 /* Frameworks */,
+				0A5F597830969DDA009EB363 /* Resources */,
+				0A5F59A530969DDB009EB363 /* Set the version */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0A5F59A330969DDB009EB363 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0A5F597D30969DDB009EB363 /* CogQuickLook */,
+			);
+			name = CogQuickLook;
+			packageProductDependencies = (
+			);
+			productName = CogQuickLook;
+			productReference = 0A5F597A30969DDA009EB363 /* CogQuickLook.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		8D1107260486CEB800E47090 /* Cog */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Cog" */;
@@ -2393,6 +2467,7 @@
 				17F3BB8B0CBC566200864489 /* PBXTargetDependency */,
 				17C8F44C0CBEDD37008D969D /* PBXTargetDependency */,
 				17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */,
+				0A5F598730969DDB009EB363 /* PBXTargetDependency */,
 			);
 			name = Cog;
 			packageProductDependencies = (
@@ -2450,7 +2525,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2720;
 				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					0A5F597930969DDA009EB363 = {
+						CreatedOnToolsVersion = 27.2;
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Cog" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -2617,6 +2698,7 @@
 				8D1107260486CEB800E47090 /* Cog */,
 				CEC0CAFE000000000000A001 /* CogRemoteControl */,
 				CEC0CAFE000000000000A002 /* cog-mcp */,
+				0A5F597930969DDA009EB363 /* CogQuickLook */,
 			);
 		};
 /* End PBXProject section */
@@ -2898,6 +2980,13 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0A5F597830969DDA009EB363 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D1107290486CEB800E47090 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2948,6 +3037,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0A5F59A530969DDB009EB363 /* Set the version */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Set the version";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# The extension carries the app's version, as Scripts/genversion.sh gives it\nGIT_RELEASE_VERSION=$(git -C \"$SRCROOT\" describe --tags --always | sed -e 's/k54-//')\nGIT_RELEASE_NUMBER=${GIT_RELEASE_VERSION%-*}\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $GIT_RELEASE_NUMBER\" -c \"Set :CFBundleShortVersionString $GIT_RELEASE_NUMBER\" \"$SCRIPT_INPUT_FILE_0\"\n";
+			showEnvVarsInLog = 0;
+		};
 		421B41AA2E54B838007A2A49 /* Generate Swift secrets file */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3032,6 +3142,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0A5F597630969DDA009EB363 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D11072C0486CEB800E47090 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3209,6 +3326,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0A5F598730969DDB009EB363 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0A5F597930969DDA009EB363 /* CogQuickLook */;
+			targetProxy = 0A5F598630969DDB009EB363 /* PBXContainerItemProxy */;
+		};
+		0A5F59A330969DDB009EB363 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CogAudio;
+			targetProxy = 0A5F59A230969DDB009EB363 /* PBXContainerItemProxy */;
+		};
 		17643CBC0D5BD44900F0A9FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "APL Plugin";
@@ -3471,6 +3598,163 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0A5F598930969DDB009EB363 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "CogQuickLook-Direct.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CogQuickLook/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.CogQuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		0A5F598A30969DDB009EB363 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = CogQuickLook.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CogQuickLook/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.CogQuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		0A5F598B30969DDB009EB363 /* Release-Direct */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "CogQuickLook-Direct.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CogQuickLook/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Cog;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cog.CogQuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUNTIME_EXCEPTION_ALLOW_JIT = YES;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = "Release-Direct";
+		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3DDFC2472344EC6B000F1453 /* Shared.xcconfig */;
@@ -4054,6 +4338,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0A5F598D30969DDB009EB363 /* Build configuration list for PBXNativeTarget "CogQuickLook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A5F598930969DDB009EB363 /* Debug */,
+				0A5F598A30969DDB009EB363 /* Release */,
+				0A5F598B30969DDB009EB363 /* Release-Direct */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Cog" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

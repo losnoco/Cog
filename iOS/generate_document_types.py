@@ -66,54 +66,74 @@ def identifier(name):
 	return f'org.cogx.cog.{slug}'
 
 
-template = plistlib.loads(TEMPLATE.read_bytes())
+def document_groups():
+	"""The macOS document types, merged by name (some are listed twice), each
+	with its extensions in order; folders are not documents on iOS."""
+	template = plistlib.loads(TEMPLATE.read_bytes())
+	groups = {}
+	for doc in template['CFBundleDocumentTypes']:
+		extensions = [e.lower() for e in doc.get('CFBundleTypeExtensions', []) if e != '*']
+		if extensions:
+			group = groups.setdefault(doc['CFBundleTypeName'], [])
+			group.extend(e for e in extensions if e not in group)
+	return groups
 
-# The macOS document types, merged by name (some are listed twice), each
-# with its extensions in order; folders are not documents on iOS.
-groups = {}
-for doc in template['CFBundleDocumentTypes']:
-	extensions = [e.lower() for e in doc.get('CFBundleTypeExtensions', []) if e != '*']
-	if extensions:
-		group = groups.setdefault(doc['CFBundleTypeName'], [])
-		group.extend(e for e in extensions if e not in group)
 
-# An extension without a system type belongs to the most specific group
-# that claims it, the one with the fewest extensions: .dsf is a DSD stream
-# rather than one of vgmstream's many formats.
-owner = {}
-for name, extensions in sorted(groups.items(), key=lambda item: len(item[1])):
-	for extension in extensions:
-		if extension not in SYSTEM_TYPES and extension not in NOT_AUDIO:
-			owner.setdefault(extension, name)
+def extension_owners(groups):
+	"""An extension without a system type belongs to the most specific group
+	that claims it, the one with the fewest extensions: .dsf is a DSD stream
+	rather than one of vgmstream's many formats."""
+	owner = {}
+	for name, extensions in sorted(groups.items(), key=lambda item: len(item[1])):
+		for extension in extensions:
+			if extension not in SYSTEM_TYPES and extension not in NOT_AUDIO:
+				owner.setdefault(extension, name)
+	return owner
 
-imported = []
-document_types = []
-for name, extensions in groups.items():
-	own = [e for e in extensions if owner.get(e) == name]
-	if own:
-		imported.append({
-			'UTTypeIdentifier': identifier(name),
-			'UTTypeDescription': name,
-			'UTTypeConformsTo': CONFORMS_TO.get(name, ['public.audio']),
-			'UTTypeTagSpecification': {'public.filename-extension': own},
+
+def imported_types(groups, owner):
+	"""A type for each group's own extensions, those that no other group
+	nor the system claims first."""
+	imported = []
+	for name, extensions in groups.items():
+		own = [e for e in extensions if owner.get(e) == name]
+		if own:
+			imported.append({
+				'UTTypeIdentifier': identifier(name),
+				'UTTypeDescription': name,
+				'UTTypeConformsTo': CONFORMS_TO.get(name, ['public.audio']),
+				'UTTypeTagSpecification': {'public.filename-extension': own},
+			})
+	return imported
+
+
+def main():
+	groups = document_groups()
+	owner = extension_owners(groups)
+	imported = imported_types(groups, owner)
+	document_types = []
+	for name, extensions in groups.items():
+		types = []
+		for extension in extensions:
+			if extension in NOT_AUDIO:
+				continue
+			uti = SYSTEM_TYPES.get(extension) or identifier(owner[extension])
+			if uti not in types:
+				types.append(uti)
+		document_types.append({
+			'CFBundleTypeName': name,
+			'CFBundleTypeRole': 'Viewer',
+			'LSHandlerRank': 'Default',
+			'LSItemContentTypes': types,
 		})
-	types = []
-	for extension in extensions:
-		if extension in NOT_AUDIO:
-			continue
-		uti = SYSTEM_TYPES.get(extension) or identifier(owner[extension])
-		if uti not in types:
-			types.append(uti)
-	document_types.append({
-		'CFBundleTypeName': name,
-		'CFBundleTypeRole': 'Viewer',
-		'LSHandlerRank': 'Default',
-		'LSItemContentTypes': types,
-	})
 
-info = plistlib.loads(INFO_PLIST.read_bytes())
-info['CFBundleDocumentTypes'] = document_types
-info['UTImportedTypeDeclarations'] = imported
-INFO_PLIST.write_bytes(plistlib.dumps(info, sort_keys=True))
-print(f'{len(document_types)} document types, {len(imported)} imported types, '
-      f'{len(owner)} extensions imported, {len(NOT_AUDIO)} left out')
+	info = plistlib.loads(INFO_PLIST.read_bytes())
+	info['CFBundleDocumentTypes'] = document_types
+	info['UTImportedTypeDeclarations'] = imported
+	INFO_PLIST.write_bytes(plistlib.dumps(info, sort_keys=True))
+	print(f'{len(document_types)} document types, {len(imported)} imported types, '
+	      f'{len(owner)} extensions imported, {len(NOT_AUDIO)} left out')
+
+
+if __name__ == '__main__':
+	main()
