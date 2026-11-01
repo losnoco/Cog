@@ -225,6 +225,36 @@
 	}
 }
 
+- (int)copyHeardPCM:(float *)outPCM count:(int)count latencyOffset:(double)latency {
+	if(!outPCM || count <= 0) return 0;
+
+	int samplesRead = 0;
+	@synchronized(self) {
+		if(ignoreLatency || !visAudio || !visAudioSize || !sampleRate) return 0;
+		// The newest sample heard is this far behind the newest posted.
+		int latencySamples = (int)(sampleRate * (self->latency + latency));
+		if(latencySamples < 0) latencySamples = 0;
+		if(latencySamples > visAudioSize) latencySamples = visAudioSize;
+		int samples = count;
+		if(latencySamples + samples > visAudioSize) {
+			samples = visAudioSize - latencySamples;
+		}
+		int readCursor = visAudioCursor - latencySamples - samples;
+		while(readCursor < 0)
+			readCursor += visAudioSize;
+		while(samples > 0) {
+			int samplesToRead = visAudioSize - readCursor;
+			if(samplesToRead > samples) samplesToRead = samples;
+			cblas_scopy(samplesToRead, visAudio + readCursor, 1, outPCM + samplesRead, 1);
+			samplesRead += samplesToRead;
+			readCursor += samplesToRead;
+			samples -= samplesToRead;
+			if(readCursor >= visAudioSize) readCursor -= visAudioSize;
+		}
+	}
+	return samplesRead;
+}
+
 - (void)freeFFTState:(void *_Nullable *_Nullable)state {
 	fft_free(state);
 }

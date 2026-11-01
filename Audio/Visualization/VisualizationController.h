@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (double)readSampleRate;
 - (void)copyVisPCM:(float *_Nullable)outPCM visFFT:(float *_Nullable)outFFT visFFTState:(void *_Nullable *_Nullable)state latencyOffset:(double)latency;
 
+// The `count` samples ending at what is heard now, oldest first, into
+// `outPCM`. Returns how many were copied: 0 without audio, never a stand-in.
+- (int)copyHeardPCM:(float *)outPCM count:(int)count latencyOffset:(double)latency;
+
 - (void)reset;
 
 - (void)freeFFTState:(void *_Nullable *_Nullable)state;
