@@ -727,7 +727,16 @@ static void *playlistControllerContext = &playlistControllerContext;
 	NSString *cellIdentifier = [column identifier];
 	NSUInteger index = [cellIdentifiers indexOfObject:cellIdentifier];
 	if(index == 13) {
-		NSInteger rating = ((CGFloat)ceil(cellPoint.x * 5.0 / 64.0));
+		// By where the stars are drawn, at the playlist's font size; a click
+		// past the last star is not a rating.
+		NSTableCellView *cellView = [view viewAtColumn:clickedColumn row:clickedRow makeIfNecessary:NO];
+		NSTextField *textField = [cellView isKindOfClass:[NSTableCellView class]] ? cellView.textField : nil;
+		if(!textField) return;
+		NSRect textRect = [textField.cell titleRectForBounds:textField.bounds];
+		CGFloat starsWidth = textField.attributedStringValue.size.width;
+		CGFloat x = [textField convertPoint:cellPoint fromView:cellView].x - NSMinX(textRect);
+		if(starsWidth <= 0 || x >= starsWidth) return;
+		NSInteger rating = (NSInteger)floor(x * 5.0 / starsWidth) + 1;
 		if(rating < 1) rating = 1;
 		else if(rating > 5) rating = 5;
 
