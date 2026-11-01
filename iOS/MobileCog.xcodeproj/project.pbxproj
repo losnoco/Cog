@@ -41,6 +41,7 @@
 		2A090A7FB29F457F50515C5A /* HivelyPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 532C99773A73F4B0A63DB0A3 /* HivelyPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2CD6DD50F641FDF9EC8A37FC /* HLSMemorySource.m in Sources */ = {isa = PBXBuildFile; fileRef = BF27B2F8D72FC2A16E0EB2A8 /* HLSMemorySource.m */; };
 		3068B3435515F79CF9B5C33D /* MIDIContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29F7CEB74A50703629F0CF4 /* MIDIContainer.mm */; };
+		31D0E047A6A92AFAB47913BA /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A296A233F25B5BC7CB708962 /* WaveformView.swift */; };
 		3209B7B5D3E8600D7C4E5046 /* libavformat.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 257DDCB0DE45D16012EFFB48 /* libavformat.xcframework */; };
 		32265ADFA70E9D215E25AB5C /* libbinio.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 17DBE81FD376DEE61A07E401 /* libbinio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		325350F8EF006BF49FF2AC8C /* CogAudio.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -799,6 +800,7 @@
 		A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = ../ThirdParty/ffmpeg/ios/libavcodec.xcframework; sourceTree = SOURCE_ROOT; };
 		A15B973292811547F5271225 /* MP3Decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = MP3Decoder.m; path = ../Plugins/minimp3/MP3Decoder.m; sourceTree = SOURCE_ROOT; };
 		A1BFD6C8AA245760013590FD /* base64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; fileEncoding = "4"; name = base64.c; path = "../Plugins/Vorbis/vorbis-tools/share/base64.c"; sourceTree = SOURCE_ROOT; };
+		A296A233F25B5BC7CB708962 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformView.swift; path = ../Visualization/WaveformView.swift; sourceTree = SOURCE_ROOT; };
 		A2DAE782D8EC423E4681516B /* CVbriHeader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; fileEncoding = "4"; name = CVbriHeader.c; path = ../Plugins/minimp3/ThirdParty/CVbriHeader.c; sourceTree = SOURCE_ROOT; };
 		A322EB294ED4B2F9C65653DC /* SCPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SCPlayer.mm; path = ../Plugins/MIDI/MIDI/SCPlayer.mm; sourceTree = SOURCE_ROOT; };
 		A57431BC2D46826BFE55992E /* ArchiveContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = ArchiveContainer.h; path = ../Plugins/ArchiveSource/ArchiveSource/ArchiveContainer.h; sourceTree = SOURCE_ROOT; };
@@ -1497,6 +1499,7 @@
 				5CE483BAA46D154DB7C97656 /* LyricsLookup.swift */,
 				EB555EB4EAC3737FD50CC73A /* LyricsText.swift */,
 				D0370650B61067CFC89A424D /* SpectrumView.swift */,
+				A296A233F25B5BC7CB708962 /* WaveformView.swift */,
 				41E6832858CBCBE4960E6F31 /* VUMeterView.swift */,
 				DFADF619D205FB77124E6CD4 /* OutputMeter.swift */,
 				01E9C4583F2DA66D6A2D382D /* SignalMeters.swift */,
@@ -2287,6 +2290,7 @@
 				F36D9A91F7D4A4D7E11451F3 /* LyricsLookup.swift in Sources */,
 				5425F638539669076211EE53 /* LyricsText.swift in Sources */,
 				44F439990135AAE534EBCEC5 /* SpectrumView.swift in Sources */,
+				31D0E047A6A92AFAB47913BA /* WaveformView.swift in Sources */,
 				015FFDDEC0B1AA6F22CD8E97 /* VUMeterView.swift in Sources */,
 				B755C34E207534B200C0FED7 /* OutputMeter.swift in Sources */,
 				A774B6601FAAC51CC84E75FF /* SignalMeters.swift in Sources */,
