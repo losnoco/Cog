@@ -362,6 +362,8 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		}
 	}
 
+	renderedTotal += rendered;
+
 	if(!IsRepeatOneSet() && renderedTotal >= length) {
 		int16_t *sampleBuf = buffer;
 		long fadeEnd = fadeRemain - rendered;
