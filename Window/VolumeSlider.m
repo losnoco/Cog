@@ -41,20 +41,24 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
 	wasInsideSnapRange = NO;
-	textView = [NSText new];
-	[textView setFrame:NSMakeRect(0, 0, 50, 20)];
-	textView.drawsBackground = NO;
-	textView.editable = NO;
-	// Selectable, it made the popover the key window, so the next click on
-	// the slider only brought the main window back.
-	textView.selectable = NO;
+	// A label centred in a view of a set size. An NSText sized itself to its
+	// line of text, and the popover then held it low in the bubble.
+	textView = [NSTextField labelWithString:@""];
 	textView.alignment = NSTextAlignmentCenter;
-	// NSText's own default is Helvetica. Even digits keep the text still as
-	// the value changes.
+	// Even digits keep the text still as the value changes.
 	textView.font = [NSFont monospacedDigitSystemFontOfSize:12 weight:NSFontWeightRegular];
+	textView.translatesAutoresizingMaskIntoConstraints = NO;
+
+	NSView *contentView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 50, 20)];
+	[contentView addSubview:textView];
+	[NSLayoutConstraint activateConstraints:@[
+		[textView.leadingAnchor constraintEqualToAnchor:contentView.leadingAnchor],
+		[textView.trailingAnchor constraintEqualToAnchor:contentView.trailingAnchor],
+		[textView.centerYAnchor constraintEqualToAnchor:contentView.centerYAnchor],
+	]];
 
 	NSViewController *viewController = [NSViewController new];
-	viewController.view = textView;
+	viewController.view = contentView;
 
 	popover = [NSPopover new];
 	popover.contentViewController = viewController;
@@ -63,7 +67,7 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 	// nothing.
 	popover.behavior = NSPopoverBehaviorApplicationDefined;
 	popover.animates = NO;
-	[popover setContentSize:textView.bounds.size];
+	[popover setContentSize:contentView.bounds.size];
 
 	// The toolbar sizes the item by the slider's constraints, and a slider has
 	// no width of its own: on macOS 15 it was squeezed to just its knob.
@@ -84,7 +88,7 @@ static void *kVolumeSliderContext = &kVolumeSliderContext;
 }
 
 - (void)updateToolTip {
-	[textView setString:[NSString stringWithFormat:@"%.0lf%%", round([self displayedVolume])]];
+	textView.stringValue = [NSString stringWithFormat:@"%.0lf%%", round([self displayedVolume])];
 }
 
 - (double)displayedVolume {

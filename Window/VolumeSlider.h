@@ -10,7 +10,7 @@
 
 @interface VolumeSlider : NSSlider {
 	NSPopover *popover;
-	NSText *textView;
+	NSTextField *textView;
 	double MAX_VOLUME;
 }
 
