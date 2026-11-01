@@ -1,17 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%.1f VU" : {
-      "comment" : "VU meter: a needle's reading",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.1f VU"
-          }
-        }
-      }
-    },
     "%.1f dBFS" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -19,6 +8,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%.1f dBFS"
+          }
+        }
+      }
+    },
+    "%.1f VU" : {
+      "comment" : "VU meter: a needle's reading",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.1f VU"
           }
         }
       }
@@ -84,22 +84,22 @@
         }
       }
     },
-    "0 VU At" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0 VU en"
-          }
-        }
-      }
-    },
     "0 semitones" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "0 semitonos"
+          }
+        }
+      }
+    },
+    "0 VU At" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 VU en"
           }
         }
       }
@@ -156,46 +156,6 @@
         }
       }
     },
-    "Add Music" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir música"
-          }
-        }
-      }
-    },
-    "Add Music…" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir música…"
-          }
-        }
-      }
-    },
-    "Add URL" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir URL"
-          }
-        }
-      }
-    },
-    "Add URL…" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir URL…"
-          }
-        }
-      }
-    },
     "Add files or folders from Files; they play where they are. Music copied into Cog's folder in the Files app or Finder can be added too." : {
       "localizations" : {
         "es" : {
@@ -216,6 +176,26 @@
         }
       }
     },
+    "Add Music" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir música"
+          }
+        }
+      }
+    },
+    "Add Music…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir música…"
+          }
+        }
+      }
+    },
     "Add to Playlist" : {
       "comment" : "Row menu: copies the track to another playlist",
       "localizations" : {
@@ -223,6 +203,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Añadir a playlist"
+          }
+        }
+      }
+    },
+    "Add URL" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir URL"
+          }
+        }
+      }
+    },
+    "Add URL…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir URL…"
           }
         }
       }
@@ -452,22 +452,22 @@
         }
       }
     },
-    "Choose SoundFont…" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegir SoundFont…"
-          }
-        }
-      }
-    },
     "Choose a track in the playlist." : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elige una pista de la playlist."
+          }
+        }
+      }
+    },
+    "Choose SoundFont…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir SoundFont…"
           }
         }
       }
@@ -719,6 +719,17 @@
         }
       }
     },
+    "Delete “%@”?" : {
+      "comment" : "Deleting a playlist: the alert's title, with its name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar «%@»?"
+          }
+        }
+      }
+    },
     "Delete Playlist" : {
       "comment" : "Confirmation button: deletes the playlist and its tracks",
       "localizations" : {
@@ -737,17 +748,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eliminar playlist…"
-          }
-        }
-      }
-    },
-    "Delete “%@”?" : {
-      "comment" : "Deleting a playlist: the alert's title, with its name",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Eliminar «%@»?"
           }
         }
       }
@@ -1178,6 +1178,16 @@
         }
       }
     },
+    "Hide Playlist" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar playlist"
+          }
+        }
+      }
+    },
     "High Consistency" : {
       "localizations" : {
         "es" : {
@@ -1204,6 +1214,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alta velocidad"
+          }
+        }
+      }
+    },
+    "https://" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://"
           }
         }
       }
@@ -1285,39 +1305,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "LRCLIB could not answer for this track." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LRCLIB no pudo responder por esta pista."
-          }
-        }
-      }
-    },
-    "LRCLIB has no lyrics for this track." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LRCLIB no tiene la letra de esta pista."
-          }
-        }
-      }
-    },
-    "LRCLIB lists this track as instrumental." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "LRCLIB indica que esta pista es instrumental."
           }
         }
       }
@@ -1424,6 +1411,39 @@
         }
       }
     },
+    "LRCLIB could not answer for this track." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB no pudo responder por esta pista."
+          }
+        }
+      }
+    },
+    "LRCLIB has no lyrics for this track." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB no tiene la letra de esta pista."
+          }
+        }
+      }
+    },
+    "LRCLIB lists this track as instrumental." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LRCLIB indica que esta pista es instrumental."
+          }
+        }
+      }
+    },
     "Lyrics" : {
       "localizations" : {
         "es" : {
@@ -1434,22 +1454,23 @@
         }
       }
     },
+    "Manage Playlists…" : {
+      "comment" : "Playlist title menu: the list of playlists, to reorder, rename and delete them",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestionar playlists…"
+          }
+        }
+      }
+    },
     "MIDI" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "MIDI"
-          }
-        }
-      }
-    },
-    "MIDI Flavor" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Variedad de MIDI"
           }
         }
       }
@@ -1466,13 +1487,12 @@
         }
       }
     },
-    "Manage Playlists…" : {
-      "comment" : "Playlist title menu: the list of playlists, to reorder, rename and delete them",
+    "MIDI Flavor" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestionar playlists…"
+            "value" : "Variedad de MIDI"
           }
         }
       }
@@ -1599,26 +1619,6 @@
         }
       }
     },
-    "No Music" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin música"
-          }
-        }
-      }
-    },
-    "No Music Locations" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin ubicaciones"
-          }
-        }
-      }
-    },
     "No levels while paused" : {
       "localizations" : {
         "es" : {
@@ -1639,6 +1639,26 @@
         }
       }
     },
+    "No Music" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin música"
+          }
+        }
+      }
+    },
+    "No Music Locations" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin ubicaciones"
+          }
+        }
+      }
+    },
     "None" : {
       "localizations" : {
         "es" : {
@@ -1649,22 +1669,22 @@
         }
       }
     },
-    "Not Playing" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se está reproduciendo"
-          }
-        }
-      }
-    },
     "Not clipped" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sin saturación"
+          }
+        }
+      }
+    },
+    "Not Playing" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se está reproduciendo"
           }
         }
       }
@@ -1741,17 +1761,6 @@
         }
       }
     },
-    "PEAK" : {
-      "comment" : "VU meter: the lamp that lights near full scale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PICO"
-          }
-        }
-      }
-    },
     "Password" : {
       "localizations" : {
         "es" : {
@@ -1768,6 +1777,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pausar"
+          }
+        }
+      }
+    },
+    "PEAK" : {
+      "comment" : "VU meter: the lamp that lights near full scale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PICO"
           }
         }
       }
@@ -1939,16 +1959,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Añadir a la cola"
-          }
-        }
-      }
-    },
-    "ROM Set" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conjunto de ROMs"
           }
         }
       }
@@ -2127,6 +2137,16 @@
         }
       }
     },
+    "ROM Set" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conjunto de ROMs"
+          }
+        }
+      }
+    },
     "Rubber Band" : {
       "localizations" : {
         "es" : {
@@ -2153,16 +2173,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rubber Band (mejor calidad)"
-          }
-        }
-      }
-    },
-    "SF2, SF3, DLS or an sflist, played where it is. Without one, Cog picks a built-in SoundFont for each file." : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SF2, SF3, DLS o un sflist, que se reproduce donde está. Sin uno, Cog elige un SoundFont integrado para cada archivo."
           }
         }
       }
@@ -2257,6 +2267,16 @@
         }
       }
     },
+    "SF2, SF3, DLS or an sflist, played where it is. Without one, Cog picks a built-in SoundFont for each file." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SF2, SF3, DLS o un sflist, que se reproduce donde está. Sin uno, Cog elige un SoundFont integrado para cada archivo."
+          }
+        }
+      }
+    },
     "Shifted" : {
       "localizations" : {
         "es" : {
@@ -2294,6 +2314,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar playlist siguiente"
+          }
+        }
+      }
+    },
+    "Show Playlist" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar playlist"
           }
         }
       }
@@ -2787,16 +2817,6 @@
         }
       }
     },
-    "VU Meter" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vúmetro"
-          }
-        }
-      }
-    },
     "Varies the playback speed, like a record player: the pitch follows it." : {
       "localizations" : {
         "es" : {
@@ -2849,6 +2869,16 @@
         }
       }
     },
+    "VU Meter" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vúmetro"
+          }
+        }
+      }
+    },
     "Window" : {
       "localizations" : {
         "es" : {
@@ -2885,16 +2915,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tu token está en listenbrainz.org, en Settings."
-          }
-        }
-      }
-    },
-    "https://" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://"
           }
         }
       }
