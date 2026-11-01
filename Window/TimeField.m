@@ -17,6 +17,31 @@ NSString *formatTimer(long minutes, long seconds, unichar prefix, int padding) {
 	return [NSString localizedStringWithFormat:@"%@%C%lu:%02lu", paddingString, prefix, minutes, seconds];
 }
 
+@implementation TimeFieldCell
+
+- (NSRect)drawingRectForBounds:(NSRect)rect {
+	NSRect drawingRect = [super drawingRectForBounds:rect];
+	NSFont *font = self.font;
+	if(!font) return drawingRect;
+	// The bezel is as tall as the field would be with its control size's
+	// own font, at the top of the field.
+	NSTextFieldCell *plain = [[NSTextFieldCell alloc] initTextCell:@"0"];
+	plain.bezeled = self.bezeled;
+	plain.bezelStyle = self.bezelStyle;
+	plain.controlSize = self.controlSize;
+	plain.font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:self.controlSize]];
+	CGFloat bezelHeight = MIN(plain.cellSize.height, NSHeight(rect));
+	// The text is laid out from the top of the drawing rect; move it so
+	// that the digits, from the baseline up, sit in the bezel's middle.
+	NSLayoutManager *layoutManager = [NSLayoutManager new];
+	CGFloat baseline = NSMinY(rect) + bezelHeight / 2.0 + font.capHeight / 2.0;
+	drawingRect.origin.y = baseline - [layoutManager defaultBaselineOffsetForFont:font];
+	drawingRect.size.height = [layoutManager defaultLineHeightForFont:font];
+	return drawingRect;
+}
+
+@end
+
 @implementation TimeField {
 	BOOL showTimeRemaining;
 	BOOL allowZeroTime;

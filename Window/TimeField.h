@@ -8,6 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+/// Centres the digits in the field's bezel. The field is a small control
+/// with a larger font, which makes it taller than its bezel, and its own
+/// layout left the digits low.
+@interface TimeFieldCell : NSTextFieldCell
+@end
+
 @interface TimeField : NSTextField
 
 @property(nonatomic) NSInteger currentTime;
