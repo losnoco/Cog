@@ -2,15 +2,15 @@
 //  Visualizer.swift
 //  Cog (iOS)
 //
-//  What rises over the art in Now Playing: the spectrum, or the VU meter
-//  macOS shows in its own window.
+//  What rises over the art in Now Playing: the spectrum, the waveform, or
+//  the VU meter macOS shows in its own window.
 //
 
 import SwiftUI
 
 /// What the visualizer shows while it is on.
 enum VisualizerStyle: String {
-	case spectrum, vuMeter
+	case spectrum, waveform, vuMeter
 }
 
 /// The VU meter over the art. The output is metered while it is on screen

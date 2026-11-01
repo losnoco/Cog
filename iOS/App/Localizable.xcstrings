@@ -544,6 +544,16 @@
         }
       }
     },
+    "Color" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        }
+      }
+    },
     "Comment" : {
       "localizations" : {
         "es" : {
@@ -809,6 +819,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Motor"
+          }
+        }
+      }
+    },
+    "Envelope" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envolvente"
           }
         }
       }
@@ -1465,6 +1485,16 @@
         }
       }
     },
+    "Match Album Art" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Según la carátula"
+          }
+        }
+      }
+    },
     "MIDI" : {
       "localizations" : {
         "es" : {
@@ -1747,6 +1777,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Una"
+          }
+        }
+      }
+    },
+    "Oscilloscope" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Osciloscopio"
           }
         }
       }
@@ -2510,6 +2550,26 @@
         }
       }
     },
+    "Spectrum Bars" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barras del analizador"
+          }
+        }
+      }
+    },
+    "Spectrum Peaks" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Picos del analizador"
+          }
+        }
+      }
+    },
     "Speed" : {
       "localizations" : {
         "es" : {
@@ -2649,6 +2709,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No es un conjunto completo de ROMs de SC-55mk2 o SC-55mk1."
+          }
+        }
+      }
+    },
+    "The oscilloscope traces the moment playing; the envelope, the last few seconds. Tap the waveform in Now Playing to switch." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El osciloscopio traza el instante que suena; la envolvente, los últimos segundos. Toca la forma de onda en En reproducción para cambiar."
           }
         }
       }
@@ -2875,6 +2945,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vúmetro"
+          }
+        }
+      }
+    },
+    "Waveform" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma de onda"
+          }
+        }
+      }
+    },
+    "Waveform Style" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estilo de la forma de onda"
           }
         }
       }

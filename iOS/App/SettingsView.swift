@@ -22,6 +22,7 @@ struct SettingsView: View {
 	@AppStorage(WaveformModel.logScaleKey) private var waveformLogScale = false
 	@AppStorage(WaveformModel.rectifiedKey) private var waveformRectified = true
 	@AppStorage("nowPlayingAlwaysDark") private var nowPlayingAlwaysDark = false
+	@AppStorage("waveformVisualizerMode") private var waveformVisualizerMode = WaveformView.Mode.oscilloscope
 
 	var body: some View {
 		NavigationStack {
@@ -58,6 +59,19 @@ struct SettingsView: View {
 					Text("Now Playing")
 				} footer: {
 					Text("Tracks without album art play in dark colors too, as tracks with art do in the album's.")
+				}
+				Section {
+					VisualizerColorPicker("Spectrum Bars", color: .spectrumBars)
+					VisualizerColorPicker("Spectrum Peaks", color: .spectrumPeaks)
+					VisualizerColorPicker("Waveform", color: .waveform)
+					Picker("Waveform Style", selection: $waveformVisualizerMode) {
+						Text("Oscilloscope").tag(WaveformView.Mode.oscilloscope)
+						Text("Envelope").tag(WaveformView.Mode.envelope)
+					}
+				} header: {
+					Text("Visualizer")
+				} footer: {
+					Text("The oscilloscope traces the moment playing; the envelope, the last few seconds. Tap the waveform in Now Playing to switch.")
 				}
 				Section {
 					Picker("ReplayGain", selection: $replayGain) {

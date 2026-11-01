@@ -116,6 +116,10 @@ struct NowPlayingView: View {
 	@EnvironmentObject private var ui: AppUI
 	@AppStorage("showsVisualizer") private var showsVisualizer = false
 	@AppStorage("visualizerStyle") private var visualizerStyle = VisualizerStyle.spectrum
+	@AppStorage(VisualizerColor.spectrumBars.rawValue) private var spectrumBarColor: Data?
+	@AppStorage(VisualizerColor.spectrumPeaks.rawValue) private var spectrumPeakColor: Data?
+	@AppStorage(VisualizerColor.waveform.rawValue) private var waveformColor: Data?
+	@AppStorage("waveformVisualizerMode") private var waveformMode = WaveformView.Mode.oscilloscope
 	@AppStorage("nowPlayingAlwaysDark") private var alwaysDark = false
 	/// The playing album's colors; nil without art, for the usual look.
 	@State private var palette: ArtworkPalette?
@@ -317,15 +321,26 @@ struct NowPlayingView: View {
 	@ViewBuilder private func artwork(size: CGFloat) -> some View {
 		if let entry = model.currentEntry {
 			ArtworkView(entry: entry, size: max(size, 0), cornerRadius: 16)
-				// The spectrum or the VU meter rises over the art's lower
-				// half, darkened to carry it.
+				// The spectrum, the waveform or the VU meter rises over the
+				// art's lower half, darkened to carry it.
 				.overlay(alignment: .bottom) {
 					if showsVisualizer {
 						ZStack {
 							switch visualizerStyle {
 							case .spectrum:
-								SpectrumView(isPlaying: player.isPlaying, barColor: (palette?.accent ?? .white).opacity(0.8))
+								SpectrumView(isPlaying: player.isPlaying,
+								             barColor: VisualizerColor.spectrumBars.resolved(spectrumBarColor, palette: palette),
+								             peakColor: VisualizerColor.spectrumPeaks.resolved(spectrumPeakColor, palette: palette))
 									.padding(.horizontal, 12)
+							case .waveform:
+								WaveformView(isPlaying: player.isPlaying,
+								             lineColor: VisualizerColor.waveform.resolved(waveformColor, palette: palette),
+								             mode: waveformMode)
+									.padding(.horizontal, 12)
+									.padding(.vertical, 8)
+									// A tap switches between the trace and the envelope.
+									.contentShape(Rectangle())
+									.onTapGesture { waveformMode = waveformMode == .oscilloscope ? .envelope : .oscilloscope }
 							case .vuMeter:
 								NowPlayingVUMeter()
 									.padding(.horizontal, 4)
@@ -705,6 +720,7 @@ struct NowPlayingControls: View {
 			Picker(selection: visualizer) {
 				Text("Off").tag(VisualizerStyle?.none)
 				Text("Spectrum").tag(VisualizerStyle?.some(.spectrum))
+				Text("Waveform").tag(VisualizerStyle?.some(.waveform))
 				Text("VU Meter").tag(VisualizerStyle?.some(.vuMeter))
 			} label: {
 				Label("Visualizer", systemImage: "waveform")
