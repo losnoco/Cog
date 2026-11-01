@@ -101,7 +101,8 @@ Every format is a plugin class conforming to protocols in `Audio/Plugin.h`:
   `interrupt` (unblock a pending read promptly) and `setTrack:` (reuse an open decoder for another cue track).
 - `CogMetadataReader`, `CogPropertiesReader`, `CogMetadataWriter`.
 
-Each plugin declares file extensions, MIME types and a `priority` from 0.0 to 1.0.
+Each plugin declares file extensions, MIME types and a `priority`, a float that may exceed 1.0. Most are
+0.0 to 2.0; the CueSheet plugin's 16.0 is the highest so far, so it wins any extension it claims.
 
 `PluginController` builds the extension and MIME-type tables. When more than one plugin claims an extension,
 the `Cog*Multi` wrappers in `CogPluginMulti.m` try them in priority order. So a plugin that takes an extension
@@ -163,8 +164,8 @@ decoder (ObjC plugin) → Feeder thread → deep SPSC ring → DSP thread → sh
   - `PlaylistEntry` extensions.
 - macOS already uses `PlaybackOrder`, `PlaylistExpander` and `PlaylistStore` from
   `Playlist/PlaylistController.m` and `PlaylistLoader.m`. Other rules still live in the AppKit
-  `Playlist/PlaylistController.m`, and the two must be kept in step. `iOS/README.md` describes the remaining
-  migration plan, but it is out of date about macOS not using the framework.
+  `Playlist/PlaylistController.m`, and the two must be kept in step. `iOS/README.md` describes what macOS
+  uses and what remains: delegating the rest of `PlaylistController`'s rules to `PlaylistModel`.
 - `Utils/SQLiteStore` is the older SQLite playlist store, kept only to import old databases.
 
 ### macOS app
@@ -222,6 +223,12 @@ decoder (ObjC plugin) → Feeder thread → deep SPSC ring → DSP thread → sh
   - `iOS/generate_document_types.py` derives `iOS/CogApp-Info.plist` from them.
   - `Scripts/generate_quicklook_types.py` derives the Quick Look extension's types.
   - Re-run both scripts after changing document types.
+  - The template's document types are themselves produced by hand, at runtime: change the `#if 0` blocks
+    around `xmlEscapeString` and the end of `printPluginInfo` in `Audio/PluginController.mm` to `#if 1`,
+    build and run the macOS app, and it writes the registered plugins' types to `Cog_Info.plist` in
+    `NSTemporaryDirectory()`, which is the sandbox container's `tmp` folder
+    (`~/Library/Containers/org.cogx.cog/Data/tmp/`). Merge that into the template and restore the `#if 0`.
+    A build-time tool that collects the plugins' types without running the app would be better.
 - Acknowledgements: edit `Acknowledgements/components.json` (or add a license under `Acknowledgements/Licenses/`),
   then run `Scripts/build-acknowledgements.py`. It writes `Acknowledgements/Acknowledgements.json` (macOS) and
   `iOS/App/Acknowledgements.json`.

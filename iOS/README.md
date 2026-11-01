@@ -56,23 +56,35 @@ unpacks into place.
 macOS and iOS. It contains:
 
 - `PlaylistStore`: Cog's Core Data stack, on the shared `DataModel.xcdatamodeld`.
+  It owns the managed object model, so the entity classes are generated once.
 - `PlaylistEntry` extensions: tags, URL and `setMetadata`, ported from
   `Playlist/PlaylistEntry.m`.
-- `PlaylistModel`: order, current entry, queue, shuffle, repeat and stop-after,
-  ported from `Playlist/PlaylistController.m`.
+- `PlaybackOrder`: what plays next, by shuffle, repeat, queue and stop-after.
+- `PlaylistExpander`: turns dropped files, folders and containers into
+  ordered, filtered track URLs.
+- `PlaylistModel`: the playlist's order and current entry, with
+  `PlaybackOrder` deciding what plays next.
 - `PlaylistLoader`: folders and containers through the plugins, and metadata
   loaded in the background.
+- `ArtworkStore`: where entries keep their album art.
 
 Its rules are ported from the macOS app, so keep the two in step. The tests
 run on both platforms (`CogPlaylist` scheme). The loader is tested with the
 real plugins in `CogPluginsTests`.
 
-For now only iOS uses it. For the macOS app to adopt it:
+The macOS app uses it too:
 
-- Its `PlaylistController` delegates to `PlaylistModel`.
-- It stops generating the model's classes itself, since the entity classes
-  would otherwise exist twice.
-- It drops its own copy of `MaybeSecureValueDataTransformer`.
+- `Playlist/PlaylistController.m` opens its store on `PlaylistStore.model`,
+  so the app no longer generates the model's classes itself, and takes what
+  plays next from `PlaybackOrder`.
+- `Playlist/PlaylistLoader.m` expands what is added through
+  `PlaylistExpander`.
+- `MaybeSecureValueDataTransformer` is compiled only into `CogPlaylist`,
+  which registers it.
+
+What remains is for the macOS `PlaylistController` to delegate the rest of
+its rules to `PlaylistModel`, as the iOS app does. Until then, those rules
+live in both.
 
 ## Porting more of Cog
 
