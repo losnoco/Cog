@@ -4993,6 +4993,24 @@
         }
       }
     },
+    "Wfm-Me-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform\"; ObjectID = \"Wfm-Me-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Waveform"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar forma de onda"
+          }
+        }
+      }
+    },
     "Wfm-Sb-k1t.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform in Seek Bar\"; ObjectID = \"Wfm-Sb-k1t\";",
       "extractionState" : "extracted_with_value",

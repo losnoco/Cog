@@ -23,6 +23,8 @@
 		0A5F597C30969DDB009EB363 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A5F597B30969DDA009EB363 /* Quartz.framework */; };
 		0A5F598830969DDB009EB363 /* CogQuickLook.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0A5F597A30969DDA009EB363 /* CogQuickLook.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0A5F59A430969DDB009EB363 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; };
+		0A64CD343097FD8E00719211 /* WaveformWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64CD333097FD8E00719211 /* WaveformWindowController.swift */; };
+		0A64CD363097FD8E00719211 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A64CD353097FD8E00719211 /* WaveformView.swift */; };
 		0A67EED0306E3AC100DADC34 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */; };
 		0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */; };
 		0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */; };
@@ -937,6 +939,8 @@
 		0A5F597B30969DDA009EB363 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		0A5F59A030969DDB009EB363 /* CogQuickLook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CogQuickLook.entitlements; sourceTree = "<group>"; };
 		0A5F59A130969DDB009EB363 /* CogQuickLook-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CogQuickLook-Direct.entitlements"; sourceTree = "<group>"; };
+		0A64CD333097FD8E00719211 /* WaveformWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformWindowController.swift; path = Visualization/WaveformWindowController.swift; sourceTree = "<group>"; };
+		0A64CD353097FD8E00719211 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformView.swift; path = Visualization/WaveformView.swift; sourceTree = "<group>"; };
 		0A67EECF306E3AC100DADC34 /* ListenBrainzAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzAPI.swift; sourceTree = "<group>"; };
 		0A67EED6306E3AF400DADC34 /* ListenBrainzScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzScrobbler.swift; sourceTree = "<group>"; };
 		0A67EED8306E3B2800DADC34 /* ListenBrainzPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenBrainzPaneView.swift; sourceTree = "<group>"; };
@@ -2139,6 +2143,8 @@
 				0A0033923086B95500C5352B /* SpectrumWindowController.swift */,
 				0A6E7139308A829A00E2ADA7 /* VUMeterView.swift */,
 				0A6E7141308A82B300E2ADA7 /* VUMeterWindowController.swift */,
+				0A64CD333097FD8E00719211 /* WaveformWindowController.swift */,
+				0A64CD353097FD8E00719211 /* WaveformView.swift */,
 			);
 			name = Visualization;
 			sourceTree = "<group>";
@@ -3258,6 +3264,8 @@
 				8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */,
 				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
+				0A64CD343097FD8E00719211 /* WaveformWindowController.swift in Sources */,
+				0A64CD363097FD8E00719211 /* WaveformView.swift in Sources */,
 				0A67EED9306E3B2800DADC34 /* ListenBrainzPaneView.swift in Sources */,
 				83E998722F7131140017AE33 /* TotalTimeTransformer.swift in Sources */,
 				835A8FD327957310005B3C39 /* json.c in Sources */,

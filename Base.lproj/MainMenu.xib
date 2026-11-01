@@ -1967,6 +1967,12 @@
                                     <action selector="showWindow:" target="VUm-Wn-Ctl" id="VUm-Me-Act"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Show Waveform" secondaryImage="waveform" catalog="system" id="Wfm-Me-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showWindow:" target="Wfm-Wn-Ctl" id="Wfm-Me-Act"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show Nuked SC-55" secondaryImage="pianokeys" catalog="system" id="f31-bq-Mgd">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -2932,6 +2938,11 @@ Gw
         <customObject id="VUm-Wn-Ctl" customClass="VUMeterWindowController">
             <connections>
                 <outlet property="playbackController" destination="705" id="VUm-Pb-Out"/>
+            </connections>
+        </customObject>
+        <customObject id="Wfm-Wn-Ctl" customClass="WaveformWindowController">
+            <connections>
+                <outlet property="playbackController" destination="705" id="Wfm-Pb-Out"/>
             </connections>
         </customObject>
         <customObject id="Bno-cV-wwU" userLabel="SCVis Window Controller" customClass="SCVisWindowController">

@@ -898,6 +898,10 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 
+	// The waveform visualizer's; the waveform* keys below are the seek bar's.
+	[userDefaultsValuesDict setObject:barColor forKey:@"waveformVisualizerColor"];
+	[userDefaultsValuesDict setObject:@"oscilloscope" forKey:@"waveformVisualizerMode"];
+
 	[userDefaultsValuesDict setObject:@YES forKey:@"waveformSeekBar"];
 	[userDefaultsValuesDict setObject:@NO forKey:@"waveformLogScale"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"waveformRectified"];

@@ -27,6 +27,9 @@ private final class AppearancePrefs: ObservableObject {
     @Published var spectrumDotColor: Color {
 		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: spectrumDotColor) ?? NSColor(srgbRed: 1.0, green: 0, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "spectrumDotColor") } }
     }
+    @Published var waveformVisualizerColor: Color {
+		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: waveformVisualizerColor) ?? NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "waveformVisualizerColor") } }
+    }
 
 
     deinit { isActive = false }
@@ -41,6 +44,7 @@ private final class AppearancePrefs: ObservableObject {
         spectrumProjectionMode = d.object(forKey: "spectrumProjectionMode") as? Bool ?? false
 		spectrumBarColor = Self.defaultColor(forKey: "spectrumBarColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)))
 		spectrumDotColor = Self.defaultColor(forKey: "spectrumDotColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0, blue: 0, alpha: 1.0)))
+		waveformVisualizerColor = Self.defaultColor(forKey: "waveformVisualizerColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)))
     }
 
     private static func defaultColor(forKey key: String, default defaultColor: Color) -> Color {
@@ -55,6 +59,8 @@ struct AppearancePaneView: View {
     @AppStorage("waveformSeekBar") private var waveformSeekBar = true
     @AppStorage("waveformLogScale") private var waveformLogScale = false
     @AppStorage("waveformRectified") private var waveformRectified = true
+    // As @AppStorage, this follows the waveform pane's click and menu too.
+    @AppStorage("waveformVisualizerMode") private var waveformVisualizerMode = WaveformView.Mode.oscilloscope
 
     var body: some View {
         if #available(macOS 13.0, *) {
@@ -110,6 +116,18 @@ struct AppearancePaneView: View {
                     Text("Dot color:")
                     Spacer()
                     ColorPicker("", selection: $prefs.spectrumDotColor)
+                        .labelsHidden()
+                }
+            }
+            Section(header: Text("Waveform").bold()) {
+                Picker("Style:", selection: $waveformVisualizerMode) {
+                    Text("Oscilloscope").tag(WaveformView.Mode.oscilloscope)
+                    Text("Envelope").tag(WaveformView.Mode.envelope)
+                }
+                HStack {
+                    Text("Color:")
+                    Spacer()
+                    ColorPicker("", selection: $prefs.waveformVisualizerColor)
                         .labelsHidden()
                 }
             }
