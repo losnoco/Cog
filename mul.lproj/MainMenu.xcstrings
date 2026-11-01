@@ -4850,19 +4850,19 @@
       }
     },
     "VUm-Me-Itm.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show VU Meter\"; ObjectID = \"VUm-Me-Itm\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"VU Meter\"; ObjectID = \"VUm-Me-Itm\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Show VU Meter"
+            "value" : "VU Meter"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar vúmetro"
+            "value" : "Vúmetro"
           }
         }
       }
@@ -4957,6 +4957,42 @@
         }
       }
     },
+    "Vis-Mn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Visualizers\"; ObjectID = \"Vis-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Visualizers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualizadores"
+          }
+        }
+      }
+    },
+    "Vis-Sb-Mnu.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Visualizers\"; ObjectID = \"Vis-Sb-Mnu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Visualizers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualizadores"
+          }
+        }
+      }
+    },
     "WKt-lM-Bv1.label" : {
       "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Dead Items\"; ObjectID = \"WKt-lM-Bv1\";",
       "extractionState" : "extracted_with_value",
@@ -4994,19 +5030,19 @@
       }
     },
     "Wfm-Me-Itm.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Waveform\"; ObjectID = \"Wfm-Me-Itm\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Waveform\"; ObjectID = \"Wfm-Me-Itm\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Show Waveform"
+            "value" : "Waveform"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar forma de onda"
+            "value" : "Forma de onda"
           }
         }
       }
@@ -5138,19 +5174,19 @@
       }
     },
     "f31-bq-Mgd.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Nuked SC-55\"; ObjectID = \"f31-bq-Mgd\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Nuked SC-55\"; ObjectID = \"f31-bq-Mgd\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Show Nuked SC-55"
+            "value" : "Nuked SC-55"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar Nuked SC-55"
+            "value" : "Nuked SC-55"
           }
         }
       }
@@ -5678,19 +5714,19 @@
       }
     },
     "wl2-Vo-pul.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Spectrum Window\"; ObjectID = \"wl2-Vo-pul\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Spectrum\"; ObjectID = \"wl2-Vo-pul\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Show Spectrum Window"
+            "value" : "Spectrum"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar ventana del analizador"
+            "value" : "Analizador"
           }
         }
       }

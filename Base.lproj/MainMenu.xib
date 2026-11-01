@@ -1957,27 +1957,34 @@
                                     <action selector="showWindow:" target="dJ9-b3-BFu" id="l8q-wn-w0b"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Spectrum Window" secondaryImage="chart.bar" catalog="system" keyEquivalent="V" id="wl2-Vo-pul">
-                                <connections>
-                                    <action selector="showWindow:" target="Ix4-7A-ejK" id="wS9-M9-Dhe"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Show VU Meter" secondaryImage="barometer" catalog="system" keyEquivalent="U" id="VUm-Me-Itm">
-                                <connections>
-                                    <action selector="showWindow:" target="VUm-Wn-Ctl" id="VUm-Me-Act"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Show Waveform" secondaryImage="waveform" catalog="system" id="Wfm-Me-Itm">
+                            <menuItem title="Visualizers" secondaryImage="waveform" catalog="system" id="Vis-Mn-Itm">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="showWindow:" target="Wfm-Wn-Ctl" id="Wfm-Me-Act"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Show Nuked SC-55" secondaryImage="pianokeys" catalog="system" id="f31-bq-Mgd">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="showWindow:" target="Bno-cV-wwU" id="d3F-Ro-6Qp"/>
-                                </connections>
+                                <menu key="submenu" title="Visualizers" id="Vis-Sb-Mnu">
+                                    <items>
+                                        <menuItem title="Spectrum" secondaryImage="chart.bar" catalog="system" keyEquivalent="V" id="wl2-Vo-pul">
+                                            <connections>
+                                                <action selector="showWindow:" target="Ix4-7A-ejK" id="wS9-M9-Dhe"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="VU Meter" secondaryImage="barometer" catalog="system" keyEquivalent="U" id="VUm-Me-Itm">
+                                            <connections>
+                                                <action selector="showWindow:" target="VUm-Wn-Ctl" id="VUm-Me-Act"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Waveform" secondaryImage="waveform.path" catalog="system" id="Wfm-Me-Itm">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showWindow:" target="Wfm-Wn-Ctl" id="Wfm-Me-Act"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Nuked SC-55" secondaryImage="pianokeys" catalog="system" id="f31-bq-Mgd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showWindow:" target="Bno-cV-wwU" id="d3F-Ro-6Qp"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="RPL-Sp-Itm"/>
                             <menuItem title="Reset Pane Layout" id="RPL-Mn-Itm">
