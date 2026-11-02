@@ -94,7 +94,7 @@ public final class WaveformScanner {
 	/// end. A synthesized format renders what comes before wherever it seeks
 	/// to, so it is read from start to end.
 	private func scan(progress: @escaping (Waveform) -> Void) -> Waveform? {
-		guard url.isFileURL, let first = open() else { return nil }
+		guard WaveformCache.localFile(url) != nil, let first = open() else { return nil }
 
 		var properties: [AnyHashable: Any] = [:]
 		_ = Self.call(url) { properties = first.decoder.properties() ?? [:] }

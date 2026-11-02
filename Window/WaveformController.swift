@@ -25,6 +25,9 @@ import Foundation
 	}
 
 	private var url: URL?
+	/// The track's scan read nothing, so it is scanned again when it next
+	/// begins, rather than staying blank.
+	private var scanFailed = false
 	private var scanner: WaveformScanner?
 	private var enabledObservation: NSKeyValueObservation?
 
@@ -55,7 +58,7 @@ import Foundation
 
 	@objc private func playbackDidBegin(_ notification: Notification) {
 		// Posted again when a stream's title changes; only a new track counts.
-		guard let entry = notification.object as? PlaylistEntry, entry.url != url else { return }
+		guard let entry = notification.object as? PlaylistEntry, entry.url != url || scanFailed else { return }
 		load(entry.url)
 	}
 
@@ -67,13 +70,17 @@ import Foundation
 		scanner?.cancel()
 		scanner = nil
 		url = newURL
+		scanFailed = false
 		if waveform != nil {
 			waveform = nil
 		}
 		guard isEnabled, let newURL else { return }
-		scanner = WaveformCache.shared.load(newURL) { [weak self] waveform in
+		scanner = WaveformCache.shared.load(newURL, update: { [weak self] waveform in
 			guard let self, self.url == newURL else { return }
 			self.waveform = waveform
-		}
+		}, failed: { [weak self] in
+			guard let self, self.url == newURL else { return }
+			self.scanFailed = true
+		})
 	}
 }

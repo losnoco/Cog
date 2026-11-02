@@ -21,6 +21,9 @@ final class WaveformModel: ObservableObject {
 	@Published private(set) var waveform: Waveform?
 
 	private var url: URL?
+	/// The track's scan read nothing, so it is scanned again when it next
+	/// begins, rather than staying blank.
+	private var scanFailed = false
 	private var scanner: WaveformScanner?
 	private var wasEnabled: Bool
 	private var defaultsObserver: NSObjectProtocol?
@@ -42,7 +45,7 @@ final class WaveformModel: ObservableObject {
 
 	/// The track that began playing, or nil when playback stops.
 	func track(_ newURL: URL?) {
-		guard newURL != url else { return }
+		guard newURL != url || (newURL != nil && scanFailed) else { return }
 		load(newURL)
 	}
 
@@ -50,11 +53,15 @@ final class WaveformModel: ObservableObject {
 		scanner?.cancel()
 		scanner = nil
 		url = newURL
+		scanFailed = false
 		waveform = nil
 		guard Self.isEnabled, let newURL else { return }
-		scanner = WaveformCache.shared.load(newURL) { [weak self] waveform in
+		scanner = WaveformCache.shared.load(newURL, update: { [weak self] waveform in
 			guard let self, self.url == newURL else { return }
 			self.waveform = waveform
-		}
+		}, failed: { [weak self] in
+			guard let self, self.url == newURL else { return }
+			self.scanFailed = true
+		})
 	}
 }
