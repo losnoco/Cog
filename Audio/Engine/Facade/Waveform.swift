@@ -126,7 +126,9 @@ public struct Waveform: Equatable {
 	// MARK: - Storage
 
 	private static let magic: UInt32 = 0x4357_4652 // "CWFR"
-	private static let version: UInt32 = 1
+	/// 2: a file cut short of its stated length no longer has its last
+	/// bucket stretched to the end, so those scanned before are dropped.
+	private static let version: UInt32 = 2
 
 	/// The waveform as the cache stores it: a header, then the three arrays
 	/// as native floats. Only a complete waveform is stored.

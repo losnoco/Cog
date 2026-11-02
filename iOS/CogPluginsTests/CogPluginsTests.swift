@@ -348,6 +348,32 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertEqual(meanSquare.squareRoot(), 0.5 / Float(2).squareRoot(), accuracy: 0.01)
 	}
 
+	/// A file cut short of the length its header claims: FATE's
+	/// luckynight-partial.ape says 60.48 seconds, but holds under ten.
+	/// The waveform shows what is there, then nothing, rather than the last
+	/// bucket stretched over the rest.
+	func testAWaveformOfATruncatedFileEndsWhereItsAudioDoes() throws {
+		let url = URL(fileURLWithPath: "/Users/chris/Documents/CogTestSuite/FFMPEG/luckynight-partial.ape")
+		try XCTSkipUnless(FileManager.default.fileExists(atPath: url.path), "needs the Cog test suite")
+		let scanned = expectation(description: "scanned")
+		var result: Waveform?
+		WaveformScanner(url: url).start(progress: { _ in }) { waveform in
+			result = waveform
+			scanned.fulfill()
+		}
+		wait(for: [scanned], timeout: 60)
+		let waveform = try XCTUnwrap(result)
+		let peaks = (0..<Waveform.bucketCount).map { max(-waveform.minimum[$0], waveform.maximum[$0]) }
+		let perSecond = Double(Waveform.bucketCount) / 60.48
+		XCTAssertTrue(waveform.isComplete)
+		// Sound until about 9.8 seconds, the last whole frame, and none
+		// from 11 on.
+		XCTAssertGreaterThan(peaks[Int(9.0 * perSecond)], 0.01)
+		for bucket in Int(11 * perSecond)..<Waveform.bucketCount {
+			XCTAssertEqual(peaks[bucket], 0, "bucket \(bucket)")
+		}
+	}
+
 	func testAWaveformSurvivesTheCache() throws {
 		var waveform = Waveform()
 		for bucket in 0..<Waveform.bucketCount {
