@@ -1260,6 +1260,19 @@
                             <outlet property="windowController" destination="VUm-Wn-Ctl" id="VUm-Tb-Wnc"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="63DC65E4-ABA4-49A7-A0DF-F3234B0F84F0" label="Waveform" paletteLabel="Waveform" tag="-1" id="Wfm-Tb-Itm" customClass="WaveformItem">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="64" height="26"/>
+                        <size key="maxSize" width="64" height="26"/>
+                        <customView key="view" id="Wfm-Tb-Viw">
+                            <rect key="frame" x="0.0" y="14" width="64" height="26"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </customView>
+                        <connections>
+                            <outlet property="playbackController" destination="705" id="Wfm-Tb-Pbc"/>
+                            <outlet property="windowController" destination="Wfm-Wn-Ctl" id="Wfm-Tb-Wnc"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="1539"/>
@@ -1542,6 +1555,19 @@
                         <connections>
                             <outlet property="playbackController" destination="705" id="VUm-Mn-Pbc"/>
                             <outlet property="windowController" destination="VUm-Wn-Ctl" id="VUm-Mn-Wnc"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="EC1E377A-F2C7-4598-8DA8-BD864DA3E2DF" label="Waveform" paletteLabel="Waveform" tag="-1" id="Wfm-Mn-Itm" customClass="WaveformItem">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="64" height="26"/>
+                        <size key="maxSize" width="64" height="26"/>
+                        <customView key="view" id="Wfm-Mn-Viw">
+                            <rect key="frame" x="0.0" y="14" width="64" height="26"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </customView>
+                        <connections>
+                            <outlet property="playbackController" destination="705" id="Wfm-Mn-Pbc"/>
+                            <outlet property="windowController" destination="Wfm-Wn-Ctl" id="Wfm-Mn-Wnc"/>
                         </connections>
                     </toolbarItem>
                 </allowedToolbarItems>

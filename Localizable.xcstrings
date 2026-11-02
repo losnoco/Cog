@@ -6383,6 +6383,17 @@
         }
       }
     },
+    "Waveform. Click to open the waveform." : {
+      "comment" : "Waveform toolbar item tooltip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma de onda. Haz clic para abrir la forma de onda."
+          }
+        }
+      }
+    },
     "wdhms" : {
       "comment" : "weeks, days, hours, minutes and seconds",
       "localizations" : {

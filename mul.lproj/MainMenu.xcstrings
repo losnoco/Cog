@@ -4993,6 +4993,78 @@
         }
       }
     },
+    "Wfm-Mn-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Waveform\"; ObjectID = \"Wfm-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Waveform"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma de onda"
+          }
+        }
+      }
+    },
+    "Wfm-Mn-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Waveform\"; ObjectID = \"Wfm-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Waveform"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma de onda"
+          }
+        }
+      }
+    },
+    "Wfm-Tb-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Waveform\"; ObjectID = \"Wfm-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Waveform"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma de onda"
+          }
+        }
+      }
+    },
+    "Wfm-Tb-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Waveform\"; ObjectID = \"Wfm-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Waveform"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forma de onda"
+          }
+        }
+      }
+    },
     "WKt-lM-Bv1.label" : {
       "comment" : "Class = \"NSToolbarItem\"; label = \"Remove Dead Items\"; ObjectID = \"WKt-lM-Bv1\";",
       "extractionState" : "extracted_with_value",
