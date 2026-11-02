@@ -75,7 +75,14 @@ revision_code = revision_split[1]
 
 if 1 #appcast_revision < latest_revision
   #Get the changelog
-  changelog = %x[/usr/bin/git log #{appcast_revision_code}..#{revision_code} --pretty=format:'<li> <a href="https://github.com/losnoco/Cog/commit/%H">view commit</a> &bull; %s</li> ' --reverse]
+  # Release notes from chalogen instead of the raw commit list.
+  template = %x[security find-generic-password -s chalogen-url -w].strip
+  abort "chalogen: no URL in the Keychain (service chalogen-url)" if template.empty?
+  url = template.sub('{FROM}', appcast_revision_code).sub('{TO}', revision_code)
+  changelog = %x[curl -sf --max-time 200 #{Shellwords.escape(url)}]
+  if !$?.success? || changelog.strip.empty?
+    abort "chalogen: no changelog for #{appcast_revision_code}..#{revision_code}; check the dashboard"
+  end
 
   description = changelog
 
