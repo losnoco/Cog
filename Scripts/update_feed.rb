@@ -75,19 +75,29 @@ revision_code = revision_split[1]
 
 if 1 #appcast_revision < latest_revision
   #Get the changelog
-  # Release notes from chalogen instead of the raw commit list.
+  # Release notes from chalogen, in English and Latin American Spanish.
+  # Both come as complete pages: generate_appcast embeds an HTML fragment in
+  # <description> but links a page, and only links can carry xml:lang. Sparkle
+  # also prefers a link to the description, so English must be a link too.
   template = %x[security find-generic-password -s chalogen-url -w].strip
   abort "chalogen: no URL in the Keychain (service chalogen-url)" if template.empty?
-  url = template.sub('{FROM}', appcast_revision_code).sub('{TO}', revision_code)
-  changelog = %x[curl -sf --max-time 200 #{Shellwords.escape(url)}]
-  if !$?.success? || changelog.strip.empty?
-    abort "chalogen: no changelog for #{appcast_revision_code}..#{revision_code}; check the dashboard"
+  fetch_notes = lambda do |lang|
+    url = template.sub('{FROM}', appcast_revision_code).sub('{TO}', revision_code)
+                  .sub(/lang=[a-z]+/, "lang=#{lang}") + '&format=document'
+    notes = %x[curl -sf --max-time 200 #{Shellwords.escape(url)}]
+    if !$?.success? || notes.strip.empty?
+      abort "chalogen: no #{lang} changelog for #{appcast_revision_code}..#{revision_code}; check the dashboard"
+    end
+    notes
   end
+  changelog = fetch_notes.call('en')
+  changelog_es = fetch_notes.call('es')
 
   description = changelog
 
   filename = "Cog-#{revision_code}.zip"
   filenamedesc = "Cog-#{revision_code}.html"
+  filenamedesc_es = "Cog-#{revision_code}.es.html"
   deltamask = "Cog#{revision_number}-"
   temp_path = "/tmp";
   puts "Generating zip file for Cog..."
@@ -113,6 +123,9 @@ if 1 #appcast_revision < latest_revision
   %x[cp '#{descriptiondoc.path}' '#{site_dir}/#{feed}_builds/#{filenamedesc}']
   %x[rm '#{descriptiondoc.path}']
 
+  #Spanish release notes; generate_appcast links them with xml:lang="es"
+  File.write("#{site_dir}/#{feed}_builds/#{filenamedesc_es}", changelog_es)
+
   #Update appcast
   puts "Generating appcast..."
   %x[generate_appcast '#{site_dir}/#{feed}_builds']
@@ -131,19 +144,14 @@ if 1 #appcast_revision < latest_revision
   #Upload the changelog that Sparkle will display
   puts "Uploading changelog to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc}' r2:cog/ --progress]
+  %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc_es}' r2:cog/ --progress]
  
   #Clean up
   %x[rm -rf '#{temp_path}/Cog.app']
 
-  #Convert to JSON
-  puts "Converting to JSON..."
-  %x[pushd '#{site_dir}/#{feed}_builds' && '#{__dir__}/sparkleToJSON' '#{site_dir}/#{feed}_builds/#{feed}.xml' && popd]
-
-  #Upload to R2
+  #Upload to R2; the website reads the XML feed directly
   puts "Uploading XML feed to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{feed}.xml' r2:cog/ --progress]
-  puts "Uploading JSON feed to R2..."
-  %x[rclone copy '#{site_dir}/#{feed}_builds/#{feed}.json' r2:cog/ --progress]
 
   #Send web hook to update site
   puts "Sending web hook to update site..."
