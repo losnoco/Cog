@@ -79,6 +79,9 @@ if 1 #appcast_revision < latest_revision
   # Both come as complete pages: generate_appcast embeds an HTML fragment in
   # <description> but links a page, and only links can carry xml:lang. Sparkle
   # also prefers a link to the description, so English must be a link too.
+  # English goes out twice: unmarked as the default, and marked xml:lang="en",
+  # because Sparkle before 2.5.1 (in older Cog builds) doesn't read an
+  # unmarked link as English and could show those Macs the Spanish notes.
   template = %x[security find-generic-password -s chalogen-url -w].strip
   abort "chalogen: no URL in the Keychain (service chalogen-url)" if template.empty?
   fetch_notes = lambda do |lang|
@@ -97,6 +100,7 @@ if 1 #appcast_revision < latest_revision
 
   filename = "Cog-#{revision_code}.zip"
   filenamedesc = "Cog-#{revision_code}.html"
+  filenamedesc_en = "Cog-#{revision_code}.en.html"
   filenamedesc_es = "Cog-#{revision_code}.es.html"
   deltamask = "Cog#{revision_number}-"
   temp_path = "/tmp";
@@ -123,7 +127,8 @@ if 1 #appcast_revision < latest_revision
   %x[cp '#{descriptiondoc.path}' '#{site_dir}/#{feed}_builds/#{filenamedesc}']
   %x[rm '#{descriptiondoc.path}']
 
-  #Spanish release notes; generate_appcast links them with xml:lang="es"
+  #Per-language release notes; generate_appcast links them with xml:lang
+  File.write("#{site_dir}/#{feed}_builds/#{filenamedesc_en}", changelog)
   File.write("#{site_dir}/#{feed}_builds/#{filenamedesc_es}", changelog_es)
 
   #Update appcast
@@ -144,6 +149,7 @@ if 1 #appcast_revision < latest_revision
   #Upload the changelog that Sparkle will display
   puts "Uploading changelog to R2..."
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc}' r2:cog/ --progress]
+  %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc_en}' r2:cog/ --progress]
   %x[rclone copy '#{site_dir}/#{feed}_builds/#{filenamedesc_es}' r2:cog/ --progress]
  
   #Clean up
