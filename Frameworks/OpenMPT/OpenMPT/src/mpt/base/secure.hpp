@@ -8,8 +8,8 @@
 #include "mpt/base/integer.hpp"
 #include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
+#include "mpt/base/utility.hpp"
 
-#include <atomic>
 #include <utility>
 #include <vector>
 
@@ -24,13 +24,13 @@ inline namespace MPT_INLINE_NS {
 
 // C23 memset_explicit
 inline MPT_NOINLINE void * memset_explicit(void * const dst, int const value, std::size_t const len) noexcept {
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	volatile unsigned char * volatile p = static_cast<volatile unsigned char *>(dst);
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	for (volatile std::size_t i = 0; i < len; ++i) {
 		p[i] = static_cast<unsigned char>(value);
 	}
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	return dst;
 }
 
@@ -41,54 +41,54 @@ namespace secure {
 
 
 inline MPT_NOINLINE void memzero(std::byte * const dst, std::size_t const len) noexcept {
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	volatile std::byte * volatile p = static_cast<volatile std::byte *>(dst);
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	for (volatile std::size_t i = 0; i < len; ++i) {
 		p[i] = std::byte{0};
 	}
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 }
 
 inline MPT_NOINLINE void memzero(void * const dst, std::size_t const len) noexcept {
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	volatile std::byte * volatile p = static_cast<volatile std::byte *>(dst);
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	for (volatile std::size_t i = 0; i < len; ++i) {
 		p[i] = std::byte{0};
 	}
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 }
 
 inline MPT_NOINLINE void memzero(char * const dst, std::size_t const len) noexcept {
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	volatile std::byte * volatile p = reinterpret_cast<volatile std::byte *>(dst);
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	for (volatile std::size_t i = 0; i < len; ++i) {
 		p[i] = std::byte{0};
 	}
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 }
 
 inline MPT_NOINLINE void memzero(uint8 * const dst, std::size_t const len) noexcept {
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	volatile std::byte * volatile p = reinterpret_cast<volatile std::byte *>(dst);
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	for (volatile std::size_t i = 0; i < len; ++i) {
 		p[i] = std::byte{0};
 	}
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 }
 
 
 
 template <typename T>
 inline MPT_NOINLINE void clear(T & val) {
-	std::atomic_signal_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	volatile T * volatile v = &val;
-	std::atomic_thread_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 	*v = T{};
-	std::atomic_signal_fence(std::memory_order_seq_cst);
+	mpt::full_barrier();
 }
 
 

@@ -13,6 +13,9 @@
 #include "mpt/base/saturate_round.hpp"
 #endif
 
+#if MPT_CXX_BEFORE(26)
+#include <atomic>
+#endif
 #if MPT_CXX_BEFORE(23) && !MPT_COMPILER_MSVC && !MPT_COMPILER_GCC && !MPT_COMPILER_CLANG
 #include <exception>
 #endif
@@ -254,6 +257,70 @@ using std::unreachable;
 }
 
 #endif // C++23
+
+
+
+#if MPT_CXX_AT_LEAST(26)
+
+using std::observable_checkpoint;
+
+#else // !C++26
+
+#if MPT_COMPILER_MSVC
+inline void observable_checkpoint() {
+	_ReadWriteBarrier();
+}
+#elif MPT_COMPILER_GCC || MPT_COMPILER_CLANG
+inline void observable_checkpoint() {
+	// clang-format off
+	__asm__ __volatile__("" ::: "memory");
+	// clang-format on
+}
+#else
+inline void observable_checkpoint() {
+	std::atomic_signal_fence(std::memory_order_release);
+}
+#endif
+
+#endif // C++26
+
+
+
+inline void compiler_barrier(std::memory_order order) {
+#if MPT_COMPILER_CLANG
+	// clang-format off
+	__asm__ __volatile__("" ::: "memory");
+	// clang-format on
+#endif
+	std::atomic_signal_fence(order);
+#if MPT_COMPILER_CLANG
+	// clang-format off
+	__asm__ __volatile__("" ::: "memory");
+	// clang-format on
+#endif
+}
+
+
+
+inline void cpu_barrier(std::memory_order order) {
+	std::atomic_thread_fence(order);
+}
+
+
+
+inline void full_barrier() {
+#if MPT_COMPILER_CLANG
+	// clang-format off
+	__asm__ __volatile__("" ::: "memory");
+	// clang-format on
+	std::atomic_thread_fence(std::memory_order_seq_cst);
+	// clang-format off
+	__asm__ __volatile__("" ::: "memory");
+	// clang-format on
+#else
+	std::atomic_thread_fence(std::memory_order_seq_cst);
+#endif
+}
 
 
 

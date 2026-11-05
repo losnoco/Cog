@@ -70,7 +70,8 @@ WAVReader::WAVReader(FileReader &inputFile) : file(inputFile)
 
 	// Read format chunk
 	FileReader formatChunk = chunks.GetChunk(RIFFChunk::idfmt_);
-	if(!formatChunk.ReadStruct(formatInfo))
+	if(!formatChunk.ReadStruct(formatInfo)
+		|| formatInfo.numChannels == 0)
 	{
 		return;
 	}
@@ -104,11 +105,12 @@ WAVReader::WAVReader(FileReader &inputFile) : file(inputFile)
 		sampleData = chunks.GetChunk(RIFFChunk::idpcm_);
 	}
 
-	// "fact" chunk should contain sample length of compressed samples.
-	sampleLength = chunks.GetChunk(RIFFChunk::idfact).ReadUint32LE();
-
-	if((formatInfo.format == WAVFormatChunk::fmtIMA_ADPCM) && (GetBlockAlign() > 0))
+	sampleLength = 0;
+	if((formatInfo.format == WAVFormatChunk::fmtIMA_ADPCM) && (GetBlockAlign() >= 4 * formatInfo.numChannels))
 	{
+		// "fact" chunk should contain sample length of compressed samples.
+		sampleLength = chunks.GetChunk(RIFFChunk::idfact).ReadUint32LE();
+
 		FileReader::pos_type dataLength = sampleData.GetLength();
 		std::size_t blocks = mpt::align_up<FileReader::pos_type>(dataLength, GetBlockAlign()) / GetBlockAlign();
 		std::size_t framesPerBlock = ((GetBlockAlign() - (4 * formatInfo.numChannels)) * 2 / formatInfo.numChannels) + 1;
@@ -124,6 +126,7 @@ WAVReader::WAVReader(FileReader &inputFile) : file(inputFile)
 				sampleLength *= 2;
 			}
 		}
+		LimitMax(sampleLength, expectedLengthFrames);
 	}
 
 	if((formatInfo.format != WAVFormatChunk::fmtIMA_ADPCM || sampleLength == 0) && GetSampleSize() != 0)

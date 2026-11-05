@@ -87,6 +87,7 @@
 //                      MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x10) //                        25H1                                         Dilithium 25H1                         10.0.28000.? NTDDI_WIN11_BR
 #define MPT_WIN_11_25H2 MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x11) // NTDDI_WIN11_DT   Win11.25H2 26200      Hudson Valley 2 ?            ?         25H2    2025 Update          10.0.28000.? NTDDI_WIN11_BR
 #define MPT_WIN_11_26H1 MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x12) // NTDDI_WIN11_BR   Win11.26H1 28000      ?               ?            Bromine   26H2                         10.0.28000.? NTDDI_WIN11_BR
+//      MPT_WIN_11_26H2 MPT_WIN_MAKE_VERSION(0x0a, 0x00, 0x00, 0x11) // NTDDI_WIN11_DT   Win11.26H2 26300      ?               ?            ?         26H2    2026 Update          10.0.28000.? NTDDI_WIN11_BR
 
 // MPT_WIN_API_DESKTOP     : Windows 8/10 Desktop Application (Win32)
 // MPT_WIN_API_UNIVERSAL   : Windows 10 Store App / Universal App

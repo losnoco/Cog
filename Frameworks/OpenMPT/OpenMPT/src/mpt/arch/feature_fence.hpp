@@ -7,6 +7,7 @@
 #include "mpt/base/detect.hpp"
 #include "mpt/base/macros.hpp"
 #include "mpt/base/namespace.hpp"
+#include "mpt/base/utility.hpp"
 
 #include <atomic>
 
@@ -22,11 +23,11 @@ namespace arch {
 
 
 MPT_FORCEINLINE void feature_fence_aquire() noexcept {
-	std::atomic_signal_fence(std::memory_order_acquire);
+	mpt::compiler_barrier(std::memory_order_acquire);
 }
 
 MPT_FORCEINLINE void feature_fence_release() noexcept {
-	std::atomic_signal_fence(std::memory_order_release);
+	mpt::compiler_barrier(std::memory_order_release);
 }
 
 class feature_fence_guard {

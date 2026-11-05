@@ -1128,7 +1128,7 @@ bool CDLSBank::UpdateSF2PresetData(SF2LoaderInfo &sf2info, const IFFCHUNK &heade
 					sampleType = (sampleType & 0xFFFC) | 0x10;
 
 				dlsSmp.compressed = (sampleType & 0x10);
-				if(((sampleType & 0x7FCF) <= 4) && (p.dwEnd >= p.dwStart + 4))
+				if(((sampleType & 0x7FCF) <= 8) && (p.dwEnd >= p.dwStart + 4))
 				{
 					m_WaveForms[i] = p.dwStart;
 					dlsSmp.dwLen = (p.dwEnd - p.dwStart);

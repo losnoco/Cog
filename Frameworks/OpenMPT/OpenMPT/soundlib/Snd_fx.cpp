@@ -148,9 +148,13 @@ public:
 					}
 					break;
 				case VOLCMD_PORTAUP:
+					if(sndFile.m_playBehaviour[kITDoublePortamentoSlides])
+						chn.nOldPortaUp = chn.nOldPortaDown = m.vol << 2;
 					sndFile.PortamentoUp(*state, channel, static_cast<ModCommand::PARAM>(m.vol << 2), sndFile.m_playBehaviour[kITVolColFinePortamento]);
 					break;
 				case VOLCMD_PORTADOWN:
+					if(sndFile.m_playBehaviour[kITDoublePortamentoSlides])
+						chn.nOldPortaUp = chn.nOldPortaDown = m.vol << 2;
 					sndFile.PortamentoDown(*state, channel, static_cast<ModCommand::PARAM>(m.vol << 2), sndFile.m_playBehaviour[kITVolColFinePortamento]);
 					break;
 				default:
