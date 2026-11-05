@@ -10,9 +10,6 @@
 [submodule "Frameworks/AdPlug/AdPlug/database"]
 	path = Frameworks/AdPlug/AdPlug/database
 	url = https://github.com/adplug/database.git
-[submodule "Frameworks/libatrac9/libatrac9"]
-	path = Frameworks/libatrac9/libatrac9
-	url = https://github.com/Thealexbarney/LibAtrac9.git
 [submodule "Frameworks/shpakovski/MASShortcut"]
 	path = Frameworks/shpakovski/MASShortcut
 	url = https://github.com/kode54/MASShortcut.git

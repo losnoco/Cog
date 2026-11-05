@@ -137,8 +137,7 @@ TEST_PROJECTS = ['CogPlaylist/CogPlaylist.xcodeproj']
 
 # Frameworks the plugins' frameworks link in turn (vgmstream's), which the
 # app must embed as well.
-EMBED_PROJECTS = ['Frameworks/g719/g719.xcodeproj', 'Frameworks/libatrac9/libatrac9.xcodeproj',
-                  'Frameworks/libcelt_0061/libcelt_0061/libcelt_0061.xcodeproj',
+EMBED_PROJECTS = ['Frameworks/libcelt_0061/libcelt_0061/libcelt_0061.xcodeproj',
                   'Frameworks/libcelt_0110/libcelt_0110/libcelt_0110.xcodeproj']
 
 # What the app bundles: the MIDI plugin's SoundFonts (it looks for them in

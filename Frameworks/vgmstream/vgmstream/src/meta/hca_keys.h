@@ -1676,6 +1676,14 @@ static const hcakey_info hcakey_list[] = {
     // Genso Suikoden STAR LEAP (Android)
     {310004001},                // 00000000127A4921
 
+    // Final Fantasy Resonance Demo (PC)
+    {39734930526541068},        // 008D2AB57335950C
+
+    // Tales of Eternia Remastered (PC)
+    {31847960372542034},        // 0071258D1CD37A52
+
+    // Jujutsu Kaisen: Phantom Parade (PC)
+    {7825649332975864},        // 001BCD62F8A0F8F8
 };
 
 #endif

@@ -16,16 +16,14 @@ VGMSTREAM* init_vgmstream_brwav(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00, sf, "RWAV"))
-        goto fail;
+        return NULL;
 
     /* .brwav: from tools (no games known)
      * .rwav: header id */
     if (!check_extensions(sf, "brwav,rwav"))
-        goto fail;
+        return NULL;
 
     return init_vgmstream_bxwav(sf, RWAV);
-fail:
-    return NULL;
 }
 
 /* FWAV - NintendoWare binary caFe wave (WiiU and Switch games) */
@@ -33,16 +31,14 @@ VGMSTREAM* init_vgmstream_bfwav(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00, sf, "FWAV"))
-        goto fail;
+        return NULL;
 
     /* .bfwav: used?
      * .fwav: header id */
     if (!check_extensions(sf, "bfwav,fwav"))
-        goto fail;
+        return NULL;
 
     return init_vgmstream_bxwav(sf, FWAV);
-fail:
-    return NULL;
 }
 
 /* CWAV - NintendoWare binary CTR wave (3DS games) */
@@ -50,7 +46,7 @@ VGMSTREAM* init_vgmstream_bcwav(STREAMFILE* sf) {
 
     /* checks */
     if (!is_id32be(0x00, sf, "CWAV"))
-        goto fail;
+        return NULL;
 
     /* .bcwav: standard 3DS (though rare as usually found in .bcsar) [Adventure Bar Story (3DS), LBX (3DS)]
      * .adpcm: 80's Overdrive (3DS)
@@ -59,11 +55,9 @@ VGMSTREAM* init_vgmstream_bcwav(STREAMFILE* sf) {
      * .str: Pac-Man and the Ghostly Adventures 2 (3DS)
      * .zic: Wizdom (3DS) */
     if (!check_extensions(sf, "bcwav,adpcm,bms,sfx,str,zic"))
-        goto fail;
+        return NULL;
 
     return init_vgmstream_bxwav(sf, CWAV);
-fail:
-    return NULL;
 }
 
 
@@ -96,7 +90,7 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
         read_s16 = read_s16le;
     }
     else {
-        goto fail;
+        return NULL;
     }
 
     /* header */
@@ -135,17 +129,17 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
             break;
 
         default:
-            goto fail;        
+            return NULL;
     }
 
     if (file_size != get_streamfile_size(sf)) {
         vgm_logi("BXWAV: wrong size %x vs %x\n", file_size, (uint32_t)get_streamfile_size(sf));
-        goto fail;
+        return NULL;
     }
 
     /* INFO section */
     if (!is_id32be(info_offset + 0x00, sf, "INFO"))
-        goto fail;
+        return NULL;
     /* 0x04: size */
 
     switch(type) {
@@ -161,8 +155,10 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
             chtb_offset = read_u32(info_offset + 0x18, sf) + info_offset + 0x08;
             /* 0x1c: channel table size */
 
-            loop_start  = dsp_nibbles_to_samples(loop_start);
-            num_samples = dsp_nibbles_to_samples(num_samples);
+            if (codec == 0x02) {
+                loop_start  = dsp_nibbles_to_samples(loop_start);
+                num_samples = dsp_nibbles_to_samples(num_samples);
+            }
 
             break;
 
@@ -180,14 +176,14 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
             break;
 
         default:
-            goto fail;        
+            return NULL;
     }
 
     /* channel table is parsed at the end */
 
     /* DATA section */
     if (!is_id32be(data_offset + 0x00, sf, "DATA"))
-        goto fail;
+        return NULL;
     /* 0x04: size */
 
 
@@ -208,7 +204,7 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
     vgmstream->loop_end_sample = num_samples;
     if (type == CWAV)
         vgmstream->allow_dual_stereo = 1; /* LEGO 3DS games */
-    
+
     vgmstream->layout_type = layout_none;
 
     /* only 0x02/03 are known, others can be made with SDK tools */
@@ -227,7 +223,7 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
             break;
 
         case 0x03:
-            vgmstream->coding_type = coding_IMA_mono; // 3DS eShop applet (3DS) 
+            vgmstream->coding_type = coding_IMA_mono; // 3DS eShop applet (3DS)
             /* hist is read below */
             break;
 
@@ -288,7 +284,7 @@ static VGMSTREAM* init_vgmstream_bxwav(STREAMFILE* sf, bxwav_type_t type) {
                     break;
 
                 default:
-                    goto fail;        
+                    goto fail;
             }
 
             vgmstream->ch[ch].channel_start_offset = chdt_offset;

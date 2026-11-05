@@ -3,16 +3,18 @@
 #include "../coding/coding.h"
 #include "../util/companion_files.h"
 #include "../util/cri_keys.h"
+#include "../util/meta_utils.h"
 
 typedef struct {
     VGMSTREAM* (*init_vgmstream)(STREAMFILE* sf);
     VGMSTREAM* (*init_vgmstream_subkey)(STREAMFILE* sf, uint16_t subkey);
     const char* extension;
     bool load_loops;
+    bool is_missing;
     uint32_t subfile_size;
 } meta_info_t;
 
-static bool load_meta_type(meta_info_t* meta, STREAMFILE* sf, uint32_t subfile_offset);
+static bool load_meta_type(meta_info_t* meta, STREAMFILE* sf, uint32_t subfile_offset, uint32_t subfile_size);
 static void load_acb_info(STREAMFILE* sf, STREAMFILE* sf_acb, VGMSTREAM* vgmstream, int waveid, bool load_loops);
 static uint64_t load_keycode(STREAMFILE* sf);
 
@@ -99,7 +101,7 @@ VGMSTREAM* init_vgmstream_awb_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
     {
         meta_info_t meta = {0};
 
-        bool meta_ok = load_meta_type(&meta, sf, subfile_offset);
+        bool meta_ok = load_meta_type(&meta, sf, subfile_offset, subfile_size);
         if (!meta_ok) { 
             // try encrypted meta (loads key after regular cases since it's uncommon)
             uint64_t keycode = load_keycode(sf);
@@ -124,24 +126,35 @@ VGMSTREAM* init_vgmstream_awb_memory(STREAMFILE* sf, STREAMFILE* sf_acb) {
             subfile_size = meta.subfile_size;
         }
 
-        if (!temp_sf) {
+        if (!temp_sf && !meta.is_missing) {
             temp_sf = setup_subfile_streamfile(sf, subfile_offset, subfile_size, meta.extension);
             if (!temp_sf) goto fail;
         }
 
         // don't pass AWB subsong index (ffmpeg/MP4 allows subsongs)
-        temp_sf->stream_index = 0;
+        if (temp_sf) {
+            temp_sf->stream_index = 0;
+        }
 
-        if (meta.init_vgmstream_subkey)
+        if (meta.is_missing) {
+            vgmstream = init_vgmstream_silence(0, 0, 0);
+        }
+        else if (meta.init_vgmstream_subkey) {
             vgmstream = meta.init_vgmstream_subkey(temp_sf, subkey);
-        else
+        }
+        else {
             vgmstream = meta.init_vgmstream(temp_sf);
+        }
         if (!vgmstream) goto fail;
 
         vgmstream->num_streams = total_subsongs;
 
         /* try to load cue names+etc */
         load_acb_info(sf, sf_acb, vgmstream, waveid, meta.load_loops);
+
+        if (meta.is_missing) {
+            meta_mark_missing(vgmstream);
+        }
     }
 
     close_streamfile(temp_sf);
@@ -175,7 +188,14 @@ fail:
  * 19: AAC M4A (.m4a) [Imperial SaGa Eclipse (Browser)]
  * 24: Switch Opus (.switchopus) [Super Mario RPG (Switch)]
  */
-static bool load_meta_type(meta_info_t* meta, STREAMFILE* sf, uint32_t subfile_offset) {
+static bool load_meta_type(meta_info_t* meta, STREAMFILE* sf, uint32_t subfile_offset, uint32_t subfile_size) {
+
+    if (subfile_size == 0) {
+        // very rarely multiple entries point to the same offset or padding [Final Fantasy Resonance Demo (PC)]
+        // .acb info looks normal and has cue name that doesn't match the data at offset, so they are truly missing (maybe bug?)
+        meta->is_missing = true;
+        return true;
+    }
 
     if (read_u16be(subfile_offset, sf) == 0x8000) {
         meta->init_vgmstream_subkey = init_vgmstream_adx_subkey;

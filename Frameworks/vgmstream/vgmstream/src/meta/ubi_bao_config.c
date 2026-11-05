@@ -166,6 +166,13 @@ bool ubi_bao_config_version(ubi_bao_config_t* cfg, STREAMFILE* sf, uint32_t vers
         cfg->parser = PARSER_29;
     }
 
+    uint32_t header_empty = 0;
+    uint32_t header_subversion = 0;
+    if (cfg->version == 0x001B0100) {
+        header_empty = read_u32le(0x10, sf);
+        header_subversion = read_u32le(0x24, sf);
+    }
+
     /* 2 configs with same ID, autodetect */
     if (cfg->version == 0x00220015) {
         off_t header_size = 0x40 + read_u32le(0x04, sf); // first is always LE
@@ -209,6 +216,11 @@ bool ubi_bao_config_version(ubi_bao_config_t* cfg, STREAMFILE* sf, uint32_t vers
             cfg->codec_map[0x04] = FMT_OGG;
             cfg->codec_map[0x05] = RAW_XMA1_str;
             cfg->codec_map[0x07] = RAW_AT3;
+
+            // no apparent flags other than this (XMA1_mem BAO set 0x66666666 at 0x10)
+            if (cfg->version == 0x001B0100 && header_empty == 0xFFFFFFFF && header_subversion == 0x10) {
+                cfg->codec_map[0x00] = RAW_DSP;
+            }
 
             cfg->audio_stream_subtype = 0x78;
 

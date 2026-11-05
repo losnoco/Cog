@@ -26,8 +26,9 @@ Each format is handled by a plugin under [`Plugins/`](Plugins):
 - **Common formats:** MP3, AAC, ALAC, FLAC, Ogg Vorbis, Opus, WavPack,
   Musepack, Shorten, and anything else Core Audio or FFmpeg can decode
 - **Tracker modules:** libopenmpt, HivelyTracker, Organya and Syntrax
-- **Video game music:** Game_Music_Emu, vgmstream, libvgm, sidplay (C64
-  SID), AdPlug (AdLib), and the PSF family through HighlyComplete
+- **Video game music:** Game_Music_Emu, vgmstream (whose bundled ATRAC9 and
+  G.719 decoders replace the former libatrac9 and g719 libraries), libvgm,
+  sidplay (C64 SID), AdPlug (AdLib), and the PSF family through HighlyComplete
 - **MIDI**, through Cog's built-in synthesizers (SoundFonts, OPL3 FM, and
   Roland SC-55 emulation from your own ROM set), or through Audio Unit instruments on the Mac
 - **Playlists and containers:** cue sheets, M3U and PLS, and files inside

@@ -25,6 +25,7 @@
 static const char* extension_list[] = {
     //"", /* vgmstream can play extensionless files too, but plugins must accept them manually */
 
+    "11k",
     "208",
     "2dx",
     "2dx9",
@@ -195,7 +196,6 @@ static const char* extension_list[] = {
     "dyx", //txth/reserved [Shrek 4 (iOS)]
 
     "e4x",
-    "eam",
     "eas",
     "eda", //txth/reserved [Project Eden (PS2)]
     "emff", //fake extension for .mul (to be removed)
@@ -249,6 +249,7 @@ static const char* extension_list[] = {
     "hps",
     "hsf",
     "hvqm",
+    "hvg", //txth/reserved [Star Wars Episode III (PS2)]
     "hwx", //txth/reserved [Star Wars Episode III (Xbox)]
     "hx2",
     "hx3",
@@ -391,6 +392,7 @@ static const char* extension_list[] = {
     "msh",
     "msd",
     "mse",
+    "msenc",
     "msf",
     "mss",
     "msv",
@@ -414,6 +416,7 @@ static const char* extension_list[] = {
     "naac",
     "nds",
     "ndp", //fake extension/header id for .nds
+    "new",
     "nlsd",
     "no",
     "nop",
@@ -470,6 +473,7 @@ static const char* extension_list[] = {
     "pona",
     "pos",
     "ps3",
+    "ps3audio",
     "psb",
     "psf",
     "psh", //fake extension for .vsv (to be removed)
@@ -757,6 +761,7 @@ static const char* extension_list[] = {
     "xnb",
     "xsh",
     "xsf",
+    "xsnd", //txth/reserved [3DO Interactive Sampler (3DO)]
     "xst",
     "xse",
     "xsew",
@@ -933,6 +938,7 @@ static const coding_info coding_info_list[] = {
         {coding_HVQM4_IMA,          "Hudson HVQM4 4-bit IMA ADPCM"},
         {coding_CD_IMA,             "Crystal Dynamics 4-bit IMA ADPCM"},
         {coding_CRANKCASE_IMA,      "CrankcaseAudio REV 4-bit IMA ADPCM"},
+        {coding_SCP_IMA,            "Smoking Car Productions 4-bit IMA ADPCM"},
 
         {coding_MSADPCM,            "Microsoft 4-bit ADPCM"},
         {coding_MSADPCM_mono,       "Microsoft 4-bit ADPCM (mono)"},
@@ -994,6 +1000,7 @@ static const coding_info coding_info_list[] = {
         {coding_CF_DF_DPCM_V41,     "Cyberflix DreamFactory v4.1 DPCM"},
         {coding_CF_DF_ADPCM_v5,     "Cyberflix DreamFactory v5 ADPCM"},
         {coding_CF_DF_IMA_v5,       "Cyberflix DreamFactory v5 IMA ADPCM"},
+        {coding_KA_ADPCM,           "Knowledge Adventure ADPCM"},
 
 #ifdef VGM_USE_VORBIS
         {coding_OGG_VORBIS,         "Ogg Vorbis"},
@@ -1010,7 +1017,7 @@ static const coding_info coding_info_list[] = {
         {coding_G7221C,             "ITU G.722.1 annex C (Polycom Siren 14)"},
 #endif
 #ifdef VGM_USE_G719
-        {coding_G719,               "ITU G.719 annex B (Polycom Siren 22)"},
+        {coding_G719,               "ITU G.719 (Polycom Siren 22)"},
 #endif
 #ifdef VGM_USE_ATRAC9
         {coding_ATRAC9,             "ATRAC9"},
@@ -1557,6 +1564,7 @@ static const meta_info meta_info_list[] = {
         {meta_SAUD,                 "LucasArts SAUD header"},
         {meta_CWV,                  "Nintendo .CWV header"},
         {meta_XMA_UE5,              "Unreal Engine 5 XMA header"},
+        {meta_KA_SOUND,             "Knowledge Adventure KA Sound header"},
 };
 
 void get_vgmstream_coding_description(VGMSTREAM* vgmstream, char* dst, size_t dst_size) {

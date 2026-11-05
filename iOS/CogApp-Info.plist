@@ -894,6 +894,7 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>11k</string>
 					<string>208</string>
 					<string>2dx</string>
 					<string>2dx9</string>
@@ -1040,7 +1041,6 @@
 					<string>dvi</string>
 					<string>dyx</string>
 					<string>e4x</string>
-					<string>eam</string>
 					<string>eas</string>
 					<string>eda</string>
 					<string>emff</string>
@@ -1089,6 +1089,7 @@
 					<string>hps</string>
 					<string>hsf</string>
 					<string>hvqm</string>
+					<string>hvg</string>
 					<string>hwx</string>
 					<string>hx2</string>
 					<string>hx3</string>
@@ -1212,6 +1213,7 @@
 					<string>msh</string>
 					<string>msd</string>
 					<string>mse</string>
+					<string>msenc</string>
 					<string>msf</string>
 					<string>mss</string>
 					<string>msv</string>
@@ -1233,6 +1235,7 @@
 					<string>naac</string>
 					<string>nds</string>
 					<string>ndp</string>
+					<string>new</string>
 					<string>nlsd</string>
 					<string>no</string>
 					<string>nop</string>
@@ -1283,6 +1286,7 @@
 					<string>pona</string>
 					<string>pos</string>
 					<string>ps3</string>
+					<string>ps3audio</string>
 					<string>psh</string>
 					<string>psn</string>
 					<string>pth</string>
@@ -1534,6 +1538,7 @@
 					<string>xnb</string>
 					<string>xsh</string>
 					<string>xsf</string>
+					<string>xsnd</string>
 					<string>xst</string>
 					<string>xse</string>
 					<string>xsew</string>

@@ -84,6 +84,9 @@ include), build both the macOS and the iOS app. Each platform breaks in ways the
 - One project per plugin under `Plugins/`.
 - The libraries those plugins wrap, under `Frameworks/` (GME, vgmstream, OpenMPT, libsidplayfp, munt, mGBA, …).
   Several are git submodules of kode54 forks.
+- vgmstream no longer uses the separate `libatrac9` and `g719` libraries, which have been dropped from both
+  vgmstream and Cog. Its bundled decoders in `Frameworks/vgmstream/vgmstream/src/coding/libs/` (`atrac9_*`,
+  `g719_*`) replace them.
 
 Prebuilt third-party libraries (FFmpeg, FLAC, Opus, Vorbis, soxr, Rubber Band, TagLib, mpg123, …) live in
 `ThirdParty/` as tarballs plus headers. Each library's `README.md` there names the release and patches it
