@@ -163,13 +163,16 @@ struct ContentView: View {
 				// (which opens its own) is closed.
 				.sheet(isPresented: overPlaylist($ui.showsEqualizer)) {
 					EqualizerView()
+						.albumSheet()
 				}
 				.sheet(isPresented: overPlaylist($ui.showsSpeed)) {
 					SpeedView()
+						.albumSheet()
 				}
 				.sheet(isPresented: overPlaylist($ui.showsLyrics)) {
 					if let entry = model.currentEntry {
 						LyricsView(entry: entry)
+							.albumSheet()
 					}
 				}
 		}
@@ -198,15 +201,18 @@ private struct PaneSheets: ViewModifier {
 			.sheet(isPresented: shows($ui.showsEqualizer)) {
 				EqualizerView()
 					.paneSheet(width: paneWidth)
+					.albumSheet()
 			}
 			.sheet(isPresented: shows($ui.showsSpeed)) {
 				SpeedView()
 					.paneSheet(width: paneWidth)
+					.albumSheet()
 			}
 			.sheet(isPresented: shows($ui.showsLyrics)) {
 				if let entry = model.currentEntry {
 					LyricsView(entry: entry)
 						.paneSheet(width: paneWidth)
+						.albumSheet()
 				}
 			}
 			.sheet(isPresented: shows($ui.showsInfo)) {
@@ -214,6 +220,7 @@ private struct PaneSheets: ViewModifier {
 					// Now Playing shows the art, across the fold.
 					InfoView(entry: entry, showsArtwork: false)
 						.paneSheet(width: paneWidth)
+						.albumSheet()
 				}
 			}
 	}

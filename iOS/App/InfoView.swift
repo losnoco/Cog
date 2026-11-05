@@ -32,6 +32,10 @@ struct InfoView: View {
 		case card
 	}
 
+	@Environment(\.albumRowBackground) private var sheetRowBackground
+	/// Given, or as the sheet it is in has them.
+	private var rows: Color? { rowBackground ?? sheetRowBackground }
+
 	var body: some View {
 		if presentation != .sheet {
 			content
@@ -88,14 +92,14 @@ struct InfoView: View {
 				Section("Comment") {
 					Text(comment)
 						.textSelection(.enabled)
-						.listRowBackground(rowBackground)
+						.listRowBackground(rows)
 				}
 			}
 		}
 		.navigationTitle(presentation == .card ? Text(verbatim: "") : Text("Info"))
 		.navigationBarTitleDisplayMode(.inline)
 		// The album's colors, or the card's, show through.
-		.scrollContentBackground(rowBackground == nil && presentation != .card ? .automatic : .hidden)
+		.scrollContentBackground(rows == nil && presentation != .card ? .automatic : .hidden)
 		.task(id: entry.artHash) {
 			guard showsArtwork, presentation != .card else { return }
 			artwork = await ArtworkCache.shared.image(for: entry, pixels: 640)
@@ -120,7 +124,7 @@ struct InfoView: View {
 			} label: {
 				Text(label)
 			}
-			.listRowBackground(rowBackground)
+			.listRowBackground(rows)
 		}
 	}
 

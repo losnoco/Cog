@@ -188,7 +188,8 @@ decoder (ObjC plugin) → Feeder thread → deep SPSC ring → DSP thread → sh
 - **Preferences/**: SwiftUI panes in `Preferences/Panes/*View.swift`, hosted by `PreferencesWindow` and
   `PreferencesModel`, plus older Objective-C pane code in `Preferences/Preferences/`.
 - Other feature folders: `InfoInspector/`, `SignalInspector/`, `FileTree/`, `Spotlight/`, `Scrobbler/` (Last.fm
-  and ListenBrainz), `LyricsWindow/` (tags or LRCLIB), `Visualization/`, `Equalizer/`, `TagEditor/`.
+  and ListenBrainz), `LyricsWindow/` (tags, `.lrc` files or LRCLIB, synced where timed), `Visualization/`,
+  `Equalizer/`, `TagEditor/`.
 - `CogQuickLook/` is the Finder preview extension. It plays files through the same plugins.
 - **Sandbox**:
   - The app is sandboxed. Every file access outside the granted folders goes through `Utils/SandboxBroker`,

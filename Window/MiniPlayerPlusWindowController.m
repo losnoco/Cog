@@ -44,6 +44,10 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
                              forKeyPath:@"content"
                                 options:NSKeyValueObservingOptionNew
                                 context:kMiniPlayerPlusContext];
+	[[NSUserDefaults standardUserDefaults] addObserver:self
+	                                        forKeyPath:@"trackInfoSource"
+	                                           options:NSKeyValueObservingOptionNew
+	                                           context:kMiniPlayerPlusContext];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(playbackDidBegin:)
 												 name:CogPlaybackDidBeginNotificiation
@@ -58,6 +62,9 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
 	[currentEntryController removeObserver:self
 								forKeyPath:@"content"
 								   context:kMiniPlayerPlusContext];
+	[[NSUserDefaults standardUserDefaults] removeObserver:self
+	                                           forKeyPath:@"trackInfoSource"
+	                                              context:kMiniPlayerPlusContext];
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 													name:CogPlaybackDidBeginNotificiation
 												  object:nil];
@@ -65,24 +72,25 @@ static void *kMiniPlayerPlusContext = &kMiniPlayerPlusContext;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if(context == kMiniPlayerPlusContext) {
-        PlaylistEntry *currentSelection = [[playlistSelectionController selectedObjects] firstObject];
-        if(currentSelection != nil) {
-            [self setValueToDisplay:currentSelection];
-        } else {
-            [self setValueToDisplay:[currentEntryController content]];
-        }
+        [self setValueToDisplay:[self entryToDisplay]];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
-- (void)playbackDidBegin:(NSNotification *)notification {
-	PlaylistEntry *currentSelection = [[playlistSelectionController selectedObjects] firstObject];
-	if(currentSelection != nil) {
-		[self setValueToDisplay:currentSelection];
-	} else {
-		[self setValueToDisplay:[currentEntryController content]];
+/// The track to show, as the setting says, or the other one where that
+/// leaves none, as PaneWindowController's trackToShow does.
+- (PlaylistEntry *)entryToDisplay {
+	PlaylistEntry *selected = [[playlistSelectionController selectedObjects] firstObject];
+	PlaylistEntry *playing = [currentEntryController content];
+	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"trackInfoSource"] isEqualToString:@"selection"]) {
+		return selected ?: playing;
 	}
+	return playing ?: selected;
+}
+
+- (void)playbackDidBegin:(NSNotification *)notification {
+	[self setValueToDisplay:[self entryToDisplay]];
 	[self rebuildContent];
 }
 

@@ -24,6 +24,9 @@ private let httpStreamingBufferSizeOptions = (16...27).map { 1 << $0 }
     @Published var enableLrclib: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableLrclib, forKey: "enableLrclib") }
     }
+    @Published var trackInfoSource: String {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(trackInfoSource, forKey: "trackInfoSource") }
+    }
     @Published var sentryConsented: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(sentryConsented, forKey: "sentryConsented") }
     }
@@ -41,6 +44,7 @@ private let httpStreamingBufferSizeOptions = (16...27).map { 1 << $0 }
         allowInsecureSSL = d.bool(forKey: "allowInsecureSSL")
         httpStreamingBufferSize = d.integer(forKey: "httpStreamingBufferSize")
         enableLrclib = d.bool(forKey: "enableLrclib")
+        trackInfoSource = d.string(forKey: "trackInfoSource") ?? "playback"
         sentryConsented = d.bool(forKey: "sentryConsented")
 #if COG_SPARKLE
         automaticallyChecksForUpdates = SparkleBridge.sharedStandardUpdaterController()?.updater.automaticallyChecksForUpdates ?? false
@@ -142,6 +146,17 @@ struct GeneralPaneView: View {
                     .foregroundColor(.secondary)
             } header: {
                 Text("Lyrics").bold()
+            }
+            Section {
+                Picker("Show info about", selection: $prefs.trackInfoSource) {
+                    Text("Playing Track").tag("playback")
+                    Text("Selected Track").tag("selection")
+                }
+                Text("The Info Inspector, Lyrics and the mini player show this track, or the other one when there is none.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } header: {
+                Text("Track Info").bold()
             }
             Section {
                 Toggle("Send crash reports and usage data", isOn: $prefs.sentryConsented)

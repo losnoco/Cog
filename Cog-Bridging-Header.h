@@ -12,6 +12,7 @@
 #import "Application/PlaybackController.h"
 #import "Playlist/PlaylistController.h"
 #import "Playlist/PlaylistLoader.h"
+#import "Utils/SandboxBroker.h"
 #import "Playlist/PlaylistControllerEnums.h"
 #import "Preferences/PathSuggester.h"
 #import "Preferences/MIDIConfig.h"

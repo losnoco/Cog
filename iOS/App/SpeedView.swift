@@ -79,87 +79,92 @@ struct SpeedControls: View {
 	@AppStorage("rubberbandPitch") private var pitchMode = "highspeed"
 	@AppStorage("rubberbandChannels") private var channels = "apart"
 
+	@Environment(\.albumRowBackground) private var rowBackground
+
 	private var isVarispeed: Bool { engine == "varispeed" }
 	private var isRubberBand: Bool { engine == "faster" || engine == "finer" }
 	private var isR3: Bool { engine == "finer" }
 
 	var body: some View {
 		Form {
-			Section {
-				Picker("Engine", selection: $engine) {
-					Text("Off").tag("disabled")
-					Text("Varispeed").tag("varispeed")
-					Text("Signalsmith Stretch").tag("signalsmith")
-					Text("Rubber Band (Faster)").tag("faster")
-					Text("Rubber Band (Finer)").tag("finer")
-				}
-			} footer: {
-				Text(isVarispeed
-					? "Varies the playback speed, like a record player: the pitch follows it."
-					: "Changes the tempo and the pitch apart from each other.")
-			}
-
-			if engine != "disabled" {
+			Group {
 				Section {
-					SpeedSlider(title: isVarispeed ? "Speed" : "Tempo", value: tempo, detail: ratio(tempo)) { setTempo($0) }
-					if !isVarispeed {
-						SpeedSlider(title: "Pitch", value: pitch, detail: "\(ratio(pitch)), \(semitones(pitch))") { setPitch($0) }
-						Toggle("Lock Pitch to Tempo", isOn: $locked)
+					Picker("Engine", selection: $engine) {
+						Text("Off").tag("disabled")
+						Text("Varispeed").tag("varispeed")
+						Text("Signalsmith Stretch").tag("signalsmith")
+						Text("Rubber Band (Faster)").tag("faster")
+						Text("Rubber Band (Finer)").tag("finer")
 					}
-					Button("Reset") {
-						tempo = 1
-						pitch = 1
-					}
-					.disabled(tempo == 1 && pitch == 1)
+				} footer: {
+					Text(isVarispeed
+						? "Varies the playback speed, like a record player: the pitch follows it."
+						: "Changes the tempo and the pitch apart from each other.")
 				}
-			}
 
-			if isRubberBand {
-				Section("Rubber Band") {
-					if !isR3 {
-						Picker("Transients", selection: $transients) {
-							Text("Crisp").tag("crisp")
-							Text("Mixed").tag("mixed")
-							Text("Smooth").tag("smooth")
+				if engine != "disabled" {
+					Section {
+						SpeedSlider(title: isVarispeed ? "Speed" : "Tempo", value: tempo, detail: ratio(tempo)) { setTempo($0) }
+						if !isVarispeed {
+							SpeedSlider(title: "Pitch", value: pitch, detail: "\(ratio(pitch)), \(semitones(pitch))") { setPitch($0) }
+							Toggle("Lock Pitch to Tempo", isOn: $locked)
 						}
-						Picker("Detector", selection: $detector) {
-							Text("Compound").tag("compound")
-							Text("Percussive").tag("percussive")
-							Text("Soft").tag("soft")
+						Button("Reset") {
+							tempo = 1
+							pitch = 1
 						}
-						Picker("Phase", selection: $phase) {
-							Text("Laminar").tag("laminar")
-							Text("Independent").tag("independent")
-						}
+						.disabled(tempo == 1 && pitch == 1)
 					}
-					Picker("Window", selection: $window) {
-						Text("Standard").tag("standard")
-						Text("Short").tag("short")
+				}
+
+				if isRubberBand {
+					Section("Rubber Band") {
 						if !isR3 {
-							Text("Long").tag("long")
+							Picker("Transients", selection: $transients) {
+								Text("Crisp").tag("crisp")
+								Text("Mixed").tag("mixed")
+								Text("Smooth").tag("smooth")
+							}
+							Picker("Detector", selection: $detector) {
+								Text("Compound").tag("compound")
+								Text("Percussive").tag("percussive")
+								Text("Soft").tag("soft")
+							}
+							Picker("Phase", selection: $phase) {
+								Text("Laminar").tag("laminar")
+								Text("Independent").tag("independent")
+							}
 						}
-					}
-					if !isR3 {
-						Picker("Smoothing", selection: $smoothing) {
-							Text("Off").tag("off")
-							Text("On").tag("on")
+						Picker("Window", selection: $window) {
+							Text("Standard").tag("standard")
+							Text("Short").tag("short")
+							if !isR3 {
+								Text("Long").tag("long")
+							}
 						}
-					}
-					Picker("Formant", selection: $formant) {
-						Text("Shifted").tag("shifted")
-						Text("Preserved").tag("preserved")
-					}
-					Picker("Pitch Mode", selection: $pitchMode) {
-						Text("High Speed").tag("highspeed")
-						Text("High Quality").tag("highquality")
-						Text("High Consistency").tag("highconsistency")
-					}
-					Picker("Channels", selection: $channels) {
-						Text("Apart").tag("apart")
-						Text("Together").tag("together")
+						if !isR3 {
+							Picker("Smoothing", selection: $smoothing) {
+								Text("Off").tag("off")
+								Text("On").tag("on")
+							}
+						}
+						Picker("Formant", selection: $formant) {
+							Text("Shifted").tag("shifted")
+							Text("Preserved").tag("preserved")
+						}
+						Picker("Pitch Mode", selection: $pitchMode) {
+							Text("High Speed").tag("highspeed")
+							Text("High Quality").tag("highquality")
+							Text("High Consistency").tag("highconsistency")
+						}
+						Picker("Channels", selection: $channels) {
+							Text("Apart").tag("apart")
+							Text("Together").tag("together")
+						}
 					}
 				}
 			}
+			.listRowBackground(rowBackground)
 		}
 	}
 

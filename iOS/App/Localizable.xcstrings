@@ -2694,6 +2694,17 @@
         }
       }
     },
+    "Synced Lyrics" : {
+      "comment" : "Lyrics: switches between following playback and the plain text",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letras sincronizadas"
+          }
+        }
+      }
+    },
     "Synthesizer" : {
       "localizations" : {
         "es" : {

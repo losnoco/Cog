@@ -144,7 +144,7 @@ struct NowPlayingView: View {
 			}
 		}
 		// Light on the album's dark colors, in its accent, and dark without
-		// art if the setting says so; the sheets it opens keep the usual look.
+		// art if the setting says so.
 		.tint(palette?.accent)
 		.environment(\.colorScheme, palette == nil && !alwaysDark ? colorScheme : .dark)
 		.albumPalette($palette, of: model.currentEntry)
@@ -208,19 +208,16 @@ struct NowPlayingView: View {
 		.toolbarBackground(palette == nil ? .automatic : .hidden, for: .navigationBar)
 		.sheet(isPresented: sheet($ui.showsEqualizer)) {
 			EqualizerView()
-				.environment(\.colorScheme, colorScheme)
-				.tint(.accentColor)
+				.albumSheet()
 		}
 		.sheet(isPresented: sheet($ui.showsSpeed)) {
 			SpeedView()
-				.environment(\.colorScheme, colorScheme)
-				.tint(.accentColor)
+				.albumSheet()
 		}
 		.sheet(isPresented: sheet($ui.showsLyrics)) {
 			if let entry = model.currentEntry {
 				LyricsView(entry: entry)
-					.environment(\.colorScheme, colorScheme)
-					.tint(.accentColor)
+					.albumSheet()
 			}
 		}
 		// Beside the playlist, a card, or a sheet where cards do not fit;
@@ -229,8 +226,7 @@ struct NowPlayingView: View {
 		.sheet(isPresented: Binding(get: { ui.showsInfo && isEmbedded && !cardsFit && !panelsElsewhere }, set: { ui.showsInfo = $0 })) {
 			if let entry = model.currentEntry {
 				InfoView(entry: entry)
-					.environment(\.colorScheme, colorScheme)
-					.tint(.accentColor)
+					.albumSheet()
 			}
 		}
 		.navigationDestination(isPresented: Binding(get: { ui.showsInfo && !isEmbedded }, set: { ui.showsInfo = $0 })) {
@@ -503,6 +499,7 @@ struct PlaybackPanels: View {
 	@EnvironmentObject private var model: PlaylistModel
 	@EnvironmentObject private var ui: AppUI
 	@EnvironmentObject private var equalizer: Equalizer
+	@EnvironmentObject private var player: Player
 
 	var body: some View {
 		HStack(alignment: .top, spacing: 16) {
@@ -536,7 +533,7 @@ struct PlaybackPanels: View {
 				} trailing: {
 					EmptyView()
 				} content: {
-					LyricsText(entry: entry)
+					LyricsText(entry: entry, playback: player.lyricsPlayback)
 				}
 			}
 			if ui.showsInfo, let entry = model.currentEntry {
@@ -942,7 +939,7 @@ private struct RoutePicker: UIViewRepresentable {
 /// fades; appearing, or a track without art, does not. Only the colors
 /// animate, never the frame: an implicit animation would also move it, as
 /// the layout settles while the sheet opens.
-private struct AlbumGradient: View {
+struct AlbumGradient: View {
 	let palette: ArtworkPalette?
 	let startPoint: UnitPoint
 	let endPoint: UnitPoint
@@ -959,5 +956,40 @@ private struct AlbumGradient: View {
 					shown = new
 				}
 			}
+	}
+}
+
+extension EnvironmentValues {
+	/// What rows of a list or form take over the album's colors in a sheet;
+	/// nil for the usual look.
+	@Entry var albumRowBackground: Color?
+}
+
+extension View {
+	/// A sheet in the colors of the album playing, as Now Playing is; the
+	/// usual look without art.
+	func albumSheet() -> some View {
+		modifier(AlbumSheet())
+	}
+}
+
+private struct AlbumSheet: ViewModifier {
+	@EnvironmentObject private var model: PlaylistModel
+	@Environment(\.colorScheme) private var colorScheme
+	@State private var palette: ArtworkPalette?
+
+	func body(content: Content) -> some View {
+		content
+			.scrollContentBackground(palette == nil ? .automatic : .hidden)
+			.environment(\.albumRowBackground, palette == nil ? nil : .white.opacity(0.1))
+			.tint(palette?.accent)
+			.environment(\.colorScheme, palette == nil ? colorScheme : .dark)
+			.presentationBackground {
+				ZStack {
+					Color(uiColor: .systemBackground)
+					AlbumGradient(palette: palette, startPoint: .top, endPoint: .bottom)
+				}
+			}
+			.albumPalette($palette, of: model.currentEntry)
 	}
 }

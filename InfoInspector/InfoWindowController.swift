@@ -55,16 +55,16 @@ final class InfoWindowController: PaneWindowController {
 			if let appController {
 				observations.append(appController.observe(\.miniMode) { update($0, $1) })
 			}
+			observations.append(UserDefaults.standard.observe(\.trackInfoSource) { update($0, $1) })
 			updateEntry()
 		}
 	}
 
 	private func updateEntry() {
-		// Prefer the playlist selection, falling back to the playing track.
 		// Avoid "selection" because it creates a proxy that's hard to reason
 		// with when we don't need to write.
-		let selected = playlistSelectionController?.selectedObjects.first as? PlaylistEntry
-		let entry = selected ?? currentEntryController?.content as? PlaylistEntry
+		let entry = trackToShow(selected: playlistSelectionController?.selectedObjects.first as? PlaylistEntry,
+		                        playing: currentEntryController?.content as? PlaylistEntry)
 		if model.entry !== entry {
 			model.entry = entry
 		}

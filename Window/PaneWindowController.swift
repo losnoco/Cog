@@ -6,7 +6,17 @@
 //
 
 import Cocoa
+import CogPlaylist
 import SwiftUI
+
+extension UserDefaults {
+	/// Whether what shows a track's info follows the track playing
+	/// ("playback") or the playlist's selection ("selection"). Named as its
+	/// key, so that it can be observed.
+	@objc dynamic var trackInfoSource: String? {
+		string(forKey: "trackInfoSource")
+	}
+}
 
 /// A window controller whose content is a pane: it shows in the controller's
 /// own window, floating, or docked in the main window by `PaneManager`.
@@ -99,6 +109,12 @@ class PaneWindowController: NSWindowController, NSWindowDelegate {
 	}
 
 	/// A hosting view that leaves its size to the window or the dock.
+	/// The track to show info about, as the setting says, or the other one
+	/// where that leaves none. MiniPlayerPlusWindowController does the same.
+	func trackToShow(selected: PlaylistEntry?, playing: PlaylistEntry?) -> PlaylistEntry? {
+		UserDefaults.standard.trackInfoSource == "selection" ? selected ?? playing : playing ?? selected
+	}
+
 	func hostingView(_ rootView: some View) -> NSView {
 		let view = NSHostingView(rootView: rootView)
 		if #available(macOS 13.0, *) {

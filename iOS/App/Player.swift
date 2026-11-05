@@ -219,6 +219,17 @@ final class Player: NSObject, ObservableObject {
 		play(entries[previous])
 	}
 
+	/// For synced lyrics: the entry playing's position, read fresh rather
+	/// than from the clock's four ticks a second.
+	var lyricsPlayback: LyricsPlayback {
+		LyricsPlayback(position: { [weak self] entry in
+			guard let self, entry == self.model.currentEntry, self.status != .stopped else { return nil }
+			return self.audioPlayer.amountPlayed()
+		}, seek: { [weak self] seconds in
+			self?.seek(to: seconds)
+		})
+	}
+
 	// MARK: - Fast forward and rewind
 
 	/// The tempo setting and engine as they were before the fast forward,

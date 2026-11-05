@@ -15,6 +15,7 @@ import SwiftUI
 @MainActor
 final class LyricsWindowModel: ObservableObject {
 	@Published var entry: PlaylistEntry?
+	var playback: LyricsPlayback?
 }
 
 /// Owns the lyrics, in their window or docked. Instantiated by MainMenu.xib,
@@ -61,6 +62,7 @@ final class LyricsWindowController: PaneWindowController {
 			if let appController {
 				observations.append(appController.observe(\.miniMode) { update($0, $1) })
 			}
+			observations.append(UserDefaults.standard.observe(\.trackInfoSource) { update($0, $1) })
 		}
 	}
 
@@ -69,18 +71,28 @@ final class LyricsWindowController: PaneWindowController {
 			model.entry = nil
 			return
 		}
-		// Prefer the playlist selection, falling back to the playing track.
 		// Avoid "selection" because it creates a proxy that's hard to reason
 		// with when we don't need to write.
-		let selected = playlistSelectionController?.selectedObjects.first as? PlaylistEntry
-		let entry = selected ?? currentEntryController?.content as? PlaylistEntry
+		let entry = trackToShow(selected: playlistSelectionController?.selectedObjects.first as? PlaylistEntry,
+		                        playing: currentEntryController?.content as? PlaylistEntry)
 		if model.entry !== entry {
 			model.entry = entry
 		}
 	}
 
+	/// Follows the track playing, which the selection may not be.
+	private var playback: LyricsPlayback {
+		LyricsPlayback(position: { [weak self] entry in
+			guard let self, self.currentEntryController?.content as? PlaylistEntry === entry else { return nil }
+			return self.appController?.playbackController.audioPlayer().amountPlayed()
+		}, seek: { [weak self] seconds in
+			self?.appController?.playbackController.seek(self, toTime: seconds)
+		})
+	}
+
 	override func makePaneView() -> NSView {
-		hostingView(LyricsWindowView(model: model))
+		model.playback = playback
+		return hostingView(LyricsWindowView(model: model))
 	}
 
 	override func makeWindow() -> NSWindow {
@@ -107,7 +119,7 @@ private struct LyricsWindowView: View {
 
 	var body: some View {
 		if let entry = model.entry {
-			LyricsText(entry: entry, font: .body)
+			LyricsText(entry: entry, font: .body, playback: model.playback)
 		} else {
 			Color.clear
 		}

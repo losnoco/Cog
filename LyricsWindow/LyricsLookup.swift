@@ -51,7 +51,8 @@ final class LyricsLookup: NSObject {
 
 	// MARK: - Entry point for the lyrics window
 
-	/// The text to show for a track without lyrics of its own.
+	/// The text to show for a track without lyrics of its own: LRC where
+	/// LRCLIB has it timed.
 	///
 	/// Returns nil when LRCLIB is off or the track can't be asked about (no
 	/// artist or title). Otherwise returns either the final text, or a
@@ -209,7 +210,7 @@ final class LyricsLookup: NSObject {
 	private static func text(for outcome: Outcome) -> String {
 		switch outcome {
 		case let .answer(.found(plain, synced)):
-			return plain.isEmpty ? unsynced(synced) : plain
+			return synced.isEmpty ? plain : synced
 		case .answer(.instrumental):
 			return NSLocalizedString("LRCLIB lists this track as instrumental.", comment: "Lyrics window: LRCLIB says the track has no words")
 		case .answer(.notFound):
@@ -219,28 +220,5 @@ final class LyricsLookup: NSObject {
 		case .failure:
 			return NSLocalizedString("LRCLIB could not answer for this track.", comment: "Lyrics window: LRCLIB returned an error")
 		}
-	}
-
-	/// Plain text from LRC: timestamps dropped, header tags such as `[ar:…]`
-	/// removed, blank lines kept as stanza breaks.
-	static func unsynced(_ lrc: String) -> String {
-		let timestamp = try! NSRegularExpression(pattern: #"\[\d+:\d+(?:[.:]\d+)?\]"#)
-		let header = try! NSRegularExpression(pattern: #"^\s*\[[A-Za-z#]+:[^\]]*\]\s*$"#)
-		var lines: [String] = []
-		lrc.enumerateLines { line, _ in
-			let range = NSRange(line.startIndex..., in: line)
-			if header.firstMatch(in: line, range: range) != nil {
-				return
-			}
-			let text = timestamp.stringByReplacingMatches(in: line, range: range, withTemplate: "")
-			lines.append(text.trimmingCharacters(in: .whitespaces))
-		}
-		while lines.first?.isEmpty == true {
-			lines.removeFirst()
-		}
-		while lines.last?.isEmpty == true {
-			lines.removeLast()
-		}
-		return lines.joined(separator: "\n")
 	}
 }

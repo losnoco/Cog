@@ -13,11 +13,12 @@ import SwiftUI
 /// beside Now Playing.
 struct LyricsView: View {
 	@ObservedObject var entry: PlaylistEntry
+	@EnvironmentObject private var player: Player
 	@Environment(\.dismiss) private var dismiss
 
 	var body: some View {
 		NavigationStack {
-			LyricsText(entry: entry)
+			LyricsText(entry: entry, playback: player.lyricsPlayback)
 				.navigationTitle(entry.title)
 				.navigationBarTitleDisplayMode(.inline)
 				.toolbar {

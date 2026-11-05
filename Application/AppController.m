@@ -886,6 +886,9 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@NO forKey:@"enableLrclib"];
 	[userDefaultsValuesDict setObject:@"https://lrclib.net" forKey:@"lrclibUrl"];
 
+	// What shows a track's info follows "playback" or "selection".
+	[userDefaultsValuesDict setObject:@"playback" forKey:@"trackInfoSource"];
+
 	[userDefaultsValuesDict setObject:@NO forKey:@"spectrumFreqMode"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumProjectionMode"];
 
