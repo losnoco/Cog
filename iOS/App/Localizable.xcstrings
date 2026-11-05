@@ -43,6 +43,17 @@
         }
       }
     },
+    "%lld-bit" : {
+      "comment" : "Now Playing's format line: the bit depth, as in 24-bit",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bits"
+          }
+        }
+      }
+    },
     "%lld tracks, %@" : {
       "comment" : "The playlist's footer: how many tracks, and their total length",
       "localizations" : {

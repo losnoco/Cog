@@ -382,7 +382,7 @@ struct NowPlayingView: View {
 			.padding(.horizontal)
 
 			if showsProgress {
-				ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
+				ProgressBar(clock: player.clock, waveform: player.waveform, entry: entry, tint: palette?.accent)
 					.transition(.opacity)
 			}
 		}
@@ -438,7 +438,7 @@ struct StandingControls: View {
 			// Expanded, the seek bar comes down from Now Playing, as on its own
 			// it has the controls under it.
 			if expanded, let entry = model.currentEntry {
-				ProgressBar(clock: player.clock, waveform: player.waveform, length: entry.length.doubleValue, tint: palette?.accent)
+				ProgressBar(clock: player.clock, waveform: player.waveform, entry: entry, tint: palette?.accent)
 					.transition(.opacity)
 			}
 			NowPlayingControls(compact: !expanded, isEmbedded: true, palette: expanded ? palette : nil)
@@ -849,7 +849,7 @@ private struct PressReporting: ButtonStyle {
 private struct ProgressBar: View {
 	@ObservedObject var clock: PlaybackClock
 	@ObservedObject var waveform: WaveformModel
-	let length: Double
+	let entry: PlaylistEntry
 	/// The album's accent, which a UIKit slider cannot take from the
 	/// environment's tint.
 	let tint: Color?
@@ -859,6 +859,10 @@ private struct ProgressBar: View {
 	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
 	@AppStorage(WaveformModel.logScaleKey) private var logScale = false
 	@AppStorage(WaveformModel.rectifiedKey) private var rectified = true
+	/// What the times take at either end of their row.
+	@ScaledMetric(relativeTo: .caption) private var timeWidth = 60.0
+
+	private var length: Double { entry.length.doubleValue }
 
 	var body: some View {
 		VStack(spacing: 4) {
@@ -871,10 +875,15 @@ private struct ProgressBar: View {
 				}
 			}
 			.disabled(length <= 0)
-			HStack {
-				Text(formatTime(scrubbing ?? clock.position))
-				Spacer()
-				Text("-" + formatTime(max(0, length - (scrubbing ?? clock.position))))
+			ZStack {
+				HStack {
+					Text(formatTime(scrubbing ?? clock.position))
+					Spacer()
+					Text("-" + formatTime(max(0, length - (scrubbing ?? clock.position))))
+				}
+				// Centered on the row, however wide the times are.
+				AudioFormatLabel(entry: entry)
+					.padding(.horizontal, timeWidth)
 			}
 			.font(.caption.monospacedDigit())
 			.foregroundStyle(.secondary)
@@ -890,6 +899,33 @@ private struct ProgressBar: View {
 			}
 		}
 		.padding(.horizontal, 24)
+	}
+}
+
+/// The entry's format, as "ALAC · 24-bit/96 kHz · 2116 kbps", without the
+/// bitrate where that will not fit. A view of its own so that the clock's
+/// ticks do not format it again.
+private struct AudioFormatLabel: View {
+	@ObservedObject var entry: PlaylistEntry
+
+	var body: some View {
+		ViewThatFits(in: .horizontal) {
+			Text(verbatim: summary(withBitrate: true))
+			Text(verbatim: summary(withBitrate: false))
+		}
+		.lineLimit(1)
+	}
+
+	/// What the entry reports, leaving out what it does not.
+	private func summary(withBitrate: Bool) -> String {
+		// Lossy and synthesized audio have no depth of their own: what is
+		// reported is the decoder's output.
+		let hasDepth = entry.bitsPerSample > 0 && entry.encoding != "lossy" && entry.encoding != "synthesized"
+		let depth = hasDepth ? String(localized: "\(Int(entry.bitsPerSample))-bit") : nil
+		let rate = entry.sampleRate > 0 ? "\((entry.sampleRate / 1000).formatted(.number.precision(.fractionLength(0...3)))) kHz" : nil
+		let quality = [depth, rate].compactMap { $0 }.joined(separator: "/")
+		let bitrate = withBitrate && entry.bitrate > 0 ? "\(entry.bitrate) kbps" : nil
+		return [entry.codec, quality, bitrate].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
 	}
 }
 
