@@ -704,13 +704,16 @@ import Foundation
 
 	@objc public func resume() {
 		guard let renderer else { return }
+		resumesAfterInterruption = false
 		switch phase {
 		case .prebuffering:
 			phase = .prebuffering(paused: false)
 		case .paused, .pausing:
 			cancelSuspend()
+			// Still paused if the device will not start, so that pressing
+			// play again tries again instead of pausing the silence.
+			guard startDevice() else { return }
 			cog_renderer_set_held(renderer, false)
-			startDevice()
 			rampTransport(renderer, to: 1, frames: fadeFrames)
 			phase = .playing
 			postPrebuffered()
@@ -758,8 +761,15 @@ import Foundation
 
 	/// Stops the device a while into a pause, as OutputCoreAudio did.
 	private var suspendTimer: Timer?
-	/// As OutputCoreAudio's idle timer; shortened by tests.
+	/// As OutputCoreAudio's idle timer; shortened by tests. None on iOS: it
+	/// has no DoP to keep locked, and it takes a running unit for playing
+	/// whatever Now Playing says, so until the unit stops the Lock Screen
+	/// shows playing, and headphones send Pause when asked to play.
+	#if os(iOS)
+	var suspendDelay: TimeInterval = 0
+	#else
 	var suspendDelay: TimeInterval = 10
+	#endif
 
 	/// Whether the device is running, for tests.
 	var isDeviceRunning: Bool { output?.isRunning ?? false }
@@ -791,18 +801,38 @@ import Foundation
 
 	/// Starts the device. One held exclusively that will not start is given
 	/// up and playback restarts through shared output, so asking for
-	/// exclusive output never turns a playable track into silence.
-	private func startDevice() {
-		guard let output else { return }
+	/// exclusive output never turns a playable track into silence. Returns
+	/// whether playback is under way, by either road.
+	@discardableResult
+	private func startDevice() -> Bool {
+		guard let output else { return false }
 		do {
 			try output.start()
 		} catch {
 			EngineLog.logger.error("The device would not start: \(error.localizedDescription, privacy: .public)")
-			guard output.isExclusive, !rebuildRequested else { return }
+			guard output.isExclusive else { return false }
+			guard !rebuildRequested else { return true }
 			exclusiveRefused = output.deviceID
 			rebuildRequested = true
 			host?.playbackEngineRestartAtCurrentPosition(currentTrack?.userInfo)
 		}
+		return true
+	}
+
+	/// Whether an interruption paused playback, to resume when it ends.
+	private var resumesAfterInterruption = false
+
+	/// The system stopped the device: paused, as far as anyone can tell, so
+	/// say so. No suspend is scheduled, as stopping the output would forget
+	/// the interruption, and nothing renders, so nothing fades either.
+	private func interrupted() {
+		guard case .playing = phase, let renderer else { return }
+		cancelSuspend()
+		rampTransport(renderer, to: 0, frames: 0)
+		cog_renderer_set_held(renderer, true)
+		phase = .paused
+		resumesAfterInterruption = true
+		host?.playbackEngineDidChangeStatus(.paused, userInfo: currentTrack?.userInfo)
 	}
 
 	/// Exclusive output was turned on or off: a pipeline it changes restarts
@@ -877,6 +907,7 @@ import Foundation
 		initialTrack = nil
 		seekPending = false
 		rebuildRequested = false
+		resumesAfterInterruption = false
 		outputPlan = .shared
 		plannedProperties = [:]
 		if releasingDevice {
@@ -1317,9 +1348,17 @@ import Foundation
 
 	/// The device or its format changed: rebuild at the current position,
 	/// unless nothing that matters to the render format actually changed.
-	private func deviceChanged(_ change: DeviceOutput.Change) {
+	func deviceChanged(_ change: DeviceOutput.Change) {
 		guard feeder != nil, let output else { return }
 		switch change {
+		case .interrupted:
+			interrupted()
+			return
+		case .interruptionEnded:
+			if resumesAfterInterruption {
+				resume()
+			}
+			return
 		case .format:
 			// A stream's format may have changed under the same render format.
 			publishedStatus = nil

@@ -34,9 +34,10 @@ let kAudioObjectUnknown: AudioObjectID = 0
 ///
 /// Route changes (headphones in or out, AirPlay, a new Bluetooth device)
 /// report `.format`, and the engine rebuilds if the rate, channels or plan
-/// changed. Interruptions (a call, Siri) stop the unit; it starts again when
-/// the interruption ends if it was running and the system says to resume.
-/// After media services reset, the unit is made anew and `.format` reported,
+/// changed. Interruptions (a call, Siri) stop the unit and report
+/// `.interrupted`, so the engine pauses rather than go on as if playing; if
+/// the unit was running and the system says to resume, `.interruptionEnded`
+/// follows, with the session active again. After media services reset, the unit is made anew and `.format` reported,
 /// which rebuilds.
 ///
 /// On a stereo route, surround can be spatialized through `AUSpatialMixer`
@@ -50,6 +51,11 @@ public final class DeviceOutput {
 		case format
 		/// Not reported on iOS: there is no device to choose.
 		case device
+		/// The system took the session and stopped the unit.
+		case interrupted
+		/// The interruption ended with leave to resume, and the session is
+		/// active again.
+		case interruptionEnded
 	}
 
 	/// Called on a private queue when the route changes under us.
@@ -217,6 +223,10 @@ public final class DeviceOutput {
 	}
 
 	private static func configureAndActivateSession() throws {
+		// Not active unless this succeeds: the system deactivates a suspended
+		// app's session without a word (since iOS 16), so the flag may be
+		// stale, and `start()` must try again after a failure here.
+		sessionLock.withLock { sessionActive = false }
 		let session = AVAudioSession.sharedInstance()
 		try session.setCategory(.playback, mode: .default, policy: .longFormAudio)
 		// Surround reaches routes that take it (AirPlay to a home theater,
@@ -563,7 +573,13 @@ public final class DeviceOutput {
 			try Self.check(AudioUnitInitialize(unit))
 			initialized = true
 		}
-		try Self.check(AudioOutputUnitStart(unit))
+		let status = AudioOutputUnitStart(unit)
+		if status != noErr {
+			// Most likely the session went while the app was suspended.
+			EngineLog.logger.error("The unit would not start (\(status)); activating the audio session and trying again")
+			try Self.configureAndActivateSession()
+			try Self.check(AudioOutputUnitStart(unit))
+		}
 		isRunning = true
 		interruptedWhileRunning = false
 	}
@@ -622,9 +638,9 @@ public final class DeviceOutput {
 	}
 
 	/// Main thread. The system stopped the unit (a call, an alarm, another
-	/// app taking the session); when it ends with leave to resume, the unit
-	/// starts again where the renderer left off. Until then the engine sees
-	/// a device that pulls nothing, so the position holds.
+	/// app taking the session). The engine is told, as an end to the
+	/// interruption may never come, and told again if one comes with leave
+	/// to resume; it is the engine's to start the unit then.
 	private func interruption(_ type: AVAudioSession.InterruptionType, options: UInt) {
 		switch type {
 		case .began:
@@ -635,6 +651,7 @@ public final class DeviceOutput {
 				AudioOutputUnitStop(unit)
 				isRunning = false
 			}
+			onDeviceChange?(.interrupted)
 		case .ended:
 			let resume = AVAudioSession.InterruptionOptions(rawValue: options).contains(.shouldResume)
 			EngineLog.logger.notice("Audio session interruption ended\(resume ? ", resuming" : "", privacy: .public)")
@@ -645,7 +662,7 @@ public final class DeviceOutput {
 				do {
 					try await Self.activateSession()
 					guard self.stops == stopsBefore else { return }
-					try self.start()
+					self.onDeviceChange?(.interruptionEnded)
 				} catch {
 					EngineLog.logger.error("Could not resume after the interruption: \(error.localizedDescription, privacy: .public)")
 				}

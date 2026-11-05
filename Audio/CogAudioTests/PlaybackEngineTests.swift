@@ -277,6 +277,40 @@ final class PlaybackEngineTests: XCTestCase {
 		engine.stop()
 	}
 
+	/// An interruption pauses, for all to see, as it may never end; one that
+	/// ends with leave to resume plays on, but not after a pause of the
+	/// listener's own.
+	func testAnInterruptionPausesAndItsEndResumes() throws {
+		let samples = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { _ in MemoryDecoder(samples: samples, sampleRate: 48000, channels: 2) }
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://long")!, userInfo: "long", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+
+		engine.deviceChanged(.interrupted)
+		XCTAssertEqual(host.statuses.last, .paused)
+		// The position is as of the last tick: let it catch up.
+		runMainLoop(until: { false }, timeout: 0.3)
+		let paused = engine.amountPlayed
+		runMainLoop(until: { false }, timeout: 0.3)
+		XCTAssertEqual(engine.amountPlayed, paused, accuracy: 0.01, "held")
+
+		engine.deviceChanged(.interruptionEnded)
+		XCTAssertEqual(host.statuses.last, .playing)
+		runMainLoop(until: { engine.amountPlayed > paused + 0.2 }, timeout: 5)
+		XCTAssertGreaterThan(engine.amountPlayed, paused + 0.2)
+
+		engine.pause()
+		engine.deviceChanged(.interrupted)
+		engine.deviceChanged(.interruptionEnded)
+		XCTAssertEqual(host.statuses.last, .paused, "paused by the listener, so it stays paused")
+		engine.stop()
+	}
+
 	/// An unreadable file plays as the silence standing in for it, flagged
 	/// as an error; a readable one has any old error cleared, as InputNode
 	/// did on starting each track.

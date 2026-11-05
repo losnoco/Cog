@@ -330,7 +330,11 @@ Each stage ships on its own and leaves the old engine working.
      keeps running, so resuming does not restart it and a DoP DAC stays
      locked. With `suspendOutputOnPause` on (the default) the device stops
      ten seconds in, as OutputCoreAudio's idle timer did; changing the
-     setting while paused starts or stops that clock.
+     setting while paused starts or stops that clock. On iOS it stops as
+     soon as the fade ends: the system judges playing from the running
+     unit, not from `MPNowPlayingInfoCenter.playbackState`, which applies
+     only on macOS, so a held unit reads as playing and a headphone press
+     arrives as Pause.
    - HDCD: decoding comes with ChunkList, which only looks for it in
      lossless audio, so the feeder marks each chunk lossless or not from
      the decoder's `encoding`, as InputNode did (most decoders already

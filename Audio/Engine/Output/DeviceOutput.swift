@@ -51,6 +51,9 @@ public final class DeviceOutput {
 		/// The system default output changed while following it, or the
 		/// selected device went away.
 		case device
+		/// Not reported on macOS: only iOS has interruptions.
+		case interrupted
+		case interruptionEnded
 	}
 
 	/// Called on a private queue when the device changes under us.
