@@ -34,8 +34,11 @@ enum LrclibError: Error, Sendable {
 	case incomplete
 	/// The request never got an HTTP answer.
 	case transport(String)
-	/// Rate limited or a server error; worth asking again later.
-	case transient(status: Int)
+	/// Rate limited or a server error; worth asking again later. `retryAfter`
+	/// is how many seconds the server asked us to wait, when it said.
+	case transient(status: Int, retryAfter: TimeInterval?)
+	/// Not sent: the server's `Retry-After` has not passed yet.
+	case deferred
 	/// Any other HTTP error.
 	case api(status: Int, message: String)
 	/// A 200 whose body is not a lyrics record.
@@ -70,6 +73,9 @@ struct LrclibClient: Sendable {
 		let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "unknown"
 		return "Cog/\(version) (+https://github.com/losnoco/Cog)"
 	}()
+
+	/// Names the app to LRCLIB. It is public and self-asserted, not a credential.
+	static let appID = "1w1i-FBsJ_kYCcgI9DB7xNHqW2BIW2jny6MFiLR2X2A"
 
 	/// `root` with trailing slashes removed and `/api` appended unless it is
 	/// already there.
@@ -108,6 +114,7 @@ struct LrclibClient: Sendable {
 		guard let finalURL = components.url else { return nil }
 		var request = URLRequest(url: finalURL)
 		request.setValue(Self.clientName, forHTTPHeaderField: "Lrclib-Client")
+		request.setValue(Self.appID, forHTTPHeaderField: "Lrclib-App-Id")
 		request.setValue("application/json", forHTTPHeaderField: "Accept")
 		return request
 	}
@@ -135,11 +142,28 @@ struct LrclibClient: Sendable {
 		case 404:
 			return .notFound
 		case 429, 500...599:
-			throw LrclibError.transient(status: http.statusCode)
+			let retryAfter = Self.retryDelay(from: http.value(forHTTPHeaderField: "Retry-After"))
+			throw LrclibError.transient(status: http.statusCode, retryAfter: retryAfter)
 		default:
 			let message = (try? JSONDecoder().decode(ErrorBody.self, from: data))?.message
 			throw LrclibError.api(status: http.statusCode, message: message ?? "HTTP \(http.statusCode)")
 		}
+	}
+
+	/// Seconds to wait from a `Retry-After` value, which is either a number of
+	/// seconds or an HTTP date. Nil when there is nothing to wait for.
+	static func retryDelay(from value: String?, now: Date = Date()) -> TimeInterval? {
+		guard let value = value?.trimmingCharacters(in: .whitespaces), !value.isEmpty else { return nil }
+		if let seconds = Int(value) {
+			return seconds > 0 ? TimeInterval(seconds) : nil
+		}
+		let formatter = DateFormatter()
+		formatter.locale = Locale(identifier: "en_US_POSIX")
+		formatter.timeZone = TimeZone(secondsFromGMT: 0)
+		formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+		guard let date = formatter.date(from: value) else { return nil }
+		let seconds = date.timeIntervalSince(now)
+		return seconds > 0 ? seconds : nil
 	}
 
 	static func answer(from data: Data) throws -> LrclibAnswer {

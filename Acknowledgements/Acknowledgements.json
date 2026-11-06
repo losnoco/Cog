@@ -1059,6 +1059,17 @@
    "texts": []
   },
   {
+   "group": "app",
+   "name": "LRCLIB",
+   "url": "https://lrclib.net/developers/authorizations/1w1i-FBsJ_kYCcgI9DB7xNHqW2BIW2jny6MFiLR2X2A",
+   "license": "LRCLIB API Terms of Use",
+   "holders": [
+    "LRCLIB"
+   ],
+   "note": "Free and open lyrics database (lrclib.net), used to look up lyrics for tracks without their own. The link below is Cog's API authorization.",
+   "texts": []
+  },
+  {
    "group": "swift",
    "name": "Sentry Cocoa SDK",
    "version": "9.26.0",
