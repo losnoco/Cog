@@ -92,6 +92,10 @@ public final class Pump {
 	/// Channel fitting from the chain's output to the device.
 	private var downmix: DownmixProcessor?
 	private var fitSource: StreamFormat?
+	/// Whether the fit sends mono to the center, rather than front left and
+	/// right. Only for speakers: mono is never spatialized.
+	private var fitMonoToCenter = false
+	static let monoToCenterKey = "sendMonoToCenter"
 
 	/// The track whose frames are being read, for its ReplayGain.
 	private var gainTrack: EngineTrack?
@@ -465,13 +469,16 @@ public final class Pump {
 		} else {
 			downmix = DownmixProcessor(inputFormat: Self.asbd(format), inputConfig: inputConfig,
 			                           andOutputFormat: Self.asbd(outputFormat), outputConfig: outputFormat.channelConfig)
+			downmix?.monoToCenter = fitMonoToCenter
 		}
 	}
 
 	/// Fits `block` to the device's channel layout and writes it to the
 	/// shallow ring, waiting for room.
 	private func emit() {
-		if block.format != fitSource {
+		let monoToCenter = UserDefaults.standard.bool(forKey: Self.monoToCenterKey)
+		if block.format != fitSource || monoToCenter != fitMonoToCenter {
+			fitMonoToCenter = monoToCenter
 			configureFit(from: block.format)
 		}
 		let frames = block.frames

@@ -84,13 +84,14 @@ final class PumpTests: XCTestCase {
 		XCTAssertLessThan(worst, 1e-5, "seam at the renderer")
 	}
 
-	func testMonoIsFittedToAStereoDevice() throws {
+	/// A second of mono played through to a device of this layout.
+	private func playMono(channels: Int, channelConfig: UInt32) throws -> [Float] {
 		let mono = SeamSignal.loopable(frames: 48000, sampleRate: 48000).enumerated().filter { $0.offset % 2 == 0 }.map(\.element)
 		let track = (EngineTrack(url: URL(string: "memory://mono")!), MemoryDecoder(samples: mono, sampleRate: 48000, channels: 1))
 		let feeder = makeFeeder(outputRate: 48000, tracks: [track])
 		let delegate = ScriptedTracks([])
 		feeder.delegate = delegate
-		let pump = try XCTUnwrap(Pump(feeder: feeder, outputFormat: StreamFormat(sampleRate: 48000, channels: 2, channelConfig: UInt32(AudioConfigStereo))))
+		let pump = try XCTUnwrap(Pump(feeder: feeder, outputFormat: StreamFormat(sampleRate: 48000, channels: channels, channelConfig: channelConfig)))
 		let renderer = try XCTUnwrap(cog_renderer_create(pump.ring))
 		defer { cog_renderer_destroy(renderer) }
 
@@ -101,11 +102,49 @@ final class PumpTests: XCTestCase {
 		pump.stop()
 		feeder.stop()
 
-		XCTAssertEqual(played.samples.count, 48000 * 2)
+		XCTAssertEqual(played.samples.count, 48000 * channels)
+		return played.samples
+	}
+
+	func testMonoIsFittedToAStereoDevice() throws {
+		let samples = try playMono(channels: 2, channelConfig: UInt32(AudioConfigStereo))
 		for frame in stride(from: 0, to: 48000, by: 997) {
-			XCTAssertEqual(played.samples[frame * 2], played.samples[frame * 2 + 1], "both channels carry the mono signal")
+			XCTAssertEqual(samples[frame * 2], samples[frame * 2 + 1], "both channels carry the mono signal")
 		}
-		XCTAssertNotEqual(played.samples[1000 * 2], 0)
+		XCTAssertNotEqual(samples[1000 * 2], 0)
+	}
+
+	func testMonoIsFittedToFrontLeftAndRightOfASurroundDevice() throws {
+		let samples = try playMono(channels: 8, channelConfig: UInt32(AudioConfig7Point1))
+		for frame in stride(from: 0, to: 48000, by: 997) {
+			XCTAssertEqual(samples[frame * 8], samples[frame * 8 + 1], "front left and right carry the mono signal")
+			for channel in 2..<8 {
+				XCTAssertEqual(samples[frame * 8 + channel], 0, "channel \(channel) stays silent")
+			}
+		}
+		XCTAssertNotEqual(samples[1000 * 8], 0)
+	}
+
+	func testMonoGoesToTheCenterWhenAskedTo() throws {
+		UserDefaults.standard.set(true, forKey: "sendMonoToCenter")
+		defer { UserDefaults.standard.removeObject(forKey: "sendMonoToCenter") }
+		let samples = try playMono(channels: 8, channelConfig: UInt32(AudioConfig7Point1))
+		for frame in stride(from: 0, to: 48000, by: 997) {
+			for channel in 0..<8 where channel != 2 {
+				XCTAssertEqual(samples[frame * 8 + channel], 0, "channel \(channel) stays silent")
+			}
+		}
+		XCTAssertNotEqual(samples[1000 * 8 + 2], 0)
+	}
+
+	func testMonoToCenterIsIgnoredOnAStereoDevice() throws {
+		UserDefaults.standard.set(true, forKey: "sendMonoToCenter")
+		defer { UserDefaults.standard.removeObject(forKey: "sendMonoToCenter") }
+		let samples = try playMono(channels: 2, channelConfig: UInt32(AudioConfigStereo))
+		for frame in stride(from: 0, to: 48000, by: 997) {
+			XCTAssertEqual(samples[frame * 2], samples[frame * 2 + 1], "both channels carry the mono signal")
+		}
+		XCTAssertNotEqual(samples[1000 * 2], 0)
 	}
 
 	func testASeekFlushesTheDeviceSideAndMarksTheNewPosition() throws {

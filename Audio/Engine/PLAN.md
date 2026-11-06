@@ -254,6 +254,10 @@ Each stage ships on its own and leaves the old engine working.
      channel fit, reconfiguring on a format or active-set change, resetting
      on seek, and draining them (`drain(_:)`) at the end of the stream and
      before a format change.
+   - The channel fit sends mono to front left and right, even on a device
+     with a center: a device's channel count doesn't say what is connected,
+     and a 14-channel interface is taken for 7.1 (#550). `sendMonoToCenter`
+     sends it to the center instead, for surround speakers.
    - `EqualizerStage`: the 31-band `vDSP_biquadm` EQ, driven by the EQ
      window through the `CogEqualizer` protocol; band changes no longer
      reset the filter state.

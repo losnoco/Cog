@@ -26,6 +26,9 @@ private final class OutputPrefs: ObservableObject {
     @Published var enableFading: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableFading, forKey: "enableFading") }
     }
+    @Published var sendMonoToCenter: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(sendMonoToCenter, forKey: "sendMonoToCenter") }
+    }
     @Published var enableHdcd: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableHdcd, forKey: "enableHDCD") }
     }
@@ -54,6 +57,7 @@ private final class OutputPrefs: ObservableObject {
         volumeLimit = d.object(forKey: "volumeLimit") as? Bool ?? true
         suspendOutputOnPause = d.object(forKey: "suspendOutputOnPause") as? Bool ?? true
         enableFading = d.object(forKey: "enableFading") as? Bool ?? true
+        sendMonoToCenter = d.bool(forKey: "sendMonoToCenter")
         enableHdcd = d.object(forKey: "enableHDCD") as? Bool ?? true
         halveDSDVolume = d.object(forKey: "halveDSDVolume") as? Bool ?? false
         enableDoP = d.bool(forKey: "enableDoP")
@@ -166,6 +170,8 @@ struct OutputPaneView: View {
             Toggle("Limit volume to prevent clipping", isOn: $prefs.volumeLimit)
             Toggle("Suspend output when paused", isOn: $prefs.suspendOutputOnPause)
             Toggle("Fade playback transitions", isOn: $prefs.enableFading)
+            Toggle("Send mono to center output", isOn: $prefs.sendMonoToCenter)
+                .help("For surround speakers. Otherwise, mono plays on the front left and right, which is all that is connected on many multichannel interfaces.")
             Section {
                 Toggle("Use exclusive mode when supported", isOn: $prefs.exclusiveOutput)
                 Toggle(

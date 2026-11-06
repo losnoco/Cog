@@ -17,6 +17,10 @@
 	uint32_t outConfig;
 }
 
+/* Fit mono to the output's center channel, where it has one, rather than to
+ * its front left and right. */
+@property(nonatomic) BOOL monoToCenter;
+
 - (id)initWithInputFormat:(AudioStreamBasicDescription)inf inputConfig:(uint32_t)iConfig andOutputFormat:(AudioStreamBasicDescription)outf outputConfig:(uint32_t)oConfig;
 
 - (void)process:(const void *)inBuffer frameCount:(size_t)frames output:(void *)outBuffer;

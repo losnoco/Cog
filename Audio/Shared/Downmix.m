@@ -161,16 +161,8 @@ static void downmix_to_mono(const float *inBuffer, int channels, uint32_t config
 	vDSP_vsmul(outBuffer, 1, &scale, outBuffer, 1, count);
 }
 
-static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, float *outBuffer, int outchannels, uint32_t outconfig, size_t count) {
-	if(inconfig == AudioConfigMono && outconfig == AudioConfigStereo) {
-		cblas_scopy((int)count, inBuffer, 1, outBuffer, 2);
-		cblas_scopy((int)count, inBuffer, 1, outBuffer + 1, 2);
-	} else if(inconfig == AudioConfigMono && outconfig == AudioConfig4Point0) {
-		cblas_scopy((int)count, inBuffer, 1, outBuffer, 4);
-		cblas_scopy((int)count, inBuffer, 1, outBuffer + 1, 4);
-		vDSP_vclr(outBuffer + 2, 4, count);
-		vDSP_vclr(outBuffer + 3, 4, count);
-	} else if(inconfig == AudioConfigMono && (outconfig & AudioChannelFrontCenter)) {
+static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, float *outBuffer, int outchannels, uint32_t outconfig, BOOL monoToCenter, size_t count) {
+	if(inconfig == AudioConfigMono && monoToCenter && (outconfig & AudioChannelFrontCenter)) {
 		uint32_t cIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontCenter];
 		cblas_scopy((int)count, inBuffer, 1, outBuffer + cIndex, outchannels);
 		for(size_t i = 0; i < cIndex; ++i) {
@@ -179,6 +171,14 @@ static void upmix(const float *inBuffer, int inchannels, uint32_t inconfig, floa
 		for(size_t i = cIndex + 1; i < outchannels; ++i) {
 			vDSP_vclr(outBuffer + i, outchannels, (int)count);
 		}
+	} else if(inconfig == AudioConfigMono && (outconfig & AudioChannelFrontLeft) && (outconfig & AudioChannelFrontRight)) {
+		/* A device's channel count says nothing of what is connected to it: on
+		 * an interface taken for 7.1, only the first two may be in use. */
+		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
+		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
+		vDSP_vclr(outBuffer, 1, count * outchannels);
+		cblas_scopy((int)count, inBuffer, 1, outBuffer + flIndex, outchannels);
+		cblas_scopy((int)count, inBuffer, 1, outBuffer + frIndex, outchannels);
 	} else if(inconfig == AudioConfig4Point0 && outchannels >= 5) {
 		uint32_t flIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontLeft];
 		uint32_t frIndex = [AudioChunk channelIndexFromConfig:outconfig forFlag:AudioChannelFrontRight];
@@ -296,9 +296,9 @@ static void *kDownmixProcessorContext = &kDownmixProcessorContext;
 		 * caller's buffer unwritten, which reaches the device as silence. */
 		float tempBuffer[frames * 2];
 		downmix_to_stereo((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, tempBuffer, frames);
-		upmix((const float *)tempBuffer, 2, AudioConfigStereo, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
+		upmix((const float *)tempBuffer, 2, AudioConfigStereo, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, self.monoToCenter, frames);
 	} else if(inputFormat.mChannelsPerFrame < outputFormat.mChannelsPerFrame) {
-		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
+		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, self.monoToCenter, frames);
 	} else if(inConfig == outConfig) {
 		/* Identical layouts: the sample order already matches the device, so a
 		 * raw copy is all that is needed. */
@@ -309,7 +309,7 @@ static void *kDownmixProcessorContext = &kDownmixProcessorContext;
 		 * sample to the centre speaker. Map each channel to the position its
 		 * flag names and clear any position that has no input to fill it, so
 		 * nothing lands on the wrong output. */
-		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, frames);
+		upmix((const float *)inBuffer, inputFormat.mChannelsPerFrame, inConfig, (float *)outBuffer, outputFormat.mChannelsPerFrame, outConfig, self.monoToCenter, frames);
 	}
 }
 
