@@ -256,47 +256,53 @@ public final class Feeder {
 			lock.withLock { threadExited }.signal()
 		}
 
+		// This thread has no pool of its own: whatever a pass autoreleases (the conversion's float chunks and
+		// their data, a seek's or a track change's leftovers) would otherwise live as long as the thread.
 		while isRunning {
-			if let seek = takePendingSeek() {
-				performSeek(to: seek.seconds, in: seek.track, with: seek.decoder)
-				continue
-			}
+			autoreleasepool { pass() }
+		}
+	}
 
-			if takePendingReset() {
-				performReset()
-				continue
-			}
+	/// One turn of the thread: a seek, a reset, a nap once finished, or one
+	/// chunk decoded and fed (or, at the decoder's end, the next track).
+	private func pass() {
+		if let seek = takePendingSeek() {
+			performSeek(to: seek.seconds, in: seek.track, with: seek.decoder)
+			return
+		}
 
-			if finished {
-				// Nothing left to decode; wait for a seek or a stop.
-				_ = idle.wait(timeout: .now() + .milliseconds(100))
-				continue
-			}
+		if takePendingReset() {
+			performReset()
+			return
+		}
 
-			let start = EngineLog.now()
-			let chunk: AudioChunk? = autoreleasepool {
-				decoder?.readAudio()
-			}
-			let decodeMs = EngineLog.milliseconds(since: start)
-			if let chunk, chunk.frameCount() > 0 {
-				// The conversion's temporaries (float chunks, their data) go per chunk: this thread has no other
-				// pool, so outside one they lived as long as the thread (about 1 MB/s with a small-chunk decoder)
-				autoreleasepool { feed(chunk) }
+		if finished {
+			// Nothing left to decode; wait for a seek or a stop.
+			_ = idle.wait(timeout: .now() + .milliseconds(100))
+			return
+		}
+
+		let start = EngineLog.now()
+		let chunk: AudioChunk? = autoreleasepool {
+			decoder?.readAudio()
+		}
+		let decodeMs = EngineLog.milliseconds(since: start)
+		if let chunk, chunk.frameCount() > 0 {
+			feed(chunk)
+		} else {
+			advance()
+		}
+		// Waiting for ring space is expected; only report time spent working.
+		let workMs = EngineLog.milliseconds(since: start) - Double(waitNanoseconds) / 1_000_000
+		waitNanoseconds = 0
+		if workMs > EngineLog.slowPass * 1000 {
+			let deepMs = bufferedSeconds * 1000
+			// A slow pass only threatens playback with little decoded
+			// ahead of it; with the ring deep, it is just a heavy decoder.
+			if deepMs < EngineLog.shallowDeepRing * 1000 {
+				EngineLog.logger.warning("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
 			} else {
-				advance()
-			}
-			// Waiting for ring space is expected; only report time spent working.
-			let workMs = EngineLog.milliseconds(since: start) - Double(waitNanoseconds) / 1_000_000
-			waitNanoseconds = 0
-			if workMs > EngineLog.slowPass * 1000 {
-				let deepMs = bufferedSeconds * 1000
-				// A slow pass only threatens playback with little decoded
-				// ahead of it; with the ring deep, it is just a heavy decoder.
-				if deepMs < EngineLog.shallowDeepRing * 1000 {
-					EngineLog.logger.warning("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
-				} else {
-					EngineLog.logger.debug("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
-				}
+				EngineLog.logger.debug("Feeder pass worked \(workMs, format: .fixed(precision: 1)) ms (decode \(decodeMs, format: .fixed(precision: 1)) ms), deep ring about \(deepMs, format: .fixed(precision: 0)) ms")
 			}
 		}
 	}
@@ -476,30 +482,35 @@ public final class Feeder {
 		}
 		floatConverter.add(chunk)
 		while !floatConverter.isEmpty() {
-			let floats = floatConverter.removeSamples(asFloat32: 4096)
-			guard floats.frameCount() > 0 else { break }
-			if floats.isHDCD(), let track, !track.hdcdDetected {
-				track.hdcdDetected = true
-			}
-			let asbd = floats.format
-			let format = StreamFormat(sampleRate: asbd.mSampleRate, channels: Int(asbd.mChannelsPerFrame), channelConfig: floats.channelConfig)
-			let frames = floats.frameCount()
-			let data = floats.removeSamples(frames)
-
-			if let pending = trackStartPending {
-				placeTrackStart(pending.track, offset: pending.offset, before: format)
-				trackStartPending = nil
-			}
-
-			// ReplayGain is applied on the DSP thread, where a change is heard
-			// within the shallow ring instead of after the deep one.
-			data.withUnsafeBytes { raw in
-				let samples = raw.bindMemory(to: Float.self)
-				converter.process(samples, format: format) { out, outFormat in
-					write(out, format: outFormat)
+			// Each block's temporaries (the float chunk, its data) go with the
+			// block, so a decoder's large chunk doesn't pile up all its blocks.
+			let carryOn = autoreleasepool { () -> Bool in
+				let floats = floatConverter.removeSamples(asFloat32: 4096)
+				guard floats.frameCount() > 0 else { return false }
+				if floats.isHDCD(), let track, !track.hdcdDetected {
+					track.hdcdDetected = true
 				}
+				let asbd = floats.format
+				let format = StreamFormat(sampleRate: asbd.mSampleRate, channels: Int(asbd.mChannelsPerFrame), channelConfig: floats.channelConfig)
+				let frames = floats.frameCount()
+				let data = floats.removeSamples(frames)
+
+				if let pending = trackStartPending {
+					placeTrackStart(pending.track, offset: pending.offset, before: format)
+					trackStartPending = nil
+				}
+
+				// ReplayGain is applied on the DSP thread, where a change is heard
+				// within the shallow ring instead of after the deep one.
+				data.withUnsafeBytes { raw in
+					let samples = raw.bindMemory(to: Float.self)
+					converter.process(samples, format: format) { out, outFormat in
+						write(out, format: outFormat)
+					}
+				}
+				return !hasPendingSeek && isRunning
 			}
-			if hasPendingSeek || !isRunning { return }
+			if !carryOn { return }
 		}
 	}
 
