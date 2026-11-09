@@ -279,7 +279,9 @@ public final class Feeder {
 			}
 			let decodeMs = EngineLog.milliseconds(since: start)
 			if let chunk, chunk.frameCount() > 0 {
-				feed(chunk)
+				// The conversion's temporaries (float chunks, their data) go per chunk: this thread has no other
+				// pool, so outside one they lived as long as the thread (about 1 MB/s with a small-chunk decoder)
+				autoreleasepool { feed(chunk) }
 			} else {
 				advance()
 			}

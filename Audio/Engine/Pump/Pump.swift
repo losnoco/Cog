@@ -216,7 +216,9 @@ public final class Pump {
 		while isRunning {
 			let start = EngineLog.now()
 			let gap = EngineLog.milliseconds(since: last)
-			let worked = pass()
+			// One pool per pass: this thread has no other, so whatever a pass (or a DSP stage) autoreleases would
+			// otherwise live as long as playback
+			let worked = autoreleasepool { pass() }
 			let took = EngineLog.milliseconds(since: start)
 			if gap > EngineLog.slowPass * 1000 || took > EngineLog.slowPass * 1000 {
 				let shallowMs = Double(cog_ring_readable(ring)) / outputFormat.sampleRate * 1000
