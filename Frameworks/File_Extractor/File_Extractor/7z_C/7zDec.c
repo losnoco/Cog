@@ -9,6 +9,7 @@
 
 #include "Bcj2.h"
 #include "Bra.h"
+#include "Delta.h"
 #include "CpuArch.h"
 #include "LzmaDec.h"
 #include "Lzma2Dec.h"
@@ -25,6 +26,7 @@
 #define k_ARMT  0x03030701
 #define k_SPARC 0x03030805
 #define k_BCJ2  0x0303011B
+#define k_Delta 3
 
 #ifdef _7ZIP_PPMD_SUPPPORT
 
@@ -295,6 +297,10 @@ static SRes CheckSupportedFolder(const CSzFolder *f)
       case k_BCJ:
       case k_ARM:
         break;
+      case k_Delta:
+        if (c->Props.size != 1)
+          return SZ_ERROR_UNSUPPORTED;
+        break;
       default:
         return SZ_ERROR_UNSUPPORTED;
     }
@@ -448,6 +454,13 @@ static SRes SzFolder_Decode2(const CSzFolder *folder, const UInt64 *packSizes,
           break;
         }
         CASE_BRA_CONV(ARM)
+        case k_Delta:
+        {
+          Byte state[DELTA_STATE_SIZE];
+          Delta_Init(state);
+          Delta_Decode(state, (unsigned)coder->Props.data[0] + 1, outBuffer, outSize);
+          break;
+        }
         default:
           return SZ_ERROR_UNSUPPORTED;
       }
