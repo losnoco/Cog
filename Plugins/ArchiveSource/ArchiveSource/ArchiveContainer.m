@@ -18,8 +18,17 @@ static NSString *path_pack_string(NSString *src) {
 	return [NSString stringWithFormat:@"|%lu|%@|", [src length], src];
 }
 
+static NSString *escape_url_delimiters(NSString *src) {
+	static NSCharacterSet *allowed;
+	static dispatch_once_t once;
+	dispatch_once(&once, ^{
+		allowed = [[NSCharacterSet characterSetWithCharactersInString:@"%#?"] invertedSet];
+	});
+	return [src stringByAddingPercentEncodingWithAllowedCharacters:allowed];
+}
+
 static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString *name) {
-	return [NSString stringWithFormat:@"unpack://%@%@%@", name, path_pack_string(archive), file];
+	return [NSString stringWithFormat:@"unpack://%@%@%@", name, escape_url_delimiters(path_pack_string(archive)), escape_url_delimiters(file)];
 }
 
 @implementation ArchiveContainer
