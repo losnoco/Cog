@@ -87,6 +87,15 @@ static NSString *g_make_unpack_path(NSString *archive, NSString *file, NSString 
 
 	[sandboxBroker endFolderAccess:sbHandle];
 
+	// What a container lists is not opened again, so an archive holding one
+	// file with several tracks, a rip of an NSF or GBS, say, lists its tracks
+	// here. Archives of several files are left as they were.
+	if([files count] == 1) {
+		NSArray *tracks = [NSClassFromString(@"AudioContainer") urlsForContainerURL:files[0]];
+		if([tracks count] > 1)
+			return tracks;
+	}
+
 	return files;
 }
 
