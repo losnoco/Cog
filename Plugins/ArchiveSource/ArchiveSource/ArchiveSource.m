@@ -60,6 +60,26 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 	return YES;
 }
 
+// The archive and the file in it that `url` names, its fragment (the track of
+// a file with several) left off.
+static BOOL g_parse_unpack_url(NSURL *url, NSString **archive, NSString **file) {
+	NSString *urlString = [url absoluteString];
+	if([url fragment])
+		urlString = [urlString substringToIndex:[urlString rangeOfString:@"#" options:NSBackwardsSearch].location];
+
+	NSString *type;
+	if(!g_parse_unpack_path([urlString stringByRemovingPercentEncoding], archive, file, &type))
+		return NO;
+
+	if(![type isEqualToString:@"fex"])
+		return NO;
+
+	/* An unpack:// URL stored before archive paths were normalized can still
+	 * carry a file reference, which fex_open() cannot use. */
+	*archive = CogNormalizeFilePath(*archive);
+	return YES;
+}
+
 @implementation ArchiveSource
 
 - (id)init {
@@ -73,21 +93,11 @@ static BOOL g_parse_unpack_path(NSString *src, NSString **archive, NSString **fi
 - (BOOL)open:(NSURL *)url {
 	[self setURL:url];
 
-	NSString *urlDecoded = [[url absoluteString] stringByRemovingPercentEncoding];
-
-	NSString *type;
 	NSString *archive;
 	NSString *file;
 
-	if(!g_parse_unpack_path(urlDecoded, &archive, &file, &type))
+	if(!g_parse_unpack_url(url, &archive, &file))
 		return NO;
-
-	if(![type isEqualToString:@"fex"])
-		return NO;
-
-	/* An unpack:// URL stored before archive paths were normalized can still
-	 * carry a file reference, which fex_open() cannot use. */
-	archive = CogNormalizeFilePath(archive);
 
 	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
 	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
