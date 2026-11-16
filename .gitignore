@@ -49,6 +49,8 @@ Xcode-config/SENTRY_SETTINGS.xcconfig
 /ThirdParty/opusfile/lib/libopusfile.0.dylib
 /ThirdParty/projectM/lib/libprojectM-4.4.dylib
 /ThirdParty/projectM/lib/libprojectM-4-playlist.4.dylib
+/ThirdParty/angle/lib/libEGL.dylib
+/ThirdParty/angle/lib/libGLESv2.dylib
 /ThirdParty/rubberband/lib/librubberband.3.dylib
 /ThirdParty/speex/libspeex.a
 /ThirdParty/vorbis/lib/libvorbisfile.3.dylib

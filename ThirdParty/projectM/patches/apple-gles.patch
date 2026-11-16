@@ -1,0 +1,38 @@
+diff --color -ruN libprojectM-4.1.8/CMakeLists.txt libprojectM-4.1.8-gles/CMakeLists.txt
+--- libprojectM-4.1.8/CMakeLists.txt	2026-10-06 05:47:07
++++ libprojectM-4.1.8-gles/CMakeLists.txt	2026-11-15 23:46:17
+@@ -164,6 +164,14 @@
+ 
+     if(ENABLE_GLES)
+         message(STATUS "Building for OpenGL Embedded Profile")
++        if(APPLE)
++            # Cog: OpenGL ES 3.0 from ANGLE on Metal, given by OPENGL_gles3_LIBRARY
++            # and OPENGL_GLES3_INCLUDE_DIR.
++            add_library(OpenGL::GLES3 UNKNOWN IMPORTED)
++            set_target_properties(OpenGL::GLES3 PROPERTIES
++                    IMPORTED_LOCATION "${OPENGL_gles3_LIBRARY}"
++                    INTERFACE_INCLUDE_DIRECTORIES "${OPENGL_GLES3_INCLUDE_DIR}")
++        else()
+         if(NOT CMAKE_SYSTEM_NAME STREQUAL Linux
+                 AND NOT CMAKE_SYSTEM_NAME STREQUAL Android)
+             message(FATAL_ERROR "OpenGL ES 3 support is currently only available for Linux platforms. You're building for ${CMAKE_SYSTEM_NAME}.")
+@@ -176,6 +184,7 @@
+         find_package(OpenGL REQUIRED COMPONENTS GLES3)
+         if(NOT TARGET OpenGL::GLES3)
+             message(FATAL_ERROR "No suitable GLES3 library was found.")
++        endif()
+         endif()
+ 
+         set(PROJECTM_OPENGL_LIBRARIES OpenGL::GLES3)
+diff --color -ruN libprojectM-4.1.8/src/libprojectM/projectM-opengl.h libprojectM-4.1.8-gles/src/libprojectM/projectM-opengl.h
+--- libprojectM-4.1.8/src/libprojectM/projectM-opengl.h	2026-10-06 05:47:07
++++ libprojectM-4.1.8-gles/src/libprojectM/projectM-opengl.h	2026-11-15 23:45:36
+@@ -10,7 +10,7 @@
+ // Unlock FPS for rendering benchmarks, it disables Vblank/Vsync and prints drawn frame count within a 5s test run
+ #define UNLOCK_FPS 0
+ 
+-#ifdef __APPLE__
++#if defined(__APPLE__) && !defined(USE_GLES)
+ # include <OpenGL/gl3.h>
+ # include <OpenGL/gl3ext.h>
+ #elif defined(EYETUNE_WINRT)

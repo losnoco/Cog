@@ -5,15 +5,20 @@
 //  Created by Kevin López Brante on 2026-11-15.
 //
 
-#define GL_SILENCE_DEPRECATION
-
-// projectM draws only with OpenGL, which AppKit deprecates.
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
 #import "ProjectMView.h"
+#import "ProjectMSurface.h"
 
 #import <CoreVideo/CoreVideo.h>
+
+// Only for the constants: the functions are called through the surface's
+// table (ProjectMSurface.h), from ANGLE on Apple Silicon and desktop OpenGL
+// on Intel.
+#if defined(__arm64__)
+#import <GLES3/gl3.h>
+#else
+#define GL_SILENCE_DEPRECATION
 #import <OpenGL/gl3.h>
+#endif
 
 #import <CogAudio/VisualizationController.h>
 
@@ -21,6 +26,10 @@
 #import <projectM-4/projectM.h>
 
 #import "Logging.h"
+
+// libprojectM is weak-linked: on Apple Silicon it is built for ANGLE, which
+// needs macOS 13, and there it is missing on 12.
+extern projectm_handle projectm_create(void) __attribute__((weak_import));
 
 // projectM keeps its own window of recent audio; a frame at 60 Hz needs
 // 735, and a late one more.
@@ -41,11 +50,11 @@ static CVReturn displayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 
 @implementation ProjectMView {
-	NSOpenGLContext *context;
-	NSOpenGLPixelFormat *pixelFormat;
+	id<ProjectMSurface> surface;
+	const ProjectMGL *gl;
 	CVDisplayLinkRef displayLink;
 
-	// Touched only with the context locked.
+	// Touched only with the surface locked.
 	projectm_handle projectM;
 	projectm_playlist_handle playlist;
 	BOOL playlistNeedsLoading;
@@ -67,35 +76,20 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 }
 
 + (ProjectMView *)createWithFrame:(NSRect)frame {
-	NSOpenGLPixelFormatAttribute attributes[] = {
-		NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion4_1Core,
-		NSOpenGLPFAAccelerated,
-		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFAColorSize, 24,
-		NSOpenGLPFAAlphaSize, 8,
-		NSOpenGLPFADepthSize, 0,
-		0
-	};
-	NSOpenGLPixelFormat *pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attributes];
-	if(!pixelFormat) {
-		ALog(@"projectM: no OpenGL 4.1 Core pixel format");
+	if(projectm_create == NULL) {
+		ALog(@"projectM: libprojectM did not load");
 		return nil;
 	}
-	NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-	if(!context) {
-		ALog(@"projectM: no OpenGL 4.1 Core context");
-		return nil;
-	}
-	return [[ProjectMView alloc] initWithFrame:frame pixelFormat:pixelFormat context:context];
+	id<ProjectMSurface> surface = ProjectMMakeSurface();
+	if(!surface) return nil;
+	return [[ProjectMView alloc] initWithFrame:frame surface:surface];
 }
 
-- (instancetype)initWithFrame:(NSRect)frame pixelFormat:(NSOpenGLPixelFormat *)pixelFormat context:(NSOpenGLContext *)context {
+- (instancetype)initWithFrame:(NSRect)frame surface:(id<ProjectMSurface>)surface {
 	self = [super initWithFrame:frame];
 	if(self) {
-		self->pixelFormat = pixelFormat;
-		self->context = context;
-		GLint swapInterval = 1;
-		[context setValues:&swapInterval forParameter:NSOpenGLContextParameterSwapInterval];
+		self->surface = surface;
+		gl = surface.gl;
 		pendingCommands = [NSMutableArray new];
 		audio = calloc(kMaxFramesPerDraw * 2, sizeof(float));
 		_presetFolders = @[];
@@ -107,18 +101,13 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 		_meshSize = NSMakeSize(32, 24);
 		_excludedThemes = @[];
 		_renderScale = 1;
-		self.wantsBestResolutionOpenGLSurface = YES;
+		// After the surface, which may make the layer.
 		self.wantsLayer = YES;
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		                                         selector:@selector(surfaceNeedsUpdate:)
-		                                             name:NSViewGlobalFrameDidChangeNotification
-		                                           object:self];
 	}
 	return self;
 }
 
 - (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[self shutdown];
 	free(audio);
 }
@@ -129,16 +118,23 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 	return YES;
 }
 
+- (CALayer *)makeBackingLayer {
+	return [surface makeBackingLayer] ?: [super makeBackingLayer];
+}
+
 - (void)viewDidMoveToWindow {
 	[super viewDidMoveToWindow];
 	if(self.window) {
-		[self attachContext];
-	} else if(context) {
+		[surface lock];
+		[surface attachToView:self];
+		[surface unlock];
+		[self updateDrawableSize];
+	} else if(surface) {
 		// Docking moves the view between windows; the surface follows it.
 		[self updateDisplayLink];
-		CGLLockContext(context.CGLContextObj);
-		[context clearDrawable];
-		CGLUnlockContext(context.CGLContextObj);
+		[surface lock];
+		[surface detachFromView];
+		[surface unlock];
 		return;
 	}
 	[self updateDisplayLink];
@@ -154,26 +150,12 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 	[self updateDrawableSize];
 }
 
-- (void)surfaceNeedsUpdate:(NSNotification *)notification {
-	[self updateDrawableSize];
-}
-
-- (void)attachContext {
-	CGLLockContext(context.CGLContextObj);
-	context.view = self;
-	CGLUnlockContext(context.CGLContextObj);
-	[self updateDrawableSize];
-}
-
 - (void)updateDrawableSize {
-	// NSView's initializer may size the view before the context exists.
-	if(!context) return;
-	NSSize size = [self convertRectToBacking:self.bounds].size;
-	CGLLockContext(context.CGLContextObj);
-	[context update];
-	drawableWidth = (size_t)MAX(size.width, 1);
-	drawableHeight = (size_t)MAX(size.height, 1);
-	CGLUnlockContext(context.CGLContextObj);
+	// NSView's initializer may size the view before the surface exists.
+	if(!surface || !self.window) return;
+	[surface lock];
+	[surface updateForView:self];
+	[surface unlock];
 	if(!_isRunning) {
 		[self drawOnce];
 	}
@@ -207,12 +189,15 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 			return;
 		}
 		CVDisplayLinkSetOutputCallback(displayLink, displayLinkCallback, (__bridge void *)self);
-		CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, context.CGLContextObj, pixelFormat.CGLPixelFormatObj);
+		NSNumber *screen = self.window.screen.deviceDescription[@"NSScreenNumber"];
+		if(screen) {
+			CVDisplayLinkSetCurrentCGDisplay(displayLink, screen.unsignedIntValue);
+		}
 		lastVideoTime = 0;
 		nextFrameTime = 0;
 		CVDisplayLinkStart(displayLink);
 	} else if(!wanted && displayLink) {
-		// Stop waits for a callback in flight, which takes the context lock.
+		// Stop waits for a callback in flight, which takes the surface lock.
 		CVDisplayLinkStop(displayLink);
 		CVDisplayLinkRelease(displayLink);
 		displayLink = NULL;
@@ -222,9 +207,10 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 - (void)shutdown {
 	self.isRunning = NO;
 	[self updateDisplayLink];
-	CGLLockContext(context.CGLContextObj);
-	[context makeCurrentContext];
-	[self deleteScaleBuffer];
+	if(!surface) return;
+	[surface lock];
+	BOOL current = [surface makeCurrent];
+	if(current) [self deleteScaleBuffer];
 	appliedFPS = 0;
 	if(playlist) {
 		projectm_playlist_destroy(playlist);
@@ -234,14 +220,14 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 		projectm_destroy(projectM);
 		projectM = NULL;
 	}
-	[NSOpenGLContext clearCurrentContext];
-	CGLUnlockContext(context.CGLContextObj);
+	if(current) [surface clearCurrent];
+	[surface unlock];
 }
 
 #pragma mark - Drawing (display link thread, or main while frozen)
 
 - (void)drawOnce {
-	if(!self.window || !context.view) return;
+	if(!self.window || !surface) return;
 	[self renderFrameAtTime:NULL];
 }
 
@@ -338,8 +324,8 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 }
 
 - (void)deleteScaleBuffer {
-	if(scaleFramebuffer) glDeleteFramebuffers(1, &scaleFramebuffer);
-	if(scaleTexture) glDeleteTextures(1, &scaleTexture);
+	if(scaleFramebuffer) gl->DeleteFramebuffers(1, &scaleFramebuffer);
+	if(scaleTexture) gl->DeleteTextures(1, &scaleTexture);
 	scaleFramebuffer = 0;
 	scaleTexture = 0;
 	scaleWidth = scaleHeight = 0;
@@ -352,37 +338,41 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 - (void)scaleUpFrom:(size_t)width height:(size_t)height {
 	if(width != scaleWidth || height != scaleHeight || !scaleFramebuffer) {
 		[self deleteScaleBuffer];
-		glGenTextures(1, &scaleTexture);
-		glBindTexture(GL_TEXTURE_2D, scaleTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glGenFramebuffers(1, &scaleFramebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, scaleFramebuffer);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, scaleTexture, 0);
+		gl->GenTextures(1, &scaleTexture);
+		gl->BindTexture(GL_TEXTURE_2D, scaleTexture);
+		gl->TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		gl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		gl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		gl->BindTexture(GL_TEXTURE_2D, 0);
+		gl->GenFramebuffers(1, &scaleFramebuffer);
+		gl->BindFramebuffer(GL_FRAMEBUFFER, scaleFramebuffer);
+		gl->FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, scaleTexture, 0);
 		scaleWidth = width;
 		scaleHeight = height;
 	}
 	// Blits obey the scissor test, which a preset may leave on.
-	glDisable(GL_SCISSOR_TEST);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, scaleFramebuffer);
-	glBlitFramebuffer(0, 0, (GLint)width, (GLint)height, 0, 0, (GLint)width, (GLint)height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, scaleFramebuffer);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBlitFramebuffer(0, 0, (GLint)width, (GLint)height, 0, 0, (GLint)drawableWidth, (GLint)drawableHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	gl->Disable(GL_SCISSOR_TEST);
+	gl->BindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	gl->BindFramebuffer(GL_DRAW_FRAMEBUFFER, scaleFramebuffer);
+	gl->BlitFramebuffer(0, 0, (GLint)width, (GLint)height, 0, 0, (GLint)width, (GLint)height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	gl->BindFramebuffer(GL_READ_FRAMEBUFFER, scaleFramebuffer);
+	gl->BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	gl->BlitFramebuffer(0, 0, (GLint)width, (GLint)height, 0, 0, (GLint)drawableWidth, (GLint)drawableHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	gl->BindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 - (void)renderFrameAtTime:(const CVTimeStamp *)outputTime {
 	if(![self isFrameDueAt:outputTime]) return;
-	CGLContextObj cgl = context.CGLContextObj;
-	CGLLockContext(cgl);
-	[context makeCurrentContext];
+	[surface lock];
+	if(![surface makeCurrent]) {
+		[surface unlock];
+		return;
+	}
+	[surface getDrawableWidth:&drawableWidth height:&drawableHeight];
 
 	if(!projectM && ![self makeProjectM]) {
-		CGLUnlockContext(cgl);
+		[surface clearCurrent];
+		[surface unlock];
 		return;
 	}
 
@@ -426,17 +416,17 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 		}
 	}
 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	gl->Viewport(0, 0, (GLsizei)width, (GLsizei)height);
 	projectm_opengl_render_frame(projectM);
 	if(width != drawableWidth || height != drawableHeight) {
 		[self scaleUpFrom:width height:height];
 	} else if(scaleFramebuffer) {
 		[self deleteScaleBuffer];
 	}
-	[context flushBuffer];
+	[surface present];
 
-	[NSOpenGLContext clearCurrentContext];
-	CGLUnlockContext(cgl);
+	[surface clearCurrent];
+	[surface unlock];
 }
 
 #pragma mark - Presets
