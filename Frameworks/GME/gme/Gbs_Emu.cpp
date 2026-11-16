@@ -100,7 +100,7 @@ struct Gbs_File : Gme_Info_
 static Music_Emu* new_gbs_emu () { return BLARGG_NEW Gbs_Emu ; }
 static Music_Emu* new_gbs_file() { return BLARGG_NEW Gbs_File; }
 
-static gme_type_t_ const gme_gbs_type_ = { "Game Boy", 0, &new_gbs_emu, &new_gbs_file, "GBS", 1 };
+static gme_type_t_ const gme_gbs_type_ = { "Game Boy", 0, &new_gbs_emu, &new_gbs_file, "GBS", 0x03 };
 extern gme_type_t const gme_gbs_type = &gme_gbs_type_;
 
 // Setup
