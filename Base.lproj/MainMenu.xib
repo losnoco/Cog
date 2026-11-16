@@ -2003,6 +2003,12 @@
                                                 <action selector="showWindow:" target="Wfm-Wn-Ctl" id="Wfm-Me-Act"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="projectM" secondaryImage="sparkles" catalog="system" id="Pjm-Me-Itm">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showWindow:" target="Pjm-Wn-Ctl" id="Pjm-Me-Act"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Nuked SC-55" secondaryImage="pianokeys" catalog="system" id="f31-bq-Mgd">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -2971,6 +2977,12 @@ Gw
         <customObject id="VUm-Wn-Ctl" customClass="VUMeterWindowController">
             <connections>
                 <outlet property="playbackController" destination="705" id="VUm-Pb-Out"/>
+            </connections>
+        </customObject>
+        <customObject id="Pjm-Wn-Ctl" customClass="ProjectMWindowController">
+            <connections>
+                <outlet property="currentEntryController" destination="1897" id="Pjm-Ce-Out"/>
+                <outlet property="playbackController" destination="705" id="Pjm-Pb-Out"/>
             </connections>
         </customObject>
         <customObject id="Wfm-Wn-Ctl" customClass="WaveformWindowController">

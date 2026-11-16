@@ -4687,6 +4687,24 @@
         }
       }
     },
+    "Pjm-Me-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"projectM\"; ObjectID = \"Pjm-Me-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "projectM"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "projectM"
+          }
+        }
+      }
+    },
     "PoD-EU-L4X.headerCell.title" : {
       "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Bitrate\"; ObjectID = \"PoD-EU-L4X\";",
       "extractionState" : "extracted_with_value",

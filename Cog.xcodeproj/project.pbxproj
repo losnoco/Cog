@@ -118,6 +118,7 @@
 		515000000000000000000004 /* RubberbandPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000004 /* RubberbandPaneView.swift */; };
 		515000000000000000000005 /* OutputPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000005 /* OutputPaneView.swift */; };
 		515000000000000000000006 /* AppearancePaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000006 /* AppearancePaneView.swift */; };
+		C0FE7A010000000000000010 /* VisualizationsPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000011 /* VisualizationsPaneView.swift */; };
 		515000000000000000000007 /* GeneralPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000007 /* GeneralPaneView.swift */; };
 		515000000000000000000008 /* MIDIPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000008 /* MIDIPaneView.swift */; };
 		515000000000000000000009 /* HotKeyPaneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505000000000000000000009 /* HotKeyPaneView.swift */; };
@@ -203,6 +204,14 @@
 		8389FCC42E76D51D004FAB82 /* Syntrax.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8389FCC32E76D4FB004FAB82 /* Syntrax.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		838A33742D06A9B100D0D770 /* librubberband.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; };
 		838A33752D06A9CE00D0D770 /* librubberband.3.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C0FE7A010000000000000001 /* ProjectMView.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000009 /* ProjectMView.m */; };
+		C0FE7A010000000000000002 /* ProjectMWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000A /* ProjectMWindowController.swift */; };
+		C0FE7A01000000000000000E /* ProjectMPresetPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000F /* ProjectMPresetPack.swift */; };
+		C0FE7A010000000000000003 /* projectM in Resources */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000B /* projectM */; };
+		C0FE7A010000000000000004 /* libprojectM-4.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000C /* libprojectM-4.4.dylib */; };
+		C0FE7A010000000000000005 /* libprojectM-4.4.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000C /* libprojectM-4.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C0FE7A010000000000000006 /* libprojectM-4-playlist.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */; };
+		C0FE7A010000000000000007 /* libprojectM-4-playlist.4.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33802D06CF4100D0D770 /* SpectrumViewCG.m */; };
 		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
 		838F851F256B4E8B00C3E614 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -894,6 +903,8 @@
 				83AA7D07279EBCAF00087AA4 /* libswresample.6.dylib in Copy Files */,
 				83AA7D06279EBCAD00087AA4 /* libavutil.60.dylib in Copy Files */,
 				838A33752D06A9CE00D0D770 /* librubberband.3.dylib in Copy Files */,
+				C0FE7A010000000000000005 /* libprojectM-4.4.dylib in Copy Files */,
+				C0FE7A010000000000000007 /* libprojectM-4-playlist.4.dylib in Copy Files */,
 				83AA7D05279EBCAB00087AA4 /* libavformat.62.dylib in Copy Files */,
 				83AA7D04279EBCA900087AA4 /* libavcodec.62.dylib in Copy Files */,
 				83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in Copy Files */,
@@ -1073,6 +1084,7 @@
 		505000000000000000000004 /* RubberbandPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RubberbandPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000005 /* OutputPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000006 /* AppearancePaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePaneView.swift; sourceTree = "<group>"; };
+		C0FE7A010000000000000011 /* VisualizationsPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationsPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000007 /* GeneralPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000008 /* MIDIPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIPaneView.swift; sourceTree = "<group>"; };
 		505000000000000000000009 /* HotKeyPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyPaneView.swift; sourceTree = "<group>"; };
@@ -1191,6 +1203,13 @@
 		838770F42D6F0996001455A0 /* FeedbackController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedbackController.m; sourceTree = "<group>"; };
 		8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax.xcodeproj; path = Plugins/Syntrax/Syntrax.xcodeproj; sourceTree = "<group>"; };
 		838A33732D06A9B100D0D770 /* librubberband.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librubberband.3.dylib; path = ThirdParty/rubberband/lib/librubberband.3.dylib; sourceTree = "<group>"; };
+		C0FE7A010000000000000008 /* ProjectMView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectMView.h; path = Visualization/ProjectMView.h; sourceTree = "<group>"; };
+		C0FE7A010000000000000009 /* ProjectMView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectMView.m; path = Visualization/ProjectMView.m; sourceTree = "<group>"; };
+		C0FE7A01000000000000000A /* ProjectMWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProjectMWindowController.swift; path = Visualization/ProjectMWindowController.swift; sourceTree = "<group>"; };
+		C0FE7A01000000000000000F /* ProjectMPresetPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProjectMPresetPack.swift; path = Visualization/ProjectMPresetPack.swift; sourceTree = "<group>"; };
+		C0FE7A01000000000000000B /* projectM */ = {isa = PBXFileReference; lastKnownFileType = folder; name = projectM; path = Visualization/projectM; sourceTree = "<group>"; };
+		C0FE7A01000000000000000C /* libprojectM-4.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libprojectM-4.4.dylib"; path = "ThirdParty/projectM/lib/libprojectM-4.4.dylib"; sourceTree = "<group>"; };
+		C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libprojectM-4-playlist.4.dylib"; path = "ThirdParty/projectM/lib/libprojectM-4-playlist.4.dylib"; sourceTree = "<group>"; };
 		838A337F2D06CF4100D0D770 /* SpectrumViewCG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpectrumViewCG.h; path = Visualization/SpectrumViewCG.h; sourceTree = "<group>"; };
 		838A33802D06CF4100D0D770 /* SpectrumViewCG.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SpectrumViewCG.m; path = Visualization/SpectrumViewCG.m; sourceTree = "<group>"; };
 		838F84FF25687C5C00C3E614 /* Cog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Cog-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -1341,6 +1360,8 @@
 				8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */,
 				838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */,
 				838A33742D06A9B100D0D770 /* librubberband.3.dylib in Frameworks */,
+				C0FE7A010000000000000004 /* libprojectM-4.4.dylib in Frameworks */,
+				C0FE7A010000000000000006 /* libprojectM-4-playlist.4.dylib in Frameworks */,
 				8366CB332E8693EC007DB8D2 /* MetalKit.framework in Frameworks */,
 				17BB5CF90B8A86350009ACB1 /* AudioUnit.framework in Frameworks */,
 				839080562E88F5DE00D5D683 /* Cocoa.framework in Frameworks */,
@@ -1437,6 +1458,8 @@
 			isa = PBXGroup;
 			children = (
 				838A33732D06A9B100D0D770 /* librubberband.3.dylib */,
+				C0FE7A01000000000000000C /* libprojectM-4.4.dylib */,
+				C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */,
 				836DF616298F6EC400CD0580 /* libsoxr.0.dylib */,
 				83256B672866617F0036D9C0 /* libmpg123.0.dylib */,
 				8383952D2E4609CF00A7CFD8 /* libdav1d.a */,
@@ -1873,6 +1896,7 @@
 				505000000000000000000004 /* RubberbandPaneView.swift */,
 				505000000000000000000005 /* OutputPaneView.swift */,
 				505000000000000000000006 /* AppearancePaneView.swift */,
+				C0FE7A010000000000000011 /* VisualizationsPaneView.swift */,
 				505000000000000000000007 /* GeneralPaneView.swift */,
 				505000000000000000000008 /* MIDIPaneView.swift */,
 				505000000000000000000009 /* HotKeyPaneView.swift */,
@@ -2135,6 +2159,11 @@
 				838A33802D06CF4100D0D770 /* SpectrumViewCG.m */,
 				8377C66227B8CF6300E8BC0F /* SpectrumViewSK.h */,
 				8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */,
+				C0FE7A010000000000000008 /* ProjectMView.h */,
+				C0FE7A010000000000000009 /* ProjectMView.m */,
+				C0FE7A01000000000000000A /* ProjectMWindowController.swift */,
+				C0FE7A01000000000000000F /* ProjectMPresetPack.swift */,
+				C0FE7A01000000000000000B /* projectM */,
 				8366CB192E85510B007DB8D2 /* SCView.h */,
 				8366CB132E8550C6007DB8D2 /* SCView.m */,
 				8366CB1C2E8577A6007DB8D2 /* SCVisWindowController.h */,
@@ -3037,6 +3066,7 @@
 				17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */,
 				17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */,
 				836DF61E298F7F6E00CD0580 /* Scenes.scnassets in Resources */,
+				C0FE7A010000000000000003 /* projectM in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3182,6 +3212,9 @@
 				0A0038583086B9BC00C5352B /* LyricsWindowController.swift in Sources */,
 				83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */,
 				8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */,
+				C0FE7A010000000000000001 /* ProjectMView.m in Sources */,
+				C0FE7A010000000000000002 /* ProjectMWindowController.swift in Sources */,
+				C0FE7A01000000000000000E /* ProjectMPresetPack.swift in Sources */,
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
@@ -3285,6 +3318,7 @@
 				515000000000000000000004 /* RubberbandPaneView.swift in Sources */,
 				515000000000000000000005 /* OutputPaneView.swift in Sources */,
 				515000000000000000000006 /* AppearancePaneView.swift in Sources */,
+				C0FE7A010000000000000010 /* VisualizationsPaneView.swift in Sources */,
 				0A0E707E307416E400EF30D0 /* SignalStatusModel.swift in Sources */,
 				0A6E7ACE308A875D00E2ADA7 /* PaneManager.swift in Sources */,
 				83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */,
@@ -3793,7 +3827,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				HEADER_SEARCH_PATHS = (
+					ThirdParty/avif/include,
+					ThirdParty/projectM/include,
+				);
 				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				INFOPLIST_FILE = Info.plist;
@@ -3811,6 +3848,7 @@
 					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/ThirdParty/rubberband/lib",
+					"$(PROJECT_DIR)/ThirdParty/projectM/lib",
 				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
@@ -3873,7 +3911,10 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				HEADER_SEARCH_PATHS = (
+					ThirdParty/avif/include,
+					ThirdParty/projectM/include,
+				);
 				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				INFOPLIST_FILE = Info.plist;
@@ -3891,6 +3932,7 @@
 					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/ThirdParty/rubberband/lib",
+					"$(PROJECT_DIR)/ThirdParty/projectM/lib",
 				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
@@ -4048,7 +4090,10 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/ThirdParty/Frameworks";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				HEADER_SEARCH_PATHS = ThirdParty/avif/include;
+				HEADER_SEARCH_PATHS = (
+					ThirdParty/avif/include,
+					ThirdParty/projectM/include,
+				);
 				IBC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				IBSC_COMPILER_USE_NIBKEYEDARCHIVER_FOR_MACOS = YES;
 				INFOPLIST_FILE = Info.plist;
@@ -4066,6 +4111,7 @@
 					"$(PROJECT_DIR)/ThirdParty/soxr/lib",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/ThirdParty/rubberband/lib",
+					"$(PROJECT_DIR)/ThirdParty/projectM/lib",
 				);
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",

@@ -901,6 +901,20 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 
+	// The projectM pane's.
+	[userDefaultsValuesDict setObject:@YES forKey:@"projectMShuffle"];
+	[userDefaultsValuesDict setObject:@30.0 forKey:@"projectMPresetDuration"];
+	[userDefaultsValuesDict setObject:@"" forKey:@"projectMPresetFolder"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"projectMSeizureWarningSuppressed"];
+	[userDefaultsValuesDict setObject:@3.0 forKey:@"projectMCrossfade"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"projectMHardCuts"];
+	[userDefaultsValuesDict setObject:@2.0 forKey:@"projectMHardCutThreshold"];
+	[userDefaultsValuesDict setObject:@1 forKey:@"projectMDetail"];
+	[userDefaultsValuesDict setObject:@1 forKey:@"projectMResolution"];
+	[userDefaultsValuesDict setObject:@0 forKey:@"projectMFrameRate"];
+	[userDefaultsValuesDict setObject:@[] forKey:@"projectMExcludedThemes"];
+	[userDefaultsValuesDict setObject:@NO forKey:@"projectMPresetLocked"];
+
 	// The waveform visualizer's; the waveform* keys below are the seek bar's.
 	[userDefaultsValuesDict setObject:barColor forKey:@"waveformVisualizerColor"];
 	[userDefaultsValuesDict setObject:@"oscilloscope" forKey:@"waveformVisualizerMode"];

@@ -52,6 +52,12 @@ struct PreferencePaneDescriptor: Identifiable {
                 body: AnyView(AppearancePaneView())
             ),
             PreferencePaneDescriptor(
+                title: "Visualizations",
+                localizedTitle: NSLocalizedString("Visualizations", comment: "Preference pane title"),
+                icon: paneIcon(system: "waveform", legacy: "appearance"),
+                body: AnyView(VisualizationsPaneView())
+            ),
+            PreferencePaneDescriptor(
                 title: "Synthesis",
                 localizedTitle: NSLocalizedString("Synthesis", comment: "Preference pane title"),
                 icon: paneIcon(system: "pianokeys", legacy: "midi"),

@@ -12,25 +12,6 @@ private final class AppearancePrefs: ObservableObject {
     @Published var customDockIconsPlaque: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(customDockIconsPlaque, forKey: "customDockIconsPlaque") }
     }
-    @Published var spectrumSceneKit: Bool {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumSceneKit, forKey: "spectrumSceneKit") }
-    }
-    @Published var spectrumFreqMode: Bool {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumFreqMode, forKey: "spectrumFreqMode") }
-    }
-    @Published var spectrumProjectionMode: Bool {
-        didSet { guard isActive else { return }; UserDefaults.standard.set(spectrumProjectionMode, forKey: "spectrumProjectionMode") }
-    }
-    @Published var spectrumBarColor: Color {
-		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: spectrumBarColor) ?? NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "spectrumBarColor") } }
-    }
-    @Published var spectrumDotColor: Color {
-		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: spectrumDotColor) ?? NSColor(srgbRed: 1.0, green: 0, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "spectrumDotColor") } }
-    }
-    @Published var waveformVisualizerColor: Color {
-		didSet { guard isActive else { return }; if let data = dataFromArchivedColor(nsColor(from: waveformVisualizerColor) ?? NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)) { UserDefaults.standard.set(data, forKey: "waveformVisualizerColor") } }
-    }
-
 
     deinit { isActive = false }
 
@@ -39,17 +20,6 @@ private final class AppearancePrefs: ObservableObject {
         customDockIcons = d.bool(forKey: "customDockIcons")
         colorfulDockIcons = d.bool(forKey: "colorfulDockIcons")
         customDockIconsPlaque = d.bool(forKey: "customDockIconsPlaque")
-        spectrumSceneKit = d.object(forKey: "spectrumSceneKit") as? Bool ?? true
-        spectrumFreqMode = d.object(forKey: "spectrumFreqMode") as? Bool ?? false
-        spectrumProjectionMode = d.object(forKey: "spectrumProjectionMode") as? Bool ?? false
-		spectrumBarColor = Self.defaultColor(forKey: "spectrumBarColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)))
-		spectrumDotColor = Self.defaultColor(forKey: "spectrumDotColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0, blue: 0, alpha: 1.0)))
-		waveformVisualizerColor = Self.defaultColor(forKey: "waveformVisualizerColor", default: Color(nsColor: NSColor(srgbRed: 1.0, green: 0.5, blue: 0, alpha: 1.0)))
-    }
-
-    private static func defaultColor(forKey key: String, default defaultColor: Color) -> Color {
-        let data = UserDefaults.standard.data(forKey: key)
-        return colorFromArchivedData(data) ?? defaultColor
     }
 }
 
@@ -59,8 +29,6 @@ struct AppearancePaneView: View {
     @AppStorage("waveformSeekBar") private var waveformSeekBar = true
     @AppStorage("waveformLogScale") private var waveformLogScale = false
     @AppStorage("waveformRectified") private var waveformRectified = true
-    // As @AppStorage, this follows the waveform pane's click and menu too.
-    @AppStorage("waveformVisualizerMode") private var waveformVisualizerMode = WaveformView.Mode.oscilloscope
 
     var body: some View {
         if #available(macOS 13.0, *) {
@@ -99,36 +67,6 @@ struct AppearancePaneView: View {
                 if waveformSeekBar {
                     Toggle("Logarithmic scale", isOn: $waveformLogScale)
                     Toggle("Rectified", isOn: $waveformRectified)
-                }
-            }
-            Section(header: Text("Spectrum").bold()) {
-                Toggle("Use 3D rendered spectrum", isOn: $prefs.spectrumSceneKit)
-                if (prefs.spectrumSceneKit) {
-                    Toggle("Use flat perspective in toolbar", isOn: $prefs.spectrumProjectionMode)
-                }
-                HStack {
-                    Text("Bar color:")
-                    Spacer()
-                    ColorPicker("", selection: $prefs.spectrumBarColor)
-                        .labelsHidden()
-                }
-                HStack {
-                    Text("Dot color:")
-                    Spacer()
-                    ColorPicker("", selection: $prefs.spectrumDotColor)
-                        .labelsHidden()
-                }
-            }
-            Section(header: Text("Waveform").bold()) {
-                Picker("Style:", selection: $waveformVisualizerMode) {
-                    Text("Oscilloscope").tag(WaveformView.Mode.oscilloscope)
-                    Text("Envelope").tag(WaveformView.Mode.envelope)
-                }
-                HStack {
-                    Text("Color:")
-                    Spacer()
-                    ColorPicker("", selection: $prefs.waveformVisualizerColor)
-                        .labelsHidden()
                 }
             }
         }
