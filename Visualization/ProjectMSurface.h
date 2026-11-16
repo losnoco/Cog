@@ -9,11 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// The GL functions ProjectMView calls itself, from the library that draws:
-/// OpenGL ES from ANGLE on Apple Silicon, desktop OpenGL on Intel. Called
-/// through this table, so the view never binds a GL symbol at link time and
-/// can't take one from the wrong library. The types are the ones the GL
-/// typedefs stand for.
+/// The GL functions ProjectMView calls itself, from ANGLE's OpenGL ES, looked
+/// up through EGL as libEGL is opened at run time. The types are the ones the
+/// GL typedefs stand for.
 typedef struct {
 	void (*Viewport)(int x, int y, int width, int height);
 	void (*Disable)(unsigned int capability);
@@ -59,8 +57,7 @@ typedef struct {
 
 @end
 
-/// The surface for this Mac, or nil when it can't draw: on Apple Silicon,
-/// ANGLE needs macOS 13.
+/// A surface, or nil when ANGLE can't draw here.
 id<ProjectMSurface> _Nullable ProjectMMakeSurface(void);
 
 NS_ASSUME_NONNULL_END

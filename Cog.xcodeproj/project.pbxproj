@@ -206,15 +206,14 @@
 		838A33752D06A9CE00D0D770 /* librubberband.3.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C0FE7A010000000000000001 /* ProjectMView.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000009 /* ProjectMView.m */; };
 		C0FE7A010000000000000002 /* ProjectMWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000A /* ProjectMWindowController.swift */; };
-		C0FE7A010000000000000023 /* ProjectMSurfaceCGL.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000021 /* ProjectMSurfaceCGL.m */; };
 		C0FE7A010000000000000024 /* ProjectMSurfaceANGLE.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000022 /* ProjectMSurfaceANGLE.m */; };
 		C0FE7A010000000000000027 /* libEGL.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000025 /* libEGL.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C0FE7A010000000000000028 /* libGLESv2.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = C0FE7A010000000000000026 /* libGLESv2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C0FE7A01000000000000000E /* ProjectMPresetPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000F /* ProjectMPresetPack.swift */; };
 		C0FE7A010000000000000003 /* projectM in Resources */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000B /* projectM */; };
-		C0FE7A010000000000000004 /* libprojectM-4.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000C /* libprojectM-4.4.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		C0FE7A010000000000000004 /* libprojectM-4.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000C /* libprojectM-4.4.dylib */; };
 		C0FE7A010000000000000005 /* libprojectM-4.4.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000C /* libprojectM-4.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		C0FE7A010000000000000006 /* libprojectM-4-playlist.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
+		C0FE7A010000000000000006 /* libprojectM-4-playlist.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */; };
 		C0FE7A010000000000000007 /* libprojectM-4-playlist.4.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = C0FE7A01000000000000000D /* libprojectM-4-playlist.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		838A33832D06CF4100D0D770 /* SpectrumViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 838A33802D06CF4100D0D770 /* SpectrumViewCG.m */; };
 		838F851E256B4E5E00C3E614 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838F851D256B4E5E00C3E614 /* Sparkle.framework */; };
@@ -1213,7 +1212,6 @@
 		C0FE7A010000000000000009 /* ProjectMView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectMView.m; path = Visualization/ProjectMView.m; sourceTree = "<group>"; };
 		C0FE7A01000000000000000A /* ProjectMWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProjectMWindowController.swift; path = Visualization/ProjectMWindowController.swift; sourceTree = "<group>"; };
 		C0FE7A010000000000000020 /* ProjectMSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectMSurface.h; path = Visualization/ProjectMSurface.h; sourceTree = "<group>"; };
-		C0FE7A010000000000000021 /* ProjectMSurfaceCGL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectMSurfaceCGL.m; path = Visualization/ProjectMSurfaceCGL.m; sourceTree = "<group>"; };
 		C0FE7A010000000000000022 /* ProjectMSurfaceANGLE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProjectMSurfaceANGLE.m; path = Visualization/ProjectMSurfaceANGLE.m; sourceTree = "<group>"; };
 		C0FE7A010000000000000025 /* libEGL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.dylib; path = ThirdParty/angle/lib/libEGL.dylib; sourceTree = "<group>"; };
 		C0FE7A010000000000000026 /* libGLESv2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLESv2.dylib; path = ThirdParty/angle/lib/libGLESv2.dylib; sourceTree = "<group>"; };
@@ -2176,7 +2174,6 @@
 				C0FE7A010000000000000009 /* ProjectMView.m */,
 				C0FE7A01000000000000000A /* ProjectMWindowController.swift */,
 				C0FE7A010000000000000020 /* ProjectMSurface.h */,
-				C0FE7A010000000000000021 /* ProjectMSurfaceCGL.m */,
 				C0FE7A010000000000000022 /* ProjectMSurfaceANGLE.m */,
 				C0FE7A01000000000000000F /* ProjectMPresetPack.swift */,
 				C0FE7A01000000000000000B /* projectM */,
@@ -3230,7 +3227,6 @@
 				8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */,
 				C0FE7A010000000000000001 /* ProjectMView.m in Sources */,
 				C0FE7A010000000000000002 /* ProjectMWindowController.swift in Sources */,
-				C0FE7A010000000000000023 /* ProjectMSurfaceCGL.m in Sources */,
 				C0FE7A010000000000000024 /* ProjectMSurfaceANGLE.m in Sources */,
 				C0FE7A01000000000000000E /* ProjectMPresetPack.swift in Sources */,
 				1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */,

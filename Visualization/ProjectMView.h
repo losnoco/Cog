@@ -9,12 +9,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// projectM's presets, drawn with OpenGL on a display link thread
-/// and fed the stereo audio that is being heard. macOS only: projectM needs
-/// OpenGL 3.3 Core.
+/// projectM's presets, drawn with OpenGL ES through ANGLE on Metal, on a
+/// display link thread, and fed the stereo audio that is being heard.
 @interface ProjectMView : NSView
 
-/// A view, or nil when no OpenGL 4.1 Core context can be made.
+/// A view, or nil when ANGLE can't make a surface to draw on.
 + (ProjectMView *_Nullable)createWithFrame:(NSRect)frame;
 
 /// Draws while YES; NO freezes the last frame and stops the work.

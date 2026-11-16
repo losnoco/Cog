@@ -11,14 +11,8 @@
 #import <CoreVideo/CoreVideo.h>
 
 // Only for the constants: the functions are called through the surface's
-// table (ProjectMSurface.h), from ANGLE on Apple Silicon and desktop OpenGL
-// on Intel.
-#if defined(__arm64__)
+// table (ProjectMSurface.h), taken from ANGLE.
 #import <GLES3/gl3.h>
-#else
-#define GL_SILENCE_DEPRECATION
-#import <OpenGL/gl3.h>
-#endif
 
 #import <CogAudio/VisualizationController.h>
 
@@ -26,10 +20,6 @@
 #import <projectM-4/projectM.h>
 
 #import "Logging.h"
-
-// libprojectM is weak-linked: on Apple Silicon it is built for ANGLE, which
-// needs macOS 13, and there it is missing on 12.
-extern projectm_handle projectm_create(void) __attribute__((weak_import));
 
 // projectM keeps its own window of recent audio; a frame at 60 Hz needs
 // 735, and a late one more.
@@ -76,10 +66,6 @@ static void presetSwitched(bool isHardCut, unsigned int index, void *userData);
 }
 
 + (ProjectMView *)createWithFrame:(NSRect)frame {
-	if(projectm_create == NULL) {
-		ALog(@"projectM: libprojectM did not load");
-		return nil;
-	}
 	id<ProjectMSurface> surface = ProjectMMakeSurface();
 	if(!surface) return nil;
 	return [[ProjectMView alloc] initWithFrame:frame surface:surface];

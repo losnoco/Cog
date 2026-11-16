@@ -4,15 +4,11 @@
 //
 //  Created by Kevin López Brante on 2026-11-16.
 //
-//  Apple Silicon: OpenGL ES 3.0 from ANGLE, which draws with Metal, into the
-//  view's CAMetalLayer. No deprecated OpenGL. Intel Macs keep desktop OpenGL
-//  (ProjectMSurfaceCGL.m), as the ANGLE build Cog ships is arm64 only.
+//  OpenGL ES 3.0 from ANGLE, which draws with Metal, into the view's
+//  CAMetalLayer: projectM uses no deprecated OpenGL. ANGLE is built by
+//  Scripts/build-angle.sh. libEGL is opened at run time and finds libGLESv2
+//  beside itself in Contents/Frameworks; libprojectM links libGLESv2.
 //
-//  libEGL is opened at run time rather than linked: it needs macOS 13, and
-//  Cog runs on 12. It finds libGLESv2 beside itself in Contents/Frameworks.
-//
-
-#if defined(__arm64__)
 
 #import "ProjectMSurface.h"
 
@@ -53,11 +49,6 @@ static BOOL loadANGLE(void) {
 	static BOOL loaded = NO;
 	static dispatch_once_t once;
 	dispatch_once(&once, ^{
-		if(@available(macOS 13.0, *)) {
-		} else {
-			ALog(@"projectM: ANGLE needs macOS 13");
-			return;
-		}
 		NSString *path = [NSBundle.mainBundle.privateFrameworksPath stringByAppendingPathComponent:@"libEGL.dylib"];
 		void *library = dlopen(path.fileSystemRepresentation, RTLD_NOW | RTLD_LOCAL);
 		if(!library) {
@@ -248,5 +239,3 @@ id<ProjectMSurface> ProjectMMakeSurface(void) {
 	}
 	return [[ProjectMSurfaceANGLE alloc] initWithContext:context];
 }
-
-#endif

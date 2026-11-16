@@ -976,7 +976,7 @@
    "holders": [
     "The ANGLE Project Authors"
    ],
-   "note": "OpenGL ES on Metal, for projectM on Apple Silicon. Packaged by EdgeFirstAI's angle-package.",
+   "note": "OpenGL ES on Metal, for projectM.",
    "texts": [
     "file:ThirdParty/angle/LICENSE"
    ]
