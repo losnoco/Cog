@@ -8,6 +8,8 @@
 
 #import "ArchiveSource.h"
 
+#import "ArchiveContainer.h"
+
 #import "SandboxBroker.h"
 
 #import "Logging.h"
@@ -180,6 +182,39 @@ static BOOL g_parse_unpack_url(NSURL *url, NSString **archive, NSString **file) 
 		[sandboxBroker endFolderAccess:sbHandle];
 		sbHandle = NULL;
 	}
+}
+
+- (NSDictionary *)filesBesideURL:(NSURL *)url {
+	NSString *archive;
+	NSString *file;
+
+	if(!g_parse_unpack_url(url, &archive, &file))
+		return nil;
+
+	NSString *folder = [file stringByDeletingLastPathComponent];
+
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	const void *handle = [sandboxBroker beginFolderAccess:[NSURL fileURLWithPath:archive]];
+
+	NSMutableDictionary *files = [NSMutableDictionary dictionary];
+
+	// Its own handle, since moving this source's would free the data it reads.
+	fex_t *listing;
+	if(!fex_open(&listing, [archive UTF8String])) {
+		while(!fex_done(listing)) {
+			NSString *name = guess_encoding_of_string(fex_name(listing));
+			if([[name stringByDeletingLastPathComponent] isEqualToString:folder])
+				files[[name lastPathComponent]] = [ArchiveContainer urlForFile:name inArchive:archive];
+			fex_next(listing);
+		}
+		fex_close(listing);
+	}
+
+	[sandboxBroker endFolderAccess:handle];
+
+	return files;
 }
 
 - (NSURL *)url {
