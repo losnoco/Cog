@@ -13,4 +13,7 @@
 @interface ArchiveContainer : NSObject <CogContainer> {
 }
 
+// The unpack:// URL of `file` in `archive`, as ArchiveSource opens it.
++ (NSURL *)urlForFile:(NSString *)file inArchive:(NSString *)archive;
+
 @end
