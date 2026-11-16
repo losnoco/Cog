@@ -23,6 +23,9 @@
 // Promptly unblock any in-flight read without waiting for full teardown.
 // The normal -close call still follows on the reader's own thread.
 - (void)interrupt;
+// The files in the folder that holds `url`, or in that folder of its
+// archive, by name, as URLs this source opens. Needs no open: first.
+- (NSDictionary *)filesBesideURL:(NSURL *)url;
 @end
 
 @protocol CogVersionCheck <NSObject>

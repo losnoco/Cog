@@ -149,6 +149,25 @@
 	}
 }
 
+- (NSDictionary *)filesBesideURL:(NSURL *)url {
+	url = CogNormalizeURL(url);
+	NSString *folder = [[url path] stringByDeletingLastPathComponent];
+
+	id sandboxBrokerClass = NSClassFromString(@"SandboxBroker");
+	id sandboxBroker = [sandboxBrokerClass sharedSandboxBroker];
+
+	const void *handle = [sandboxBroker beginFolderAccess:url];
+	NSArray *names = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:folder error:nil];
+	[sandboxBroker endFolderAccess:handle];
+
+	NSMutableDictionary *files = [NSMutableDictionary dictionaryWithCapacity:[names count]];
+	for(NSString *name in names) {
+		if(![name hasPrefix:@"."])
+			files[name] = [NSURL fileURLWithPath:[folder stringByAppendingPathComponent:name]];
+	}
+	return files;
+}
+
 - (NSURL *)url {
 	return _url;
 }
