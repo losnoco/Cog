@@ -35,5 +35,9 @@ extern gme_err_t readCallback(void* data, void* out, int count);
 // The properties of a track that plays `length` milliseconds at
 // `sampleRate`.
 + (NSDictionary *)propertiesWithSampleRate:(double)sampleRate length:(long)length;
+// Loads the m3u playlist named after the file at `url`, or, failing that,
+// the lines naming the file in the playlists beside it, as rips that give
+// each track its own playlist have them.
++ (void)loadPlaylistForURL:(NSURL *)url intoEmu:(Music_Emu *)emu;
 
 @end
