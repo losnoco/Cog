@@ -59,7 +59,7 @@ struct VisualizationsPaneView: View {
     @AppStorage("projectMHardCutThreshold") private var projectMHardCutThreshold = 2.0
     @AppStorage("projectMDetail") private var projectMDetail = ProjectMDetail.standard.rawValue
     @AppStorage("projectMResolution") private var projectMResolution = 1
-    @AppStorage("projectMFrameRate") private var projectMFrameRate = 0
+    @AppStorage("projectMFrameRate") private var projectMFrameRate = 30
 
     /// The theme folders of the presets in use, and those left out.
     @State private var themes: [String] = []

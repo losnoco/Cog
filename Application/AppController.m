@@ -911,7 +911,7 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@2.0 forKey:@"projectMHardCutThreshold"];
 	[userDefaultsValuesDict setObject:@1 forKey:@"projectMDetail"];
 	[userDefaultsValuesDict setObject:@1 forKey:@"projectMResolution"];
-	[userDefaultsValuesDict setObject:@0 forKey:@"projectMFrameRate"];
+	[userDefaultsValuesDict setObject:@30 forKey:@"projectMFrameRate"];
 	[userDefaultsValuesDict setObject:@[] forKey:@"projectMExcludedThemes"];
 	[userDefaultsValuesDict setObject:@NO forKey:@"projectMPresetLocked"];
 
