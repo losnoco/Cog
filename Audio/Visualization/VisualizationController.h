@@ -36,6 +36,17 @@ NS_ASSUME_NONNULL_BEGIN
 // `outPCM`. Returns how many were copied: 0 without audio, never a stand-in.
 - (int)copyHeardPCM:(float *)outPCM count:(int)count latencyOffset:(double)latency;
 
+// Stereo, for the projectM visualizer. The tap posts interleaved left/right
+// at the same rate as the mono audio, but only while a consumer is
+// registered; the ring holds the last ten seconds.
+@property(readonly) BOOL wantsStereo;
+- (void)addStereoConsumer;
+- (void)removeStereoConsumer;
+- (void)postStereoVisPCM:(const float *)inPCM frames:(int)frames;
+// As copyHeardPCM, in frames of two interleaved samples: `outPCM` holds
+// `frames * 2` floats. Returns how many frames were copied.
+- (int)copyHeardStereoPCM:(float *)outPCM frames:(int)frames latencyOffset:(double)latency;
+
 - (void)reset;
 
 - (void)freeFFTState:(void *_Nullable *_Nullable)state;

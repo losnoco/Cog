@@ -23,7 +23,13 @@
 	uint64_t visSamplesPosted;
 	BOOL ignoreLatency;
 	double sinePhase;
+
+	int stereoConsumers;
+	float *visStereo;
+	int visStereoCursor, visStereoFrames;
 }
+
+static const double kStereoSeconds = 10.0;
 
 + (VisualizationController *)sharedController {
 	static VisualizationController *_sharedController = nil;
@@ -65,6 +71,8 @@
 - (void)dealloc {
 	[sineTimer invalidate];
 	sineTimer = nil;
+	free(visStereo);
+	free(visAudio);
 }
 
 - (void)reset {
@@ -77,7 +85,87 @@
 		if(visAudio && visAudioSize) {
 			bzero(visAudio, sizeof(float) * visAudioSize);
 		}
+		visStereoCursor = 0;
+		if(visStereo && visStereoFrames) {
+			bzero(visStereo, sizeof(float) * 2 * visStereoFrames);
+		}
 	}
+}
+
+// Sizes the stereo ring for the current rate while anyone listens, and
+// frees it otherwise. Called with self locked.
+- (void)updateStereoRing {
+	int frames = (stereoConsumers > 0 && sampleRate > 0) ? (int)(sampleRate * kStereoSeconds) : 0;
+	if(frames == visStereoFrames) return;
+	free(visStereo);
+	visStereo = frames ? calloc((size_t)frames * 2, sizeof(float)) : NULL;
+	visStereoFrames = visStereo ? frames : 0;
+	visStereoCursor = 0;
+}
+
+- (BOOL)wantsStereo {
+	@synchronized(self) {
+		return stereoConsumers > 0;
+	}
+}
+
+- (void)addStereoConsumer {
+	@synchronized(self) {
+		stereoConsumers++;
+		[self updateStereoRing];
+	}
+}
+
+- (void)removeStereoConsumer {
+	@synchronized(self) {
+		if(stereoConsumers > 0) stereoConsumers--;
+		[self updateStereoRing];
+	}
+}
+
+- (void)postStereoVisPCM:(const float *)inPCM frames:(int)frames {
+	@synchronized(self) {
+		if(!visStereoFrames) return;
+		int framesRead = 0;
+		while(frames > 0) {
+			int framesToCopy = visStereoFrames - visStereoCursor;
+			if(framesToCopy > frames) framesToCopy = frames;
+			cblas_scopy(framesToCopy * 2, inPCM + framesRead * 2, 1, visStereo + visStereoCursor * 2, 1);
+			visStereoCursor += framesToCopy;
+			if(visStereoCursor >= visStereoFrames) visStereoCursor -= visStereoFrames;
+			frames -= framesToCopy;
+			framesRead += framesToCopy;
+		}
+	}
+}
+
+- (int)copyHeardStereoPCM:(float *)outPCM frames:(int)count latencyOffset:(double)latency {
+	if(!outPCM || count <= 0) return 0;
+
+	int framesRead = 0;
+	@synchronized(self) {
+		if(ignoreLatency || !visStereo || !visStereoFrames || !sampleRate) return 0;
+		int latencyFrames = (int)(sampleRate * (self->latency + latency));
+		if(latencyFrames < 0) latencyFrames = 0;
+		if(latencyFrames > visStereoFrames) latencyFrames = visStereoFrames;
+		int frames = count;
+		if(latencyFrames + frames > visStereoFrames) {
+			frames = visStereoFrames - latencyFrames;
+		}
+		int readCursor = visStereoCursor - latencyFrames - frames;
+		while(readCursor < 0)
+			readCursor += visStereoFrames;
+		while(frames > 0) {
+			int framesToRead = visStereoFrames - readCursor;
+			if(framesToRead > frames) framesToRead = frames;
+			cblas_scopy(framesToRead * 2, visStereo + readCursor * 2, 1, outPCM + framesRead * 2, 1);
+			framesRead += framesToRead;
+			readCursor += framesToRead;
+			frames -= framesToRead;
+			if(readCursor >= visStereoFrames) readCursor -= visStereoFrames;
+		}
+	}
+	return framesRead;
 }
 
 - (void)postSampleRate:(double)sampleRate {
@@ -100,6 +188,7 @@
 				}
 				self->visAudioSize = 0;
 			}
+			[self updateStereoRing];
 		}
 	}
 }
