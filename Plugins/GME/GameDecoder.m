@@ -91,6 +91,79 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		      @"encoding": @"synthesized" };
 }
 
+// All that `url` holds, or nil if it does not open.
+static NSData *dataForURL(NSURL *url) {
+	id audioSourceClass = NSClassFromString(@"AudioSource");
+	id<CogSource> source = [audioSourceClass audioSourceForURL:url];
+	if(![source open:url] || ![source seekable])
+		return nil;
+
+	[source seek:0 whence:SEEK_END];
+	long size = [source tell];
+	[source seek:0 whence:SEEK_SET];
+
+	NSMutableData *data = [NSMutableData dataWithLength:size];
+	[source read:[data mutableBytes] amount:size];
+	[source close];
+	return data;
+}
+
++ (void)loadPlaylistForURL:(NSURL *)url intoEmu:(Music_Emu *)emu {
+	NSURL *m3uurl = [url URLByDeletingPathExtension];
+	m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
+	NSData *data = dataForURL(m3uurl);
+
+	if(!data) {
+		// Rips made for NEZplug often give each track a playlist of its own,
+		// "01 Title.m3u" holding "Game.gbs::GBS,12,Title,0:04,,1", in place
+		// of one named after the file: gather the lines naming this file from
+		// the playlists beside it, in order.
+		id audioSourceClass = NSClassFromString(@"AudioSource");
+		id<CogSource> source = [audioSourceClass audioSourceForURL:url];
+		NSDictionary *files = nil;
+		if([source respondsToSelector:@selector(filesBesideURL:)])
+			files = [source filesBesideURL:url];
+
+		// This file's name, which an archive's URL does not end with.
+		NSString *name = nil;
+		for(NSString *fileName in files) {
+			if([[files[fileName] path] isEqualToString:[url path]]) {
+				name = fileName;
+				break;
+			}
+		}
+		NSMutableData *playlist = [NSMutableData data];
+		if(name) {
+			NSData *prefix = [[name stringByAppendingString:@"::"] dataUsingEncoding:NSUTF8StringEncoding];
+			for(NSString *fileName in [[files allKeys] sortedArrayUsingSelector:@selector(localizedStandardCompare:)]) {
+				if(![[[fileName pathExtension] lowercaseString] isEqualToString:@"m3u"])
+					continue;
+				NSData *contents = dataForURL(files[fileName]);
+				const char *line = [contents bytes];
+				const char *end = line + [contents length];
+				while(line < end) {
+					const char *next = line;
+					while(next < end && *next != '\r' && *next != '\n')
+						++next;
+					if((NSUInteger)(next - line) > [prefix length] && strncasecmp(line, [prefix bytes], [prefix length]) == 0) {
+						[playlist appendBytes:line length:next - line];
+						[playlist appendBytes:"\n" length:1];
+					}
+					line = next + 1;
+				}
+			}
+		}
+		data = playlist;
+	}
+
+	if([data length]) {
+		gme_err_t error = gme_load_m3u_data(emu, [data bytes], [data length]);
+		if(error) {
+			ALog(@"GME: Error loading playlist for %@: %s", url, error);
+		}
+	}
+}
+
 - (id)init {
 	self = [super init];
 	if(self) {
@@ -137,23 +210,7 @@ gme_err_t readCallback(void *data, void *out, int count) {
 		return NO;
 	}
 
-	NSURL *m3uurl = [[source url] URLByDeletingPathExtension];
-	m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
-	id audioSourceClass = NSClassFromString(@"AudioSource");
-	id<CogSource> m3usrc = [audioSourceClass audioSourceForURL:m3uurl];
-	if([m3usrc open:m3uurl]) {
-		if([m3usrc seekable]) {
-			[m3usrc seek:0 whence:SEEK_END];
-			long size = [m3usrc tell];
-			[m3usrc seek:0 whence:SEEK_SET];
-
-			void *data = malloc(size);
-			[m3usrc read:data amount:size];
-
-			gme_load_m3u_data(emu, data, size);
-			free(data);
-		}
-	}
+	[GameDecoder loadPlaylistForURL:[source url] intoEmu:emu];
 
 	int track_num = [[[source url] fragment] intValue]; // What if theres no fragment? Assuming we get 0.
 

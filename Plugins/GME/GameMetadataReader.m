@@ -64,22 +64,7 @@
 		return nil;
 	}
 
-	NSURL *m3uurl = [url URLByDeletingPathExtension];
-	m3uurl = [m3uurl URLByAppendingPathExtension:@"m3u"];
-	id<CogSource> m3usrc = [audioSourceClass audioSourceForURL:m3uurl];
-	if([m3usrc open:m3uurl]) {
-		if([m3usrc seekable]) {
-			[m3usrc seek:0 whence:SEEK_END];
-			long size = [m3usrc tell];
-			[m3usrc seek:0 whence:SEEK_SET];
-
-			void *data = malloc(size);
-			[m3usrc read:data amount:size];
-
-			gme_load_m3u_data(emu, data, size);
-			free(data);
-		}
-	}
+	[GameDecoder loadPlaylistForURL:url intoEmu:emu];
 
 	int track_num;
 	if([[url fragment] length] == 0)
