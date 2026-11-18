@@ -1787,6 +1787,12 @@
                                     <action selector="showWindow:" target="Hd4-Wy-Rfl" id="xfd-8T-SL4"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Cog Details…" alternate="YES" secondaryImage="info.circle" catalog="system" id="cDt-aL-0x1">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="showDetails:" target="Hd4-Wy-Rfl" id="cDt-aC-0x2"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1100">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>

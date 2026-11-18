@@ -370,6 +370,16 @@
         }
       }
     },
+    "Artwork" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iconos e ilustraciones"
+          }
+        }
+      }
+    },
     "Asking LRCLIB…" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1798,16 +1808,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Osciloscopio"
-          }
-        }
-      }
-    },
-    "Other Contributions" : {
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otras contribuciones"
           }
         }
       }

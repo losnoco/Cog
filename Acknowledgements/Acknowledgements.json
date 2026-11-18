@@ -6,7 +6,7 @@
   "midi",
   "app",
   "swift",
-  "contributors"
+  "artwork"
  ],
  "licenses": {
   "header:ThirdParty/rubberband/include/rubberband/RubberBandStretcher.h": "Rubber Band Library\nAn audio time-stretching and pitch-shifting library.\nCopyright 2007-2024 Particular Programs Ltd.\n\nThis program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License as\npublished by the Free Software Foundation; either version 2 of the\nLicense, or (at your option) any later version.  See the file\nCOPYING included with this distribution for more information.\n\nAlternatively, if you have a valid commercial licence for the\nRubber Band Library obtained by agreement with the copyright\nholders, you may redistribute and/or modify it under the terms\ndescribed in that licence.\n\nIf you wish to distribute code using the Rubber Band Library\nunder terms other than those of the GNU General Public License,\nyou must obtain a valid commercial licence before doing so.",
@@ -1305,73 +1305,7 @@
    ]
   },
   {
-   "group": "contributors",
-   "name": "Spotlight search and sorting helpers",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Matthew Leon Grinshpun"
-   ],
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Shuffle",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Eric Hanneken"
-   ],
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Playlist behavior settings",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Vasily Fedoseyev"
-   ],
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Last.fm scrobbling",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Leonardo Lobato"
-   ],
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Index formatter and file creation helper",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Zaphod Beeblebrox"
-   ],
-   "note": "Credited under the pseudonym used in the source.",
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Playlist header view",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Simon"
-   ],
-   "note": "Credited as named in the source; no surname given.",
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Mini mode menu title",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "UFO"
-   ],
-   "note": "Credited under the pseudonym used in the source.",
-   "texts": []
-  },
-  {
-   "group": "contributors",
+   "group": "artwork",
    "name": "Document icons and interface artwork",
    "license": "Not stated",
    "holders": [
@@ -1381,7 +1315,7 @@
    "texts": []
   },
   {
-   "group": "contributors",
+   "group": "artwork",
    "name": "Rubber Band settings icon",
    "url": "https://thenounproject.com/icon/rubber-band-4214821/",
    "license": "Noun Project license",

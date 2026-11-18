@@ -9,7 +9,7 @@
     "MPL-1.1": "Acknowledgements/Licenses/MPL-1.1.txt",
     "BSL-1.0": "Frameworks/OpenMPT/OpenMPT/src/mpt/LICENSE.BSL-1.0.txt"
   },
-  "groups": ["audio", "codecs", "chiptune", "midi", "app", "swift", "contributors"],
+  "groups": ["audio", "codecs", "chiptune", "midi", "app", "swift", "artwork"],
   "components": [
     { "group": "audio", "name": "Rubber Band Library", "version": "4.0", "url": "https://breakfastquay.com/rubberband/", "license": "GPL-2.0-or-later", "holders": ["Particular Programs Ltd."], "texts": ["header:ThirdParty/rubberband/include/rubberband/RubberBandStretcher.h", "shared:GPL-2.0"] },
     { "group": "audio", "name": "Signalsmith Stretch", "version": "1.3.0", "url": "https://github.com/Signalsmith-Audio/signalsmith-stretch", "license": "MIT", "holders": ["Geraint Luff / Signalsmith Audio Ltd."], "texts": ["file:ThirdParty/signalsmith/signalsmith-stretch/LICENSE.txt"] },
@@ -114,14 +114,7 @@
     { "group": "swift", "platforms": ["macOS"], "name": "Swift Atomics", "version": "1.3.1", "url": "https://github.com/apple/swift-atomics", "license": "Apache-2.0", "holders": ["Apple Inc. and the Swift project authors"], "texts": ["shared:Apache-2.0"] },
     { "group": "swift", "platforms": ["macOS"], "name": "Swift Collections", "version": "1.6.0", "url": "https://github.com/apple/swift-collections", "license": "Apache-2.0", "holders": ["Apple Inc. and the Swift project authors"], "texts": ["shared:Apache-2.0"] },
 
-    { "group": "contributors", "platforms": ["macOS"], "name": "Spotlight search and sorting helpers", "license": "GPL (part of Cog)", "holders": ["Matthew Leon Grinshpun"] },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Shuffle", "license": "GPL (part of Cog)", "holders": ["Eric Hanneken"] },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Playlist behavior settings", "license": "GPL (part of Cog)", "holders": ["Vasily Fedoseyev"] },
-    { "group": "contributors", "name": "Last.fm scrobbling", "license": "GPL (part of Cog)", "holders": ["Leonardo Lobato"] },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Index formatter and file creation helper", "license": "GPL (part of Cog)", "holders": ["Zaphod Beeblebrox"], "note": "Credited under the pseudonym used in the source." },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Playlist header view", "license": "GPL (part of Cog)", "holders": ["Simon"], "note": "Credited as named in the source; no surname given." },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Mini mode menu title", "license": "GPL (part of Cog)", "holders": ["UFO"], "note": "Credited under the pseudonym used in the source." },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Document icons and interface artwork", "license": "Not stated", "holders": ["tuurngait"], "note": "Credited under the handle recorded in the 2013 commit that introduced the icons; the artist's name is not recorded." },
-    { "group": "contributors", "platforms": ["macOS"], "name": "Rubber Band settings icon", "url": "https://thenounproject.com/icon/rubber-band-4214821/", "license": "Noun Project license", "holders": ["Lucas Helle"] }
+    { "group": "artwork", "platforms": ["macOS"], "name": "Document icons and interface artwork", "license": "Not stated", "holders": ["tuurngait"], "note": "Credited under the handle recorded in the 2013 commit that introduced the icons; the artist's name is not recorded." },
+    { "group": "artwork", "platforms": ["macOS"], "name": "Rubber Band settings icon", "url": "https://thenounproject.com/icon/rubber-band-4214821/", "license": "Noun Project license", "holders": ["Lucas Helle"] }
   ]
 }

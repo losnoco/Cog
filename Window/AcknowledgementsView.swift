@@ -103,7 +103,7 @@ struct AcknowledgementsView: View {
         case "midi": return "MIDI and Synthesis"
         case "app": return "Application Components"
         case "swift": return "Swift Packages"
-        case "contributors": return "Other Contributions"
+        case "artwork": return "Artwork"
         default: return LocalizedStringKey(group)
         }
     }
@@ -170,41 +170,6 @@ private struct ComponentDetail: View {
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-    }
-}
-
-final class AcknowledgementsWindowController: NSWindowController {
-    static let shared = AcknowledgementsWindowController()
-
-    init() {
-        super.init(window: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    override func loadWindow() {
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 760, height: 540),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable],
-            backing: .buffered,
-            defer: true
-        )
-        window.title = NSLocalizedString("Acknowledgements", comment: "Acknowledgements window title")
-        window.isReleasedWhenClosed = false
-        window.contentView = NSHostingView(rootView: AcknowledgementsView())
-        window.center()
-        window.setFrameAutosaveName("Acknowledgements")
-        self.window = window
-    }
-
-    override func showWindow(_ sender: Any?) {
-        // Without a nib, NSWindowController never calls loadWindow() itself.
-        if window == nil {
-            loadWindow()
-        }
-        super.showWindow(sender)
     }
 }
 

@@ -6,39 +6,121 @@
 //
 
 import Cocoa
+import SwiftUI
 
-class AboutWindowController: NSWindowController {
+/// One window with two faces. MainMenu.xib sends "About Cog" to
+/// `showWindow(_:)` for the card, and that item's Option alternate to
+/// `showDetails(_:)`.
+class AboutWindowController: NSWindowController, NSWindowDelegate {
+	private let model = AboutModel()
 
-    override func loadWindow() {
-        let hostingController = AboutViewHostingController()
-        if #available(macOS 13.0, *) {
-            // Keep the hosting controller from resizing the window to the
-            // SwiftUI fitting size after it has been centered.
-            hostingController.sizingOptions = []
-        }
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 600),
-            styleMask: [.titled, .closable, .fullSizeContentView],
-            backing: .buffered,
-            defer: false
-        )
-        window.contentViewController = hostingController
-        window.title = "About Cog"
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
-        window.isMovableByWindowBackground = true
-        window.appearance = NSAppearance(named: .darkAqua)
-        // Setting contentViewController sizes the window to the view, so
-        // restore the intended size before centering.
-        window.setContentSize(NSSize(width: 400, height: 600))
-        window.center()
-        self.window = window
-    }
+	private static let cardSize = NSSize(width: 320, height: 420)
+	private static let detailsMinSize = NSSize(width: 640, height: 420)
+	/// The details face keeps the size it was last given, for as long as
+	/// the app runs.
+	private var detailsSize = NSSize(width: 760, height: 560)
 
-    override func showWindow(_ sender: Any?) {
-        if window == nil {
-            loadWindow()
-        }
-        super.showWindow(sender)
-    }
+	/// Nil until the window has been laid out for a mode.
+	private var configuredMode: AboutMode?
+
+	override func loadWindow() {
+		let hostingController = NSHostingController(rootView: AboutView(model: model))
+		if #available(macOS 13.0, *) {
+			// The window's size follows the mode, not the SwiftUI fitting size.
+			hostingController.sizingOptions = []
+		}
+		let window = NSWindow(
+			contentRect: NSRect(origin: .zero, size: Self.cardSize),
+			styleMask: [.titled, .closable],
+			backing: .buffered,
+			defer: false
+		)
+		window.contentViewController = hostingController
+		window.title = NSLocalizedString("About Cog", comment: "About window title")
+		window.isReleasedWhenClosed = false
+		// The details face is resizable, but it neither zooms nor goes full
+		// screen.
+		window.collectionBehavior = [.fullScreenNone]
+		window.delegate = self
+		self.window = window
+
+		model.showDetails = { [weak self] tab in
+			self?.show(.details, tab: tab)
+		}
+	}
+
+	override func showWindow(_ sender: Any?) {
+		show(.card, tab: nil)
+	}
+
+	@IBAction func showDetails(_ sender: Any?) {
+		show(.details, tab: nil)
+	}
+
+	private func show(_ mode: AboutMode, tab: AboutTab?) {
+		// Without a nib, NSWindowController never calls loadWindow() itself.
+		if window == nil {
+			loadWindow()
+		}
+		guard let window else { return }
+		if let tab {
+			model.tab = tab
+		}
+		if configuredMode != mode {
+			configure(window, for: mode)
+		}
+		super.showWindow(nil)
+	}
+
+	/// Covers a double click on the title bar as well as the button.
+	func windowShouldZoom(_ window: NSWindow, toFrame newFrame: NSRect) -> Bool {
+		false
+	}
+
+	private func configure(_ window: NSWindow, for mode: AboutMode) {
+		if configuredMode == .details {
+			detailsSize = window.contentRect(forFrameRect: window.frame).size
+		}
+		let first = configuredMode == nil
+		configuredMode = mode
+		model.mode = mode
+
+		let size: NSSize
+		switch mode {
+		case .card:
+			window.styleMask = [.titled, .closable]
+			window.titleVisibility = .hidden
+			window.titlebarAppearsTransparent = true
+			window.isMovableByWindowBackground = true
+			window.contentMinSize = Self.cardSize
+			window.contentMaxSize = Self.cardSize
+			size = Self.cardSize
+		case .details:
+			window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+			window.titleVisibility = .visible
+			window.titlebarAppearsTransparent = false
+			window.isMovableByWindowBackground = false
+			window.contentMinSize = Self.detailsMinSize
+			window.contentMaxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+			size = detailsSize
+		}
+
+		// Changing the style mask can bring the button back enabled.
+		window.standardWindowButton(.zoomButton)?.isEnabled = false
+
+		var frame = window.frameRect(forContentRect: NSRect(origin: .zero, size: size))
+		if first || !window.isVisible {
+			window.setFrame(frame, display: false)
+			window.center()
+			return
+		}
+		// Keep the title bar's center where it is, as far as the screen allows.
+		let old = window.frame
+		frame.origin = NSPoint(x: old.midX - frame.width / 2, y: old.maxY - frame.height)
+		if let visible = window.screen?.visibleFrame {
+			frame.origin.x = max(visible.minX, min(frame.origin.x, visible.maxX - frame.width))
+			frame.origin.y = max(visible.minY, min(frame.origin.y, visible.maxY - frame.height))
+		}
+		window.setFrame(frame, display: true, animate: true)
+	}
 }

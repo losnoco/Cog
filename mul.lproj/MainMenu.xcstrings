@@ -4441,6 +4441,24 @@
         }
       }
     },
+    "cDt-aL-0x1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Cog Details…\"; ObjectID = \"cDt-aL-0x1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cog Details…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detalles de Cog…"
+          }
+        }
+      }
+    },
     "Dac-Fm-Cell.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Output: —\"; ObjectID = \"Dac-Fm-Cell\";",
       "extractionState" : "extracted_with_value",

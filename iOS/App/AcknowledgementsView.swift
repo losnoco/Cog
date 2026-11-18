@@ -90,7 +90,7 @@ struct AcknowledgementsView: View {
 		case "midi": "MIDI and Synthesis"
 		case "app": "Application Components"
 		case "swift": "Swift Packages"
-		case "contributors": "Other Contributions"
+		case "artwork": "Artwork"
 		default: LocalizedStringKey(group)
 		}
 	}

@@ -1,0 +1,73 @@
+{
+ "_comment": "The people credited in the About window's Credits tab (Window/CreditsView.swift). Hand-maintained and language-neutral: section titles are localized in CreditsView.swift by 'id'. 'contributors' merges the commit authors (git shortlog -sn --no-merges, aliases folded together, bots dropped) with the people credited only in source comments; keep it sorted. 'language' is a language code, shown as that language's name. Third-party code and data belong in components.json instead.",
+ "sections": [
+  {
+   "id": "created",
+   "people": [
+    {"name": "Vincent Spader"}
+   ]
+  },
+  {
+   "id": "maintained",
+   "people": [
+    {"name": "Christopher Snowhill", "url": "https://kode54.net"},
+    {"name": "Kevin López Brante", "url": "https://kddlb.cl"}
+   ]
+  },
+  {
+   "id": "contributors",
+   "people": [
+    {"name": "Adam Gashlin"},
+    {"name": "Anand Hegde"},
+    {"name": "Andrey Tabakov"},
+    {"name": "areff"},
+    {"name": "Autumn Ashton"},
+    {"name": "C.W. Betts"},
+    {"name": "Calvin Buckley"},
+    {"name": "Chris Funderburg"},
+    {"name": "Dan Leehr"},
+    {"name": "Devin Prater"},
+    {"name": "Dzmitry Neviadomski", "url": "https://github.com/nevack"},
+    {"name": "Eric Hanneken"},
+    {"name": "Hugh Cole-Baker"},
+    {"name": "Ilia Sharin"},
+    {"name": "Jan Weiß"},
+    {"name": "Jörn Heusipp"},
+    {"name": "LennyLip"},
+    {"name": "Leonardo Lobato"},
+    {"name": "lmsilva"},
+    {"name": "Luis Fuentes"},
+    {"name": "Marko Jurković"},
+    {"name": "Matthew Leon Grinshpun"},
+    {"name": "mscott"},
+    {"name": "o1"},
+    {"name": "pax"},
+    {"name": "Pedro Maciel"},
+    {"name": "Richard Kasendu"},
+    {"name": "Shoh Sewell"},
+    {"name": "Simon"},
+    {"name": "soneek"},
+    {"name": "sryegkahl"},
+    {"name": "svenforkbeard"},
+    {"name": "UFO"},
+    {"name": "Vasily Fedoseyev"},
+    {"name": "vurlix"},
+    {"name": "Zaphod Beeblebrox"}
+   ]
+  },
+  {
+   "id": "translation",
+   "people": [
+    {"name": "Kevin López Brante", "url": "https://kddlb.cl", "language": "es"}
+   ]
+  },
+  {
+   "id": "patrons",
+   "people": [
+    {"name": "deef.xyz"},
+    {"name": "Calvin"},
+    {"name": "G Douglas Davidson"}
+   ]
+  }
+ ]
+}

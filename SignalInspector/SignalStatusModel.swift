@@ -18,6 +18,10 @@ import CogAudio
 	/// Nil while nothing plays.
 	@Published private(set) var chain: SignalChain?
 
+	/// The notification's own description behind `chain`, for the About
+	/// window's diagnostics report, which is not translated.
+	private(set) var status: [AnyHashable: Any]?
+
 	/// For the status bar: "Bit perfect · Float32 · 48 kHz".
 	@objc private(set) var summary = NSLocalizedString("Audio: —", comment: "No active audio output information")
 	@objc private(set) var toolTip = NSLocalizedString("No active audio output.", comment: "No active audio output tooltip")
@@ -36,6 +40,7 @@ import CogAudio
 	}
 
 	func update(_ status: [AnyHashable: Any]?) {
+		self.status = status
 		chain = status.flatMap(SignalChain.init(status:))
 		if let chain {
 			summary = chain.summary

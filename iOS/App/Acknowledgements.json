@@ -6,7 +6,7 @@
   "midi",
   "app",
   "swift",
-  "contributors"
+  "artwork"
  ],
  "licenses": {
   "header:ThirdParty/rubberband/include/rubberband/RubberBandStretcher.h": "Rubber Band Library\nAn audio time-stretching and pitch-shifting library.\nCopyright 2007-2024 Particular Programs Ltd.\n\nThis program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License as\npublished by the Free Software Foundation; either version 2 of the\nLicense, or (at your option) any later version.  See the file\nCOPYING included with this distribution for more information.\n\nAlternatively, if you have a valid commercial licence for the\nRubber Band Library obtained by agreement with the copyright\nholders, you may redistribute and/or modify it under the terms\ndescribed in that licence.\n\nIf you wish to distribute code using the Rubber Band Library\nunder terms other than those of the GNU General Public License,\nyou must obtain a valid commercial licence before doing so.",
@@ -911,15 +911,6 @@
     "LRCLIB"
    ],
    "note": "Free and open lyrics database (lrclib.net), used to look up lyrics for tracks without their own. The link below is Cog's API authorization.",
-   "texts": []
-  },
-  {
-   "group": "contributors",
-   "name": "Last.fm scrobbling",
-   "license": "GPL (part of Cog)",
-   "holders": [
-    "Leonardo Lobato"
-   ],
    "texts": []
   }
  ]

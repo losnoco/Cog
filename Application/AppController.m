@@ -778,8 +778,9 @@ static BOOL consentLastEnabled = NO;
 	if(@available(macOS 26, *)) {
 		updatesItem.image = [NSImage imageWithSystemSymbolName:@"arrow.trianglehead.2.counterclockwise.rotate.90" accessibilityDescription:nil];
 	}
-	// Directly below About Cog
-	[appMenu insertItem:updatesItem atIndex:1];
+	// Directly below About Cog and its Option alternate, which have to stay
+	// next to each other.
+	[appMenu insertItem:updatesItem atIndex:2];
 
 	NSMenu *donateMenu = [[NSMenu alloc] initWithTitle:NSLocalizedStringFromTable(@"Donate", @"Direct", @"Application menu submenu of donation links.")];
 	donateMenu.autoenablesItems = NO;
