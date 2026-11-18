@@ -65,6 +65,7 @@
 		4679C83C35D5CF82C7EBB503 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB96A5BAE8525021B1DEB4DD /* SidMetadataReader.mm */; };
 		473B65903619C7E9B4DF1E8C /* libopus.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9589F8429AC738EFB618FA3E /* libopus.xcframework */; };
 		48425FFBE7EB53E2878E8481 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D59C40E79B719FEE54AFFC5 /* FileSource.m */; };
+		49F75DE7824677EAB795916E /* SidSongLengths.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5FDBE67E662C7F503CFCE73 /* SidSongLengths.mm */; };
 		4A94C004EF2247E61DD62906 /* HLSSegmentManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB1D83AA44D044896DAF7FF /* HLSSegmentManager.m */; };
 		4D564EF56BBC29798548AC15 /* nuked_sc55.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CDAD83EBE73EAC5C970B33D /* nuked_sc55.framework */; };
 		4DA55AC3B6337B4751DC6D26 /* HLSDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E46B0A6FBA07C23CEEB297 /* HLSDecoder.m */; };
@@ -771,11 +772,13 @@
 		A2DAE782D8EC423E4681516B /* CVbriHeader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; fileEncoding = "4"; name = CVbriHeader.c; path = ../Plugins/minimp3/ThirdParty/CVbriHeader.c; sourceTree = SOURCE_ROOT; };
 		A322EB294ED4B2F9C65653DC /* SCPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SCPlayer.mm; path = ../Plugins/MIDI/MIDI/SCPlayer.mm; sourceTree = SOURCE_ROOT; };
 		A57431BC2D46826BFE55992E /* ArchiveContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = ArchiveContainer.h; path = ../Plugins/ArchiveSource/ArchiveSource/ArchiveContainer.h; sourceTree = SOURCE_ROOT; };
+		A5FDBE67E662C7F503CFCE73 /* SidSongLengths.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SidSongLengths.mm; path = ../Plugins/sidplay/SidSongLengths.mm; sourceTree = SOURCE_ROOT; };
 		A68F61C62CE9B27D10850CB1 /* jxsMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = jxsMetadataReader.h; path = ../Plugins/Syntrax/Syntrax/jxsMetadataReader.h; sourceTree = SOURCE_ROOT; };
 		A6DC7906614491BDF2E01CF7 /* libtag.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libtag.xcframework; path = ../ThirdParty/taglib/ios/libtag.xcframework; sourceTree = SOURCE_ROOT; };
 		A7C9A4FFC588A2137FC04653 /* TagLibMetadataReader.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibMetadataReader.m; path = ../Plugins/TagLib/TagLibMetadataReader.m; sourceTree = SOURCE_ROOT; };
 		A7D3342E943AD2F82E286CAF /* HLSSegmentManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HLSSegmentManager.h; path = ../Plugins/HLS/HLSSegmentManager.h; sourceTree = SOURCE_ROOT; };
 		A801CED40C6DA0CA7E634D2A /* OpusDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = OpusDecoder.h; path = ../Plugins/Opus/Opus/OpusDecoder.h; sourceTree = SOURCE_ROOT; };
+		A88FF21C170809EF7EE8762A /* SidSongLengths.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SidSongLengths.h; path = ../Plugins/sidplay/SidSongLengths.h; sourceTree = SOURCE_ROOT; };
 		A8E46B0A6FBA07C23CEEB297 /* HLSDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSDecoder.m; path = ../Plugins/HLS/HLSDecoder.m; sourceTree = SOURCE_ROOT; };
 		A96A4CE512DDD3E6A2FDBF59 /* VGMDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VGMDecoder.h; path = ../Plugins/vgmstream/vgmstream/VGMDecoder.h; sourceTree = SOURCE_ROOT; };
 		A9AC7DC0913152952B471D54 /* libvgmstream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmstream.xcodeproj; path = ../Frameworks/vgmstream/libvgmstream.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1054,6 +1057,8 @@
 				D5EC8EF46E0D8E8D4E34543B /* SidDecoder.mm */,
 				EF38CB0FC6E3A45D667E247A /* SidMetadataReader.h */,
 				CB96A5BAE8525021B1DEB4DD /* SidMetadataReader.mm */,
+				A88FF21C170809EF7EE8762A /* SidSongLengths.h */,
+				A5FDBE67E662C7F503CFCE73 /* SidSongLengths.mm */,
 				B666CD9F251D5201F3B8093E /* roms.cpp */,
 				ECE3C4E2FC2391C4F0A0D622 /* roms.hpp */,
 			);
@@ -2272,6 +2277,7 @@
 				96FE4A93EA901F97059D43F4 /* SidContainer.mm in Sources */,
 				3F48E4C939BAAE31122BABAA /* SidDecoder.mm in Sources */,
 				4679C83C35D5CF82C7EBB503 /* SidMetadataReader.mm in Sources */,
+				49F75DE7824677EAB795916E /* SidSongLengths.mm in Sources */,
 				AFAA97A7CD84215BC9275441 /* roms.cpp in Sources */,
 				EB63C157F25CBF74304C4835 /* jxsContainer.m in Sources */,
 				A8FF5F24BDA2A4CCD7962A23 /* jxsDecoder.m in Sources */,

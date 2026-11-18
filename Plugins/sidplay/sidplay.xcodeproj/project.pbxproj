@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8314D8091A35654900EEE8E6 /* SidDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8041A35654900EEE8E6 /* SidDecoder.mm */; };
 		8314D80A1A35654900EEE8E6 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */; };
+		83C0FFEE2EC0539000A1B2C5 /* SidSongLengths.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83C0FFEE2EC0539000A1B2C4 /* SidSongLengths.mm */; };
 		8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8314D8081A35654900EEE8E6 /* SidContainer.mm */; };
 		833A8998286FF2E30022E036 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 833A8996286FF2E30022E036 /* Cocoa.framework */; };
 		834D19122D7F957300F13B89 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 834D19112D7F957300F13B89 /* CogAudio.framework */; };
@@ -47,10 +48,13 @@
 		8314D8041A35654900EEE8E6 /* SidDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SidDecoder.mm; sourceTree = SOURCE_ROOT; };
 		8314D8051A35654900EEE8E6 /* SidMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidMetadataReader.h; sourceTree = SOURCE_ROOT; };
 		8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SidMetadataReader.mm; sourceTree = SOURCE_ROOT; };
+		83C0FFEE2EC0539000A1B2C3 /* SidSongLengths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidSongLengths.h; sourceTree = SOURCE_ROOT; };
+		83C0FFEE2EC0539000A1B2C4 /* SidSongLengths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SidSongLengths.mm; sourceTree = SOURCE_ROOT; };
 		8314D8071A35654900EEE8E6 /* SidContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidContainer.h; sourceTree = SOURCE_ROOT; };
 		8314D8081A35654900EEE8E6 /* SidContainer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SidContainer.mm; sourceTree = SOURCE_ROOT; };
 		8314D80C1A35657700EEE8E6 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		8314D80D1A35658C00EEE8E6 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
+		83C0FFEE2EC0539000A1B2C6 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		8314D80E1A3565AC00EEE8E6 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		833A8996286FF2E30022E036 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		834A42A6287AEAAB00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
@@ -101,11 +105,14 @@
 				836F5BEB1A357915002730CC /* roms.hpp */,
 				8314D80E1A3565AC00EEE8E6 /* PlaylistControllerEnums.h */,
 				8314D80D1A35658C00EEE8E6 /* Logging.h */,
+				83C0FFEE2EC0539000A1B2C6 /* SandboxBroker.h */,
 				8314D80C1A35657700EEE8E6 /* Plugin.h */,
 				8314D8031A35654900EEE8E6 /* SidDecoder.h */,
 				8314D8041A35654900EEE8E6 /* SidDecoder.mm */,
 				8314D8051A35654900EEE8E6 /* SidMetadataReader.h */,
 				8314D8061A35654900EEE8E6 /* SidMetadataReader.mm */,
+				83C0FFEE2EC0539000A1B2C3 /* SidSongLengths.h */,
+				83C0FFEE2EC0539000A1B2C4 /* SidSongLengths.mm */,
 				8314D8071A35654900EEE8E6 /* SidContainer.h */,
 				8314D8081A35654900EEE8E6 /* SidContainer.mm */,
 				8314D6341A354DFE00EEE8E6 /* Supporting Files */,
@@ -230,6 +237,7 @@
 			files = (
 				8314D80B1A35654900EEE8E6 /* SidContainer.mm in Sources */,
 				8314D80A1A35654900EEE8E6 /* SidMetadataReader.mm in Sources */,
+				83C0FFEE2EC0539000A1B2C5 /* SidSongLengths.mm in Sources */,
 				836F5BEC1A357915002730CC /* roms.cpp in Sources */,
 				8314D8091A35654900EEE8E6 /* SidDecoder.mm in Sources */,
 			);

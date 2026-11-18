@@ -7,6 +7,7 @@
 //
 
 #import "SidDecoder.h"
+#import "SidSongLengths.h"
 
 #import <sidplayfp/residfp.h>
 
@@ -299,8 +300,17 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 		n_channels = 1;
 
 		length = [SidDecoder lengthForSampleRate:sampleRate];
+		lengthIsKnown = NO;
 
-		tune->selectSong(track_num);
+		unsigned int song = tune->selectSong(track_num);
+
+		// A song the collection's database lists plays for exactly as long
+		// as it says, which is where it ends or comes around again.
+		double seconds = [SidSongLengths lengthOfSong:song ofTune:tune url:url];
+		if(seconds > 0.0) {
+			length = (long)ceil(sampleRate * seconds);
+			lengthIsKnown = YES;
+		}
 
 		if(![SidDecoder loadTune:tune sampleRate:sampleRate engine:&engine builder:&builder channels:&n_channels])
 			return NO;
@@ -315,7 +325,7 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 	}
 
 	renderedTotal = 0;
-	fadeTotal = fadeRemain = (int)ceil(sampleRate * defaultFade);
+	fadeTotal = fadeRemain = lengthIsKnown ? 0 : (int)ceil(sampleRate * defaultFade);
 
 	[self willChangeValueForKey:@"properties"];
 	[self didChangeValueForKey:@"properties"];
@@ -364,7 +374,11 @@ static void sidTuneLoader(const char *fileName, std::vector<uint8_t> &bufferRef)
 
 	renderedTotal += rendered;
 
-	if(!IsRepeatOneSet() && renderedTotal >= length) {
+	if(!IsRepeatOneSet() && renderedTotal >= length && fadeTotal <= 0) {
+		// No fade: the song ends at its length, to the frame.
+		long over = renderedTotal - length;
+		rendered = over < rendered ? (int)(rendered - over) : 0;
+	} else if(!IsRepeatOneSet() && renderedTotal >= length) {
 		int16_t *sampleBuf = buffer;
 		long fadeEnd = fadeRemain - rendered;
 		if(fadeEnd < 0)

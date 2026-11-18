@@ -25,6 +25,9 @@
 
 	id<CogSource> source;
 	long length;
+	// The length is the song's own, from the collection's database, and not
+	// the default one, which fades out.
+	BOOL lengthIsKnown;
 
 	NSString *currentUrl;
 	BOOL hintAdded;

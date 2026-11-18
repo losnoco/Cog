@@ -9,6 +9,7 @@
 #import "SidContainer.h"
 #import "SidDecoder.h"
 #import "SidMetadataReader.h"
+#import "SidSongLengths.h"
 
 #import "Logging.h"
 
@@ -61,6 +62,8 @@
 	unsigned int subsongs = 0;
 	NSDictionary *properties = nil;
 	NSDictionary *metadata = nil;
+	NSArray<NSNumber *> *songLengths = nil;
+	double sampleRate = [SidDecoder sampleRate];
 	SidTune *tune = NULL;
 
 	try {
@@ -87,7 +90,6 @@
 			metadata = [SidMetadataReader metadataForTuneInfo:info];
 
 			if(![SidDecoder loadsCompanionForURL:url]) {
-				double sampleRate = [SidDecoder sampleRate];
 				sidplayfp *engine = NULL;
 				sidbuilder *builder = NULL;
 				int channels = 1;
@@ -104,8 +106,10 @@
 				delete builder;
 				delete engine;
 
-				if(loaded)
+				if(loaded) {
 					properties = [SidDecoder propertiesWithSampleRate:sampleRate length:[SidDecoder lengthForSampleRate:sampleRate] channels:channels];
+					songLengths = [SidSongLengths lengthsForTune:tune url:url];
+				}
 			}
 		}
 
@@ -131,9 +135,20 @@
 		[merged addEntriesFromDictionary:metadata];
 		NSDictionary *entryInfo = [NSDictionary dictionaryWithDictionary:merged];
 
+		// Each song plays for the length the collection's database gives
+		// it, as the decoder finds it, or for the default one.
 		NSMutableDictionary *info = [NSMutableDictionary dictionaryWithCapacity:[tracks count]];
+		NSUInteger song = 0;
 		for(NSURL *track in tracks) {
-			info[track] = entryInfo;
+			double seconds = song < [songLengths count] ? [songLengths[song] doubleValue] : 0.0;
+			if(seconds > 0.0) {
+				NSMutableDictionary *songInfo = [entryInfo mutableCopy];
+				songInfo[@"totalFrames"] = @((long)ceil(sampleRate * seconds));
+				info[track] = songInfo;
+			} else {
+				info[track] = entryInfo;
+			}
+			++song;
 		}
 		*trackInfo = info;
 	}
