@@ -41,6 +41,7 @@ Each format is handled by a plugin under [`Plugins/`](Plugins):
 - ReplayGain by album or track, with clipping prevention, falling back to
   Sound Check
 - An equalizer with presets
+- Bauer (bs2b) crossfeed for stereo on headphones
 - Speed and pitch control with the Rubber Band or Signalsmith Stretch
   engines, or plain varispeed like a record player
 - Spatial audio: surround tracks are spatialized on headphones and stereo

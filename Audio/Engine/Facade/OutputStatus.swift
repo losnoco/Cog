@@ -223,6 +223,12 @@ struct OutputStatus: Equatable {
 					CogAudioOutputStageBandFrequenciesKey: EqualizerStage.bands,
 					CogAudioOutputStageBandGainsKey: gainsDB.map(Double.init),
 				] as [String: Any]
+			case let .crossfeed(applies, cutoffHz, feedDB):
+				userInfo[CogAudioOutputCrossfeedKey] = [
+					CogAudioOutputStageActiveKey: applies,
+					CogAudioOutputStageCutoffKey: cutoffHz,
+					CogAudioOutputStageFeedKey: feedDB,
+				] as [String: Any]
 			}
 		}
 		if stageModifications.contains(CogAudioOutputModificationSpatialAudio) {

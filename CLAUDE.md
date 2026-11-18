@@ -132,7 +132,7 @@ decoder (ObjC plugin) → Feeder thread → deep SPSC ring → DSP thread → sh
     bypass it bit-exactly.
   - Applies ReplayGain and writes seam markers.
 - **DSP** (`DSP/`, through `Pump/`): in-place stages in a fixed order: time-stretch (Rubber Band or Signalsmith),
-  FreeSurround, EQ, then the visualization tap. Stages report `pendingFrames`, so that track-start
+  FreeSurround, EQ, crossfeed, then the visualization tap. Stages report `pendingFrames`, so that track-start
   announcements line up with what is actually heard.
 - **Render** (`Core/CogRender.c`, `Core/CogRing.c`) must stay real-time safe: no locks, allocation, ARC,
   Objective-C messaging or autorelease pools. On an underrun it fills with silence and counts the event. Ring

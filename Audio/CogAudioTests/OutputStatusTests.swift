@@ -126,7 +126,8 @@ final class OutputStatusTests: XCTestCase {
 		let staged = status(source(bits: 16)) {
 			$0.processing.inspections = [.timeStretch(engine: "finer", tempo: 1.25, pitch: 1),
 			                             .freeSurround(upmixes: true, output: surround),
-			                             .equalizer(preampDB: -3, gainsDB: gains)]
+			                             .equalizer(preampDB: -3, gainsDB: gains),
+			                             .crossfeed(applies: true, cutoffHz: 650, feedDB: 9.5)]
 			$0.gainSource = .album
 			$0.gainPeakLimited = true
 			$0.bufferFrames = 882
@@ -143,6 +144,10 @@ final class OutputStatusTests: XCTestCase {
 		XCTAssertEqual(equalizer[CogAudioOutputStagePreampKey] as? Double, -3)
 		XCTAssertEqual((equalizer[CogAudioOutputStageBandGainsKey] as? [Double])?.first, 2)
 		XCTAssertEqual((equalizer[CogAudioOutputStageBandFrequenciesKey] as? [Double])?.count, 31)
+		let crossfeed = try XCTUnwrap(userInfo[CogAudioOutputCrossfeedKey] as? [String: Any])
+		XCTAssertEqual(crossfeed[CogAudioOutputStageActiveKey] as? Bool, true)
+		XCTAssertEqual(crossfeed[CogAudioOutputStageCutoffKey] as? Double, 650)
+		XCTAssertEqual(crossfeed[CogAudioOutputStageFeedKey] as? Double, 9.5)
 		XCTAssertEqual(userInfo[CogAudioOutputTrackGainSourceKey] as? String, "album")
 		XCTAssertEqual(userInfo[CogAudioOutputTrackGainPeakLimitedKey] as? Bool, true)
 		XCTAssertEqual(userInfo[CogAudioOutputBufferFramesKey] as? Int, 882)

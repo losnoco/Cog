@@ -698,6 +698,16 @@
         }
       }
     },
+    "Crossfeed" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crossfeed"
+          }
+        }
+      }
+    },
     "Cuesheet" : {
       "localizations" : {
         "es" : {
@@ -725,6 +735,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fecha"
+          }
+        }
+      }
+    },
+    "Default" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predeterminado"
           }
         }
       }
@@ -1209,6 +1229,16 @@
         }
       }
     },
+    "Headphones" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audífonos"
+          }
+        }
+      }
+    },
     "Hi-Speed Scrubbing" : {
       "localizations" : {
         "es" : {
@@ -1376,6 +1406,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duración"
+          }
+        }
+      }
+    },
+    "Level" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nivel"
           }
         }
       }
@@ -1554,6 +1594,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mezclado"
+          }
+        }
+      }
+    },
+    "Mixes the lower part of each stereo channel into the other, quieter, as both ears hear a speaker. Stereo only." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mezcla la parte grave de cada canal estéreo en el otro, más bajo, tal como ambos oídos escuchan un parlante. Solo para estéreo."
           }
         }
       }

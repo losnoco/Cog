@@ -74,6 +74,9 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputFreeSurroundKey;
 // NSDictionary: the equalizer, while it is on. Preamp, band frequencies and
 // band gains.
 FOUNDATION_EXPORT NSString *const CogAudioOutputEqualizerKey;
+// NSDictionary: Bauer crossfeed, while it is on. Active, and the cut
+// frequency and feed level of its preset.
+FOUNDATION_EXPORT NSString *const CogAudioOutputCrossfeedKey;
 // NSDictionary: the spatial mixer, while it renders the track. Spatial
 // output ("headphones", "builtInSpeakers" or "externalSpeakers") and head
 // tracking.
@@ -98,6 +101,9 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputStageChannelConfigKey;
 FOUNDATION_EXPORT NSString *const CogAudioOutputStagePreampKey;
 FOUNDATION_EXPORT NSString *const CogAudioOutputStageBandFrequenciesKey;
 FOUNDATION_EXPORT NSString *const CogAudioOutputStageBandGainsKey;
+// NSNumber (double), Hz; NSNumber (double), dB.
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageCutoffKey;
+FOUNDATION_EXPORT NSString *const CogAudioOutputStageFeedKey;
 // NSString; NSNumber (BOOL).
 FOUNDATION_EXPORT NSString *const CogAudioOutputStageSpatialOutputKey;
 FOUNDATION_EXPORT NSString *const CogAudioOutputStageHeadTrackingKey;
@@ -123,6 +129,7 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationTrackGain;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationTimeStretch;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationFreeSurround;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationEqualizer;
+FOUNDATION_EXPORT NSString *const CogAudioOutputModificationCrossfeed;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationSpatialAudio;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationChannelLayout;
 FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;

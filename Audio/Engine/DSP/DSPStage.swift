@@ -91,4 +91,7 @@ public enum StageInspection: Equatable {
 	case freeSurround(upmixes: Bool, output: StreamFormat)
 	/// The equalizer's preamp and its 31 band gains, in dB.
 	case equalizer(preampDB: Float, gainsDB: [Float])
+	/// Crossfeed: `applies` is false while the input is not stereo, which
+	/// passes through; the preset's cut frequency and feed level.
+	case crossfeed(applies: Bool, cutoffHz: Double, feedDB: Double)
 }

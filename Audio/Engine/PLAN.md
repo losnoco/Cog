@@ -265,6 +265,10 @@ Each stage ships on its own and leaves the old engine working.
      blocks, the half-block lag removed and the tail drained, so the
      output is exactly as long as the input (the old node zero-padded short
      chunks mid-stream).
+   - `CrossfeedStage` (added later, after the EQ): Bauer crossfeed for
+     headphones, libbs2b's two single-pole filters per channel written in
+     Swift, with its three presets (`enableCrossfeed`, `crossfeedPreset`).
+     Stereo only, no latency, and a preset change keeps the filter state.
    - `HRTFStage`: `HeadphoneFilter` with the SADIE D02 set, primed from an
      LPC backward extrapolation after each start or seek; any layout in,
      binaural stereo out. Head tracking moves to a Swift `HeadTracker`

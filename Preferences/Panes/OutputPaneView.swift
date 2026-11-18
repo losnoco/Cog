@@ -14,6 +14,12 @@ private final class OutputPrefs: ObservableObject {
     @Published var enableFSurround: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableFSurround, forKey: "enableFSurround") }
     }
+    @Published var enableCrossfeed: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(enableCrossfeed, forKey: "enableCrossfeed") }
+    }
+    @Published var crossfeedPreset: String {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(crossfeedPreset, forKey: "crossfeedPreset") }
+    }
     @Published var enableHeadTracking: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(enableHeadTracking, forKey: "enableHeadTracking") }
     }
@@ -54,6 +60,8 @@ private final class OutputPrefs: ObservableObject {
         enableSpatialAudio = d.bool(forKey: "enableSpatialAudio")
         enableHeadTracking = d.bool(forKey: "enableHeadTracking")
         enableFSurround = d.bool(forKey: "enableFSurround")
+        enableCrossfeed = d.bool(forKey: "enableCrossfeed")
+        crossfeedPreset = d.string(forKey: "crossfeedPreset") ?? "default"
         volumeLimit = d.object(forKey: "volumeLimit") as? Bool ?? true
         suspendOutputOnPause = d.object(forKey: "suspendOutputOnPause") as? Bool ?? true
         enableFading = d.object(forKey: "enableFading") as? Bool ?? true
@@ -230,6 +238,19 @@ struct OutputPaneView: View {
                 .help("Upmixes stereo to 5.1, for surround speakers or for spatial audio on headphones.")
             } header: {
                 Text("Spatial audio").bold()
+            }
+            Section {
+                Toggle("Crossfeed stereo for headphones", isOn: $prefs.enableCrossfeed)
+                    .help("Mixes the lower part of each stereo channel into the other, quieter, as both ears hear a speaker. Hard-panned recordings tire less on headphones. Stereo only: surround, and stereo that FreeSurround upmixes, play as they are.")
+                Picker("Crossfeed level:", selection: $prefs.crossfeedPreset) {
+                    Text("Default").tag("default")
+                    Text(verbatim: "Chu Moy").tag("chuMoy")
+                    Text(verbatim: "Jan Meier").tag("janMeier")
+                }
+                .disabled(!prefs.enableCrossfeed)
+                .help("The presets of Bauer stereophonic-to-binaural (bs2b) crossfeed. Default is the strongest and closest to speakers; Jan Meier's is the mildest.")
+            } header: {
+                Text("Headphones").bold()
             }
         }
     }

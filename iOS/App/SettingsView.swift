@@ -17,6 +17,8 @@ struct SettingsView: View {
 	@AppStorage("stopWhenQueueEmpties") private var stopWhenQueueEmpties = false
 	@AppStorage("enableSpatialAudio") private var spatialAudio = false
 	@AppStorage("enableHeadTracking") private var headTracking = false
+	@AppStorage("enableCrossfeed") private var crossfeed = false
+	@AppStorage("crossfeedPreset") private var crossfeedPreset = "default"
 	@AppStorage("enableLrclib") private var lrclib = false
 	@AppStorage(WaveformModel.enabledKey) private var showWaveform = true
 	@AppStorage(WaveformModel.logScaleKey) private var waveformLogScale = false
@@ -93,6 +95,19 @@ struct SettingsView: View {
 					Text("Spatial Audio")
 				} footer: {
 					Text("Surround tracks are spatialized on headphones and the built-in speaker.")
+				}
+				Section {
+					Toggle("Crossfeed", isOn: $crossfeed)
+					Picker("Level", selection: $crossfeedPreset) {
+						Text("Default").tag("default")
+						Text(verbatim: "Chu Moy").tag("chuMoy")
+						Text(verbatim: "Jan Meier").tag("janMeier")
+					}
+					.disabled(!crossfeed)
+				} header: {
+					Text("Headphones")
+				} footer: {
+					Text("Mixes the lower part of each stereo channel into the other, quieter, as both ears hear a speaker. Stereo only.")
 				}
 				Section {
 					Toggle("Look Up Lyrics", isOn: $lrclib)

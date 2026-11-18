@@ -60,6 +60,7 @@ import Foundation
 	/// reference to whichever equalizer it was last given.
 	private let timeStretch = TimeStretchStage()
 	private let freeSurround = FreeSurroundStage()
+	private let crossfeed = CrossfeedStage()
 	private let visualization = VisualizationTap()
 
 	private lazy var equalizer: EqualizerStage = {
@@ -387,7 +388,7 @@ import Foundation
 		plannedProperties = properties
 
 		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: plan.dop),
-		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, visualization], carrier: plan.dop,
+		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, crossfeed, visualization], carrier: plan.dop,
 		                      captureDirectory: EngineCapture.directory),
 		      let renderer = cog_renderer_create(pump.ring) else {
 			return false
@@ -1084,6 +1085,10 @@ import Foundation
 		}
 		if ran.contains(ObjectIdentifier(equalizer)) {
 			modifications.append(CogAudioOutputModificationEqualizer)
+		}
+		// Crossfeed mixes stereo and passes anything else through.
+		if processing.inspections.contains(where: { if case .crossfeed(true, _, _) = $0 { return true } else { return false } }) {
+			modifications.append(CogAudioOutputModificationCrossfeed)
 		}
 		if outputPlan.spatial {
 			modifications.append(CogAudioOutputModificationSpatialAudio)

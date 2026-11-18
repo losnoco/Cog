@@ -248,6 +248,14 @@ struct SignalChain: Equatable {
 			                          detail: SignalFormatting.equalizer(equalizer)))
 		}
 
+		if let crossfeed = status[CogAudioOutputCrossfeedKey] as? [String: Any] {
+			let active = crossfeed[CogAudioOutputStageActiveKey] as? Bool ?? false
+			stages.append(SignalStage(id: "crossfeed", name: NSLocalizedString("Crossfeed", comment: "Signal Inspector stage: Bauer crossfeed for headphones"),
+			                          state: active ? .modifies : .bypassed,
+			                          detail: active ? SignalFormatting.crossfeed(crossfeed) :
+			                          	NSLocalizedString("Mixes stereo only; passes this through", comment: "Signal Inspector: crossfeed is on but the audio is not stereo")))
+		}
+
 		if modifies(CogAudioOutputModificationChannelLayout) {
 			stages.append(SignalStage(id: "channels", name: NSLocalizedString("Channel mapping", comment: "Signal Inspector stage: channels fitted to the device"),
 			                          state: .modifies, detail: describe(CogAudioOutputModificationChannelLayout)))
@@ -472,6 +480,8 @@ enum SignalFormatting {
 			return NSLocalizedString("Upmixed by FreeSurround", comment: "Cog signal-integrity reason")
 		case CogAudioOutputModificationEqualizer:
 			return NSLocalizedString("Equalizer applied", comment: "Cog signal-integrity reason")
+		case CogAudioOutputModificationCrossfeed:
+			return NSLocalizedString("Crossfeed applied", comment: "Cog signal-integrity reason")
 		case CogAudioOutputModificationSpatialAudio:
 			return NSLocalizedString("Spatialized for headphones by macOS", comment: "Cog signal-integrity reason")
 		default:
@@ -532,6 +542,14 @@ enum SignalFormatting {
 			parts.append(NSLocalizedString("bands flat", comment: "Signal Inspector: no equalizer band is moved"))
 		}
 		return parts.joined(separator: " · ")
+	}
+
+	/// "Below 700 Hz, 4.5 dB down": what each channel feeds the other.
+	static func crossfeed(_ crossfeed: [String: Any]) -> String {
+		let cutoff = crossfeed[CogAudioOutputStageCutoffKey] as? Double ?? 0
+		let feed = crossfeed[CogAudioOutputStageFeedKey] as? Double ?? 0
+		return String(format: NSLocalizedString("Below %ld Hz, %@ dB down", comment: "Signal Inspector: what crossfeed mixes into the other channel, its cut frequency and how far below the direct signal"),
+		              Int(cutoff.rounded()), String.localizedStringWithFormat("%.1f", feed))
 	}
 
 	static func spatialOutput(_ output: String?) -> String {
