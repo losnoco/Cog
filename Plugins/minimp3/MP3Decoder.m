@@ -38,6 +38,11 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 }
 
 - (BOOL)open:(id<CogSource>)source {
+	// "file.mp3#2" is a chapter FFMPEGContainer listed, which only FFmpeg
+	// knows how to play; refusing it passes it to FFmpeg's decoder, next in
+	// priority. (A cue sheet's tracks open their file without a fragment.)
+	if([[[source url] fragment] length]) return NO;
+
 	_source = source;
 
 	seekable = [source seekable];
