@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 07DB5F3C0ED353A900C2E3EF /* AudioMetadataWriter.h */; };
-		07DB5F3F0ED353A900C2E3EF /* AudioMetadataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 07DB5F3D0ED353A900C2E3EF /* AudioMetadataWriter.m */; };
 		17A2D3C50B8D1D37000778C4 /* AudioDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 17A2D3C30B8D1D37000778C4 /* AudioDecoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17A2D3C60B8D1D37000778C4 /* AudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */; };
 		17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 17ADB13A0B97926D00257CA2 /* AudioSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,6 +29,7 @@
 		17F94DD50B8D0F7000A34E87 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DD30B8D0F7000A34E87 /* PluginController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 17F94DD40B8D0F7000A34E87 /* PluginController.mm */; };
 		17F94DDD0B8D101100A34E87 /* Plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 17F94DDC0B8D101100A34E87 /* Plugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AD88ED57A490620B20C5681 /* CogExceptionCatching.h in Headers */ = {isa = PBXBuildFile; fileRef = D4FBBB369A684384871FD68E /* CogExceptionCatching.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		831A50142865A7FD0049CFE4 /* rsstate.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 831A50132865A7FD0049CFE4 /* rsstate.hpp */; };
 		831A50162865A8800049CFE4 /* rsstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 831A50152865A8800049CFE4 /* rsstate.cpp */; };
 		831A50182865A8B30049CFE4 /* rsstate.h in Headers */ = {isa = PBXBuildFile; fileRef = 831A50172865A8B30049CFE4 /* rsstate.h */; };
@@ -80,13 +79,12 @@
 		83F9FFF62D6EC43900026576 /* soxr.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F9FFF02D6EC43900026576 /* soxr.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83F9FFF82D6EC43900026576 /* libsoxr.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83F9FFF22D6EC43900026576 /* libsoxr.0.dylib */; platformFilters = (macos, ); };
 		8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1AD88ED57A490620B20C5681 /* CogExceptionCatching.h in Headers */ = {isa = PBXBuildFile; fileRef = D4FBBB369A684384871FD68E /* CogExceptionCatching.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D70822D9394E0B6D56EE6123 /* CogExceptionCatching.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D1661D35A9335C079703CA /* CogExceptionCatching.m */; };
 		8E8D3D300CBAEE6E00135C1B /* AudioContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */; };
 		B0575F2D0D687A0800411D77 /* Helper.h in Headers */ = {isa = PBXBuildFile; fileRef = B0575F2C0D687A0800411D77 /* Helper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B0575F300D687A4000411D77 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = B0575F2F0D687A4000411D77 /* Helper.m */; };
-		C0C0A0010000000000000002 /* libsoxr.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C0A0010000000000000001 /* libsoxr.xcframework */; platformFilters = (ios, ); };
-		C0C0A0010000000000000004 /* librubberband.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C0A0010000000000000003 /* librubberband.xcframework */; platformFilters = (ios, ); };
+		C0C0A0010000000000000002 /* libsoxr.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C0A0010000000000000001 /* libsoxr.xcframework */; platformFilter = ios; };
+		C0C0A0010000000000000004 /* librubberband.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C0A0010000000000000003 /* librubberband.xcframework */; platformFilter = ios; };
+		D70822D9394E0B6D56EE6123 /* CogExceptionCatching.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D1661D35A9335C079703CA /* CogExceptionCatching.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,8 +110,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		07DB5F3C0ED353A900C2E3EF /* AudioMetadataWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMetadataWriter.h; sourceTree = "<group>"; };
-		07DB5F3D0ED353A900C2E3EF /* AudioMetadataWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMetadataWriter.m; sourceTree = "<group>"; };
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		17A2D3C30B8D1D37000778C4 /* AudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDecoder.h; sourceTree = "<group>"; };
@@ -193,13 +189,13 @@
 		8DC2EF5B0486A6940098B216 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8D3D2D0CBAEE6E00135C1B /* AudioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContainer.h; sourceTree = "<group>"; };
 		8E8D3D2E0CBAEE6E00135C1B /* AudioContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioContainer.m; sourceTree = "<group>"; };
-		D4FBBB369A684384871FD68E /* CogExceptionCatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogExceptionCatching.h; sourceTree = "<group>"; };
 		93D1661D35A9335C079703CA /* CogExceptionCatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogExceptionCatching.m; sourceTree = "<group>"; };
 		B0575F2C0D687A0800411D77 /* Helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helper.h; sourceTree = "<group>"; };
 		B0575F2F0D687A4000411D77 /* Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helper.m; sourceTree = "<group>"; };
-		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		C0C0A0010000000000000001 /* libsoxr.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libsoxr.xcframework; path = ../ThirdParty/soxr/ios/libsoxr.xcframework; sourceTree = SOURCE_ROOT; };
 		C0C0A0010000000000000003 /* librubberband.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = librubberband.xcframework; path = ../ThirdParty/rubberband/ios/librubberband.xcframework; sourceTree = SOURCE_ROOT; };
+		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		D4FBBB369A684384871FD68E /* CogExceptionCatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogExceptionCatching.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -319,8 +315,6 @@
 				17A2D3C40B8D1D37000778C4 /* AudioDecoder.m */,
 				17C940210B900909008627D6 /* AudioMetadataReader.h */,
 				17C940220B900909008627D6 /* AudioMetadataReader.m */,
-				07DB5F3C0ED353A900C2E3EF /* AudioMetadataWriter.h */,
-				07DB5F3D0ED353A900C2E3EF /* AudioMetadataWriter.m */,
 				17B6192E0B909BC300BC003F /* AudioPropertiesReader.h */,
 				17B6192F0B909BC300BC003F /* AudioPropertiesReader.m */,
 				17ADB13A0B97926D00257CA2 /* AudioSource.h */,
@@ -549,7 +543,6 @@
 				8E8D3D2F0CBAEE6E00135C1B /* AudioContainer.h in Headers */,
 				1AD88ED57A490620B20C5681 /* CogExceptionCatching.h in Headers */,
 				B0575F2D0D687A0800411D77 /* Helper.h in Headers */,
-				07DB5F3E0ED353A900C2E3EF /* AudioMetadataWriter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,7 +685,6 @@
 				B0575F300D687A4000411D77 /* Helper.m in Sources */,
 				835DD2742ACAF5AD0057E319 /* lpc.c in Sources */,
 				834A41AA287A90AB00EB9D9B /* freesurround_decoder.cpp in Sources */,
-				07DB5F3F0ED353A900C2E3EF /* AudioMetadataWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -710,11 +702,6 @@
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"OTHER_LDFLAGS[sdk=iphone*]" = "-lc++";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -744,14 +731,19 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
+				"OTHER_LDFLAGS[sdk=iphone*]" = "-lc++";
 				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -760,11 +752,6 @@
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"OTHER_LDFLAGS[sdk=iphone*]" = "-lc++";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -791,13 +778,18 @@
 					../ThirdParty/rubberband/lib,
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 c++17";
+				"OTHER_LDFLAGS[sdk=iphone*]" = "-lc++";
 				OTHER_SWIFT_FLAGS = "$(inherited) -enable-experimental-feature CheckImplementationOnly";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.cogaudio;
 				PRODUCT_NAME = CogAudio;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Engine/Internal";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -908,11 +900,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]" = (
-					DeviceOutputTests.swift,
-					ExclusiveDeviceTests.swift,
-					SpatialAudioTests.swift,
-				);
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -923,6 +910,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]" = (
+					DeviceOutputTests.swift,
+					ExclusiveDeviceTests.swift,
+					SpatialAudioTests.swift,
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -955,13 +947,13 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -970,11 +962,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]" = (
-					DeviceOutputTests.swift,
-					ExclusiveDeviceTests.swift,
-					SpatialAudioTests.swift,
-				);
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -986,6 +973,11 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
+				"EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*]" = (
+					DeviceOutputTests.swift,
+					ExclusiveDeviceTests.swift,
+					SpatialAudioTests.swift,
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -1012,11 +1004,11 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

@@ -99,6 +99,27 @@ static void cache_insert_metadata(NSURL *url, BOOL skipCue, NSDictionary *metada
 	entry.time_accessed = std::chrono::steady_clock::now();
 }
 
+// Drops the file's entries, both cue variants, and those of its subsongs
+// ("file#3"), whose keys start with the file's.
+static void cache_forget(NSURL *url) {
+	std::lock_guard<std::mutex> lock(*Cache_Lock);
+
+	const std::string file = [[url absoluteString] UTF8String];
+	const std::string subsongs = file + "#";
+	for(auto it = Cache_List.lower_bound(file); it != Cache_List.end();) {
+		const std::string &key = it->first;
+		const bool sameFile = key.compare(0, file.size(), file) == 0 && (key.size() == file.size() || key[file.size()] == '\x1f');
+		const bool subsong = key.compare(0, subsongs.size(), subsongs) == 0;
+		if(sameFile || subsong) {
+			it = Cache_List.erase(it);
+		} else if(key.compare(0, file.size(), file) == 0) {
+			++it;
+		} else {
+			break;
+		}
+	}
+}
+
 static NSDictionary *cache_access_properties(NSURL *url, BOOL skipCue) {
 	std::lock_guard<std::mutex> lock(*Cache_Lock);
 
@@ -231,6 +252,7 @@ static void cache_run() {
 @synthesize sources;
 @synthesize containers;
 @synthesize metadataReaders;
+@synthesize metadataWriters;
 
 @synthesize propertiesReadersByExtension;
 @synthesize propertiesReadersByMimeType;
@@ -256,6 +278,7 @@ static void cache_run() {
 		self.containers = [NSMutableDictionary new];
 
 		self.metadataReaders = [NSMutableDictionary new];
+		self.metadataWriters = [NSMutableDictionary new];
 
 		self.propertiesReadersByExtension = [NSMutableDictionary new];
 		self.propertiesReadersByMimeType = [NSMutableDictionary new];
@@ -318,6 +341,9 @@ static void cache_run() {
 		if([bundleClass conformsToProtocol:@protocol(CogMetadataReader)]) {
 			[self setupMetadataReader:className];
 		}
+		if([bundleClass conformsToProtocol:@protocol(CogMetadataWriter)]) {
+			[self setupMetadataWriter:className];
+		}
 		if([bundleClass conformsToProtocol:@protocol(CogPropertiesReader)]) {
 			[self setupPropertiesReader:className];
 		}
@@ -353,7 +379,7 @@ static void cache_run() {
 /// (CogPlugins.framework), so their classes are found among those of the
 /// app's own images: its executable, and the frameworks beside CogAudio's.
 - (void)loadPlugins {
-	Protocol *pluginProtocols[] = { @protocol(CogContainer), @protocol(CogDecoder), @protocol(CogMetadataReader),
+	Protocol *pluginProtocols[] = { @protocol(CogContainer), @protocol(CogDecoder), @protocol(CogMetadataReader), @protocol(CogMetadataWriter),
 		                            @protocol(CogPropertiesReader), @protocol(CogSource) };
 	NSString *frameworks = [[[NSString stringWithUTF8String:class_getImageName([PluginController class])]
 		stringByDeletingLastPathComponent] stringByDeletingLastPathComponent];
@@ -466,6 +492,21 @@ static void cache_run() {
 	}
 }
 
+- (void)setupMetadataWriter:(NSString *)className {
+	Class metadataWriter = NSClassFromString(className);
+	if(metadataWriter && [metadataWriter respondsToSelector:@selector(fileTypes)]) {
+		for(id fileType in [metadataWriter fileTypes]) {
+			NSString *ext = [fileType lowercaseString];
+			NSMutableArray *writers = [metadataWriters objectForKey:ext];
+			if(!writers) {
+				writers = [NSMutableArray new];
+				[metadataWriters setObject:writers forKey:ext];
+			}
+			[writers addObject:className];
+		}
+	}
+}
+
 - (void)setupPropertiesReader:(NSString *)className {
 	Class propertiesReader = NSClassFromString(className);
 	if(propertiesReader && [propertiesReader respondsToSelector:@selector(fileTypes)]) {
@@ -523,6 +564,7 @@ static NSString *xmlEscapeString(NSString * string) {
 	NSDictionary *sources = [self.sources copy];
 	NSDictionary *containers = [self.containers copy];
 	NSDictionary *metadataReaders = [self.metadataReaders copy];
+	NSDictionary *metadataWriters = [self.metadataWriters copy];
 	NSDictionary *propertiesReadersByExtension = [self.propertiesReadersByExtension copy];
 	NSDictionary *propertiesReadersByMimeType = [self.propertiesReadersByMimeType copy];
 	NSDictionary *decodersByExtension = [self.decodersByExtension copy];
@@ -531,6 +573,7 @@ static NSString *xmlEscapeString(NSString * string) {
 		ALog(@"Sources: %@", sources);
 		ALog(@"Containers: %@", containers);
 		ALog(@"Metadata Readers: %@", metadataReaders);
+		ALog(@"Metadata Writers: %@", metadataWriters);
 
 		ALog(@"Properties Readers By Extension: %@", propertiesReadersByExtension);
 		ALog(@"Properties Readers By Mime Type: %@", propertiesReadersByMimeType);
@@ -1086,8 +1129,56 @@ static NSString *xmlEscapeString(NSString * string) {
 	}
 }
 
-- (int)putMetadataInURL:(NSURL *)url {
-	return 0;
+// The writer that will save the file, with what its probe answered: the
+// extension's claimants from the highest priority down, and the first whose
+// probe can save. Several writers rewriting one file in turn would fight,
+// so only one does. Nil for a URL with a fragment: "album.cue#3" would have
+// the cue sheet's text rewritten, and a subsong's tags aren't the file's.
+- (Class)metadataWriterForURL:(NSURL *)url capabilities:(NSDictionary **)capabilities {
+	if(capabilities) *capabilities = @{};
+	if(!url || [url fragment]) return nil;
+	NSString *ext = [[url pathExtension] lowercaseString];
+	NSArray *writers = [metadataWriters objectForKey:ext];
+	if(![writers count]) return nil;
+	for(NSString *className in sortClassesByPriority(writers)) {
+		Class writer = NSClassFromString(className);
+		if(!writer) continue;
+		NSDictionary *probed = [writer capabilitiesForURL:url];
+		if([probed[CogTagWriterWritable] boolValue]) {
+			if(capabilities) *capabilities = probed;
+			return writer;
+		}
+	}
+	return nil;
+}
+
+- (NSDictionary *)tagWritingCapabilitiesForURL:(NSURL *)url {
+	NSDictionary *capabilities = nil;
+	[self metadataWriterForURL:url capabilities:&capabilities];
+	return capabilities;
+}
+
+- (NSDictionary *)writableTagsForURL:(NSURL *)url {
+	Class writer = [self metadataWriterForURL:url capabilities:nil];
+	return writer ? [writer tagsForURL:url] : nil;
+}
+
+- (BOOL)writeTags:(NSDictionary *)tags toURL:(NSURL *)url replace:(BOOL)replace error:(NSError **)error {
+	Class writer = [self metadataWriterForURL:url capabilities:nil];
+	if(!writer) {
+		if(error) *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFileWriteUnsupportedSchemeError userInfo:@{ NSURLErrorKey: url ?: [NSNull null] }];
+		return NO;
+	}
+	BOOL written = [writer writeTags:tags toURL:url replace:replace error:error];
+	// Even a failed save may have changed the file.
+	[self forgetMetadataForURL:url];
+	return written;
+}
+
+- (void)forgetMetadataForURL:(NSURL *)url {
+	// Keyed as metadataForURL: keys it.
+	url = CogNormalizeURL(url);
+	if(url) cache_forget(url);
 }
 
 @end

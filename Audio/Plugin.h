@@ -92,10 +92,40 @@
 + (NSDictionary *)metadataForURL:(NSURL *)url;
 @end
 
+// What a tag writer's probe says it can keep in one file. Missing or NO
+// means it can't; a dictionary without CogTagWriterWritable means no writer
+// can save the file at all.
+static NSString *const CogTagWriterWritable = @"writable"; // tags can be saved at all
+static NSString *const CogTagWriterArbitraryKeys = @"arbitraryKeys"; // any tag name keeps its own name
+static NSString *const CogTagWriterFoldsKeys = @"foldsKeys"; // other names survive, folded (ID3v2 TXXX, MP4 ----)
+static NSString *const CogTagWriterMultiValue = @"multiValue"; // a tag keeps two or more values
+static NSString *const CogTagWriterPictures = @"pictures"; // embedded cover art
+static NSString *const CogTagWriterChapters = @"chapters"; // chapters can be read and written
+
+// In the dictionary a writer reads and writes: the cover as NSData (empty
+// NSData removes it), and the chapters as an array of dictionaries with the
+// keys below, ordered by start. Every other key is a tag's lowercased name
+// holding an array of strings, named as CogMetadataReader names them; an
+// empty array removes the tag.
+static NSString *const CogTagAlbumArt = @"albumArt";
+static NSString *const CogTagChapters = @"chapters";
+static NSString *const CogChapterStart = @"start"; // NSNumber, milliseconds
+static NSString *const CogChapterEnd = @"end"; // NSNumber, milliseconds
+static NSString *const CogChapterTitle = @"title"; // NSString
+static NSString *const CogChapterID = @"id"; // opaque, kept from a read so a chapter keeps its identity
+
 @protocol CogMetadataWriter <NSObject>
-//+ (NSArray *)fileTypes;
-//+ (NSArray *)mimeTypes;
-+ (int)putMetadataInURL:(NSURL *)url tagData:(NSDictionary *)tagData;
++ (NSArray *)fileTypes;
++ (float)priority;
+// The probe: opens the file and says what a save would keep.
++ (NSDictionary *)capabilitiesForURL:(NSURL *)url;
+// The file's own tags as this writer would write them, with no other
+// reader's and no folder art.
++ (NSDictionary *)tagsForURL:(NSURL *)url;
+// replace: the dictionary is the file's whole set of tags, and any other is
+// removed. Otherwise only the tags it names change. The cover and the
+// chapters are left alone when absent either way.
++ (BOOL)writeTags:(NSDictionary *)tags toURL:(NSURL *)url replace:(BOOL)replace error:(NSError **)error;
 @end
 
 @protocol CogPropertiesReader <NSObject>
@@ -126,7 +156,16 @@
 - (NSDictionary *)propertiesForURL:(NSURL *)url skipCue:(BOOL)skip;
 - (id<CogDecoder>)audioDecoderForSource:(id<CogSource>)source skipCue:(BOOL)skip;
 
-- (int)putMetadataInURL:(NSURL *)url;
+// Tag writing. URLs with a fragment (cue tracks, subsongs, chapters) are
+// refused: callers pass the file's own URL. The writer used is the
+// highest-priority one for the extension whose probe says it can save.
+- (NSDictionary *)metadataWriters;
+- (NSDictionary *)tagWritingCapabilitiesForURL:(NSURL *)url;
+- (NSDictionary *)writableTagsForURL:(NSURL *)url;
+- (BOOL)writeTags:(NSDictionary *)tags toURL:(NSURL *)url replace:(BOOL)replace error:(NSError **)error;
+// Drops what the tag cache holds for the file and its subsongs, so the next
+// read after a save sees the file.
+- (void)forgetMetadataForURL:(NSURL *)url;
 @end
 
 #ifdef __cplusplus

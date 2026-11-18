@@ -10,7 +10,7 @@
 
 #import "Plugin.h"
 
-@interface TagLibMetadataWriter : NSObject <CogMetadataWriter> {
+@interface TagLibMetadataWriter : NSObject {
 }
 
 @end

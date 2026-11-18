@@ -9,6 +9,7 @@
 	NSMutableDictionary *sources;
 	NSMutableDictionary *containers;
 	NSMutableDictionary *metadataReaders;
+	NSMutableDictionary *metadataWriters;
 
 	NSMutableDictionary *propertiesReadersByExtension;
 	NSMutableDictionary *propertiesReadersByMimeType;
@@ -22,6 +23,7 @@
 @property(retain) NSMutableDictionary *sources;
 @property(retain) NSMutableDictionary *containers;
 @property(retain) NSMutableDictionary *metadataReaders;
+@property(retain) NSMutableDictionary *metadataWriters;
 
 @property(retain) NSMutableDictionary *propertiesReadersByExtension;
 @property(retain) NSMutableDictionary *propertiesReadersByMimeType;
@@ -41,6 +43,7 @@
 - (void)setupContainer:(NSString *)className;
 - (void)setupDecoder:(NSString *)className;
 - (void)setupMetadataReader:(NSString *)className;
+- (void)setupMetadataWriter:(NSString *)className;
 - (void)setupPropertiesReader:(NSString *)className;
 
 + (BOOL)isCoverFile:(NSString *)fileName;
