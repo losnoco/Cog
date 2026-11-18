@@ -133,6 +133,7 @@ static NSData *dataForURL(NSURL *url) {
 			}
 		}
 		NSMutableData *playlist = [NSMutableData data];
+		NSMutableSet *seen = [NSMutableSet set];
 		if(name) {
 			NSData *prefix = [[name stringByAppendingString:@"::"] dataUsingEncoding:NSUTF8StringEncoding];
 			for(NSString *fileName in [[files allKeys] sortedArrayUsingSelector:@selector(localizedStandardCompare:)]) {
@@ -146,8 +147,15 @@ static NSData *dataForURL(NSURL *url) {
 					while(next < end && *next != '\r' && *next != '\n')
 						++next;
 					if((NSUInteger)(next - line) > [prefix length] && strncasecmp(line, [prefix bytes], [prefix length]) == 0) {
-						[playlist appendBytes:line length:next - line];
-						[playlist appendBytes:"\n" length:1];
+						// A rip may also hold one playlist of every track,
+						// under a name other than the file's: its lines
+						// repeat the per-track playlists'.
+						NSData *entry = [NSData dataWithBytes:line length:next - line];
+						if(![seen containsObject:entry]) {
+							[seen addObject:entry];
+							[playlist appendData:entry];
+							[playlist appendBytes:"\n" length:1];
+						}
 					}
 					line = next + 1;
 				}
