@@ -121,6 +121,15 @@ class AboutWindowController: NSWindowController, NSWindowDelegate {
 			frame.origin.x = max(visible.minX, min(frame.origin.x, visible.maxX - frame.width))
 			frame.origin.y = max(visible.minY, min(frame.origin.y, visible.maxY - frame.height))
 		}
+		// The new face would otherwise be laid out in the old one's size and
+		// stretch along with the window, so it stays hidden until the window
+		// has its new size.
+		let content = window.contentView
+		content?.alphaValue = 0
 		window.setFrame(frame, display: true, animate: true)
+		NSAnimationContext.runAnimationGroup { context in
+			context.duration = 0.15
+			content?.animator().alphaValue = 1
+		}
 	}
 }
