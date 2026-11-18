@@ -277,11 +277,9 @@ static BOOL consentLastEnabled = NO;
 	NSString *newFilename = @"Default.xml";
 
 	BOOL resetPlaylistOnQuit = [[NSUserDefaults standardUserDefaults] boolForKey:@"resetPlaylistOnQuit"];
-	BOOL dataStorePresent = NO;
-
-	if (!resetPlaylistOnQuit) {
-		dataStorePresent = [playlistLoader addDataStore];
-	}
+	// Always, even after a reset: it readies a playlist and shows it, and
+	// entries added to no playlist have no next track.
+	BOOL dataStorePresent = [playlistLoader addDataStore];
 
 	if(!dataStorePresent && !resetPlaylistOnQuit) {
 		if([[NSFileManager defaultManager] fileExistsAtPath:[basePath stringByAppendingPathComponent:dbFilename]]) {
@@ -669,7 +667,8 @@ static BOOL consentLastEnabled = NO;
 		}
 	}
 
-	[playlistController commitPersistentStoreAsync];
+	// Not async: the main queue doesn't run again before the app exits.
+	[playlistController commitPersistentStore];
 
 	if([SQLiteStore databaseStarted]) {
 		[[SQLiteStore sharedStore] shutdown];
