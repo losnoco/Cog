@@ -198,6 +198,24 @@ Writing MP4 chapters ourselves is out of scope.
      dropped file; a chapter entry from an MP3; a cue track's menu item
      disabled.
 
+## Findings from phases 1 and 2
+
+- minimp3's `MP3Decoder` (priority 2.0) outranked FFmpeg (1.5) for `.mp3`
+  and ignored the fragment, so every `#N` chapter row of an MP3 played the
+  whole file with no chapter title. It now refuses fragment URLs, and FFmpeg
+  plays them. Cue tracks are unaffected (the CueSheet decoder opens the file
+  without a fragment).
+- FFmpeg lists ID3v2 chapters in start order, the same order the writer reads
+  and writes, so an entry's `#N` is the editor's chapter N
+  (`testMP3ChaptersRoundTripAndFFmpegListsThemInTheSameOrder`).
+- MP4 tags and FFmpeg's chapter titles reach the playlist only through the
+  decoder (the properties path), not `metadataForURL:`. Read-backs that stand
+  for "what the playlist sees" go through `PlaylistEntryInfo.info(for:)`.
+- Checked once by hand, with ffmpeg-made files and `ffprobe`: Matroska
+  chapters and tags, ID3v2 chapters in a LAME MP3, and Ogg Opus repeated
+  values. All decode cleanly after the save. These have no automated test,
+  since `AVAudioFile` can't write Matroska, Ogg or MP3.
+
 ## Out of scope for v1
 
 ReplayGain writing; `.lrc` writing; MP4 chapter writing; archive members, HTTP

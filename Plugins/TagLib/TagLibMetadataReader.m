@@ -7,6 +7,7 @@
 //
 
 #import "TagLibMetadataReader.h"
+#import "TagLibMetadataWriter.h"
 #import <tag/audioproperties.h>
 #import <tag/fileref.h>
 #import <tag/tag.h>
@@ -53,7 +54,9 @@
 
 		if(!title.isEmpty()) {
 			NSString *titlename;
-			if(names.contains("CHAPTERS")) {
+			// A file with chapters is an album of them (an audiobook, say),
+			// whose own title names the whole.
+			if(TagLibFileHasChapters(f.file())) {
 				titlename = @"album";
 			} else {
 				titlename = @"title";

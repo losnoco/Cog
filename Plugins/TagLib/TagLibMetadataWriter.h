@@ -10,7 +10,17 @@
 
 #import "Plugin.h"
 
-@interface TagLibMetadataWriter : NSObject {
+#ifdef __cplusplus
+namespace TagLib {
+class File;
+}
+
+// Whether the file carries chapters TagLib can read (ID3v2 CHAP frames or
+// Matroska chapters).
+bool TagLibFileHasChapters(TagLib::File *file);
+#endif
+
+@interface TagLibMetadataWriter : NSObject <CogMetadataWriter> {
 }
 
 @end

@@ -100,6 +100,7 @@
 		730A757E6B41EFC05D036AA0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70BA5804918B7E26B3153C57 /* Foundation.framework */; };
 		74CD013E1CB8352E46669BBB /* libAdPlug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC3E5E4E639E44129F4C524 /* libAdPlug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		77765602EDDEBD8D7723A978 /* psflib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F30C12771D00C495945E383B /* psflib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7834CA5DCAD03ACAB6C6307B /* TagWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D24E85F78B3B6AF8AC5000 /* TagWriterTests.swift */; };
 		7C82A49C28A0093FD6211DB7 /* MIDIMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = BAADE44FB06C94DBA8C19582 /* MIDIMetadataReader.mm */; };
 		7CCB8542AD3F474F278F1350 /* libvgmstream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2CC1DD960BDED5C8A23AEBAA /* libvgmstream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7D0164DE06B3C025F283DB66 /* AUPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ECDE68D2C7E946E6B4E0261 /* AUPlayer.mm */; };
@@ -850,6 +851,7 @@
 		E78516014F8B59511921B7B1 /* libogg.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libogg.xcframework; path = ../ThirdParty/ogg/ios/libogg.xcframework; sourceTree = SOURCE_ROOT; };
 		E80F8E92F446847E4371DE0D /* jxsDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = jxsDecoder.h; path = ../Plugins/Syntrax/Syntrax/jxsDecoder.h; sourceTree = SOURCE_ROOT; };
 		E9261831209C36A4CB9BEA60 /* tg300b.sflist.json */ = {isa = PBXFileReference; lastKnownFileType = file; name = tg300b.sflist.json; path = ../tg300b.sflist.json; sourceTree = SOURCE_ROOT; };
+		E9D24E85F78B3B6AF8AC5000 /* TagWriterTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/TagWriterTests.swift; sourceTree = "<group>"; };
 		E9DCAB0D9B45843111913A4D /* opl3class.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = opl3class.cpp; path = ../Plugins/MIDI/MIDI/fmopl3lib/opl3class.cpp; sourceTree = SOURCE_ROOT; };
 		EB555EB4EAC3737FD50CC73A /* LyricsText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LyricsText.swift; path = ../LyricsWindow/LyricsText.swift; sourceTree = SOURCE_ROOT; };
 		ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceDecoder.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.h; sourceTree = SOURCE_ROOT; };
@@ -1122,6 +1124,7 @@
 			children = (
 				7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */,
 				8B49EB3B9474F202D166CC8D /* PlaylistLoaderTests.swift */,
+				E9D24E85F78B3B6AF8AC5000 /* TagWriterTests.swift */,
 			);
 			name = CogPluginsTests;
 			sourceTree = "<group>";
@@ -2332,6 +2335,7 @@
 			files = (
 				32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */,
 				F815EFED9F3EB48B9894412F /* PlaylistLoaderTests.swift in Sources */,
+				7834CA5DCAD03ACAB6C6307B /* TagWriterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
 		};
