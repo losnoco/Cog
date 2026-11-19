@@ -42,31 +42,37 @@ private struct EntryDetailsContent: View {
 	let entry: PlaylistEntry?
 
 	@State private var labelWidth: CGFloat = 0
+	@AppStorage("infoInspectorShowsRawTags") private var showsRawTags = false
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 4) {
+			Toggle("Show raw tags", isOn: $showsRawTags)
+				.toggleStyle(.checkbox)
+				.controlSize(.small)
+				.help("Show every tag under the name it was read by, in place of the named fields.")
+				.padding(.bottom, 2)
+
 			// PlaylistEntry's Objective-C category header can't be imported
 			// into Swift, so its derived properties are read through KVC.
-			row("Album Artist:", "albumartist")
-			row("Artist:", "artist")
-			row("Composer:", "composer")
-			row("Album:", "album")
-			row("Title:", "title")
-			row("Track:", "trackText")
-			row("Length:", "lengthText", help: "lengthInfo")
-			row("Date:", "date")
-			row("Genre:", "genre")
-			row("Filename:", "filename")
-			InfoRow(label: "Sample Rate:", value: sampleRate, labelWidth: labelWidth)
-			row("Channels:", "channels")
-			row("Bitrate:", "bitrate")
-			row("Bits Per Sample:", "bitsPerSample")
-			row("Codec:", "codec")
-			row("Encoding:", "encoding")
-			row("Cuesheet:", "cuesheetPresent")
-			row("ReplayGain:", "gainCorrection", help: "gainInfo")
-			row("Play Count:", "playCount", help: "playCountInfo")
-			row("Comment:", "comment")
+			if showsRawTags {
+				rawTagRows
+				Divider()
+					.padding(.vertical, 2)
+				row("Length:", "lengthText", help: "lengthInfo")
+				fileRows
+			} else {
+				row("Album Artist:", "albumartist")
+				row("Artist:", "artist")
+				row("Composer:", "composer")
+				row("Album:", "album")
+				row("Title:", "title")
+				row("Track:", "trackText")
+				row("Length:", "lengthText", help: "lengthInfo")
+				row("Date:", "date")
+				row("Genre:", "genre")
+				fileRows
+				row("Comment:", "comment")
+			}
 
 			AlbumArtView(image: entry?.value(forKey: "albumArt") as? NSImage)
 				.padding(.top, 4)
@@ -77,8 +83,45 @@ private struct EntryDetailsContent: View {
 		.onPreferenceChange(LabelWidthKey.self) { labelWidth = $0 }
 	}
 
+	/// What the file is, as opposed to what its tags say.
+	@ViewBuilder private var fileRows: some View {
+		row("Filename:", "filename")
+		InfoRow(label: Text("Sample Rate:"), value: sampleRate, labelWidth: labelWidth)
+		row("Channels:", "channels")
+		row("Bitrate:", "bitrate")
+		row("Bits Per Sample:", "bitsPerSample")
+		row("Codec:", "codec")
+		row("Encoding:", "encoding")
+		row("Cuesheet:", "cuesheetPresent")
+		row("ReplayGain:", "gainCorrection", help: "gainInfo")
+		row("Play Count:", "playCount", help: "playCountInfo")
+	}
+
+	/// One row per tag the entry holds, under the name its reader gave it,
+	/// which the named fields above fold together or leave out.
+	@ViewBuilder private var rawTagRows: some View {
+		let tags = rawTags
+		if tags.isEmpty {
+			Text("No tags")
+				.foregroundColor(.secondary)
+		} else {
+			ForEach(tags, id: \.name) { tag in
+				InfoRow(label: Text(verbatim: tag.name), value: tag.value, labelWidth: labelWidth, truncatesLabel: true)
+			}
+		}
+	}
+
+	private var rawTags: [(name: String, value: String)] {
+		guard let blob = entry?.value(forKey: "metadataBlob") as? [String: Any] else { return [] }
+		return blob.map { key, value in
+			let values = (value as? [Any])?.map { "\($0)" } ?? ["\(value)"]
+			return (name: PlaylistEntry.metaTag(forKey: key), value: values.joined(separator: ", "))
+		}
+		.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+	}
+
 	private func row(_ label: LocalizedStringKey, _ key: String, help helpKey: String? = nil) -> some View {
-		InfoRow(label: label, value: string(for: key), help: helpKey.map(string(for:)), labelWidth: labelWidth)
+		InfoRow(label: Text(label), value: string(for: key), help: helpKey.map(string(for:)), labelWidth: labelWidth)
 	}
 
 	private func string(for key: String) -> String {
@@ -93,19 +136,17 @@ private struct EntryDetailsContent: View {
 }
 
 private struct InfoRow: View {
-	let label: LocalizedStringKey
+	let label: Text
 	let value: String
 	var help: String?
 	let labelWidth: CGFloat
+	/// A raw tag's name can be any length; it is cut short where a field's
+	/// label, which sets the column's width, never is.
+	var truncatesLabel = false
 
 	var body: some View {
 		HStack(alignment: .firstTextBaseline, spacing: 8) {
-			Text(label)
-				.lineLimit(1)
-				.fixedSize()
-				.background(GeometryReader { proxy in
-					Color.clear.preference(key: LabelWidthKey.self, value: proxy.size.width)
-				})
+			labelView
 				.frame(width: labelWidth > 0 ? labelWidth : nil, alignment: .trailing)
 			Text(value)
 				.lineLimit(1)
@@ -113,6 +154,26 @@ private struct InfoRow: View {
 				.textSelection(.enabled)
 				.frame(maxWidth: .infinity, alignment: .leading)
 				.help(help ?? value)
+		}
+	}
+
+	@ViewBuilder private var labelView: some View {
+		if truncatesLabel {
+			label
+				.lineLimit(1)
+				.truncationMode(.tail)
+				.textSelection(.enabled)
+				.frame(maxWidth: 120, alignment: .trailing)
+				.background(GeometryReader { proxy in
+					Color.clear.preference(key: LabelWidthKey.self, value: proxy.size.width)
+				})
+		} else {
+			label
+				.lineLimit(1)
+				.fixedSize()
+				.background(GeometryReader { proxy in
+					Color.clear.preference(key: LabelWidthKey.self, value: proxy.size.width)
+				})
 		}
 	}
 }
