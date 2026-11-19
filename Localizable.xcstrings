@@ -6966,17 +6966,6 @@
         }
       }
     },
-    "The chapters of %ld files changed." : {
-      "comment" : "Tag editor: several files' chapters changed",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los capítulos de %ld archivos cambiaron."
-          }
-        }
-      }
-    },
     "The chapters of “%@” changed." : {
       "comment" : "Tag editor: one file's chapters changed",
       "localizations" : {
@@ -6984,6 +6973,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Los capítulos de “%@” cambiaron."
+          }
+        }
+      }
+    },
+    "The chapters of %ld files changed." : {
+      "comment" : "Tag editor: several files' chapters changed",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los capítulos de %ld archivos cambiaron."
           }
         }
       }
@@ -7097,17 +7097,6 @@
         }
       }
     },
-    "The tags of %ld files couldn't be saved." : {
-      "comment" : "Tag editor: several saves failed",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No se pudieron guardar las etiquetas de %ld archivos."
-          }
-        }
-      }
-    },
     "The tags of “%@” couldn't be saved." : {
       "comment" : "Tag editor: one save failed",
       "localizations" : {
@@ -7115,6 +7104,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No se pudieron guardar las etiquetas de “%@”."
+          }
+        }
+      }
+    },
+    "The tags of %ld files couldn't be saved." : {
+      "comment" : "Tag editor: several saves failed",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron guardar las etiquetas de %ld archivos."
           }
         }
       }

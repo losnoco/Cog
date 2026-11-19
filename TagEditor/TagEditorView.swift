@@ -321,7 +321,7 @@ struct TagEditorView: View {
 			ForEach($model.chapters) { $chapter in
 				let index = model.chapters.firstIndex { $0.id == chapter.id }
 				HStack {
-					Text("\((index ?? 0) + 1)")
+					Text(verbatim: "\((index ?? 0) + 1)")
 						.monospacedDigit()
 						.frame(width: 24, alignment: .trailing)
 						.foregroundColor(index == model.highlightedChapter ? .accentColor : .secondary)
