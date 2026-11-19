@@ -55,6 +55,8 @@ struct CogApp: App {
 			"synthDefaultFadeSeconds": 8.0,
 			"synthDefaultLoopCount": 2,
 			"synthSampleRate": 44100,
+			// The Mac halves this to spare the CPU and has a setting for it.
+			"visualizerFrameRate": 60,
 			"alwaysStopAfterCurrent": false,
 			"stopWhenQueueEmpties": false,
 			"suspendOutputOnPause": true,

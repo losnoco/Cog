@@ -20,9 +20,17 @@ extern NSNotificationName CogPlaybackDidPauseNotificiation;
 extern NSNotificationName CogPlaybackDidResumeNotificiation;
 extern NSNotificationName CogPlaybackDidStopNotificiation;
 
+// Frames a second, as Preferences > Visualizations sets for every
+// visualizer but projectM, which has its own.
+static NSInteger visualizerFrameRate(void) {
+	NSInteger rate = [[NSUserDefaults standardUserDefaults] integerForKey:@"visualizerFrameRate"];
+	return rate > 0 ? MIN(rate, 120) : 30;
+}
+
 @implementation SpectrumViewCG {
 	VisualizationController *visController;
 	NSTimer *timer;
+	NSTimeInterval frameInterval;
 	float saLowerBound;
 	BOOL paused;
 	BOOL stopped;
@@ -172,6 +180,8 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 			[self updateVisListening];
 		} else if([keyPath isEqualToString:@"values.spectrumFreqMode"]) {
 			[self freqModeDidChange];
+		} else if([keyPath isEqualToString:@"values.visualizerFrameRate"]) {
+			if(self.isListening) [self startTimer];
 		} else {
 			[self colorsDidChange:nil];
 		}
@@ -186,6 +196,7 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewCGContext];
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumFreqMode" options:0 context:kSpectrumViewCGContext];
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewCGContext];
+		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.visualizerFrameRate" options:0 context:kSpectrumViewCGContext];
 
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewCGContext];
 
@@ -222,6 +233,7 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewCGContext];
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumFreqMode" context:kSpectrumViewCGContext];
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewCGContext];
+		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.visualizerFrameRate" context:kSpectrumViewCGContext];
 
 		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewCGContext];
 
@@ -245,7 +257,8 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 - (void)startTimer {
 	[self stopTimer];
 	visLatencyOffset = 0.0;
-	timer = [NSTimer timerWithTimeInterval:1.0 / 60.0
+	frameInterval = 1.0 / visualizerFrameRate();
+	timer = [NSTimer timerWithTimeInterval:frameInterval
 	                                target:self
 	                              selector:@selector(timerRun:)
 	                              userInfo:nil
@@ -260,7 +273,7 @@ extern NSNotificationName CogPlaybackDidStopNotificiation;
 
 - (void)timerRun:(NSTimer *)timer {
 	[self repaint];
-	visLatencyOffset -= 1.0 / 60.0;
+	visLatencyOffset -= frameInterval;
 }
 
 - (void)colorsDidChange:(NSNotification *)notification {

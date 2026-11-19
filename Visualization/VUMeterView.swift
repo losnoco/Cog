@@ -111,6 +111,8 @@ struct VUMeterView: View {
 	@AppStorage("vuMeterStyle") private var style = VUMeterStyle.needles
 	/// The level, in dBFS, that reads 0 VU.
 	@AppStorage("vuMeterReference") private var reference = -18.0
+	/// Frames a second, as Preferences > Visualizations sets for them all.
+	@AppStorage("visualizerFrameRate") private var frameRate = 30
 
 	private static let references = [-12.0, -14.0, -18.0, -20.0]
 
@@ -142,7 +144,7 @@ struct VUMeterView: View {
 	}
 
 	private var needles: some View {
-		TimelineView(.animation(paused: !model.isMoving)) { context in
+		TimelineView(.animation(minimumInterval: 1.0 / Double(max(frameRate, 1)), paused: !model.isMoving)) { context in
 			let positions = model.needlePositions(at: context.date, reference: reference)
 			HStack(spacing: 8) {
 				ForEach(positions.indices, id: \.self) { index in

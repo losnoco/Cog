@@ -899,6 +899,7 @@ static BOOL consentLastEnabled = NO;
 	NSData *dotColor = [colorToValueTransformer reverseTransformedValue:[NSColor colorWithSRGBRed:1.0 green:0 blue:0 alpha:1.0]];
 
 	[userDefaultsValuesDict setObject:@YES forKey:@"spectrumSceneKit"];
+	[userDefaultsValuesDict setObject:@(30) forKey:@"visualizerFrameRate"];
 	[userDefaultsValuesDict setObject:barColor forKey:@"spectrumBarColor"];
 	[userDefaultsValuesDict setObject:dotColor forKey:@"spectrumDotColor"];
 

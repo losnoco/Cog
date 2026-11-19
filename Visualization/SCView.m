@@ -127,6 +127,13 @@ typedef struct
 
 enum { _ChainCount = 3 };
 
+// Frames a second, as Preferences > Visualizations sets for every
+// visualizer but projectM, which has its own.
+static NSInteger visualizerFrameRate(void) {
+	NSInteger rate = [[NSUserDefaults standardUserDefaults] integerForKey:@"visualizerFrameRate"];
+	return rate > 0 ? MIN(rate, 120) : 30;
+}
+
 @implementation SCView {
 	MIDIVisualizationController *midiController;
 
@@ -443,6 +450,8 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 	if(context == kSCViewContext) {
 		if([keyPath isEqualToString:@"self.window.visible"]) {
 			[self updateVisListening];
+		} else if([keyPath isEqualToString:@"values.visualizerFrameRate"]) {
+			if(self.isListening) self.preferredFramesPerSecond = visualizerFrameRate();
 		}
 	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -452,6 +461,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 - (void)addObservers {
 	if(!observersAdded) {
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSCViewContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.visualizerFrameRate" options:0 context:kSCViewContext];
 
 		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter addObserver:self
@@ -490,6 +500,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 - (void)removeObservers {
 	if(observersAdded) {
 		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSCViewContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.visualizerFrameRate" context:kSCViewContext];
 
 		NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
 		[defaultCenter removeObserver:self
@@ -518,7 +529,7 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
 }
 
 - (void)startTimer {
-	self.preferredFramesPerSecond = 60.0;
+	self.preferredFramesPerSecond = visualizerFrameRate();
 	self.enableSetNeedsDisplay = NO;
 	self.paused = NO;
 }

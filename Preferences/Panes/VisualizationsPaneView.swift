@@ -60,6 +60,7 @@ struct VisualizationsPaneView: View {
     @AppStorage("projectMDetail") private var projectMDetail = ProjectMDetail.standard.rawValue
     @AppStorage("projectMResolution") private var projectMResolution = 1
     @AppStorage("projectMFrameRate") private var projectMFrameRate = 30
+    @AppStorage("visualizerFrameRate") private var visualizerFrameRate = 30
 
     /// The theme folders of the presets in use, and those left out.
     @State private var themes: [String] = []
@@ -75,6 +76,16 @@ struct VisualizationsPaneView: View {
 
     private var formContent: some View {
         Form {
+            Section {
+                Picker("Frame rate:", selection: $visualizerFrameRate) {
+                    ForEach([60, 30, 20, 15], id: \.self) { rate in
+                        Text(String(format: NSLocalizedString("%d fps", comment: "projectM frame rate; the argument is frames per second"), rate)).tag(rate)
+                    }
+                }
+                Text("For the spectrum, VU meter, waveform and SC-55 visualizers. A lower rate uses less CPU and energy. projectM has its own, below.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
             Section(header: Text("Spectrum").bold()) {
                 Toggle("Use 3D rendered spectrum", isOn: $prefs.spectrumSceneKit)
                 if prefs.spectrumSceneKit {

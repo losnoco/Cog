@@ -156,8 +156,11 @@ struct SpectrumView: View {
 		style = Style(barColor: barColor, peakColor: peakColor, isFullView: isFullView, frequencyMode: frequencyMode)
 	}
 
+	/// Frames a second, as Preferences > Visualizations sets for them all.
+	@AppStorage("visualizerFrameRate") private var frameRate = 30
+
 	var body: some View {
-		TimelineView(.animation(minimumInterval: 1.0 / 60.0, paused: !isPlaying)) { timeline in
+		TimelineView(.animation(minimumInterval: 1.0 / Double(max(frameRate, 1)), paused: !isPlaying)) { timeline in
 			Canvas { context, size in
 				analyzer.draw(in: &context, size: size, at: timeline.date, style: style)
 			}

@@ -26,6 +26,13 @@ extern NSString *CogPlaybackDidPauseNotificiation;
 extern NSString *CogPlaybackDidResumeNotificiation;
 extern NSString *CogPlaybackDidStopNotificiation;
 
+// Frames a second, as Preferences > Visualizations sets for every
+// visualizer but projectM, which has its own.
+static NSInteger visualizerFrameRate(void) {
+	NSInteger rate = [[NSUserDefaults standardUserDefaults] integerForKey:@"visualizerFrameRate"];
+	return rate > 0 ? MIN(rate, 120) : 30;
+}
+
 @implementation SpectrumViewSK {
 	VisualizationController *visController;
 	BOOL paused;
@@ -117,6 +124,8 @@ extern NSString *CogPlaybackDidStopNotificiation;
 	if(context == kSpectrumViewSKContext) {
 		if([keyPath isEqualToString:@"self.window.visible"]) {
 			[self updateVisListening];
+		} else if([keyPath isEqualToString:@"values.visualizerFrameRate"]) {
+			if(self.isListening) self.preferredFramesPerSecond = visualizerFrameRate();
 		} else {
 			[self updateControls];
 		}
@@ -266,6 +275,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumProjectionMode" options:0 context:kSpectrumViewSKContext];
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumBarColor" options:0 context:kSpectrumViewSKContext];
 		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.spectrumDotColor" options:0 context:kSpectrumViewSKContext];
+		[sharedUserDefaultsController addObserver:self forKeyPath:@"values.visualizerFrameRate" options:0 context:kSpectrumViewSKContext];
 
 		[self addObserver:self forKeyPath:@"self.window.visible" options:0 context:kSpectrumViewSKContext];
 
@@ -298,6 +308,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumProjectionMode" context:kSpectrumViewSKContext];
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumBarColor" context:kSpectrumViewSKContext];
 		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.spectrumDotColor" context:kSpectrumViewSKContext];
+		[sharedUserDefaultsController removeObserver:self forKeyPath:@"values.visualizerFrameRate" context:kSpectrumViewSKContext];
 
 		[self removeObserver:self forKeyPath:@"self.window.visible" context:kSpectrumViewSKContext];
 
@@ -355,7 +366,7 @@ extern NSString *CogPlaybackDidStopNotificiation;
 
 - (void)startTimer {
 	lastTime = -1;
-	self.preferredFramesPerSecond = 60;
+	self.preferredFramesPerSecond = visualizerFrameRate();
 	self.rendersContinuously = YES;
 }
 

@@ -195,8 +195,11 @@ struct WaveformView: View {
 		style = Style(lineColor: lineColor, mode: mode, showsCenterLine: showsCenterLine)
 	}
 
+	/// Frames a second, as Preferences > Visualizations sets for them all.
+	@AppStorage("visualizerFrameRate") private var frameRate = 30
+
 	var body: some View {
-		TimelineView(.animation(minimumInterval: 1.0 / 60.0, paused: !isPlaying)) { timeline in
+		TimelineView(.animation(minimumInterval: 1.0 / Double(max(frameRate, 1)), paused: !isPlaying)) { timeline in
 			Canvas { context, size in
 				sampler.draw(in: &context, size: size, at: timeline.date, style: style)
 			}
