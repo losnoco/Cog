@@ -712,6 +712,8 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	__block RedundantPlaylistDataStore *weakDataStore = dataStore;
 
 	__block NSMutableDictionary *uniquePathsEntries = [NSMutableDictionary new];
+	// The paths whose tags would not read.
+	NSMutableArray *unreadKeys = [NSMutableArray new];
 
 	__block id<SentrySpan> mainTask = [SentrySDK startTransactionWithName:@"Loading tags" operation:@"Main tag operation"];
 
@@ -738,8 +740,12 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 
 					@try {
 						NSDictionary *entryInfo = [PlaylistEntryInfo infoForURL:url];
-						if(entryInfo == nil)
+						if(entryInfo == nil) {
+							[weakLock lock];
+							[unreadKeys addObject:key];
+							[weakLock unlock];
 							return;
+						}
 						
 						[weakLock lock];
 						@autoreleasepool {
@@ -839,6 +845,22 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	}
 
 	[self->playlistController commitPersistentStoreAsync];
+
+	// An entry whose tags would not read keeps none, to be tried again, but
+	// whoever waits for them is told the wait is over: playing such an entry
+	// held on to the track before it for two seconds, until the wait for
+	// its tags gave up, while the playlist already showed it as playing.
+	if([unreadKeys count]) {
+		NSMutableArray *unread = [NSMutableArray new];
+		for(NSString *key in unreadKeys) {
+			[unread addObjectsFromArray:[queueThisJob objectForKey:key]];
+		}
+		dispatch_async(dispatch_get_main_queue(), ^{
+			for(PlaylistEntry *pe in unread) {
+				[[NSNotificationCenter defaultCenter] postNotificationName:CogPlaylistEntryMetadataLoadedNotification object:pe];
+			}
+		});
+	}
 
 	[playlistController performSelectorOnMainThread:@selector(updateTotalTime) withObject:nil waitUntilDone:NO];
 
