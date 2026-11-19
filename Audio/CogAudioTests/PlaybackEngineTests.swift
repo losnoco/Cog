@@ -12,6 +12,10 @@ import XCTest
 /// in handing out the next track.
 final class RecordingHost: NSObject, PlaybackEngineHost {
 	var queue: [EngineTrack] = []
+	/// What follows a track, by its name, however often it is asked: as a
+	/// playlist answers. The engine asks again after a seek, having dropped
+	/// the track it had queued, and `queue` hands each track out only once.
+	var following: [String: EngineTrack] = [:]
 	var log: [String] = []
 	var statuses: [CogStatus] = []
 	var stopped = false
@@ -21,6 +25,7 @@ final class RecordingHost: NSObject, PlaybackEngineHost {
 	func playbackEngineNextTrack(after userInfo: Any?) -> EngineTrack? {
 		DispatchQueue.main.sync {
 			log.append("next after \(name(userInfo))")
+			if let next = following[name(userInfo)] { return next }
 			return queue.isEmpty ? nil : queue.removeFirst()
 		}
 	}
@@ -389,7 +394,10 @@ final class PlaybackEngineTests: XCTestCase {
 		let long = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
 		let short = SeamSignal.loopable(frames: 24000, sampleRate: 48000) // 0.5 s
 		let host = RecordingHost()
-		host.queue = [EngineTrack(url: URL(string: "memory://next")!, userInfo: "next", gain: 1)]
+		// Asked for more than once: the deep ring can hold all of `long`, so
+		// the feeder has reached its end, and asked what follows, before the
+		// first seek makes it ask again.
+		host.following = ["long": EngineTrack(url: URL(string: "memory://next")!, userInfo: "next", gain: 1)]
 		let engine = PlaybackEngine()
 		engine.host = host
 		engine.opener = { track in
