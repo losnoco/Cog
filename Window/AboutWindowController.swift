@@ -14,8 +14,8 @@ import SwiftUI
 class AboutWindowController: NSWindowController, NSWindowDelegate {
 	private let model = AboutModel()
 
-	private static let cardSize = NSSize(width: 320, height: 420)
-	private static let detailsMinSize = NSSize(width: 640, height: 420)
+	static let cardSize = NSSize(width: 320, height: 420)
+	static let detailsMinSize = NSSize(width: 640, height: 420)
 	/// The details face keeps the size it was last given, for as long as
 	/// the app runs.
 	private var detailsSize = NSSize(width: 760, height: 560)

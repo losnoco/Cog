@@ -60,15 +60,18 @@ struct AboutView: View {
 	@ObservedObject var model: AboutModel
 
 	var body: some View {
-		Group {
-			switch model.mode {
-			case .card:
-				AboutCardView(model: model)
-			case .details:
-				AboutDetailsView(model: model)
-			}
+		// Sized here as well as by the window: before macOS 13 the hosting
+		// controller sizes the window to the view's fitting size, which for
+		// the card's wrapping text could be taller than the screen.
+		switch model.mode {
+		case .card:
+			AboutCardView(model: model)
+				.frame(width: AboutWindowController.cardSize.width, height: AboutWindowController.cardSize.height)
+		case .details:
+			AboutDetailsView(model: model)
+				.frame(minWidth: AboutWindowController.detailsMinSize.width, maxWidth: .infinity,
+				       minHeight: AboutWindowController.detailsMinSize.height, maxHeight: .infinity)
 		}
-		.frame(maxWidth: .infinity, maxHeight: .infinity)
 	}
 }
 
