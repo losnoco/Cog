@@ -30,6 +30,9 @@ private final class PlaylistPrefs: ObservableObject {
     @Published var stopWhenQueueEmpties: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(stopWhenQueueEmpties, forKey: "stopWhenQueueEmpties") }
     }
+    @Published var tagEditorChapterRows: String {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(tagEditorChapterRows, forKey: "tagEditorChapterRows") }
+    }
 
     deinit { isActive = false }
 
@@ -44,8 +47,15 @@ private final class PlaylistPrefs: ObservableObject {
         resetPlaylistOnQuit = d.bool(forKey: "resetPlaylistOnQuit")
         quitOnNaturalStop = d.bool(forKey: "quitOnNaturalStop")
         stopWhenQueueEmpties = d.bool(forKey: "stopWhenQueueEmpties")
+        tagEditorChapterRows = d.string(forKey: "tagEditorChapterRows") ?? "ask"
     }
 }
+
+@MainActor private let chapterRowsOptions: [(label: LocalizedStringKey, value: String)] = [
+    ("Ask", "ask"),
+    ("Rebuild the rows", "rebuild"),
+    ("Keep the rows", "keep"),
+]
 
 @MainActor private let behaviorOptions: [(label: LocalizedStringKey, value: String)] = [
     ("Clear Playlist and Play", "clearAndPlay"),
@@ -96,6 +106,16 @@ struct PlaylistPaneView: View {
             Toggle("Reset playlist on quit", isOn: $prefs.resetPlaylistOnQuit)
             Toggle("Quit when playback completes", isOn: $prefs.quitOnNaturalStop)
             Toggle("Stop when the queue empties", isOn: $prefs.stopWhenQueueEmpties)
+
+            Section {
+                Picker("Playlist rows:", selection: $prefs.tagEditorChapterRows) {
+                    ForEach(chapterRowsOptions, id: \.value) { opt in
+                        Text(opt.label).tag(opt.value)
+                    }
+                }
+            } header: {
+                Text("When saving tags changes a file's chapters").bold()
+            }
         }
     }
 }

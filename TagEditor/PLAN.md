@@ -226,6 +226,21 @@ lists them, and AVFoundation reads the QuickTime track.
   values. All decode cleanly after the save. These have no automated test,
   since `AVAudioFile` can't write Matroska, Ogg or MP3.
 
+## Findings from phase 4 (tested on macOS 12 and 27)
+
+- NSWindowController calls `loadWindow()` only with a nib, so a window
+  controller without one has to make its window itself, in its initializer.
+- Inserting rows (expanding a file) must not run on the main thread: opening
+  the file waits on the main thread for sandbox access.
+- Before macOS 13 the hosting controller sizes the window to the SwiftUI
+  view, and a `Form` puts its labels' column where the section headers start,
+  so a long label ("Artista del álbum") runs off the window. The editor lays
+  itself out on macOS 12, with a label column as wide as the widest label;
+  macOS 13 and later use the grouped `Form`.
+- ffmpeg writes a FLAC's comment as `DESCRIPTION`, the Vorbis comment spec's
+  field for it, so the Comment field reads `description` too and retires it
+  when edited.
+
 ## Out of scope for v1
 
 ReplayGain writing; `.lrc` writing; archive members, HTTP

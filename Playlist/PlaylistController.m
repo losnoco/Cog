@@ -1781,6 +1781,8 @@ BOOL showTrashConsent(NSWindow *window) {
 
 	if(action == @selector(stopAfterCurrent:) && currentEntry.stopAfter) return NO;
 
+	if(action == @selector(editTags:)) return [self canEditTagsOfSelection];
+
 	// The last playlist stays.
 	if(action == NSSelectorFromString(@"deletePlaylist:") &&
 	   [[Playlist playlistsInContext:self.persistentContainer.viewContext] count] < 2) return NO;

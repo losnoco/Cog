@@ -2264,6 +2264,12 @@ CA
                                     </binding>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Edit Tags…" secondaryImage="pencil" catalog="system" id="tgE-d1-Tg1">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="editTags:" target="218" id="tgE-d1-Ac1"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Show in Finder" secondaryImage="finder" catalog="system" keyEquivalent="R" id="1135">
                                 <connections>
                                     <action selector="showEntryInFinder:" target="218" id="1346"/>
@@ -2825,6 +2831,12 @@ Gw
                         </binding>
                     </connections>
                 </menuItem>
+                <menuItem title="Edit Tags…" id="tgE-d2-Tg2">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="editTags:" target="218" id="tgE-d2-Ac2"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Reset Play Count" id="5iV-dM-oX2">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -3188,6 +3200,7 @@ yw
         <image name="info" catalog="system" width="10" height="15"/>
         <image name="info.circle" catalog="system" width="15" height="15"/>
         <image name="info.square" catalog="system" width="15" height="14"/>
+        <image name="pencil" catalog="system" width="14" height="13"/>
         <image name="line.3.horizontal.decrease" catalog="system" width="16" height="10"/>
         <image name="macwindow.stack" catalog="system" width="17" height="18"/>
         <image name="magnifyingglass" catalog="system" width="16" height="15"/>

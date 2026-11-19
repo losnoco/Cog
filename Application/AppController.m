@@ -877,6 +877,7 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@NO forKey:@"resumePlaybackOnStartup"];
 
 	[userDefaultsValuesDict setObject:@NO forKey:@"resetPlaylistOnQuit"];
+	[userDefaultsValuesDict setObject:@"ask" forKey:@"tagEditorChapterRows"];
 
 	[userDefaultsValuesDict setObject:@NO forKey:@"quitOnNaturalStop"];
 

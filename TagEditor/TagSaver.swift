@@ -69,11 +69,17 @@ import class CogPlaylist.PlaylistEntryInfo
 		return Int(fragment)
 	}
 
-	/// Whether every entry's file can have its tags saved.
+	/// Whether the entries' files can have their tags saved: every entry
+	/// names a file, and the first few files probe writable. Menus validate
+	/// often, so a large selection isn't probed whole; the editor leaves out
+	/// whatever turns out not to be writable.
 	@objc func canEditTags(of entries: [PlaylistEntry]) -> Bool {
 		guard !entries.isEmpty else { return false }
+		var probed = Set<URL>()
 		for entry in entries {
-			guard let file = Self.tagFileURL(for: entry), isWritable(file) else { return false }
+			guard let file = Self.tagFileURL(for: entry) else { return false }
+			guard probed.count < 16, probed.insert(file).inserted else { continue }
+			if !isWritable(file) { return false }
 		}
 		return true
 	}

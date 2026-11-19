@@ -4831,6 +4831,42 @@
         }
       }
     },
+    "tgE-d1-Tg1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Edit Tags…\"; ObjectID = \"tgE-d1-Tg1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Edit Tags…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar etiquetas…"
+          }
+        }
+      }
+    },
+    "tgE-d2-Tg2.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Edit Tags…\"; ObjectID = \"tgE-d2-Tg2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Edit Tags…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar etiquetas…"
+          }
+        }
+      }
+    },
     "Tkb-7M-OiA.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Lyrics\"; ObjectID = \"Tkb-7M-OiA\";",
       "extractionState" : "extracted_with_value",

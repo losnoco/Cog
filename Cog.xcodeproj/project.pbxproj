@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B1D66F5705875E145529E2C /* TagEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550AB9F3CF2DFD1019130F65 /* TagEditorModel.swift */; };
+		54DF52C071A69E92D207E810 /* TagEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169DE7A2CB5AE86B31CAFC1E /* TagEditorView.swift */; };
+		69D7710BD7312F4BEDF23DB3 /* TagEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE722292116FA217C8186C3 /* TagEditorWindowController.swift */; };
 		07D971E60ED1DAA800E7602E /* TagSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagSaver.swift */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
 		0A0033913086B95400C5352B /* SpectrumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0033903086B95400C5352B /* SpectrumView.swift */; };
@@ -938,6 +941,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		550AB9F3CF2DFD1019130F65 /* TagEditorModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TagEditorModel.swift; path = TagEditor/TagEditorModel.swift; sourceTree = "<group>"; };
+		169DE7A2CB5AE86B31CAFC1E /* TagEditorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TagEditorView.swift; path = TagEditor/TagEditorView.swift; sourceTree = "<group>"; };
+		4FE722292116FA217C8186C3 /* TagEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TagEditorWindowController.swift; path = TagEditor/TagEditorWindowController.swift; sourceTree = "<group>"; };
 		07D971E50ED1DAA800E7602E /* TagSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TagSaver.swift; path = TagEditor/TagSaver.swift; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
@@ -1411,6 +1417,9 @@
 			isa = PBXGroup;
 			children = (
 				07D971E50ED1DAA800E7602E /* TagSaver.swift */,
+				4FE722292116FA217C8186C3 /* TagEditorWindowController.swift */,
+				169DE7A2CB5AE86B31CAFC1E /* TagEditorView.swift */,
+				550AB9F3CF2DFD1019130F65 /* TagEditorModel.swift */,
 			);
 			name = TagEditor;
 			sourceTree = "<group>";
@@ -3293,6 +3302,9 @@
 				8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
 				07D971E60ED1DAA800E7602E /* TagSaver.swift in Sources */,
+				69D7710BD7312F4BEDF23DB3 /* TagEditorWindowController.swift in Sources */,
+				54DF52C071A69E92D207E810 /* TagEditorView.swift in Sources */,
+				7B1D66F5705875E145529E2C /* TagEditorModel.swift in Sources */,
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				8E1A2B032DDE000100000003 /* MainSplitViewController.m in Sources */,
 				833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */,
