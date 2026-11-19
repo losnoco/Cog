@@ -146,17 +146,28 @@ struct SpeedPopoverView: View {
 			.controlSize(.small)
 		}
 		.padding(12)
-		.frame(width: 340)
+		.frame(width: 400)
 		.onPreferenceChange(SliderFramesKey.self) { frames in
 			MainActor.assumeIsolated { control.sliderFrames = frames }
 		}
 		.coordinateSpace(name: SpeedControl.space)
 	}
 
+	/// The titles of the rows shown.
+	private var titles: [LocalizedStringKey] { isVarispeed ? ["Speed"] : ["Tempo", "Pitch"] }
+
 	private func row(_ title: LocalizedStringKey, _ slider: SpeedControl.Slider, _ value: Double) -> some View {
 		HStack(spacing: 6) {
-			Text(title)
-				.frame(width: 44, alignment: .leading)
+			// As wide as the widest title shown, on one line: a set width cut
+			// "Velocidad" in two.
+			ZStack(alignment: .leading) {
+				ForEach(titles.indices, id: \.self) { index in
+					Text(titles[index]).hidden()
+				}
+				Text(title)
+			}
+			.lineLimit(1)
+			.fixedSize()
 			Text(verbatim: "0.2×")
 				.font(.caption)
 				.foregroundColor(.secondary)
