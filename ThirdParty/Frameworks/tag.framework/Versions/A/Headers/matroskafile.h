@@ -24,6 +24,7 @@
 #include "taglib_export.h"
 #include "tfile.h"
 #include "matroskaproperties.h"
+#include "matroskawritestyle.h"
 
 //! An implementation of Matroska metadata
 namespace TagLib::Matroska {
@@ -146,12 +147,24 @@ namespace TagLib::Matroska {
     bool save() override;
 
     /*!
+     * Save the file with the specified write style.
+     *
+     * This returns \c true if the save was successful.
+     */
+    bool save(WriteStyle style);
+
+    /*!
      * Returns a pointer to the attachments of the file.
      *
      * If \a create is \c false this may return a null pointer if there are no
      * attachments.
      * If \a create is \c true it will create attachments if none exist and
      * returns a valid pointer.
+     *
+     * The data of the attached files is read from the file here, reading the
+     * file itself only registers where the data is stored.  Applications
+     * which are not interested in the attached files therefore do not have to
+     * pay for reading them.
      */
     Attachments *attachments(bool create = false) const;
 
@@ -176,6 +189,13 @@ namespace TagLib::Matroska {
 
   private:
     void read(bool readProperties, Properties::ReadStyle readStyle);
+    /*!
+     * Read the data of the attached files which has been left in the file
+     * while reading, see EBML::DeferredBinaryElement.  This is done when the
+     * attachments are requested and before saving, so that an attachment
+     * which has never been requested is not lost when the file is written.
+     */
+    void loadAttachedFileData() const;
     class FilePrivate;
     friend class Properties;
     TAGLIB_MSVC_SUPPRESS_WARNING_NEEDS_TO_HAVE_DLL_INTERFACE

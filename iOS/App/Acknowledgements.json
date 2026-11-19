@@ -401,7 +401,7 @@
   {
    "group": "codecs",
    "name": "TagLib",
-   "version": "2.2.1",
+   "version": "2.3.2",
    "url": "https://taglib.org",
    "license": "LGPL-2.1 or MPL-1.1",
    "holders": [

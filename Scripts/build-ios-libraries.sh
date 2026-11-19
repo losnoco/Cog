@@ -240,9 +240,9 @@ build_libvgm() {
 # TagLib's headers go in the xcframework as tag/, so the plugins' framework
 # style includes (<tag/fileref.h>) work as they do with macOS's tag.framework.
 build_taglib() {
-	fetch https://taglib.org/releases/taglib-2.2.1.tar.gz taglib.tar.gz \
-		7e76b5299dcef427c486bffe455098470c8da91cf3ccb9ea804893df57389b5e
-	cmake_build "${WORK}/taglib-2.2.1" -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
+	fetch https://taglib.org/releases/taglib-2.3.2.tar.gz taglib.tar.gz \
+		3ca2d8afaa7f1cf7f6ed10e511ebc368bfacd6dcaa3dbfa690b89e502e8963dc
+	cmake_build "${WORK}/taglib-2.3.2" -DBUILD_BINDINGS=OFF -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
 	mkdir -p "${WORK}/taglib-headers/tag"
 	cp "$(prefix iphoneos)"/include/taglib/* "${WORK}/taglib-headers/tag/"
 	xcframework taglib libtag.a "${WORK}/taglib-headers"

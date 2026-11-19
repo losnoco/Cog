@@ -85,6 +85,12 @@ namespace TagLib {
 
     protected:
       /*!
+       * Returns the packet contents for the i-th packet if its size does not
+       * exceed the requested maximum.
+       */
+      ByteVector packet(unsigned int i, unsigned int maxSize);
+
+      /*!
        * Constructs an Ogg file from \a file.
        *
        * \note This constructor is protected since Ogg::File shouldn't be
@@ -105,12 +111,32 @@ namespace TagLib {
        */
       File(IOStream *stream);
 
+      /*!
+       * Restricts packet parsing to the first logical bitstream whose first
+       * packet begins with \a magic.  This is needed for multiplexed Ogg
+       * streams, such as an Ogg Vorbis stream muxed with an Ogg Theora video
+       * stream carrying cover art, where packets of the individual logical
+       * bitstreams are interleaved.  Must be called before any packet is
+       * requested.
+       *
+       * Returns \c true if a matching logical bitstream was found and selected.
+       * If no match is found, the file falls back to the first logical
+       * bitstream in the file.
+       */
+      bool selectStream(const ByteVector &magic);
+
     private:
       /*!
        * Reads the pages from the beginning of the file until enough to compose
        * the requested packet.
        */
       bool readPages(unsigned int i);
+
+      /*!
+       * Reads the pages needed to compose the requested packet while limiting
+       * its total size.
+       */
+      bool readPages(unsigned int i, unsigned int maxSize);
 
       /*!
        * Writes the requested packet to the file.

@@ -1,15 +1,21 @@
-TagLib was built with CMake, using four separate builds:
+TagLib was built with CMake and Ninja, one build per architecture, joined
+with lipo:
 
 
 ```
-cmake -B build.x86 -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath
+cmake -B build.x86_64 -G Ninja -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="12.0" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF
 
-cmake -B build.arm -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath
+cmake -B build.arm64 -G Ninja -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="12.0" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BINDINGS=OFF
 
-cmake -B build.x86.d -DCMAKE_OSX_ARCHITECTURES="x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.14" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath
+ninja -C build.x86_64 && ninja -C build.arm64
 
-cmake -B build.arm -DCMAKE_OSX_ARCHITECTURES="arm64" -DCMAKE_OSX_DEPLOYMENT_TARGET="11.0" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DBUILD_FRAMEWORK=ON -DFRAMEWORK_INSTALL_DIR=@rpath
+lipo -create build.x86_64/taglib/tag.framework/Versions/A/tag build.arm64/taglib/tag.framework/Versions/A/tag -output tag.framework/Versions/A/tag
 ```
 
-Using taglib 2.2.1, with no patches applied.
+The headers are those of either build. The framework's Info.plist is kept,
+with its version strings set by hand, as the build leaves them empty.
 
+Using taglib 2.3.2 (taglib-2.3.2.tar.gz, SHA-256
+3ca2d8afaa7f1cf7f6ed10e511ebc368bfacd6dcaa3dbfa690b89e502e8963dc), with no
+patches applied. The iOS build is Scripts/build-ios-libraries.sh's
+build_taglib.

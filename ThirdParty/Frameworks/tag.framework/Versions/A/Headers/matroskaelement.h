@@ -26,6 +26,7 @@
 #include "taglib_export.h"
 #include "taglib.h"
 #include "tlist.h"
+#include "matroskawritestyle.h"
 
 namespace TagLib {
   class File;
@@ -52,10 +53,22 @@ namespace TagLib {
       void setData(const ByteVector &data);
       const ByteVector &data() const;
       virtual void write(TagLib::File &file);
+      void clearSizeListeners();
       void addSizeListener(Element *element);
       void addSizeListeners(const List<Element *> &elements);
       bool emitSizeChanged(offset_t delta);
       virtual bool sizeChanged(Element &caller, offset_t delta);
+
+      void setWriteStyle(WriteStyle style);
+      WriteStyle writeStyle() const;
+      void setIsLastElement(bool isLast);
+      void setAppendOffset(offset_t appendOffset);
+      bool wasMoved() const;
+      //! Mark this element as the trailing element of the segment (no other
+      //! element follows it in the file). Trailing elements may shrink even
+      //! in non-Compact write styles because no offsets need to be preserved.
+      void setIsTrailingInSegment(bool isTrailing);
+      bool isTrailingInSegment() const;
 
     protected:
       offset_t sizeRenderedOrWritten() const;
