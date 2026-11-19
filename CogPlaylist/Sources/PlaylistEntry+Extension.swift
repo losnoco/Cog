@@ -278,9 +278,14 @@ extension PlaylistEntry {
 		}
 	}
 
+	/// DESCRIPTION is the Vorbis comment spec's field for a comment, and what
+	/// ffmpeg writes one as; a COMMENT comes first where a file has both.
 	@objc public var comment: String? {
-		get { readAllValuesAsString("comment") }
-		set { setValue("comment", fromString: newValue) }
+		get { firstValue(of: "comment", "description") }
+		set {
+			setValue("comment", fromString: newValue)
+			setValue("description", fromString: nil)
+		}
 	}
 
 	private func firstValue(of tagNames: String...) -> String? {

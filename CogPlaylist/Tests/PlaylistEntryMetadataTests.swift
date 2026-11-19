@@ -110,6 +110,20 @@ final class PlaylistEntryMetadataTests: XCTestCase {
 		XCTAssertEqual(entry.albumArtInternal, picture)
 	}
 
+	/// A Vorbis DESCRIPTION is the comment when there's no COMMENT.
+	func testCommentFallsBackToDescription() {
+		let entry = makeEntry()
+		entry.setMetadata(["description": ["From ffmpeg"]])
+		XCTAssertEqual(entry.comment, "From ffmpeg")
+
+		entry.setMetadata(["comment": ["Proper"]])
+		XCTAssertEqual(entry.comment, "Proper", "COMMENT comes first")
+
+		entry.comment = "Set"
+		XCTAssertEqual(entry.comment, "Set")
+		XCTAssertNil(entry.readAllValuesAsString("description"), "setting it retires DESCRIPTION")
+	}
+
 	func testNoMetadataMarksTheEntryUnreadable() {
 		let entry = makeEntry()
 		entry.setMetadata(nil)
