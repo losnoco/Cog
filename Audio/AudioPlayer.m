@@ -317,6 +317,16 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	return [[[PluginController sharedPluginController] containers] allKeys];
 }
 
++ (NSArray *)decoderTypes {
+	PluginController *pluginController = [PluginController sharedPluginController];
+
+	NSMutableSet *types = [NSMutableSet set];
+	[types addObjectsFromArray:[[pluginController decodersByExtension] allKeys]];
+	[types addObjectsFromArray:[[pluginController propertiesReadersByExtension] allKeys]];
+
+	return [types allObjects];
+}
+
 + (NSArray *)fileTypes {
 	PluginController *pluginController = [PluginController sharedPluginController];
 

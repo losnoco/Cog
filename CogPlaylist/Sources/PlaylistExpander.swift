@@ -16,6 +16,7 @@ import CogAudio
 import CoreServices
 #endif
 import Foundation
+import UniformTypeIdentifiers
 
 /// Access to files outside the app's own, which the macOS app's sandbox
 /// broker grants and keeps.
@@ -53,6 +54,9 @@ import Foundation
 	/// Every URL seen so far, so each is added once.
 	private var unique = Set<URL>()
 	private var dependencies = Set<String>()
+	/// The files that came from listing a folder, as opposed to those
+	/// asked for by name.
+	private var listed = Set<URL>()
 	private let lock = NSLock()
 
 	// MARK: - Listing
@@ -79,6 +83,7 @@ import Foundation
 					sandbox?.addFolder(url)
 					for file in fileURLs(inFolder: url.path) {
 						expanded[Self.key(for: file)] = file
+						listed.insert(file)
 					}
 				} else if addsOtherFilesInFolders {
 					let folder = url.deletingLastPathComponent()
@@ -86,8 +91,10 @@ import Foundation
 						sandbox?.requestFolder(forFile: url)
 						for file in fileURLs(inFolder: folder.path) {
 							expanded[Self.key(for: file)] = file
+							listed.insert(file)
 						}
 					}
+					listed = listed.filter { $0.path != url.path }
 				} else {
 					sandbox?.addFile(url)
 					expanded[Self.key(for: url)] = url
@@ -137,6 +144,7 @@ import Foundation
 	/// several at a time. A container no plugin can open stays a file.
 	@objc public func openContainers(_ expanded: [String: URL]) -> [String: Any] {
 		let containerTypes = Set(((AudioPlayer.containerTypes() as? [String]) ?? []).map { $0.lowercased() })
+		let decoderTypes = Set(((AudioPlayer.decoderTypes() as? [String]) ?? []).map { $0.lowercased() })
 		let items = Array(expanded)
 		var loaded: [String: Any] = [:]
 		let step = items.isEmpty ? 0 : 100 / Double(items.count)
@@ -162,8 +170,22 @@ import Foundation
 					var info: NSDictionary?
 					let inner = PluginCalls.run(for: url) { AudioContainer.urls(forContainerURL: url, trackInfo: &info) as? [URL] } ?? []
 					if inner.isEmpty {
-						// Every container parser failed: the raw file, then,
-						// with what one read of it.
+						// Every container parser failed. A file that a folder
+						// brought along and that nothing can read either is
+						// not music: an archive with nothing to play in it,
+						// or a file that only shares an extension with a
+						// format (a source map's .map, an index's .idx).
+						lock.lock()
+						let fromFolder = listed.contains(url)
+						lock.unlock()
+						// An extension with no decoder would "read" as the
+						// silence decoder's ten seconds, so it is not asked.
+						if fromFolder, !Self.isKnownAudio(url),
+						   !decoderTypes.contains(type)
+						   || PluginCalls.run(for: url, { AudioPropertiesReader.properties(for: url) }) == nil {
+							return
+						}
+						// Otherwise the raw file, with what one read of it.
 						lock.lock()
 						loaded[key] = url
 						if let fileInfo = (info as? [URL: [String: Any]])?[url] {
@@ -244,6 +266,16 @@ import Foundation
 			valid.append(url)
 		}
 		return valid
+	}
+
+	/// Whether the system itself knows the file's extension as audio. Such a
+	/// file stays in the playlist when it cannot be read, marked as an error,
+	/// so a damaged track of an album is seen to be missing. The types Cog
+	/// declares do not count: they give every extension a plugin claims to
+	/// audio, the very ones (.map, .idx) that other kinds of file share.
+	static func isKnownAudio(_ url: URL) -> Bool {
+		guard let type = UTType(filenameExtension: url.pathExtension), !type.identifier.hasPrefix("org.cogx.") else { return false }
+		return type.conforms(to: .audio)
 	}
 
 	/// All three steps, for an app with no progress to show between them.

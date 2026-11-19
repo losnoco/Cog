@@ -199,6 +199,9 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 + (NSArray *)fileTypes;
 + (NSArray *)schemes;
 + (NSArray *)containerTypes;
+// The extensions some plugin decodes, or reads the properties of. A file of
+// any other extension is opened by the silence decoder, whatever it holds.
++ (NSArray *)decoderTypes;
 
 @end
 

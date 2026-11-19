@@ -90,6 +90,27 @@ final class PlaylistLoaderTests: XCTestCase {
 		XCTAssertTrue(third.isEmpty)
 	}
 
+	func testAFolderLeavesOutWhatOnlySharesAnExtension() async throws {
+		try writeWAV(named: "song.wav", seconds: 0.5)
+		// As a web project's folder has them: a source map, an index and
+		// archives with nothing to play, under extensions that formats use.
+		for name in ["bundle.js.map", "pack.idx", "notes.gz", "empty.zip"] {
+			try "not audio".write(to: directory.appendingPathComponent(name), atomically: true, encoding: .utf8)
+		}
+		try "not audio either".write(to: directory.appendingPathComponent("broken.wav"), atomically: true, encoding: .utf8)
+
+		let model = PlaylistModel(store: try PlaylistStore(inMemory: true),
+		                          defaults: try XCTUnwrap(UserDefaults(suiteName: "PlaylistLoaderTests-\(UUID().uuidString)")))
+		let added = await PlaylistLoader(model: model).add([directory])
+		XCTAssertEqual(added.map(\.filename), ["broken.wav", "song.wav"], "a damaged track stays, to be seen")
+		XCTAssertEqual(added.map(\.error), [true, false])
+
+		// Asked for by name, such a file is still added, and marked.
+		let named = await PlaylistLoader(model: model).add([directory.appendingPathComponent("pack.idx")])
+		XCTAssertEqual(named.map(\.filename), ["pack.idx"])
+		XCTAssertEqual(named.map(\.error), [true])
+	}
+
 	func testAnUnreadableFileIsMarked() async throws {
 		try "not audio either".write(to: directory.appendingPathComponent("broken.wav"), atomically: true, encoding: .utf8)
 		let model = PlaylistModel(store: try PlaylistStore(inMemory: true),
