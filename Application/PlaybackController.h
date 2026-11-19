@@ -111,6 +111,7 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (IBAction)prev:(id)sender;
 - (IBAction)seek:(id)sender;
 - (IBAction)seek:(id)sender toTime:(NSTimeInterval)time;
+- (IBAction)jumpToTime:(id)sender;
 - (IBAction)eventSeekForward:(id)sender;
 - (void)seekForward:(double)sender;
 - (IBAction)eventSeekBackward:(id)sender;

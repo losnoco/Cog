@@ -2561,6 +2561,17 @@
         }
       }
     },
+    "Enter a position in the playing track, as hours:minutes:seconds." : {
+      "comment" : "Jump to Time prompt: explanation",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa una posición en la pista en reproducción, como horas:minutos:segundos."
+          }
+        }
+      }
+    },
     "Envelope" : {
       "comment" : "Waveform menu item: the last few seconds' peaks, scrolling",
       "localizations" : {
@@ -3568,6 +3579,28 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Jump" : {
+      "comment" : "Jump to Time prompt: the button that seeks",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir"
+          }
+        }
+      }
+    },
+    "Jump to Time" : {
+      "comment" : "Jump to Time prompt: title",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a un tiempo"
           }
         }
       }

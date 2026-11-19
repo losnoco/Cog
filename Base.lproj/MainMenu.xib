@@ -2203,6 +2203,21 @@
                                     </binding>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Jump to Time…" secondaryImage="clock.arrow.circlepath" catalog="system" keyEquivalent="j" id="Jtt-Mn-Itm">
+                                <connections>
+                                    <action selector="jumpToTime:" target="705" id="Jtt-Mn-Act"/>
+                                    <binding destination="1897" name="enabled" keyPath="content" id="Jtt-Mn-Bnd">
+                                        <dictionary key="options">
+                                            <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                            <integer key="NSNullPlaceholder" value="0"/>
+                                            <integer key="NSRaisesForNotApplicableKeys" value="1"/>
+                                            <string key="NSValueTransformerName">NSIsNotNil</string>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="1860">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -3295,6 +3310,7 @@ yw
         <image name="speaker.plus" catalog="system" width="19" height="14"/>
         <image name="speaker.wave.3.fill" catalog="system" width="17" height="16"/>
         <image name="square.and.arrow.down" catalog="system" width="15" height="17"/>
+        <image name="clock.arrow.circlepath" catalog="system" width="17" height="15"/>
         <image name="scope" catalog="system" width="16" height="15"/>
         <image name="square.on.square" catalog="system" width="20" height="20"/>
         <image name="square.stack" catalog="system" width="15" height="18"/>

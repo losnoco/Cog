@@ -4579,6 +4579,24 @@
         }
       }
     },
+    "Jtt-Mn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Jump to Time…\"; ObjectID = \"Jtt-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Jump to Time…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a un tiempo…"
+          }
+        }
+      }
+    },
     "Kc3-Tr-9fA.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Collapse All Folders\"; ObjectID = \"Kc3-Tr-9fA\";",
       "extractionState" : "extracted_with_value",

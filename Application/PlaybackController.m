@@ -1,4 +1,5 @@
 #import "PlaybackController.h"
+#import "SecondsFormatter.h"
 #import "CogAudio/Helper.h"
 #import "CogAudio/Status.h"
 #import "PlaylistView.h"
@@ -501,6 +502,79 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		PlaylistEntry *pe = [playlistController currentEntry];
 		if(pe) pe.currentPosition = time;
 	}
+}
+
+// Asks for a position in the playing track, with where it is filled in (to
+// note down, or to change), and seeks there. A position past the track's end,
+// or that isn't one, is refused with a beep.
+- (IBAction)jumpToTime:(id)sender {
+	if(![playlistController currentEntry] || ![self seekable]) {
+		NSBeep();
+		return;
+	}
+
+	NSAlert *alert = [NSAlert new];
+	alert.messageText = NSLocalizedString(@"Jump to Time", @"Jump to Time prompt: title");
+	alert.informativeText = NSLocalizedString(@"Enter a position in the playing track, as hours:minutes:seconds.", @"Jump to Time prompt: explanation");
+	[alert addButtonWithTitle:NSLocalizedString(@"Jump", @"Jump to Time prompt: the button that seeks")];
+	[alert addButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
+
+	NSTextField *field = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 220, 22)];
+	field.stringValue = [[SecondsFormatter new] stringForObjectValue:@([self position])] ?: @"";
+	field.alignment = NSTextAlignmentCenter;
+	field.font = [NSFont monospacedDigitSystemFontOfSize:NSFont.systemFontSize weight:NSFontWeightRegular];
+	alert.accessoryView = field;
+	alert.window.initialFirstResponder = field;
+
+	void (^seek)(NSModalResponse) = ^(NSModalResponse response) {
+		if(response != NSAlertFirstButtonReturn) return;
+		// The track may have changed while the prompt was up.
+		PlaylistEntry *pe = [self->playlistController currentEntry];
+		NSTimeInterval time = [PlaybackController secondsFromTimeString:field.stringValue];
+		double length = [[pe length] doubleValue];
+		if(!pe || ![self seekable] || time < 0 || (length > 0 && time > length)) {
+			NSBeep();
+			return;
+		}
+		[self seek:self toTime:time];
+	};
+
+	NSWindow *window = [NSApp mainWindow];
+	if(window) {
+		[alert beginSheetModalForWindow:window completionHandler:seek];
+	} else {
+		seek([alert runModal]);
+	}
+}
+
+// Seconds, minutes:seconds or hours:minutes:seconds, the seconds with a
+// fraction if wanted; -1 for anything else.
++ (NSTimeInterval)secondsFromTimeString:(NSString *)string {
+	NSString *trimmed = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	NSArray<NSString *> *parts = [trimmed componentsSeparatedByString:@":"];
+	if(!trimmed.length || parts.count > 3) return -1;
+
+	NSCharacterSet *notDigits = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789"] invertedSet];
+	NSTimeInterval seconds = 0;
+	for(NSUInteger i = 0; i < parts.count; i++) {
+		NSString *part = parts[i];
+		BOOL last = (i == parts.count - 1);
+		// Only the seconds may have a fraction, after a period or a comma.
+		NSString *whole = part, *fraction = @"";
+		if(last) {
+			NSRange mark = [part rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@".,"]];
+			if(mark.location != NSNotFound) {
+				whole = [part substringToIndex:mark.location];
+				fraction = [part substringFromIndex:mark.location + 1];
+			}
+		}
+		if(!whole.length && !fraction.length) return -1;
+		if([whole rangeOfCharacterFromSet:notDigits].location != NSNotFound ||
+		   [fraction rangeOfCharacterFromSet:notDigits].location != NSNotFound) return -1;
+		double value = [[NSString stringWithFormat:@"%@.%@", whole.length ? whole : @"0", fraction.length ? fraction : @"0"] doubleValue];
+		seconds = seconds * 60.0 + value;
+	}
+	return seconds;
 }
 
 - (IBAction)spam:(id)sender {
