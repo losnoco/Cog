@@ -49,7 +49,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 	cellIdentifiers = @[@"index", @"status", @"title", @"albumartist", @"artist",
 		                @"album", @"length", @"date", @"genre", @"track", @"path",
 		                @"filename", @"codec", @"rating", @"samplerate",
-		                @"bitspersample", @"bitrate", @"composer", @"playcount"];
+		                @"bitspersample", @"bitrate", @"composer", @"playcount",
+		                @"comment"];
 
 	NSValueTransformer *repeatNoneTransformer =
 	[[RepeatModeTransformer alloc] initWithMode:RepeatModeNoRepeat];
@@ -667,6 +668,17 @@ static void *playlistControllerContext = &playlistControllerContext;
 				cellText = pe.playCount;
 				cellTextAlignment = NSTextAlignmentRight;
 				break;
+
+			case 19: {
+				// One line of the row is all there is; show a comment's
+				// lines side by side.
+				NSString *comment = pe.comment;
+				if(comment) {
+					NSArray *lines = [comment componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+					cellText = [lines componentsJoinedByString:@" "];
+				}
+				break;
+			}
 		}
 	}
 
@@ -790,8 +802,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 	 - playcount vs "playCount" - numeric
 	 18
 
-	 - title, albumartist, artist, album, date, genre, path, filename, codec, composer - strings, finderCompare
-	 2, 3, 4, 5, 7, 8, 10, 11, 12, 17
+	 - title, albumartist, artist, album, date, genre, path, filename, codec, composer, comment - strings, finderCompare
+	 2, 3, 4, 5, 7, 8, 10, 11, 12, 17, 19
 
 	 - rating, bitrate, numeric with text decorators - compare
 	 13, 16
@@ -816,6 +828,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 11:
 		case 12:
 		case 17:
+		case 19:
 			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(finderCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;

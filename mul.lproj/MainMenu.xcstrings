@@ -4459,6 +4459,42 @@
         }
       }
     },
+    "Cmt-Co-Lmn.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Comment\"; ObjectID = \"Cmt-Co-Lmn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Comment"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comentarios"
+          }
+        }
+      }
+    },
+    "Cmt-Co-Lmn.title" : {
+      "comment" : "Class = \"NSTableColumn\"; title = \"Comment\"; ObjectID = \"Cmt-Co-Lmn\";",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comentarios"
+          }
+        }
+      }
+    },
     "Dac-Fm-Cell.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Output: —\"; ObjectID = \"Dac-Fm-Cell\";",
       "extractionState" : "extracted_with_value",

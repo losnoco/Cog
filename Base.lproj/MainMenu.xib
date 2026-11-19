@@ -343,6 +343,50 @@
                                                         </binding>
                                                     </connections>
                                                 </tableColumn>
+                                                <tableColumn identifier="comment" editable="NO" width="151" minWidth="96" maxWidth="1024" hidden="YES" id="Cmt-Co-Lmn" userLabel="Comment">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Comment">
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="Cmt-Dc-Cel">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <sortDescriptor key="sortDescriptorPrototype" selector="caseInsensitiveCompare:" sortKey="comment"/>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                    <prototypeCellViews>
+                                                        <tableCellView misplaced="YES" id="Cmt-Cv-Viw">
+                                                            <rect key="frame" x="1" y="3" width="0.0" height="18"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Cmt-Tf-Fld">
+                                                                    <rect key="frame" x="0.0" y="1" width="4" height="16"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Cmt-Tc-Cel">
+                                                                        <font key="font" usesAppearanceFont="YES"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="Cmt-Tf-Fld" firstAttribute="leading" secondItem="Cmt-Cv-Viw" secondAttribute="leading" constant="2" id="Cmt-C1-Ldg"/>
+                                                                <constraint firstItem="Cmt-Tf-Fld" firstAttribute="centerY" secondItem="Cmt-Cv-Viw" secondAttribute="centerY" id="Cmt-C2-CtY"/>
+                                                                <constraint firstItem="Cmt-Tf-Fld" firstAttribute="centerX" secondItem="Cmt-Cv-Viw" secondAttribute="centerX" id="Cmt-C3-CtX"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="textField" destination="Cmt-Tf-Fld" id="Cmt-Ot-Txt"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                    </prototypeCellViews>
+                                                    <connections>
+                                                        <binding destination="218" name="value" keyPath="arrangedObjects.comment" id="Cmt-Bd-Val">
+                                                            <dictionary key="options">
+                                                                <bool key="NSConditionallySetsEditable" value="YES"/>
+                                                            </dictionary>
+                                                        </binding>
+                                                    </connections>
+                                                </tableColumn>
                                                 <tableColumn identifier="album" editable="NO" width="210.5" minWidth="96" maxWidth="1024" id="806">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Album">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
