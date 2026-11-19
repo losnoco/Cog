@@ -5,7 +5,7 @@ enum KeychainHelper {
     private static let service = "co.losno.Cog.lastfm"
     private static let account = "sessionKey"
 
-    // MARK: - Last.FM session key
+    // MARK: - Last.fm session key
 
     static func save(sessionKey: String) -> Bool {
         save(sessionKey, service: service, account: account)

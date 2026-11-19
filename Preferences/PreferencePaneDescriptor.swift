@@ -70,8 +70,10 @@ struct PreferencePaneDescriptor: Identifiable {
                 body: AnyView(RubberbandPaneView())
             ),
             PreferencePaneDescriptor(
+                // The pane's stored name keeps its old spelling: "Last.fm" was a
+                // pane of older versions, which PreferencesWindow sends to General.
                 title: "Last.FM",
-                localizedTitle: NSLocalizedString("Last.FM", comment: "Preference pane title"),
+                localizedTitle: NSLocalizedString("Last.fm", comment: "Preference pane title"),
                 icon: paneIcon(system: "music.note", legacy: "lastfm"),
                 body: AnyView(LastFMPaneView())
             ),

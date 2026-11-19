@@ -63,7 +63,7 @@
 // SENTRY_AUTH_TOKEN to the developer authorization token for your instance.
 
 // Create a Secrets.xconfig file by copying Secrets.template.xcconfig
-// and provide your own values for the Last.FM API key.
+// and provide your own values for the Last.fm API key.
 //
 // The keys below should remain empty here in case the Secrets.xcconfig
 // file is not present.

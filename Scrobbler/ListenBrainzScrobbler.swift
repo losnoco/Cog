@@ -7,7 +7,7 @@ import CogPlaylist
 import CoreData
 import Foundation
 
-/// Sends listens to ListenBrainz alongside the Last.FM scrobbler.
+/// Sends listens to ListenBrainz alongside the Last.fm scrobbler.
 ///
 /// Listens go through a queue in the Core Data store first, so a play made
 /// offline, or while the server is down, is sent later rather than lost:
@@ -58,7 +58,7 @@ final class ListenBrainzScrobbler: NSObject {
     func connect(token: String) async throws -> String {
         let name = try await api(token: token).validateToken()
         guard KeychainHelper.save(token, service: Self.keychainService, account: Self.keychainAccount) else {
-            throw ListenBrainzError.transport(NSLocalizedString("Could not save credentials to Keychain.", comment: "Last.FM keychain save error"))
+            throw ListenBrainzError.transport(NSLocalizedString("Could not save credentials to Keychain.", comment: "Last.fm keychain save error"))
         }
         UserDefaults.standard.set(name, forKey: Self.usernameKey)
         UserDefaults.standard.set(true, forKey: Self.enabledKey)

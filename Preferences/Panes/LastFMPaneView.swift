@@ -42,7 +42,7 @@ import SwiftUI
                     guard KeychainHelper.save(sessionKey: auth.sessionKey) else {
                         self.errorMessage = NSLocalizedString(
                             "Could not save credentials to Keychain.",
-                            comment: "Last.FM keychain save error"
+                            comment: "Last.fm keychain save error"
                         )
                         return
                     }
@@ -56,8 +56,8 @@ import SwiftUI
                         self.errorMessage = message
                     } else {
                         self.errorMessage = NSLocalizedString(
-                            "Could not connect to Last.FM. Please try again.",
-                            comment: "Last.FM auth network error"
+                            "Could not connect to Last.fm. Please try again.",
+                            comment: "Last.fm auth network error"
                         )
                     }
                 }
@@ -87,7 +87,7 @@ struct LastFMPaneView: View {
     private var formContent: some View {
         Form {
             Toggle(
-                NSLocalizedString("Enable Last.FM scrobbling", comment: "Last.FM pref toggle"),
+                NSLocalizedString("Enable Last.fm scrobbling", comment: "Last.fm pref toggle"),
                 isOn: $prefs.enableScrobbling
             )
 
@@ -106,11 +106,11 @@ struct LastFMPaneView: View {
                     .fill(Color.green)
                     .frame(width: 8, height: 8)
                 Text(String(
-                    format: NSLocalizedString("Connected as %@", comment: "Last.FM connected status"),
+                    format: NSLocalizedString("Connected as %@", comment: "Last.fm connected status"),
                     prefs.connectedUsername
                 ))
             }
-            Button(NSLocalizedString("Disconnect", comment: "Last.FM disconnect button")) {
+            Button(NSLocalizedString("Disconnect", comment: "Last.fm disconnect button")) {
                 prefs.disconnect()
             }
         }
@@ -119,17 +119,17 @@ struct LastFMPaneView: View {
     private var disconnectedView: some View {
         Section {
             TextField(
-                NSLocalizedString("Username", comment: "Last.FM username field"),
+                NSLocalizedString("Username", comment: "Last.fm username field"),
                 text: $prefs.username
             )
 
             SecureField(
-                NSLocalizedString("Password", comment: "Last.FM password field"),
+                NSLocalizedString("Password", comment: "Last.fm password field"),
                 text: $prefs.password
             )
 
             HStack {
-                Button(NSLocalizedString("Connect", comment: "Last.FM connect button")) {
+                Button(NSLocalizedString("Connect", comment: "Last.fm connect button")) {
                     prefs.connect()
                 }
                 .disabled(prefs.username.isEmpty || prefs.password.isEmpty || prefs.isAuthenticating)

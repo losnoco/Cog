@@ -1587,7 +1587,7 @@
       }
     },
     "Connect" : {
-      "comment" : "Last.FM connect button",
+      "comment" : "Last.fm connect button",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1598,7 +1598,7 @@
       }
     },
     "Connected as %@" : {
-      "comment" : "Last.FM connected status",
+      "comment" : "Last.fm connected status",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1715,8 +1715,8 @@
         }
       }
     },
-    "Could not connect to Last.FM. Please try again." : {
-      "comment" : "Last.FM auth network error",
+    "Could not connect to Last.fm. Please try again." : {
+      "comment" : "Last.fm auth network error",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1755,7 +1755,7 @@
       }
     },
     "Could not save credentials to Keychain." : {
-      "comment" : "Last.FM keychain save error",
+      "comment" : "Last.fm keychain save error",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2211,7 +2211,7 @@
       }
     },
     "Disconnect" : {
-      "comment" : "Last.FM disconnect button",
+      "comment" : "Last.fm disconnect button",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2462,8 +2462,8 @@
         }
       }
     },
-    "Enable Last.FM scrobbling" : {
-      "comment" : "Last.FM pref toggle",
+    "Enable Last.fm scrobbling" : {
+      "comment" : "Last.fm pref toggle",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3629,7 +3629,7 @@
         }
       }
     },
-    "Last.FM" : {
+    "Last.fm" : {
       "comment" : "Preference pane title",
       "localizations" : {
         "en" : {
@@ -4697,7 +4697,7 @@
       }
     },
     "Password" : {
-      "comment" : "Last.FM password field",
+      "comment" : "Last.fm password field",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -7668,7 +7668,7 @@
       }
     },
     "Username" : {
-      "comment" : "Last.FM username field",
+      "comment" : "Last.fm username field",
       "localizations" : {
         "es" : {
           "stringUnit" : {

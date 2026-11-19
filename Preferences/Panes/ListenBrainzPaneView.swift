@@ -156,11 +156,11 @@ struct ListenBrainzPaneView: View {
                     .fill(Color.green)
                     .frame(width: 8, height: 8)
                 Text(String(
-                    format: NSLocalizedString("Connected as %@", comment: "Last.FM connected status"),
+                    format: NSLocalizedString("Connected as %@", comment: "Last.fm connected status"),
                     prefs.connectedUsername
                 ))
             }
-            Button(NSLocalizedString("Disconnect", comment: "Last.FM disconnect button")) {
+            Button(NSLocalizedString("Disconnect", comment: "Last.fm disconnect button")) {
                 prefs.disconnect()
             }
         }
@@ -180,7 +180,7 @@ struct ListenBrainzPaneView: View {
             )
 
             HStack {
-                Button(NSLocalizedString("Connect", comment: "Last.FM connect button")) {
+                Button(NSLocalizedString("Connect", comment: "Last.fm connect button")) {
                     prefs.connect()
                 }
                 .disabled(prefs.token.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || prefs.isAuthenticating)
