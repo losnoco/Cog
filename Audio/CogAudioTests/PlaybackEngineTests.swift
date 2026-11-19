@@ -186,6 +186,56 @@ final class PlaybackEngineTests: XCTestCase {
 		engine.stop()
 	}
 
+	/// Playing a track no decoder takes, while another plays: it is flagged
+	/// and skipped, and the track after it is announced as what plays, or
+	/// playback stops if nothing follows.
+	func testAnUnopenableTrackWhilePlayingMovesOnToTheNext() throws {
+		let long = SeamSignal.loopable(frames: 480000, sampleRate: 48000) // 10 s
+		let short = SeamSignal.loopable(frames: 48000, sampleRate: 48000) // 1 s
+		let host = RecordingHost()
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.opener = { track in
+			switch track.url.host {
+			case "broken": return nil
+			case "c": return MemoryDecoder(samples: short, sampleRate: 48000, channels: 2)
+			default: return MemoryDecoder(samples: long, sampleRate: 48000, channels: 2)
+			}
+		}
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://a")!, userInfo: "a", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+
+		host.queue = [EngineTrack(url: URL(string: "memory://c")!, userInfo: "c", gain: 1)]
+		_ = engine.play(URL(string: "memory://broken")!, userInfo: "broken", rgInfo: nil, startPaused: false, seekTo: 0)
+		runMainLoop(until: { host.stopped }, timeout: 8)
+		XCTAssertTrue(host.stopped, "c plays to its end")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["error broken", "begin c", "played c", "stopped after c"])
+
+		// With nothing after it, playback stops.
+		host.stopped = false
+		host.log = []
+		XCTAssertTrue(engine.play(URL(string: "memory://a")!, userInfo: "a", rgInfo: nil, startPaused: false, seekTo: 0))
+		runMainLoop(until: { engine.amountPlayed > 0.3 }, timeout: 5)
+		_ = engine.play(URL(string: "memory://broken")!, userInfo: "broken", rgInfo: nil, startPaused: false, seekTo: 0)
+		runMainLoop(until: { host.stopped }, timeout: 8)
+		XCTAssertTrue(host.stopped, "nothing follows the broken track")
+		XCTAssertEqual(host.statuses.last, .stopped)
+		engine.stop()
+
+		// Started on from a stop (or a pause), where a pipeline is built for
+		// it: the same.
+		host.stopped = false
+		host.log = []
+		host.queue = [EngineTrack(url: URL(string: "memory://c")!, userInfo: "c", gain: 1)]
+		_ = engine.play(URL(string: "memory://broken")!, userInfo: "broken", rgInfo: nil, startPaused: false, seekTo: 0)
+		runMainLoop(until: { host.stopped }, timeout: 8)
+		XCTAssertTrue(host.stopped, "c plays to its end")
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["error broken", "begin c", "played c", "stopped after c"])
+		engine.stop()
+	}
+
 	/// A DSD track after a PCM one needs a DoP carrier: the stream ends
 	/// before it and the engine rebuilds, announcing it once heard. The DSD
 	/// is at 16 times the device's own rate, so the device keeps its rate,
