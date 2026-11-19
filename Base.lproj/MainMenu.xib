@@ -1246,6 +1246,22 @@
                             </connections>
                         </button>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="6C1E0B7A-3F52-4D8E-9A41-2B7D5E8F0C13" label="Go to Current Track" paletteLabel="Go to Current Track" image="scope" catalog="system" bordered="YES" navigational="YES" id="Gct-Tb-Itm">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="28" height="23"/>
+                        <size key="maxSize" width="32" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="Gct-Tb-Btn">
+                            <rect key="frame" x="53" y="14" width="28" height="23"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="scope" catalog="system" imagePosition="only" alignment="center" borderStyle="border" id="Gct-Tb-Cel">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="scrollToCurrentEntry:" target="207" id="Gct-Tb-Act"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="9824C59B-F192-42FE-963F-6B8526B82EDB" label="Remove Duplicate Items" paletteLabel="Remove Duplicate Items" image="square.on.square" catalog="system" bordered="YES" navigational="YES" id="rEg-qk-MbN">
                         <nil key="toolTip"/>
                         <size key="minSize" width="28" height="23"/>
@@ -1979,7 +1995,7 @@
                                     <action selector="selectAll:" target="-1" id="179"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Select Currently Playing" secondaryImage="play.square.fill" catalog="system" keyEquivalent="l" id="1823">
+                            <menuItem title="Go to Current Track" secondaryImage="scope" catalog="system" keyEquivalent="l" id="1823">
                                 <connections>
                                     <action selector="scrollToCurrentEntry:" target="207" id="1888"/>
                                 </connections>
@@ -2837,6 +2853,12 @@ Gw
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="2047"/>
+                <menuItem title="Go to Current Track" id="Gct-Cx-Itm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="scrollToCurrentEntry:" target="207" id="Gct-Cx-Act"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Save Selection As Playlist..." id="0wz-bh-aMp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -3273,6 +3295,7 @@ yw
         <image name="speaker.plus" catalog="system" width="19" height="14"/>
         <image name="speaker.wave.3.fill" catalog="system" width="17" height="16"/>
         <image name="square.and.arrow.down" catalog="system" width="15" height="17"/>
+        <image name="scope" catalog="system" width="16" height="15"/>
         <image name="square.on.square" catalog="system" width="20" height="20"/>
         <image name="square.stack" catalog="system" width="15" height="18"/>
         <image name="square.stack.fill" catalog="system" width="15" height="18"/>

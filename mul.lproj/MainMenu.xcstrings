@@ -1688,19 +1688,19 @@
       }
     },
     "1823.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Select Currently Playing\"; ObjectID = \"1823\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Go to Current Track\"; ObjectID = \"1823\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Select Currently Playing"
+            "value" : "Go to Current Track"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seleccionar reproducción actual"
+            "value" : "Ir a la pista actual"
           }
         }
       }
@@ -5385,6 +5385,60 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nuked SC-55"
+          }
+        }
+      }
+    },
+    "Gct-Cx-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Go to Current Track\"; ObjectID = \"Gct-Cx-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go to Current Track"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a la pista actual"
+          }
+        }
+      }
+    },
+    "Gct-Tb-Itm.label" : {
+      "comment" : "Class = \"NSToolbarItem\"; label = \"Go to Current Track\"; ObjectID = \"Gct-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go to Current Track"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a la pista actual"
+          }
+        }
+      }
+    },
+    "Gct-Tb-Itm.paletteLabel" : {
+      "comment" : "Class = \"NSToolbarItem\"; paletteLabel = \"Go to Current Track\"; ObjectID = \"Gct-Tb-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go to Current Track"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a la pista actual"
           }
         }
       }
