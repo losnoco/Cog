@@ -1889,7 +1889,8 @@ static BOOL playlistIsLive(Playlist *playlist) {
 
 // Replaces `entries`, rows of one file in `playlist`, with the rows `url`
 // lists now, where the first of them was: after a tag save changed the
-// file's chapters, so its "#N" rows follow them. Shown or not.
+// file's chapters, so its "#N" rows follow them. Shown or not. Call it on
+// the main thread; the new rows arrive shortly after, from the background.
 - (void)replaceEntries:(NSArray<PlaylistEntry *> *)entries withRowsOfURL:(NSURL *)url inPlaylist:(Playlist *)playlist {
 	if(![entries count] || !url || !playlistIsLive(playlist)) return;
 
@@ -1923,7 +1924,14 @@ static BOOL playlistIsLive(Playlist *playlist) {
 		if(playlist == self.playingPlaylist) [self playingPlaylistDidChange];
 	}
 
-	[playlistLoader insertURLs:@[url] atIndex:index sort:NO intoPlaylist:playlist];
+	// Off the main thread, as loadURLsForInput: inserts: expanding the file
+	// opens it, and opening it waits on the main thread for sandbox access.
+	// Not through loadURLsForInput: itself, whose opening-files behavior
+	// could clear the playlist or start playback.
+	PlaylistLoader *loader = playlistLoader;
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+		[loader insertURLs:@[url] atIndex:index sort:NO intoPlaylist:playlist];
+	});
 }
 
 // Removes every entry of `playlist`, shown or not.
