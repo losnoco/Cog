@@ -162,17 +162,43 @@ final class TagWriterTests: XCTestCase {
 		XCTAssertEqual(values(merged(url), "artist"), ["Cog"])
 	}
 
-	/// MP4 tags save; chapters aren't offered, since TagLib can't keep them.
-	func testM4ARoundTripsTagsWithoutOfferingChapters() throws {
+	func testM4ARoundTripsTags() throws {
 		let url = try writeM4A()
-		let capabilities = try XCTUnwrap(plugins.tagWritingCapabilities(for: url))
-		XCTAssertEqual(capabilities[CogTagWriterWritable] as? Bool, true)
-		XCTAssertNil(capabilities[CogTagWriterChapters])
+		XCTAssertEqual(try XCTUnwrap(plugins.tagWritingCapabilities(for: url))[CogTagWriterWritable] as? Bool, true)
 		try write(["title": ["Packed"], "album": ["Box"], "cog_custom": ["atom"]], to: url, replace: true)
 		let tags = try written(url)
 		XCTAssertEqual(values(tags, "title"), ["Packed"])
 		XCTAssertEqual(values(tags, "cog_custom"), ["atom"])
 		XCTAssertEqual(values(merged(url), "album"), ["Box"], "\(merged(url))")
+	}
+
+	/// MP4 chapters (TagLib 2.3) are written as a QuickTime chapter track and
+	/// a Nero list, and FFmpeg, which plays MP4 files, lists them in order.
+	func testM4AChaptersRoundTripAndFFmpegListsThem() throws {
+		let url = try writeM4A()
+		XCTAssertEqual(try XCTUnwrap(plugins.tagWritingCapabilities(for: url))[CogTagWriterChapters] as? Bool, true)
+		let chapters: [[String: Any]] = [
+			[CogChapterStart: 500, CogChapterTitle: "Two"],
+			[CogChapterStart: 0, CogChapterTitle: "One"],
+		]
+		try write(["album": ["Audiobook"], CogTagChapters: chapters], to: url, replace: true)
+
+		let read = try XCTUnwrap(try written(url)[CogTagChapters] as? [[String: Any]])
+		XCTAssertEqual(read.map { $0[CogChapterTitle] as? String }, ["One", "Two"])
+		XCTAssertEqual(read.map { ($0[CogChapterStart] as? NSNumber)?.intValue }, [0, 500])
+		XCTAssertEqual((read[0][CogChapterEnd] as? NSNumber)?.intValue, 500)
+		XCTAssertGreaterThan((read[1][CogChapterEnd] as? NSNumber)?.intValue ?? 0, 500, "the last one ends where the file does")
+		XCTAssertEqual(values(try written(url), "album"), ["Audiobook"])
+
+		let tracks = plugins.urls(forContainerURL: url) ?? []
+		XCTAssertEqual(tracks.count, 2, "\(tracks)")
+		if tracks.count == 2, let second = tracks[1] as? URL {
+			XCTAssertEqual(values(merged(second), "title"), ["Two"], "\(merged(second))")
+		}
+
+		try write([CogTagChapters: []], to: url, replace: false)
+		XCTAssertEqual((try written(url)[CogTagChapters] as? [Any])?.count, 0)
+		XCTAssertEqual((plugins.urls(forContainerURL: url) ?? []).count, 1, "with no chapters the file is one row again")
 	}
 
 	/// ID3v2 keeps a name it has no frame for in a TXXX frame, which reads

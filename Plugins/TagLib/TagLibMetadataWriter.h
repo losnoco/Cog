@@ -15,8 +15,8 @@ namespace TagLib {
 class File;
 }
 
-// Whether the file carries chapters TagLib can read (ID3v2 CHAP frames or
-// Matroska chapters).
+// Whether the file carries chapters TagLib can read (ID3v2 CHAP frames,
+// Matroska chapters, or MP4 QuickTime or Nero chapters).
 bool TagLibFileHasChapters(TagLib::File *file);
 #endif
 

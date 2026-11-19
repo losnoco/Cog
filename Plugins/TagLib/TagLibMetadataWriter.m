@@ -17,9 +17,9 @@
 //    reads ID3v1 and APE tags too, so a stale one would read back over the
 //    new tag. WAV and DSDIFF keep their second tag kind (RIFF INFO, DIIN),
 //    which setProperties writes the same values to.
-//  * Chapters exist for TagLib 2.2.1 only as ID3v2 CHAP/CTOC frames and
-//    Matroska chapters. MP4 chapters it neither reads nor writes, and a
-//    save leaves them alone.
+//  * Chapters are ID3v2 CHAP/CTOC frames, Matroska chapters, and MP4's two
+//    kinds: a QuickTime chapter track, which Apple's players read, and a
+//    Nero chpl list, which others do. A save writes both, from one list.
 //
 
 #import "TagLibMetadataWriter.h"
@@ -37,6 +37,7 @@
 #import <tag/matroskachapteredition.h>
 #import <tag/matroskachapters.h>
 #import <tag/matroskafile.h>
+#import <tag/mp4chapter.h>
 #import <tag/mp4file.h>
 #import <tag/mpcfile.h>
 #import <tag/mpegfile.h>
@@ -92,7 +93,7 @@ NSDictionary *capabilitiesOf(Family family) {
 			return @{ CogTagWriterWritable: @YES, CogTagWriterFoldsKeys: @YES, CogTagWriterMultiValue: @YES, CogTagWriterPictures: @YES, CogTagWriterChapters: @YES };
 		case Family::MP4:
 			// Names without an atom of their own become ---- atoms.
-			return @{ CogTagWriterWritable: @YES, CogTagWriterFoldsKeys: @YES, CogTagWriterMultiValue: @YES, CogTagWriterPictures: @YES };
+			return @{ CogTagWriterWritable: @YES, CogTagWriterFoldsKeys: @YES, CogTagWriterMultiValue: @YES, CogTagWriterPictures: @YES, CogTagWriterChapters: @YES };
 		case Family::Matroska:
 			return @{ CogTagWriterWritable: @YES, CogTagWriterArbitraryKeys: @YES, CogTagWriterMultiValue: @YES, CogTagWriterPictures: @YES, CogTagWriterChapters: @YES };
 	}
@@ -234,8 +235,30 @@ std::vector<Chapter> readMatroskaChapters(TagLib::Matroska::File *file) {
 	return chapters;
 }
 
+// MP4 chapters carry a title and a start; each ends where the next starts,
+// and the last where the file does. The QuickTime track when there is one,
+// as Apple's players show it, otherwise the Nero list.
+std::vector<Chapter> readMP4Chapters(TagLib::MP4::File *file) {
+	std::vector<Chapter> chapters;
+	TagLib::MP4::ChapterList list = file->qtChapters();
+	if(list.isEmpty()) list = file->neroChapters();
+	for(const auto &source : list) {
+		Chapter chapter;
+		chapter.start = source.startTime() > 0 ? (unsigned long long)source.startTime() : 0;
+		chapter.title = toNSString(source.title());
+		chapters.push_back(chapter);
+	}
+	std::stable_sort(chapters.begin(), chapters.end(), [](const Chapter &a, const Chapter &b) { return a.start < b.start; });
+	const unsigned long long length = file->audioProperties() ? (unsigned long long)file->audioProperties()->lengthInMilliseconds() : 0;
+	for(size_t i = 0; i < chapters.size(); ++i) {
+		chapters[i].end = i + 1 < chapters.size() ? chapters[i + 1].start : std::max(length, chapters[i].start);
+	}
+	return chapters;
+}
+
 std::vector<Chapter> readChapters(TagLib::File *file) {
 	if(auto matroska = dynamic_cast<TagLib::Matroska::File *>(file)) return readMatroskaChapters(matroska);
+	if(auto mp4 = dynamic_cast<TagLib::MP4::File *>(file)) return readMP4Chapters(mp4);
 	return readID3v2Chapters(id3v2TagOf(file, false));
 }
 
@@ -319,6 +342,17 @@ void writeMatroskaChapters(TagLib::Matroska::File *file, const std::vector<Chapt
 		list.append(TagLib::Matroska::Chapter(chapter.start * 1000000, chapter.end * 1000000, displays, uid));
 	}
 	all->addChapterEdition(TagLib::Matroska::ChapterEdition(list, true, false, randomUID()));
+}
+
+// Both kinds, so every player finds the same chapters; an empty list
+// removes them.
+void writeMP4Chapters(TagLib::MP4::File *file, const std::vector<Chapter> &chapters) {
+	TagLib::MP4::ChapterList list;
+	for(const Chapter &chapter : chapters) {
+		list.append(TagLib::MP4::Chapter(toString(chapter.title), (long long)chapter.start));
+	}
+	file->setQtChapters(list);
+	file->setNeroChapters(list);
 }
 
 NSArray *chapterArray(const std::vector<Chapter> &chapters) {
@@ -415,6 +449,8 @@ bool applyTags(TagLib::FileRef &f, NSDictionary *tags, BOOL replace) {
 		const std::vector<Chapter> list = chaptersFromArray(chapters, length);
 		if(auto matroska = dynamic_cast<TagLib::Matroska::File *>(file)) {
 			writeMatroskaChapters(matroska, list);
+		} else if(auto mp4 = dynamic_cast<TagLib::MP4::File *>(file)) {
+			writeMP4Chapters(mp4, list);
 		} else if(auto tag = id3v2TagOf(file, !list.empty())) {
 			writeID3v2Chapters(tag, list);
 		}
@@ -519,7 +555,8 @@ bool TagLibFileHasChapters(TagLib::File *file) {
 
 	NSDictionary *tags = nil;
 	try {
-		TagLib::FileRef f([[url path] fileSystemRepresentation], false);
+		// With audio properties: the last MP4 chapter ends at the length.
+		TagLib::FileRef f([[url path] fileSystemRepresentation], true);
 		if(!f.isNull()) tags = readTags(f);
 	} catch(std::exception &e) {
 		ALog(@"Exception caught reading file with TagLib: %s", e.what());

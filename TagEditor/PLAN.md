@@ -25,12 +25,14 @@ already stores tags. It also covers reading and writing chapters through TagLib.
   which FFmpeg reads), and decoders add their own tags. Folder art is injected
   into `albumArt` (`Cached_Folder_Art` in `PluginController.mm`). So the
   playlist blob is **not** a faithful picture of the file's tags.
-- TagLib is 2.2.1 (`ThirdParty/Frameworks/taglib.txt`), prebuilt with no
-  patches. It exposes chapters only per format: ID3v2 `CHAP`/`CTOC` frames
-  (`chapterframe.h`, `tableofcontentsframe.h`), and Matroska
-  `Matroska::File::chapters()`. **It has no MP4 chapter API**, and it has no
-  generic `CHAPTERS` complex property. `TagLibMetadataReader.m:56` tests for
-  one, so that branch never runs.
+- TagLib was 2.2.1 when this was planned, and is now 2.3.2
+  (`ThirdParty/Frameworks/taglib.txt`), prebuilt with no patches. It exposes
+  chapters only per format: ID3v2 `CHAP`/`CTOC` frames (`chapterframe.h`,
+  `tableofcontentsframe.h`), Matroska `Matroska::File::chapters()`, and since
+  2.3 MP4's QuickTime chapter track and Nero `chpl` list
+  (`MP4::File::qtChapters()`, `neroChapters()`). It has no generic `CHAPTERS`
+  complex property. `TagLibMetadataReader.m:56` tested for one, so that
+  branch never ran.
 - Playback already gets chapters from FFmpeg: `FFMPEGContainer` lists
   `file#N` per `AVChapter`, and the decoder takes each chapter's metadata.
 
@@ -133,11 +135,12 @@ UID, so an unchanged chapter keeps its identity.
 through the same helper, so a chaptered file's `TITLE` is read as `album` the
 way that code intends.
 
-**MP4/M4B, the main audiobook format:** TagLib 2.2.1 can neither read nor
-write its chapters (Nero `chpl` or QuickTime chapter tracks). The probe
-reports `chapters = NO`, the editor lists them read-only from FFmpeg or not at
-all, and saving tags leaves the chapter atoms alone. This needs a test.
-Writing MP4 chapters ourselves is out of scope.
+**MP4/M4B, the main audiobook format:** TagLib 2.3 reads and writes both
+kinds of MP4 chapters. They carry a title and a start only; each ends where
+the next starts. The writer reads the QuickTime track when there is one (it
+is what Apple's players show), otherwise the Nero list, and writes both from
+one list, so every player sees the same chapters. Checked by hand: FFmpeg
+lists them, and AVFoundation reads the QuickTime track.
 
 ## Phases
 
@@ -188,9 +191,8 @@ Writing MP4 chapters ourselves is out of scope.
    - Writer round-trips in `iOS/CogPluginsTests`, which loads the real
      plugins: FLAC, Ogg Vorbis/Opus, MP3 (with a `TXXX` fold), MP4, WAV,
      Matroska. Cover added and removed, a custom key, a two-value key, a
-     merge clearing alias spellings, ID3v2 and Matroska chapters
-     (write → read → compare), and an MP4 file's chapters surviving a tag
-     save.
+     merge clearing alias spellings, and ID3v2, Matroska and MP4 chapters
+     (write → read → compare).
    - The read-back goes through the **whole merged reader path**
      (`PlaylistEntryInfo`), not only TagLib, so a decoder's own reader (FLAC,
      Vorbis, FFmpeg) is shown to see the change.
@@ -218,7 +220,7 @@ Writing MP4 chapters ourselves is out of scope.
 
 ## Out of scope for v1
 
-ReplayGain writing; `.lrc` writing; MP4 chapter writing; archive members, HTTP
+ReplayGain writing; `.lrc` writing; archive members, HTTP
 streams and cue tracks; the iOS editor UI; AppleScript and Remote Control tag
 writes.
 
