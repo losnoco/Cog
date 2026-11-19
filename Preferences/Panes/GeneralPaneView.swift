@@ -68,22 +68,15 @@ struct GeneralPaneView: View {
         }
     }
 
+    // One form that scrolls as a whole: the paths' table has a fixed height
+    // in its own section, so it no longer takes the window's height from the
+    // settings under it.
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Sandbox-accessible paths:")
-                .font(.headline)
-                .padding([.horizontal, .top])
-
-            pathTable
-
-            actionBar
-
-            Divider()
-
+        Group {
             if #available(macOS 13.0, *) {
                 settingsForm.formStyle(.grouped)
             } else {
-                settingsForm.padding()
+                ScrollView { settingsForm.padding() }
             }
         }
         .onAppear { pathModel.refresh() }
@@ -107,6 +100,9 @@ struct GeneralPaneView: View {
             }
             .width(60)
         }
+        .tableStyle(.bordered(alternatesRowBackgrounds: true))
+        // The header and about five rows; more scroll within the table.
+        .frame(height: 148)
     }
 
     private var pathList: some View {
@@ -129,6 +125,12 @@ struct GeneralPaneView: View {
 
     private var settingsForm: some View {
         Form {
+            Section {
+                pathTable
+                actionBar
+            } header: {
+                Text("Sandbox-accessible paths:").bold()
+            }
             Section {
                 Toggle("Allow insecure SSL connections", isOn: $prefs.allowInsecureSSL)
                 Picker("HTTP/HTTPS streaming buffer", selection: $prefs.httpStreamingBufferSize) {
@@ -209,7 +211,6 @@ struct GeneralPaneView: View {
                 selectedIndices.removeAll()
             }
         }
-        .padding()
     }
 }
 
