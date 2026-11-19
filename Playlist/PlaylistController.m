@@ -180,6 +180,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 	                        options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld)
 	                        context:playlistControllerContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:playlistControllerContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.boldPlayingTrack" options:NSKeyValueObservingOptionNew context:playlistControllerContext];
 
 	observersRegistered = YES;
 
@@ -198,6 +199,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		[playbackController removeObserver:self forKeyPath:@"progressOverall" context:playlistControllerContext];
 		[playbackController removeObserver:self forKeyPath:@"progressMetadata" context:playlistControllerContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.fontSize" context:playlistControllerContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.boldPlayingTrack" context:playlistControllerContext];
 	}
 }
 
@@ -222,6 +224,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 			[self.tableView reloadData];
 		} else if([keyPath isEqualToString:@"values.fontSize"]) {
 			[self updateRowSize];
+		} else if([keyPath isEqualToString:@"values.boldPlayingTrack"]) {
+			if(currentEntry) [self reloadRowsForEntries:@[currentEntry]];
 		} else if([keyPath isEqualToString:@"progressOverall"] ||
 		          [keyPath isEqualToString:@"progressMetadata"]) {
 			id objNew = [change objectForKey:NSKeyValueChangeNewKey];
@@ -696,7 +700,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 		frameRect.size.height = tableView.rowHeight;
 		cellView.frame = frameRect;
 
-		NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:NSFontWeightRegular];
+		// The row that plays stands out in bold, selected or not, so it can
+		// be found in a long playlist; the status icon alone is easy to miss.
+		BOOL bold = pe.current && [[NSUserDefaults standardUserDefaults] boolForKey:@"boldPlayingTrack"];
+		NSFont *font = [NSFont monospacedDigitSystemFontOfSize:fontSize weight:bold ? NSFontWeightBold : NSFontWeightRegular];
 
 		if(cellView.textField) {
 			cellView.textField.allowsDefaultTighteningForTruncation = YES;

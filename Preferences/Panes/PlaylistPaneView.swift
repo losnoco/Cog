@@ -30,6 +30,9 @@ private final class PlaylistPrefs: ObservableObject {
     @Published var stopWhenQueueEmpties: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(stopWhenQueueEmpties, forKey: "stopWhenQueueEmpties") }
     }
+    @Published var boldPlayingTrack: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(boldPlayingTrack, forKey: "boldPlayingTrack") }
+    }
     @Published var tagEditorChapterRows: String {
         didSet { guard isActive else { return }; UserDefaults.standard.set(tagEditorChapterRows, forKey: "tagEditorChapterRows") }
     }
@@ -47,6 +50,7 @@ private final class PlaylistPrefs: ObservableObject {
         resetPlaylistOnQuit = d.bool(forKey: "resetPlaylistOnQuit")
         quitOnNaturalStop = d.bool(forKey: "quitOnNaturalStop")
         stopWhenQueueEmpties = d.bool(forKey: "stopWhenQueueEmpties")
+        boldPlayingTrack = d.bool(forKey: "boldPlayingTrack")
         tagEditorChapterRows = d.string(forKey: "tagEditorChapterRows") ?? "ask"
     }
 }
@@ -106,6 +110,7 @@ struct PlaylistPaneView: View {
             Toggle("Reset playlist on quit", isOn: $prefs.resetPlaylistOnQuit)
             Toggle("Quit when playback completes", isOn: $prefs.quitOnNaturalStop)
             Toggle("Stop when the queue empties", isOn: $prefs.stopWhenQueueEmpties)
+            Toggle("Show the playing track in bold", isOn: $prefs.boldPlayingTrack)
 
             Section {
                 Picker("Playlist rows:", selection: $prefs.tagEditorChapterRows) {

@@ -6336,6 +6336,17 @@
         }
       }
     },
+    "Show the playing track in bold" : {
+      "comment" : "A toggle in the Playlist preferences that draws the playing track's row in bold.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar en negrita la pista en reproducción"
+          }
+        }
+      }
+    },
     "Show waveform" : {
       "localizations" : {
         "es" : {

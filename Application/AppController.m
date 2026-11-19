@@ -935,6 +935,7 @@ static BOOL consentLastEnabled = NO;
 	[userDefaultsValuesDict setObject:@NO forKey:@"stopWhenQueueEmpties"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"showPlaylistTabs"];
 	[userDefaultsValuesDict setObject:@NO forKey:@"selectionFollowsPlayback"];
+	[userDefaultsValuesDict setObject:@YES forKey:@"boldPlayingTrack"];
 
 	[userDefaultsValuesDict setObject:@YES forKey:@"suspendOutputOnPause"];
 	[userDefaultsValuesDict setObject:@YES forKey:@"enableFading"];
