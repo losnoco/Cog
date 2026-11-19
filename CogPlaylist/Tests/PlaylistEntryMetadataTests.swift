@@ -87,6 +87,29 @@ final class PlaylistEntryMetadataTests: XCTestCase {
 		XCTAssertEqual(entry.artist, "A")
 	}
 
+	/// A reload after a tag save: what the file no longer has goes, the
+	/// cover included.
+	func testReplacingDropsTagsAndArtTheReadNoLongerHas() {
+		let entry = makeEntry()
+		entry.metadataBlob = ["comment": ["Removed from the file"], "artist": ["Old"]] as NSDictionary
+		entry.albumArtInternal = Data([0xFF, 0xD8, 0xFF, 0xE0, 9])
+		XCTAssertNotNil(entry.artHash)
+
+		entry.setMetadata(["artist": "New"], replacing: true)
+		XCTAssertNil(entry.comment)
+		XCTAssertEqual(entry.artist, "New")
+		XCTAssertNil(entry.artHash)
+		XCTAssertTrue(entry.metadataLoaded)
+	}
+
+	func testReplacingKeepsArtTheReadStillHas() {
+		let picture = Data([0xFF, 0xD8, 0xFF, 0xE0, 7])
+		let entry = makeEntry()
+		entry.albumArtInternal = picture
+		entry.setMetadata(["albumart": picture, "title": "T"], replacing: true)
+		XCTAssertEqual(entry.albumArtInternal, picture)
+	}
+
 	func testNoMetadataMarksTheEntryUnreadable() {
 		let entry = makeEntry()
 		entry.setMetadata(nil)

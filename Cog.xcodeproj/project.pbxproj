@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagEditorController.m */; };
+		07D971E60ED1DAA800E7602E /* TagSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D971E50ED1DAA800E7602E /* TagSaver.swift */; };
 		07E18DF30D62B38400BB0E11 /* NSArray+ShuffleUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */; };
 		0A0033913086B95400C5352B /* SpectrumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0033903086B95400C5352B /* SpectrumView.swift */; };
 		0A0033933086B95500C5352B /* SpectrumWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0033923086B95500C5352B /* SpectrumWindowController.swift */; };
@@ -938,8 +938,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		07D971E40ED1DAA800E7602E /* TagEditorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TagEditorController.h; path = TagEditor/TagEditorController.h; sourceTree = "<group>"; };
-		07D971E50ED1DAA800E7602E /* TagEditorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagEditorController.m; path = TagEditor/TagEditorController.m; sourceTree = "<group>"; };
+		07D971E50ED1DAA800E7602E /* TagSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TagSaver.swift; path = TagEditor/TagSaver.swift; sourceTree = "<group>"; };
 		07E18DF10D62B38400BB0E11 /* NSArray+ShuffleUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+ShuffleUtils.h"; sourceTree = "<group>"; };
 		07E18DF20D62B38400BB0E11 /* NSArray+ShuffleUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+ShuffleUtils.m"; sourceTree = "<group>"; };
 		0A0033903086B95400C5352B /* SpectrumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpectrumView.swift; path = Visualization/SpectrumView.swift; sourceTree = "<group>"; };
@@ -1408,13 +1407,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		07D973050ED1E8F200E7602E /* ID3TagEditor */ = {
+		07D973050ED1E8F200E7602E /* TagEditor */ = {
 			isa = PBXGroup;
 			children = (
-				07D971E40ED1DAA800E7602E /* TagEditorController.h */,
-				07D971E50ED1DAA800E7602E /* TagEditorController.m */,
+				07D971E50ED1DAA800E7602E /* TagSaver.swift */,
 			);
-			name = ID3TagEditor;
+			name = TagEditor;
 			sourceTree = "<group>";
 		};
 		080E96DDFE201D6D7F000001 /* Classes */ = {
@@ -1436,7 +1434,7 @@
 				17E0D5F60F520F42005B6FED /* Transformers */,
 				177EC0110B8BC2CF0000BC8C /* Utils */,
 				177EBF770B8BC2A70000BC8C /* ThirdParty */,
-				07D973050ED1E8F200E7602E /* ID3TagEditor */,
+				07D973050ED1E8F200E7602E /* TagEditor */,
 				0A0E707C307416E400EF30D0 /* SignalInspector */,
 			);
 			name = Classes;
@@ -3294,7 +3292,7 @@
 				179D03280E0CB2500064A77A /* SmartFolderNode.m in Sources */,
 				8366CB2F2E85E2FB007DB8D2 /* Shaders.metal in Sources */,
 				173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */,
-				07D971E60ED1DAA800E7602E /* TagEditorController.m in Sources */,
+				07D971E60ED1DAA800E7602E /* TagSaver.swift in Sources */,
 				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
 				8E1A2B032DDE000100000003 /* MainSplitViewController.m in Sources */,
 				833D0C2527C4ABB80060E16A /* ScriptAdditions.m in Sources */,

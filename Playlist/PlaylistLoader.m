@@ -643,6 +643,14 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 }
 
 - (void)loadInfoForEntries:(NSArray *)entries {
+	[self loadInfoForEntries:entries replacing:NO];
+}
+
+- (void)reloadInfoForEntries:(NSArray *)entries {
+	[self loadInfoForEntries:entries replacing:YES];
+}
+
+- (void)loadInfoForEntries:(NSArray *)entries replacing:(BOOL)replacing {
 	NSMutableDictionary *queueThisJob = [NSMutableDictionary new];
 	for(PlaylistEntry *pe in entries) {
 		if(!pe || !pe.urlString || ![pe.urlString length] || pe.deLeted || pe.metadataLoaded) continue;
@@ -810,7 +818,7 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 				NSArray *entrySet = [uniquePathsEntries objectForKey:entryKey];
 				if(entrySet) {
 					for(PlaylistEntry *pe in entrySet) {
-						[pe setMetadata:entryInfo];
+						[pe setMetadata:entryInfo replacing:replacing];
 						NSInteger row = [playlistController rowForEntry:pe];
 						if(row != NSNotFound) {
 							[batchRows addIndex:row];

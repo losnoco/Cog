@@ -19,8 +19,16 @@ extension PlaylistEntry {
 	/// Stores what PlaylistEntryInfo read for the entry; nil marks it as
 	/// unreadable. Either way the entry's metadata counts as loaded.
 	@objc(setMetadata:) public func setMetadata(_ metadata: [String: Any]?) {
+		setMetadata(metadata, replacing: false)
+	}
+
+	/// As setMetadata(_:), and when `replacing`, what the entry had before is
+	/// dropped first, the album art included: a reload after a tag was
+	/// removed from the file (or a cover was) must not keep the old one.
+	@objc(setMetadata:replacing:) public func setMetadata(_ metadata: [String: Any]?, replacing: Bool) {
 		if let metadata {
-			var dictionary = metadataBlob as? [String: Any] ?? [:]
+			var dictionary = replacing ? [:] : metadataBlob as? [String: Any] ?? [:]
+			if replacing { artHash = nil }
 			volume = 1
 			for (key, valueObject) in metadata {
 				let lowerKey = Self.metaTag(forKey: key).lowercased()

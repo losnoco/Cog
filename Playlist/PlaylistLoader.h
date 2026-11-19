@@ -60,6 +60,10 @@ typedef enum {
 //- (NSDictionary *)readEntryInfo:(PlaylistEntry *)pe;
 
 - (void)loadInfoForEntries:(NSArray *)entries;
+// As loadInfoForEntries:, for entries already loaded once (each marked
+// metadataLoaded = NO): what they stored is replaced, not merged into, so a
+// tag or cover gone from the file goes from the entry too.
+- (void)reloadInfoForEntries:(NSArray *)entries;
 
 // To be dispatched on main thread only
 - (void)syncLoadInfoForEntries:(NSArray *)entries;

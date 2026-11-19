@@ -1654,19 +1654,6 @@ BOOL showTrashConsent(NSWindow *window) {
 	if([url isFileURL]) [ws selectFile:[url path] inFileViewerRootedAtPath:[url path]];
 }
 
-/*
-- (IBAction)showTagEditor:(id)sender
-{
-// call the editor & pass the url
-	if ([self selectionIndex] < 0)
-		return;
-
-	NSURL *url = [[[self selectedObjects] objectAtIndex:0] URL];
-	if ([url isFileURL])
-		[TagEditorController openTagEditor:url sender:sender];
-
-}
-*/
 - (IBAction)searchByArtist:(id)sender;
 {
 	PlaylistEntry *entry = [[self arrangedObjects] objectAtIndex:[self selectionIndex]];
@@ -1900,6 +1887,45 @@ static BOOL playlistIsLive(Playlist *playlist) {
 	}
 }
 
+// Replaces `entries`, rows of one file in `playlist`, with the rows `url`
+// lists now, where the first of them was: after a tag save changed the
+// file's chapters, so its "#N" rows follow them. Shown or not.
+- (void)replaceEntries:(NSArray<PlaylistEntry *> *)entries withRowsOfURL:(NSURL *)url inPlaylist:(Playlist *)playlist {
+	if(![entries count] || !url || !playlistIsLive(playlist)) return;
+
+	NSInteger index;
+	if(playlist == self.shownPlaylist) {
+		[self clearFilterPredicate:self];
+		NSArray *arranged = [self arrangedObjects];
+		NSMutableIndexSet *rows = [NSMutableIndexSet new];
+		for(PlaylistEntry *pe in entries) {
+			NSUInteger row = [arranged indexOfObjectIdenticalTo:pe];
+			if(row != NSNotFound) [rows addIndex:row];
+		}
+		if(![rows count]) return;
+		index = (NSInteger)[rows firstIndex];
+		[self removeObjectsAtArrangedObjectIndexes:rows];
+	} else {
+		NSArray<PlaylistEntry *> *ordered = playlist.orderedEntries;
+		index = NSIntegerMax;
+		for(PlaylistEntry *pe in entries) {
+			NSUInteger position = [ordered indexOfObjectIdenticalTo:pe];
+			if(position != NSNotFound) index = MIN(index, (NSInteger)position);
+		}
+		if(index == NSIntegerMax) return;
+		[self.playbackOrder willRemoveEntries:entries current:currentEntry];
+		for(PlaylistEntry *pe in entries) {
+			pe.deLeted = YES;
+		}
+		// Renumbered by the insert below, which skips removed entries;
+		// saved and announced here in case the file lists no rows now.
+		[self commitPersistentStoreAsync];
+		if(playlist == self.playingPlaylist) [self playingPlaylistDidChange];
+	}
+
+	[playlistLoader insertURLs:@[url] atIndex:index sort:NO intoPlaylist:playlist];
+}
+
 // Removes every entry of `playlist`, shown or not.
 - (void)clearPlaylist:(Playlist *)playlist {
 	if(!playlistIsLive(playlist) || playlist == self.shownPlaylist) {
@@ -1991,7 +2017,7 @@ static BOOL playlistIsLive(Playlist *playlist) {
 			pe.metadataLoaded = NO;
 		}
 
-		[playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:selectedobjects];
+		[playlistLoader performSelectorInBackground:@selector(reloadInfoForEntries:) withObject:selectedobjects];
 	}
 }
 

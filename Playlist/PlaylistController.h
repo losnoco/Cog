@@ -94,7 +94,6 @@
 - (IBAction)clearFilterPredicate:(id _Nullable)sender;
 - (IBAction)clear:(id _Nullable)sender;
 
-//- (IBAction)showTagEditor:(id)sender;
 
 // Spotlight
 - (IBAction)searchByArtist:(id _Nullable)sender;
@@ -124,6 +123,7 @@
 /// Puts `entries` at `index` (the end when negative) of `playlist`, shown or
 /// not; of the shown one if `playlist` is nil or has since been deleted.
 - (void)insertEntries:(NSArray<PlaylistEntry *> *_Nonnull)entries atIndex:(NSInteger)index intoPlaylist:(Playlist *_Nullable)playlist;
+- (void)replaceEntries:(NSArray<PlaylistEntry *> *_Nonnull)entries withRowsOfURL:(NSURL *_Nonnull)url inPlaylist:(Playlist *_Nonnull)playlist;
 
 // queue methods
 - (IBAction)toggleQueued:(id _Nullable)sender;
