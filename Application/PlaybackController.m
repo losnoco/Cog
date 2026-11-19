@@ -113,6 +113,8 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 - (void)setVolumeControlsValue:(double)value;
 @end
 
+static void *kVolumeDefaultContext = &kVolumeDefaultContext;
+
 @implementation PlaybackController {
 	// Bumped by every play or stop, so a start deferred until an entry's
 	// tags load is dropped if something else happened meanwhile.
@@ -160,6 +162,9 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 		[self setPlaybackStatus:CogStatusStopped];
 
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(entryMetadataLoaded:) name:CogPlaylistEntryMetadataLoadedNotification object:nil];
+		// The volume set from outside the app (defaults write), which was
+		// only read at launch.
+		[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:@"volume" options:0 context:kVolumeDefaultContext];
 	}
 
 	return self;
@@ -176,6 +181,22 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 	});
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+	if(context != kVolumeDefaultContext) {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		BOOL volumeLimit = [[NSUserDefaults standardUserDefaults] boolForKey:@"volumeLimit"];
+		const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+		double volume = MAX(0.0, MIN([[NSUserDefaults standardUserDefaults] doubleForKey:@"volume"], MAX_VOLUME));
+		// What the app itself just saved is already playing.
+		if(fabs(volume - [self->audioPlayer volume]) < 1e-6) return;
+		[self->audioPlayer setVolume:volume];
+		[self setVolumeControlsValue:logarithmicToLinear(volume, MAX_VOLUME)];
+	});
+}
+
 - (void)initDefaults {
 	NSDictionary *defaultsDictionary = @{ @"volume": @(75.0),
 		                                  @"pitch": @(1.0),
@@ -185,6 +206,8 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 		                                  @"GraphicEQpreset": @(-1),
 		                                  @"GraphicEQtrackgenre": @NO,
 		                                  @"volumeLimit": @YES,
+		                                  @"volumeStep": @(5.0),
+		                                  @"volumeStepMode": @"volume",
 		                                  @"enableSpatialAudio": @YES,
 		                                  @"enableHeadTracking": @NO,
 		                                  @"enableHDCD": @NO,
@@ -859,25 +882,36 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
-- (IBAction)volumeDown:(id)sender {
+// One step of the volume keys, hot keys and menu items, of the size and kind
+// set in the preferences: so many points of the volume shown (5 at a time
+// is a lot near silence and little near full), or of the slider's travel,
+// which is curved to move evenly by ear.
+- (void)stepVolume:(double)direction {
 	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
 	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
 
-	double newVolume = [audioPlayer volumeDown:DEFAULT_VOLUME_DOWN];
+	double step = [[NSUserDefaults standardUserDefaults] doubleForKey:@"volumeStep"];
+	if(step <= 0) step = DEFAULT_VOLUME_UP;
+
+	double newVolume;
+	if([[[NSUserDefaults standardUserDefaults] stringForKey:@"volumeStepMode"] isEqualToString:@"slider"]) {
+		double travel = logarithmicToLinear([audioPlayer volume], MAX_VOLUME) + direction * step;
+		newVolume = linearToLogarithmic(MAX(0.0, MIN(travel, 100.0)), MAX_VOLUME);
+		[audioPlayer setVolume:newVolume];
+	} else {
+		newVolume = direction > 0 ? [audioPlayer volumeUp:step] : [audioPlayer volumeDown:step];
+	}
 	[self setVolumeControlsValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
 
 	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
 }
 
+- (IBAction)volumeDown:(id)sender {
+	[self stepVolume:-1];
+}
+
 - (IBAction)volumeUp:(id)sender {
-	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
-	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
-
-	double newVolume;
-	newVolume = [audioPlayer volumeUp:DEFAULT_VOLUME_UP];
-	[self setVolumeControlsValue:logarithmicToLinear(newVolume, MAX_VOLUME)];
-
-	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
+	[self stepVolume:1];
 }
 
 - (IBAction)pitchDown:(id)sender {

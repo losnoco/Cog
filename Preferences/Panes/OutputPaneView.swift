@@ -26,6 +26,12 @@ private final class OutputPrefs: ObservableObject {
     @Published var volumeLimit: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(volumeLimit, forKey: "volumeLimit") }
     }
+    @Published var volumeStep: Double {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(volumeStep, forKey: "volumeStep") }
+    }
+    @Published var volumeStepMode: String {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(volumeStepMode, forKey: "volumeStepMode") }
+    }
     @Published var suspendOutputOnPause: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(suspendOutputOnPause, forKey: "suspendOutputOnPause") }
     }
@@ -63,6 +69,8 @@ private final class OutputPrefs: ObservableObject {
         enableCrossfeed = d.bool(forKey: "enableCrossfeed")
         crossfeedPreset = d.string(forKey: "crossfeedPreset") ?? "default"
         volumeLimit = d.object(forKey: "volumeLimit") as? Bool ?? true
+        volumeStep = d.object(forKey: "volumeStep") as? Double ?? 5
+        volumeStepMode = d.string(forKey: "volumeStepMode") ?? "volume"
         suspendOutputOnPause = d.object(forKey: "suspendOutputOnPause") as? Bool ?? true
         enableFading = d.object(forKey: "enableFading") as? Bool ?? true
         sendMonoToCenter = d.bool(forKey: "sendMonoToCenter")
@@ -176,6 +184,18 @@ struct OutputPaneView: View {
                 }
             }
             Toggle("Limit volume to prevent clipping", isOn: $prefs.volumeLimit)
+            Picker("Volume keys change:", selection: $prefs.volumeStepMode) {
+                Text("The volume level").tag("volume")
+                Text("The slider's position").tag("slider")
+            }
+            Picker("Volume step:", selection: $prefs.volumeStep) {
+                ForEach([1.0, 2.0, 5.0, 10.0], id: \.self) { step in
+                    Text(String(format: NSLocalizedString("%d%%", comment: "A volume step, in percent"), Int(step))).tag(step)
+                }
+            }
+            Text("Steps of the slider's position are finer near silence and coarser near full volume.")
+                .font(.caption)
+                .foregroundColor(.secondary)
             Toggle("Suspend output when paused", isOn: $prefs.suspendOutputOnPause)
             Toggle("Fade playback transitions", isOn: $prefs.enableFading)
             Toggle("Send mono to center output", isOn: $prefs.sendMonoToCenter)
