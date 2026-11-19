@@ -15,8 +15,11 @@
 	IBOutlet NSSearchField *searchField;
 	// The SignalInspectorWindowController, opened by clicking the output status.
 	IBOutlet id signalInspector;
+	// The bar under the playlist, with the total duration and the output status.
+	IBOutlet NSView *statusBar;
 }
 
 - (IBAction)openSearch:(id)sender;
+- (IBAction)toggleStatusBar:(id)sender;
 
 @end

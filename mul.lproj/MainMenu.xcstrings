@@ -4831,6 +4831,24 @@
         }
       }
     },
+    "Stb-Mn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Status Bar\"; ObjectID = \"Stb-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Status Bar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar barra de estado"
+          }
+        }
+      }
+    },
     "tgE-d1-Tg1.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Edit Tags…\"; ObjectID = \"tgE-d1-Tg1\";",
       "extractionState" : "extracted_with_value",

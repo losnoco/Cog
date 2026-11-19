@@ -1310,6 +1310,7 @@
                 <outlet property="playlistView" destination="206" id="mah-wo-1nd"/>
                 <outlet property="searchField" destination="1531" id="Lh4-Bw-6Ex"/>
                 <outlet property="signalInspector" destination="Sig-In-Ctl" id="Sig-In-Out"/>
+                <outlet property="statusBar" destination="Dac-Fm-Bar" id="Stb-Vw-Out"/>
             </connections>
             <point key="canvasLocation" x="270.5" y="131"/>
         </window>
@@ -2023,6 +2024,11 @@
                                         </menuItem>
                                     </items>
                                 </menu>
+                            </menuItem>
+                            <menuItem title="Show Status Bar" keyEquivalent="/" id="Stb-Mn-Itm">
+                                <connections>
+                                    <action selector="toggleStatusBar:" target="-1" id="Stb-Mn-Act"/>
+                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="RPL-Sp-Itm"/>
                             <menuItem title="Reset Pane Layout" id="RPL-Mn-Itm">

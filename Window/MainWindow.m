@@ -63,6 +63,8 @@ void showSentryConsent(NSWindow *window) {
 	NSClickGestureRecognizer *click = [[NSClickGestureRecognizer alloc] initWithTarget:signalInspector action:@selector(toggleWindow:)];
 	[outputFormatField addGestureRecognizer:click];
 
+	statusBar.hidden = [[NSUserDefaults standardUserDefaults] boolForKey:@"hideStatusBar"];
+
 	[playlistView setNextResponder:self];
 
 	if(![[NSUserDefaults standardUserDefaults] boolForKey:@"miniMode"]) {
@@ -84,6 +86,22 @@ void showSentryConsent(NSWindow *window) {
 	SignalStatusModel *model = SignalStatusModel.shared;
 	outputFormatField.stringValue = model.summary;
 	outputFormatField.toolTip = model.toolTip;
+}
+
+// The playlist's stack view detaches a hidden view, so the playlist takes
+// the bar's room.
+- (IBAction)toggleStatusBar:(id)sender {
+	BOOL hide = !statusBar.hidden;
+	statusBar.hidden = hide;
+	[[NSUserDefaults standardUserDefaults] setBool:hide forKey:@"hideStatusBar"];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+	if(menuItem.action == @selector(toggleStatusBar:)) {
+		menuItem.state = statusBar.hidden ? NSControlStateValueOff : NSControlStateValueOn;
+		return YES;
+	}
+	return [super validateMenuItem:menuItem];
 }
 
 - (void)focusSearch:(id)sender {
