@@ -288,6 +288,33 @@ final class TagWriterTests: XCTestCase {
 		XCTAssertEqual(try Data(contentsOf: url), before)
 	}
 
+	/// The playing file: a decoder holds it open (FileSource keeps a FILE *)
+	/// while the save swaps a new file in. It reads the old file's bytes to
+	/// the end, unshifted, though the new tag is far larger at its start.
+	func testAFileOpenForReadingKeepsItsDataThroughASave() throws {
+		let url = try writeFLAC()
+		let original = try Data(contentsOf: url)
+		let handle = try FileHandle(forReadingFrom: url)
+		defer { try? handle.close() }
+		let head = try XCTUnwrap(try handle.read(upToCount: 4096))
+
+		try write(["comment": [String(repeating: "grown ", count: 4000)], CogTagAlbumArt: png], to: url, replace: true)
+
+		let rest = try handle.readToEnd() ?? Data()
+		XCTAssertEqual(head + rest, original, "the open file changed under its reader")
+		XCTAssertNotEqual(try Data(contentsOf: url), original)
+		XCTAssertEqual(values(try written(url), "comment").first?.hasPrefix("grown"), true)
+	}
+
+	func testASymbolicLinkStaysOneAndItsTargetGetsTheTags() throws {
+		let target = try writeFLAC()
+		let link = directory.appendingPathComponent("link.flac")
+		try FileManager.default.createSymbolicLink(at: link, withDestinationURL: target)
+		try write(["title": ["Through the link"]], to: link, replace: true)
+		XCTAssertEqual(try FileManager.default.destinationOfSymbolicLink(atPath: link.path), target.path)
+		XCTAssertEqual(values(try written(target), "title"), ["Through the link"])
+	}
+
 	func testNoCopyIsLeftBesideTheFile() throws {
 		let url = try writeFLAC()
 		try write(["title": ["Tidy"]], to: url, replace: true)

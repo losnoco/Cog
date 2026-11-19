@@ -8,11 +8,14 @@
 //  * Tags are named as TagLibMetadataReader names them: TagLib's property
 //    names lowercased, with tracknumber, discnumber and itunnorm read as
 //    track, disc and soundcheck. A write maps those back.
-//  * Saving goes to a copy beside the file, which then replaces it: TagLib
-//    rewrites files in place, so a failed or interrupted save would
-//    otherwise leave a damaged file. Where the folder can't be written
-//    (a sandboxed app given only the file), the file is saved in place
-//    with a copy in the temporary folder to restore from on failure.
+//  * A save is a copy, saved, then swapped in for the file by a rename, never
+//    a rewrite in place: TagLib rewrites files in place, which an
+//    interrupted save would leave damaged, and the file may be playing. A
+//    decoder reading it keeps the old file's data until it closes it, and
+//    the next open gets the new one, where a tag that grew in place would
+//    shift the audio under the decoder. The copy goes in a temporary folder
+//    on the file's own volume, or else beside it; when neither can be
+//    written, the save fails and the file is untouched.
 //  * MPEG files save their ID3v2 tag alone and strip the others: TagLib
 //    reads ID3v1 and APE tags too, so a stale one would read back over the
 //    new tag. WAV and DSDIFF keep their second tag kind (RIFF INFO, DIIN),
@@ -576,39 +579,43 @@ bool TagLibFileHasChapters(TagLib::File *file) {
 	const void *sbHandle = [sandboxBroker beginFolderAccess:url];
 
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	NSString *path = [url path];
+	// A symbolic link stays one: its target is what gets the new tags.
+	NSURL *target = [url URLByResolvingSymlinksInPath];
 	NSString *reason = nil;
 	BOOL saved = NO;
 
-	// A copy beside the file keeps the extension, which is how TagLib picks
-	// the format, and the folder, so the replace is a rename.
-	NSString *copyName = [NSString stringWithFormat:@".%@.cog-%@.%@", [[path lastPathComponent] stringByDeletingPathExtension], [[NSUUID UUID] UUIDString], [path pathExtension]];
-	NSURL *copyURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:copyName];
+	// Where the copy can be made: the volume's own folder for safe saves,
+	// or else beside the file. Either way on the file's volume, so the swap
+	// is a rename. The copy keeps the file's extension, which is how TagLib
+	// picks the format.
+	NSURL *replacementFolder = [fileManager URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:target create:YES error:nil];
+	NSString *besideName = [NSString stringWithFormat:@".%@.cog-%@.%@", [[target lastPathComponent] stringByDeletingPathExtension], [[NSUUID UUID] UUIDString], [target pathExtension]];
+	NSMutableArray<NSURL *> *places = [NSMutableArray new];
+	if(replacementFolder) [places addObject:[replacementFolder URLByAppendingPathComponent:[target lastPathComponent]]];
+	[places addObject:[[target URLByDeletingLastPathComponent] URLByAppendingPathComponent:besideName]];
+
+	NSURL *copyURL = nil;
 	NSError *copyError = nil;
-	if([fileManager copyItemAtURL:url toURL:copyURL error:&copyError]) {
+	for(NSURL *place in places) {
+		if([fileManager copyItemAtURL:target toURL:place error:&copyError]) {
+			copyURL = place;
+			break;
+		}
+	}
+
+	if(copyURL) {
 		if(saveTagsAtPath([copyURL path], tags, replace, &reason)) {
 			NSError *replaceError = nil;
-			saved = [fileManager replaceItemAtURL:url withItemAtURL:copyURL backupItemName:nil options:0 resultingItemURL:nil error:&replaceError];
+			// Keeps the file's own attributes: permissions, dates made,
+			// extended attributes.
+			saved = [fileManager replaceItemAtURL:target withItemAtURL:copyURL backupItemName:nil options:0 resultingItemURL:nil error:&replaceError];
 			if(!saved) reason = [replaceError localizedDescription] ?: @"The saved copy could not replace the file.";
 		}
 		if(!saved) [fileManager removeItemAtURL:copyURL error:nil];
 	} else {
-		// The folder isn't writable, but the file may be: save in place,
-		// with a copy to put back if TagLib fails.
-		NSURL *backupURL = [[NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES] URLByAppendingPathComponent:copyName];
-		NSData *original = [NSData dataWithContentsOfURL:url options:NSDataReadingMappedIfSafe error:nil];
-		if(original && [original writeToURL:backupURL atomically:NO]) {
-			saved = saveTagsAtPath(path, tags, replace, &reason);
-			if(!saved && ![original writeToURL:url atomically:NO]) {
-				ALog(@"Could not restore %@ after a failed save; the original is at %@", path, [backupURL path]);
-				reason = [NSString stringWithFormat:@"%@ The original was kept at %@.", reason, [backupURL path]];
-				backupURL = nil;
-			}
-			if(backupURL) [fileManager removeItemAtURL:backupURL error:nil];
-		} else {
-			reason = [copyError localizedDescription] ?: @"The file could not be copied before saving.";
-		}
+		reason = [NSString stringWithFormat:@"Cog can't write a copy of the file to save into. %@", [copyError localizedFailureReason] ?: [copyError localizedDescription] ?: @""];
 	}
+	if(replacementFolder) [fileManager removeItemAtURL:replacementFolder error:nil];
 
 	[sandboxBroker endFolderAccess:sbHandle];
 

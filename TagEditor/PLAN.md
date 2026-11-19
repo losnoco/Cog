@@ -70,10 +70,18 @@ already stores tags. It also covers reading and writing chapters through TagLib.
    raw, lowercased name (with the reader's `track`/`disc`/`soundcheck`
    mapping), so the editor's free-form rows are the same raw fields the blob
    and the Info Inspector show for the entry.
-2. **Crash safety is ours to do.** TagLib 2.x rewrites the file in place. Save
-   a copy in the same folder (`NSFileManager` copy, TagLib on the copy), then
-   `replaceItemAtURL:withItemAtURL:…`. A failed or interrupted save leaves the
-   original untouched. The folder is already inside the bookmark's scope.
+2. **Every save is an atomic swap.** TagLib 2.x rewrites the file in place,
+   so the writer saves a copy and renames it over the file
+   (`replaceItemAtURL:withItemAtURL:…`). The copy lives in the volume's
+   `NSItemReplacementDirectory`, or else beside the file, so the rename stays
+   on one volume. A failed or interrupted save leaves the original untouched,
+   and the file may be playing: every decoder of a writable format reads
+   through the `CogSource` it was handed (`FileSource` keeps a `FILE *`), so
+   it reads the old file's bytes, unshifted, until it closes it, and the next
+   open gets the new file. There is no in-place fallback. When no copy can be
+   written, the save fails. A symbolic link stays one, and its target gets the
+   tags. (`testAFileOpenForReadingKeepsItsDataThroughASave`,
+   `testASymbolicLinkStaysOneAndItsTargetGetsTheTags`.)
 3. **Sandbox:** every access goes through `SandboxBroker`
    `beginFolderAccess:`/`endFolderAccess:`. Bookmarks are made without
    `…SecurityScopeAllowOnlyReadAccess`, so they allow writing. Test the App
