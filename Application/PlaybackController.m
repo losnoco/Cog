@@ -882,6 +882,21 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	}
 }
 
+- (double)volumeLevel {
+	return [audioPlayer volume];
+}
+
+- (void)setVolumeLevel:(double)level {
+	BOOL volumeLimit = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] boolForKey:@"volumeLimit"];
+	const double MAX_VOLUME = (volumeLimit) ? 100.0 : 800.0;
+
+	level = MAX(0.0, MIN(level, MAX_VOLUME));
+	[audioPlayer setVolume:level];
+	[self setVolumeControlsValue:logarithmicToLinear(level, MAX_VOLUME)];
+
+	[[NSUserDefaults standardUserDefaults] setDouble:[audioPlayer volume] forKey:@"volume"];
+}
+
 // One step of the volume keys, hot keys and menu items, of the size and kind
 // set in the preferences: so many points of the volume shown (5 at a time
 // is a lot near silence and little near full), or of the slider's travel,

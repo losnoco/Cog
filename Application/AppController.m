@@ -199,7 +199,42 @@ static AppController *kAppController = nil;
 }
 
 - (BOOL)application:(NSApplication *)sender delegateHandlesKey:(NSString *)key {
-	return [key isEqualToString:@"currentEntry"];
+	return [@[@"currentEntry", @"playerState", @"playerPosition", @"soundVolume"] containsObject:key];
+}
+
+// AppleScript's player state, as the code of its enumerator in Cog.sdef.
+- (NSNumber *)playerState {
+	switch([playbackController playbackStatus]) {
+		case CogStatusPlaying: return @((OSType)'kPSP');
+		case CogStatusPaused: return @((OSType)'kPSp');
+		default: return @((OSType)'kPSS');
+	}
+}
+
+// AppleScript's player position: seconds into the playing track.
+- (NSNumber *)playerPosition {
+	CogStatus status = [playbackController playbackStatus];
+	if(status != CogStatusPlaying && status != CogStatusPaused) return @(0.0);
+	return @([[playbackController audioPlayer] amountPlayed]);
+}
+
+- (void)setPlayerPosition:(NSNumber *)position {
+	CogStatus status = [playbackController playbackStatus];
+	PlaylistEntry *pe = [playlistController currentEntry];
+	if(!pe || (status != CogStatusPlaying && status != CogStatusPaused) || ![playbackController seekable]) return;
+	double length = [[pe length] doubleValue];
+	double time = MAX(0.0, [position doubleValue]);
+	if(length > 0) time = MIN(time, length);
+	[playbackController seek:self toTime:time];
+}
+
+// AppleScript's sound volume: the level the volume slider's tip shows.
+- (NSNumber *)soundVolume {
+	return @((NSInteger)lround([playbackController volumeLevel]));
+}
+
+- (void)setSoundVolume:(NSNumber *)volume {
+	[playbackController setVolumeLevel:[volume doubleValue]];
 }
 
 static BOOL consentLastEnabled = NO;

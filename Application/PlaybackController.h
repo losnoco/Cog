@@ -82,6 +82,10 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (AudioPlayer *)audioPlayer;
 
 - (IBAction)changeVolume:(id)sender;
+// The volume as the slider's tip shows it: 0 to 100, or to 800 with the
+// volume limit off.
+- (double)volumeLevel;
+- (void)setVolumeLevel:(double)level;
 - (IBAction)volumeDown:(id)sender;
 - (IBAction)volumeUp:(id)sender;
 

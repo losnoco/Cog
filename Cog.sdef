@@ -3,6 +3,12 @@
 <dictionary title="Cog Terminology">
 	<suite name="Cog Suite" code="????" description="The standard suite for Cog.">
 		<cocoa name="NSCoreSuite"/>
+		<!-- As Music names and codes them, for the remotes written against it. -->
+		<enumeration name="ePlS" code="ePlS">
+			<enumerator name="stopped" code="kPSS" description="Nothing is playing."/>
+			<enumerator name="playing" code="kPSP" description="A track is playing."/>
+			<enumerator name="paused" code="kPSp" description="A track is paused."/>
+		</enumeration>
 		<enumeration name="save options" code="savo">
 			<enumerator name="yes" code="yes " description="Save the file."/>
 			<enumerator name="no" code="no  " description="Do not save the file."/>
@@ -54,6 +60,15 @@
 			<property name="version" code="vers" description="The version of the application." type="text" access="r"/>
 			<property name="currentEntry" code="cure" description="The current entry playing." type="playlistentry" access="r">
 				<cocoa key="currentEntry"/>
+			</property>
+			<property name="player state" code="pPlS" description="Is the player stopped, paused, or playing?" type="ePlS" access="r">
+				<cocoa key="playerState"/>
+			</property>
+			<property name="player position" code="pPos" description="The position within the playing track, in seconds. Setting it seeks." type="real">
+				<cocoa key="playerPosition"/>
+			</property>
+			<property name="sound volume" code="pVol" description="The volume, from 0 to 100 (or to 800 with the volume limit off)." type="integer">
+				<cocoa key="soundVolume"/>
 			</property>
 			<responds-to command="open">
 				<cocoa method="handleOpenScriptCommand:"/>
