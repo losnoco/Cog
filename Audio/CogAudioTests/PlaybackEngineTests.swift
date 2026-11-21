@@ -297,6 +297,48 @@ final class PlaybackEngineTests: XCTestCase {
 		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
 	}
 
+	/// The reconfiguration a handoff rebuilds the device with raises a format
+	/// notification while the old track is still the current one. Judged
+	/// against that old track it reads as a device change and restarts it; at
+	/// its end it hands off again, and the transition bounces back and forth
+	/// (issue 556). It must be judged against the track the pipeline was
+	/// rebuilt for, and leave the handoff alone.
+	func testTheHandoffsOwnFormatChangeDoesNotRestartTheOldTrack() throws {
+		UserDefaults.standard.set(true, forKey: "enableDoP")
+		defer { UserDefaults.standard.removeObject(forKey: "enableDoP") }
+		let device = try DeviceOutput()
+		try device.selectDevice(nil)
+		let rate = device.format.sampleRate
+		let channels = device.format.channels
+
+		let pcm = SeamSignal.loopable(frames: 24000, sampleRate: 48000) // 0.5 s
+		let dsd = [UInt8](repeating: 0x69, count: Int(rate * 16 / 8 / 2) * channels) // 0.5 s
+		let host = RecordingHost()
+		host.queue = [EngineTrack(url: URL(string: "memory://dsd")!, userInfo: "dsd", gain: 1)]
+		let engine = PlaybackEngine()
+		engine.host = host
+		engine.allowsDeviceRateChanges = false
+		engine.requiresExclusiveDoP = false
+		engine.opener = { track in
+			track.url.host == "dsd" ? DSDMemoryDecoder(bytes: dsd, bitRate: rate * 16, channels: channels)
+				: MemoryDecoder(samples: pcm, sampleRate: 48000, channels: 2)
+		}
+		engine.volume = 0
+
+		XCTAssertTrue(engine.play(URL(string: "memory://pcm")!, userInfo: "pcm", rgInfo: nil, startPaused: false, seekTo: 0))
+		// The rebuild for the DSD track is done and prebuffering; the PCM
+		// track stays current until the DSD is heard.
+		runMainLoop(until: { engine.pipelineBuilds == 2 }, timeout: 10)
+		XCTAssertFalse(host.log.contains("begin dsd"), "the DSD is not heard yet")
+		// The notification the rebuild's own reconfiguration raises.
+		engine.deviceChanged(.format)
+		XCTAssertFalse(host.log.contains("restart"), "the handoff's own format change is not a device change")
+
+		runMainLoop(until: { host.stopped }, timeout: 10)
+		XCTAssertTrue(host.stopped)
+		XCTAssertEqual(host.log.filter { !$0.hasPrefix("next") }, ["played pcm", "begin dsd", "played dsd", "stopped after dsd"])
+	}
+
 	/// Paused, the device keeps running on held silence until the suspend
 	/// delay passes (as OutputCoreAudio's idle timer), or indefinitely with
 	/// `suspendOutputOnPause` off; resuming carries on from the same place.

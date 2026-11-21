@@ -319,6 +319,11 @@ import Foundation
 	/// The decoder properties `outputPlan` was made from, standing in for
 	/// the first track's own until the feeder has decoded some of it.
 	private var plannedProperties: [AnyHashable: Any] = [:]
+	/// The track `outputPlan` was made for. Through a handoff this is the
+	/// next track, while `currentTrack` is still the one being heard: the
+	/// rebuild's own device-rate change must be judged against this track,
+	/// not the old one, or it reads as a device change and restarts it.
+	private var plannedTrack: EngineTrack?
 	/// A device that could not be held exclusively (another process holds
 	/// it, or it would not start): planned as shared until playback stops or
 	/// the setting changes, so that not every track tries again.
@@ -386,6 +391,7 @@ import Foundation
 		}
 		outputPlan = plan
 		plannedProperties = properties
+		plannedTrack = track
 
 		guard let feeder = Feeder(outputRate: output.format.sampleRate, opener: opener, dsdAsDoP: plan.dop),
 		      let pump = Pump(feeder: feeder, outputFormat: output.format, stages: [timeStretch, freeSurround, equalizer, crossfeed, visualization], carrier: plan.dop,
@@ -635,6 +641,7 @@ import Foundation
 		// the engine, once its first frame reaches the device.
 		initialTrack = track
 		currentTrack = track
+		plannedTrack = track
 		currentOffset = seconds
 		currentHeard = false
 		seekPending = true
@@ -859,14 +866,18 @@ import Foundation
 		host?.playbackEngineRestartAtCurrentPosition(track.userInfo)
 	}
 
-	/// Whether the track being heard would now be planned differently.
-	/// Until the feeder has started it, the track is planned from the
-	/// properties the pipeline was built for: a slow decoder (a MIDI synth
-	/// loading) has not started when the notification of the build's own
-	/// rate switch arrives, and planned from nothing it would get shared
-	/// output, and a restart.
+	/// Whether the track the pipeline serves would now be planned
+	/// differently. That is the track the plan was made for, which through a
+	/// handoff is the next track while `currentTrack` is still the one being
+	/// heard: judging the rebuild's own device-rate change against the old
+	/// track would read as a device change and restart it, bouncing the
+	/// handoff back and forth. Until the feeder has started the track, it is
+	/// planned from the properties the pipeline was built for: a slow decoder
+	/// (a MIDI synth loading) has not started when the notification of the
+	/// build's own rate switch arrives, and planned from nothing it would get
+	/// shared output, and a restart.
 	private func wantsAnotherPlan() -> Bool {
-		guard let output, let track = currentTrack else { return false }
+		guard let output, let track = plannedTrack else { return false }
 		return Self.plan(for: track.sourceProperties ?? plannedProperties, device: planning(for: output)) != outputPlan
 	}
 
@@ -911,6 +922,7 @@ import Foundation
 		resumesAfterInterruption = false
 		outputPlan = .shared
 		plannedProperties = [:]
+		plannedTrack = nil
 		if releasingDevice {
 			// Other apps may play again.
 			output?.releaseExclusive()
@@ -1244,6 +1256,7 @@ import Foundation
 			scrobbleListened = 0
 			host?.playbackEngineDidBeginTrack(track.userInfo)
 		}
+		plannedTrack = track
 		currentOffset = offset
 		currentStart = position
 		currentHeard = true
