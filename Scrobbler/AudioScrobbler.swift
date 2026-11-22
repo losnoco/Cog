@@ -51,8 +51,16 @@ public class AudioScrobbler: NSObject, @unchecked Sendable {
     @objc
     public static let shared: AudioScrobbler = AudioScrobbler()
 
+    /// Whether this build offers Last.fm at all. While it is false, nothing is
+    /// sent to Last.fm and neither app shows its settings.
+    @objc
+    public static let isAvailable = false
+
     public var enabled: Bool {
         get {
+            guard Self.isAvailable else {
+                return false
+            }
             guard Secrets.lastFmApiSecret.count > 0 && Secrets.lastFmApiKey.count > 0 else {
                 return false
             }

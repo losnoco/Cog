@@ -116,7 +116,9 @@ struct SettingsView: View {
 				} footer: {
 					Text("For tracks without lyrics of their own, Cog asks LRCLIB (lrclib.net), sending the title, artist, album and length.")
 				}
-				LastFMSection()
+				if AudioScrobbler.isAvailable {
+					LastFMSection()
+				}
 				ListenBrainzSection()
 				Section {
 					NavigationLink("Acknowledgements") { AcknowledgementsView() }

@@ -11,7 +11,7 @@ struct PreferencePaneDescriptor: Identifiable {
     var showPathSuggesterAction: ((NSWindow) -> Void)? = nil
 
     @MainActor static func allPanes() -> [PreferencePaneDescriptor] {
-        [
+        let panes = [
             PreferencePaneDescriptor(
                 title: "Playlist",
                 localizedTitle: NSLocalizedString("Playlist", comment: "Preference pane title"),
@@ -90,6 +90,7 @@ struct PreferencePaneDescriptor: Identifiable {
                 body: AnyView(RemoteControlPaneView())
             ),
         ]
+        return panes.filter { $0.title != "Last.FM" || AudioScrobbler.isAvailable }
     }
 
     private static func paneIcon(system: String, legacy: String) -> NSImage {
