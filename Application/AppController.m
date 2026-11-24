@@ -18,7 +18,7 @@
 #import "SpotlightWindowController.h"
 #import <CogAudio/Status.h>
 
-#import "DualWindow.h"
+
 #import "Logging.h"
 #import "MIDIPluginState.h"
 

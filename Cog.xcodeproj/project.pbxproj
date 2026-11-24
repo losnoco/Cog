@@ -106,7 +106,6 @@
 		17E0D5EB0F520F02005B6FED /* MiniWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E40F520F02005B6FED /* MiniWindow.m */; };
 		17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E60F520F02005B6FED /* PositionSlider.m */; };
 		17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E80F520F02005B6FED /* TimeField.m */; };
-		17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D6190F520F9F005B6FED /* VolumeButton.m */; };
 		17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D61B0F520F9F005B6FED /* VolumeSlider.m */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -241,7 +240,6 @@
 		83B06704180D579E008E3612 /* MIDI.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B066A1180D5669008E3612 /* MIDI.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83B72E3B279045B7006007A3 /* libfdk-aac.2.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		83B73B652D8FD75A00A57F08 /* minimp3.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83B73B602D8FC05A00A57F08 /* minimp3.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5AB020E4C87100631CD4 /* DualWindow.m */; };
 		83BC5AC020E4CE7D00631CD4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342A980D5FD20B00E8D854 /* MainMenu.xib */; };
 		83BC5AC120E4CE8700631CD4 /* OpenURLPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17342ABD0D5FD36400E8D854 /* OpenURLPanel.xib */; };
 		83BC5AC220E4CE8A00631CD4 /* FileTree.xib in Resources */ = {isa = PBXBuildFile; fileRef = 17211A7C0D68B7C500911CA9 /* FileTree.xib */; };
@@ -1076,8 +1074,6 @@
 		17E0D5E60F520F02005B6FED /* PositionSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PositionSlider.m; path = Window/PositionSlider.m; sourceTree = "<group>"; };
 		17E0D5E70F520F02005B6FED /* TimeField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeField.h; path = Window/TimeField.h; sourceTree = "<group>"; };
 		17E0D5E80F520F02005B6FED /* TimeField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TimeField.m; path = Window/TimeField.m; sourceTree = "<group>"; };
-		17E0D6180F520F9F005B6FED /* VolumeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeButton.h; path = Window/VolumeButton.h; sourceTree = "<group>"; };
-		17E0D6190F520F9F005B6FED /* VolumeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeButton.m; path = Window/VolumeButton.m; sourceTree = "<group>"; };
 		17E0D61A0F520F9F005B6FED /* VolumeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeSlider.h; path = Window/VolumeSlider.h; sourceTree = "<group>"; };
 		17E0D61B0F520F9F005B6FED /* VolumeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeSlider.m; path = Window/VolumeSlider.m; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
@@ -1260,8 +1256,6 @@
 		83B0669C180D5668008E3612 /* MIDI.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MIDI.xcodeproj; path = Plugins/MIDI/MIDI.xcodeproj; sourceTree = "<group>"; };
 		83B30F652FF7A5D9003D672B /* CogMCP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CogMCP.entitlements; sourceTree = "<group>"; };
 		83B72E2A279044F6006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
-		83BC5AB020E4C87100631CD4 /* DualWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DualWindow.m; path = Window/DualWindow.m; sourceTree = "<group>"; };
-		83BC5AB120E4C87100631CD4 /* DualWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DualWindow.h; path = Window/DualWindow.h; sourceTree = "<group>"; };
 		83BC5AB520E4C91200631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		83BC5AB620E4C91300631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OpenURLPanel.xib; sourceTree = "<group>"; };
 		83BC5AB720E4C91400631CD4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileTree.xib; sourceTree = "<group>"; };
@@ -1728,8 +1722,6 @@
 				0ABA78692F6B1ECF00537320 /* CreditsView.swift */,
 				0A9CEA012861501700E47168 /* AboutWindowController.swift */,
 				83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */,
-				83BC5AB120E4C87100631CD4 /* DualWindow.h */,
-				83BC5AB020E4C87100631CD4 /* DualWindow.m */,
 				17E0D5E10F520F02005B6FED /* MainWindow.h */,
 				17E0D5E20F520F02005B6FED /* MainWindow.m */,
 				8E1A2B012DDE000100000001 /* MainSplitViewController.h */,
@@ -1751,8 +1743,6 @@
 				8325F59D2F71418600400A88 /* ShuffleTransformers.swift */,
 				17E0D5E70F520F02005B6FED /* TimeField.h */,
 				17E0D5E80F520F02005B6FED /* TimeField.m */,
-				17E0D6180F520F9F005B6FED /* VolumeButton.h */,
-				17E0D6190F520F9F005B6FED /* VolumeButton.m */,
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
 				83D4097B2E8CB335003CBCAE /* CogSearchField.h */,
@@ -3322,7 +3312,6 @@
 				17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */,
 				17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */,
 				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,
-				17E0D61C0F520F9F005B6FED /* VolumeButton.m in Sources */,
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */,
 				42777C332E54E091005B0E11 /* Secrets.swift in Sources */,
@@ -3332,7 +3321,6 @@
 				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 				0A0038563086B9BC00C5352B /* LyricsText.swift in Sources */,
-				83BC5AB220E4C87100631CD4 /* DualWindow.m in Sources */,
 				8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */,
 				835F00BB279BD1CD00055FCF /* SecondsFormatter.m in Sources */,
 				1784560F0F631E24007E8021 /* FileTreeViewController.m in Sources */,
