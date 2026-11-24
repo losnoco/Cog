@@ -1,42 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "1.title" : {
-      "comment" : "Class = \"NSWindow\"; title = \"Spotlight\"; ObjectID = \"1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Spotlight"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Spotlight"
-          }
-        }
-      }
-    },
-    "6.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Add to Playlist\"; ObjectID = \"6\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add to Playlist"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir a la lista"
-          }
-        }
-      }
-    },
     "29.headerCell.title" : {
       "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Track\"; ObjectID = \"29\";",
       "extractionState" : "extracted_with_value",
@@ -285,24 +249,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Celda de texto"
-          }
-        }
-      }
-    },
-    "80.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Search Location:\"; ObjectID = \"80\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Search Location:"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ubicación de la búsqueda:"
           }
         }
       }

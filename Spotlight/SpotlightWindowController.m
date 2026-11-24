@@ -16,6 +16,10 @@
 
 #import "Logging.h"
 
+#import "Cog-Swift.h"
+
+#import <pwd.h>
+
 // Minimum length of a search string (searching for very small strings gets ugly)
 #define MINIMUM_SEARCH_STRING_LENGTH 3
 
@@ -43,16 +47,20 @@ static NSPredicate *musicOnlyPredicate = nil;
 }
 
 - (void)registerDefaults {
-	// Set the home directory as the default search directory
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	// The home folder by default. NSHomeDirectory() is the sandbox container's,
+	// where there is no music to find.
 	NSString *homeDir = @"~";
-	homeDir = [homeDir stringByExpandingTildeInPath];
+	struct passwd *pw = getpwuid(getuid());
+	if(pw && pw->pw_dir) homeDir = [NSString stringWithUTF8String:pw->pw_dir];
+	else homeDir = [homeDir stringByExpandingTildeInPath];
 	homeDir = [[NSURL fileURLWithPath:homeDir isDirectory:YES] absoluteString];
-	NSDictionary *searchDefault = @{@"spotlightSearchPath": homeDir};
-	[defaults registerDefaults:searchDefault];
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{@"spotlightSearchPath": homeDir}];
 }
 
 - (id)init {
+	// With a nib name, NSWindowController calls loadWindow for the window;
+	// that loads the nib, which has only the results table, and makes the
+	// window around it.
 	if(self = [super initWithWindowNibName:@"SpotlightPanel"]) {
 		self.query = [NSMetadataQuery new];
 		[self.query setDelegate:self];
@@ -90,6 +98,29 @@ static NSPredicate *musicOnlyPredicate = nil;
 - (void)awakeFromNib {
 }
 
+// The window is SwiftUI's; the nib holds only the results table, which it
+// hosts. NSWindowController's own would look for the window in the nib.
+- (void)loadWindow {
+	[[NSBundle mainBundle] loadNibNamed:@"SpotlightPanel" owner:self topLevelObjects:nil];
+	self.window = [SpotlightPanel makeWindowWithController:self];
+}
+
+- (NSArrayController *)resultsController {
+	[self window];
+	return playlistController;
+}
+
+- (NSURL *)searchFolder {
+	NSString *string = [[NSUserDefaults standardUserDefaults] stringForKey:@"spotlightSearchPath"];
+	NSURL *url = string ? [NSURL URLWithString:string] : nil;
+	return url ?: [NSURL fileURLWithPath:NSHomeDirectory() isDirectory:YES];
+}
+
+- (void)setSearchFolder:(NSURL *)searchFolder {
+	[[NSUserDefaults standardUserDefaults] setObject:[searchFolder absoluteString] forKey:@"spotlightSearchPath"];
+	[self performSearch];
+}
+
 - (IBAction)toggleWindow:(id)sender {
 	if([[self window] isVisible])
 		[[self window] orderOut:self];
@@ -109,13 +140,12 @@ static NSPredicate *musicOnlyPredicate = nil;
 		                                                       @[musicOnlyPredicate,
 			                                                     searchPredicate]];
 		// Only preform a new search if the predicate has changed or there is a new path
-		if(![self.query.predicate isEqual:spotlightPredicate] || ![self.query.searchScopes isEqualToArray:
-		                                                                                   @[pathControl.URL]]) {
+		NSURL *folder = self.searchFolder;
+		if(![self.query.predicate isEqual:spotlightPredicate] || ![self.query.searchScopes isEqualToArray:@[folder]]) {
 			if([self.query isStarted])
 				[self.query stopQuery];
 			self.query.predicate = spotlightPredicate;
-			// Set scope to contents of pathControl
-			self.query.searchScopes = @[pathControl.URL];
+			self.query.searchScopes = @[folder];
 			[self.query startQuery];
 			DLog(@"Started query: %@", [self.query.predicate description]);
 		}
@@ -249,15 +279,6 @@ static NSPredicate *musicOnlyPredicate = nil;
 
 	[playlistLoader addURLsInBackground:loadEntryData];
 	[self.query enableUpdates];
-}
-
-// If pop-up styled NSPathControl is set to /a/b/c path, then selecting either 'a' or 'b'
-// from its pop-up menu won't do anything by default (while we'd like it to select /a and
-// /a/b respectively). So here we set url of NSPathControl to be that of clicked cell.
-- (IBAction)pathComponentClicked:(id)sender {
-	NSPathComponentCell *pcc = [sender clickedPathComponentCell];
-	DLog(@"%@", pcc);
-	[sender setURL:[pcc URL]];
 }
 
 #pragma mark NSMetadataQuery delegate methods

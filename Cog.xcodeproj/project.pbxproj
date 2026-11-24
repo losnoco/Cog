@@ -152,6 +152,7 @@
 		8325F5902F713E3500400A88 /* StatusImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */; };
 		0A5F1A0C3100000000000002 /* SimplePlaylistCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5F1A0C3100000000000001 /* SimplePlaylistCellView.swift */; };
 		8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F5992F713FF900400A88 /* SpotlightTransformers.swift */; };
+		0A5F1A0C3100000000000004 /* SpotlightPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5F1A0C3100000000000003 /* SpotlightPanelView.swift */; };
 		8325F59C2F71412700400A88 /* RepeatTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F59B2F71412700400A88 /* RepeatTransformers.swift */; };
 		8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F59D2F71418600400A88 /* ShuffleTransformers.swift */; };
 		8325F5A12F71476F00400A88 /* StringToURLTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F5A02F71476F00400A88 /* StringToURLTransformer.swift */; };
@@ -1140,6 +1141,7 @@
 		8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusImageTransformer.swift; sourceTree = "<group>"; };
 		0A5F1A0C3100000000000001 /* SimplePlaylistCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePlaylistCellView.swift; sourceTree = "<group>"; };
 		8325F5992F713FF900400A88 /* SpotlightTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotlightTransformers.swift; path = Spotlight/SpotlightTransformers.swift; sourceTree = "<group>"; };
+		0A5F1A0C3100000000000003 /* SpotlightPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotlightPanelView.swift; path = Spotlight/SpotlightPanelView.swift; sourceTree = "<group>"; };
 		8325F59B2F71412700400A88 /* RepeatTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RepeatTransformers.swift; path = Window/RepeatTransformers.swift; sourceTree = "<group>"; };
 		8325F59D2F71418600400A88 /* ShuffleTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShuffleTransformers.swift; path = Window/ShuffleTransformers.swift; sourceTree = "<group>"; };
 		8325F59F2F71452A00400A88 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistControllerEnums.h; sourceTree = "<group>"; };
@@ -1951,6 +1953,7 @@
 				56DB08340D67166000453B6A /* Categories */,
 				56462EB00D634206000AB68C /* SpotlightPlaylistController.h */,
 				56462EB10D634206000AB68C /* SpotlightPlaylistController.m */,
+				0A5F1A0C3100000000000003 /* SpotlightPanelView.swift */,
 				8325F5992F713FF900400A88 /* SpotlightTransformers.swift */,
 				5604D45A0D60349B004F5C5D /* SpotlightWindowController.h */,
 				5604D4590D60349B004F5C5D /* SpotlightWindowController.m */,
@@ -3225,6 +3228,7 @@
 				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
 				0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */,
 				8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */,
+				0A5F1A0C3100000000000004 /* SpotlightPanelView.swift in Sources */,
 				0A877A80307074E2000C7A1B /* InfoInspectorView.swift in Sources */,
 				8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */,
 				8E75757509F31D5A0080F1EE /* Shuffle.m in Sources */,
