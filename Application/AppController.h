@@ -129,14 +129,11 @@
 - (IBAction)toggleToolbarStyle:(id)sender;
 
 - (BOOL)pathSuggesterEmpty;
-+ (BOOL)globalPathSuggesterEmpty;
 - (void)showPathSuggester;
-+ (void)globalShowPathSuggester;
 
 - (void)selectTrack:(id)sender;
 
 - (IBAction)showRubberbandSettings:(id)sender;
-+ (void)globalShowRubberbandSettings;
 
 #ifdef COG_SPARKLE
 - (IBAction)checkForUpdates:(id)sender;

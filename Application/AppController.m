@@ -18,7 +18,6 @@
 #import "SpotlightWindowController.h"
 #import <CogAudio/Status.h>
 
-
 #import "Logging.h"
 #import "MIDIPluginState.h"
 
@@ -1282,24 +1281,12 @@ static NSDictionary *shortcutDefaults = nil;
 	return [playlistController pathSuggesterEmpty];
 }
 
-+ (BOOL)globalPathSuggesterEmpty {
-	return [kAppController pathSuggesterEmpty];
-}
-
 - (void)showPathSuggester {
 	[preferencesController showPathSuggester:self];
 }
 
-+ (void)globalShowPathSuggester {
-	[kAppController showPathSuggester];
-}
-
 - (void)showRubberbandSettings:(id)sender {
 	[preferencesController showRubberbandSettings:sender];
-}
-
-+ (void)globalShowRubberbandSettings {
-	[kAppController showRubberbandSettings:kAppController];
 }
 
 - (void)selectTrack:(id)sender {

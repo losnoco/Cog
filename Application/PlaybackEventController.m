@@ -9,23 +9,6 @@
 
 #import "PlaylistEntry.h"
 
-#if 0
-NSString *TrackNotification = @"com.apple.iTunes.playerInfo";
-
-NSString *TrackArtist = @"Artist";
-NSString *TrackAlbum = @"Album";
-NSString *TrackTitle = @"Name";
-NSString *TrackGenre = @"Genre";
-NSString *TrackNumber = @"Track Number";
-NSString *TrackLength = @"Total Time";
-NSString *TrackPath = @"Location";
-NSString *TrackState = @"Player State";
-
-typedef NS_ENUM(NSInteger, TrackStatus) { TrackPlaying,
-	                                      TrackPaused,
-	                                      TrackStopped };
-#endif
-
 @implementation PlaybackEventController {
 	NSOperationQueue *queue;
 
@@ -126,55 +109,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 	[window makeKeyAndOrderFront:self];
 }
 
-#if 0
-- (NSDictionary *)fillNotificationDictionary:(PlaylistEntry *)pe status:(TrackStatus)status {
-	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-	if(pe == nil || pe.deLeted || pe.url == nil) return dict;
-
-	[dict setObject:[pe.url absoluteString] forKey:TrackPath];
-	if(pe.title) [dict setObject:pe.title forKey:TrackTitle];
-	if(pe.artist) [dict setObject:pe.artist forKey:TrackArtist];
-	if(pe.album) [dict setObject:pe.album forKey:TrackAlbum];
-	if(pe.genre) [dict setObject:pe.genre forKey:TrackGenre];
-	if(pe.track)
-		[dict setObject:pe.trackText forKey:TrackNumber];
-	if(pe.length)
-		[dict setObject:@((NSInteger)([pe.length doubleValue] * 1000.0))
-		         forKey:TrackLength];
-
-	NSString *state = nil;
-
-	switch(status) {
-		case TrackPlaying:
-			state = @"Playing";
-			break;
-		case TrackPaused:
-			state = @"Paused";
-			break;
-		case TrackStopped:
-			state = @"Stopped";
-			break;
-		default:
-			break;
-	}
-
-	[dict setObject:state forKey:TrackState];
-
-	return dict;
-}
-#endif
-
 - (void)performPlaybackDidBeginActions:(PlaylistEntry *)pe {
 	if(NO == [pe error]) {
 		entry = pe;
-
-#if 0
-		[[NSDistributedNotificationCenter defaultCenter]
-		postNotificationName:TrackNotification
-		              object:nil
-		            userInfo:[self fillNotificationDictionary:pe status:TrackPlaying]
-		  deliverImmediately:YES];
-#endif
 
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
@@ -267,33 +204,12 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 }
 
 - (void)performPlaybackDidPauseActions {
-#if 0
-	[[NSDistributedNotificationCenter defaultCenter]
-	postNotificationName:TrackNotification
-	              object:nil
-	            userInfo:[self fillNotificationDictionary:entry status:TrackPaused]
-	  deliverImmediately:YES];
-#endif
 }
 
 - (void)performPlaybackDidResumeActions {
-#if 0
-	[[NSDistributedNotificationCenter defaultCenter]
-	postNotificationName:TrackNotification
-	              object:nil
-	            userInfo:[self fillNotificationDictionary:entry status:TrackPlaying]
-	  deliverImmediately:YES];
-#endif
 }
 
 - (void)performPlaybackDidStopActions {
-#if 0
-	[[NSDistributedNotificationCenter defaultCenter]
-	postNotificationName:TrackNotification
-	              object:nil
-	            userInfo:[self fillNotificationDictionary:entry status:TrackStopped]
-	  deliverImmediately:YES];
-#endif
 	entry = nil;
 }
 
