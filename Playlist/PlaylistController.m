@@ -10,6 +10,7 @@
 #import "PlaybackController.h"
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
+#import "PlaylistView.h"
 #import "Shuffle.h"
 #import "SpotlightWindowController.h"
 
@@ -31,7 +32,12 @@ NSPersistentContainer *kPersistentContainer = nil;
 
 // validateMenuItem: belongs to NSMenuItemValidation now; without saying so,
 // it matches the deprecated informal declaration on NSObject.
-@interface PlaylistController () <NSMenuItemValidation>
+@interface PlaylistController () <NSMenuItemValidation> {
+	// The last sort, by header or by the Sort By menu, which a second
+	// choice of the same key reverses.
+	NSString *lastSortKey;
+	BOOL lastSortAscending;
+}
 @end
 
 @implementation PlaylistController
@@ -181,10 +187,19 @@ static void *playlistControllerContext = &playlistControllerContext;
 	                        context:playlistControllerContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.fontSize" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:playlistControllerContext];
 	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.boldPlayingTrack" options:NSKeyValueObservingOptionNew context:playlistControllerContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.playlistSimpleLayout" options:NSKeyValueObservingOptionNew context:playlistControllerContext];
+	[[NSUserDefaultsController sharedUserDefaultsController] addObserver:self forKeyPath:@"values.playlistSimpleLayoutArt" options:NSKeyValueObservingOptionNew context:playlistControllerContext];
 
 	observersRegistered = YES;
 
 	__weak PlaylistController *weakSelf = self;
+
+	// After the table has set up its saved columns, which it does as it
+	// wakes too.
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[weakSelf updateLayout];
+	});
+
 	self.playbackOrder.onFollow = ^(PlaylistEntry *pe) {
 		PlaylistController *strongSelf = weakSelf;
 		if(strongSelf) [strongSelf->appController selectTrack:pe];
@@ -200,6 +215,8 @@ static void *playlistControllerContext = &playlistControllerContext;
 		[playbackController removeObserver:self forKeyPath:@"progressMetadata" context:playlistControllerContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.fontSize" context:playlistControllerContext];
 		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.boldPlayingTrack" context:playlistControllerContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.playlistSimpleLayout" context:playlistControllerContext];
+		[[NSUserDefaultsController sharedUserDefaultsController] removeObserver:self forKeyPath:@"values.playlistSimpleLayoutArt" context:playlistControllerContext];
 	}
 }
 
@@ -226,6 +243,10 @@ static void *playlistControllerContext = &playlistControllerContext;
 			[self updateRowSize];
 		} else if([keyPath isEqualToString:@"values.boldPlayingTrack"]) {
 			if(currentEntry) [self reloadRowsForEntries:@[currentEntry]];
+		} else if([keyPath isEqualToString:@"values.playlistSimpleLayout"]) {
+			[self updateLayout];
+		} else if([keyPath isEqualToString:@"values.playlistSimpleLayoutArt"]) {
+			if([self isSimpleLayout]) [self.tableView reloadData];
 		} else if([keyPath isEqualToString:@"progressOverall"] ||
 		          [keyPath isEqualToString:@"progressMetadata"]) {
 			id objNew = [change objectForKey:NSKeyValueChangeNewKey];
@@ -572,7 +593,11 @@ static void *playlistControllerContext = &playlistControllerContext;
 	PlaylistEntry *pe = [[self arrangedObjects] objectAtIndex:row];
 
 	float fontSize = [[[NSUserDefaultsController sharedUserDefaultsController] defaults] floatForKey:@"fontSize"];
-	
+
+	if([[tableColumn identifier] isEqualToString:SimplePlaylistCellView.identifier]) {
+		return [self simpleViewForEntry:pe tableView:tableView fontSize:fontSize];
+	}
+
 	if(pe) {
 		cellIdentifier = [tableColumn identifier];
 		NSUInteger index = [cellIdentifiers indexOfObject:cellIdentifier];
@@ -741,6 +766,39 @@ static void *playlistControllerContext = &playlistControllerContext;
 	return view;
 }
 
+/// The row of the simple layout, as the iOS app shows an entry.
+- (NSView *)simpleViewForEntry:(PlaylistEntry *)pe tableView:(NSTableView *)tableView fontSize:(float)fontSize {
+	SimplePlaylistCellView *view = [tableView makeViewWithIdentifier:SimplePlaylistCellView.identifier owner:nil];
+	if(!view) view = [[SimplePlaylistCellView alloc] initWithFrame:NSZeroRect];
+	if(!pe) return view;
+
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	BOOL showsArt = [defaults boolForKey:@"playlistSimpleLayoutArt"];
+
+	NSMutableArray<NSString *> *parts = [NSMutableArray new];
+	if([pe.artist length]) [parts addObject:pe.artist];
+	if([pe.album length]) [parts addObject:pe.album];
+	NSString *subtitle = [parts count] ? [parts componentsJoinedByString:@" — "] : nil;
+
+	NSString *title = pe.title ?: @"";
+	if([title length] > 1024) title = [[title substringToIndex:1023] stringByAppendingString:@"…"];
+
+	[view configureWithStatus:[statusImageTransformer transformedValue:pe.status]
+	            statusToolTip:[pe statusMessage]
+	                      art:showsArt ? pe.albumArt : nil
+	                   artKey:pe.artHash
+	                 showsArt:showsArt
+	                    title:title
+	                 subtitle:subtitle
+	                   length:pe.lengthText
+	            lengthToolTip:pe.lengthInfo
+	                 fontSize:fontSize
+	                  current:pe.current
+	                     bold:pe.current && [defaults boolForKey:@"boldPlayingTrack"]
+	                   dimmed:pe.error];
+	return view;
+}
+
 - (void)tableView:(NSTableView *)view didClickRow:(NSInteger)clickedRow column:(NSInteger)clickedColumn atPoint:(NSPoint)cellPoint {
 	NSTableColumn *column = [view tableColumns][clickedColumn];
 	NSString *cellIdentifier = [column identifier];
@@ -770,6 +828,20 @@ static void *playlistControllerContext = &playlistControllerContext;
 	}
 }
 
+- (BOOL)isSimpleLayout {
+	return [self.tableView isKindOfClass:[PlaylistView class]] && ((PlaylistView *)self.tableView).simpleLayout;
+}
+
+/// Shows the columns, or the simple layout, as the View menu has it.
+- (void)updateLayout {
+	if(![self.tableView isKindOfClass:[PlaylistView class]]) return;
+	PlaylistView *playlistView = (PlaylistView *)self.tableView;
+	BOOL simple = [[NSUserDefaults standardUserDefaults] boolForKey:@"playlistSimpleLayout"];
+	if(playlistView.simpleLayout == simple) return;
+	playlistView.simpleLayout = simple;
+	[self updateRowSize];
+}
+
 - (void)updateRowSize {
 	[self.tableView reloadData];
 	NSInteger row = [self rowForEntry:currentEntry];
@@ -778,11 +850,6 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn {
 	if([self shuffle] != ShuffleOff) [self resetShuffleList];
-
-	NSUInteger index = [cellIdentifiers indexOfObject:[tableColumn identifier]];
-
-	NSSortDescriptor *sortDescriptor;/* = [tableColumn sortDescriptorPrototype];*/
-	NSArray *sortDescriptors;/* = sortDescriptor ? @[sortDescriptor] : @[];*/
 
 	BOOL ascending;
 
@@ -797,6 +864,18 @@ static void *playlistControllerContext = &playlistControllerContext;
 		[tableView setIndicatorImage:sortAscending inTableColumn:tableColumn];
 		ascending = YES;
 	}
+
+	lastSortKey = [tableColumn identifier];
+	lastSortAscending = ascending;
+	[self setSortDescriptors:[self sortDescriptorsForKey:[tableColumn identifier] ascending:ascending]];
+}
+
+/// How the column named `key` sorts the playlist.
+- (NSArray<NSSortDescriptor *> *)sortDescriptorsForKey:(NSString *)key ascending:(BOOL)ascending {
+	NSUInteger index = [cellIdentifiers indexOfObject:key];
+
+	NSSortDescriptor *sortDescriptor;
+	NSArray *sortDescriptors;
 
 	/*
 	 
@@ -836,14 +915,14 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 12:
 		case 17:
 		case 19:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(finderCompare:)];
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:key ascending:ascending selector:@selector(finderCompare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 
 		case 6:
 		case 14:
 		case 15:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compareTrackNumbers:)];
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:key ascending:ascending selector:@selector(compareTrackNumbers:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 
@@ -856,7 +935,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		case 1:
 		case 13:
 		case 16:
-			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:ascending selector:@selector(compare:)];
+			sortDescriptor = [[NSSortDescriptor alloc] initWithKey:key ascending:ascending selector:@selector(compare:)];
 			sortDescriptors = @[sortDescriptor];
 			break;
 
@@ -879,7 +958,28 @@ static void *playlistControllerContext = &playlistControllerContext;
 		}
 	}
 
-	[self setSortDescriptors:sortDescriptors];
+	return sortDescriptors;
+}
+
+/// Sorts by the column the menu item's identifier names, as a click on its
+/// header would; a second time in a row reverses it. The
+/// simple layout has no headers to click.
+- (IBAction)sortByKey:(NSMenuItem *)sender {
+	NSString *key = [sender identifier];
+	if(!key || [cellIdentifiers indexOfObject:key] == NSNotFound) return;
+
+	if([self shuffle] != ShuffleOff) [self resetShuffleList];
+
+	BOOL ascending = [key isEqualToString:lastSortKey] ? !lastSortAscending : YES;
+	lastSortKey = key;
+	lastSortAscending = ascending;
+
+	// The headers' arrows would tell of the last sort by a header.
+	for(NSTableColumn *column in [self.tableView tableColumns]) {
+		[self.tableView setIndicatorImage:nil inTableColumn:column];
+	}
+
+	[self setSortDescriptors:[self sortDescriptorsForKey:key ascending:ascending]];
 }
 
 // This action is only needed to revert the one that follows it
@@ -1798,6 +1898,8 @@ BOOL showTrashConsent(NSWindow *window) {
 	}
 
 	if(action == @selector(emptyQueueList:) && ([self.playbackOrder.queue count] < 1)) return NO;
+
+	if(action == @selector(sortByKey:)) return [[self arrangedObjects] count] > 1;
 
 	if(action == @selector(stopAfterCurrent:) && currentEntry.stopAfter) return NO;
 

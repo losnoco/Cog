@@ -25,7 +25,19 @@
 	// the pasteboard still holds it, without loading the files again.
 	NSArray<PlaylistEntry *> *copiedEntries;
 	NSInteger copiedChangeCount;
+
+	// While the layout is simple: the columns it put away, in their order,
+	// and what it changed of the table to show one full-width column.
+	NSArray<NSTableColumn *> *detailColumns;
+	NSTableHeaderView *detailHeaderView;
+	NSTableViewColumnAutoresizingStyle detailAutoresizingStyle;
+	// The row height the font size setting gives the columns.
+	CGFloat detailRowHeight;
 }
+
+/// One full-width column of two-line rows, as the iOS app has it, instead
+/// of the columns; they come back as they were.
+@property(nonatomic) BOOL simpleLayout;
 
 - (IBAction)toggleColumn:(NSMenuItem *)sender;
 

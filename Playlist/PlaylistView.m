@@ -16,6 +16,8 @@
 
 #import "Logging.h"
 
+#import "Cog-Swift.h"
+
 @import Sentry;
 
 static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
@@ -191,6 +193,9 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 }
 
 - (void)syncColumnState {
+	// The simple column isn't one to keep; the others keep what they were.
+	if(self.simpleLayout) return;
+
 	NSArray<NSTableColumn *> *columns = [self tableColumns];
 	NSMutableArray *savedColumns = [NSMutableArray new];
 
@@ -214,14 +219,95 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 }
 
 - (void)tableColumnsResized {
+	if(self.simpleLayout) return;
 	[self tableShouldSync];
 }
 
 - (void)tableColumnsMoved {
+	if(self.simpleLayout) return;
 	[self tableShouldSync];
 }
 
+/// The simple layout's row height, at the font size setting.
+- (CGFloat)simpleRowHeight {
+	float fontSize = [[NSUserDefaults standardUserDefaults] floatForKey:@"fontSize"];
+	return [SimplePlaylistCellView rowHeightWithFontSize:fontSize];
+}
+
+// The xib binds the row height to the font size setting, for the columns;
+// the simple layout keeps its own, and the columns get theirs back.
+- (void)setRowHeight:(CGFloat)rowHeight {
+	if(self.simpleLayout) {
+		detailRowHeight = rowHeight;
+		[super setRowHeight:[self simpleRowHeight]];
+	} else {
+		[super setRowHeight:rowHeight];
+	}
+}
+
+- (void)setSimpleLayout:(BOOL)simpleLayout {
+	if(simpleLayout == _simpleLayout) return;
+
+	if(simpleLayout) {
+		[syncTimer invalidate];
+		syncTimer = nil;
+		[self syncColumnState];
+
+		_simpleLayout = YES;
+
+		detailColumns = [[self tableColumns] copy];
+		detailHeaderView = [self headerView];
+		detailAutoresizingStyle = [self columnAutoresizingStyle];
+
+		for(NSTableColumn *column in detailColumns) {
+			[self removeTableColumn:column];
+		}
+
+		NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:SimplePlaylistCellView.identifier];
+		[column setResizingMask:NSTableColumnAutoresizingMask];
+		[column setEditable:NO];
+		[column setMinWidth:100];
+		[column setMaxWidth:CGFLOAT_MAX];
+		// The table counts its rows by its columns' bindings, as the xib binds
+		// each column to the playlist; this one too, or the table is empty.
+		[column bind:NSValueBinding toObject:playlistController withKeyPath:@"arrangedObjects.title" options:nil];
+		[self addTableColumn:column];
+
+		[self setHeaderView:nil];
+		[self setColumnAutoresizingStyle:NSTableViewUniformColumnAutoresizingStyle];
+		[self sizeLastColumnToFit];
+
+		detailRowHeight = [self rowHeight];
+		[super setRowHeight:[self simpleRowHeight]];
+	} else {
+		_simpleLayout = NO;
+
+		[super setRowHeight:detailRowHeight];
+
+		for(NSTableColumn *column in [[self tableColumns] copy]) {
+			[column unbind:NSValueBinding];
+			[self removeTableColumn:column];
+		}
+		for(NSTableColumn *column in detailColumns) {
+			[self addTableColumn:column];
+		}
+		detailColumns = nil;
+
+		[self setColumnAutoresizingStyle:detailAutoresizingStyle];
+		[self setHeaderView:detailHeaderView];
+		detailHeaderView = nil;
+
+		// The header comes back without its menu otherwise.
+		[[self headerView] setMenu:headerContextMenu];
+	}
+
+	// The scroll view lays out its header again.
+	[[self enclosingScrollView] tile];
+}
+
 - (IBAction)toggleColumn:(NSMenuItem *)sender {
+	if(self.simpleLayout) return;
+
 	id tc = [sender representedObject];
 
 	if([sender state] == NSControlStateValueOff) {
@@ -295,7 +381,10 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		// No rows are selected, so the table should be displayed with all items disabled
 		int i;
 		for(i = 0; i < [tableViewMenu numberOfItems]; i++) {
-			[[tableViewMenu itemAtIndex:i] setEnabled:NO];
+			NSMenuItem *item = [tableViewMenu itemAtIndex:i];
+			// Sorting takes no selection; its items enable themselves.
+			if([item hasSubmenu]) continue;
+			[item setEnabled:NO];
 		}
 	}
 

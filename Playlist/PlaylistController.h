@@ -83,6 +83,7 @@
 - (IBAction)toggleRepeat:(id _Nullable)sender;
 
 - (IBAction)randomizeList:(id _Nullable)sender;
+- (IBAction)sortByKey:(NSMenuItem *_Nonnull)sender;
 
 - (IBAction)removeDuplicates:(id _Nullable)sender;
 - (IBAction)removeDeadItems:(id _Nullable)sender;

@@ -2112,6 +2112,12 @@
                                     <binding destination="1689" name="value" keyPath="values.waveformSeekBar" id="Wfm-Sb-b1n"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Simple Playlist" id="SpL-Mn-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <binding destination="1689" name="value" keyPath="values.playlistSimpleLayout" id="SpL-Mn-b1n"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="2155"/>
                             <menuItem title="Customize Toolbar..." id="1856">
                                 <connections>
@@ -2868,6 +2874,49 @@ Gw
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="2047"/>
+                <menuItem title="Sort By" id="SbY-Mn-Itm">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Sort By" id="SbY-Sb-Mnu">
+                        <items>
+                            <menuItem title="Title" identifier="title" id="Sb1-Tt-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sortByKey:" target="218" id="Sa1-Tt-Act"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Artist" identifier="artist" id="Sb2-Ar-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sortByKey:" target="218" id="Sa2-Ar-Act"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Album" identifier="album" id="Sb3-Al-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sortByKey:" target="218" id="Sa3-Al-Act"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Length" identifier="length" id="Sb4-Ln-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sortByKey:" target="218" id="Sa4-Ln-Act"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Track" identifier="track" id="Sb5-Tr-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sortByKey:" target="218" id="Sa5-Tr-Act"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="File Name" identifier="filename" id="Sb6-Fn-Itm">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="sortByKey:" target="218" id="Sa6-Fn-Act"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="Go to Current Track" id="Gct-Cx-Itm">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

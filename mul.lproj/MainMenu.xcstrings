@@ -4867,6 +4867,150 @@
         }
       }
     },
+    "Sb1-Tt-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Title\"; ObjectID = \"Sb1-Tt-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Título"
+          }
+        }
+      }
+    },
+    "Sb2-Ar-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Artist\"; ObjectID = \"Sb2-Ar-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Artist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artista"
+          }
+        }
+      }
+    },
+    "Sb3-Al-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Album\"; ObjectID = \"Sb3-Al-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Album"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Álbum"
+          }
+        }
+      }
+    },
+    "Sb4-Ln-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Length\"; ObjectID = \"Sb4-Ln-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Length"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración"
+          }
+        }
+      }
+    },
+    "Sb5-Tr-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Track\"; ObjectID = \"Sb5-Tr-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Track"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pista"
+          }
+        }
+      }
+    },
+    "Sb6-Fn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"File Name\"; ObjectID = \"Sb6-Fn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File Name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del archivo"
+          }
+        }
+      }
+    },
+    "SbY-Mn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Sort By\"; ObjectID = \"SbY-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort By"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenar por"
+          }
+        }
+      }
+    },
+    "SbY-Sb-Mnu.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Sort By\"; ObjectID = \"SbY-Sb-Mnu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort By"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenar por"
+          }
+        }
+      }
+    },
     "Sig-In-Mnu.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Signal Inspector\"; ObjectID = \"Sig-In-Mnu\";",
       "extractionState" : "extracted_with_value",
@@ -4881,6 +5025,24 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar inspector de señal"
+          }
+        }
+      }
+    },
+    "SpL-Mn-Itm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Simple Playlist\"; ObjectID = \"SpL-Mn-Itm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Simple Playlist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista de reproducción simple"
           }
         }
       }

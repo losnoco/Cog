@@ -150,6 +150,7 @@
 		83256B68286661FC0036D9C0 /* libmpg123.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; };
 		83256B69286661FC0036D9C0 /* libmpg123.0.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 83256B672866617F0036D9C0 /* libmpg123.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		8325F5902F713E3500400A88 /* StatusImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */; };
+		0A5F1A0C3100000000000002 /* SimplePlaylistCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5F1A0C3100000000000001 /* SimplePlaylistCellView.swift */; };
 		8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F5992F713FF900400A88 /* SpotlightTransformers.swift */; };
 		8325F59C2F71412700400A88 /* RepeatTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F59B2F71412700400A88 /* RepeatTransformers.swift */; };
 		8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8325F59D2F71418600400A88 /* ShuffleTransformers.swift */; };
@@ -1137,6 +1138,7 @@
 		831B99BE27C23E88005A969B /* Cog.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Cog.sdef; sourceTree = "<group>"; };
 		83256B672866617F0036D9C0 /* libmpg123.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpg123.0.dylib; path = ThirdParty/mpg123/lib/libmpg123.0.dylib; sourceTree = "<group>"; };
 		8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusImageTransformer.swift; sourceTree = "<group>"; };
+		0A5F1A0C3100000000000001 /* SimplePlaylistCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePlaylistCellView.swift; sourceTree = "<group>"; };
 		8325F5992F713FF900400A88 /* SpotlightTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpotlightTransformers.swift; path = Spotlight/SpotlightTransformers.swift; sourceTree = "<group>"; };
 		8325F59B2F71412700400A88 /* RepeatTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RepeatTransformers.swift; path = Window/RepeatTransformers.swift; sourceTree = "<group>"; };
 		8325F59D2F71418600400A88 /* ShuffleTransformers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShuffleTransformers.swift; path = Window/ShuffleTransformers.swift; sourceTree = "<group>"; };
@@ -2328,6 +2330,7 @@
 				8E75753009F31D5A0080F1EE /* PlaylistEntry.m */,
 				8E75753309F31D5A0080F1EE /* Shuffle.h */,
 				8E75753409F31D5A0080F1EE /* Shuffle.m */,
+				0A5F1A0C3100000000000001 /* SimplePlaylistCellView.swift */,
 				8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */,
 				8325F5A22F71497F00400A88 /* ToggleQueueTitleTransformer.swift */,
 			);
@@ -3284,6 +3287,7 @@
 				839DA7CF274A2D4C001B18E5 /* NSDictionary+Merge.m in Sources */,
 				83D4097D2E8CB335003CBCAE /* CogSearchField.m in Sources */,
 				8325F5902F713E3500400A88 /* StatusImageTransformer.swift in Sources */,
+				0A5F1A0C3100000000000002 /* SimplePlaylistCellView.swift in Sources */,
 				179D03200E0CB2500064A77A /* DirectoryNode.m in Sources */,
 				8325F5A12F71476F00400A88 /* StringToURLTransformer.swift in Sources */,
 				179D03210E0CB2500064A77A /* FileIconCell.m in Sources */,

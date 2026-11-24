@@ -33,6 +33,12 @@ private final class PlaylistPrefs: ObservableObject {
     @Published var boldPlayingTrack: Bool {
         didSet { guard isActive else { return }; UserDefaults.standard.set(boldPlayingTrack, forKey: "boldPlayingTrack") }
     }
+    @Published var playlistSimpleLayout: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(playlistSimpleLayout, forKey: "playlistSimpleLayout") }
+    }
+    @Published var playlistSimpleLayoutArt: Bool {
+        didSet { guard isActive else { return }; UserDefaults.standard.set(playlistSimpleLayoutArt, forKey: "playlistSimpleLayoutArt") }
+    }
     @Published var tagEditorChapterRows: String {
         didSet { guard isActive else { return }; UserDefaults.standard.set(tagEditorChapterRows, forKey: "tagEditorChapterRows") }
     }
@@ -51,6 +57,8 @@ private final class PlaylistPrefs: ObservableObject {
         quitOnNaturalStop = d.bool(forKey: "quitOnNaturalStop")
         stopWhenQueueEmpties = d.bool(forKey: "stopWhenQueueEmpties")
         boldPlayingTrack = d.bool(forKey: "boldPlayingTrack")
+        playlistSimpleLayout = d.bool(forKey: "playlistSimpleLayout")
+        playlistSimpleLayoutArt = d.bool(forKey: "playlistSimpleLayoutArt")
         tagEditorChapterRows = d.string(forKey: "tagEditorChapterRows") ?? "ask"
     }
 }
@@ -111,6 +119,9 @@ struct PlaylistPaneView: View {
             Toggle("Quit when playback completes", isOn: $prefs.quitOnNaturalStop)
             Toggle("Stop when the queue empties", isOn: $prefs.stopWhenQueueEmpties)
             Toggle("Show the playing track in bold", isOn: $prefs.boldPlayingTrack)
+            Toggle("Use the simple playlist layout", isOn: $prefs.playlistSimpleLayout)
+            Toggle("Show album art in the simple layout", isOn: $prefs.playlistSimpleLayoutArt)
+                .disabled(!prefs.playlistSimpleLayout)
 
             Section {
                 Picker("Playlist rows:", selection: $prefs.tagEditorChapterRows) {
