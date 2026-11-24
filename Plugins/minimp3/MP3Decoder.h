@@ -41,6 +41,15 @@
 	long _framesDecoded;
 	BOOL _foundID3v2;
 
+	// The chapter of "file.mp3#N" being played: the ID3v2 chapters in the
+	// order FFMPEGContainer numbers them, and the span's content frames.
+	BOOL _isChapter;
+	NSArray *_chapters;
+	NSUInteger _chapterIndex;
+	long _chapterStartFrame;
+	long _fileTotalFrames;
+	NSString *_fileTitle;
+
 	BOOL inputEOF;
 
 	int channels;

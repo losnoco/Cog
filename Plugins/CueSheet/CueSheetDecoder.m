@@ -116,6 +116,22 @@ static void *kCueSheetDecoderContext = &kCueSheetDecoderContext;
 
 		source = s;
 
+		// The inner decoder reads the whole file: an embedded sheet's track
+		// bounds come from its full length. Open it on a fragment-less URL so
+		// a numeric fragment (a chapter row, file.mp3#01) is not mistaken for
+		// a chapter span by the input decoder.
+		if([url fragment]) {
+			NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+			components.fragment = nil;
+			NSURL *innerURL = [components URL];
+			if(innerURL) {
+				id<CogSource> innerSource = [NSClassFromString(@"AudioSource") audioSourceForURL:innerURL];
+				if([innerSource open:innerURL]) {
+					source = innerSource;
+				}
+			}
+		}
+
 		decoder = [NSClassFromString(@"AudioDecoder") audioDecoderForSource:source skipCue:YES];
 
 		[self registerObservers];

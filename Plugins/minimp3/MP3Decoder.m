@@ -25,6 +25,8 @@
 
 #import "CVbriHeader.h"
 
+#import "TagLibID3v2Reader.h"
+
 @implementation MP3Decoder
 
 static size_t mp3_read_callback(void *buf, size_t size, void *user_data) {
@@ -37,11 +39,42 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 	return [_file seek:position whence:SEEK_SET] ? 0 : -1;
 }
 
+// A chapter fragment is a plain decimal index, the whole of it: "2", not
+// "2x" or "-1" (intValue would take the leading number of either). The
+// digit cap keeps an absurd fragment from overflowing the parse; any real
+// chapter count is far below it.
+static BOOL chapterIndexFromFragment(NSString *fragment, NSUInteger *index) {
+	NSUInteger length = [fragment length];
+	if(!length || length > 9) return NO;
+	for(NSUInteger i = 0; i < length; ++i) {
+		unichar c = [fragment characterAtIndex:i];
+		if(c < '0' || c > '9') return NO;
+	}
+	*index = (NSUInteger)[fragment integerValue];
+	return YES;
+}
+
 - (BOOL)open:(id<CogSource>)source {
-	// "file.mp3#2" is a chapter FFMPEGContainer listed, which only FFmpeg
-	// knows how to play; refusing it passes it to FFmpeg's decoder, next in
-	// priority. (A cue sheet's tracks open their file without a fragment.)
-	if([[[source url] fragment] length]) return NO;
+	// "file.mp3#2" is a chapter FFMPEGContainer listed. Its span comes from
+	// the ID3v2 chapters, read below; a fragment that is not a decimal
+	// index, or has no chapters to index, is refused, passing it to FFmpeg's
+	// decoder, next in priority. (A cue sheet's tracks open their file
+	// without a fragment.)
+	NSString *fragment = [[source url] fragment];
+	NSUInteger fragmentIndex = 0;
+	BOOL wantsChapter = NO;
+	if([fragment length]) {
+		if(![source seekable]) return NO;
+		if(!chapterIndexFromFragment(fragment, &fragmentIndex)) return NO;
+		wantsChapter = YES;
+	}
+
+	_isChapter = NO;
+	_chapters = nil;
+	_chapterIndex = 0;
+	_chapterStartFrame = 0;
+	_fileTotalFrames = 0;
+	_fileTitle = @"";
 
 	_source = source;
 
@@ -134,14 +167,50 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 							}
 							free(description8);
 						}
+					} else if(!strcmp(frame->id, "TIT2")) {
+						// The file's own title, which a chapter row carries
+						// as its album (FFmpeg's rule). Read here, not via
+						// metadataForTag:, which retitles it to album itself.
+						// A text frame's string is a string list, not a full
+						// string, so take its first entry.
+						union id3_field *field = id3_frame_field(frame, 1);
+						if(id3_field_getnstrings(field) > 0) {
+							const id3_ucs4_t *value = id3_field_getstrings(field, 0);
+							if(value) {
+								id3_utf8_t *value8 = id3_ucs4_utf8duplicate(value);
+								_fileTitle = [NSString stringWithUTF8String:(const char *)value8] ?: @"";
+								free(value8);
+							}
+						}
 					}
 				}
 
 				id3_tag_delete(tag);
 			}
 
+			if(wantsChapter) {
+				Class tagReader = NSClassFromString(@"TagLibID3v2Reader");
+				if(![tagReader respondsToSelector:@selector(chaptersForTag:)]) {
+					free(tagBuffer);
+					return NO;
+				}
+				NSArray *chapters = [tagReader chaptersForTag:[NSData dataWithBytes:tagBuffer length:id3_length]];
+				// FFMPEGContainer numbers the rows as FFmpeg lists them, by
+				// start, so the fragment indexes the same order.
+				_chapters = [chapters sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult(NSDictionary *a, NSDictionary *b) {
+					return [a[CogChapterStart] compare:b[CogChapterStart]];
+				}];
+			if(fragmentIndex >= [_chapters count]) {
+				free(tagBuffer);
+				return NO;
+			}
+			_chapterIndex = fragmentIndex;
+			}
+
 			free(tagBuffer);
 		}
+
+		if(wantsChapter && ![_chapters count]) return NO;
 
 		_decoder_io.read = mp3_read_callback;
 		_decoder_io.read_data = (__bridge void *)source;
@@ -157,6 +226,28 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 			_decoder_ex.detected_samples = totalFrames * _decoder_ex.info.channels;
 			_decoder_ex.samples = (totalFrames + _startPadding + _endPadding) * _decoder_ex.info.channels;
 		}
+		if(!_foundiTunSMPB) {
+			size_t samples = _decoder_ex.detected_samples;
+			if(!samples) {
+				samples = _decoder_ex.samples;
+			}
+			totalFrames = samples / _decoder_ex.info.channels;
+		}
+		bitrate = (double)((_fileSize - id3_length) * 8) / ((double)totalFrames / (double)_decoder_ex.info.hz) / 1000.0;
+		if(wantsChapter) {
+			// The chapter's span, positioned at its start; the first frame
+			// decoded below is the chapter's own.
+			long startFrame = 0, endFrame = 0;
+			if(![self chapterSpanAtIndex:_chapterIndex start:&startFrame end:&endFrame fileFrames:totalFrames] ||
+			   mp3dec_ex_seek(&_decoder_ex, (uint64_t)startFrame * _decoder_ex.info.channels) < 0) {
+				mp3dec_ex_close(&_decoder_ex);
+				return NO;
+			}
+			_fileTotalFrames = totalFrames;
+			_chapterStartFrame = startFrame;
+			totalFrames = endFrame - startFrame;
+			_isChapter = YES;
+		}
 		mp3d_sample_t *sample_ptr = NULL;
 		size_t samples = 0;
 		int retry = 10;
@@ -168,17 +259,10 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 			memcpy(&_decoder_buffer_output[0], sample_ptr, sizeof(mp3d_sample_t) * samples);
 		} else {
 			inputEOF = YES;
+			mp3dec_ex_close(&_decoder_ex);
 			return NO;
 		}
 		inputEOF = NO;
-		if(!_foundiTunSMPB) {
-			size_t samples = _decoder_ex.detected_samples;
-			if(!samples) {
-				samples = _decoder_ex.samples;
-			}
-			totalFrames = samples / _decoder_info.channels;
-		}
-		bitrate = (double)((_fileSize - id3_length) * 8) / ((double)totalFrames / (double)_decoder_info.hz) / 1000.0;
 	} else {
 		_decoder_buffer_filled = [source read:_decoder_buffer amount:MINIMP3_BUF_SIZE];
 		inputEOF = _decoder_buffer_filled < MINIMP3_BUF_SIZE;
@@ -215,6 +299,10 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 	album = @"";
 	artist = @"";
 	title = @"";
+	if(_isChapter) {
+		title = _chapters[_chapterIndex][CogChapterTitle] ?: @"";
+		album = _fileTitle;
+	}
 
 	metadataUpdateInterval = sampleRate;
 	metadataUpdateCount = 0;
@@ -249,6 +337,19 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 
 	for(;;) {
 		long framesToCopy = samples_filled;
+
+		if(_isChapter) {
+			// The chapter ends where the next one starts; the rest of a
+			// frame that straddles the boundary belongs to the next track.
+			long remaining = totalFrames - _framesDecoded;
+			if(remaining <= 0) {
+				inputEOF = YES;
+				break;
+			}
+			if(framesToCopy > remaining) {
+				framesToCopy = remaining;
+			}
+		}
 
 		if(framesToCopy) {
 			chunk = [[audioChunkClass alloc] initWithProperties:[self properties]];
@@ -330,11 +431,13 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 		frame = totalFrames;
 
 	if(seekable) {
-		int error = mp3dec_ex_seek(&_decoder_ex, frame * _decoder_ex.info.channels);
+		long absolute = _isChapter ? _chapterStartFrame + frame : frame;
+		int error = mp3dec_ex_seek(&_decoder_ex, (uint64_t)absolute * _decoder_ex.info.channels);
 		if(error < 0) {
 			return -1;
 		}
 		samples_filled = 0;
+		inputEOF = NO;
 	} else {
 		return -1;
 	}
@@ -345,7 +448,59 @@ static int mp3_seek_callback(uint64_t position, void *user_data) {
 	return frame;
 }
 
+// The chapter's span in content frames at the file's own rate, its end
+// clamped to the file's length. The tag keeps the times in milliseconds.
+- (BOOL)chapterSpanAtIndex:(NSUInteger)index start:(long *)start end:(long *)end fileFrames:(long)fileFrames {
+	if(index >= [_chapters count]) return NO;
+	NSDictionary *chapter = _chapters[index];
+	unsigned long long hz = (unsigned long long)_decoder_ex.info.hz;
+	if(!hz) return NO;
+	unsigned long long startMs = [chapter[CogChapterStart] unsignedLongLongValue];
+	unsigned long long endMs = [chapter[CogChapterEnd] unsignedLongLongValue];
+	long startFrame = (long)((startMs * hz + 500) / 1000);
+	long endFrame = (long)((endMs * hz + 500) / 1000);
+	if(endFrame > fileFrames) endFrame = fileFrames;
+	if(startFrame >= endFrame) return NO;
+	*start = startFrame;
+	*end = endFrame;
+	return YES;
+}
+
+// The next chapter of the same file: the feeder carries on without
+// reopening. The seek is sample-accurate, and lands where the last chapter
+// ended when the two are contiguous.
+- (BOOL)setTrack:(NSURL *)track {
+	if(!_isChapter) return NO;
+	if(![[track path] isEqualToString:[[_source url] path]]) return NO;
+	NSString *fragment = [track fragment];
+	NSUInteger index = 0;
+	if(!chapterIndexFromFragment(fragment, &index)) return NO;
+	if(index >= [_chapters count]) return NO;
+	long startFrame = 0, endFrame = 0;
+	if(![self chapterSpanAtIndex:index start:&startFrame end:&endFrame fileFrames:_fileTotalFrames]) return NO;
+	if(mp3dec_ex_seek(&_decoder_ex, (uint64_t)startFrame * _decoder_ex.info.channels) < 0) return NO;
+
+	samples_filled = 0;
+	_chapterIndex = index;
+	_chapterStartFrame = startFrame;
+	totalFrames = endFrame - startFrame;
+	_framesDecoded = 0;
+	seconds = 0.0;
+	inputEOF = NO;
+	title = _chapters[_chapterIndex][CogChapterTitle] ?: @"";
+
+	[self willChangeValueForKey:@"properties"];
+	[self didChangeValueForKey:@"properties"];
+	[self willChangeValueForKey:@"metadata"];
+	[self didChangeValueForKey:@"metadata"];
+
+	return YES;
+}
+
 - (void)updateMetadata {
+	// A chapter's title and album are fixed at open; only a stream's
+	// metadata changes mid-play, and a chapter is never a stream.
+	if(_isChapter) return;
 	NSString *_artist = artist;
 	NSString *_album = album;
 	NSString *_title = title;

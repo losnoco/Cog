@@ -7,9 +7,12 @@
 
 #import "TagLibID3v2Reader.h"
 
+#import "TagLibChapters.h"
+
 #import "TagLibMetadataReader.h"
 
 #import <tag/fileref.h>
+#import <tag/mpegfile.h>
 #import <tag/tfilestream.h>
 #import <tag/tbytevectorstream.h>
 
@@ -68,6 +71,22 @@
 	}
 
 	return dict;
+}
+
++ (NSArray *)chaptersForTag:(NSData *)tagBlock {
+	if(![tagBlock length]) return @[];
+
+	try {
+		TagLib::ByteVector vector((const char *)[tagBlock bytes], (unsigned int)[tagBlock length]);
+		TagLib::ByteVectorStream vectorStream(vector);
+		// A tag block is an MPEG file's tag with no audio after it; reading
+		// no properties leaves just the tag, which is what the chapters are in.
+		TagLib::MPEG::File file(&vectorStream, false);
+		return chapterArray(readID3v2Chapters(file.ID3v2Tag()));
+	} catch(std::exception &e) {
+		ALog(@"Exception caught processing ID3v2 tag with TagLib: %s", e.what());
+		return @[];
+	}
 }
 
 @end

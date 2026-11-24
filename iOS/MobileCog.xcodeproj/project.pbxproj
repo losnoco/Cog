@@ -30,6 +30,7 @@
 		1DA926CE01F50FA3EFAE7069 /* mGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 085FA552679C58FA488A1620 /* mGBA.framework */; };
 		1DDA904F6B08E65B949544FA /* libcelt_0061.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 031F633C5AE0F9AC79D8DBFC /* libcelt_0061.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1EC1BF7D19AEB0E8FDE55F1D /* HVLMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CBB9134848BD549A403D565 /* HVLMetadataReader.m */; };
+		236AC7A3789F7A6733290C82 /* TagLibChapters.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94C718E33E0CCB3FDA0E5B /* TagLibChapters.mm */; };
 		237FAE851E9FE3A0F011163D /* libvgmMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A3E14F83FC1E4439E5F2DE /* libvgmMetadataReader.mm */; };
 		238E15565E43452D2885473B /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0468E03B37135675DFB60E6 /* ListenBrainzScrobbler.swift */; };
 		23C65BF2FAF31D2E7D8AF770 /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D454E45687C44F4B6C045E5 /* ShortenDecoder.mm */; };
@@ -47,6 +48,7 @@
 		325350F8EF006BF49FF2AC8C /* CogAudio.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */; };
 		34D69FC1E7A6ABDD55218E47 /* CueSheetTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A2642BE6FC03B7CE9127E5B /* CueSheetTrack.m */; };
+		34F319D44CA1E88ED2862524 /* MP3Fixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F4C4EF508D4896E97517AA /* MP3Fixtures.swift */; };
 		354C0600F4B6C913FEDAF961 /* FFMPEGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E1BEB480338F1E8DEDA80D4 /* FFMPEGDecoder.m */; };
 		378A9B626349D711980733EE /* APLFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 3453D6CC072D843BA6780D71 /* APLFile.m */; };
 		38FAA431BA1DCFE55A07356C /* AdPlugDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 683CBD5DC3A478614F1881FE /* AdPlugDecoder.mm */; };
@@ -155,9 +157,11 @@
 		BCEDC3D519FAE1F7864C087B /* libvgmPropertiesReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 95701CD1532DCD29093ED21B /* libvgmPropertiesReader.mm */; };
 		BCFFC4E726BC01BCBF45CA0A /* MusepackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DEE7F2E3A67102B96B70357 /* MusepackDecoder.m */; };
 		BD7B1F59CBEF6849D6CCD5B5 /* psflib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F30C12771D00C495945E383B /* psflib.framework */; };
+		BD9552CAABBF11F19816CFAD /* MP3ChapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328529C08DC6D9D87626E6D8 /* MP3ChapterTests.swift */; };
 		C0308D3FF5F3D64687A388B0 /* VGMDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC397956E922C55419563D0 /* VGMDecoder.m */; settings = {COMPILER_FLAGS = "-DVGM_USE_ATRAC9 -DVGM_USE_FFMPEG -DVGM_USE_G719 -DVGM_USE_G7221 -DVGM_USE_MPEG -DVGM_USE_VORBIS -D__MACOSX__"; }; };
 		C1D600A66C6D55C9BC838DC5 /* libtag.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6DC7906614491BDF2E01CF7 /* libtag.xcframework */; };
 		C238EB7933807B0AE97102A2 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 646099D3C9CB96D3B0FFD6B8 /* analyzer.c */; };
+		C73ADFF3CCE53B77C4B9BE27 /* TagLibChapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AF5810860FFCA8FEB577ED /* TagLibChapterTests.swift */; };
 		C74CAF65DED91B4D82C88D96 /* HVLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FABA4479FBBED1F7F133 /* HVLDecoder.m */; };
 		C9021DD72384E5B54AD70E45 /* spessasynth_core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 82355ACDB3A25A8B86B9F558 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */; };
@@ -187,6 +191,7 @@
 		EB63C157F25CBF74304C4835 /* jxsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 90EE473FDDE2946B28A44DF9 /* jxsContainer.m */; };
 		EC74D9ED3EAD5466C2DC1C57 /* CVbriHeader.c in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE782D8EC423E4681516B /* CVbriHeader.c */; };
 		ED19795381C4FB5B8A325493 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = BA59E2A752A1601EDB9602EC /* cuesheet.m */; };
+		ED1CE00A15619832705EC6C6 /* MP3SeekAccuracyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE2295979723E59BA16BA7AF /* MP3SeekAccuracyTests.swift */; };
 		ED746F9B78109FB6C4CC8938 /* libFLAC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2735D67CD372EF14E5D1456A /* libFLAC.xcframework */; };
 		EE7CF4B8D800AD97A6D63FCC /* WavPackDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ED6D5020F011DDEB94BDF1B /* WavPackDecoder.m */; };
 		EE98248FAA390B167A40962C /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; };
@@ -665,6 +670,7 @@
 		2C76A39A96D0361FD64D2E81 /* lazyusf2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lazyusf2.xcodeproj; path = ../Frameworks/lazyusf2/lazyusf2.xcodeproj; sourceTree = SOURCE_ROOT; };
 		30CA821FB86049864458FA85 /* HLSVariant.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSVariant.m; path = ../Plugins/HLS/HLSVariant.m; sourceTree = SOURCE_ROOT; };
 		312DCD14A343F771C341CE2E /* fileprovider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = fileprovider.h; path = ../Plugins/AdPlug/AdPlug/fileprovider.h; sourceTree = SOURCE_ROOT; };
+		328529C08DC6D9D87626E6D8 /* MP3ChapterTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/MP3ChapterTests.swift; sourceTree = "<group>"; };
 		342FF2164A46E59039C68200 /* Syntrax_c.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax_c.xcodeproj; path = "../Frameworks/Syntrax-c/Syntrax_c.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		3453D6CC072D843BA6780D71 /* APLFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = APLFile.m; path = ../Plugins/APL/APLFile.m; sourceTree = SOURCE_ROOT; };
 		34D0FABA4479FBBED1F7F133 /* HVLDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HVLDecoder.m; path = ../Plugins/Hively/Hively/HVLDecoder.m; sourceTree = SOURCE_ROOT; };
@@ -682,6 +688,7 @@
 		41E6832858CBCBE4960E6F31 /* VUMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VUMeterView.swift; path = ../Visualization/VUMeterView.swift; sourceTree = SOURCE_ROOT; };
 		46D6405F3B78DFF490955EAD /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		473A22E40B152B3A740A8EB0 /* libvgm-player.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libvgm-player.xcframework"; path = "../ThirdParty/libvgm/ios/libvgm-player.xcframework"; sourceTree = SOURCE_ROOT; };
+		47F4C4EF508D4896E97517AA /* MP3Fixtures.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/MP3Fixtures.swift; sourceTree = "<group>"; };
 		484B12BD156A475E5A43AF8D /* libvorbisfile.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbisfile.xcframework; path = ../ThirdParty/vorbis/ios/libvorbisfile.xcframework; sourceTree = SOURCE_ROOT; };
 		491EB8564E09A359D73CF93F /* LrclibClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LrclibClient.swift; path = ../LyricsWindow/LrclibClient.swift; sourceTree = SOURCE_ROOT; };
 		4B9EDB5BED5AAA8CCF49311C /* HCDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HCDecoder.h; path = ../Plugins/HighlyComplete/HighlyComplete/HCDecoder.h; sourceTree = SOURCE_ROOT; };
@@ -708,6 +715,7 @@
 		644D14A6CEF05A0105659361 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		646099D3C9CB96D3B0FFD6B8 /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = analyzer.c; path = ../Visualization/ThirdParty/deadbeef/analyzer.c; sourceTree = SOURCE_ROOT; };
 		64AAC71501F3E26D10305D52 /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = SOURCE_ROOT; };
+		65AF5810860FFCA8FEB577ED /* TagLibChapterTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/TagLibChapterTests.swift; sourceTree = "<group>"; };
 		667C24D5C3DDDF616A7BDD03 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = ../ThirdParty/ffmpeg/ios/libavutil.xcframework; sourceTree = SOURCE_ROOT; };
 		6739A24254BD6309F1C3012B /* CueSheetDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetDecoder.h; path = ../Plugins/CueSheet/CueSheetDecoder.h; sourceTree = SOURCE_ROOT; };
 		67777D9ADE0A0782BF47BEB3 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CoreAudioDecoder.h; path = ../Plugins/CoreAudio/CoreAudioDecoder.h; sourceTree = SOURCE_ROOT; };
@@ -769,6 +777,7 @@
 		A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = ../ThirdParty/ffmpeg/ios/libavcodec.xcframework; sourceTree = SOURCE_ROOT; };
 		A15B973292811547F5271225 /* MP3Decoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = MP3Decoder.m; path = ../Plugins/minimp3/MP3Decoder.m; sourceTree = SOURCE_ROOT; };
 		A1BFD6C8AA245760013590FD /* base64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; fileEncoding = "4"; name = base64.c; path = "../Plugins/Vorbis/vorbis-tools/share/base64.c"; sourceTree = SOURCE_ROOT; };
+		A26C151D3244ADDD1A8BB2FA /* TagLibChapters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = TagLibChapters.h; path = ../Plugins/TagLib/TagLibChapters.h; sourceTree = SOURCE_ROOT; };
 		A296A233F25B5BC7CB708962 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformView.swift; path = ../Visualization/WaveformView.swift; sourceTree = SOURCE_ROOT; };
 		A2DAE782D8EC423E4681516B /* CVbriHeader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; fileEncoding = "4"; name = CVbriHeader.c; path = ../Plugins/minimp3/ThirdParty/CVbriHeader.c; sourceTree = SOURCE_ROOT; };
 		A322EB294ED4B2F9C65653DC /* SCPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SCPlayer.mm; path = ../Plugins/MIDI/MIDI/SCPlayer.mm; sourceTree = SOURCE_ROOT; };
@@ -813,6 +822,7 @@
 		CC962CE19DF1CC389D66757D /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = ../Frameworks/Shorten/Shorten.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CD92CBA4FB13B40660D230F8 /* SidDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SidDecoder.h; path = ../Plugins/sidplay/SidDecoder.h; sourceTree = SOURCE_ROOT; };
 		CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FlacDecoder.m; path = ../Plugins/Flac/FlacDecoder.m; sourceTree = SOURCE_ROOT; };
+		CF94C718E33E0CCB3FDA0E5B /* TagLibChapters.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibChapters.mm; path = ../Plugins/TagLib/TagLibChapters.mm; sourceTree = SOURCE_ROOT; };
 		D0370650B61067CFC89A424D /* SpectrumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpectrumView.swift; path = ../Visualization/SpectrumView.swift; sourceTree = SOURCE_ROOT; };
 		D05BA07425A81304D0F2D4D1 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CueSheetMetadataReader.h; path = ../Plugins/CueSheet/CueSheetMetadataReader.h; sourceTree = SOURCE_ROOT; };
 		D105E7348FFC04E58612438E /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -878,6 +888,7 @@
 		FC15BFC3B9F6EDB8DD2EDD52 /* libcelt_0110.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libcelt_0110.xcodeproj; path = ../Frameworks/libcelt_0110/libcelt_0110/libcelt_0110.xcodeproj; sourceTree = SOURCE_ROOT; };
 		FC2AAEEA1F39093E49739FE2 /* MusepackDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = MusepackDecoder.h; path = ../Plugins/Musepack/MusepackDecoder.h; sourceTree = SOURCE_ROOT; };
 		FC735CCDBE1804B0B6FCDEDE /* libvgmContainer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = libvgmContainer.mm; path = ../Plugins/libvgmPlayer/libvgmContainer.mm; sourceTree = SOURCE_ROOT; };
+		FE2295979723E59BA16BA7AF /* MP3SeekAccuracyTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/MP3SeekAccuracyTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -1123,7 +1134,11 @@
 			isa = PBXGroup;
 			children = (
 				7B349D4AFBFAFE796A30C3AD /* CogPluginsTests.swift */,
+				328529C08DC6D9D87626E6D8 /* MP3ChapterTests.swift */,
+				47F4C4EF508D4896E97517AA /* MP3Fixtures.swift */,
+				FE2295979723E59BA16BA7AF /* MP3SeekAccuracyTests.swift */,
 				8B49EB3B9474F202D166CC8D /* PlaylistLoaderTests.swift */,
+				65AF5810860FFCA8FEB577ED /* TagLibChapterTests.swift */,
 				E9D24E85F78B3B6AF8AC5000 /* TagWriterTests.swift */,
 			);
 			name = CogPluginsTests;
@@ -1653,6 +1668,8 @@
 		ECB52566840D07C61DB2A343 /* TagLib */ = {
 			isa = PBXGroup;
 			children = (
+				A26C151D3244ADDD1A8BB2FA /* TagLibChapters.h */,
+				CF94C718E33E0CCB3FDA0E5B /* TagLibChapters.mm */,
 				D56B596439AD7E621B1B7E81 /* TagLibID3v2Reader.h */,
 				25D2EFA388124EFF9477D200 /* TagLibID3v2Reader.mm */,
 				C57E459CBA8EB64564AEBAE3 /* TagLibMetadataReader.h */,
@@ -2323,6 +2340,7 @@
 				DC787E942570AD43AC969270 /* base64.c in Sources */,
 				F85A78AF67240416AF39D328 /* picture.c in Sources */,
 				EE7CF4B8D800AD97A6D63FCC /* WavPackDecoder.m in Sources */,
+				236AC7A3789F7A6733290C82 /* TagLibChapters.mm in Sources */,
 				69AF174D336D6C81E423E641 /* TagLibID3v2Reader.mm in Sources */,
 				39CEE9B810B723B118BA8E55 /* TagLibMetadataReader.m in Sources */,
 				1308F6D95900A128A5837309 /* TagLibMetadataWriter.m in Sources */,
@@ -2334,7 +2352,11 @@
 			buildActionMask = "2147483647";
 			files = (
 				32D62F8A98C7B66CCFBC87C1 /* CogPluginsTests.swift in Sources */,
+				BD9552CAABBF11F19816CFAD /* MP3ChapterTests.swift in Sources */,
+				34F319D44CA1E88ED2862524 /* MP3Fixtures.swift in Sources */,
+				ED1CE00A15619832705EC6C6 /* MP3SeekAccuracyTests.swift in Sources */,
 				F815EFED9F3EB48B9894412F /* PlaylistLoaderTests.swift in Sources */,
+				C73ADFF3CCE53B77C4B9BE27 /* TagLibChapterTests.swift in Sources */,
 				7834CA5DCAD03ACAB6C6307B /* TagWriterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = "0";
