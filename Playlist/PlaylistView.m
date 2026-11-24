@@ -24,16 +24,14 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 
 @implementation PlaylistView
 
-- (void)awakeFromNib {
-	[self setAutosaveTableColumns:NO];
+/// Whether this is the playlist's table, whose columns
+/// "Playlist Saved Columns v0" keeps.
+- (BOOL)keepsPlaylistColumns {
+	return [[self autosaveName] isEqualToString:@"Playlist"];
+}
 
-	[[self menu] setAutoenablesItems:NO];
-
-	// Configure bindings to scale font size and row height
-	NSControlSize s = NSControlSizeSmall;
-	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
-	// NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
-
+/// The playlist's columns as the setting has them, with any new ones.
+- (void)restorePlaylistColumns {
 	NSArray *defaultColumns = @[@{@"id": @"index", @"width": @(64), @"hidden": @NO},
 								@{@"id": @"status", @"width": @(20), @"hidden": @NO},
 								@{@"id": @"rating", @"width": @(116), @"hidden": @NO},
@@ -133,8 +131,27 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 			[self addTableColumn:col];
 		}
 	}
+}
 
-	columns = [self tableColumns];
+- (void)awakeFromNib {
+	[[self menu] setAutoenablesItems:NO];
+
+	// Configure bindings to scale font size and row height
+	NSControlSize s = NSControlSizeSmall;
+	NSFont *f = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:s]];
+	// NSFont *bf = [[NSFontManager sharedFontManager] convertFont:f toHaveTrait:NSBoldFontMask];
+
+	// The playlist keeps its columns in a setting of its own; other tables
+	// of this class (the Spotlight panel's) let AppKit keep theirs, under
+	// their own autosave names.
+	if([self keepsPlaylistColumns]) {
+		[self setAutosaveTableColumns:NO];
+		[self restorePlaylistColumns];
+	} else {
+		[self setAutosaveTableColumns:YES];
+	}
+
+	NSArray<NSTableColumn *> *columns = [self tableColumns];
 
 	for(NSTableColumn *col in columns) {
 		[[col dataCell] setControlSize:s];
@@ -174,15 +191,17 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 		menuIndex++;
 	}
 
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsResized) name:NSTableViewColumnDidResizeNotification object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsMoved) name:NSTableViewColumnDidMoveNotification object:nil];
+	// This table's own changes only; another table's columns aren't the
+	// playlist's to save.
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsResized) name:NSTableViewColumnDidResizeNotification object:self];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tableColumnsMoved) name:NSTableViewColumnDidMoveNotification object:self];
 
 	[[self headerView] setMenu:headerContextMenu];
 }
 
 - (void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTableViewColumnDidResizeNotification object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTableViewColumnDidMoveNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTableViewColumnDidResizeNotification object:self];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSTableViewColumnDidMoveNotification object:self];
 
 	if(syncTimer) {
 		[syncTimer invalidate];
@@ -193,6 +212,8 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 }
 
 - (void)syncColumnState {
+	// AppKit keeps any other table's columns.
+	if(![self keepsPlaylistColumns]) return;
 	// The simple column isn't one to keep; the others keep what they were.
 	if(self.simpleLayout) return;
 
