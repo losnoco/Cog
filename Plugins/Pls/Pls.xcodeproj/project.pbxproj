@@ -10,7 +10,7 @@
 		0353481720D0F856D37474FF /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27334F52E346BE597B125B1E /* CogAudio.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		8E8D41A10CBB0CA700135C1B /* PlsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D41A00CBB0CA700135C1B /* PlsContainer.m */; };
+		835F00D10000000000000004 /* PlsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000003 /* PlsContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,8 +26,7 @@
 		838491321808193F00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B6048680CD000E48DA /* Pls.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pls.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E8D419F0CBB0CA700135C1B /* PlsContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlsContainer.h; sourceTree = "<group>"; };
-		8E8D41A00CBB0CA700135C1B /* PlsContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlsContainer.m; sourceTree = "<group>"; };
+		835F00D10000000000000003 /* PlsContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlsContainer.swift; sourceTree = "<group>"; };
 		8E8D41A50CBB0CBE00135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -82,8 +81,7 @@
 				834A42C0287AFEB100EB9D9B /* AudioChunk.h */,
 				838491321808193F00E7332D /* Logging.h */,
 				8E8D41A50CBB0CBE00135C1B /* Plugin.h */,
-				8E8D419F0CBB0CA700135C1B /* PlsContainer.h */,
-				8E8D41A00CBB0CA700135C1B /* PlsContainer.m */,
+				835F00D10000000000000003 /* PlsContainer.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -198,7 +196,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E8D41A10CBB0CA700135C1B /* PlsContainer.m in Sources */,
+				835F00D10000000000000004 /* PlsContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +221,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -233,6 +235,7 @@
 				PRODUCT_NAME = Pls;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -244,6 +247,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Pls_Prefix.pch;
@@ -252,6 +259,7 @@
 				PRODUCT_NAME = Pls;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 			};

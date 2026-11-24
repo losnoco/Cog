@@ -529,6 +529,7 @@ plugin_config = configurations('PBXNativeTarget "CogPlugins"', {
 	'GCC_PRECOMPILE_PREFIX_HEADER': 'YES',
 	'GCC_PREFIX_HEADER': 'CogPlugins/CogPlugins_Prefix.pch',
 	'GENERATE_INFOPLIST_FILE': 'YES',
+	'FRAMEWORK_SEARCH_PATHS': ['$(inherited)', '$(BUILT_PRODUCTS_DIR)'],
 	'HEADER_SEARCH_PATHS': ['$(inherited)'] + [rel(p) for p in HEADER_SEARCH_PATHS +
 	                                            sorted({h for plugin in PLUGINS for h in plugin.get('headers', [])})],
 	'INSTALL_PATH': '$(LOCAL_LIBRARY_DIR)/Frameworks',

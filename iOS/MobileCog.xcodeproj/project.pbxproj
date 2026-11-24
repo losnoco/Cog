@@ -33,6 +33,7 @@
 		237FAE851E9FE3A0F011163D /* libvgmMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93A3E14F83FC1E4439E5F2DE /* libvgmMetadataReader.mm */; };
 		238E15565E43452D2885473B /* ListenBrainzScrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0468E03B37135675DFB60E6 /* ListenBrainzScrobbler.swift */; };
 		23C65BF2FAF31D2E7D8AF770 /* ShortenDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7D454E45687C44F4B6C045E5 /* ShortenDecoder.mm */; };
+		23C9F4B77C0C11864409ABA3 /* PlsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C179CF3A07BE3E588BDBCF /* PlsContainer.swift */; };
 		24AFD1A007CFD5F2AC940851 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8122059ACF2893E48561F658 /* CogPlaylist.framework */; };
 		26DF98040C8F313B5094D979 /* libAdPlug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC3E5E4E639E44129F4C524 /* libAdPlug.framework */; };
 		275572E66D0BB37058D9C2FE /* adplug.db in Resources */ = {isa = PBXBuildFile; fileRef = 0D3D2BCFCFEB97ED1B75A623 /* adplug.db */; };
@@ -61,6 +62,7 @@
 		3F48E4C939BAAE31122BABAA /* SidDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = D5EC8EF46E0D8E8D4E34543B /* SidDecoder.mm */; };
 		3F860854465B9CD43B175049 /* libfdk-aac.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E645023FA3DDE611F15C07E7 /* libfdk-aac.xcframework */; };
 		402C04ECAB265B8C9D828C8A /* sidplayfp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB821A988F522F49086C420E /* sidplayfp.framework */; };
+		41012110BA6ADD8E8343C855 /* M3uContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F55B5F22170A396E8658E4A /* M3uContainer.swift */; };
 		44F439990135AAE534EBCEC5 /* SpectrumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0370650B61067CFC89A424D /* SpectrumView.swift */; };
 		4679C83C35D5CF82C7EBB503 /* SidMetadataReader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CB96A5BAE8525021B1DEB4DD /* SidMetadataReader.mm */; };
 		473B65903619C7E9B4DF1E8C /* libopus.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9589F8429AC738EFB618FA3E /* libopus.xcframework */; };
@@ -139,7 +141,6 @@
 		A968FE7037A459B2F8D6FBD4 /* sidplayfp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BB821A988F522F49086C420E /* sidplayfp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A97E05C80DE7BC52224D9292 /* snes9x.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A39802592B4BBF39E7CE605 /* snes9x.framework */; };
 		AAB809179CFEDE507C04126B /* HighlyExperimental.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3CBE07E9B01DF7251BDC5F /* HighlyExperimental.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		AEB74DDB94DDF68C9A8B51E3 /* PlsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = CB795B83652675999BA2E14A /* PlsContainer.m */; };
 		AF3B5173B7E31EACF8039DD2 /* fileprovider.mm in Sources */ = {isa = PBXBuildFile; fileRef = D6308C6E5C5F4BA02A0C1866 /* fileprovider.mm */; };
 		AFAA97A7CD84215BC9275441 /* roms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B666CD9F251D5201F3B8093E /* roms.cpp */; };
 		B044E9C6AB8119E755C46045 /* vio2sf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 51C032A0F3E6E79A6FD61DFC /* vio2sf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -160,7 +161,6 @@
 		C238EB7933807B0AE97102A2 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 646099D3C9CB96D3B0FFD6B8 /* analyzer.c */; };
 		C74CAF65DED91B4D82C88D96 /* HVLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D0FABA4479FBBED1F7F133 /* HVLDecoder.m */; };
 		C9021DD72384E5B54AD70E45 /* spessasynth_core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 82355ACDB3A25A8B86B9F558 /* spessasynth_core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */; };
 		CB2297A0B85E5B58A2DA1559 /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A15506AAB53F24B32C54A6 /* Secrets.swift */; };
 		CB5E8E6F1C26CBA6CE94B750 /* libavcodec.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0EF53735C6DF4F794E3E321 /* libavcodec.xcframework */; };
 		CB67BE88DC354F4638A092F7 /* libOpenMPT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70A08385D3EBB2682A30F39D /* libOpenMPT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -630,7 +630,6 @@
 
 /* Begin PBXFileReference section */
 		019ADF4B49F7C630B2C00750 /* libid3tag.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libid3tag.xcframework; path = ../ThirdParty/libid3tag/ios/libid3tag.xcframework; sourceTree = SOURCE_ROOT; };
-		01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = M3uContainer.m; path = ../Plugins/M3u/M3uContainer.m; sourceTree = SOURCE_ROOT; };
 		01E9C4583F2DA66D6A2D382D /* SignalMeters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalMeters.swift; path = ../SignalInspector/SignalMeters.swift; sourceTree = SOURCE_ROOT; };
 		02325170602DA2B4E80294AA /* VorbisDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = VorbisDecoder.m; path = ../Plugins/Vorbis/VorbisDecoder.m; sourceTree = SOURCE_ROOT; };
 		036CA9849CAB37A23AC4989A /* AdPlugContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = AdPlugContainer.h; path = ../Plugins/AdPlug/AdPlug/AdPlugContainer.h; sourceTree = SOURCE_ROOT; };
@@ -638,6 +637,7 @@
 		084D68C64F49A677B48D5ECD /* spessasynth_core.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = spessasynth_core.xcodeproj; path = ../Plugins/MIDI/MIDI/spessasynth_core/spessasynth_core.xcodeproj; sourceTree = SOURCE_ROOT; };
 		088B157AC72281CE887BDDB2 /* mGBA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mGBA.xcodeproj; path = ../Frameworks/mGBA/mGBA.xcodeproj; sourceTree = SOURCE_ROOT; };
 		08A15506AAB53F24B32C54A6 /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Secrets.swift; path = ../Generated/Secrets.swift; sourceTree = SOURCE_ROOT; };
+		09C179CF3A07BE3E588BDBCF /* PlsContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = PlsContainer.swift; path = ../Plugins/Pls/PlsContainer.swift; sourceTree = SOURCE_ROOT; };
 		09FD061E41F1DE6461DC1C88 /* HLSMemorySource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HLSMemorySource.h; path = ../Plugins/HLS/HLSMemorySource.h; sourceTree = SOURCE_ROOT; };
 		0BB2C1FE7DE677915F8CAC6A /* HVLContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HVLContainer.m; path = ../Plugins/Hively/Hively/HVLContainer.m; sourceTree = SOURCE_ROOT; };
 		0C74EC760C0B2BA53F2E1952 /* FileSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FileSource.h; path = ../Plugins/FileSource/FileSource.h; sourceTree = SOURCE_ROOT; };
@@ -701,6 +701,7 @@
 		5E8F8B9BB5B3CE9FFC9EF3D4 /* jxsMetadataReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = jxsMetadataReader.m; path = ../Plugins/Syntrax/Syntrax/jxsMetadataReader.m; sourceTree = SOURCE_ROOT; };
 		5ED6D5020F011DDEB94BDF1B /* WavPackDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = WavPackDecoder.m; path = ../Plugins/WavPack/WavPackDecoder.m; sourceTree = SOURCE_ROOT; };
 		5F2967EF39D3B5BF923884AA /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainHelper.swift; path = ../Scrobbler/KeychainHelper.swift; sourceTree = SOURCE_ROOT; };
+		5F55B5F22170A396E8658E4A /* M3uContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = M3uContainer.swift; path = ../Plugins/M3u/M3uContainer.swift; sourceTree = SOURCE_ROOT; };
 		5FB1D83AA44D044896DAF7FF /* HLSSegmentManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSSegmentManager.m; path = ../Plugins/HLS/HLSSegmentManager.m; sourceTree = SOURCE_ROOT; };
 		5FC21F8478D9D2DE1142CB77 /* libswresample.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswresample.xcframework; path = ../ThirdParty/ffmpeg/ios/libswresample.xcframework; sourceTree = SOURCE_ROOT; };
 		5FE55E37B6CC2F2A30FF50E1 /* HLSPlaylistParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HLSPlaylistParser.h; path = ../Plugins/HLS/HLSPlaylistParser.h; sourceTree = SOURCE_ROOT; };
@@ -713,7 +714,6 @@
 		67777D9ADE0A0782BF47BEB3 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CoreAudioDecoder.h; path = ../Plugins/CoreAudio/CoreAudioDecoder.h; sourceTree = SOURCE_ROOT; };
 		681B3E839D0E192A690222C4 /* CogPlugins.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = "0"; path = CogPlugins.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		683CBD5DC3A478614F1881FE /* AdPlugDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = AdPlugDecoder.mm; path = ../Plugins/AdPlug/AdPlug/AdPlugDecoder.mm; sourceTree = SOURCE_ROOT; };
-		6BD6A7D12B87C90E04D4422C /* M3uContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = M3uContainer.h; path = ../Plugins/M3u/M3uContainer.h; sourceTree = SOURCE_ROOT; };
 		6CE1F251E0E8E4514B27185F /* SpessaPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SpessaPlayer.mm; path = ../Plugins/MIDI/MIDI/SpessaPlayer.mm; sourceTree = SOURCE_ROOT; };
 		6E196C538C203BD697B8D44F /* CVbriHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CVbriHeader.h; path = ../Plugins/minimp3/ThirdParty/CVbriHeader.h; sourceTree = SOURCE_ROOT; };
 		6F691F71FA4097449A3783A2 /* fx97.pxt */ = {isa = PBXFileReference; lastKnownFileType = file; name = fx97.pxt; path = ../Plugins/Organya/fx97.pxt; sourceTree = SOURCE_ROOT; };
@@ -758,7 +758,6 @@
 		94773D810AFC2CF97E33C2A3 /* libvorbis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libvorbis.xcframework; path = ../ThirdParty/vorbis/ios/libvorbis.xcframework; sourceTree = SOURCE_ROOT; };
 		95701CD1532DCD29093ED21B /* libvgmPropertiesReader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = libvgmPropertiesReader.mm; path = ../Plugins/libvgmPlayer/libvgmPropertiesReader.mm; sourceTree = SOURCE_ROOT; };
 		9589F8429AC738EFB618FA3E /* libopus.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libopus.xcframework; path = ../ThirdParty/opus/ios/libopus.xcframework; sourceTree = SOURCE_ROOT; };
-		95EC8BD6B14741F3FB74D1E3 /* PlsContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = PlsContainer.h; path = ../Plugins/Pls/PlsContainer.h; sourceTree = SOURCE_ROOT; };
 		96268B7790B8C2D3946AD49C /* HivelyPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HivelyPlayer.xcodeproj; path = ../Frameworks/HivelyPlayer/HivelyPlayer.xcodeproj; sourceTree = SOURCE_ROOT; };
 		97E19BBF296B18CA33747D71 /* libvgm-emu.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libvgm-emu.xcframework"; path = "../ThirdParty/libvgm/ios/libvgm-emu.xcframework"; sourceTree = SOURCE_ROOT; };
 		9C40DFD0DCCCA4A2F6A64B7D /* wavetable.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = wavetable.dat; path = ../Plugins/Organya/wavetable.dat; sourceTree = SOURCE_ROOT; };
@@ -807,7 +806,6 @@
 		C922A2B456C86C90DC48C7F1 /* OrganyaDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = OrganyaDecoder.h; path = ../Plugins/Organya/OrganyaDecoder.h; sourceTree = SOURCE_ROOT; };
 		CA74177BF52B90343EEB1AF0 /* libAdPlug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libAdPlug.xcodeproj; path = ../Frameworks/AdPlug/libAdPlug.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CADE734D658780F64AA52618 /* AdPlugMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = AdPlugMetadataReader.h; path = ../Plugins/AdPlug/AdPlug/AdPlugMetadataReader.h; sourceTree = SOURCE_ROOT; };
-		CB795B83652675999BA2E14A /* PlsContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = PlsContainer.m; path = ../Plugins/Pls/PlsContainer.m; sourceTree = SOURCE_ROOT; };
 		CB96A5BAE8525021B1DEB4DD /* SidMetadataReader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SidMetadataReader.mm; path = ../Plugins/sidplay/SidMetadataReader.mm; sourceTree = SOURCE_ROOT; };
 		CBF893425EE90227570006A2 /* VGMMetadataReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = VGMMetadataReader.m; path = ../Plugins/vgmstream/vgmstream/VGMMetadataReader.m; sourceTree = SOURCE_ROOT; };
 		CC962CE19DF1CC389D66757D /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = ../Frameworks/Shorten/Shorten.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -989,8 +987,7 @@
 		09FB65929E45C33881EE159D /* Pls */ = {
 			isa = PBXGroup;
 			children = (
-				95EC8BD6B14741F3FB74D1E3 /* PlsContainer.h */,
-				CB795B83652675999BA2E14A /* PlsContainer.m */,
+				09C179CF3A07BE3E588BDBCF /* PlsContainer.swift */,
 			);
 			name = Pls;
 			sourceTree = "<group>";
@@ -1720,8 +1717,7 @@
 		FD8033E3D338F3C15332594D /* M3u */ = {
 			isa = PBXGroup;
 			children = (
-				6BD6A7D12B87C90E04D4422C /* M3uContainer.h */,
-				01CBACE3D702BEB93A4FFE43 /* M3uContainer.m */,
+				5F55B5F22170A396E8658E4A /* M3uContainer.swift */,
 			);
 			name = M3u;
 			sourceTree = "<group>";
@@ -2252,8 +2248,8 @@
 				EFE5EB9974F03606FF2700F7 /* FlacDecoder.m in Sources */,
 				ED19795381C4FB5B8A325493 /* cuesheet.m in Sources */,
 				F61150A6AD40CD07316B17E3 /* HTTPSource.m in Sources */,
-				CAA34F8A269D403000337B7A /* M3uContainer.m in Sources */,
-				AEB74DDB94DDF68C9A8B51E3 /* PlsContainer.m in Sources */,
+				41012110BA6ADD8E8343C855 /* M3uContainer.swift in Sources */,
+				23C9F4B77C0C11864409ABA3 /* PlsContainer.swift in Sources */,
 				071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */,
 				EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */,
 				0D9ADE3FD4314E919829FE54 /* AdPlugContainer.mm in Sources */,
@@ -2520,6 +2516,10 @@
 				CURRENT_PROJECT_VERSION = "1";
 				DEFINES_MODULE = NO;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CogPlugins/CogPlugins_Prefix.pch;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2572,6 +2572,10 @@
 				CURRENT_PROJECT_VERSION = "1";
 				DEFINES_MODULE = NO;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CogPlugins/CogPlugins_Prefix.pch;
 				GENERATE_INFOPLIST_FILE = YES;

@@ -10,7 +10,7 @@
 		4DDBCF96B5609F5C62205497 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55A898844CF5459DFB5A4617 /* CogAudio.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		8E8D40290CBAFF4300135C1B /* M3uContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D40280CBAFF4300135C1B /* M3uContainer.m */; };
+		835F00D10000000000000002 /* M3uContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000001 /* M3uContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,8 +27,7 @@
 		8D5B49B6048680CD000E48DA /* M3u.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = M3u.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E8D401B0CBAFEF200135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		8E8D40270CBAFF4300135C1B /* M3uContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = M3uContainer.h; sourceTree = "<group>"; };
-		8E8D40280CBAFF4300135C1B /* M3uContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = M3uContainer.m; sourceTree = "<group>"; };
+		835F00D10000000000000001 /* M3uContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = M3uContainer.swift; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -82,8 +81,7 @@
 				834A42BA287AFAEF00EB9D9B /* AudioChunk.h */,
 				83849130180818B100E7332D /* Logging.h */,
 				8E8D401B0CBAFEF200135C1B /* Plugin.h */,
-				8E8D40270CBAFF4300135C1B /* M3uContainer.h */,
-				8E8D40280CBAFF4300135C1B /* M3uContainer.m */,
+				835F00D10000000000000001 /* M3uContainer.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -198,7 +196,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E8D40290CBAFF4300135C1B /* M3uContainer.m in Sources */,
+				835F00D10000000000000002 /* M3uContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +221,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -234,6 +236,7 @@
 				PRODUCT_NAME = M3u;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -245,6 +248,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = M3u_Prefix.pch;
@@ -254,6 +261,7 @@
 				PRODUCT_NAME = M3u;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;
