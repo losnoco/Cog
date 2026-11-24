@@ -1,8 +1,0 @@
-//
-// Prefix header for all source files of the 'General' target in the 'General' project.
-//
-
-#ifdef __OBJC__
-    #import <AssertMacros.h>
-    #import <Cocoa/Cocoa.h>
-#endif
