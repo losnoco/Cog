@@ -246,7 +246,7 @@ static void *playlistControllerContext = &playlistControllerContext;
 		} else if([keyPath isEqualToString:@"values.playlistSimpleLayout"]) {
 			[self updateLayout];
 		} else if([keyPath isEqualToString:@"values.playlistSimpleLayoutArt"]) {
-			if([self isSimpleLayout]) [self.tableView reloadData];
+			if([self isMemberOfClass:[PlaylistController class]] && [self isSimpleLayout]) [self.tableView reloadData];
 		} else if([keyPath isEqualToString:@"progressOverall"] ||
 		          [keyPath isEqualToString:@"progressMetadata"]) {
 			id objNew = [change objectForKey:NSKeyValueChangeNewKey];
@@ -834,6 +834,9 @@ static void *playlistControllerContext = &playlistControllerContext;
 
 /// Shows the columns, or the simple layout, as the View menu has it.
 - (void)updateLayout {
+	// The Spotlight panel's controller is a subclass, with a PlaylistView of
+	// its own whose rows it draws itself; only the playlist changes layout.
+	if(![self isMemberOfClass:[PlaylistController class]]) return;
 	if(![self.tableView isKindOfClass:[PlaylistView class]]) return;
 	PlaylistView *playlistView = (PlaylistView *)self.tableView;
 	BOOL simple = [[NSUserDefaults standardUserDefaults] boolForKey:@"playlistSimpleLayout"];
