@@ -247,7 +247,6 @@ class SpectrumViewSK: SCNView, SCNSceneRendererDelegate {
 	deinit {
 		ddb_analyzer_dealloc(&analyzer)
 		ddb_analyzer_draw_data_dealloc(&drawData)
-		stopTimer()
 		removePlaybackObservers()
 		removeObservers()
 		visController.freeFFTState(&visFFTState)
@@ -317,12 +316,10 @@ class SpectrumViewSK: SCNView, SCNSceneRendererDelegate {
 		rendersContinuously = true
 	}
 
-	nonisolated private func stopTimer() {
+	private func stopTimer() {
 		lastTime = -1
-		DispatchQueue.main.async {
-			self.preferredFramesPerSecond = 1
-			self.rendersContinuously = false
-		}
+		preferredFramesPerSecond = 1
+		rendersContinuously = false
 	}
 
 	@objc func startPlayback() {
