@@ -104,7 +104,7 @@
 		835F00D10000000000000041 /* MiniWindows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000040 /* MiniWindows.swift */; };
 		835F00D1000000000000004B /* PositionSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000004A /* PositionSlider.swift */; };
 		835F00D10000000000000049 /* TimeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000048 /* TimeField.swift */; };
-		17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D61B0F520F9F005B6FED /* VolumeSlider.m */; };
+		835F00D10000000000000053 /* VolumeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000052 /* VolumeSlider.swift */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
@@ -1058,8 +1058,7 @@
 		835F00D10000000000000040 /* MiniWindows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniWindows.swift; path = Window/MiniWindows.swift; sourceTree = "<group>"; };
 		835F00D1000000000000004A /* PositionSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSlider.swift; path = Window/PositionSlider.swift; sourceTree = "<group>"; };
 		835F00D10000000000000048 /* TimeField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeField.swift; path = Window/TimeField.swift; sourceTree = "<group>"; };
-		17E0D61A0F520F9F005B6FED /* VolumeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeSlider.h; path = Window/VolumeSlider.h; sourceTree = "<group>"; };
-		17E0D61B0F520F9F005B6FED /* VolumeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeSlider.m; path = Window/VolumeSlider.m; sourceTree = "<group>"; };
+		835F00D10000000000000052 /* VolumeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolumeSlider.swift; path = Window/VolumeSlider.swift; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
 		17F6C8050F603701000D9DA9 /* PlaybackEventController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackEventController.h; sourceTree = "<group>"; };
@@ -1683,8 +1682,7 @@
 				8325F59B2F71412700400A88 /* RepeatTransformers.swift */,
 				8325F59D2F71418600400A88 /* ShuffleTransformers.swift */,
 				835F00D10000000000000048 /* TimeField.swift */,
-				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
-				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
+				835F00D10000000000000052 /* VolumeSlider.swift */,
 				835F00D1000000000000001B /* CogSearchField.swift */,
 				0A8783C630707A98000C7A1B /* AcknowledgementsView.swift */,
 				0A00385F3086B9BD00C5352B /* SpeedButton.swift */,
@@ -3233,7 +3231,7 @@
 				835F00D1000000000000004B /* PositionSlider.swift in Sources */,
 				835F00D10000000000000049 /* TimeField.swift in Sources */,
 				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,
-				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
+				835F00D10000000000000053 /* VolumeSlider.swift in Sources */,
 				420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */,
 				42777C332E54E091005B0E11 /* Secrets.swift in Sources */,
 				835F00D1000000000000003D /* NSString+CogSort.swift in Sources */,
