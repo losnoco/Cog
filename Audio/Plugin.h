@@ -175,3 +175,13 @@ extern NSString *guess_encoding_of_string(const char *input);
 #ifdef __cplusplus
 }
 #endif
+
+/* The app's sandbox broker, which plugins reach by name so they need not
+ * link the app: cast NSClassFromString(@"SandboxBroker") to this protocol's
+ * metatype. Where there is no broker (iOS), the class is absent and the
+ * cast gives nil. */
+@protocol CogSandboxBroker <NSObject>
++ (id<CogSandboxBroker>)sharedSandboxBroker;
+- (const void *_Nullable)beginFolderAccess:(NSURL *)fileUrl;
+- (void)endFolderAccess:(const void *_Nullable)handle;
+@end

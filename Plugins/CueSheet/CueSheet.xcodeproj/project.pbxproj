@@ -7,22 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		17DA346E0CC04FCD0003F6B2 /* CueSheetMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */; };
+		835F00D1000000000000000E /* CueSheetMetadataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000000D /* CueSheetMetadataReader.swift */; };
 		83D833AC2DF95A89009970AF /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83D833AB2DF95A89009970AF /* CogAudio.framework */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		8E8D42260CBB0F5800135C1B /* CueSheetContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42250CBB0F5800135C1B /* CueSheetContainer.m */; };
-		8E8D42370CBB0F9800135C1B /* CueSheetDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42360CBB0F9800135C1B /* CueSheetDecoder.m */; };
-		8E8D424D0CBB11C600135C1B /* CueSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D424C0CBB11C600135C1B /* CueSheet.m */; };
-		8E8D43570CBB1AE900135C1B /* CueSheetTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D43560CBB1AE900135C1B /* CueSheetTrack.m */; };
+		835F00D1000000000000000A /* CueSheetContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000009 /* CueSheetContainer.swift */; };
+		835F00D1000000000000000C /* CueSheetDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000000B /* CueSheetDecoder.swift */; };
+		835F00D10000000000000010 /* CueSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000000F /* CueSheet.swift */; };
+		835F00D10000000000000012 /* CueSheetTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000011 /* CueSheetTrack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		17DA346C0CC04FCD0003F6B2 /* CueSheetMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheetMetadataReader.h; sourceTree = "<group>"; };
-		17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheetMetadataReader.m; sourceTree = "<group>"; };
+		835F00D1000000000000000D /* CueSheetMetadataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueSheetMetadataReader.swift; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* CueSheet_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheet_Prefix.pch; sourceTree = "<group>"; };
 		832EE93A288F888600B03467 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		833F68371CDBCAB200AFB9F0 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -36,15 +35,11 @@
 		83D833AB2DF95A89009970AF /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B6048680CD000E48DA /* CueSheet.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CueSheet.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E8D42240CBB0F5800135C1B /* CueSheetContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheetContainer.h; sourceTree = "<group>"; };
-		8E8D42250CBB0F5800135C1B /* CueSheetContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheetContainer.m; sourceTree = "<group>"; };
-		8E8D42350CBB0F9800135C1B /* CueSheetDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheetDecoder.h; sourceTree = "<group>"; };
-		8E8D42360CBB0F9800135C1B /* CueSheetDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheetDecoder.m; sourceTree = "<group>"; };
+		835F00D10000000000000009 /* CueSheetContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueSheetContainer.swift; sourceTree = "<group>"; };
+		835F00D1000000000000000B /* CueSheetDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueSheetDecoder.swift; sourceTree = "<group>"; };
 		8E8D423C0CBB0FF600135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		8E8D424B0CBB11C600135C1B /* CueSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheet.h; sourceTree = "<group>"; };
-		8E8D424C0CBB11C600135C1B /* CueSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheet.m; sourceTree = "<group>"; };
-		8E8D43550CBB1AE900135C1B /* CueSheetTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueSheetTrack.h; sourceTree = "<group>"; };
-		8E8D43560CBB1AE900135C1B /* CueSheetTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CueSheetTrack.m; sourceTree = "<group>"; };
+		835F00D1000000000000000F /* CueSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueSheet.swift; sourceTree = "<group>"; };
+		835F00D10000000000000011 /* CueSheetTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueSheetTrack.swift; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -102,16 +97,11 @@
 				839DA7D0274A2EA9001B18E5 /* AudioMetadataReader.h */,
 				8384912A180814D900E7332D /* Logging.h */,
 				8E8D423C0CBB0FF600135C1B /* Plugin.h */,
-				8E8D42240CBB0F5800135C1B /* CueSheetContainer.h */,
-				8E8D42250CBB0F5800135C1B /* CueSheetContainer.m */,
-				8E8D42350CBB0F9800135C1B /* CueSheetDecoder.h */,
-				8E8D42360CBB0F9800135C1B /* CueSheetDecoder.m */,
-				17DA346C0CC04FCD0003F6B2 /* CueSheetMetadataReader.h */,
-				17DA346D0CC04FCD0003F6B2 /* CueSheetMetadataReader.m */,
-				8E8D424B0CBB11C600135C1B /* CueSheet.h */,
-				8E8D424C0CBB11C600135C1B /* CueSheet.m */,
-				8E8D43550CBB1AE900135C1B /* CueSheetTrack.h */,
-				8E8D43560CBB1AE900135C1B /* CueSheetTrack.m */,
+				835F00D10000000000000009 /* CueSheetContainer.swift */,
+				835F00D1000000000000000B /* CueSheetDecoder.swift */,
+				835F00D1000000000000000D /* CueSheetMetadataReader.swift */,
+				835F00D1000000000000000F /* CueSheet.swift */,
+				835F00D10000000000000011 /* CueSheetTrack.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -226,11 +216,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E8D42260CBB0F5800135C1B /* CueSheetContainer.m in Sources */,
-				8E8D42370CBB0F9800135C1B /* CueSheetDecoder.m in Sources */,
-				8E8D424D0CBB11C600135C1B /* CueSheet.m in Sources */,
-				8E8D43570CBB1AE900135C1B /* CueSheetTrack.m in Sources */,
-				17DA346E0CC04FCD0003F6B2 /* CueSheetMetadataReader.m in Sources */,
+				835F00D1000000000000000A /* CueSheetContainer.swift in Sources */,
+				835F00D1000000000000000C /* CueSheetDecoder.swift in Sources */,
+				835F00D10000000000000010 /* CueSheet.swift in Sources */,
+				835F00D10000000000000012 /* CueSheetTrack.swift in Sources */,
+				835F00D1000000000000000E /* CueSheetMetadataReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +245,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -265,6 +259,7 @@
 				PRODUCT_NAME = CueSheet;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
@@ -276,6 +271,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CueSheet_Prefix.pch;
@@ -284,6 +283,7 @@
 				PRODUCT_NAME = CueSheet;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = ../../build;
 				WRAPPER_EXTENSION = bundle;
 			};

@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0D69AF701B3DA2938BB1E0C6 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC0D5515441B9BE34FED706 /* CogAudio.framework */; };
-		99B98A1F0CC7E1CD00C256E9 /* APLDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E8D42360CBB0F9800135C1B /* APLDecoder.m */; };
-		99B98A200CC7E1CE00C256E9 /* APLFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 99B9863F0CC7A08600C256E9 /* APLFile.m */; };
+		835F00D10000000000000006 /* APLDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000005 /* APLDecoder.swift */; };
+		835F00D10000000000000008 /* APLFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000007 /* APLFile.swift */; };
 		99B98A260CC7E22500C256E9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,11 +23,9 @@
 		83747FE32862E8B60021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		838491281808135500E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E8D42350CBB0F9800135C1B /* APLDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APLDecoder.h; sourceTree = "<group>"; };
-		8E8D42360CBB0F9800135C1B /* APLDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APLDecoder.m; sourceTree = "<group>"; };
+		835F00D10000000000000005 /* APLDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APLDecoder.swift; sourceTree = "<group>"; };
 		8E8D423C0CBB0FF600135C1B /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		99B9863E0CC7A08600C256E9 /* APLFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APLFile.h; sourceTree = "<group>"; };
-		99B9863F0CC7A08600C256E9 /* APLFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APLFile.m; sourceTree = "<group>"; };
+		835F00D10000000000000007 /* APLFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APLFile.swift; sourceTree = "<group>"; };
 		99B989F40CC7E10400C256E9 /* APL.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = APL.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -81,10 +79,8 @@
 				834A42AF287AF34300EB9D9B /* AudioChunk.h */,
 				838491281808135500E7332D /* Logging.h */,
 				8E8D423C0CBB0FF600135C1B /* Plugin.h */,
-				8E8D42350CBB0F9800135C1B /* APLDecoder.h */,
-				8E8D42360CBB0F9800135C1B /* APLDecoder.m */,
-				99B9863E0CC7A08600C256E9 /* APLFile.h */,
-				99B9863F0CC7A08600C256E9 /* APLFile.m */,
+				835F00D10000000000000005 /* APLDecoder.swift */,
+				835F00D10000000000000007 /* APLFile.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -194,8 +190,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99B98A1F0CC7E1CD00C256E9 /* APLDecoder.m in Sources */,
-				99B98A200CC7E1CE00C256E9 /* APLFile.m in Sources */,
+				835F00D10000000000000006 /* APLDecoder.swift in Sources */,
+				835F00D10000000000000008 /* APLFile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +301,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -321,6 +321,7 @@
 				PRODUCT_NAME = APL;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
 			};
@@ -332,6 +333,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -346,6 +351,7 @@
 				PRODUCT_NAME = APL;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;
 			};

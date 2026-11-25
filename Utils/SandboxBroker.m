@@ -11,6 +11,8 @@
 
 #import "SandboxBroker.h"
 
+#import <CogAudio/Plugin.h>
+
 #import "Logging.h"
 
 #import <CogPlaylist/CogPlaylist-Swift.h>
@@ -20,6 +22,12 @@
 #import "PlaylistController.h"
 
 static SandboxBroker *kSharedSandboxBroker = nil;
+
+/* The plugin-facing contract (Plugin.h): plugins reach the broker by name
+ * and cast it to CogSandboxBroker, so the conformance lives here, where the
+ * protocol is visible, rather than in the header every plugin imports. */
+@interface SandboxBroker () <CogSandboxBroker>
+@end
 
 @interface SandboxEntry : NSObject {
 	SandboxToken *_token;
