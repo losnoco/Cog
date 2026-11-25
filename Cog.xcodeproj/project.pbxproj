@@ -264,7 +264,7 @@
 		835F00D1000000000000001E /* MainSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000001D /* MainSplitViewController.swift */; };
 		8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752C09F31D5A0080F1EE /* DNDArrayController.m */; };
 		8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75752E09F31D5A0080F1EE /* PlaylistController.m */; };
-		8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753009F31D5A0080F1EE /* PlaylistEntry.m */; };
+		835F00D10000000000000055 /* PlaylistEntry+AppKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000054 /* PlaylistEntry+AppKit.swift */; };
 		8E75757409F31D5A0080F1EE /* PlaylistView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E75753209F31D5A0080F1EE /* PlaylistView.m */; };
 		835F00D10000000000000022 /* Shuffle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000021 /* Shuffle.swift */; };
 		8E8D40880CBB038E00135C1B /* M3u.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8E8D40870CBB036600135C1B /* M3u.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1252,7 +1252,7 @@
 		8E75752D09F31D5A0080F1EE /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistController.h; sourceTree = "<group>"; };
 		8E75752E09F31D5A0080F1EE /* PlaylistController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistController.m; sourceTree = "<group>"; };
 		8E75752F09F31D5A0080F1EE /* PlaylistEntry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistEntry.h; sourceTree = "<group>"; };
-		8E75753009F31D5A0080F1EE /* PlaylistEntry.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistEntry.m; sourceTree = "<group>"; };
+		835F00D10000000000000054 /* PlaylistEntry+AppKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PlaylistEntry+AppKit.swift"; sourceTree = "<group>"; };
 		8E75753109F31D5A0080F1EE /* PlaylistView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlaylistView.h; sourceTree = "<group>"; };
 		8E75753209F31D5A0080F1EE /* PlaylistView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = PlaylistView.m; sourceTree = "<group>"; };
 		835F00D10000000000000021 /* Shuffle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shuffle.swift; sourceTree = "<group>"; };
@@ -2243,7 +2243,7 @@
 				8E75752B09F31D5A0080F1EE /* DNDArrayController.h */,
 				8E75752C09F31D5A0080F1EE /* DNDArrayController.m */,
 				8E75752F09F31D5A0080F1EE /* PlaylistEntry.h */,
-				8E75753009F31D5A0080F1EE /* PlaylistEntry.m */,
+				835F00D10000000000000054 /* PlaylistEntry+AppKit.swift */,
 				835F00D10000000000000021 /* Shuffle.swift */,
 				0A5F1A0C3100000000000001 /* SimplePlaylistCellView.swift */,
 				8325F58F2F713E3500400A88 /* StatusImageTransformer.swift */,
@@ -3137,7 +3137,7 @@
 				8E75757109F31D5A0080F1EE /* DNDArrayController.m in Sources */,
 				8E75757209F31D5A0080F1EE /* PlaylistController.m in Sources */,
 				83E998762F71325E0017AE33 /* ColorToValueTransformer.swift in Sources */,
-				8E75757309F31D5A0080F1EE /* PlaylistEntry.m in Sources */,
+				835F00D10000000000000055 /* PlaylistEntry+AppKit.swift in Sources */,
 				0A67EED7306E3AF400DADC34 /* ListenBrainzScrobbler.swift in Sources */,
 				8325F59A2F713FF900400A88 /* SpotlightTransformers.swift in Sources */,
 				0A5F1A0C3100000000000004 /* SpotlightPanelView.swift in Sources */,

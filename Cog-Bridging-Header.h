@@ -13,6 +13,7 @@
 #import "Playlist/PlaylistController.h"
 #import "Playlist/PlaylistLoader.h"
 #import "Utils/SandboxBroker.h"
+#import "ThirdParty/avif/source/AVIFDecoder.h"
 #import "Playlist/PlaylistControllerEnums.h"
 #import "Preferences/MIDIConfig.h"
 #import "Spotlight/SpotlightWindowController.h"
