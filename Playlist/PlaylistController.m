@@ -28,6 +28,10 @@ extern BOOL kAppControllerShuttingDown;
 
 NSPersistentContainer *kPersistentContainer = nil;
 
+// Posted once an entry's metadata has loaded; the entry's AppKit half is
+// Swift now, but this C symbol is still referenced from Objective-C.
+NSNotificationName const CogPlaylistEntryMetadataLoadedNotification = @"CogPlaylistEntryMetadataLoadedNotification";
+
 // validateMenuItem: belongs to NSMenuItemValidation now; without saying so,
 // it matches the deprecated informal declaration on NSObject.
 @interface PlaylistController () <NSMenuItemValidation> {
