@@ -31,8 +31,6 @@
 
 #import "PreferencesController.h"
 
-#import "FeedbackController.h"
-
 @import Sentry;
 @import UniformTypeIdentifiers;
 

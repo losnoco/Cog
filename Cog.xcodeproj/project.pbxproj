@@ -206,7 +206,7 @@
 		8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952E2E4609CF00A7CFD8 /* libyuv.a */; };
 		838395302E4609CF00A7CFD8 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952D2E4609CF00A7CFD8 /* libdav1d.a */; };
 		8384914018083E4E00E7332D /* filetype.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8384913D18083E4E00E7332D /* filetype.icns */; };
-		838770FA2D6F0996001455A0 /* FeedbackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 838770F42D6F0996001455A0 /* FeedbackController.m */; };
+		835F00D10000000000000014 /* FeedbackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000013 /* FeedbackController.swift */; };
 		8389FCC42E76D51D004FAB82 /* Syntrax.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8389FCC32E76D4FB004FAB82 /* Syntrax.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		838A33742D06A9B100D0D770 /* librubberband.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; };
 		838A33752D06A9CE00D0D770 /* librubberband.3.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = 838A33732D06A9B100D0D770 /* librubberband.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1213,8 +1213,7 @@
 		8384912518080F2D00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		8384913D18083E4E00E7332D /* filetype.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = filetype.icns; sourceTree = "<group>"; };
 		83859520234FEB35004E9946 /* Cog.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cog.entitlements; sourceTree = "<group>"; };
-		838770F32D6F0996001455A0 /* FeedbackController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeedbackController.h; sourceTree = "<group>"; };
-		838770F42D6F0996001455A0 /* FeedbackController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FeedbackController.m; sourceTree = "<group>"; };
+		835F00D10000000000000013 /* FeedbackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackController.swift; sourceTree = "<group>"; };
 		8389FCBC2E76D4FB004FAB82 /* Syntrax.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Syntrax.xcodeproj; path = Plugins/Syntrax/Syntrax.xcodeproj; sourceTree = "<group>"; };
 		838A33732D06A9B100D0D770 /* librubberband.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librubberband.3.dylib; path = ThirdParty/rubberband/lib/librubberband.3.dylib; sourceTree = "<group>"; };
 		C0FE7A010000000000000008 /* ProjectMView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProjectMView.h; path = Visualization/ProjectMView.h; sourceTree = "<group>"; };
@@ -2201,8 +2200,7 @@
 		838770F72D6F0996001455A0 /* Feedback */ = {
 			isa = PBXGroup;
 			children = (
-				838770F32D6F0996001455A0 /* FeedbackController.h */,
-				838770F42D6F0996001455A0 /* FeedbackController.m */,
+				835F00D10000000000000013 /* FeedbackController.swift */,
 			);
 			path = Feedback;
 			sourceTree = "<group>";
@@ -3242,7 +3240,7 @@
 				8E9A30160BA792DC0091081B /* NSFileHandle+CreateFile.m in Sources */,
 				179790E10C087AB7001D6996 /* OpenURLPanel.m in Sources */,
 				0A8783C730707A99000C7A1B /* AcknowledgementsView.swift in Sources */,
-				838770FA2D6F0996001455A0 /* FeedbackController.m in Sources */,
+				835F00D10000000000000014 /* FeedbackController.swift in Sources */,
 				0ABA786A2F6B1ECF00537320 /* CreditsView.swift in Sources */,
 				0ABA786B2F6B1ECF00537320 /* AboutView.swift in Sources */,
 				0AC0DE012FE1000000AB0002 /* AboutDetailsView.swift in Sources */,
