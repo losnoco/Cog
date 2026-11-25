@@ -197,7 +197,7 @@
 		836FB5A718206F2500B3AD2D /* Hively.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 836FB5471820538800B3AD2D /* Hively.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8370D73D277419F700245CE0 /* SQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 8370D73C277419F700245CE0 /* SQLiteStore.m */; };
 		8370D73F2775AE1300245CE0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8370D73E2775AE1300245CE0 /* libsqlite3.tbd */; };
-		8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */ = {isa = PBXBuildFile; fileRef = 8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */; };
+		835F00D10000000000000051 /* SpectrumViewSK.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000050 /* SpectrumViewSK.swift */; };
 		835F00D10000000000000028 /* SpectrumItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000027 /* SpectrumItem.swift */; };
 		837DC92B285B05710005C58A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837DC92A285B05710005C58A /* CoreData.framework */; };
 		8383952F2E4609CF00A7CFD8 /* libyuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8383952E2E4609CF00A7CFD8 /* libyuv.a */; };
@@ -1172,8 +1172,7 @@
 		8370D73E2775AE1300245CE0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		8372C92A27C785BD00E250C9 /* minimp3.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = minimp3.xcodeproj; path = Plugins/minimp3/minimp3.xcodeproj; sourceTree = "<group>"; };
 		8375B05117FFEA400092A79F /* OpusPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OpusPlugin.xcodeproj; path = Plugins/Opus/OpusPlugin.xcodeproj; sourceTree = "<group>"; };
-		8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SpectrumViewSK.m; path = Visualization/SpectrumViewSK.m; sourceTree = "<group>"; };
-		8377C66227B8CF6300E8BC0F /* SpectrumViewSK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumViewSK.h; path = Visualization/SpectrumViewSK.h; sourceTree = "<group>"; };
+		835F00D10000000000000050 /* SpectrumViewSK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpectrumViewSK.swift; path = Visualization/SpectrumViewSK.swift; sourceTree = "<group>"; };
 		835F00D10000000000000027 /* SpectrumItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpectrumItem.swift; path = Visualization/SpectrumItem.swift; sourceTree = "<group>"; };
 		837DC92A285B05710005C58A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		837DC930285B3F790005C58A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -2108,8 +2107,7 @@
 				830C37EF27B9956C00E02BB0 /* ThirdParty */,
 				835F00D10000000000000027 /* SpectrumItem.swift */,
 				835F00D1000000000000004E /* SpectrumViewCG.swift */,
-				8377C66227B8CF6300E8BC0F /* SpectrumViewSK.h */,
-				8377C66127B8CF6300E8BC0F /* SpectrumViewSK.m */,
+				835F00D10000000000000050 /* SpectrumViewSK.swift */,
 				C0FE7A010000000000000008 /* ProjectMView.h */,
 				C0FE7A010000000000000009 /* ProjectMView.m */,
 				C0FE7A01000000000000000A /* ProjectMWindowController.swift */,
@@ -3158,7 +3156,7 @@
 				835F00D1000000000000003F /* NSData+MD5.swift in Sources */,
 				0A0038583086B9BC00C5352B /* LyricsWindowController.swift in Sources */,
 				83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */,
-				8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */,
+				835F00D10000000000000051 /* SpectrumViewSK.swift in Sources */,
 				C0FE7A010000000000000001 /* ProjectMView.m in Sources */,
 				C0FE7A010000000000000002 /* ProjectMWindowController.swift in Sources */,
 				C0FE7A010000000000000024 /* ProjectMSurfaceANGLE.m in Sources */,
