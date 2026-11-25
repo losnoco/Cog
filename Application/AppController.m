@@ -3,7 +3,6 @@
 #import "FileTreeController.h"
 #import "FileTreeOutlineView.h"
 #import "FileTreeViewController.h"
-#import "MainSplitViewController.h"
 #import "OpenURLPanel.h"
 #import "PathNode.h"
 #import "PlaybackController.h"
@@ -28,8 +27,6 @@
 #ifdef COG_SPARKLE
 #import <Sparkle/Sparkle.h>
 #endif
-
-#import "PreferencesController.h"
 
 @import Sentry;
 @import UniformTypeIdentifiers;

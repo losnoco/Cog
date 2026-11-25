@@ -13,7 +13,7 @@
 #import "PlaylistEntry.h"
 
 #import "AVIFDecoder.h"
-#import "SecondsFormatter.h"
+#import "Cog-Swift.h"
 
 extern NSPersistentContainer *kPersistentContainer;
 

@@ -20,6 +20,9 @@
 #import "Spotlight/SpotlightWindowController.h"
 #import "Visualization/SpectrumViewSK.h"
 #import "Visualization/ProjectMView.h"
+#import <MetalKit/MetalKit.h>
+#import "Visualization/SCView.h"
+#import "Visualization/SpectrumViewCG.h"
 #import <File_Extractor/fex.h>
 #import "Visualization/ThirdParty/deadbeef/analyzer.h"
 #import "NSData+MD5.h"

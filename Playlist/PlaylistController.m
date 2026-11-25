@@ -11,7 +11,6 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 #import "PlaylistView.h"
-#import "Shuffle.h"
 #import "SpotlightWindowController.h"
 
 #import "NSString+CogSort.h"

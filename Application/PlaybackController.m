@@ -1,5 +1,5 @@
 #import "PlaybackController.h"
-#import "SecondsFormatter.h"
+#import "Cog-Swift.h"
 #import "CogAudio/Helper.h"
 #import "CogAudio/Status.h"
 #import "PlaylistView.h"
