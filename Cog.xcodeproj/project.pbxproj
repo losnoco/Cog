@@ -276,7 +276,7 @@
 		C06D1E0100000000000D0004 /* Direct.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C06D1E0100000000000D0003 /* Direct.xcstrings */; };
 		C64F06253A43E55485AF6058 /* LrclibClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6992B2B954E6728D9F5E814E /* LrclibClient.swift */; };
 		CA11E7A10000000000000002 /* ContentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA11E7A10000000000000001 /* ContentTypes.swift */; };
-		CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */; };
+		835F00D10000000000000057 /* MiniPlayerPlusWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000056 /* MiniPlayerPlusWindowController.swift */; };
 		CEC0CAFE000000000000B002 /* CogRemoteControl.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CEC0CAFE000000000000F001 /* CogRemoteControl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CEC0CAFE000000000000B003 /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC02 /* MCP */; };
 		CEC0CAFE000000000000B004 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = CEC0CAFE000000000000AC04 /* NIOCore */; };
@@ -1266,8 +1266,7 @@
 		C06D1E0100000000000D0003 /* Direct.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Direct.xcstrings; sourceTree = "<group>"; };
 		C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesModel.swift; path = Preferences/PreferencesModel.swift; sourceTree = "<group>"; };
 		CA11E7A10000000000000001 /* ContentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTypes.swift; sourceTree = "<group>"; };
-		CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MiniPlayerPlusWindowController.h; path = Window/MiniPlayerPlusWindowController.h; sourceTree = "<group>"; };
-		CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MiniPlayerPlusWindowController.m; path = Window/MiniPlayerPlusWindowController.m; sourceTree = "<group>"; };
+		835F00D10000000000000056 /* MiniPlayerPlusWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniPlayerPlusWindowController.swift; path = Window/MiniPlayerPlusWindowController.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F001 /* CogRemoteControl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CogRemoteControl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEC0CAFE000000000000F103 /* RemoteControlServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlServer.swift; sourceTree = "<group>"; };
 		CEC0CAFE000000000000F104 /* RemoteControlToolHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlToolHandlers.swift; sourceTree = "<group>"; };
@@ -1672,8 +1671,7 @@
 				17E0D5E20F520F02005B6FED /* MainWindow.m */,
 				835F00D1000000000000001D /* MainSplitViewController.swift */,
 				835F00D10000000000000040 /* MiniWindows.swift */,
-				CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */,
-				CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */,
+				835F00D10000000000000056 /* MiniPlayerPlusWindowController.swift */,
 				835F00D1000000000000001F /* PlaybackButtons.swift */,
 				835F00D1000000000000004A /* PositionSlider.swift */,
 				EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */,
@@ -3227,7 +3225,7 @@
 				835F00D1000000000000001E /* MainSplitViewController.swift in Sources */,
 				835F00D10000000000000018 /* ScriptAdditions.swift in Sources */,
 				835F00D10000000000000041 /* MiniWindows.swift in Sources */,
-				CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */,
+				835F00D10000000000000057 /* MiniPlayerPlusWindowController.swift in Sources */,
 				835F00D1000000000000004B /* PositionSlider.swift in Sources */,
 				835F00D10000000000000049 /* TimeField.swift in Sources */,
 				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,
