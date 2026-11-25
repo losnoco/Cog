@@ -5,7 +5,6 @@
 #import "AppController.h"
 #import "CogAudio/AudioPlayer.h"
 #import "CogAudio/Status.h"
-#import "TrackingSlider.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>

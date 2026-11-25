@@ -62,8 +62,7 @@
 		1770429C0B8BC53600B86321 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 177042980B8BC53600B86321 /* AppController.m */; };
 		1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1770429A0B8BC53600B86321 /* PlaybackController.m */; };
 		177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EBF870B8BC2A70000BC8C /* ImageTextCell.m */; };
-		177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */; };
-		177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */; };
+		835F00D10000000000000047 /* Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000046 /* Tracking.swift */; };
 		17818A950C0B27AC001C4916 /* aiff.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A8E0C0B27AC001C4916 /* aiff.icns */; };
 		17818A960C0B27AC001C4916 /* ape.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A8F0C0B27AC001C4916 /* ape.icns */; };
 		17818A970C0B27AC001C4916 /* m3u.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17818A900C0B27AC001C4916 /* m3u.icns */; };
@@ -103,8 +102,8 @@
 		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
 		17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E20F520F02005B6FED /* MainWindow.m */; };
 		835F00D10000000000000041 /* MiniWindows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000040 /* MiniWindows.swift */; };
-		17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E60F520F02005B6FED /* PositionSlider.m */; };
-		17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E80F520F02005B6FED /* TimeField.m */; };
+		835F00D1000000000000004B /* PositionSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000004A /* PositionSlider.swift */; };
+		835F00D10000000000000049 /* TimeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000048 /* TimeField.swift */; };
 		17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D61B0F520F9F005B6FED /* VolumeSlider.m */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -999,10 +998,7 @@
 		1770429A0B8BC53600B86321 /* PlaybackController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaybackController.m; sourceTree = "<group>"; };
 		177EBF860B8BC2A70000BC8C /* ImageTextCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ImageTextCell.h; sourceTree = "<group>"; };
 		177EBF870B8BC2A70000BC8C /* ImageTextCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageTextCell.m; sourceTree = "<group>"; };
-		177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingCell.h; sourceTree = "<group>"; };
-		177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TrackingCell.m; sourceTree = "<group>"; };
-		177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TrackingSlider.h; sourceTree = "<group>"; };
-		177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TrackingSlider.m; sourceTree = "<group>"; };
+		835F00D10000000000000046 /* Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracking.swift; sourceTree = "<group>"; };
 		17818A8E0C0B27AC001C4916 /* aiff.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = aiff.icns; sourceTree = "<group>"; };
 		17818A8F0C0B27AC001C4916 /* ape.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ape.icns; sourceTree = "<group>"; };
 		17818A900C0B27AC001C4916 /* m3u.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m3u.icns; sourceTree = "<group>"; };
@@ -1060,10 +1056,8 @@
 		17E0D5E10F520F02005B6FED /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = Window/MainWindow.h; sourceTree = "<group>"; };
 		17E0D5E20F520F02005B6FED /* MainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainWindow.m; path = Window/MainWindow.m; sourceTree = "<group>"; };
 		835F00D10000000000000040 /* MiniWindows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniWindows.swift; path = Window/MiniWindows.swift; sourceTree = "<group>"; };
-		17E0D5E50F520F02005B6FED /* PositionSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PositionSlider.h; path = Window/PositionSlider.h; sourceTree = "<group>"; };
-		17E0D5E60F520F02005B6FED /* PositionSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PositionSlider.m; path = Window/PositionSlider.m; sourceTree = "<group>"; };
-		17E0D5E70F520F02005B6FED /* TimeField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeField.h; path = Window/TimeField.h; sourceTree = "<group>"; };
-		17E0D5E80F520F02005B6FED /* TimeField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TimeField.m; path = Window/TimeField.m; sourceTree = "<group>"; };
+		835F00D1000000000000004A /* PositionSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSlider.swift; path = Window/PositionSlider.swift; sourceTree = "<group>"; };
+		835F00D10000000000000048 /* TimeField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeField.swift; path = Window/TimeField.swift; sourceTree = "<group>"; };
 		17E0D61A0F520F9F005B6FED /* VolumeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VolumeSlider.h; path = Window/VolumeSlider.h; sourceTree = "<group>"; };
 		17E0D61B0F520F9F005B6FED /* VolumeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VolumeSlider.m; path = Window/VolumeSlider.m; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
@@ -1536,10 +1530,7 @@
 				8D1A2B3E00000011 /* MIDIPluginState.m */,
 				8370D739277419D200245CE0 /* SQLiteStore.h */,
 				8370D73C277419F700245CE0 /* SQLiteStore.m */,
-				177EC01A0B8BC2CF0000BC8C /* TrackingCell.h */,
-				177EC01B0B8BC2CF0000BC8C /* TrackingCell.m */,
-				177EC01C0B8BC2CF0000BC8C /* TrackingSlider.h */,
-				177EC01D0B8BC2CF0000BC8C /* TrackingSlider.m */,
+				835F00D10000000000000046 /* Tracking.swift */,
 				8307D30C28606148000FF8EB /* SandboxBroker.h */,
 				8307D30D28606148000FF8EB /* SandboxBroker.m */,
 				83C0F1A02E4C1B0100C0F1A0 /* CogURLNormalization.h */,
@@ -1689,15 +1680,13 @@
 				CCAA0004B590B10015000004 /* MiniPlayerPlusWindowController.h */,
 				CCAA0005B590B10015000005 /* MiniPlayerPlusWindowController.m */,
 				835F00D1000000000000001F /* PlaybackButtons.swift */,
-				17E0D5E50F520F02005B6FED /* PositionSlider.h */,
-				17E0D5E60F520F02005B6FED /* PositionSlider.m */,
+				835F00D1000000000000004A /* PositionSlider.swift */,
 				EDAAA41E25A665C000731773 /* PositionSliderToolbarItem.swift */,
 				0ABB324630843A3C000AAB12 /* WaveformController.swift */,
 				0ABB371230843A63000AAB12 /* WaveformSliderCell.swift */,
 				8325F59B2F71412700400A88 /* RepeatTransformers.swift */,
 				8325F59D2F71418600400A88 /* ShuffleTransformers.swift */,
-				17E0D5E70F520F02005B6FED /* TimeField.h */,
-				17E0D5E80F520F02005B6FED /* TimeField.m */,
+				835F00D10000000000000048 /* TimeField.swift */,
 				17E0D61A0F520F9F005B6FED /* VolumeSlider.h */,
 				17E0D61B0F520F9F005B6FED /* VolumeSlider.m */,
 				835F00D1000000000000001B /* CogSearchField.swift */,
@@ -3166,8 +3155,7 @@
 				835F00D1000000000000001A /* PreferencesController.swift in Sources */,
 				835F00D10000000000000028 /* SpectrumItem.swift in Sources */,
 				177EBFA70B8BC2A70000BC8C /* ImageTextCell.m in Sources */,
-				177EC0270B8BC2CF0000BC8C /* TrackingCell.m in Sources */,
-				177EC0290B8BC2CF0000BC8C /* TrackingSlider.m in Sources */,
+				835F00D10000000000000047 /* Tracking.swift in Sources */,
 				1770429C0B8BC53600B86321 /* AppController.m in Sources */,
 				CA11E7A10000000000000002 /* ContentTypes.swift in Sources */,
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
@@ -3248,8 +3236,8 @@
 				835F00D10000000000000018 /* ScriptAdditions.swift in Sources */,
 				835F00D10000000000000041 /* MiniWindows.swift in Sources */,
 				CCAA0006B590B10015000006 /* MiniPlayerPlusWindowController.m in Sources */,
-				17E0D5EC0F520F02005B6FED /* PositionSlider.m in Sources */,
-				17E0D5ED0F520F02005B6FED /* TimeField.m in Sources */,
+				835F00D1000000000000004B /* PositionSlider.swift in Sources */,
+				835F00D10000000000000049 /* TimeField.swift in Sources */,
 				839B837F286D7F8D00F529EE /* NumberHertzToStringTransformer.swift in Sources */,
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */,

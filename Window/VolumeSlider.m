@@ -9,7 +9,7 @@
 #import "VolumeSlider.h"
 #import "CogAudio/Helper.h"
 #import "PlaybackController.h"
-#import "TrackingSlider.h"
+#import "Cog-Swift.h"
 
 static void *kVolumeSliderContext = &kVolumeSliderContext;
 
