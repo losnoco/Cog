@@ -16,7 +16,9 @@ class CueSheetDecoder: NSObject, CogDecoder {
 	private var sourceURL: URL?
 	private var baseURL: URL?
 	private var source: CogSource?
-	private var decoder: CogDecoder?
+	// @objc so the feeder can look inside this wrapper with KVC, as it could
+	// when the ivar was Objective-C's.
+	@objc private var decoder: CogDecoder?
 
 	private var cuesheet: CueSheet?
 	private var track: CueSheetTrack?
