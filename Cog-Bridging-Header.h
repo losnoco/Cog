@@ -25,3 +25,6 @@
 #import "Visualization/SpectrumViewCG.h"
 #import <File_Extractor/fex.h>
 #import "Visualization/ThirdParty/deadbeef/analyzer.h"
+
+// Defined in Window/MainWindow.m; the mini window shows it at launch.
+void showSentryConsent(NSWindow *window);
