@@ -33,6 +33,9 @@ Each format is handled by a plugin under [`Plugins/`](Plugins):
   Roland SC-55 emulation from your own ROM set), or through Audio Unit instruments on the Mac
 - **Playlists and containers:** cue sheets, M3U and PLS, and files inside
   archives
+- **Chaptered files:** an audiobook's chapters expand to one playlist row
+  each. MP3 chapters play through minimp3 — gapless-correct from the first
+  chapter, with sample-accurate seeking, and free-bitrate frames work too
 - **Streams** over HTTP and HLS
 
 ## Features

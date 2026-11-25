@@ -15,6 +15,7 @@
 		834A42C3287AFF5E00EB9D9B /* AudioChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 834A42C2287AFF5E00EB9D9B /* AudioChunk.h */; };
 		8356BCE527B377C20074E50C /* TagLibID3v2Reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */; };
 		8356BCE627B377C20074E50C /* TagLibID3v2Reader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */; };
+		83A100032F00000000000003 /* TagLibChapters.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83A100022F00000000000002 /* TagLibChapters.mm */; };
 		8384913A18081FFC00E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384913918081FFC00E7332D /* Logging.h */; };
 		8394D2972F65803A002FFAAC /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8394D2962F65803A002FFAAC /* CogAudio.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -48,6 +49,8 @@
 		834A42C2287AFF5E00EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagLibID3v2Reader.h; sourceTree = "<group>"; };
 		8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TagLibID3v2Reader.mm; sourceTree = "<group>"; };
+		83A100012F00000000000001 /* TagLibChapters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagLibChapters.h; sourceTree = "<group>"; };
+		83A100022F00000000000002 /* TagLibChapters.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TagLibChapters.mm; sourceTree = "<group>"; };
 		83747BF52862D9470021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		8384913918081FFC00E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8394D2962F65803A002FFAAC /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +117,8 @@
 				17C93FC20B90056C008627D6 /* TagLibMetadataReader.m */,
 				8356BCE327B377C20074E50C /* TagLibID3v2Reader.h */,
 				8356BCE427B377C20074E50C /* TagLibID3v2Reader.mm */,
+				83A100012F00000000000001 /* TagLibChapters.h */,
+				83A100022F00000000000002 /* TagLibChapters.mm */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -249,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8356BCE627B377C20074E50C /* TagLibID3v2Reader.mm in Sources */,
+				83A100032F00000000000003 /* TagLibChapters.mm in Sources */,
 				17C93FC30B90056C008627D6 /* TagLibMetadataReader.m in Sources */,
 				07CACE8B0ED1AD1000C0F1E8 /* TagLibMetadataWriter.m in Sources */,
 			);

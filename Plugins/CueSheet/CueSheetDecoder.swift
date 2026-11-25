@@ -133,13 +133,27 @@ class CueSheetDecoder: NSObject, CogDecoder {
 			// Embedded cuesheet check
 			fileMetadata = AudioMetadataReader.metadata(for: url, skipCue: true)
 
-			source = s
+			// The inner decoder reads the whole file: an embedded sheet's track
+			// bounds come from its full length. Open it on a fragment-less URL so
+			// a numeric fragment (a chapter row, file.mp3#01) is not mistaken for
+			// a chapter span by the input decoder.
+			var input: CogSource = s
+			if url.fragment != nil {
+				var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+				components?.fragment = nil
+				if let innerURL = components?.url,
+				   let innerSource = AudioSource.audioSource(for: innerURL),
+				   innerSource.open(innerURL) {
+					input = innerSource
+				}
+			}
+			source = input
 
-			decoder = AudioDecoder.audioDecoder(for: s, skipCue: true)
+			decoder = AudioDecoder.audioDecoder(for: input, skipCue: true)
 
 			registerObservers()
 
-			guard let decoder, decoder.open(s) else {
+			guard let decoder, decoder.open(input) else {
 				NSLog("Could not open cuesheet decoder")
 				return false
 			}
