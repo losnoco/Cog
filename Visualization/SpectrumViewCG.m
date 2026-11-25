@@ -7,7 +7,7 @@
 
 #import "SpectrumViewCG.h"
 
-#import "NSView+Visibility.h"
+#import "Cog-Swift.h"
 
 #import "analyzer.h"
 

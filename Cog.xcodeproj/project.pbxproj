@@ -157,7 +157,7 @@
 		832923AF279FAC400048201E /* Cog.q1.json in Resources */ = {isa = PBXBuildFile; fileRef = 832923AE279FAC400048201E /* Cog.q1.json */; };
 		832AE3B32FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */; };
 		832AE3B52FA063E000AFAB72 /* tg300b.sflist.json in Resources */ = {isa = PBXBuildFile; fileRef = 832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */; };
-		832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */ = {isa = PBXBuildFile; fileRef = 832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */; };
+		835F00D1000000000000004D /* NSView+Visibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000004C /* NSView+Visibility.swift */; };
 		8331250A2E817A63005C8895 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 833125092E817A63005C8895 /* InfoPlist.xcstrings */; };
 		8331250C2E817A63005C8895 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8331250B2E817A63005C8895 /* Localizable.xcstrings */; };
 		833A70D02FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 in Resources */ = {isa = PBXBuildFile; fileRef = 833A70CF2FB552A00012FCF8 /* GeneralUserGS-Drums.sf3 */; };
@@ -1123,8 +1123,7 @@
 		832923AE279FAC400048201E /* Cog.q1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Cog.q1.json; sourceTree = "<group>"; };
 		832AE3B22FA063D900AFAB72 /* GeneralUserXG-SFeTest.sf3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeneralUserXG-SFeTest.sf3"; sourceTree = "<group>"; };
 		832AE3B42FA063E000AFAB72 /* tg300b.sflist.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = tg300b.sflist.json; sourceTree = "<group>"; };
-		832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSView+Visibility.m"; sourceTree = "<group>"; };
-		832CFC532851AA37002AC26F /* NSView+Visibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSView+Visibility.h"; sourceTree = "<group>"; };
+		835F00D1000000000000004C /* NSView+Visibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSView+Visibility.swift"; sourceTree = "<group>"; };
 		833125012E817A62005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/Equalizer.xcstrings; sourceTree = "<group>"; };
 		833125072E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/FileTree.xcstrings; sourceTree = "<group>"; };
 		833125082E817A63005C8895 /* mul */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = mul; path = mul.lproj/SpotlightPanel.xcstrings; sourceTree = "<group>"; };
@@ -1522,8 +1521,7 @@
 				835F00D1000000000000003C /* NSString+CogSort.swift */,
 				F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */,
 				F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */,
-				832CFC532851AA37002AC26F /* NSView+Visibility.h */,
-				832CFC4E2851AA1A002AC26F /* NSView+Visibility.m */,
+				835F00D1000000000000004C /* NSView+Visibility.swift */,
 				83988F0C27BE0A5900A0E89A /* RedundantPlaylistDataStore.h */,
 				8381A09027C5F72F00A1C530 /* SHA256Digest.h */,
 				8D1A2B3E00000010 /* MIDIPluginState.h */,
@@ -3289,7 +3287,7 @@
 				835F00D10000000000000045 /* SandboxPathBehaviorController.swift in Sources */,
 				0A6E7AC6308A86F000E2ADA7 /* PaneWindowController.swift in Sources */,
 				835F00D10000000000000043 /* PathSuggester.swift in Sources */,
-				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
+				835F00D1000000000000004D /* NSView+Visibility.swift in Sources */,
 				4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */,
 				AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */,
 				835F00D10000000000000036 /* XmlContainer.swift in Sources */,

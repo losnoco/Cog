@@ -11,7 +11,7 @@
 
 #import "SCView.h"
 
-#import "NSView+Visibility.h"
+#import "Cog-Swift.h"
 
 #import <CogAudio/VisualizationController.h>
 

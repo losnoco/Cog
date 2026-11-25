@@ -7,7 +7,7 @@
 
 #import "SpectrumViewSK.h"
 
-#import "NSView+Visibility.h"
+#import "Cog-Swift.h"
 
 #import <Metal/Metal.h>
 
