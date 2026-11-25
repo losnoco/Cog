@@ -262,6 +262,26 @@ final class CogPluginsTests: XCTestCase {
 		XCTAssertTrue(plugins.dependencyUrls(forContainerURL: cue).contains { ($0 as? URL)?.lastPathComponent == audio.lastPathComponent })
 	}
 
+	/// The feeder names the plugin doing the decoding by looking inside the
+	/// cue wrapper with KVC; the inner decoder must answer the key.
+	func testACueDecoderExposesItsInnerDecoder() throws {
+		_ = try writeWAV(named: "album.wav", seconds: 2)
+		let cue = directory.appendingPathComponent("album.cue")
+		try """
+		FILE "album.wav" WAVE
+		  TRACK 01 AUDIO
+		    INDEX 01 00:00:00
+
+		""".write(to: cue, atomically: true, encoding: .utf8)
+		let trackURL = try XCTUnwrap(URL(string: cue.absoluteString + "#01"))
+		let source = try XCTUnwrap(plugins.audioSource(for: trackURL))
+		XCTAssertTrue(source.open(trackURL))
+		let decoder = try XCTUnwrap((NSClassFromString("CueSheetDecoder") as? NSObject.Type)?.init() as? CogDecoder)
+		XCTAssertTrue(decoder.open(source))
+		XCTAssertNotNil((decoder as? NSObject)?.value(forKey: "decoder") as? CogDecoder)
+		decoder.close()
+	}
+
 	// MARK: - Tags
 
 	/// Puts a Vorbis comment block with `comments` ("TITLE=…") into a FLAC
