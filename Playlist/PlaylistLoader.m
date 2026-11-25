@@ -25,7 +25,6 @@
 #import "CogAudio/AudioPlayer.h"
 #import "CogAudio/AudioPropertiesReader.h"
 
-#import "XmlContainer.h"
 
 #import "CogURLNormalization.h"
 

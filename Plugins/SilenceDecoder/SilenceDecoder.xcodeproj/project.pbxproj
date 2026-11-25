@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8771BAB516A7FAAD6E0ECF5E /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B5475539DFF9516CD348790 /* CogAudio.framework */; };
-		83F9D8021A884C0B007ABEC2 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */; };
-		83F9D8031A884C0B007ABEC2 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 83F9D8011A884C0B007ABEC2 /* SilenceSource.m */; };
+		835F00D1000000000000002A /* SilenceDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000029 /* SilenceDecoder.swift */; };
+		835F00D1000000000000002C /* SilenceSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000002B /* SilenceSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,10 +18,8 @@
 		83747BFA2862D95C0021245F /* Shared.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
 		83F9D7E71A884B44007ABEC2 /* SilenceDecoder.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SilenceDecoder.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F9D7EB1A884B44007ABEC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		83F9D7FE1A884C0B007ABEC2 /* SilenceDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilenceDecoder.h; sourceTree = "<group>"; };
-		83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SilenceDecoder.m; sourceTree = "<group>"; };
-		83F9D8001A884C0B007ABEC2 /* SilenceSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SilenceSource.h; sourceTree = "<group>"; };
-		83F9D8011A884C0B007ABEC2 /* SilenceSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SilenceSource.m; sourceTree = "<group>"; };
+		835F00D10000000000000029 /* SilenceDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilenceDecoder.swift; sourceTree = "<group>"; };
+		835F00D1000000000000002B /* SilenceSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilenceSource.swift; sourceTree = "<group>"; };
 		83F9D8041A884C23007ABEC2 /* PlaylistControllerEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlaylistControllerEnums.h; path = ../../../Playlist/PlaylistControllerEnums.h; sourceTree = "<group>"; };
 		83F9D8081A884C93007ABEC2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../../Audio/Plugin.h; sourceTree = "<group>"; };
 		83F9D8091A884CB5007ABEC2 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../../Utils/Logging.h; sourceTree = "<group>"; };
@@ -73,10 +71,8 @@
 				83F9D8091A884CB5007ABEC2 /* Logging.h */,
 				83F9D8081A884C93007ABEC2 /* Plugin.h */,
 				83F9D8041A884C23007ABEC2 /* PlaylistControllerEnums.h */,
-				83F9D7FE1A884C0B007ABEC2 /* SilenceDecoder.h */,
-				83F9D7FF1A884C0B007ABEC2 /* SilenceDecoder.m */,
-				83F9D8001A884C0B007ABEC2 /* SilenceSource.h */,
-				83F9D8011A884C0B007ABEC2 /* SilenceSource.m */,
+				835F00D10000000000000029 /* SilenceDecoder.swift */,
+				835F00D1000000000000002B /* SilenceSource.swift */,
 				83F9D7EA1A884B44007ABEC2 /* Supporting Files */,
 			);
 			path = SilenceDecoder;
@@ -153,8 +149,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83F9D8031A884C0B007ABEC2 /* SilenceSource.m in Sources */,
-				83F9D8021A884C0B007ABEC2 /* SilenceDecoder.m in Sources */,
+				835F00D1000000000000002C /* SilenceSource.swift in Sources */,
+				835F00D1000000000000002A /* SilenceDecoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,11 +277,16 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				INFOPLIST_FILE = SilenceDecoder/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -295,11 +296,16 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				INFOPLIST_FILE = SilenceDecoder/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cogx.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;

@@ -16,6 +16,11 @@
 
 #import <CogPlaylist/CogPlaylist-Swift.h>
 
+/* The app's Core Data stack, created by PlaylistController; the Spotlight
+ * import inserts its entries into it. Set once at launch, on the main
+ * thread, before anything reads it. */
+extern NSPersistentContainer *kPersistentContainer __attribute__((swift_attr("nonisolated(unsafe)")));
+
 @class AlbumArtwork;
 
 @class PlaylistLoader;

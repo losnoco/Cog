@@ -10,8 +10,8 @@
 		00B92830111F354B2239AE48 /* VGMContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B52983244264E94BAAA6691 /* VGMContainer.m */; settings = {COMPILER_FLAGS = "-DVGM_USE_ATRAC9 -DVGM_USE_FFMPEG -DVGM_USE_G719 -DVGM_USE_G7221 -DVGM_USE_MPEG -DVGM_USE_VORBIS -D__MACOSX__"; }; };
 		015FFDDEC0B1AA6F22CD8E97 /* VUMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E6832858CBCBE4960E6F31 /* VUMeterView.swift */; };
 		056433AE28170C5044BE271A /* Syntrax_c.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 13F1B0575A12665BAE01AAAC /* Syntrax_c.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05A53122DB5C0CA77D597723 /* SilenceSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC253AB57C4FFCE1A84711B /* SilenceSource.swift */; };
 		062940EF34A69E986610B412 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C40369FED30EEB66982F3D /* HighlyQuixotic.framework */; };
-		071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9308F951DA638F9E5B02C00E /* SilenceDecoder.m */; };
 		09C2FF3A765DC70FCC82FD0C /* libvgm-emu.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E19BBF296B18CA33747D71 /* libvgm-emu.xcframework */; };
 		0A15409EDDA66A149604706D /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590D39E029664596A83F93F2 /* CoreMedia.framework */; };
 		0CF57B7604A291B54CFF7F94 /* OpusDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C1A6DC049CD05F2CBA7478 /* OpusDecoder.m */; };
@@ -109,6 +109,7 @@
 		7EE6E9993178FBA38004B1F2 /* fx99.pxt in Resources */ = {isa = PBXBuildFile; fileRef = E11147CC88CD6813C95112FF /* fx99.pxt */; };
 		8144E4BD508B228E73B781F7 /* lazyusf2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FD67553F81F4969C5738A0D /* lazyusf2.framework */; };
 		81FD8BD9DEC05798AE24E305 /* MP3Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A15B973292811547F5271225 /* MP3Decoder.m */; };
+		840EF77CE03AB4E83FBA8C3B /* SilenceDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4C498DBDD37E18B71EE7FF /* SilenceDecoder.swift */; };
 		842E2999E95B7354DB473695 /* OrganyaDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF3C48C11CAD822C6A81BFB5 /* OrganyaDecoder.mm */; };
 		857F4F2A4A42AC7F547F4778 /* GamePropertiesReader.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FBD825BD4EED0629EE122D /* GamePropertiesReader.m */; };
 		8835465D38CE202A5C6E177C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAAA0C46EE047DA1701836EA /* AudioToolbox.framework */; };
@@ -182,7 +183,6 @@
 		E866C2F89D0DBA70E297EF9C /* OMPTDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DB7E483BAAB2817377FA994 /* OMPTDecoder.mm */; };
 		E99D6274562102390EA3E51B /* mpcdec.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AE5344866581F96A7CD6622C /* mpcdec.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EA3C28ED7285E21528EE61D9 /* GME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1928C30A5EF341A0B856EF49 /* GME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFD3F22F9E7637573E710E1 /* SilenceSource.m */; };
 		EB63C157F25CBF74304C4835 /* jxsContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 90EE473FDDE2946B28A44DF9 /* jxsContainer.m */; };
 		EC74D9ED3EAD5466C2DC1C57 /* CVbriHeader.c in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE782D8EC423E4681516B /* CVbriHeader.c */; };
 		ED19795381C4FB5B8A325493 /* cuesheet.m in Sources */ = {isa = PBXBuildFile; fileRef = BA59E2A752A1601EDB9602EC /* cuesheet.m */; };
@@ -654,7 +654,6 @@
 		1C671AC72ACA7C080289DA3F /* GameContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = GameContainer.h; path = ../Plugins/GME/GameContainer.h; sourceTree = SOURCE_ROOT; };
 		1D891F4B85609F1E02A07D61 /* HLSPlaylist.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSPlaylist.m; path = ../Plugins/HLS/HLSPlaylist.m; sourceTree = SOURCE_ROOT; };
 		1ECDE68D2C7E946E6B4E0261 /* AUPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = AUPlayer.mm; path = ../Plugins/MIDI/MIDI/AUPlayer.mm; sourceTree = SOURCE_ROOT; };
-		1FFD3F22F9E7637573E710E1 /* SilenceSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = SilenceSource.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.m; sourceTree = SOURCE_ROOT; };
 		22379D4AD1005DDB88C6C9B1 /* opl3midi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = opl3midi.cpp; path = ../Plugins/MIDI/MIDI/synthlib_opl3w/opl3midi.cpp; sourceTree = SOURCE_ROOT; };
 		24016156BE6366200B66E312 /* TagLibMetadataWriter.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibMetadataWriter.m; path = ../Plugins/TagLib/TagLibMetadataWriter.m; sourceTree = SOURCE_ROOT; };
 		25045C25194DB3B51B023D69 /* FFMPEGContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FFMPEGContainer.h; path = ../Plugins/FFMPEG/FFMPEGContainer.h; sourceTree = SOURCE_ROOT; };
@@ -716,6 +715,7 @@
 		683CBD5DC3A478614F1881FE /* AdPlugDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = AdPlugDecoder.mm; path = ../Plugins/AdPlug/AdPlug/AdPlugDecoder.mm; sourceTree = SOURCE_ROOT; };
 		6CE1F251E0E8E4514B27185F /* SpessaPlayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = SpessaPlayer.mm; path = ../Plugins/MIDI/MIDI/SpessaPlayer.mm; sourceTree = SOURCE_ROOT; };
 		6E196C538C203BD697B8D44F /* CVbriHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = CVbriHeader.h; path = ../Plugins/minimp3/ThirdParty/CVbriHeader.h; sourceTree = SOURCE_ROOT; };
+		6F4C498DBDD37E18B71EE7FF /* SilenceDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = SilenceDecoder.swift; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.swift; sourceTree = SOURCE_ROOT; };
 		6F691F71FA4097449A3783A2 /* fx97.pxt */ = {isa = PBXFileReference; lastKnownFileType = file; name = fx97.pxt; path = ../Plugins/Organya/fx97.pxt; sourceTree = SOURCE_ROOT; };
 		6F6D944D8E7FF72C2086438B /* libvgm-utils.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libvgm-utils.xcframework"; path = "../ThirdParty/libvgm/ios/libvgm-utils.xcframework"; sourceTree = SOURCE_ROOT; };
 		6FF44E2645D0CBC2E14675BC /* VorbisDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VorbisDecoder.h; path = ../Plugins/Vorbis/VorbisDecoder.h; sourceTree = SOURCE_ROOT; };
@@ -748,7 +748,6 @@
 		8DEE7F2E3A67102B96B70357 /* MusepackDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = MusepackDecoder.m; path = ../Plugins/Musepack/MusepackDecoder.m; sourceTree = SOURCE_ROOT; };
 		90EE473FDDE2946B28A44DF9 /* jxsContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = jxsContainer.m; path = ../Plugins/Syntrax/Syntrax/jxsContainer.m; sourceTree = SOURCE_ROOT; };
 		92CE4384AB8EEB743CF83623 /* AdPlugMetadataReader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = AdPlugMetadataReader.mm; path = ../Plugins/AdPlug/AdPlug/AdPlugMetadataReader.mm; sourceTree = SOURCE_ROOT; };
-		9308F951DA638F9E5B02C00E /* SilenceDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = SilenceDecoder.m; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.m; sourceTree = SOURCE_ROOT; };
 		9343694E8B2857434E66809F /* HLSPlaylistParser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSPlaylistParser.m; path = ../Plugins/HLS/HLSPlaylistParser.m; sourceTree = SOURCE_ROOT; };
 		93A3E14F83FC1E4439E5F2DE /* libvgmMetadataReader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = libvgmMetadataReader.mm; path = ../Plugins/libvgmPlayer/libvgmMetadataReader.mm; sourceTree = SOURCE_ROOT; };
 		944CD3EC27C2CEAECF2A77A5 /* AudioScrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioScrobbler.swift; path = ../Scrobbler/AudioScrobbler.swift; sourceTree = SOURCE_ROOT; };
@@ -795,6 +794,7 @@
 		BA59E2A752A1601EDB9602EC /* cuesheet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = cuesheet.m; path = ../Plugins/Flac/cuesheet.m; sourceTree = SOURCE_ROOT; };
 		BAADE44FB06C94DBA8C19582 /* MIDIMetadataReader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = MIDIMetadataReader.mm; path = ../Plugins/MIDI/MIDI/MIDIMetadataReader.mm; sourceTree = SOURCE_ROOT; };
 		BB4520989D7C14143251CB34 /* FFMPEGContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FFMPEGContainer.m; path = ../Plugins/FFMPEG/FFMPEGContainer.m; sourceTree = SOURCE_ROOT; };
+		BEC253AB57C4FFCE1A84711B /* SilenceSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = SilenceSource.swift; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.swift; sourceTree = SOURCE_ROOT; };
 		BF27B2F8D72FC2A16E0EB2A8 /* HLSMemorySource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = HLSMemorySource.m; path = ../Plugins/HLS/HLSMemorySource.m; sourceTree = SOURCE_ROOT; };
 		C265131ABD8965FF9D05909A /* OMPTDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = OMPTDecoder.h; path = ../Plugins/OpenMPT/OpenMPT/OMPTDecoder.h; sourceTree = SOURCE_ROOT; };
 		C384193C5CDC5C2FDD1F3251 /* SSEQPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SSEQPlayer.xcodeproj; path = ../Frameworks/SSEQPlayer/SSEQPlayer.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -824,7 +824,6 @@
 		D6339B1641832F41DC277FDD /* picture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = picture.h; path = "../Plugins/Vorbis/vorbis-tools/include/picture.h"; sourceTree = SOURCE_ROOT; };
 		D879007E42C4088AC20AC818 /* LastFMAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LastFMAPI.swift; path = ../Scrobbler/LastFMAPI.swift; sourceTree = SOURCE_ROOT; };
 		DBB80CD88493F37761E3AAD6 /* ArchiveSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = ArchiveSource.m; path = ../Plugins/ArchiveSource/ArchiveSource/ArchiveSource.m; sourceTree = SOURCE_ROOT; };
-		DC5F720C7292C42B874C271A /* SilenceSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceSource.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceSource.h; sourceTree = SOURCE_ROOT; };
 		DCC8E68EA4EE2D5F6B25FB46 /* libvgmDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = libvgmDecoder.mm; path = ../Plugins/libvgmPlayer/libvgmDecoder.mm; sourceTree = SOURCE_ROOT; };
 		DF24E5311FB53DE4234C6C43 /* APLDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = APLDecoder.swift; path = ../Plugins/APL/APLDecoder.swift; sourceTree = SOURCE_ROOT; };
 		DFADF619D205FB77124E6CD4 /* OutputMeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OutputMeter.swift; path = ../SignalInspector/OutputMeter.swift; sourceTree = SOURCE_ROOT; };
@@ -847,7 +846,6 @@
 		E9D24E85F78B3B6AF8AC5000 /* TagWriterTests.swift */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.swift; path = CogPluginsTests/TagWriterTests.swift; sourceTree = "<group>"; };
 		E9DCAB0D9B45843111913A4D /* opl3class.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = opl3class.cpp; path = ../Plugins/MIDI/MIDI/fmopl3lib/opl3class.cpp; sourceTree = SOURCE_ROOT; };
 		EB555EB4EAC3737FD50CC73A /* LyricsText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LyricsText.swift; path = ../LyricsWindow/LyricsText.swift; sourceTree = SOURCE_ROOT; };
-		ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SilenceDecoder.h; path = ../Plugins/SilenceDecoder/SilenceDecoder/SilenceDecoder.h; sourceTree = SOURCE_ROOT; };
 		ECE3C4E2FC2391C4F0A0D622 /* roms.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; fileEncoding = "4"; name = roms.hpp; path = ../Plugins/sidplay/roms.hpp; sourceTree = SOURCE_ROOT; };
 		ECF500DF07552252396E735D /* VGMContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VGMContainer.h; path = ../Plugins/vgmstream/vgmstream/VGMContainer.h; sourceTree = SOURCE_ROOT; };
 		ED20D914936F1B2443FA8739 /* FlacDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FlacDecoder.h; path = ../Plugins/Flac/FlacDecoder.h; sourceTree = SOURCE_ROOT; };
@@ -1096,10 +1094,8 @@
 		46717A1406EF8263C68BC2FC /* SilenceDecoder */ = {
 			isa = PBXGroup;
 			children = (
-				ECD2BAE4B24BBFA7BBC3EB06 /* SilenceDecoder.h */,
-				9308F951DA638F9E5B02C00E /* SilenceDecoder.m */,
-				DC5F720C7292C42B874C271A /* SilenceSource.h */,
-				1FFD3F22F9E7637573E710E1 /* SilenceSource.m */,
+				6F4C498DBDD37E18B71EE7FF /* SilenceDecoder.swift */,
+				BEC253AB57C4FFCE1A84711B /* SilenceSource.swift */,
 			);
 			name = SilenceDecoder;
 			sourceTree = "<group>";
@@ -2236,8 +2232,8 @@
 				F61150A6AD40CD07316B17E3 /* HTTPSource.m in Sources */,
 				41012110BA6ADD8E8343C855 /* M3uContainer.swift in Sources */,
 				23C9F4B77C0C11864409ABA3 /* PlsContainer.swift in Sources */,
-				071636660EE62BD162AFB412 /* SilenceDecoder.m in Sources */,
-				EAD8064E312DB99BA0C16E19 /* SilenceSource.m in Sources */,
+				840EF77CE03AB4E83FBA8C3B /* SilenceDecoder.swift in Sources */,
+				05A53122DB5C0CA77D597723 /* SilenceSource.swift in Sources */,
 				0D9ADE3FD4314E919829FE54 /* AdPlugContainer.mm in Sources */,
 				38FAA431BA1DCFE55A07356C /* AdPlugDecoder.mm in Sources */,
 				A9633D81A70FF75554884F72 /* AdPlugMetadataReader.mm in Sources */,

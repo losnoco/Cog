@@ -7,12 +7,8 @@
 //
 
 #import "SpotlightWindowController.h"
-#import "NSArray+CogSort.h"
-#import "NSComparisonPredicate+CogPredicate.h"
-#import "NSNumber+CogSort.h"
 #import "NSString+CogSort.h"
 #import "PlaylistLoader.h"
-#import "SpotlightPlaylistEntry.h"
 
 #import "Logging.h"
 
