@@ -54,7 +54,7 @@
 		171B57DE0C091F2B00F6AFAF /* m4a.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DA0C091F2B00F6AFAF /* m4a.icns */; };
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
-		171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */ = {isa = PBXBuildFile; fileRef = 171EFE8B0F59FEAE000ADC42 /* DockIconController.m */; };
+		835F00D10000000000000038 /* DockIconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000037 /* DockIconController.swift */; };
 		172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */; };
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
 		835F00D10000000000000020 /* PlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000001F /* PlaybackButtons.swift */; };
@@ -986,8 +986,7 @@
 		171B57DA0C091F2B00F6AFAF /* m4a.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = m4a.icns; sourceTree = "<group>"; };
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
-		171EFE8A0F59FEAE000ADC42 /* DockIconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DockIconController.h; sourceTree = "<group>"; };
-		171EFE8B0F59FEAE000ADC42 /* DockIconController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DockIconController.m; sourceTree = "<group>"; };
+		835F00D10000000000000037 /* DockIconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockIconController.swift; sourceTree = "<group>"; };
 		172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CogSort.h"; sourceTree = "<group>"; };
 		172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CogSort.m"; sourceTree = "<group>"; };
 		173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeOutlineView.h; path = FileTree/FileTreeOutlineView.h; sourceTree = "<group>"; };
@@ -1494,8 +1493,7 @@
 				177042990B8BC53600B86321 /* PlaybackController.h */,
 				1770429A0B8BC53600B86321 /* PlaybackController.m */,
 				835F00D10000000000000015 /* MediaKeysApplication.swift */,
-				171EFE8A0F59FEAE000ADC42 /* DockIconController.h */,
-				171EFE8B0F59FEAE000ADC42 /* DockIconController.m */,
+				835F00D10000000000000037 /* DockIconController.swift */,
 				17F6C8050F603701000D9DA9 /* PlaybackEventController.h */,
 				17F6C8060F603701000D9DA9 /* PlaybackEventController.m */,
 				835F00D10000000000000017 /* ScriptAdditions.swift */,
@@ -3275,7 +3273,7 @@
 				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
 				835F00D10000000000000020 /* PlaybackButtons.swift in Sources */,
 				83E9986C2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift in Sources */,
-				171EFE8C0F59FEAE000ADC42 /* DockIconController.m in Sources */,
+				835F00D10000000000000038 /* DockIconController.swift in Sources */,
 				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
 				0A0038563086B9BC00C5352B /* LyricsText.swift in Sources */,
 				8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */,
