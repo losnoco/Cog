@@ -270,7 +270,8 @@ for plugin in PLUGINS:
 
 # Support files, in iOS/CogPlugins
 support_children = []
-for name, kind in [('CogPlugins_Prefix.pch', 'sourcecode.c.h'), ('CogPlugins.xcconfig', 'text.xcconfig')]:
+for name, kind in [('CogPlugins_Prefix.pch', 'sourcecode.c.h'), ('CogPlugins.xcconfig', 'text.xcconfig'),
+                   ('CogPlugins-Bridging-Header.h', 'sourcecode.c.h')]:
 	file_id = uid('support', name)
 	add('PBXFileReference', file_id, name, {
 		'isa': 'PBXFileReference', 'fileEncoding': '4', 'lastKnownFileType': kind,
@@ -540,6 +541,7 @@ plugin_config = configurations('PBXNativeTarget "CogPlugins"', {
 	'PRODUCT_BUNDLE_IDENTIFIER': 'org.cogx.CogPlugins',
 	'PRODUCT_NAME': '$(TARGET_NAME)',
 	'SKIP_INSTALL': 'YES',
+	'SWIFT_OBJC_BRIDGING_HEADER': 'CogPlugins/CogPlugins-Bridging-Header.h',
 }, {}, {})
 test_config = configurations('PBXNativeTarget "CogPluginsTests"', {
 	'CODE_SIGN_STYLE': 'Automatic',

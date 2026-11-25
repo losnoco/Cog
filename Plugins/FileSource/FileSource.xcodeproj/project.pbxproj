@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E6A1DEF7D6A1A5F5F4C897C3 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 447FC79249FE1137E812BCEE /* CogAudio.framework */; };
-		17ADB41A0B979AEB00257CA2 /* FileSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 17ADB4190B979AEB00257CA2 /* FileSource.m */; };
+		835F00D1000000000000003A /* FileSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000039 /* FileSource.swift */; };
 		8335FF7017FF767A002D8DD2 /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8335FF6D17FF765A002D8DD2 /* File_Extractor.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -36,8 +36,8 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		17ADB4080B979A8A00257CA2 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17ADB4180B979AEB00257CA2 /* FileSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSource.h; sourceTree = "<group>"; };
-		17ADB4190B979AEB00257CA2 /* FileSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileSource.m; sourceTree = "<group>"; };
+		835F00D10000000000000039 /* FileSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSource.swift; sourceTree = "<group>"; };
+		835F00D1000000000000003B /* FileSource-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FileSource-Bridging-Header.h"; sourceTree = "<group>"; };
 		32DBCF630370AF2F00C91783 /* FileSource_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSource_Prefix.pch; sourceTree = "<group>"; };
 		8307D31B2860722C000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../../Utils/SandboxBroker.h; sourceTree = "<group>"; };
 		8335FF6817FF765A002D8DD2 /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = ../../Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
@@ -100,8 +100,8 @@
 				835F15B82DF80DE1008C7054 /* Logging.h */,
 				8307D31B2860722C000FF8EB /* SandboxBroker.h */,
 				17ADB4080B979A8A00257CA2 /* Plugin.h */,
-				17ADB4180B979AEB00257CA2 /* FileSource.h */,
-				17ADB4190B979AEB00257CA2 /* FileSource.m */,
+				835F00D10000000000000039 /* FileSource.swift */,
+				835F00D1000000000000003B /* FileSource-Bridging-Header.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -238,7 +238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17ADB41A0B979AEB00257CA2 /* FileSource.m in Sources */,
+				835F00D1000000000000003A /* FileSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +258,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -267,6 +271,8 @@
 				PRODUCT_NAME = FileSource;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "FileSource-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = YES;
 			};
@@ -277,6 +283,10 @@
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = FileSource_Prefix.pch;
@@ -285,6 +295,8 @@
 				PRODUCT_NAME = FileSource;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "FileSource-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
