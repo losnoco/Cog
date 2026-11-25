@@ -172,7 +172,7 @@
 		834F7F4720E4E54300228DAB /* TagLib.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8303A31C20E4E3D000951EF8 /* TagLib.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834F7F4820E4E55D00228DAB /* Shorten.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83CA5B0320E4E395003E463A /* Shorten.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		834F7F4A20E4E58900228DAB /* vgmstream.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83BB13C220E4E38E00723731 /* vgmstream.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8355D6B5180612F300D05687 /* NSData+MD5.m */; };
+		835F00D1000000000000003F /* NSData+MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000003E /* NSData+MD5.swift */; };
 		8355D6B8180613FB00D05687 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8355D6B7180613FB00D05687 /* Security.framework */; };
 		8359009D17FF06570060F3ED /* ArchiveSource.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8359FF3117FEF35D0060F3ED /* ArchiveSource.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		835A8FD327957310005B3C39 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 835A8FC627957310005B3C39 /* json.c */; };
@@ -1147,8 +1147,7 @@
 		835F00D10000000000000017 /* ScriptAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptAdditions.swift; sourceTree = "<group>"; };
 		83489C4E2782F2DF00BDCEA2 /* libvgmPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libvgmPlayer.xcodeproj; path = Plugins/libvgmPlayer/libvgmPlayer.xcodeproj; sourceTree = "<group>"; };
 		834A42C4287B01B600EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = Audio/Shared/AudioChunk.h; sourceTree = SOURCE_ROOT; };
-		8355D6B4180612F300D05687 /* NSData+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+MD5.h"; sourceTree = "<group>"; };
-		8355D6B5180612F300D05687 /* NSData+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+MD5.m"; sourceTree = "<group>"; };
+		835F00D1000000000000003E /* NSData+MD5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSData+MD5.swift"; sourceTree = "<group>"; };
 		8355D6B7180613FB00D05687 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		8359FF2C17FEF35C0060F3ED /* ArchiveSource.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ArchiveSource.xcodeproj; path = Plugins/ArchiveSource/ArchiveSource.xcodeproj; sourceTree = "<group>"; };
 		835A8FC627957310005B3C39 /* json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = json.c; sourceTree = "<group>"; };
@@ -1527,8 +1526,7 @@
 				83CB565D2E064607003DD379 /* NSDictionary+Optional.m */,
 				834A42C4287B01B600EB9D9B /* AudioChunk.h */,
 				8384912518080F2D00E7332D /* Logging.h */,
-				8355D6B4180612F300D05687 /* NSData+MD5.h */,
-				8355D6B5180612F300D05687 /* NSData+MD5.m */,
+				835F00D1000000000000003E /* NSData+MD5.swift */,
 				839DA7CB274A2D4C001B18E5 /* NSDictionary+Merge.h */,
 				839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */,
 				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
@@ -3184,7 +3182,7 @@
 				1770429C0B8BC53600B86321 /* AppController.m in Sources */,
 				CA11E7A10000000000000002 /* ContentTypes.swift in Sources */,
 				1770429E0B8BC53600B86321 /* PlaybackController.m in Sources */,
-				8355D6B6180612F300D05687 /* NSData+MD5.m in Sources */,
+				835F00D1000000000000003F /* NSData+MD5.swift in Sources */,
 				0A0038583086B9BC00C5352B /* LyricsWindowController.swift in Sources */,
 				83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */,
 				8377C66327B8CF6300E8BC0F /* SpectrumViewSK.m in Sources */,
