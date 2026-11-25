@@ -55,7 +55,7 @@
 		171B57DF0C091F2B00F6AFAF /* mp3.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DB0C091F2B00F6AFAF /* mp3.icns */; };
 		171B57E00C091F2B00F6AFAF /* ogg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 171B57DC0C091F2B00F6AFAF /* ogg.icns */; };
 		835F00D10000000000000038 /* DockIconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000037 /* DockIconController.swift */; };
-		172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */ = {isa = PBXBuildFile; fileRef = 172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */; };
+		835F00D1000000000000003D /* NSString+CogSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000003C /* NSString+CogSort.swift */; };
 		173855FF0E0CC81F00488CD4 /* FileTreeOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */; };
 		835F00D10000000000000020 /* PlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000001F /* PlaybackButtons.swift */; };
 		1755E1F90BA0D2B600CA3560 /* PlaylistLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1755E1F70BA0D2B600CA3560 /* PlaylistLoader.m */; };
@@ -987,8 +987,7 @@
 		171B57DB0C091F2B00F6AFAF /* mp3.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp3.icns; sourceTree = "<group>"; };
 		171B57DC0C091F2B00F6AFAF /* ogg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ogg.icns; sourceTree = "<group>"; };
 		835F00D10000000000000037 /* DockIconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockIconController.swift; sourceTree = "<group>"; };
-		172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CogSort.h"; sourceTree = "<group>"; };
-		172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CogSort.m"; sourceTree = "<group>"; };
+		835F00D1000000000000003C /* NSString+CogSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSString+CogSort.swift"; sourceTree = "<group>"; };
 		173855FD0E0CC81F00488CD4 /* FileTreeOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTreeOutlineView.h; path = FileTree/FileTreeOutlineView.h; sourceTree = "<group>"; };
 		173855FE0E0CC81F00488CD4 /* FileTreeOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTreeOutlineView.m; path = FileTree/FileTreeOutlineView.m; sourceTree = "<group>"; };
 		835F00D1000000000000001F /* PlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlaybackButtons.swift; path = Window/PlaybackButtons.swift; sourceTree = "<group>"; };
@@ -1534,8 +1533,7 @@
 				839DA7CE274A2D4C001B18E5 /* NSDictionary+Merge.m */,
 				8E9A30130BA792DC0091081B /* NSFileHandle+CreateFile.h */,
 				8E9A30140BA792DC0091081B /* NSFileHandle+CreateFile.m */,
-				172A12A70F59AF8A0078EF0C /* NSString+CogSort.h */,
-				172A12A80F59AF8A0078EF0C /* NSString+CogSort.m */,
+				835F00D1000000000000003C /* NSString+CogSort.swift */,
 				F6F9671A102C70C800D2C9B4 /* NSString+FinderCompare.h */,
 				F6F96718102C709000D2C9B4 /* NSString+FinderCompare.m */,
 				832CFC532851AA37002AC26F /* NSView+Visibility.h */,
@@ -3270,7 +3268,7 @@
 				17E0D61D0F520F9F005B6FED /* VolumeSlider.m in Sources */,
 				420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */,
 				42777C332E54E091005B0E11 /* Secrets.swift in Sources */,
-				172A12A90F59AF8A0078EF0C /* NSString+CogSort.m in Sources */,
+				835F00D1000000000000003D /* NSString+CogSort.swift in Sources */,
 				835F00D10000000000000020 /* PlaybackButtons.swift in Sources */,
 				83E9986C2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift in Sources */,
 				835F00D10000000000000038 /* DockIconController.swift in Sources */,
