@@ -134,8 +134,8 @@
 		835F00D10000000000000030 /* NSComparisonPredicate+CogPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000002F /* NSComparisonPredicate+CogPredicate.swift */; };
 		835F00D10000000000000032 /* NSNumber+CogSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000031 /* NSNumber+CogSort.swift */; };
 		835F00D10000000000000034 /* NSArray+CogSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000033 /* NSArray+CogSort.swift */; };
-		616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 606000000000000000000002 /* SandboxPathBehaviorController.m */; };
-		616000000000000000000002 /* PathSuggester.m in Sources */ = {isa = PBXBuildFile; fileRef = 606000000000000000000004 /* PathSuggester.m */; };
+		835F00D10000000000000045 /* SandboxPathBehaviorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000044 /* SandboxPathBehaviorController.swift */; };
+		835F00D10000000000000043 /* PathSuggester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000042 /* PathSuggester.swift */; };
 		62FE80E521E14AFB9C8B48E5 /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */; };
 		8305963C277F013200EBFAAE /* File_Extractor.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8305963D277F013200EBFAAE /* File_Extractor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83059639277F011100EBFAAE /* File_Extractor.framework */; };
@@ -1102,10 +1102,8 @@
 		835F00D1000000000000002F /* NSComparisonPredicate+CogPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSComparisonPredicate+CogPredicate.swift"; path = "Spotlight/NSComparisonPredicate+CogPredicate.swift"; sourceTree = "<group>"; };
 		835F00D10000000000000031 /* NSNumber+CogSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSNumber+CogSort.swift"; path = "Spotlight/NSNumber+CogSort.swift"; sourceTree = "<group>"; };
 		835F00D10000000000000033 /* NSArray+CogSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSArray+CogSort.swift"; path = "Spotlight/NSArray+CogSort.swift"; sourceTree = "<group>"; };
-		606000000000000000000001 /* SandboxPathBehaviorController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SandboxPathBehaviorController.h; path = Preferences/SandboxPathBehaviorController.h; sourceTree = "<group>"; };
-		606000000000000000000002 /* SandboxPathBehaviorController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SandboxPathBehaviorController.m; path = Preferences/SandboxPathBehaviorController.m; sourceTree = "<group>"; };
-		606000000000000000000003 /* PathSuggester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PathSuggester.h; path = Preferences/PathSuggester.h; sourceTree = "<group>"; };
-		606000000000000000000004 /* PathSuggester.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PathSuggester.m; path = Preferences/PathSuggester.m; sourceTree = "<group>"; };
+		835F00D10000000000000044 /* SandboxPathBehaviorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SandboxPathBehaviorController.swift; path = Preferences/SandboxPathBehaviorController.swift; sourceTree = "<group>"; };
+		835F00D10000000000000042 /* PathSuggester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PathSuggester.swift; path = Preferences/PathSuggester.swift; sourceTree = "<group>"; };
 		6992B2B954E6728D9F5E814E /* LrclibClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LrclibClient.swift; sourceTree = "<group>"; };
 		83059634277F011100EBFAAE /* File_Extractor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = File_Extractor.xcodeproj; path = Frameworks/File_Extractor/File_Extractor.xcodeproj; sourceTree = "<group>"; };
 		8307D30C28606148000FF8EB /* SandboxBroker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SandboxBroker.h; sourceTree = "<group>"; };
@@ -2240,10 +2238,8 @@
 				8399AFC12F6B8E20005F4A39 /* MIDIConfig.mm */,
 				835F00D10000000000000019 /* PreferencesController.swift */,
 				505000000000000000000001 /* PreferencePaneDescriptor.swift */,
-				606000000000000000000001 /* SandboxPathBehaviorController.h */,
-				606000000000000000000002 /* SandboxPathBehaviorController.m */,
-				606000000000000000000003 /* PathSuggester.h */,
-				606000000000000000000004 /* PathSuggester.m */,
+				835F00D10000000000000044 /* SandboxPathBehaviorController.swift */,
+				835F00D10000000000000042 /* PathSuggester.swift */,
 				C1D6FDF23D294F1196AE0F58 /* PreferencesModel.swift */,
 				27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */,
 				DD4494A9B0444224A7025E10 /* PreferencesWindow.swift */,
@@ -3302,9 +3298,9 @@
 				51500000000000000000000C /* SandboxPathModel.swift in Sources */,
 				51500000000000000000000D /* AudioDeviceModel.swift in Sources */,
 				51500000000000000000000E /* LastFMPaneView.swift in Sources */,
-				616000000000000000000001 /* SandboxPathBehaviorController.m in Sources */,
+				835F00D10000000000000045 /* SandboxPathBehaviorController.swift in Sources */,
 				0A6E7AC6308A86F000E2ADA7 /* PaneWindowController.swift in Sources */,
-				616000000000000000000002 /* PathSuggester.m in Sources */,
+				835F00D10000000000000043 /* PathSuggester.swift in Sources */,
 				832CFC4F2851AA1A002AC26F /* NSView+Visibility.m in Sources */,
 				4218AC502E469BC30024810A /* AudioScrobbler.swift in Sources */,
 				AE0B0ECC0325928A28E59EFC /* KeychainHelper.swift in Sources */,
