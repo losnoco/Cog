@@ -31,18 +31,23 @@ class FileTreeViewController: NSViewController, NSMenuItemValidation {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
 		fileTreeOutlineView?.style = .sourceList
 	}
 
 	// The view is laid out with autoresizing masks, so when the sidebar extends
 	// into the titlebar (full-height layout) the top controls must be shifted
-	// down by the safe area inset manually. The inset changes when the toolbar
-	// style is toggled at runtime, hence the delta-based adjustment.
+	// down below the titlebar and toolbar manually. The inset changes when the
+	// toolbar style is toggled at runtime, hence the delta-based adjustment.
+	//
+	// Derive the inset from the window's content layout rect, not the view's
+	// safe-area top inset: in the expanded toolbar style the safe area reports
+	// only the titlebar and omits the toolbar row beneath it, which would leave
+	// the controls inside the window's drag region (clicking them moves the
+	// window). The content layout rect spans both rows in either toolbar style.
 	override func viewWillLayout() {
 		super.viewWillLayout()
 
-		let topInset = view.safeAreaInsets.top
+		let topInset = view.window.map { $0.frame.height - $0.contentLayoutRect.height } ?? view.safeAreaInsets.top
 		let delta = topInset - appliedSafeAreaTopInset
 		if delta != 0 {
 			for subview in view.subviews {
