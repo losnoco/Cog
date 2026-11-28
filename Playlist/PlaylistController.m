@@ -13,8 +13,6 @@
 #import "PlaylistView.h"
 #import "SpotlightWindowController.h"
 
-#import "NSString+FinderCompare.h"
-
 #import "Logging.h"
 
 #import "Cog-Swift.h"

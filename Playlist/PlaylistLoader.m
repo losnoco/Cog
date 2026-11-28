@@ -29,7 +29,6 @@
 #import "CogURLNormalization.h"
 
 
-#import "NSString+FinderCompare.h"
 
 #import "SQLiteStore.h"
 

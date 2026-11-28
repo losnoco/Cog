@@ -11,7 +11,7 @@
 #import "FileNode.h"
 #import "SmartFolderNode.h"
 
-#import "NSString+FinderCompare.h"
+#import "Cog-Swift.h"
 
 @implementation DirectoryNode
 
