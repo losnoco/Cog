@@ -11,17 +11,12 @@
 
 #import "hdcd_decode2.h"
 
-#if !DSD_DECIMATE
-#import "dsd2float.h"
-#endif
-
 #ifdef _DEBUG
 #import "BadSampleCleaner.h"
 #endif
 
 static void *kChunkListContext = &kChunkListContext;
 
-#if DSD_DECIMATE
 /**
  * DSD 2 PCM: Stage 1:
  * Decimate by factor 8
@@ -262,22 +257,6 @@ static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count
 		dsd2pcm_process(dsd2pcm[channel], input, channel, channels, output, channel, channels, count, reverseBits);
 	}
 }
-#else
-static uint8_t reverse_bits8(uint8_t value);
-
-static void convert_dsd_to_f32(float *output, const uint8_t *input, size_t count, size_t channels, BOOL reverseBits) {
-	const uint8_t *iptr = input;
-	float *optr = output;
-	for(size_t index = 0; index < count; ++index) {
-		for(size_t channel = 0; channel < channels; ++channel) {
-			uint8_t sample = *iptr++;
-			if(reverseBits) sample = reverse_bits8(sample);
-			cblas_scopy(8, &dsd2float[sample][0], 1, optr++, (int)channels);
-		}
-		optr += channels * 7;
-	}
-}
-#endif
 
 static uint8_t reverse_bits8(uint8_t value) {
 	value = (uint8_t)(((value & 0xF0) >> 4) | ((value & 0x0F) << 4));
@@ -448,11 +427,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		inputBuffer = NULL;
 		inputBufferSize = 0;
 
-#if DSD_DECIMATE
 		dsd2pcm = NULL;
 		dsd2pcmCount = 0;
 		dsd2pcmLatency = 0;
-#endif
 
 		observersRegistered = NO;
 		outputDSDAsDoP = NO;
@@ -494,7 +471,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		free(hdcd_decoder);
 		hdcd_decoder = NULL;
 	}
-#if DSD_DECIMATE
 	if(dsd2pcm && dsd2pcmCount) {
 		for(size_t i = 0; i < dsd2pcmCount; ++i) {
 			dsd2pcm_free(dsd2pcm[i]);
@@ -503,7 +479,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		free(dsd2pcm);
 		dsd2pcm = NULL;
 	}
-#endif
 	if(tempData) {
 		free(tempData);
 	}
@@ -539,7 +514,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 		formatRead = NO;
 		dsdDoPHasPendingFrame = NO;
 		dsdDoPMarker = 0x05;
-#if DSD_DECIMATE
 		if(dsd2pcm && dsd2pcmCount) {
 			for(size_t i = 0; i < dsd2pcmCount; ++i) {
 				dsd2pcm_free(dsd2pcm[i]);
@@ -550,7 +524,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			dsd2pcmCount = 0;
 			dsd2pcmLatency = 0;
 		}
-#endif
 	}
 }
 
@@ -584,12 +557,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			return [AudioChunk new];
 		}
 		AudioChunk *chunk = [chunkList objectAtIndex:0];
-#if !DSD_DECIMATE
-		AudioStreamBasicDescription asbd = [chunk format];
-		if(asbd.mBitsPerChannel == 1) {
-			maxFrameCount /= 8;
-		}
-#endif
 		if([chunk frameCount] <= maxFrameCount) {
 			[chunkList removeObjectAtIndex:0];
 			inRemover = NO;
@@ -671,7 +638,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			dsdDoPMarker = 0x05;
 			if(outputDSDAsDoP && inputFormat.mChannelsPerFrame <= sizeof(dsdDoPPendingFrame)) {
 				floatFormat.mSampleRate *= 1.0 / 16.0;
-#if DSD_DECIMATE
 				if(dsd2pcm && dsd2pcmCount) {
 					for(size_t i = 0; i < dsd2pcmCount; ++i) {
 						dsd2pcm_free(dsd2pcm[i]);
@@ -682,9 +648,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 					dsd2pcmCount = 0;
 					dsd2pcmLatency = 0;
 				}
-#endif
 			} else {
-#if DSD_DECIMATE
 				// Decimate this for speed
 				floatFormat.mSampleRate *= 1.0 / 8.0;
 				if(dsd2pcm && dsd2pcmCount) {
@@ -702,7 +666,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				for(size_t i = 1; i < dsd2pcmCount; ++i) {
 					dsd2pcm[i] = dsd2pcm_dup(dsd2pcm[0]);
 				}
-#endif
 			}
 		}
 	}
@@ -723,11 +686,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 	NSData *inputData = [inChunk removeSamples:samplesRead];
 
-#if DSD_DECIMATE
 	const size_t sizeFactor = 3;
-#else
-	const size_t sizeFactor = (bitsPerSample == 1) ? 9 : 3;
-#endif
 	size_t newSize = samplesRead * floatFormat.mBytesPerPacket * sizeFactor + 64;
 	if(!tempData || tempDataSize < newSize)
 		tempData = realloc(tempData, tempDataSize = newSize); // Either two buffers plus padding, and/or double precision in case of endian flip
@@ -774,32 +733,17 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 				inputBuffer = &tempData[buffer_adder];
 				inputChanged = YES;
 			} else {
-				convert_dsd_to_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, [inChunk dsdDoPReverseBits]
-#if DSD_DECIMATE
-							   ,
-							   dsd2pcm
-#endif
-			);
-#if !DSD_DECIMATE
-			samplesRead *= 8;
-#endif
+				convert_dsd_to_f32((float *)(&tempData[buffer_adder]), (const uint8_t *)inputBuffer, samplesRead, inputFormat.mChannelsPerFrame, [inChunk dsdDoPReverseBits], dsd2pcm);
 				bitsPerSample = 32;
 				bytesReadFromInput = samplesRead * floatFormat.mBytesPerPacket;
 				isFloat = YES;
 				inputBuffer = &tempData[buffer_adder];
 				inputChanged = YES;
 				[self addObservers];
-#if DSD_DECIMATE
-			if(halveDSDVolume) {
-				float scaleFactor = 2.0f;
-				vDSP_vsdiv((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
-			}
-#else
-			if(!halveDSDVolume) {
-				float scaleFactor = 2.0f;
-				vDSP_vsmul((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
-			}
-#endif
+				if(halveDSDVolume) {
+					float scaleFactor = 2.0f;
+					vDSP_vsdiv((float *)inputBuffer, 1, &scaleFactor, (float *)inputBuffer, 1, bytesReadFromInput / sizeof(float));
+				}
 			}
 		} else if(bitsPerSample <= 8) {
 			samplesRead = bytesReadFromInput;

@@ -13,8 +13,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DSD_DECIMATE 1
-
 @interface ChunkList : NSObject {
 	NSMutableArray<AudioChunk *> *chunkList;
 
@@ -27,11 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 	void *inputBuffer;
 	size_t inputBufferSize;
 
-#if DSD_DECIMATE
 	void **dsd2pcm;
 	size_t dsd2pcmCount;
 	int dsd2pcmLatency;
-#endif
 	
 	BOOL observersRegistered;
 	BOOL halveDSDVolume;

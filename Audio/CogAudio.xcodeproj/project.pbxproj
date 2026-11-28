@@ -61,7 +61,6 @@
 		8377C64E27B8C54400E8BC0F /* fft.h in Headers */ = {isa = PBXBuildFile; fileRef = 8377C64D27B8C54400E8BC0F /* fft.h */; };
 		8384912718080FF100E7332D /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 8384912618080FF100E7332D /* Logging.h */; };
 		838A33722D06A97D00D0D770 /* librubberband.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 838A33712D06A97D00D0D770 /* librubberband.3.dylib */; platformFilters = (macos, ); };
-		839065F32853338700636FBB /* dsd2float.h in Headers */ = {isa = PBXBuildFile; fileRef = 839065F22853338700636FBB /* dsd2float.h */; };
 		83907FBD2E88CB9600D5D683 /* MIDIVisualizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */; };
 		83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83907FCF2E88E31C00D5D683 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83907FCE2E88E31C00D5D683 /* Cocoa.framework */; platformFilters = (macos, ); };
@@ -165,7 +164,6 @@
 		8377C64D27B8C54400E8BC0F /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
 		8384912618080FF100E7332D /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		838A33712D06A97D00D0D770 /* librubberband.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = librubberband.3.dylib; path = ../ThirdParty/rubberband/lib/librubberband.3.dylib; sourceTree = SOURCE_ROOT; };
-		839065F22853338700636FBB /* dsd2float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsd2float.h; sourceTree = "<group>"; };
 		83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDIVisualizationController.m; sourceTree = "<group>"; };
 		83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIDIVisualizationController.h; sourceTree = "<group>"; };
 		83907FCE2E88E31C00D5D683 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -351,7 +349,6 @@
 			children = (
 				83CB56632E06464D003DD379 /* NSDictionary+Optional.h */,
 				83CB56642E06464D003DD379 /* NSDictionary+Optional.m */,
-				839065F22853338700636FBB /* dsd2float.h */,
 				8328995527CB51B700D7F028 /* SHA256Digest.h */,
 				8328995627CB51B700D7F028 /* SHA256Digest.m */,
 				8328995227CB511000D7F028 /* RedundantPlaylistDataStore.h */,
@@ -525,7 +522,6 @@
 				17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */,
 				839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */,
 				83C0F1A12E4C1B0100C0F1A0 /* CogURLNormalization.h in Headers */,
-				839065F32853338700636FBB /* dsd2float.h in Headers */,
 				17B619300B909BC300BC003F /* AudioPropertiesReader.h in Headers */,
 				839366671815923C006DD712 /* CogPluginMulti.h in Headers */,
 				17ADB13C0B97926D00257CA2 /* AudioSource.h in Headers */,
