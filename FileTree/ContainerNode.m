@@ -7,7 +7,7 @@
 //
 
 #import "ContainerNode.h"
-#import "CogAudio/AudioContainer.h"
+#import "CogAudio/CogAudio-Swift.h"
 
 #import "ContainedNode.h"
 

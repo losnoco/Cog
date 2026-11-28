@@ -12,7 +12,7 @@
 
 #import "Logging.h"
 
-#import "CogAudio-Swift.h"
+#import <CogAudio/CogAudio-Swift.h>
 
 NSNotificationName const CogAudioOutputStatusDidChangeNotification = @"CogAudioOutputStatusDidChangeNotification";
 

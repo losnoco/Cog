@@ -18,11 +18,10 @@ FOUNDATION_EXPORT const unsigned char CogAudioVersionString[];
 #import <CogAudio/Status.h>
 #import <CogAudio/Helper.h>
 #import <CogAudio/AudioPlayer.h>
-#import <CogAudio/AudioSource.h>
-#import <CogAudio/AudioContainer.h>
-#import <CogAudio/AudioDecoder.h>
-#import <CogAudio/AudioMetadataReader.h>
-#import <CogAudio/AudioPropertiesReader.h>
+// AudioSource, AudioContainer, AudioDecoder, AudioMetadataReader and
+// AudioPropertiesReader are Swift now: `import CogAudio` sees them through
+// the module's Swift interface, and their public headers forward to
+// CogAudio-Swift.h for Objective-C callers that import them directly.
 
 // Utilities
 #import <CogAudio/CogExceptionCatching.h>

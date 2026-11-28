@@ -7,7 +7,7 @@
 //
 
 #import "ContainedNode.h"
-#import "CogAudio/AudioMetadataReader.h"
+#import "CogAudio/CogAudio-Swift.h"
 
 @implementation ContainedNode
 

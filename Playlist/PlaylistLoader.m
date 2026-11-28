@@ -20,10 +20,8 @@
 
 #import "NSFileHandle+CreateFile.h"
 
-#import "CogAudio/AudioContainer.h"
-#import "CogAudio/AudioMetadataReader.h"
 #import "CogAudio/AudioPlayer.h"
-#import "CogAudio/AudioPropertiesReader.h"
+#import "CogAudio/CogAudio-Swift.h"
 
 
 #import "CogURLNormalization.h"
