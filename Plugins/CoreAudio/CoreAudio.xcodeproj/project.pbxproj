@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D8D737701CE783E021DF2001 /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE1A1237AB11DDF7948772C8 /* CogAudio.framework */; };
-		17C93E740B8FF192008627D6 /* CoreAudioDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */; };
+		17C93E740B8FF192008627D6 /* CoreAudioDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C93E730B8FF192008627D6 /* CoreAudioDecoder.swift */; };
 		17C93EAC0B8FF3CE008627D6 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C93EAB0B8FF3CE008627D6 /* CoreAudio.framework */; };
 		17C93EB30B8FF3E1008627D6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17C93EB20B8FF3E1008627D6 /* AudioToolbox.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
@@ -20,8 +20,7 @@
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		177FCFCA0B90C9A10011C3B5 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
-		17C93E720B8FF192008627D6 /* CoreAudioDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CoreAudioDecoder.h; sourceTree = "<group>"; };
-		17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CoreAudioDecoder.m; sourceTree = "<group>"; };
+		17C93E730B8FF192008627D6 /* CoreAudioDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAudioDecoder.swift; sourceTree = "<group>"; };
 		17C93EAB0B8FF3CE008627D6 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		17C93EB20B8FF3E1008627D6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		32DBCF630370AF2F00C91783 /* CoreAudio_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudio_Prefix.pch; sourceTree = "<group>"; };
@@ -84,8 +83,7 @@
 				834A42B1287AF4D900EB9D9B /* AudioChunk.h */,
 				83849129180813E800E7332D /* Logging.h */,
 				177FCFCA0B90C9A10011C3B5 /* Plugin.h */,
-				17C93E720B8FF192008627D6 /* CoreAudioDecoder.h */,
-				17C93E730B8FF192008627D6 /* CoreAudioDecoder.m */,
+				17C93E730B8FF192008627D6 /* CoreAudioDecoder.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -198,7 +196,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17C93E740B8FF192008627D6 /* CoreAudioDecoder.m in Sources */,
+				17C93E740B8FF192008627D6 /* CoreAudioDecoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,6 +214,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoreAudio_Prefix.pch;
+				SWIFT_MODULE_NAME = CoreAudioPlugin;
+				SWIFT_VERSION = 5.0;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.coreaudio;
 				PRODUCT_NAME = CoreAudio;
@@ -234,6 +234,8 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CoreAudio_Prefix.pch;
+				SWIFT_MODULE_NAME = CoreAudioPlugin;
+				SWIFT_VERSION = 5.0;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.coreaudio;
 				PRODUCT_NAME = CoreAudio;
