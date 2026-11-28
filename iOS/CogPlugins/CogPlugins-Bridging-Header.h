@@ -12,6 +12,8 @@
 
 #import <FLAC/all.h>
 
+#import <opusfile.h>
+
 #import "../../Utils/RedundantPlaylistDataStore.h"
 #import "../../Utils/NSDictionary+Merge.h"
 
