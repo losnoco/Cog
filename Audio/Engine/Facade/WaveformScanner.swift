@@ -166,7 +166,7 @@ public final class WaveformScanner {
 	@discardableResult
 	private func read(_ opened: Opened, track: Track, from start: Int, to end: Int?, into accumulator: Accumulator, reporter: ProgressReporter) -> Bool {
 		let decoder = opened.decoder
-		let converter = ChunkList(maximumDuration: 1.0)
+		let converter = ChunkList()
 		var downmix: DownmixProcessor?
 		var downmixFormat: AudioStreamBasicDescription?
 		var mono: [Float] = []

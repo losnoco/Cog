@@ -432,23 +432,14 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 @implementation ChunkList
 
-@synthesize listDuration;
-@synthesize listDurationRatioed;
-@synthesize maxDuration;
-
-- (id)initWithMaximumDuration:(double)duration {
+- (id)init {
 	self = [super init];
 
 	if(self) {
 		chunkList = [NSMutableArray new];
-		listDuration = 0.0;
-		listDurationRatioed = 0.0;
-		maxDuration = duration;
 
 		inAdder = NO;
 		inRemover = NO;
-		inPeeker = NO;
-		inMerger = NO;
 		inConverter = NO;
 		stopping = NO;
 		
@@ -495,7 +486,7 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 - (void)dealloc {
 	stopping = YES;
-	while(inAdder || inRemover || inPeeker || inMerger || inConverter) {
+	while(inAdder || inRemover || inConverter) {
 		usleep(500);
 	}
 	[self removeObservers];
@@ -534,8 +525,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 - (void)reset {
 	@synchronized(chunkList) {
 		[chunkList removeAllObjects];
-		listDuration = 0.0;
-		listDurationRatioed = 0.0;
 		dsdDoPHasPendingFrame = NO;
 		dsdDoPMarker = 0x05;
 	}
@@ -571,67 +560,16 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 	}
 }
 
-- (BOOL)isFull {
-	@synchronized (chunkList) {
-		return (maxDuration - listDuration) < 0.001;
-	}
-}
-
 - (void)addChunk:(AudioChunk *)chunk {
 	if(stopping) return;
 
 	inAdder = YES;
 
-	const double chunkDuration = [chunk duration];
-	const double chunkDurationRatioed = [chunk durationRatioed];
-
 	@synchronized(chunkList) {
 		[chunkList addObject:chunk];
-		listDuration += chunkDuration;
-		listDurationRatioed += chunkDurationRatioed;
 	}
 
 	inAdder = NO;
-}
-
-- (AudioChunk *)removeSamples:(size_t)maxFrameCount {
-	if(stopping) {
-		return [AudioChunk new];
-	}
-
-	@synchronized(chunkList) {
-		inRemover = YES;
-		if(![chunkList count]) {
-			inRemover = NO;
-			return [AudioChunk new];
-		}
-		AudioChunk *chunk = [chunkList objectAtIndex:0];
-		if([chunk frameCount] <= maxFrameCount) {
-			[chunkList removeObjectAtIndex:0];
-			listDuration -= [chunk duration];
-			listDurationRatioed -= [chunk durationRatioed];
-			inRemover = NO;
-			return chunk;
-		}
-		double streamTimestamp = [chunk streamTimestamp];
-		NSData *removedData = [chunk removeSamples:maxFrameCount];
-		AudioChunk *ret = [AudioChunk new];
-		[ret setFormat:[chunk format]];
-		[ret setChannelConfig:[chunk channelConfig]];
-		[ret setLossless:[chunk lossless]];
-		[ret setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
-		[ret setStreamTimestamp:streamTimestamp];
-		[ret setStreamTimeRatio:[chunk streamTimeRatio]];
-		[ret assignData:removedData];
-		if(chunk.resetForward) {
-			ret.resetForward = YES;
-			chunk.resetForward = NO;
-		}
-		listDuration -= [ret duration];
-		listDurationRatioed -= [ret durationRatioed];
-		inRemover = NO;
-		return ret;
-	}
 }
 
 - (AudioChunk *)removeSamplesAsFloat32:(size_t)maxFrameCount {
@@ -654,8 +592,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 #endif
 		if([chunk frameCount] <= maxFrameCount) {
 			[chunkList removeObjectAtIndex:0];
-			listDuration -= [chunk duration];
-			listDurationRatioed -= [chunk durationRatioed];
 			inRemover = NO;
 			return [self convertChunk:chunk];
 		}
@@ -673,106 +609,9 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 			ret.resetForward = YES;
 			chunk.resetForward = NO;
 		}
-		listDuration -= [ret duration];
-		listDurationRatioed -= [ret durationRatioed];
 		inRemover = NO;
 		return [self convertChunk:ret];
 	}
-}
-
-- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block {
-	if(stopping) {
-		return [AudioChunk new];
-	}
-
-	inMerger = YES;
-
-	BOOL formatSet = NO;
-	AudioStreamBasicDescription currentFormat;
-	uint32_t currentChannelConfig = 0;
-
-	double streamTimestamp = 0.0;
-	double streamTimeRatio = 1.0;
-	BOOL blocked = NO;
-	while(![self peekTimestamp:&streamTimestamp timeRatio:&streamTimeRatio]) {
-		if((blocked = block())) {
-			break;
-		}
-	}
-
-	if(blocked) {
-		inMerger = NO;
-		return [AudioChunk new];
-	}
-
-	AudioChunk *chunk;
-	size_t totalFrameCount = 0;
-	AudioChunk *outputChunk = [AudioChunk new];
-
-	[outputChunk setStreamTimestamp:streamTimestamp];
-	[outputChunk setStreamTimeRatio:streamTimeRatio];
-
-	while(!stopping && totalFrameCount < maxFrameCount) {
-		AudioStreamBasicDescription newFormat;
-		uint32_t newChannelConfig;
-		if(![self peekFormat:&newFormat channelConfig:&newChannelConfig]) {
-			if(block()) {
-				break;
-			}
-			continue;
-		}
-		if(formatSet &&
-		   (memcmp(&newFormat, &currentFormat, sizeof(newFormat)) != 0 ||
-			newChannelConfig != currentChannelConfig)) {
-			break;
-		} else if(!formatSet) {
-			[outputChunk setFormat:newFormat];
-			[outputChunk setChannelConfig:newChannelConfig];
-			currentFormat = newFormat;
-			currentChannelConfig = newChannelConfig;
-			formatSet = YES;
-		}
-
-		chunk = [self removeSamples:maxFrameCount - totalFrameCount];
-		if(!chunk || ![chunk frameCount]) {
-			if(block()) {
-				break;
-			}
-			continue;
-		}
-
-		if([chunk isHDCD]) {
-			[outputChunk setHDCD];
-		}
-
-		if(!totalFrameCount) {
-			[outputChunk setDsdDoPReverseBits:[chunk dsdDoPReverseBits]];
-		}
-
-		if(chunk.resetForward) {
-			outputChunk.resetForward = YES;
-		}
-
-		size_t frameCount = [chunk frameCount];
-		NSData *sampleData = [chunk removeSamples:frameCount];
-
-		[outputChunk assignData:sampleData];
-
-		totalFrameCount += frameCount;
-	}
-
-	if(!totalFrameCount) {
-		inMerger = NO;
-		return [AudioChunk new];
-	}
-
-	inMerger = NO;
-	return outputChunk;
-}
-
-- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block {
-	AudioChunk *ret = [self removeAndMergeSamples:maxFrameCount callBlock:block];
-	return [self convertChunk:ret];
 }
 
 - (AudioChunk *)convertChunk:(AudioChunk *)inChunk {
@@ -1082,40 +921,6 @@ static void convert_be_to_le(uint8_t *buffer, size_t bitsPerSample, size_t bytes
 
 	inConverter = NO;
 	return outChunk;
-}
-
-- (BOOL)peekFormat:(AudioStreamBasicDescription *)format channelConfig:(uint32_t *)config {
-	if(stopping) return NO;
-	inPeeker = YES;
-	@synchronized(chunkList) {
-		if([chunkList count]) {
-			AudioChunk *chunk = [chunkList objectAtIndex:0];
-			*format = [chunk format];
-			*config = [chunk channelConfig];
-			inPeeker = NO;
-			return YES;
-		}
-	}
-	inPeeker = NO;
-	return NO;
-}
-
-- (BOOL)peekTimestamp:(double *)timestamp timeRatio:(double *)timeRatio {
-	if(stopping) return NO;
-	inPeeker = YES;
-	@synchronized (chunkList) {
-		if([chunkList count]) {
-			AudioChunk *chunk = [chunkList objectAtIndex:0];
-			*timestamp = [chunk streamTimestamp];
-			*timeRatio = [chunk streamTimeRatio];
-			inPeeker = NO;
-			return YES;
-		}
-	}
-	*timestamp = 0.0;
-	*timeRatio = 1.0;
-	inPeeker = NO;
-	return NO;
 }
 
 @end

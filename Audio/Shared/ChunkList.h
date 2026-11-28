@@ -18,14 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ChunkList : NSObject {
 	NSMutableArray<AudioChunk *> *chunkList;
-	double listDuration;
-	double listDurationRatioed;
-	double maxDuration;
 
 	BOOL inAdder;
 	BOOL inRemover;
-	BOOL inPeeker;
-	BOOL inMerger;
 	BOOL inConverter;
 	BOOL stopping;
 	
@@ -61,31 +56,17 @@ NS_ASSUME_NONNULL_BEGIN
 	size_t tempDataSize;
 }
 
-@property(readonly) double listDuration;
-@property(readonly) double listDurationRatioed;
-@property(readonly) double maxDuration;
-
-- (id)initWithMaximumDuration:(double)duration;
+- (id)init;
 
 - (void)reset;
 
 - (BOOL)isEmpty;
-- (BOOL)isFull;
 
 - (void)addChunk:(AudioChunk *)chunk;
-- (AudioChunk *)removeSamples:(size_t)maxFrameCount;
 
 - (AudioChunk *)removeSamplesAsFloat32:(size_t)maxFrameCount;
 
 - (void)setOutputDSDAsDoP:(BOOL)enabled;
-
-- (BOOL)peekFormat:(nonnull AudioStreamBasicDescription *)format channelConfig:(nonnull uint32_t *)config;
-
-- (BOOL)peekTimestamp:(nonnull double *)timestamp timeRatio:(nonnull double *)timeRatio;
-
-// Helpers
-- (AudioChunk *)removeAndMergeSamples:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block;
-- (AudioChunk *)removeAndMergeSamplesAsFloat32:(size_t)maxFrameCount callBlock:(BOOL(NS_NOESCAPE ^ _Nonnull)(void))block;
 
 @end
 

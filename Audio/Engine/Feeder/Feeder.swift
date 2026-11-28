@@ -53,7 +53,7 @@ public final class Feeder {
 
 	private let opener: Opener
 	private let converter: StreamConverter
-	private let floatConverter = ChunkList(maximumDuration: 1.0)
+	private let floatConverter = ChunkList()
 	private let spaceAvailable = DispatchSemaphore(value: 0)
 	private let idle = DispatchSemaphore(value: 0)
 	private let lock = UnfairLock()

@@ -80,7 +80,7 @@ final class ExclusiveOutputTests: XCTestCase {
 	/// (with the HDCD decoder engaged for lossless 16-bit, 44.1 kHz stereo,
 	/// as it is by default).
 	private func floats(_ samples: [Int32], bits: Int, lossless: Bool = true) -> [Float] {
-		let list = ChunkList(maximumDuration: 100)
+		let list = ChunkList()
 		let chunk = IntegerMemoryDecoder.chunk(samples, bits: bits, sampleRate: 44100, channels: 2)
 		chunk.lossless = lossless
 		list.add(chunk)
