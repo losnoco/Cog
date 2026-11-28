@@ -10,7 +10,6 @@
 
 #import <CogAudio/AudioChunk.h>
 
-#import <CogAudio/CogSemaphore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

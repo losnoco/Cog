@@ -5,8 +5,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import <CogAudio/CogSemaphore.h>
-
 #import <CogAudio/VisualizationController.h>
 
 class SCPlayer : public MIDIPlayer {

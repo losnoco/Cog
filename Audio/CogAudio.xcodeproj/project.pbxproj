@@ -16,8 +16,6 @@
 		17C940230B900909008627D6 /* AudioMetadataReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 17C940210B900909008627D6 /* AudioMetadataReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		17C940240B900909008627D6 /* AudioMetadataReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 17C940220B900909008627D6 /* AudioMetadataReader.m */; };
 		17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21C9E0B8BE4BA00D1EBDE /* Status.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */ = {isa = PBXBuildFile; fileRef = 17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */; };
 		17D21DAD0B8BE76800D1EBDE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */; };
 		17D21DAE0B8BE76800D1EBDE /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */; platformFilters = (macos, ); };
 		17D21DAF0B8BE76800D1EBDE /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */; };
@@ -121,8 +119,6 @@
 		17C940210B900909008627D6 /* AudioMetadataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioMetadataReader.h; sourceTree = "<group>"; };
 		17C940220B900909008627D6 /* AudioMetadataReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMetadataReader.m; sourceTree = "<group>"; };
 		17D21C9E0B8BE4BA00D1EBDE /* Status.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Status.h; sourceTree = "<group>"; };
-		17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CogSemaphore.h; sourceTree = "<group>"; };
-		17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CogSemaphore.m; sourceTree = "<group>"; };
 		17D21DA90B8BE76800D1EBDE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		17D21DAA0B8BE76800D1EBDE /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		17D21DAB0B8BE76800D1EBDE /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -367,8 +363,6 @@
 				8347C73F2796C58800FA8A7D /* NSFileHandle+CreateFile.h */,
 				8347C7402796C58800FA8A7D /* NSFileHandle+CreateFile.m */,
 				8384912618080FF100E7332D /* Logging.h */,
-				17D21CF10B8BE5EF00D1EBDE /* CogSemaphore.h */,
-				17D21CF20B8BE5EF00D1EBDE /* CogSemaphore.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -518,7 +512,6 @@
 				8328995427CB511000D7F028 /* RedundantPlaylistDataStore.h in Headers */,
 				83F9FFF62D6EC43900026576 /* soxr.h in Headers */,
 				17D21CC70B8BE4BA00D1EBDE /* Status.h in Headers */,
-				17D21CF30B8BE5EF00D1EBDE /* CogSemaphore.h in Headers */,
 				17D21DC70B8BE79700D1EBDE /* CoreAudioUtils.h in Headers */,
 				835DD2722ACAF5AD0057E319 /* lpc.h in Headers */,
 				17D21EBD0B8BF44000D1EBDE /* AudioPlayer.h in Headers */,
@@ -666,7 +659,6 @@
 				835C88B2279811A500E28EAE /* hdcd_decode2.c in Sources */,
 				835FAC5F27BCA14D00BA8562 /* BadSampleCleaner.m in Sources */,
 				83907FBD2E88CB9600D5D683 /* MIDIVisualizationController.m in Sources */,
-				17D21CF40B8BE5EF00D1EBDE /* CogSemaphore.m in Sources */,
 				8347C7422796C58800FA8A7D /* NSFileHandle+CreateFile.m in Sources */,
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */,
