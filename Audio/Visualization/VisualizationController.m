@@ -222,11 +222,6 @@ static const double kStereoSeconds = 10.0;
 	}
 }
 
-- (double)getLatency {
-	if(!ignoreLatency) return latency;
-	else return 0.0;
-}
-
 - (void)postFullLatency:(double)latency {
 	self->fullLatency = latency;
 }

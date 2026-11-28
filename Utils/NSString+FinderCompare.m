@@ -33,11 +33,3 @@
 }
 
 @end
-
-@implementation NSURL (FinderCompare)
-
-- (NSComparisonResult)finderCompare:(NSURL *)aURL {
-	return [[self absoluteString] finderCompare:[aURL absoluteString]];
-}
-
-@end

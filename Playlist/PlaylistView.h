@@ -43,7 +43,6 @@
 
 - (IBAction)scrollToCurrentEntry:(id)sender;
 
-- (IBAction)refreshCurrentTrack:(id)sender;
 - (IBAction)refreshTrack:(id)sender;
 
 - (IBAction)saveSelectionAsPlaylist:(id)sender;

@@ -10,9 +10,3 @@
 - (NSComparisonResult)finderCompare:(NSString *)aString;
 
 @end
-
-@interface NSURL (FinderCompare)
-
-- (NSComparisonResult)finderCompare:(NSURL *)aURL;
-
-@end

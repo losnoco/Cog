@@ -1110,10 +1110,6 @@ static inline void dispatch_sync_reentrant(dispatch_queue_t queue, dispatch_bloc
 	return [[self acceptableContainerTypes] arrayByAddingObjectsFromArray:[AudioPlayer fileTypes]];
 }
 
-- (NSArray *)acceptablePlaylistTypes {
-	return @[@"m3u", @"pls"];
-}
-
 - (NSArray *)acceptableContainerTypes {
 	return [AudioPlayer containerTypes];
 }

@@ -681,23 +681,9 @@ static NSString *playlistSavedColumnsID = @"Playlist Saved Columns v0";
 	return [super validateUserInterfaceItem:anItem];
 }
 
-- (IBAction)refreshCurrentTrack:(id)sender {
-	[self refreshTrack:[playlistController currentEntry]];
-}
-
 - (IBAction)refreshTrack:(id)sender {
 	PlaylistEntry *pe = (PlaylistEntry *)sender;
 	if(pe) [playlistController reloadRowsForEntries:@[pe]];
 }
-
-#if 0
-- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
-{
-    if (isLocal)
-        return NSDragOperationNone;
-    else
-        return NSDragOperationCopy;
-}
-#endif
 
 @end

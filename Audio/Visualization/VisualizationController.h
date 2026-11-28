@@ -19,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (MIDIVisualizationController *)sharedMIDIController;
 
 - (void)postLatency:(double)latency;
-- (double)getLatency;
 
 // monotonically increasing with playback speed, resets to 0 on track change
 - (void)postFullLatency:(double)timestamp;

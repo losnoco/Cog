@@ -16,10 +16,3 @@ extension NSString {
 		return compare(aString as String, options: .numeric)
 	}
 }
-
-extension NSURL {
-	@objc(compareTrackNumbers:)
-	func compareTrackNumbers(_ aURL: NSURL) -> ComparisonResult {
-		return ((absoluteString ?? "") as NSString).compareTrackNumbers((aURL.absoluteString ?? "") as NSString)
-	}
-}
