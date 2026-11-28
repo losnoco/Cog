@@ -102,7 +102,6 @@ enum {
 - (void)setFrameCount:(size_t)count; // For truncation only
 
 - (double)duration;
-- (double)durationRatioed;
 
 - (BOOL)isHDCD;
 - (void)setHDCD;

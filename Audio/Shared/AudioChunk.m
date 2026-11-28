@@ -227,10 +227,6 @@ static const uint32_t AudioChannelConfigTable[] = {
 	return 0.0;
 }
 
-- (double)durationRatioed {
-	return [self duration] * streamTimeRatio;
-}
-
 - (BOOL)isHDCD {
 	return hdcd;
 }
