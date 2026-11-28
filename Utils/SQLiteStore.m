@@ -105,31 +105,12 @@ enum {
 	stmt_remove_art,
 	stmt_add_art_renamed,
 
-	stmt_select_track,
-	stmt_select_track_refcount,
 	stmt_select_track_data,
-	stmt_bump_track,
-	stmt_pop_track,
-	stmt_add_track,
-	stmt_remove_track,
-	stmt_update_track,
 
 	stmt_select_playlist,
-	stmt_select_playlist_range,
-	stmt_select_playlist_all,
-	stmt_increment_playlist_for_insert,
-	stmt_decrement_playlist_for_removal,
-	stmt_add_playlist,
-	stmt_remove_playlist_by_range,
 	stmt_count_playlist,
-	stmt_update_playlist,
 
 	stmt_select_queue,
-	stmt_select_queue_by_playlist_entry,
-	stmt_decrement_queue_for_removal,
-	stmt_add_queue,
-	stmt_remove_queue_by_index,
-	stmt_remove_queue_all,
 	stmt_count_queue,
 
 	stmt_count,
@@ -258,23 +239,6 @@ enum {
 const char *query_add_art_renamed = "INSERT INTO artdictionary_v2 (artid, referencecount, arthash, value) VALUES (?, ?, ?, ?)";
 
 enum {
-	select_track_in_id = 1,
-
-	select_track_out_track_id = 0,
-	select_track_out_reference_count,
-};
-
-const char *query_select_track = "SELECT trackid, referencecount FROM knowntracks WHERE (urlid = ?) LIMIT 1";
-
-enum {
-	select_track_refcount_in_id = 1,
-
-	select_track_refcount_out_reference_count = 0,
-};
-
-const char *query_select_track_refcount = "SELECT referencecount FROM knowntracks WHERE (trackid = ?) LIMIT 1";
-
-enum {
 	select_track_data_in_id = 1,
 
 	select_track_data_out_url_id = 0,
@@ -310,91 +274,6 @@ enum {
 const char *query_select_track_data = "SELECT urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, channelconfig, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak FROM knowntracks WHERE (trackid = ?) LIMIT 1";
 
 enum {
-	bump_track_in_id = 1,
-};
-
-const char *query_bump_track = "UPDATE knowntracks SET referencecount = referencecount + 1 WHERE (trackid = ?) LIMIT 1";
-
-enum {
-	pop_track_in_id = 1,
-};
-
-const char *query_pop_track = "UPDATE knowntracks SET referencecount = referencecount - 1 WHERE (trackid = ?) LIMIT 1";
-
-enum {
-	add_track_in_url_id = 1,
-	add_track_in_art_id,
-	add_track_in_album_id,
-	add_track_in_albumartist_id,
-	add_track_in_artist_id,
-	add_track_in_title_id,
-	add_track_in_genre_id,
-	add_track_in_codec_id,
-	add_track_in_cuesheet_id,
-	add_track_in_encoding_id,
-	add_track_in_track,
-	add_track_in_year,
-	add_track_in_unsigned,
-	add_track_in_bitrate,
-	add_track_in_samplerate,
-	add_track_in_bitspersample,
-	add_track_in_channels,
-	add_track_in_channelconfig,
-	add_track_in_endian_id,
-	add_track_in_floatingpoint,
-	add_track_in_totalframes,
-	add_track_in_metadataloaded,
-	add_track_in_seekable,
-	add_track_in_volume,
-	add_track_in_replaygainalbumgain,
-	add_track_in_replaygainalbumpeak,
-	add_track_in_replaygaintrackgain,
-	add_track_in_replaygaintrackpeak,
-};
-
-const char *query_add_track = "INSERT INTO knowntracks (referencecount, urlid, artid, albumid, albumartistid, artistid, titleid, genreid, codecid, cuesheetid, encodingid, track, year, unsigned, bitrate, samplerate, bitspersample, channels, channelconfig, endianid, floatingpoint, totalframes, metadataloaded, seekable, volume, replaygainalbumgain, replaygainalbumpeak, replaygaintrackgain, replaygaintrackpeak) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-enum {
-	remove_track_in_id = 1,
-};
-
-const char *query_remove_track = "DELETE FROM knowntracks WHERE (trackid = ?)";
-
-enum {
-	update_track_in_url_id = 1,
-	update_track_in_art_id,
-	update_track_in_album_id,
-	update_track_in_albumartist_id,
-	update_track_in_artist_id,
-	update_track_in_title_id,
-	update_track_in_genre_id,
-	update_track_in_codec_id,
-	update_track_in_cuesheet_id,
-	update_track_in_encoding_id,
-	update_track_in_track,
-	update_track_in_year,
-	update_track_in_unsigned,
-	update_track_in_bitrate,
-	update_track_in_samplerate,
-	update_track_in_bitspersample,
-	update_track_in_channels,
-	update_track_in_channelconfig,
-	update_track_in_endian_id,
-	update_track_in_floatingpoint,
-	update_track_in_totalframes,
-	update_track_in_metadataloaded,
-	update_track_in_seekable,
-	update_track_in_volume,
-	update_track_in_replaygainalbumgain,
-	update_track_in_replaygainalbumpeak,
-	update_track_in_replaygaintrackgain,
-	update_track_in_replaygaintrackpeak,
-	update_track_in_id
-};
-
-const char *query_update_track = "UPDATE knowntracks SET urlid = ?, artid = ?, albumid = ?, albumartistid = ?, artistid = ?, titleid = ?, genreid = ?, codecid = ?, cuesheetid = ?, encodingid = ?, track = ?, year = ?, unsigned = ?, bitrate = ?, samplerate = ?, bitspersample = ?, channels = ?, channelconfig = ?, endianid = ?, floatingpoint = ?, totalframes = ?, metadataloaded = ?, seekable = ?, volume = ?, replaygainalbumgain = ?, replaygainalbumpeak = ?, replaygaintrackgain = ?, replaygaintrackpeak = ? WHERE trackid = ?";
-
-enum {
 	select_playlist_in_id = 1,
 
 	select_playlist_out_entry_id = 0,
@@ -404,64 +283,10 @@ enum {
 const char *query_select_playlist = "SELECT entryid, trackid FROM playlist WHERE (entryindex = ?)";
 
 enum {
-	select_playlist_range_in_id_low = 1,
-	select_playlist_range_in_id_high,
-
-	select_playlist_range_out_entry_id = 0,
-	select_playlist_range_out_track_id,
-};
-
-const char *query_select_playlist_range = "SELECT entryid, trackid FROM playlist WHERE (entryindex BETWEEN ? AND ?) ORDER BY entryindex ASC";
-
-enum {
-	select_playlist_all_out_entry_id = 0,
-	select_playlist_all_out_entry_index,
-	select_playlist_all_out_track_id,
-};
-
-const char *query_select_playlist_all = "SELECT entryid, entryindex, trackid FROM playlist ORDER BY entryindex ASC";
-
-enum {
-	increment_playlist_for_insert_in_count = 1,
-	increment_playlist_for_insert_in_index,
-};
-
-const char *query_increment_playlist_for_insert = "UPDATE playlist SET entryindex = entryindex + ? WHERE (entryindex >= ?)";
-
-enum {
-	decrement_playlist_for_removal_in_count = 1,
-	decrement_playlist_for_removal_in_index,
-};
-
-const char *query_decrement_playlist_for_removal = "UPDATE playlist SET entryindex = entryindex - ? WHERE (entryindex >= ?)";
-
-enum {
-	add_playlist_in_entry_index = 1,
-	add_playlist_in_track_id,
-};
-
-const char *query_add_playlist = "INSERT INTO playlist(entryindex, trackid) VALUES (?, ?)";
-
-enum {
-	remove_playlist_by_range_in_low = 1,
-	remove_playlist_by_range_in_high,
-};
-
-const char *query_remove_playlist_by_range = "DELETE FROM playlist WHERE (entryindex BETWEEN ? AND ?)";
-
-enum {
 	count_playlist_out_count = 0,
 };
 
 const char *query_count_playlist = "SELECT COUNT(*) FROM playlist";
-
-enum {
-	update_playlist_in_entry_index = 1,
-	update_playlist_in_track_id,
-	update_playlist_in_id
-};
-
-const char *query_update_playlist = "UPDATE playlist SET entryindex = ?, trackid = ? WHERE (entryid = ?)";
 
 enum {
 	select_queue_in_id = 1,
@@ -471,35 +296,6 @@ enum {
 };
 
 const char *query_select_queue = "SELECT queueid, entryid FROM queue WHERE (queueindex = ?) LIMIT 1";
-
-enum {
-	select_queue_by_playlist_entry_in_id = 1,
-
-	select_queue_by_playlist_entry_out_queue_index = 0,
-};
-
-const char *query_select_queue_by_playlist_entry = "SELECT queueindex FROM queue WHERE (entryid = ?) LIMIT 1";
-
-enum {
-	decrement_queue_for_removal_in_index = 1,
-};
-
-const char *query_decrement_queue_for_removal = "UPDATE queue SET queueindex = queueindex - 1 WHERE (queueindex >= ?)";
-
-enum {
-	add_queue_in_queue_index = 1,
-	add_queue_in_entry_id,
-};
-
-const char *query_add_queue = "INSERT INTO queue(queueindex, entryid) VALUES (?, ?)";
-
-enum {
-	remove_queue_by_index_in_queue_index = 1,
-};
-
-const char *query_remove_queue_by_index = "DELETE FROM queue WHERE (queueindex = ?)";
-
-const char *query_remove_queue_all = "DELETE FROM queue";
 
 enum {
 	count_queue_out_count = 0,
@@ -688,31 +484,12 @@ static SQLiteStore *g_sharedStore = nil;
 			   PREPARE(add_art) ||
 			   PREPARE(remove_art) ||
 
-			   PREPARE(select_track) ||
-			   PREPARE(select_track_refcount) ||
 			   PREPARE(select_track_data) ||
-			   PREPARE(bump_track) ||
-			   PREPARE(pop_track) ||
-			   PREPARE(add_track) ||
-			   PREPARE(remove_track) ||
-			   PREPARE(update_track) ||
 
 			   PREPARE(select_playlist) ||
-			   PREPARE(select_playlist_range) ||
-			   PREPARE(select_playlist_all) ||
-			   PREPARE(increment_playlist_for_insert) ||
-			   PREPARE(decrement_playlist_for_removal) ||
-			   PREPARE(add_playlist) ||
-			   PREPARE(remove_playlist_by_range) ||
 			   PREPARE(count_playlist) ||
-			   PREPARE(update_playlist) ||
 
 			   PREPARE(select_queue) ||
-			   PREPARE(select_queue_by_playlist_entry) ||
-			   PREPARE(decrement_queue_for_removal) ||
-			   PREPARE(add_queue) ||
-			   PREPARE(remove_queue_by_index) ||
-			   PREPARE(remove_queue_all) ||
 			   PREPARE(count_queue)) {
 				return nil;
 			}
