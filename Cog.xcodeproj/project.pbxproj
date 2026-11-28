@@ -100,7 +100,7 @@
 		17D1B2810CF8B2830028F5B5 /* song.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27A0CF8B2830028F5B5 /* song.icns */; };
 		17D1B2820CF8B2830028F5B5 /* vg.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27B0CF8B2830028F5B5 /* vg.icns */; };
 		17D1B2830CF8B2830028F5B5 /* xm.icns in Resources */ = {isa = PBXBuildFile; fileRef = 17D1B27C0CF8B2830028F5B5 /* xm.icns */; };
-		17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 17E0D5E20F520F02005B6FED /* MainWindow.m */; };
+		835F00D1000000000000005F /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000005E /* MainWindow.swift */; };
 		835F00D10000000000000041 /* MiniWindows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000040 /* MiniWindows.swift */; };
 		835F00D1000000000000004B /* PositionSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D1000000000000004A /* PositionSlider.swift */; };
 		835F00D10000000000000049 /* TimeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000048 /* TimeField.swift */; };
@@ -1052,8 +1052,7 @@
 		17D1B27A0CF8B2830028F5B5 /* song.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = song.icns; sourceTree = "<group>"; };
 		17D1B27B0CF8B2830028F5B5 /* vg.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = vg.icns; sourceTree = "<group>"; };
 		17D1B27C0CF8B2830028F5B5 /* xm.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xm.icns; sourceTree = "<group>"; };
-		17E0D5E10F520F02005B6FED /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = Window/MainWindow.h; sourceTree = "<group>"; };
-		17E0D5E20F520F02005B6FED /* MainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainWindow.m; path = Window/MainWindow.m; sourceTree = "<group>"; };
+		835F00D1000000000000005E /* MainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainWindow.swift; path = Window/MainWindow.swift; sourceTree = "<group>"; };
 		835F00D10000000000000040 /* MiniWindows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniWindows.swift; path = Window/MiniWindows.swift; sourceTree = "<group>"; };
 		835F00D1000000000000004A /* PositionSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PositionSlider.swift; path = Window/PositionSlider.swift; sourceTree = "<group>"; };
 		835F00D10000000000000048 /* TimeField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeField.swift; path = Window/TimeField.swift; sourceTree = "<group>"; };
@@ -1660,8 +1659,7 @@
 				0ABA78692F6B1ECF00537320 /* CreditsView.swift */,
 				0A9CEA012861501700E47168 /* AboutWindowController.swift */,
 				83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */,
-				17E0D5E10F520F02005B6FED /* MainWindow.h */,
-				17E0D5E20F520F02005B6FED /* MainWindow.m */,
+				835F00D1000000000000005E /* MainWindow.swift */,
 				835F00D1000000000000001D /* MainSplitViewController.swift */,
 				835F00D10000000000000040 /* MiniWindows.swift */,
 				835F00D10000000000000056 /* MiniPlayerPlusWindowController.swift */,
@@ -3212,7 +3210,7 @@
 				69D7710BD7312F4BEDF23DB3 /* TagEditorWindowController.swift in Sources */,
 				54DF52C071A69E92D207E810 /* TagEditorView.swift in Sources */,
 				7B1D66F5705875E145529E2C /* TagEditorModel.swift in Sources */,
-				17E0D5EA0F520F02005B6FED /* MainWindow.m in Sources */,
+				835F00D1000000000000005F /* MainWindow.swift in Sources */,
 				835F00D1000000000000001E /* MainSplitViewController.swift in Sources */,
 				835F00D10000000000000018 /* ScriptAdditions.swift in Sources */,
 				835F00D10000000000000041 /* MiniWindows.swift in Sources */,

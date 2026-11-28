@@ -27,7 +27,7 @@ import CogAudio
 	@objc private(set) var toolTip = NSLocalizedString("No active audio output.", comment: "No active audio output tooltip")
 
 	/// Posted on the main thread after each change.
-	@objc static let didChangeNotification = Notification.Name("SignalStatusModelDidChange")
+	@objc nonisolated static let didChangeNotification = Notification.Name("SignalStatusModelDidChange")
 
 	private override init() {
 		super.init()

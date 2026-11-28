@@ -9,7 +9,6 @@
 #import "PlaylistEntry.h"
 #import "PlaylistLoader.h"
 
-#import "MainWindow.h"
 
 #import <MediaPlayer/MPMediaItem.h>
 #import <MediaPlayer/MPNowPlayingInfoCenter.h>
