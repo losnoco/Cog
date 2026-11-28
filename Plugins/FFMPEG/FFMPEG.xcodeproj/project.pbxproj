@@ -23,11 +23,11 @@
 		83AA7D0E279EBCC600087AA4 /* libswresample.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0A279EBCC600087AA4 /* libswresample.6.dylib */; };
 		83AA7D0F279EBCC600087AA4 /* libavformat.62.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA7D0B279EBCC600087AA4 /* libavformat.62.dylib */; };
 		83B72E3927904557006007A3 /* libfdk-aac.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 83B72E3827904557006007A3 /* libfdk-aac.2.dylib */; };
-		83CBC5AA2866F75B00F2753B /* FFMPEGContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */; };
+		83CBC5AA2866F75B00F2753B /* FFMPEGContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83CBC5A92866F75B00F2753B /* FFMPEGContainer.swift */; };
 		83E22FC62772FD32000015EE /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC52772FD32000015EE /* libbz2.tbd */; };
 		83E22FC82772FD3A000015EE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E22FC72772FD3A000015EE /* AudioToolbox.framework */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = B09E942E0D747F410064F138 /* FFMPEGDecoder.m */; };
+		B09E942F0D747F410064F138 /* FFMPEGDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09E942E0D747F410064F138 /* FFMPEGDecoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,14 +68,13 @@
 		83AA7D0A279EBCC600087AA4 /* libswresample.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.6.dylib; path = ../../ThirdParty/ffmpeg/lib/libswresample.6.dylib; sourceTree = "<group>"; };
 		83AA7D0B279EBCC600087AA4 /* libavformat.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.dylib; path = ../../ThirdParty/ffmpeg/lib/libavformat.62.dylib; sourceTree = "<group>"; };
 		83B72E3827904557006007A3 /* libfdk-aac.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libfdk-aac.2.dylib"; path = "../../ThirdParty/fdk-aac/lib/libfdk-aac.2.dylib"; sourceTree = "<group>"; };
-		83CBC5A82866F75B00F2753B /* FFMPEGContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFMPEGContainer.h; sourceTree = "<group>"; };
-		83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFMPEGContainer.m; sourceTree = "<group>"; };
+		83CBC5A92866F75B00F2753B /* FFMPEGContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMPEGContainer.swift; sourceTree = "<group>"; };
 		83E22FC52772FD32000015EE /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		83E22FC72772FD3A000015EE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8D5B49B6048680CD000E48DA /* FFMPEG.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FFMPEG.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B09E942D0D747F410064F138 /* FFMPEGDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFMPEGDecoder.h; sourceTree = "<group>"; };
-		B09E942E0D747F410064F138 /* FFMPEGDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFMPEGDecoder.m; sourceTree = "<group>"; };
+		B09E942D0D747F410064F138 /* FFMPEG-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FFMPEG-Bridging-Header.h"; sourceTree = "<group>"; };
+		B09E942E0D747F410064F138 /* FFMPEGDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFMPEGDecoder.swift; sourceTree = "<group>"; };
 		B09E94370D747FAD0064F138 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = SOURCE_ROOT; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -156,10 +155,9 @@
 				8356BCE727B37C6F0074E50C /* NSDictionary+Merge.m */,
 				8384913818081F6C00E7332D /* Logging.h */,
 				B09E94370D747FAD0064F138 /* Plugin.h */,
-				B09E942D0D747F410064F138 /* FFMPEGDecoder.h */,
-				B09E942E0D747F410064F138 /* FFMPEGDecoder.m */,
-				83CBC5A82866F75B00F2753B /* FFMPEGContainer.h */,
-				83CBC5A92866F75B00F2753B /* FFMPEGContainer.m */,
+				B09E942D0D747F410064F138 /* FFMPEG-Bridging-Header.h */,
+				B09E942E0D747F410064F138 /* FFMPEGDecoder.swift */,
+				83CBC5A92866F75B00F2753B /* FFMPEGContainer.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -279,8 +277,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B09E942F0D747F410064F138 /* FFMPEGDecoder.m in Sources */,
-				83CBC5AA2866F75B00F2753B /* FFMPEGContainer.m in Sources */,
+				B09E942F0D747F410064F138 /* FFMPEGDecoder.swift in Sources */,
+				83CBC5AA2866F75B00F2753B /* FFMPEGContainer.swift in Sources */,
 				8356BCE927B37C6F0074E50C /* NSDictionary+Merge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,6 +299,8 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.ffmpeg;
 				PRODUCT_NAME = FFMPEG;
+				SWIFT_OBJC_BRIDGING_HEADER = "FFMPEG-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
@@ -318,6 +318,8 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = org.cogx.ffmpeg;
 				PRODUCT_NAME = FFMPEG;
+				SWIFT_OBJC_BRIDGING_HEADER = "FFMPEG-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SYMROOT = ../../build;
