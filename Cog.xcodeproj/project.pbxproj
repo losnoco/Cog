@@ -107,7 +107,7 @@
 		835F00D10000000000000053 /* VolumeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000052 /* VolumeSlider.swift */; };
 		17F3BB890CBC565900864489 /* CueSheet.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17F3BB880CBC565100864489 /* CueSheet.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17F561400C3BD4F30019975C /* CogAudio.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 17F561330C3BD4DC0019975C /* CogAudio.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F6C8060F603701000D9DA9 /* PlaybackEventController.m */; };
+		835F00D10000000000000059 /* PlaybackEventController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D10000000000000058 /* PlaybackEventController.swift */; };
 		1EBFAF4C15D626F515FDBA65 /* CogPlaylist.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = A439B853591A600EFD69D4A1 /* CogPlaylist.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		36521C1430E83285BE9E2609 /* CogPlaylist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A439B853591A600EFD69D4A1 /* CogPlaylist.framework */; };
 		420D8C3C2E4A0DC00020A67A /* LastFMAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420D8C3B2E4A0DBC0020A67A /* LastFMAPI.swift */; };
@@ -1060,8 +1060,7 @@
 		835F00D10000000000000052 /* VolumeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolumeSlider.swift; path = Window/VolumeSlider.swift; sourceTree = "<group>"; };
 		17F3BB830CBC565100864489 /* CueSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CueSheet.xcodeproj; path = Plugins/CueSheet/CueSheet.xcodeproj; sourceTree = "<group>"; };
 		17F5612A0C3BD4DC0019975C /* CogAudio.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CogAudio.xcodeproj; path = Audio/CogAudio.xcodeproj; sourceTree = "<group>"; };
-		17F6C8050F603701000D9DA9 /* PlaybackEventController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackEventController.h; sourceTree = "<group>"; };
-		17F6C8060F603701000D9DA9 /* PlaybackEventController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaybackEventController.m; sourceTree = "<group>"; };
+		835F00D10000000000000058 /* PlaybackEventController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEventController.swift; sourceTree = "<group>"; };
 		27F4BE442F304BCEB60E12AE /* PreferencesRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesRootView.swift; path = Preferences/PreferencesRootView.swift; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -1472,8 +1471,7 @@
 				1770429A0B8BC53600B86321 /* PlaybackController.m */,
 				835F00D10000000000000015 /* MediaKeysApplication.swift */,
 				835F00D10000000000000037 /* DockIconController.swift */,
-				17F6C8050F603701000D9DA9 /* PlaybackEventController.h */,
-				17F6C8060F603701000D9DA9 /* PlaybackEventController.m */,
+				835F00D10000000000000058 /* PlaybackEventController.swift */,
 				835F00D10000000000000017 /* ScriptAdditions.swift */,
 			);
 			path = Application;
@@ -3231,7 +3229,7 @@
 				835F00D10000000000000020 /* PlaybackButtons.swift in Sources */,
 				83E9986C2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift in Sources */,
 				835F00D10000000000000038 /* DockIconController.swift in Sources */,
-				17F6C8070F603701000D9DA9 /* PlaybackEventController.m in Sources */,
+				835F00D10000000000000059 /* PlaybackEventController.swift in Sources */,
 				0A0038563086B9BC00C5352B /* LyricsText.swift in Sources */,
 				8307D30E28606148000FF8EB /* SandboxBroker.m in Sources */,
 				835F00D10000000000000024 /* SecondsFormatter.swift in Sources */,
