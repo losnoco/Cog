@@ -15,8 +15,6 @@
 
 #import "Logging.h"
 
-#import "HTTPSource.h"
-
 #define ST_BUFF 2048
 
 @implementation FFMPEGReader
@@ -690,9 +688,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 		}
 	}
 
-	Class sourceClass = [source class];
-	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
-		HTTPSource *httpSource = (HTTPSource *)source;
+	if([source conformsToProtocol:@protocol(CogHTTPSource)]) {
+		id<CogHTTPSource> httpSource = (id<CogHTTPSource>)source;
 		if([httpSource hasMetadata]) {
 			@autoreleasepool {
 				NSDictionary *metadata = [httpSource metadata];

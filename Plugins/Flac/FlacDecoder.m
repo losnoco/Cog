@@ -10,8 +10,6 @@
 
 #import "Logging.h"
 
-#import "HTTPSource.h"
-
 #import "NSDictionary+Merge.h"
 
 extern void grabbag__cuesheet_emit(NSString **out, const FLAC__StreamMetadata *cuesheet, const char *file_reference);
@@ -420,9 +418,8 @@ void ErrorCallback(const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorS
 	}
 
 	if(![source seekable] && !hasVorbisComment) {
-		Class sourceClass = [source class];
-		if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
-			HTTPSource *httpSource = (HTTPSource *)source;
+		if([source conformsToProtocol:@protocol(CogHTTPSource)]) {
+			id<CogHTTPSource> httpSource = (id<CogHTTPSource>)source;
 			NSMutableDictionary *_icyMetaDict = [NSMutableDictionary new];
 			if([httpSource hasMetadata]) {
 				NSDictionary *metadata = [httpSource metadata];

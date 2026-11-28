@@ -15,8 +15,6 @@
 #import "MP3Decoder.h"
 #pragma clang diagnostic pop
 
-#import "HTTPSource.h"
-
 #import "Logging.h"
 
 #import "NSDictionary+Optional.h"
@@ -506,9 +504,8 @@ static BOOL chapterIndexFromFragment(NSString *fragment, NSUInteger *index) {
 	NSString *_title = title;
 	NSString *_genre = genre;
 
-	Class sourceClass = [_source class];
-	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
-		HTTPSource *httpSource = (HTTPSource *)_source;
+	if([_source conformsToProtocol:@protocol(CogHTTPSource)]) {
+		id<CogHTTPSource> httpSource = (id<CogHTTPSource>)_source;
 		if([httpSource hasMetadata]) {
 			NSDictionary *metadata = [httpSource metadata];
 			_genre = [metadata valueForKey:@"genre"];

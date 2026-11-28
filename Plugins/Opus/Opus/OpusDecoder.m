@@ -12,8 +12,6 @@
 
 #import "Logging.h"
 
-#import "HTTPSource.h"
-
 #import "NSDictionary+Merge.h"
 
 #import <FLAC/metadata.h>
@@ -207,9 +205,8 @@ static void setDictionary(NSMutableDictionary *dict, NSString *tag, NSString *va
 
 	NSMutableDictionary *_icyMetaDict = [NSMutableDictionary new];
 
-	Class sourceClass = [source class];
-	if([sourceClass isEqual:NSClassFromString(@"HTTPSource")]) {
-		HTTPSource *httpSource = (HTTPSource *)source;
+	if([source conformsToProtocol:@protocol(CogHTTPSource)]) {
+		id<CogHTTPSource> httpSource = (id<CogHTTPSource>)source;
 		if([httpSource hasMetadata]) {
 			@autoreleasepool {
 				NSDictionary *metadata = [httpSource metadata];

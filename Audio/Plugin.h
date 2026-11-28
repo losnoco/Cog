@@ -28,6 +28,14 @@
 - (NSDictionary *)filesBesideURL:(NSURL *)url;
 @end
 
+/* ICY metadata from an HTTP stream. Decoders cast their source to this
+ * protocol rather than naming the HTTPSource class, so the source can be
+ * ported or replaced without touching them. */
+@protocol CogHTTPSource <CogSource>
+- (BOOL)hasMetadata;
+- (NSDictionary *)metadata;
+@end
+
 @protocol CogVersionCheck <NSObject>
 + (BOOL)shouldLoadForOSVersion:(NSOperatingSystemVersion)version;
 @end

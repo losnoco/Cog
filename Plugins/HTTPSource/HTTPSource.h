@@ -25,7 +25,7 @@ enum {
 	STATUS_RETRY = 6,
 };
 
-@interface HTTPSource : NSObject <CogSource, NSURLSessionDelegate> {
+@interface HTTPSource : NSObject <CogHTTPSource, NSURLSessionDelegate> {
 	NSURL *URL;
 
 	int redirectsRemaining;
