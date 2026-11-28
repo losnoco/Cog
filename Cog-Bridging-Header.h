@@ -22,3 +22,4 @@
 #import "Visualization/SCView.h"
 #import <File_Extractor/fex.h>
 #import "Visualization/ThirdParty/deadbeef/analyzer.h"
+#import "ImageTextCell.h"
