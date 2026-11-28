@@ -213,8 +213,6 @@ extension PreviewPlayer {
 	@objc func audioPlayer(_ player: AudioPlayer, updatePosition userInfo: Any?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, reportPlayCountForTrack userInfo: Any?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, reportScrobbleForTrack userInfo: Any?) {}
-	@objc func audioPlayer(_ player: AudioPlayer, sustainHDCD userInfo: Any?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, displayEqualizer equalizer: OpaquePointer?) {}
-	@objc func audioPlayer(_ player: AudioPlayer, refreshEqualizer equalizer: OpaquePointer?) {}
 	@objc func audioPlayer(_ player: AudioPlayer, removeEqualizer equalizer: OpaquePointer?) {}
 }

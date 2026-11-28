@@ -99,18 +99,6 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	return delegate;
 }
 
-- (void)play:(NSURL *)url {
-	[self play:url withUserInfo:nil withRGInfo:nil startPaused:NO andSeekTo:0.0];
-}
-
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi {
-	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:NO andSeekTo:0.0];
-}
-
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused {
-	[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:paused andSeekTo:0.0];
-}
-
 - (void)playBG:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(NSNumber *)paused andSeekTo:(NSNumber *)time {
 	@synchronized (self) {
 		[self play:url withUserInfo:userInfo withRGInfo:rgi startPaused:[paused boolValue] andSeekTo:[time doubleValue]];
@@ -193,10 +181,6 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	[engine resetNextStreams];
 }
 
-- (void)restartPlaybackAtCurrentPosition {
-	[self sendDelegateMethod:@selector(audioPlayer:restartPlaybackAtCurrentPosition:) withObject:previousUserInfo waitUntilDone:NO];
-}
-
 - (void)updatePosition:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:updatePosition:) withObject:userInfo waitUntilDone:NO];
 }
@@ -221,10 +205,6 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	return engine.amountPlayed;
 }
 
-- (double)amountPlayedInterval {
-	return engine.amountPlayedInterval;
-}
-
 - (void)setScrobbleThreshold:(double)threshold {
 	[engine setScrobbleThreshold:threshold];
 }
@@ -245,20 +225,8 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 	[self sendDelegateMethod:@selector(audioPlayer:displayEqualizer:) withVoid:eq waitUntilDone:YES];
 }
 
-- (void)refreshEqualizer:(void *)eq {
-	[self sendDelegateMethod:@selector(audioPlayer:refreshEqualizer:) withVoid:eq waitUntilDone:YES];
-}
-
 - (void)endEqualizer:(void *)eq {
 	[self sendDelegateMethod:@selector(audioPlayer:removeEqualizer:) withVoid:eq waitUntilDone:YES];
-}
-
-- (void)reportPlayCount {
-	[self reportPlayCountForTrack:previousUserInfo];
-}
-
-- (void)reportScrobble {
-	[self reportScrobbleForTrack:previousUserInfo];
 }
 
 - (void)reportScrobbleForTrack:(id)userInfo {
@@ -300,17 +268,11 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 }
 
 - (void)setPlaybackStatus:(CogStatus)status waitUntilDone:(BOOL)wait {
-	currentPlaybackStatus = status;
-
 	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:previousUserInfo waitUntilDone:wait];
 }
 
 - (void)setError:(BOOL)status forTrack:(id)userInfo {
 	[self sendDelegateMethod:@selector(audioPlayer:setError:toTrack:) withObject:@(status) withObject:userInfo waitUntilDone:NO];
-}
-
-- (void)setPlaybackStatus:(CogStatus)status {
-	[self setPlaybackStatus:status waitUntilDone:NO];
 }
 
 + (NSArray *)containerTypes {
@@ -396,7 +358,6 @@ NSString *const CogAudioOutputModificationVolume = @"volume";
 }
 
 - (void)playbackEngineDidChangeStatus:(CogStatus)status userInfo:(id)userInfo {
-	currentPlaybackStatus = status;
 	[self sendDelegateMethod:@selector(audioPlayer:didChangeStatus:userInfo:) withObject:@(status) withObject:userInfo waitUntilDone:YES];
 }
 

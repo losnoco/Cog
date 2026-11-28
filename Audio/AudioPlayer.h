@@ -146,8 +146,6 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 	id previousUserInfo; // Track currently last heard track for play counts
 
 	id delegate;
-
-	CogStatus currentPlaybackStatus;
 }
 
 - (id)init;
@@ -155,9 +153,6 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 - (void)setDelegate:(id)d;
 - (id)delegate;
 
-- (void)play:(NSURL *)url;
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
-- (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused;
 - (void)play:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(BOOL)paused andSeekTo:(double)time;
 - (void)playBG:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi startPaused:(NSNumber *)paused andSeekTo:(NSNumber *)time;
 
@@ -173,15 +168,12 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 - (double)volumeDown:(double)amount;
 
 - (double)amountPlayed;
-- (double)amountPlayedInterval;
 
 - (void)setScrobbleThreshold:(double)threshold;
 
 - (void)setNextStream:(NSURL *)url;
 - (void)setNextStream:(NSURL *)url withUserInfo:(id)userInfo withRGInfo:(NSDictionary *)rgi;
 - (void)resetNextStreams;
-
-- (void)restartPlaybackAtCurrentPosition;
 
 - (void)pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 
@@ -208,18 +200,14 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 @interface AudioPlayer (Private) // Dont use this stuff!
 
 - (void)setPlaybackStatus:(CogStatus)status waitUntilDone:(BOOL)wait;
-- (void)setPlaybackStatus:(CogStatus)s;
 
 - (void)requestNextStream:(id)userInfo;
 
 - (void)notifyStreamChanged:(id)userInfo;
 
 - (void)beginEqualizer:(void *)eq;
-- (void)refreshEqualizer:(void *)eq;
 - (void)endEqualizer:(void *)eq;
 
-- (void)reportPlayCount;
-- (void)reportScrobble;
 - (void)setError:(BOOL)status forTrack:(id)userInfo;
 - (void)sendDelegateMethod:(SEL)selector withVoid:(void *)obj waitUntilDone:(BOOL)wait;
 - (void)sendDelegateMethod:(SEL)selector withObject:(id)obj waitUntilDone:(BOOL)wait;
@@ -232,9 +220,7 @@ FOUNDATION_EXPORT NSString *const CogAudioOutputModificationVolume;
 - (void)audioPlayer:(AudioPlayer *)player didChangeStatus:(id)status userInfo:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player didStopNaturally:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(AudioUnit)eq;
-- (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(AudioUnit)eq;
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(AudioUnit)eq;
-- (void)audioPlayer:(AudioPlayer *)player sustainHDCD:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player restartPlaybackAtCurrentPosition:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player pushInfo:(NSDictionary *)info toTrack:(id)userInfo;
 - (void)audioPlayer:(AudioPlayer *)player reportPlayCountForTrack:(id)userInfo;

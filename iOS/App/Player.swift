@@ -488,7 +488,6 @@ extension Player {
 			ListenBrainzScrobbler.shared.scrobble(track)
 		}
 	}
-	@objc func audioPlayer(_ player: AudioPlayer, sustainHDCD userInfo: Any?) {}
 	/// The engine's equalizer, handed over (as on macOS) as an unretained
 	/// pointer when it starts being used.
 	@objc func audioPlayer(_ player: AudioPlayer, displayEqualizer equalizer: OpaquePointer?) {
@@ -497,8 +496,6 @@ extension Player {
 			self.equalizer.attach(Unmanaged<AnyObject>.fromOpaque(UnsafeRawPointer(equalizer)).takeUnretainedValue() as? CogEqualizer)
 		}
 	}
-
-	@objc func audioPlayer(_ player: AudioPlayer, refreshEqualizer equalizer: OpaquePointer?) {}
 
 	@objc func audioPlayer(_ player: AudioPlayer, removeEqualizer equalizer: OpaquePointer?) {
 		MainActor.assumeIsolated { self.equalizer.attach(nil) }

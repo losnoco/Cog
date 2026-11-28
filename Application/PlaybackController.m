@@ -956,10 +956,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	[equalizerWindowController setEQ:eq];
 }
 
-- (void)audioPlayer:(AudioPlayer *)player refreshEqualizer:(void *)eq {
-	equalizerLoadPreset((__bridge id<CogEqualizer>)eq);
-}
-
 - (void)audioPlayer:(AudioPlayer *)player removeEqualizer:(void *)eq {
 	if(eq == _eq) {
 		[equalizerWindowController setEQ:nil];
