@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8372C93527C7861300E250C9 /* MP3Decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 8372C93427C7861300E250C9 /* MP3Decoder.m */; };
+		8372C93527C7861300E250C9 /* MP3Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8372C93427C7861300E250C9 /* MP3Decoder.swift */; };
+		835F00D50000000000000002 /* MP3Implementation.m in Sources */ = {isa = PBXBuildFile; fileRef = 835F00D50000000000000001 /* MP3Implementation.m */; };
 		8372C93F27C7904800E250C9 /* libid3tag.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C93E27C7904800E250C9 /* libid3tag.a */; };
 		8372C94227C7959000E250C9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8372C94127C7959000E250C9 /* libz.tbd */; };
 		83F97B6928600F9300A70B97 /* CVbriHeader.c in Sources */ = {isa = PBXBuildFile; fileRef = 83F97B6728600F9300A70B97 /* CVbriHeader.c */; };
@@ -18,8 +19,9 @@
 		5F5DAB8EF617C39782981990 /* CogAudio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CogAudio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		834A42BB287AFB0700EB9D9B /* AudioChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioChunk.h; path = ../../Audio/Shared/AudioChunk.h; sourceTree = "<group>"; };
 		8372C92327C785BD00E250C9 /* minimp3.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = minimp3.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		8372C93327C7861300E250C9 /* MP3Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MP3Decoder.h; sourceTree = "<group>"; };
-		8372C93427C7861300E250C9 /* MP3Decoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MP3Decoder.m; sourceTree = "<group>"; };
+		8372C93327C7861300E250C9 /* MP3-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MP3-Bridging-Header.h"; sourceTree = "<group>"; };
+		8372C93427C7861300E250C9 /* MP3Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MP3Decoder.swift; sourceTree = "<group>"; };
+		835F00D50000000000000001 /* MP3Implementation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MP3Implementation.m; sourceTree = "<group>"; };
 		8372C93827C7865A00E250C9 /* Plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plugin.h; path = ../../Audio/Plugin.h; sourceTree = "<group>"; };
 		8372C93927C7866B00E250C9 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = ../../Utils/Logging.h; sourceTree = "<group>"; };
 		8372C93A27C786DD00E250C9 /* HTTPSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTTPSource.h; path = ../HTTPSource/HTTPSource.h; sourceTree = "<group>"; };
@@ -57,8 +59,9 @@
 				8372C93927C7866B00E250C9 /* Logging.h */,
 				83CB566A2E064FAC003DD379 /* NSDictionary+Optional.h */,
 				8372C93827C7865A00E250C9 /* Plugin.h */,
-				8372C93327C7861300E250C9 /* MP3Decoder.h */,
-				8372C93427C7861300E250C9 /* MP3Decoder.m */,
+				8372C93327C7861300E250C9 /* MP3-Bridging-Header.h */,
+				8372C93427C7861300E250C9 /* MP3Decoder.swift */,
+				835F00D50000000000000001 /* MP3Implementation.m */,
 				8372C92427C785BD00E250C9 /* Products */,
 				8372C94027C7959000E250C9 /* Frameworks */,
 			);
@@ -169,7 +172,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8372C93527C7861300E250C9 /* MP3Decoder.m in Sources */,
+				8372C93527C7861300E250C9 /* MP3Decoder.swift in Sources */,
+				835F00D50000000000000002 /* MP3Implementation.m in Sources */,
 				83F97B6928600F9300A70B97 /* CVbriHeader.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -321,6 +325,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MP3-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
@@ -344,6 +350,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MP3-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
