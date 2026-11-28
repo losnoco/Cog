@@ -35,33 +35,6 @@ static inline void dispatch_async_or_reentrant(dispatch_queue_t queue, dispatch_
 
 @implementation NSObject (NxAdditions)
 
-#if 0
--(void)performSelectorInBackground:(SEL)selector withObjects:(id)object, ...
-{
-	NSMethodSignature *signature = [self methodSignatureForSelector:selector];
-
-	// Setup the invocation
-	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-	invocation.target = self;
-	invocation.selector = selector;
-
-	// Associate the arguments
-	va_list objects;
-	va_start(objects, object);
-	unsigned int objectCounter = 2;
-	for (id obj = object; obj != nil; obj = va_arg(objects, id))
-	{
-		[invocation setArgument:&obj atIndex:objectCounter++];
-	}
-	va_end(objects);
-
-	// Make sure to invoke on a background queue
-	NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithInvocation:invocation];
-	NSOperationQueue *backgroundQueue = [NSOperationQueue new];
-	[backgroundQueue addOperation:operation];
-}
-#endif
-
 -(void)performSelectorOnMainThread:(SEL)selector withObjects:(id)object, ...
 {
 	NSMethodSignature *signature = [self methodSignatureForSelector:selector];
@@ -222,16 +195,6 @@ NSNotificationName CogPlaybackDidPrebufferNotification = @"CogPlaybackDidPrebuff
 	};
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultsDictionary];
-}
-
-// Within the speed sliders' range; locked, the other follows, as the speed
-// popover's sliders do.
-static void setSpeed(NSString *key, NSString *lockedKey, double speed) {
-	speed = MIN(MAX(speed, 0.2), 5.0);
-	[[NSUserDefaults standardUserDefaults] setDouble:speed forKey:key];
-	if([[NSUserDefaults standardUserDefaults] boolForKey:@"speedLock"]) {
-		[[NSUserDefaults standardUserDefaults] setDouble:speed forKey:lockedKey];
-	}
 }
 
 - (void)snapSpeeds {
@@ -405,19 +368,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 	   [urlScheme isEqualToString:@"https"])
 		loadData = NO;
 
-#if 0
-	// Race here, but the worst that could happen is we re-read the data
-    if([pe metadataLoaded] != YES) {
-		[pe performSelectorOnMainThread:@selector(setMetadata:) withObject:[playlistLoader readEntryInfo:pe] waitUntilDone:YES];
-	}
-#elif 0
-	// Racing with this version is less likely to jam up the main thread
-	if([pe metadataLoaded] != YES) {
-		NSArray *entries = @[pe];
-		[playlistLoader loadInfoForEntries:entries];
-	}
-#else
-	// Let's do it this way instead
 	if([pe metadataLoaded] != YES && loadData == YES) {
 		// Start once the tags are in: the ReplayGain and whether the track can
 		// be resumed part-way come from them. Starting without them played
@@ -446,7 +396,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 		[playlistLoader performSelectorInBackground:@selector(loadInfoForEntries:) withObject:entries];
 		return;
 	}
-#endif
 
 	++startToken;
 	[self startPlayingEntry:pe startPaused:paused andSeekTo:offset];
@@ -926,22 +875,6 @@ NSDictionary *makeRGInfo(PlaylistEntry *pe) {
 
 - (IBAction)volumeUp:(id)sender {
 	[self stepVolume:1];
-}
-
-- (IBAction)pitchDown:(id)sender {
-	setSpeed(@"pitch", @"tempo", [[NSUserDefaults standardUserDefaults] doubleForKey:@"pitch"] - DEFAULT_PITCH_DOWN);
-}
-
-- (IBAction)pitchUp:(id)sender {
-	setSpeed(@"pitch", @"tempo", [[NSUserDefaults standardUserDefaults] doubleForKey:@"pitch"] + DEFAULT_PITCH_UP);
-}
-
-- (IBAction)tempoDown:(id)sender {
-	setSpeed(@"tempo", @"pitch", [[NSUserDefaults standardUserDefaults] doubleForKey:@"tempo"] - DEFAULT_TEMPO_DOWN);
-}
-
-- (IBAction)tempoUp:(id)sender {
-	setSpeed(@"tempo", @"pitch", [[NSUserDefaults standardUserDefaults] doubleForKey:@"tempo"] + DEFAULT_TEMPO_UP);
 }
 
 - (void)audioPlayer:(AudioPlayer *)player displayEqualizer:(void *)eq {

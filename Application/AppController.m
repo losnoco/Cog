@@ -96,10 +96,6 @@ static AppController *kAppController = nil;
 	[NSValueTransformer setValueTransformer:numberHertzToStringTransformer
 									forName:@"NumberHertzToStringTransformer"];
 
-	NSValueTransformer *rubberbandEngineHiddenTransformer = [RubberbandEngineHiddenTransformer new];
-	[NSValueTransformer setValueTransformer:rubberbandEngineHiddenTransformer
-									forName:@"RubberbandEngineHiddenTransformer"];
-
 	[PlaylistStore registerTransformers];
 }
 - (id)init {
@@ -182,10 +178,6 @@ static AppController *kAppController = nil;
 			                               @"origin": @(URLOriginExternal) };
 		[playlistController addURLsInBackground:loadEntriesData];
 	}
-}
-
-- (IBAction)delEntries:(id)sender {
-	[playlistController remove:self];
 }
 
 - (PlaylistEntry *)currentEntry {

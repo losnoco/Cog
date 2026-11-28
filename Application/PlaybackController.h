@@ -18,12 +18,6 @@
 #define DEFAULT_VOLUME_DOWN 5
 #define DEFAULT_VOLUME_UP DEFAULT_VOLUME_DOWN
 
-#define DEFAULT_PITCH_DOWN 0.2
-#define DEFAULT_PITCH_UP DEFAULT_PITCH_DOWN
-
-#define DEFAULT_TEMPO_DOWN 0.2
-#define DEFAULT_TEMPO_UP DEFAULT_TEMPO_DOWN
-
 extern NSNotificationName CogPlaybackDidBeginNotificiation;
 extern NSNotificationName CogPlaybackDidPauseNotificiation;
 extern NSNotificationName CogPlaybackDidResumeNotificiation;
@@ -92,13 +86,8 @@ extern NSDictionary *makeRGInfo(PlaylistEntry *pe);
 - (double)volume;
 - (void)setVolume:(double)volume;
 
-- (IBAction)pitchDown:(id)sender;
-- (IBAction)pitchUp:(id)sender;
-
 // The speed engine resamples, so pitch follows tempo and the lock means nothing.
 + (BOOL)isVarispeed;
-- (IBAction)tempoDown:(id)sender;
-- (IBAction)tempoUp:(id)sender;
 
 - (IBAction)playPauseResume:(id)sender;
 - (IBAction)pauseResume:(id)sender;

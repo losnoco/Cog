@@ -252,7 +252,6 @@
 		83E9986C2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9986B2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift */; };
 		83E998722F7131140017AE33 /* TotalTimeTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998712F7131140017AE33 /* TotalTimeTransformer.swift */; };
 		83E998762F71325E0017AE33 /* ColorToValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998752F71325E0017AE33 /* ColorToValueTransformer.swift */; };
-		83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */; };
 		83E9987C2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */; };
 		83F759E42FAB0706009DB584 /* HLS.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F759E32FAB0706009DB584 /* HLS.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		83F9D8071A884C54007ABEC2 /* SilenceDecoder.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 83F9D7F61A884B46007ABEC2 /* SilenceDecoder.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1237,7 +1236,6 @@
 		83E9986B2F712F680017AE33 /* FontSizetoLineHeightTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FontSizetoLineHeightTransformer.swift; path = Transformers/FontSizetoLineHeightTransformer.swift; sourceTree = "<group>"; };
 		83E998712F7131140017AE33 /* TotalTimeTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TotalTimeTransformer.swift; path = Transformers/TotalTimeTransformer.swift; sourceTree = "<group>"; };
 		83E998752F71325E0017AE33 /* ColorToValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColorToValueTransformer.swift; path = Transformers/ColorToValueTransformer.swift; sourceTree = "<group>"; };
-		83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RubberbandEngineTransformer.swift; path = Transformers/RubberbandEngineTransformer.swift; sourceTree = "<group>"; };
 		83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaybeSecureValueDataTransformer.swift; path = Transformers/MaybeSecureValueDataTransformer.swift; sourceTree = "<group>"; };
 		83E9987B2F713A570017AE33 /* MiniModeMenuTitleTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MiniModeMenuTitleTransformer.swift; path = Window/MiniModeMenuTitleTransformer.swift; sourceTree = "<group>"; };
 		83F9D7F11A884B44007ABEC2 /* SilenceDecoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SilenceDecoder.xcodeproj; path = Plugins/SilenceDecoder/SilenceDecoder.xcodeproj; sourceTree = "<group>"; };
@@ -1702,7 +1700,6 @@
 				8325F5A02F71476F00400A88 /* StringToURLTransformer.swift */,
 				83E998712F7131140017AE33 /* TotalTimeTransformer.swift */,
 				83E998752F71325E0017AE33 /* ColorToValueTransformer.swift */,
-				83E998772F7134B90017AE33 /* RubberbandEngineTransformer.swift */,
 				83E998792F7135310017AE33 /* MaybeSecureValueDataTransformer.swift */,
 			);
 			name = Transformers;
@@ -3263,7 +3260,6 @@
 				C0FE7A010000000000000010 /* VisualizationsPaneView.swift in Sources */,
 				0A0E707E307416E400EF30D0 /* SignalStatusModel.swift in Sources */,
 				0A6E7ACE308A875D00E2ADA7 /* PaneManager.swift in Sources */,
-				83E998782F7134B90017AE33 /* RubberbandEngineTransformer.swift in Sources */,
 				0A6E7F91308A8AE500E2ADA7 /* PaneDockGuides.swift in Sources */,
 				515000000000000000000007 /* GeneralPaneView.swift in Sources */,
 				8325F59E2F71418600400A88 /* ShuffleTransformers.swift in Sources */,

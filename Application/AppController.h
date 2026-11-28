@@ -83,7 +83,6 @@
 - (IBAction)openURL:(id)sender;
 
 - (IBAction)openFiles:(id)sender;
-- (IBAction)delEntries:(id)sender;
 - (IBAction)savePlaylist:(id)sender;
 - (IBAction)savePlaylistFromSelection:(id)sender;
 
