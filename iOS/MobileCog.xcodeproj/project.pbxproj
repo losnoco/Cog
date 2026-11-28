@@ -14,6 +14,7 @@
 		062940EF34A69E986610B412 /* HighlyQuixotic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C40369FED30EEB66982F3D /* HighlyQuixotic.framework */; };
 		09C2FF3A765DC70FCC82FD0C /* libvgm-emu.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97E19BBF296B18CA33747D71 /* libvgm-emu.xcframework */; };
 		0A15409EDDA66A149604706D /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 590D39E029664596A83F93F2 /* CoreMedia.framework */; };
+		0BC9D6DB3CB0ABD517C96B14 /* FlacDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D6E4A7402DA5DE779545B4 /* FlacDecoder.swift */; };
 		0CF57B7604A291B54CFF7F94 /* OpusDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 79C1A6DC049CD05F2CBA7478 /* OpusDecoder.m */; };
 		0D71B527B2E34E7E0A6B07FD /* Syntrax_c.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F1B0575A12665BAE01AAAC /* Syntrax_c.framework */; };
 		0D83B1F7DE6AAEDDC13A65BE /* fx97.pxt in Resources */ = {isa = PBXBuildFile; fileRef = 6F691F71FA4097449A3783A2 /* fx97.pxt */; };
@@ -196,7 +197,6 @@
 		EE98248FAA390B167A40962C /* CogAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 843D758B5E3FD2015CBD376D /* CogAudio.framework */; };
 		EF9C5AE3F370A9FAFA8796B2 /* CogPlugins.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 681B3E839D0E192A690222C4 /* CogPlugins.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EFAFEEFA12D5A14020322C66 /* SCPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A322EB294ED4B2F9C65653DC /* SCPlayer.mm */; };
-		EFE5EB9974F03606FF2700F7 /* FlacDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */; };
 		EFFC1F5A7E66714F4AEC6E2F /* opl3midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22379D4AD1005DDB88C6C9B1 /* opl3midi.cpp */; };
 		F26E15EAFFF137930CA989F1 /* ListenBrainzAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB1F5372A8473E7951EE7ABC /* ListenBrainzAPI.swift */; };
 		F36D9A91F7D4A4D7E11451F3 /* LyricsLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE483BAA46D154DB7C97656 /* LyricsLookup.swift */; };
@@ -654,6 +654,7 @@
 		1629F2F50D2291373B98529A /* VGMMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VGMMetadataReader.h; path = ../Plugins/vgmstream/vgmstream/VGMMetadataReader.h; sourceTree = SOURCE_ROOT; };
 		177CD5FC75D1BFE8880613A3 /* CogPlugins-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = "4"; lastKnownFileType = sourcecode.c.h; path = "CogPlugins/CogPlugins-Bridging-Header.h"; sourceTree = "<group>"; };
 		17D2934A3FB45679AB70AD52 /* GameMetadataReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = GameMetadataReader.h; path = ../Plugins/GME/GameMetadataReader.h; sourceTree = SOURCE_ROOT; };
+		17D6E4A7402DA5DE779545B4 /* FlacDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = FlacDecoder.swift; path = ../Plugins/Flac/FlacDecoder.swift; sourceTree = SOURCE_ROOT; };
 		18E80BE2AC31262159255440 /* ArchiveSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = ArchiveSource.h; path = ../Plugins/ArchiveSource/ArchiveSource/ArchiveSource.h; sourceTree = SOURCE_ROOT; };
 		1A90C8DB442E8F8748320BA0 /* MIDIDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = MIDIDecoder.mm; path = ../Plugins/MIDI/MIDI/MIDIDecoder.mm; sourceTree = SOURCE_ROOT; };
 		1C671AC72ACA7C080289DA3F /* GameContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = GameContainer.h; path = ../Plugins/GME/GameContainer.h; sourceTree = SOURCE_ROOT; };
@@ -764,6 +765,7 @@
 		95701CD1532DCD29093ED21B /* libvgmPropertiesReader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = libvgmPropertiesReader.mm; path = ../Plugins/libvgmPlayer/libvgmPropertiesReader.mm; sourceTree = SOURCE_ROOT; };
 		9589F8429AC738EFB618FA3E /* libopus.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libopus.xcframework; path = ../ThirdParty/opus/ios/libopus.xcframework; sourceTree = SOURCE_ROOT; };
 		96268B7790B8C2D3946AD49C /* HivelyPlayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HivelyPlayer.xcodeproj; path = ../Frameworks/HivelyPlayer/HivelyPlayer.xcodeproj; sourceTree = SOURCE_ROOT; };
+		97D4C907BBBF56B042058E12 /* Flac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = "Flac-Bridging-Header.h"; path = "../Plugins/Flac/Flac-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
 		97E19BBF296B18CA33747D71 /* libvgm-emu.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = "libvgm-emu.xcframework"; path = "../ThirdParty/libvgm/ios/libvgm-emu.xcframework"; sourceTree = SOURCE_ROOT; };
 		9C40DFD0DCCCA4A2F6A64B7D /* wavetable.dat */ = {isa = PBXFileReference; lastKnownFileType = file; name = wavetable.dat; path = ../Plugins/Organya/wavetable.dat; sourceTree = SOURCE_ROOT; };
 		9CF9C2F2B9DDA99D4C63675A /* opl3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; fileEncoding = "4"; name = opl3.cpp; path = ../Plugins/MIDI/MIDI/fmopl3lib/opl3.cpp; sourceTree = SOURCE_ROOT; };
@@ -818,7 +820,6 @@
 		CC962CE19DF1CC389D66757D /* Shorten.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Shorten.xcodeproj; path = ../Frameworks/Shorten/Shorten.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CD56ECF1DA7D656D62F8B7D9 /* CueSheetContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; fileEncoding = "4"; name = CueSheetContainer.swift; path = ../Plugins/CueSheet/CueSheetContainer.swift; sourceTree = SOURCE_ROOT; };
 		CD92CBA4FB13B40660D230F8 /* SidDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = SidDecoder.h; path = ../Plugins/sidplay/SidDecoder.h; sourceTree = SOURCE_ROOT; };
-		CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = FlacDecoder.m; path = ../Plugins/Flac/FlacDecoder.m; sourceTree = SOURCE_ROOT; };
 		CF94C718E33E0CCB3FDA0E5B /* TagLibChapters.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = "4"; name = TagLibChapters.mm; path = ../Plugins/TagLib/TagLibChapters.mm; sourceTree = SOURCE_ROOT; };
 		D0370650B61067CFC89A424D /* SpectrumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpectrumView.swift; path = ../Visualization/SpectrumView.swift; sourceTree = SOURCE_ROOT; };
 		D105E7348FFC04E58612438E /* vio2sf.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vio2sf.xcodeproj; path = ../Frameworks/vio2sf/vio2sf.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -859,7 +860,6 @@
 		EB555EB4EAC3737FD50CC73A /* LyricsText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LyricsText.swift; path = ../LyricsWindow/LyricsText.swift; sourceTree = SOURCE_ROOT; };
 		ECE3C4E2FC2391C4F0A0D622 /* roms.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; fileEncoding = "4"; name = roms.hpp; path = ../Plugins/sidplay/roms.hpp; sourceTree = SOURCE_ROOT; };
 		ECF500DF07552252396E735D /* VGMContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = VGMContainer.h; path = ../Plugins/vgmstream/vgmstream/VGMContainer.h; sourceTree = SOURCE_ROOT; };
-		ED20D914936F1B2443FA8739 /* FlacDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = FlacDecoder.h; path = ../Plugins/Flac/FlacDecoder.h; sourceTree = SOURCE_ROOT; };
 		ED54D5D3E71CB4B68FF9A896 /* jxsDecoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; fileEncoding = "4"; name = jxsDecoder.m; path = ../Plugins/Syntrax/Syntrax/jxsDecoder.m; sourceTree = SOURCE_ROOT; };
 		EE08B849427D06EAB8707702 /* fx9b.pxt */ = {isa = PBXFileReference; lastKnownFileType = file; name = fx9b.pxt; path = ../Plugins/Organya/fx9b.pxt; sourceTree = SOURCE_ROOT; };
 		EEB9430AEA07FBCBB185E859 /* HLSVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; fileEncoding = "4"; name = HLSVariant.h; path = ../Plugins/HLS/HLSVariant.h; sourceTree = SOURCE_ROOT; };
@@ -1154,8 +1154,8 @@
 		5832EF36B2B196297A37DE75 /* Flac */ = {
 			isa = PBXGroup;
 			children = (
-				ED20D914936F1B2443FA8739 /* FlacDecoder.h */,
-				CEC2FC031FD3AD6EE6192CF5 /* FlacDecoder.m */,
+				97D4C907BBBF56B042058E12 /* Flac-Bridging-Header.h */,
+				17D6E4A7402DA5DE779545B4 /* FlacDecoder.swift */,
 				BA59E2A752A1601EDB9602EC /* cuesheet.m */,
 			);
 			name = Flac;
@@ -2246,7 +2246,7 @@
 				67489D436528C31D3E07DAE1 /* FFMPEGContainer.m in Sources */,
 				354C0600F4B6C913FEDAF961 /* FFMPEGDecoder.m in Sources */,
 				2D30CF5D28C637DC10C7430D /* FileSource.swift in Sources */,
-				EFE5EB9974F03606FF2700F7 /* FlacDecoder.m in Sources */,
+				0BC9D6DB3CB0ABD517C96B14 /* FlacDecoder.swift in Sources */,
 				ED19795381C4FB5B8A325493 /* cuesheet.m in Sources */,
 				F61150A6AD40CD07316B17E3 /* HTTPSource.m in Sources */,
 				41012110BA6ADD8E8343C855 /* M3uContainer.swift in Sources */,
