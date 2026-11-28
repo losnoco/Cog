@@ -60,8 +60,7 @@
 		83907FBD2E88CB9600D5D683 /* MIDIVisualizationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */; };
 		83907FBF2E88CBC200D5D683 /* MIDIVisualizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		83907FCF2E88E31C00D5D683 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83907FCE2E88E31C00D5D683 /* Cocoa.framework */; platformFilters = (macos, ); };
-		839366671815923C006DD712 /* CogPluginMulti.h in Headers */ = {isa = PBXBuildFile; fileRef = 839366651815923C006DD712 /* CogPluginMulti.h */; };
-		839366681815923C006DD712 /* CogPluginMulti.m in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.m */; };
+		839366681815923C006DD712 /* CogPluginMulti.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839366661815923C006DD712 /* CogPluginMulti.swift */; };
 		8399CF2C27B5D1D5008751F1 /* NSDictionary+Merge.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */; };
 		8399CF2D27B5D1D5008751F1 /* NSDictionary+Merge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */; };
 		839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839E56F6287974A100DFB5F4 /* SandboxBroker.h */; };
@@ -158,8 +157,7 @@
 		83907FBC2E88CB9600D5D683 /* MIDIVisualizationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MIDIVisualizationController.m; sourceTree = "<group>"; };
 		83907FBE2E88CBC200D5D683 /* MIDIVisualizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MIDIVisualizationController.h; sourceTree = "<group>"; };
 		83907FCE2E88E31C00D5D683 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		839366651815923C006DD712 /* CogPluginMulti.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CogPluginMulti.h; sourceTree = "<group>"; };
-		839366661815923C006DD712 /* CogPluginMulti.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CogPluginMulti.m; sourceTree = "<group>"; };
+		839366661815923C006DD712 /* CogPluginMulti.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CogPluginMulti.swift; sourceTree = "<group>"; };
 		8399CF2A27B5D1D4008751F1 /* NSDictionary+Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+Merge.h"; path = "../Utils/NSDictionary+Merge.h"; sourceTree = SOURCE_ROOT; };
 		8399CF2B27B5D1D4008751F1 /* NSDictionary+Merge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+Merge.m"; path = "../Utils/NSDictionary+Merge.m"; sourceTree = SOURCE_ROOT; };
 		839E56F6287974A100DFB5F4 /* SandboxBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxBroker.h; path = ../Utils/SandboxBroker.h; sourceTree = "<group>"; };
@@ -189,7 +187,6 @@
 				AudioChunk.h,
 				ChunkList.h,
 				CogEqualizer.h,
-				Downmix.h,
 				FSurroundFilter.h,
 			);
 			target = 8DC2EF4F0486A6940098B216 /* CogAudio */;
@@ -298,8 +295,7 @@
 				835F00D20000000000000007 /* AudioMetadataReader.swift */,
 				835F00D20000000000000005 /* AudioPropertiesReader.swift */,
 				835F00D20000000000000003 /* AudioSource.swift */,
-				839366651815923C006DD712 /* CogPluginMulti.h */,
-				839366661815923C006DD712 /* CogPluginMulti.m */,
+				839366661815923C006DD712 /* CogPluginMulti.swift */,
 				17F94DD30B8D0F7000A34E87 /* PluginController.h */,
 				17F94DD40B8D0F7000A34E87 /* PluginController.mm */,
 				839E56F6287974A100DFB5F4 /* SandboxBroker.h */,
@@ -505,7 +501,6 @@
 				83B74281289E027F005AAC28 /* CogAudio-Bridging-Header.h in Headers */,
 				839E56F7287974A100DFB5F4 /* SandboxBroker.h in Headers */,
 				83C0F1A12E4C1B0100C0F1A0 /* CogURLNormalization.h in Headers */,
-				839366671815923C006DD712 /* CogPluginMulti.h in Headers */,
 				835C88B1279811A500E28EAE /* hdcd_decode2.h in Headers */,
 				8384912718080FF100E7332D /* Logging.h in Headers */,
 				8377C64E27B8C54400E8BC0F /* fft.h in Headers */,
@@ -639,7 +634,7 @@
 				17D21DC80B8BE79700D1EBDE /* CoreAudioUtils.m in Sources */,
 				8328995327CB511000D7F028 /* RedundantPlaylistDataStore.m in Sources */,
 				8377C64C27B8C51500E8BC0F /* fft_accelerate.c in Sources */,
-				839366681815923C006DD712 /* CogPluginMulti.m in Sources */,
+				839366681815923C006DD712 /* CogPluginMulti.swift in Sources */,
 				17D21EBE0B8BF44000D1EBDE /* AudioPlayer.m in Sources */,
 				17F94DD60B8D0F7000A34E87 /* PluginController.mm in Sources */,
 				835F00D20000000000000002 /* AudioDecoder.swift in Sources */,

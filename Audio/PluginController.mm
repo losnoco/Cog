@@ -1,5 +1,5 @@
 #import "PluginController.h"
-#import "CogPluginMulti.h"
+#import <CogAudio/CogAudio-Swift.h>
 #import "Plugin.h"
 
 #import "Logging.h"
@@ -16,8 +16,8 @@
 #import <objc/runtime.h>
 #endif
 
-// CogPluginMulti.m's order of plugins, highest priority first.
-extern "C" NSArray *sortClassesByPriority(NSArray *theClasses);
+// sortClassesByPriority (highest priority first) now comes from
+// CogPluginMulti.swift via CogAudio-Swift.h.
 
 #import <chrono>
 #import <map>
